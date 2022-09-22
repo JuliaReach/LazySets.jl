@@ -28,8 +28,8 @@ julia> dim(s)
 ```
 
 Use `plot(s)` to plot the extreme points of `s` and the line segment joining
-them. If it is desired to remove the endpoints, pass the options `markershape=:none`
-and `seriestype=:shape`.
+them. If it is desired to remove the endpoints, pass the options
+`markershape=:none` and `seriestype=:shape`.
 
 Membership is checked with ∈ (`in`):
 
@@ -38,14 +38,14 @@ julia> [0., 0] ∈ s && [.25, .25] ∈ s && [1., 1] ∈ s && [.5, .25] ∉ s
 true
 ```
 
-We can check the intersection with another line segment, and optionally compute
-a witness (which is just the common point in this case):
+We can check whether the intersection with another line segment is empty, and
+optionally compute a witness (which is the unique common point in this case):
 
 ```jldoctest linesegment_constructor
 julia> sn = LineSegment([1., 0], [0., 1.])
 LineSegment{Float64, Vector{Float64}}([1.0, 0.0], [0.0, 1.0])
 
-julia> isempty(s ∩ sn)
+julia> isdisjoint(s, sn)
 false
 
 julia> isdisjoint(s, sn, true)
@@ -59,30 +59,26 @@ struct LineSegment{N, VN<:AbstractVector{N}} <: AbstractZonotope{N}
     # default constructor with length constraint
     function LineSegment(p::VN, q::VN) where {N, VN<:AbstractVector{N}}
         @assert length(p) == length(q) == 2 "points for line segments must " *
-            "be two-dimensional but their lengths are $(length(p)) and $(length(q))"
+            "be two-dimensional, but their lengths are $(length(p)) and " *
+            "$(length(q))"
         return new{N, VN}(p, q)
     end
 end
 
 isoperationtype(::Type{<:LineSegment}) = false
-isconvextype(::Type{<:LineSegment}) = true
-
-
-# --- ConvexSet interface functions ---
-
 
 """
     dim(L::LineSegment)
 
-Return the ambient dimension of a line segment.
+Return the ambient dimension of a 2D line segment.
 
 ### Input
 
-- `L` -- line segment
+- `L` -- 2D line segment
 
 ### Output
 
-The ambient dimension of the line segment, which is 2.
+The ambient dimension of the 2D line segment, which is ``2``.
 """
 function dim(L::LineSegment)
     return 2
@@ -91,12 +87,12 @@ end
 """
     σ(d::AbstractVector, L::LineSegment)
 
-Return the support vector of a line segment in a given direction.
+Return the support vector of a 2D line segment in a given direction.
 
 ### Input
 
 - `d` -- direction
-- `L` -- line segment
+- `L` -- 2D line segment
 
 ### Output
 
@@ -117,11 +113,11 @@ end
 """
     an_element(L::LineSegment)
 
-Return some element of a line segment.
+Return some element of a 2D line segment.
 
 ### Input
 
-- `L` -- line segment
+- `L` -- 2D line segment
 
 ### Output
 
@@ -134,12 +130,12 @@ end
 """
     ∈(x::AbstractVector, L::LineSegment)
 
-Check whether a given point is contained in a line segment.
+Check whether a given point is contained in a 2D line segment.
 
 ### Input
 
 - `x` -- point/vector
-- `L` -- line segment
+- `L` -- 2D line segment
 
 ### Output
 
@@ -147,11 +143,11 @@ Check whether a given point is contained in a line segment.
 
 ### Algorithm
 
-Let ``L = (p, q)`` be the line segment with extremes ``p`` and ``q``, and let
-``x`` be the given point.
+Let ``L = (p, q)`` be the line segment with extreme points ``p`` and ``q``, and
+let ``x`` be the given point.
 
-1. A necessary condition for ``x ∈ (p, q)`` is that the three points are aligned,
-   thus their cross product should be zero.
+1. A necessary condition for ``x ∈ (p, q)`` is that the three points are
+   aligned, thus their cross product should be zero.
 2. It remains to check that ``x`` belongs to the box approximation of ``L``.
    This amounts to comparing each coordinate with those of the extremes ``p``
    and ``q``.
@@ -161,32 +157,31 @@ Let ``L = (p, q)`` be the line segment with extremes ``p`` and ``q``, and let
 The algorithm is inspired from [here](https://stackoverflow.com/a/328110).
 """
 function ∈(x::AbstractVector, L::LineSegment)
-    @assert length(x) == dim(L)
+    @assert length(x) == dim(L) "a vector of length $(length(x)) is " *
+        "incompatible with a $(dim(L))-dimensional set"
 
     # check if point x is on the line through the line segment (p, q)
     p = L.p
     q = L.q
     if isapproxzero(right_turn(p, q, x))
         # check if the point is inside the box approximation of the line segment
-        return _leq(min(p[1], q[1]), x[1]) && _leq(x[1], max(p[1], q[1])) &&
-               _leq(min(p[2], q[2]), x[2]) && _leq(x[2], max(p[2], q[2]))
+        return @inbounds (_leq(min(p[1], q[1]), x[1]) &&
+            _leq(x[1], max(p[1], q[1])) &&
+            _leq(min(p[2], q[2]), x[2]) &&
+            _leq(x[2], max(p[2], q[2])))
     else
         return false
     end
 end
 
-
-# --- AbstractCentrallySymmetric interface functions ---
-
-
 """
     center(L::LineSegment)
 
-Return the center of a line segment.
+Return the center of a 2D line segment.
 
 ### Input
 
-- `L` -- line segment
+- `L` -- 2D line segment
 
 ### Output
 
@@ -196,63 +191,58 @@ function center(L::LineSegment)
     return L.p + (L.q - L.p) / 2
 end
 
-
-# --- AbstractZonotope interface functions ---
-
-
 """
    genmat(L::LineSegment)
 
-Return the generator matrix of a line segment.
+Return the generator matrix of a 2D line segment.
 
 ### Input
 
-- `L` -- line segment
+- `L` -- 2D line segment
 
 ### Output
 
-A matrix with a single column representing the generator of `L`.
+A matrix with at most one column representing the generator of `L`.
 """
 function genmat(L::LineSegment)
-    ngens = L.p == L.q ? 0 : 1
-    return genmat_fallback(L, ngens=ngens)
+    N = eltype(L)
+    if _isapprox(L.p, L.q)
+        # degenerate line segment has no generators
+        return zeros(N, dim(L), 0)
+    end
+    return hcat((L.p - L.q) / 2)
 end
 
 """
-    generators(L::LineSegment{N}) where {N}
+    generators(L::LineSegment)
 
-Return an iterator over the (single) generator of a line segment.
+Return an iterator over the (single) generator of a 2D line segment.
 
 ### Input
 
-- `L` -- line segment
+- `L` -- 2D line segment
 
 ### Output
 
-A one-element iterator over the generator of `L`.
+An iterator over the generator of `L`, if any.
 """
-function generators(L::LineSegment{N}) where {N}
-    p = L.p
-    q = L.q
-    if _isapprox(p, q)
+function generators(L::LineSegment)
+    if _isapprox(L.p, L.q)
         # degenerate line segment has no generators
+        N = eltype(L)
         return EmptyIterator{Vector{N}}()
     end
-    return [(p - q) / 2]
+    return [(L.p - L.q) / 2]
 end
-
-
-# --- AbstractPolytope interface functions ---
-
 
 """
     vertices_list(L::LineSegment)
 
-Return the list of vertices of a line segment.
+Return the list of vertices of a 2D line segment.
 
 ### Input
 
-- `L` -- line segment
+- `L` -- 2D line segment
 
 ### Output
 
@@ -262,15 +252,11 @@ function vertices_list(L::LineSegment)
     return [L.p, L.q]
 end
 
-
-# --- ConvexSet interface functions ---
-
-
 """
     rand(::Type{LineSegment}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
-Create a random line segment.
+Create a random 2D line segment.
 
 ### Input
 
@@ -282,7 +268,7 @@ Create a random line segment.
 
 ### Output
 
-A random line segment.
+A random 2D line segment.
 
 ### Algorithm
 
@@ -300,19 +286,15 @@ function rand(::Type{LineSegment};
     return LineSegment(p, q)
 end
 
-
-# --- LineSegment functions ---
-
-
 """
     halfspace_left(L::LineSegment)
 
-Return a half-space describing the 'left' of a two-dimensional line segment
+Return a half-space describing the 'left' of a two-dimensional 2D line segment
 through two points.
 
 ### Input
 
- - `L` -- line segment
+- `L` -- 2D line segment
 
 ### Output
 
@@ -324,12 +306,12 @@ halfspace_left(L::LineSegment) = halfspace_left(L.p, L.q)
 """
     halfspace_right(L::LineSegment)
 
-Return a half-space describing the 'right' of a two-dimensional line segment
+Return a half-space describing the 'right' of a two-dimensional 2D line segment
 through two points.
 
 ### Input
 
- - `L` -- line segment
+- `L` -- 2D line segment
 
 ### Output
 
@@ -341,31 +323,26 @@ halfspace_right(L::LineSegment) = halfspace_right(L.p, L.q)
 """
     constraints_list(L::LineSegment)
 
-Return the list of constraints defining a line segment in 2D.
+Return a list of constraints defining a 2D line segment in 2D.
 
 ### Input
 
-- `L` -- line segment
+- `L` -- 2D line segment
 
 ### Output
 
-A vector of constraints that define the line segment.
+A vector of constraints defining the line segment.
 
 ### Algorithm
 
 ``L`` is defined by 4 constraints. In this algorithm, the first two constraints
 are returned by ``halfspace_right`` and ``halfspace_left``, and the other two
-are obtained by considering the vector normal to the line segment that passes
-through each opposite vertex.
-
-### Notes
-
-This function returns a vector of halfspaces. It does not return equality
-constraints.
+are obtained by considering a vector parallel to the line segment passing
+through one of the vertices.
 """
 function constraints_list(L::LineSegment)
     p, q = L.p, L.q
-    d = [p[2] - q[2], q[1] - p[1]]
+    d = @inbounds [p[2] - q[2], q[1] - p[1]]
     return [halfspace_left(L), halfspace_right(L),
             halfspace_right(p, p + d), halfspace_left(q, q + d)]
 end
@@ -373,11 +350,11 @@ end
 """
     translate(L::LineSegment, v::AbstractVector)
 
-Translate (i.e., shift) a line segment by a given vector.
+Translate (i.e., shift) a 2D line segment by a given vector.
 
 ### Input
 
-- `L` -- line segment
+- `L` -- 2D line segment
 - `v` -- translation vector
 
 ### Output
