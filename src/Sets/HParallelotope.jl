@@ -292,7 +292,7 @@ function generators(P::HParallelotope)
 end
 
 """
-    constraints_list(P::HParallelotope{N, VN}) where {N, VN}
+    constraints_list(P::HParallelotope)
 
 Return the list of constraints of a parallelotope in constraint representation.
 
@@ -304,9 +304,10 @@ Return the list of constraints of a parallelotope in constraint representation.
 
 The list of constraints of `P`.
 """
-function constraints_list(P::HParallelotope{N, VN}) where {N, VN}
+function constraints_list(P::HParallelotope)
     D, c = P.directions, P.offset
     n = dim(P)
+    N, VN = _parameters(P)
     if isempty(D)
         return Vector{HalfSpace{N, VN}}(undef, 0)
     end
@@ -316,6 +317,10 @@ function constraints_list(P::HParallelotope{N, VN}) where {N, VN}
         clist[i+n] = HalfSpace(-D[i, :], c[i+n])
     end
     return clist
+end
+
+function _parameters(P::HParallelotope{N, VN}) where {N, VN}
+    return (N, VN)
 end
 
 """

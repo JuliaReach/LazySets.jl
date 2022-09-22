@@ -14,7 +14,7 @@ extremal_vertices(::HParallelotope{N, VN}) where {N, VN}
 center(::HParallelotope)
 genmat(::HParallelotope)
 generators(::HParallelotope)
-constraints_list(::HParallelotope{N, VN}) where {N, VN}
+constraints_list(::HParallelotope)
 rand(::Type{HParallelotope})
 isempty(P::HParallelotope)
 ```

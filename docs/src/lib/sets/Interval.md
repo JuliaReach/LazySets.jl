@@ -29,7 +29,7 @@ isflat(::Interval)
 plot_recipe(::Interval{N}, ::Any=zero(N)) where {N}
 linear_map(::AbstractMatrix, ::Interval)
 scale(::Real, ::Interval)
-constraints_list(::Interval{N}) where {N}
+constraints_list(::Interval)
 rectify(::Interval{N}) where {N}
 diameter(::Interval, ::Real=Inf)
 split(::Interval, ::AbstractVector{Int})
