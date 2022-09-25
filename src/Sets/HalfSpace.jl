@@ -819,9 +819,7 @@ Euclidean norm.
 
 A scalar representing the distance between point `x` and half-space `H`.
 """
-function distance(x::AbstractVector, H::HalfSpace{N}) where {N}
+@commutative function distance(x::AbstractVector, H::HalfSpace{N}) where {N}
     a, b = _normalize_halfspace(H, N(2))
     return max(dot(x, a) - b, zero(N))
 end
-
-distance(H::HalfSpace, x::AbstractVector) = distance(x, H)

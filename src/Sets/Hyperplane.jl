@@ -35,7 +35,6 @@ struct Hyperplane{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 end
 
 isoperationtype(::Type{<:Hyperplane}) = false
-isconvextype(::Type{<:Hyperplane}) = true
 
 """
     normalize(H::Hyperplane{N}, p=N(2)) where {N}
@@ -45,7 +44,7 @@ Normalize a hyperplane.
 ### Input
 
 - `H` -- hyperplane
-- `p`  -- (optional, default: `2`) norm
+- `p` -- (optional, default: `2`) norm
 
 ### Output
 
@@ -57,117 +56,114 @@ function normalize(H::Hyperplane{N}, p=N(2)) where {N}
     return Hyperplane(a, b)
 end
 
-
-# --- polyhedron interface functions ---
-
-
 """
-    constraints_list(hp::Hyperplane)
+    constraints_list(H::Hyperplane)
 
 Return the list of constraints of a hyperplane.
 
 ### Input
 
-- `hp` -- hyperplane
+- `H` -- hyperplane
 
 ### Output
 
 A list containing two half-spaces.
 """
-function constraints_list(hp::Hyperplane)
-    return _constraints_list_hyperplane(hp.a, hp.b)
+function constraints_list(H::Hyperplane)
+    return _constraints_list_hyperplane(H.a, H.b)
 end
 
-
-# --- ConvexSet interface functions ---
-
+# internal helper function
+function _constraints_list_hyperplane(a::AbstractVector, b)
+    return [HalfSpace(a, b), HalfSpace(-a, -b)]
+end
 
 """
-    dim(hp::Hyperplane)
+    dim(H::Hyperplane)
 
 Return the dimension of a hyperplane.
 
 ### Input
 
-- `hp` -- hyperplane
+- `H` -- hyperplane
 
 ### Output
 
 The ambient dimension of the hyperplane.
 """
-function dim(hp::Hyperplane)
-    return length(hp.a)
+function dim(H::Hyperplane)
+    return length(H.a)
 end
 
 """
-    ρ(d::AbstractVector, hp::Hyperplane)
+    ρ(d::AbstractVector, H::Hyperplane)
 
 Evaluate the support function of a hyperplane in a given direction.
 
 ### Input
 
-- `d`  -- direction
-- `hp` -- hyperplane
+- `d` -- direction
+- `H` -- hyperplane
 
 ### Output
 
 The support function of the hyperplane.
 If the set is unbounded in the given direction, the result is `Inf`.
 """
-function ρ(d::AbstractVector, hp::Hyperplane)
-    v, unbounded = _σ_hyperplane_halfspace(d, hp.a, hp.b, error_unbounded=false,
+function ρ(d::AbstractVector, H::Hyperplane)
+    v, unbounded = _σ_hyperplane_halfspace(d, H.a, H.b, error_unbounded=false,
                                            halfspace=false)
     if unbounded
-        N = promote_type(eltype(d), eltype(hp))
+        N = promote_type(eltype(d), eltype(H))
         return N(Inf)
     end
     return dot(d, v)
 end
 
 """
-    σ(d::AbstractVector, hp::Hyperplane)
+    σ(d::AbstractVector, H::Hyperplane)
 
-Return the support vector of a hyperplane.
+Return a support vector of a hyperplane.
 
 ### Input
 
-- `d`  -- direction
-- `hp` -- hyperplane
+- `d` -- direction
+- `H` -- hyperplane
 
 ### Output
 
-The support vector in the given direction, which is only defined in the
-following two cases:
+A support vector in the given direction, which is only defined in the following
+two cases:
 1. The direction has norm zero.
 2. The direction is the hyperplane's normal direction or its opposite direction.
-In all cases, the result is any point on the hyperplane.
+In all cases, any point on the hyperplane is a solution.
 Otherwise this function throws an error.
 """
-function σ(d::AbstractVector, hp::Hyperplane)
-    v, unbounded = _σ_hyperplane_halfspace(d, hp.a, hp.b, error_unbounded=true,
+function σ(d::AbstractVector, H::Hyperplane)
+    v, unbounded = _σ_hyperplane_halfspace(d, H.a, H.b, error_unbounded=true,
                                            halfspace=false)
     return v
 end
 
 """
-    isbounded(hp::Hyperplane)
+    isbounded(H::Hyperplane)
 
-Determine whether a hyperplane is bounded.
+Check whether a hyperplane is bounded.
 
 ### Input
 
-- `hp` -- hyperplane
+- `H` -- hyperplane
 
 ### Output
 
-`true` iff `hp` is one-dimensional.
+`true` iff `H` is one-dimensional.
 """
-function isbounded(hp::Hyperplane)
-    return dim(hp) == 1
+function isbounded(H::Hyperplane)
+    return dim(H) == 1
 end
 
 """
-    isuniversal(hp::Hyperplane, [witness]::Bool=false)
+    isuniversal(H::Hyperplane, [witness]::Bool=false)
 
 Check whether a hyperplane is universal.
 
@@ -186,9 +182,9 @@ Check whether a hyperplane is universal.
 A witness is produced by adding the normal vector to an element on the
 hyperplane.
 """
-function isuniversal(hp::Hyperplane, witness::Bool=false)
+function isuniversal(H::Hyperplane, witness::Bool=false)
     if witness
-        v = _non_element_halfspace(hp.a, hp.b)
+        v = _non_element_halfspace(H.a, H.b)
         return (false, v)
     else
         return false
@@ -196,42 +192,42 @@ function isuniversal(hp::Hyperplane, witness::Bool=false)
 end
 
 """
-    an_element(hp::Hyperplane)
+    an_element(H::Hyperplane)
 
 Return some element of a hyperplane.
 
 ### Input
 
-- `hp` -- hyperplane
+- `H` -- hyperplane
 
 ### Output
 
 An element on the hyperplane.
 """
-function an_element(hp::Hyperplane)
-    return _an_element_helper_hyperplane(hp.a, hp.b)
+function an_element(H::Hyperplane)
+    return _an_element_helper_hyperplane(H.a, H.b)
 end
 
 """
-    ∈(x::AbstractVector, hp::Hyperplane)
+    ∈(x::AbstractVector, H::Hyperplane)
 
 Check whether a given point is contained in a hyperplane.
 
 ### Input
 
 - `x` -- point/vector
-- `hp` -- hyperplane
+- `H` -- hyperplane
 
 ### Output
 
-`true` iff ``x ∈ hp``.
+`true` iff ``x ∈ H``.
 
 ### Algorithm
 
-We just check if ``x`` satisfies ``a⋅x = b``.
+We just check whether ``x`` satisfies ``a⋅x = b``.
 """
-function ∈(x::AbstractVector, hp::Hyperplane)
-    return _isapprox(dot(hp.a, x), hp.b)
+function ∈(x::AbstractVector, H::Hyperplane)
+    return _isapprox(dot(H.a, x), H.b)
 end
 
 """
@@ -272,30 +268,30 @@ function rand(::Type{Hyperplane};
 end
 
 """
-    isempty(hp::Hyperplane)
+    isempty(H::Hyperplane)
 
-Return if a hyperplane is empty or not.
+Check whether a hyperplane is empty.
 
 ### Input
 
-- `hp` -- hyperplane
+- `H` -- hyperplane
 
 ### Output
 
 `false`.
 """
-function isempty(hp::Hyperplane)
+function isempty(H::Hyperplane)
     return false
 end
 
 """
-    constrained_dimensions(hp::Hyperplane)
+    constrained_dimensions(H::Hyperplane)
 
-Return the indices in which a hyperplane is constrained.
+Return the dimensions in which a hyperplane is constrained.
 
 ### Input
 
-- `hp` -- hyperplane
+- `H` -- hyperplane
 
 ### Output
 
@@ -304,15 +300,11 @@ dimension `i`.
 
 ### Examples
 
-A 2D hyperplane with constraint ``x1 = 0`` is constrained in dimension 1 only.
+A 2D hyperplane with constraint ``x_1 = 0`` is constrained in dimension 1 only.
 """
-function constrained_dimensions(hp::Hyperplane)
-    return nonzero_indices(hp.a)
+function constrained_dimensions(H::Hyperplane)
+    return nonzero_indices(H.a)
 end
-
-
-# --- Hyperplane functions ---
-
 
 """
 ```
@@ -321,7 +313,7 @@ end
                             [halfspace]::Bool=false)
 ```
 
-Return the support vector of a hyperplane ``a⋅x = b`` in direction `d`.
+Return a support vector of a hyperplane ``a⋅x = b`` in direction `d`.
 
 ### Input
 
@@ -329,8 +321,7 @@ Return the support vector of a hyperplane ``a⋅x = b`` in direction `d`.
 - `a`         -- normal direction
 - `b`         -- constraint
 - `error_unbounded` -- (optional, default: `true`) `true` if an error should be
-                 thrown whenever the set is
-                 unbounded in the given direction
+                 thrown whenever the set is unbounded in the given direction
 - `halfspace` -- (optional, default: `false`) `true` if the support vector
                  should be computed for a half-space
 
@@ -353,18 +344,18 @@ this function throws an error instead of returning.
 
 ### Notes
 
-For correctness, consider the [weak duality of
-LPs](https://en.wikipedia.org/wiki/Linear_programming#Duality):
+For correctness, consider the
+[weak duality of LPs](https://en.wikipedia.org/wiki/Linear_programming#Duality):
 If the primal is unbounded, then the dual is infeasible.
 Since there is only a single constraint, the feasible set of the dual problem is
-`a ⋅ y == d`, `y >= 0` (with objective function `b ⋅ y`).
-It is easy to see that this problem is infeasible whenever `a` is not parallel
-to `d`.
+``a ⋅ y == d``, ``y ≥ 0`` (with objective function ``b ⋅ y``).
+It is easy to see that this problem is infeasible whenever ``a`` is not parallel
+to ``d``.
 """
 @inline function _σ_hyperplane_halfspace(d::AbstractVector, a, b;
                                          error_unbounded::Bool=true,
                                          halfspace::Bool=false)
-    @assert (length(d) == length(a)) "cannot compute the support vector of a " *
+    @assert length(d) == length(a) "cannot compute the support vector of a " *
         "$(length(a))-dimensional " * (halfspace ? "halfspace" : "hyperplane") *
         " along a vector of length $(length(d))"
 
@@ -406,7 +397,7 @@ to `d`.
         if error_unbounded
             error("the support vector for the " *
                 (halfspace ? "halfspace" : "hyperplane") * " with normal " *
-                "direction $(a) is not defined along a direction $d")
+                "direction $a is not defined along a direction $d")
         end
         # the first return value does not have a meaning here
         return (d, true)
@@ -438,18 +429,11 @@ We compute the point on the hyperplane as follows:
 - We set ``x[j] = 0`` for all ``j ≠ i``.
 """
 @inline function _an_element_helper_hyperplane(a::AbstractVector{N}, b,
-                                               nonzero_entry_a::Int=findnext(x -> x!=zero(N), a, 1)
+                                               nonzero_entry_a::Int=findfirst(!iszero, a)
                                               ) where {N}
-    @assert nonzero_entry_a in 1:length(a) "invalid index " *
-        "$nonzero_entry_a for hyperplane"
     x = zeros(N, length(a))
     x[nonzero_entry_a] = b / a[nonzero_entry_a]
     return x
-end
-
-# internal helper function
-function _constraints_list_hyperplane(a::AbstractVector, b)
-    return [HalfSpace(a, b), HalfSpace(-a, -b)]
 end
 
 function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Hyperplane{N},
@@ -467,13 +451,13 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Hyperplane{N},
 end
 
 """
-    translate(hp::Hyperplane, v::AbstractVector; share::Bool=false)
+    translate(H::Hyperplane, v::AbstractVector; share::Bool=false)
 
 Translate (i.e., shift) a hyperplane by a given vector.
 
 ### Input
 
-- `hp`    -- hyperplane
+- `H`     -- hyperplane
 - `v`     -- translation vector
 - `share` -- (optional, default: `false`) flag for sharing unmodified parts of
              the original set representation
@@ -484,7 +468,7 @@ A translated hyperplane.
 
 ### Notes
 
-The normal vectors of the hyperplane (vector `a` in `a⋅x = b`) is shared with
+The normal vector of the hyperplane (vector ``a`` in ``a⋅x = b``) is shared with
 the original hyperplane if `share == true`.
 
 ### Algorithm
@@ -492,35 +476,35 @@ the original hyperplane if `share == true`.
 A hyperplane ``a⋅x = b`` is transformed to the hyperplane ``a⋅x = b + a⋅v``.
 In other words, we add the dot product ``a⋅v`` to ``b``.
 """
-function translate(hp::Hyperplane, v::AbstractVector; share::Bool=false)
-    @assert length(v) == dim(hp) "cannot translate a $(dim(hp))-dimensional " *
+function translate(H::Hyperplane, v::AbstractVector; share::Bool=false)
+    @assert length(v) == dim(H) "cannot translate a $(dim(H))-dimensional " *
                                  "set by a $(length(v))-dimensional vector"
-    a = share ? hp.a : copy(hp.a)
-    b = hp.b + dot(hp.a, v)
+    a = share ? H.a : copy(H.a)
+    b = H.b + dot(H.a, v)
     return Hyperplane(a, b)
 end
 
-function project(hp::Hyperplane{N}, block::AbstractVector{Int}; kwargs...) where {N}
-    if constrained_dimensions(hp) ⊆ block
-        return Hyperplane(hp.a[block], hp.b)
+function project(H::Hyperplane{N}, block::AbstractVector{Int}; kwargs...) where {N}
+    if constrained_dimensions(H) ⊆ block
+        return Hyperplane(H.a[block], H.b)
     else
         return Universe{N}(length(block))
     end
 end
 
 """
-    project(x::AbstractVector, hp::Hyperplane)
+    project(x::AbstractVector, H::Hyperplane)
 
 Project a point onto a hyperplane.
 
 ### Input
 
-- `x`  -- point
-- `hp` -- hyperplane
+- `x` -- point
+- `H` -- hyperplane
 
 ### Output
 
-The projection of `x` onto `hp`.
+The projection of `x` onto `H`.
 
 ### Algorithm
 
@@ -530,8 +514,8 @@ The projection of ``x`` onto the hyperplane of the form ``a⋅x = b`` is
     x - \\dfrac{a (a⋅x - b)}{‖a‖²}
 ```
 """
-function project(x::AbstractVector, hp::Hyperplane)
-    return x - hp.a * (dot(hp.a, x) - hp.b) / norm(hp.a, 2)^2
+function project(x::AbstractVector, H::Hyperplane)
+    return x - H.a * (dot(H.a, x) - H.b) / norm(H.a, 2)^2
 end
 
 function is_hyperplanar(::Hyperplane)
@@ -546,7 +530,7 @@ return quote
 
 # returns `(true, sexpr)` if expr represents a hyperplane,
 # where sexpr is the simplified expression sexpr := LHS - RHS == 0
-# otherwise, returns `(false, expr)`
+# otherwise returns `(false, expr)`
 function _is_hyperplane(expr::Symbolic)
     got_hyperplane = operation(expr) == ==
     if got_hyperplane
@@ -565,12 +549,13 @@ Return the hyperplane given by a symbolic expression.
 ### Input
 
 - `expr` -- symbolic expression that describes a hyperplane
-- `vars` -- (optional, default: `_get_variables(expr)`), if an array of variables is given,
-            use those as the ambient variables in the set with respect to which derivations
-            take place; otherwise, use only the variables which appear in the given
-            expression (but be careful because the order may be incorrect;
-            it is advised to always `vars` explicitly)
-- `N`    -- (optional, default: `Float64`) the numeric type of the returned hyperplane
+- `vars` -- (optional, default: `_get_variables(expr)`), if a vector of
+            variables is given, use those as the ambient variables with respect
+            to which derivations take place; otherwise, use only the variables
+            that appear in the given expression (but be careful because the
+            order may be incorrect; it is advised to always specify `vars`
+            explicitly)
+- `N`    -- (optional, default: `Float64`) the numeric type of the hyperplane
 
 ### Output
 
@@ -603,15 +588,16 @@ Hyperplane{Float64, Vector{Float64}}([1.0, -1.0, 0.0, 0.0], -0.0)
 ### Algorithm
 
 It is assumed that the expression is of the form
-`EXPR0: α*x1 + ⋯ + α*xn + γ == β*x1 + ⋯ + β*xn + δ`.
+`α*x1 + ⋯ + α*xn + γ == β*x1 + ⋯ + β*xn + δ`.
 This expression is transformed, by rearrangement and substitution, into the
-canonical form `EXPR1 : a1 * x1 + ⋯ + an * xn == b`. The method used to identify
-the coefficients is to take derivatives with respect to the ambient variables `vars`.
-Therefore, the order in which the variables appear in `vars` affects the final result.
-Finally, the returned set is the hyperplane with normal vector `[a1, …, an]` and
+canonical form `a1 * x1 + ⋯ + an * xn == b`. To identify the coefficients, we
+take derivatives with respect to the ambient variables `vars`. Therefore, the
+order in which the variables appear in `vars` affects the final result. Finally,
+the returned set is the hyperplane with normal vector `[a1, …, an]` and
 displacement `b`.
 """
-function Hyperplane(expr::Num, vars::AbstractVector{Num}; N::Type{<:Real}=Float64)
+function Hyperplane(expr::Num, vars::AbstractVector{Num}=_get_variables(expr);
+                    N::Type{<:Real}=Float64)
     valid, sexpr = _is_hyperplane(Symbolics.value(expr))
     if !valid
         throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
@@ -627,7 +613,6 @@ function Hyperplane(expr::Num, vars::AbstractVector{Num}; N::Type{<:Real}=Float6
     return Hyperplane(coeffs, β)
 end
 
-Hyperplane(expr::Num; N::Type{<:Real}=Float64) = Hyperplane(expr, _get_variables(expr); N=N)
 Hyperplane(expr::Num, vars; N::Type{<:Real}=Float64) = Hyperplane(expr, _vec(vars), N=N)
 
 end end  # quote / load_symbolics_hyperplane()
@@ -647,12 +632,10 @@ Euclidean norm.
 
 A scalar representing the distance between point `x` and hyperplane `H`.
 """
-function distance(x::AbstractVector, H::Hyperplane{N}) where {N}
+@commutative function distance(x::AbstractVector, H::Hyperplane{N}) where {N}
     a, b = _normalize_halfspace(H, N(2))
     return abs(dot(x, a) - b)
 end
-
-distance(H::Hyperplane, x::AbstractVector) = distance(x, H)
 
 """
     reflect(x::AbstractVector, H::Hyperplane)
@@ -661,7 +644,7 @@ Reflect (mirror) a vector in a hyperplane.
 
 ### Input
 
-- `x` -- vector
+- `x` -- point/vector
 - `H` -- hyperplane
 
 ### Output
@@ -670,15 +653,15 @@ The reflection of `x` in `H`.
 
 ### Algorithm
 
-The reflection of a point ``p`` in the hyperplane ``a ⋅ x = b`` is
+The reflection of a point ``x`` in the hyperplane ``a ⋅ x = b`` is
 
 ```math
-    p − 2 \frac{p ⋅ a − c}{a ⋅ a} a
+    x − 2 \frac{x ⋅ a − b}{a ⋅ a} a
 ```
 
-where ``x · y`` denotes the dot product.
+where ``u · v`` denotes the dot product.
 """
-function reflect(x::AbstractVector, H::Hyperplane)
+@commutative function reflect(x::AbstractVector, H::Hyperplane)
     return _reflect_point_hyperplane(x, H.a, H.b)
 end
 
