@@ -97,24 +97,24 @@ function Line(a::AbstractVector{N}, b::N; normalize=false) where {N}
     @assert length(a) == 2 "expected a normal vector of length two, but it " *
         "is $(length(a))-dimensional"
 
-    got_horizontal = @inbounds iszero(a[1])
-    got_vertical = @inbounds iszero(a[2])
+    got_horizontal = iszero(a[1])
+    got_vertical = iszero(a[2])
 
     if got_horizontal && got_vertical
         throw(ArgumentError("the vector $a must be non-zero"))
     end
 
     if got_horizontal
-        α = b / @inbounds a[2]
+        α = b / a[2]
         p = [zero(N), α]
         q = [one(N), α]
     elseif got_vertical
-        β = b / @inbounds a[1]
+        β = b / a[1]
         p = [β, zero(N)]
         q = [β, one(N)]
     else
-        α = b / @inbounds a[2]
-        @inbounds μ = a[1] / a[2]
+        α = b / a[2]
+        μ = a[1] / a[2]
         p = [zero(N), α]
         q = [one(N), α - μ]
     end
