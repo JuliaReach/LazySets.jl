@@ -52,11 +52,11 @@ for N in [Float64, Rational{Int}, Float32]
     # linear map (concrete)
     M = hcat(N[1])
     Mz = linear_map(M, z)
-    @test Mz isa ZeroSet && dim(Mz) == 1
+    @test Mz isa ZeroSet{N} && dim(Mz) == 1
 
     M = N[-1 -2;]
     MZ = linear_map(M, Z)
-    @test MZ isa ZeroSet && dim(MZ) == 1
+    @test MZ isa ZeroSet{N} && dim(MZ) == 1
 
     # translation
     @test translate(Z, N[1, 2]) == Singleton(N[1, 2])
