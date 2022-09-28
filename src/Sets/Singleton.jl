@@ -5,7 +5,7 @@ export Singleton
 """
     Singleton{N, VN<:AbstractVector{N}} <: AbstractSingleton{N}
 
-Type that represents a singleton, that is, a set with a unique element.
+Type that represents a singleton, that is, a set with a single element.
 
 ### Fields
 
@@ -30,10 +30,6 @@ function Singleton(args::Real...)
 end
 
 isoperationtype(::Type{<:Singleton}) = false
-isconvextype(::Type{<:Singleton}) = true
-
-# --- AbstractSingleton interface functions ---
-
 
 """
     element(S::Singleton)
@@ -51,28 +47,6 @@ The element of the singleton.
 function element(S::Singleton)
     return S.element
 end
-
-"""
-    element(S::Singleton, i::Int)
-
-Return the i-th entry of the element of a singleton.
-
-### Input
-
-- `S` -- singleton
-- `i` -- dimension
-
-### Output
-
-The i-th entry of the element of the singleton.
-"""
-function element(S::Singleton, i::Int)
-    return S.element[i]
-end
-
-
-# --- ConvexSet interface functions ---
-
 
 """
     rand(::Type{Singleton}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
@@ -121,13 +95,10 @@ Translate (i.e., shift) a singleton by a given vector.
 
 A translated singleton.
 
-### Algorithm
-
-We add the vector to the point in the singleton.
-
 ### Notes
 
-See also [`translate!(::Singleton, ::AbstractVector)`](@ref) for the in-place version.
+See also [`translate!(::Singleton, ::AbstractVector)`](@ref) for the in-place
+version.
 """
 function translate(S::Singleton, v::AbstractVector)
     return translate!(copy(S), v)
@@ -153,13 +124,13 @@ We add the vector to the point in the singleton.
 
 ### Notes
 
-See also [`translate(::Singleton, ::AbstractVector)`](@ref) for the out-of-place version.
+See also [`translate(::Singleton, ::AbstractVector)`](@ref) for the out-of-place
+version.
 """
 function translate!(S::Singleton, v::AbstractVector)
     @assert length(v) == dim(S) "cannot translate a $(dim(S))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    e = element(S)
-    e .+= v
+    S.element .+= v
     return S
 end
 
@@ -199,7 +170,38 @@ function project(S::Singleton, block::AbstractVector{Int}; kwargs...)
     return Singleton(element(S)[block])
 end
 
+"""
+    permute(S::Singleton, p::AbstractVector{Int})
+
+Permute the dimensions according to a permutation vector.
+
+### Input
+
+- `S` -- singleton
+- `p` -- permutation vector
+
+### Output
+
+A new `Singleton` with the permuted dimensions.
+"""
 function permute(S::Singleton, p::AbstractVector{Int})
-    e = element(S)[p]
+    e = S.element[p]
     return Singleton(e)
+end
+
+"""
+    singleton_list(S::Singleton)
+
+Return the vertices of a singleton as a list of singletons.
+
+### Input
+
+- `S` -- singleton
+
+### Output
+
+The list of vertices of `S`, as `Singleton`.
+"""
+function singleton_list(S::Singleton)
+    return [S]
 end
