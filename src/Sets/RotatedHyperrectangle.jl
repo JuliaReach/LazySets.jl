@@ -24,14 +24,13 @@ struct RotatedHyperrectangle{N, MN<:AbstractMatrix{N},
 
     function RotatedHyperrectangle(M::MN, box::HT) where {N,
             MN<:AbstractMatrix{N}, HT<:AbstractHyperrectangle{N}}
-        @assert size(M, 2) == dim(box) "a rotated hyperrectangle of dimension " *
+        @assert size(M, 2) == dim(box) "a hyperrectangle of dimension " *
             "$(dim(box)) is incompatible with a matrix of dimension $(size(M))"
         return new{N, MN, HT}(M, box)
     end
 end
 
 isoperationtype(::Type{RotatedHyperrectangle}) = false
-isconvextype(::Type{RotatedHyperrectangle}) = true
 
 """
     dim(R::RotatedHyperrectangle)
@@ -71,7 +70,7 @@ end
 """
     σ(d::AbstractVector, R::RotatedHyperrectangle)
 
-Return the support vector of a rotated hyperrectangle in a given direction.
+Return a support vector of a rotated hyperrectangle in a given direction.
 
 ### Input
 
@@ -80,7 +79,7 @@ Return the support vector of a rotated hyperrectangle in a given direction.
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 """
 function σ(d::AbstractVector, R::RotatedHyperrectangle)
     return _σ_linear_map(d, R.M, R.box)
@@ -196,5 +195,5 @@ Return the list of constraints of a rotated hyperrectangle.
 A list of the linear constraints.
 """
 function constraints_list(R::RotatedHyperrectangle)
-    return constraints_list(convert(VPolytope, R))
+    return constraints_list(convert(Zonotope, R))
 end
