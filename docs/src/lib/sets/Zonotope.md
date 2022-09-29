@@ -21,6 +21,9 @@ linear_map!(::Zonotope, ::AbstractMatrix, ::Zonotope)
 LazySets._bound_intersect_2D(::Zonotope, ::Line2D)
 remove_redundant_generators(Z::Zonotope{N}) where {N}
 ```
+Inherited from [`LazySet`](@ref):
+* [`high`](@ref high(::LazySet))
+* [`low`](@ref low(::LazySet))
 
 Inherited from [`ConvexSet`](@ref):
 * [`norm`](@ref norm(::ConvexSet, ::Real))
@@ -44,6 +47,7 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
 * [`translate`](@ref translate(::AbstractZonotope, ::AbstractVector))
+* [`translate!`](@ref translate!(::AbstractZonotope, ::AbstractVector))
 * [`split`](@ref split(::AbstractZonotope, ::Int))
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 * [`constraints_list`](@ref constraints_list(::AbstractZonotope))
