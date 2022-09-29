@@ -477,13 +477,11 @@ Compute the distance between point `x` and the line with respect to the given
 
 A scalar representing the distance between `x` and the line `L`.
 """
-function distance(x::AbstractVector, L::Line; p::Real=2.0)
+@commutative function distance(x::AbstractVector, L::Line; p::Real=2.0)
     d = L.d  # direction of the line
     t = dot(x - L.p, d) / dot(d, d)
     return distance(x, L.p + t*d; p=p)
 end
-
-distance(L::Line, x::AbstractVector; p::Real=2.0) = distance(x, L; p=p)
 
 """
     linear_map(M::AbstractMatrix, L::Line)
