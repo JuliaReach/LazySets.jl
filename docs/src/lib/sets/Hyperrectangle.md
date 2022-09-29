@@ -11,6 +11,7 @@ center(::Hyperrectangle)
 radius_hyperrectangle(::Hyperrectangle)
 radius_hyperrectangle(::Hyperrectangle, ::Int)
 translate(::Hyperrectangle, ::AbstractVector)
+permute(::Hyperrectangle, ::AbstractVector{Int})
 ```
 Inherited from [`ConvexSet`](@ref):
 * [`diameter`](@ref diameter(::ConvexSet, ::Real))
@@ -26,7 +27,6 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractZonotope`](@ref):
-* [`ngens`](@ref ngens(::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))
@@ -38,9 +38,13 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle))
-* [`high`](@ref high(::AbstractHyperrectangle))
 * [`low`](@ref low(::AbstractHyperrectangle))
+* [`low`](@ref low(::AbstractHyperrectangle, ::Int))
+* [`high`](@ref high(::AbstractHyperrectangle))
+* [`high`](@ref high(::AbstractHyperrectangle, ::Int))
 * [`isflat`](@ref isflat(::Hyperrectangle))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
+* [`ngens`](@ref ngens(::AbstractHyperrectangle))
 * [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N})
+* [`rectify`](@ref rectify(::AbstractHyperrectangle))

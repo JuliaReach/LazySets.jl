@@ -8,22 +8,22 @@ export Universe
     Universe{N} <: AbstractPolyhedron{N}
 
 Type that represents the universal set, i.e., the set of all elements.
+
+### Fields
+
+- `dim` -- the ambient dimension of the set
 """
 struct Universe{N} <: AbstractPolyhedron{N}
     dim::Int
 end
 
 isoperationtype(::Type{<:Universe}) = false
-isconvextype(::Type{<:Universe}) = true
 
 # default constructor of type Float64
 Universe(dim::Int) = Universe{Float64}(dim)
 
-
-# --- AbstractPolyhedron interface functions ---
-
 """
-    constraints_list(U::Universe{N}) where {N}
+    constraints(U::Universe{N}) where {N}
 
 Construct an iterator over the constraints of a universe.
 
@@ -53,7 +53,7 @@ Return the list of constraints defining a universe.
 The empty list of constraints, as the universe is unconstrained.
 """
 function constraints_list(U::Universe{N}) where {N}
-    return LinearConstraint{N, Vector{N}}[]
+    return HalfSpace{N, Vector{N}}[]
 end
 
 """
@@ -73,10 +73,6 @@ function constrained_dimensions(U::Universe)
     return Int[]
 end
 
-
-# --- ConvexSet interface functions ---
-
-
 """
     dim(U::Universe)
 
@@ -88,7 +84,7 @@ Return the dimension of a universe.
 
 ### Output
 
-The dimension of a universe.
+The ambient dimension of a universe.
 """
 function dim(U::Universe)
     return U.dim
@@ -134,7 +130,7 @@ A vector with infinity values, except in dimensions where the direction is zero.
 """
 function σ(d::AbstractVector, U::Universe)
     N = promote_type(eltype(d), eltype(U))
-    return [v == zero(N) ? v : v > zero(N) ? N(Inf) : N(-Inf) for v in d]
+    return [iszero(v) ? v : v > zero(N) ? N(Inf) : N(-Inf) for v in d]
 end
 
 """
@@ -149,7 +145,7 @@ Check whether a given point is contained in a universe.
 
 ### Output
 
-The output is always `true`.
+`true`.
 
 ### Examples
 
@@ -159,7 +155,8 @@ true
 ```
 """
 function ∈(x::AbstractVector, U::Universe)
-    @assert length(x) == dim(U)
+    @assert length(x) == dim(U) "a $(length(x))-dimensional vector is " *
+                                "incompatible with a $(dim(U))-dimensional set"
     return true
 end
 
@@ -210,7 +207,7 @@ end
 """
     isempty(U::Universe)
 
-Return if a universe is empty or not.
+Check whether a universe is empty.
 
 ### Input
 
@@ -227,7 +224,7 @@ end
 """
     isbounded(U::Universe)
 
-Determine whether a universe is bounded.
+Check whether a universe is bounded.
 
 ### Input
 
@@ -235,7 +232,7 @@ Determine whether a universe is bounded.
 
 ### Output
 
-`false` as the universe is unbounded.
+`false`.
 """
 function isbounded(U::Universe)
     return false
@@ -289,7 +286,7 @@ end
 
 Return the radius of a universe.
 It is the radius of the enclosing ball (of the given ``p``-norm) of minimal
-volume with the same center.
+volume.
 
 ### Input
 
@@ -308,9 +305,8 @@ end
     diameter(U::Universe, [p]::Real=Inf)
 
 Return the diameter of a universe.
-It is the maximum distance between any two elements of the set, or,
-equivalently, the diameter of the enclosing ball (of the given ``p``-norm) of
-minimal volume with the same center.
+It is the diameter of the enclosing ball (of the given ``p``-norm) of minimal
+volume .
 
 ### Input
 
@@ -340,9 +336,23 @@ Translate (i.e., shift) a universe by a given vector.
 The universe.
 """
 function translate(U::Universe, v::AbstractVector)
-    return translate!(U, v)
+    return translate!(U, v)  # no need to copy
 end
 
+"""
+    translate!(U::Universe, v::AbstractVector)
+
+Translate (i.e., shift) a universe by a given vector, in-place.
+
+### Input
+
+- `U` -- universe
+- `v` -- translation vector
+
+### Output
+
+The universe.
+"""
 function translate!(U::Universe, v::AbstractVector)
     @assert length(v) == dim(U) "cannot translate a $(dim(U))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
@@ -360,6 +370,20 @@ function project(U::Universe{N}, block::AbstractVector{Int}; kwargs...) where {N
     return Universe{N}(length(block))
 end
 
+"""
+    permute(U::Universe, p::AbstractVector{Int})
+
+Permute the dimensions according to a permutation vector.
+
+### Input
+
+- `U` -- universe
+- `p` -- permutation vector
+
+### Output
+
+The same universe.
+"""
 function permute(U::Universe, p::AbstractVector{Int})
     return U
 end
@@ -381,7 +405,7 @@ Return an `HRep` polyhedron from `Polyhedra.jl` given a universe.
 
 - `U`       -- universe
 - `backend` -- (optional, default: call `default_polyhedra_backend(P)`)
-                the polyhedral computations backend
+               the backend for polyhedral computations
 
 ### Output
 
@@ -392,8 +416,7 @@ An `HRep` polyhedron.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
-function polyhedron(U::Universe;
-                    backend=default_polyhedra_backend(U))
+function polyhedron(U::Universe; backend=default_polyhedra_backend(U))
     A, b = tosimplehrep(U)
     return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
 end

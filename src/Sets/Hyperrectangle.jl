@@ -14,8 +14,8 @@ Cartesian product of one-dimensional intervals.
 ### Fields
 
 - `center` -- center of the hyperrectangle as a real vector
-- `radius` -- radius of the ball as a real vector, i.e., half of its width along
-              each coordinate direction
+- `radius` -- radius of the hyperrectangle as a real vector, i.e., half of its
+              width along each coordinate direction
 
 ### Examples
 
@@ -32,7 +32,7 @@ julia> H = Hyperrectangle(c, r)
 Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([-1.0, 1.0], [2.0, 1.0])
 ```
 
-Which creates the hyperrectangle with vertices:
+The above instance represents the hyperrectangle with the following vertices:
 
 ```jldoctest hyperrectangle_constructor
 julia> vertices_list(H)
@@ -72,8 +72,8 @@ julia> Hyperrectangle(low=l, high=h)
 Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([-1.0, 1.0], [2.0, 1.0])
 ```
 
-By default, the constructor checks that that radius of the hyperrecatangle
-is nonnegative. To supress this check, use the `check_bounds` optional flag
+By default, the constructor checks that that radius of the hyperrectangle
+is nonnegative. To suppress this check, use the `check_bounds` optional flag
 in the constructor. Note that if `check_bounds` is set to `false`, the behavior
 of a set with contradictory bounds is undefined.
 """
@@ -95,7 +95,6 @@ struct Hyperrectangle{N, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
 end
 
 isoperationtype(::Type{<:Hyperrectangle}) = false
-isconvextype(::Type{<:Hyperrectangle}) = true
 
 # constructor from keyword arguments (lower and upper bounds)
 function Hyperrectangle(; high::AbstractVector,
@@ -106,10 +105,6 @@ function Hyperrectangle(; high::AbstractVector,
     radius = high .- center
     return Hyperrectangle(center, radius, check_bounds=check_bounds)
 end
-
-
-# --- AbstractHyperrectangle interface functions ---
-
 
 """
     radius_hyperrectangle(H::Hyperrectangle, i::Int)
@@ -123,7 +118,7 @@ Return the box radius of a hyperrectangle in a given dimension.
 
 ### Output
 
-The radius in the given dimension.
+The box radius in the given dimension.
 """
 function radius_hyperrectangle(H::Hyperrectangle, i::Int)
     return H.radius[i]
@@ -162,8 +157,8 @@ return quote
         return SMatrix{L, m}(view(gens, :, nzcol))
     end
 
-    # this function is type-stable, though it doesn't prune the generators according
-    # to flat dimensions of H
+    # this function is type stable, but it does not prune the generators
+    # according to flat dimensions of H
     function _genmat_static(H::Hyperrectangle{N, SVector{L, N}, SVector{L, N}}) where {L, N}
         gens = zeros(MMatrix{L, L, N})
         @inbounds for i in 1:L
@@ -175,13 +170,11 @@ return quote
 end
 end
 
-function genmat(H::Hyperrectangle{N, SparseVector{N, T}, SparseVector{N, T}}) where {N, T}
+function genmat(H::Hyperrectangle{N, <:AbstractVector, <:SparseVector{N}}) where {N}
     n = dim(H)
-    return sparse(1:n, 1:n, H.radius, n, n)
+    nze, nzv = findnz(H.radius)
+    return sparse(nze, 1:length(nze), nzv, n, length(nze))
 end
-
-# --- AbstractCentrallySymmetric interface functions ---
-
 
 """
     center(H::Hyperrectangle)
@@ -199,10 +192,6 @@ The center of the hyperrectangle.
 function center(H::Hyperrectangle)
     return H.center
 end
-
-
-# --- ConvexSet interface functions ---
-
 
 """
     rand(::Type{Hyperrectangle}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
@@ -270,18 +259,30 @@ function translate(H::Hyperrectangle, v::AbstractVector; share::Bool=false)
     return Hyperrectangle(c, radius)
 end
 
-# Particular dispatch for SingleEntryVector
 function ρ(d::SingleEntryVector, H::Hyperrectangle)
     return _ρ_sev_hyperrectangle(d, H)
 end
 
-# Particular dispatch for SingleEntryVector
 function σ(d::SingleEntryVector, H::Hyperrectangle)
     return _σ_sev_hyperrectangle(d, H)
 end
 
+"""
+    permute(H::Hyperrectangle, p::AbstractVector{Int})
+
+Permute the dimensions according to a permutation vector.
+
+### Input
+
+- `H` -- hyperrectangle
+- `p` -- permutation vector
+
+### Output
+
+A permuted hyperrectangle.
+"""
 function permute(H::Hyperrectangle, p::AbstractVector{Int})
-    c = center(H)[p]
-    r = radius_hyperrectangle(H)[p]
+    c = H.center[p]
+    r = H.radius[p]
     return Hyperrectangle(c, r)
 end

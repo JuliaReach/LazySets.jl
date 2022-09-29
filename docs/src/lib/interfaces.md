@@ -466,6 +466,7 @@ This interface defines the following functions:
 ∈(::AbstractVector, ::AbstractSingleton)
 center(::AbstractSingleton)
 center(::AbstractSingleton, ::Int)
+element(::AbstractSingleton, ::Int)
 vertices(::AbstractSingleton{N}) where {N}
 vertices_list(::AbstractSingleton)
 radius_hyperrectangle(::AbstractSingleton{N}) where {N}
