@@ -16,7 +16,7 @@ rand(::Type{Line})
 isbounded(::Line)
 isuniversal(::Line; ::Bool=false)
 isempty(::Line)
-constraints_list(::Line{N, VN}) where {N, VN}
+constraints_list(::Line)
 translate(::Line, ::AbstractVector)
 translate!(::Line, ::AbstractVector)
 normalize(::Line, ::Real=2.0)
@@ -24,7 +24,13 @@ normalize!(::Line, ::Real=2.0)
 distance(::AbstractVector, ::Line; ::Real=2.0)
 linear_map(::AbstractMatrix, ::Line)
 ```
+Inherited from [`LazySet`](@ref):
+* [`low`](@ref low(::LazySet))
+* [`high`](@ref high(::LazySet))
+
 Inherited from [`ConvexSet`](@ref):
 * [`norm`](@ref norm(::ConvexSet, ::Real))
 * [`radius`](@ref radius(::ConvexSet, ::Real))
 * [`diameter`](@ref diameter(::ConvexSet, ::Real))
+* [`low`](@ref low(::ConvexSet, ::Int))
+* [`high`](@ref high(::ConvexSet, ::Int))

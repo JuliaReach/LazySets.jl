@@ -5,7 +5,7 @@ for N in [Float64, Rational{Int}, Float32]
     rand(Line)
 
     # construction
-    l1 = Line(from=N[0, 1], to=N[1, 1]) # two points in the line
+    l1 = Line(from=N[0, 1], to=N[1, 1]) # two points on the line
     l2 = Line(N[0, 1], N[1, 0]) # point and direction
 
     # construction given a 2d direction and offset
@@ -45,13 +45,6 @@ for N in [Float64, Rational{Int}, Float32]
     # an_element and membership
     an_element(l1) ∈ l1
 
-    # constraints_list
-    if N <: AbstractFloat
-        @test ispermutation(constraints_list(l2),
-                            [HalfSpace(N[0, 1], N(1)),    # y <= 1
-                             HalfSpace(N[0, -1], N(-1))]) # y >= 1
-    end
-
     # translation
     @test translate(l2, N[0, 1]) == Line(N[0, 2], N[1, 0])
 
@@ -61,14 +54,9 @@ for N in [Float64, Rational{Int}, Float32]
     distance(Singleton(N[1, 0]), l1) == N(1)
     distance(l1, Singleton(N[1, 0])) == N(1)
 
-    # concrete linear map
-    if N <: AbstractFloat
-        mirror = N[-1 0; 0 1]
-        l = Line(from=N[0, 1], to=N[1, 1])
-        @test isequivalent(linear_map(mirror, l), l)
-        rot = N[0 -1; 1 0] # π/2 ccw rotation
-        @test isequivalent(linear_map(rot, l), Line(N[-1, 0], N[0, 1]))
-    end
+    # concrete linear map special case: singleton result
+    l = Line(N[0, 2], N[1, 0])
+    @test linear_map(N[0 1; 0 2], l) == Singleton(N[2, 4])
 
     # projection
     L = Line(N[1, 2, 3], N[1, 0, 0])
@@ -78,4 +66,27 @@ for N in [Float64, Rational{Int}, Float32]
     @test project(L, [1, 2]) == Line(N[1, 2], N[1, 0])
     @test project(L, [1, 3]) == Line(N[1, 3], N[1, 0])
     @test project(L, [2, 3]) == Singleton(N[2, 3])
+end
+
+for N in [Float64, Float32]
+    # constraints_list
+    l = Line(N[0, 1], N[1, 0])
+    @test ispermutation(constraints_list(l),
+                        [HalfSpace(N[0, 1], N(1)),    # y <= 1
+                         HalfSpace(N[0, -1], N(-1))]) # y >= 1
+
+    # concrete linear map
+    mirror = N[-1 0; 0 1]
+    l = Line(from=N[0, 1], to=N[1, 1])
+    @test isequivalent(linear_map(mirror, l), l)
+    rot = N[0 -1; 1 0] # π/2 ccw rotation
+    @test isequivalent(linear_map(rot, l), Line(N[-1, 0], N[0, 1]))
+
+    # construction from two points on the line with and without normalization
+    from = N[0, 1]
+    to = N[2, 3]
+    L = Line(from=from, to=to, normalize=true)
+    @test isequivalent(L, Line(N[0, 1], N[1, 1])) && norm(L.d) ≈ N(1)
+    L = Line(from=from, to=to, normalize=false)
+    @test isequivalent(L, Line(N[0, 1], N[1, 1]))
 end
