@@ -7,7 +7,6 @@ CurrentModule = LazySets
 ```@docs
 ZeroSet
 dim(::ZeroSet)
-σ(::AbstractVector, ::ZeroSet)
 ρ(::AbstractVector, ::ZeroSet)
 ∈(::AbstractVector, ::ZeroSet)
 rand(::Type{ZeroSet})
@@ -15,7 +14,6 @@ element(::ZeroSet{N}) where {N}
 element(::ZeroSet{N}, ::Int) where {N}
 linear_map(::AbstractMatrix, ::ZeroSet)
 translate(::ZeroSet, ::AbstractVector)
-center(::ZeroSet{N}, ::Int) where {N}
 rectify(Z::ZeroSet)
 ```
 Inherited from [`ConvexSet`](@ref):
@@ -31,18 +29,16 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractZonotope`](@ref):
-* [`ngens`](@ref ngens(::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
-* [`high`](@ref high(::AbstractHyperrectangle))
-* [`low`](@ref low(::AbstractHyperrectangle))
 * [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N})
 
 Inherited from [`AbstractSingleton`](@ref):
+* [`σ`](@ref σ(::AbstractVector, ::AbstractSingleton))
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}) where {N})
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N})
 * [`vertices`](@ref vertices(::AbstractSingleton{N}) where {N})
@@ -50,3 +46,6 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`center`](@ref center(::AbstractSingleton))
 * [`generators`](@ref generators(::AbstractSingleton{N}) where {N})
 * [`genmat`](@ref genmat(::AbstractSingleton{N}) where {N})
+* [`ngens`](@ref ngens(::AbstractSingleton))
+* [`high`](@ref high(::AbstractSingleton))
+* [`low`](@ref low(::AbstractSingleton))

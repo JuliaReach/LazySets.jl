@@ -465,6 +465,7 @@ This interface defines the following functions:
 ρ(::AbstractVector, ::AbstractSingleton)
 ∈(::AbstractVector, ::AbstractSingleton)
 center(::AbstractSingleton)
+center(::AbstractSingleton, ::Int)
 element(::AbstractSingleton, ::Int)
 vertices(::AbstractSingleton{N}) where {N}
 vertices_list(::AbstractSingleton)

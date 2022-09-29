@@ -237,6 +237,25 @@ function center(S::AbstractSingleton)
     return element(S)
 end
 
+"""
+    center(S::AbstractSingleton, i::Int)
+
+Return the center of a set with a single value in a given dimension.
+
+### Input
+
+- `S` -- set with a single value
+- `i` -- dimension of interest
+
+### Output
+
+The `i`-th entry of the only element of the set.
+"""
+function center(S::AbstractSingleton, i::Int)
+    @boundscheck _check_bounds(S, i)
+    return element(S, i)
+end
+
 
 # --- AbstractPolytope interface functions ---
 
