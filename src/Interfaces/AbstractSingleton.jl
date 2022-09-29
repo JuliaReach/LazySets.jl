@@ -12,10 +12,8 @@ Abstract type for sets with a single value.
 
 ### Notes
 
-Every concrete `AbstractSingleton` must define the following functions:
+Every concrete `AbstractSingleton` must define the following function:
 - `element(::AbstractSingleton{N})` -- return the single element
-- `element(::AbstractSingleton{N}, i::Int)` -- return the single element's
-    entry in the `i`-th dimension
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractSingleton)
@@ -27,6 +25,25 @@ julia> subtypes(AbstractSingleton)
 abstract type AbstractSingleton{N} <: AbstractHyperrectangle{N} end
 
 isconvextype(::Type{<:AbstractSingleton}) = true
+
+"""
+    element(S::AbstractSingleton, i::Int)
+
+Return the i-th entry of the element of a set with a single value.
+
+### Input
+
+- `S` -- set with a single value
+- `i` -- dimension
+
+### Output
+
+The i-th entry of the element.
+"""
+function element(S::AbstractSingleton, i::Int)
+    return element(S)[i]
+end
+
 
 # --- AbstractHyperrectangle interface functions ---
 
