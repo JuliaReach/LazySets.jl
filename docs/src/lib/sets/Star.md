@@ -20,6 +20,17 @@ vertices_list(::Star)
 constraints_list(::Star)
 linear_map(::AbstractMatrix, ::Star)
 affine_map(::AbstractMatrix, ::Star, v::AbstractVector)
-intersection(::Star, ::HalfSpace)
 rand(::Type{Star})
 ```
+Inherited from [`LazySet`](@ref):
+* [`high`](@ref high(::LazySet))
+* [`low`](@ref low(::LazySet))
+
+Inherited from [`ConvexSet`](@ref):
+* [`norm`](@ref norm(::ConvexSet, ::Real))
+* [`radius`](@ref radius(::ConvexSet, ::Real))
+* [`diameter`](@ref diameter(::ConvexSet, ::Real))
+* [`singleton_list`](@ref singleton_list(::ConvexSet))
+
+Inherited from [`AbstractPolyhedron`](@ref):
+* [`isuniversal`](@ref isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N})

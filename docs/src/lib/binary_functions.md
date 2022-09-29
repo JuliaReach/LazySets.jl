@@ -91,6 +91,7 @@ intersection(::CartesianProductArray, ::AbstractPolyhedron)
 intersection(::LineSegment, ::Line2D)
 intersection(::LineSegment, ::LineSegment)
 intersection(::AbstractZonotope{N}, ::HalfSpace{N}) where {N}
+intersection(::Star, ::HalfSpace)
 ```
 ## Linear Combination
 

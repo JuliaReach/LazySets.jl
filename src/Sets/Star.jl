@@ -15,10 +15,10 @@ X = \\{x ∈ \\mathbb{R}^n : x = x₀ + \\sum_{i=1}^m α_i v_i,~~\\textrm{s.t. }
 ```
 where ``x₀ ∈ \\mathbb{R}^n`` is the center, the ``m`` vectors ``v₁, …, vₘ`` form
 the basis of the star set, and the combination factors
-``α = (α₁, …, αₘ) ∈ \\mathbb{R}^m`` are the predicates' decision variables,
-i.e. ``P : α ∈ \\mathbb{R}^m → \\{⊤, ⊥\\}`` where the polyhedral predicate satisfies
-``P(α) = ⊤`` if and only if ``Aα ≤ b`` for some fixed ``A ∈ \\mathbb{R}^{p × m}`` and
-``b ∈ \\mathbb{R}^p``.
+``α = (α₁, …, αₘ) ∈ \\mathbb{R}^m`` are the predicate's decision variables,
+i.e., ``P : α ∈ \\mathbb{R}^m → \\{⊤, ⊥\\}`` where the polyhedral predicate
+satisfies ``P(α) = ⊤`` if and only if ``A·α ≤ b`` for some fixed
+``A ∈ \\mathbb{R}^{p × m}`` and ``b ∈ \\mathbb{R}^p``.
 
 ### Fields
 
@@ -28,16 +28,17 @@ i.e. ``P : α ∈ \\mathbb{R}^m → \\{⊤, ⊥\\}`` where the polyhedral predic
 
 ### Notes
 
-The predicate function is implemented as a conjunction of linear constraints, i.e.
-a subtype of `AbstractPolyhedron`. By a slight abuse of notation, the *predicate*
-is also used to denote the subset of ``\\mathbb{R}^n`` such that ``P(α) = ⊤`` holds.
+The predicate function is implemented as a conjunction of linear constraints,
+i.e., a subtype of `AbstractPolyhedron`. By a slight abuse of notation, the
+predicate is also used to denote the subset of ``\\mathbb{R}^n`` such that
+``P(α) = ⊤`` holds.
 
 The ``m`` basis vectors (each one ``n``-dimensional) are stored as the columns
 of an ``n × m`` matrix.
 
-We remark that a `Star` is mathematically equivalent to the lazy affine map of
-the polyhedral set `P`, with the transformation matrix and translation vector
-being `V` and `c` respectively.
+We remark that a `Star` is mathematically equivalent to the affine map of the
+polyhedral set `P`, with the transformation matrix and translation vector being
+`V` and `c`, respectively.
 
 ### Examples
 
@@ -52,12 +53,13 @@ be the basis vectors and take
 ```jldoctest star_constructor
 julia> c = [3.0, 3.0];
 ```
-as the center of the star set. Let the predicate be the infinity-norm ball of radius 1,
+as the center of the star set. Let the predicate be the infinity-norm ball of
+radius 1,
 
 ```jldoctest star_constructor
 julia> P = BallInf(zeros(2), 1.0);
 ```
-Finally, the star set ``X = ⟨c, V, P⟩`` defines the set:
+We construct the star set ``X = ⟨c, V, P⟩`` as follows:
 
 ```jldoctest star_constructor
 julia> S = Star(c, V, P)
@@ -80,13 +82,12 @@ julia> basis(S)
 julia> predicate(S)
 BallInf{Float64, Vector{Float64}}([0.0, 0.0], 1.0)
 ```
-In this case, we know calculating by hand that the generalized star ``S`` is
-defined by the rectangular set
+In this case, the generalized star ``S`` above is equivalent to the rectangle
+``T`` below.
 
 ```math
     T = \\{(x, y) ∈ \\mathbb{R}^2 : (2 ≤ x ≤ 4) ∧ (2 ≤ y ≤ 4) \\}
 ```
-It holds that ``T`` and ``S`` are equivalent.
 
 ### References
 
@@ -112,33 +113,29 @@ struct Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhed
 
     # default constructor with size checks
     function Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
-        @assert length(c) == size(V, 1) "the center of the basis vectors should be compatible, " *
-                                        "but they are of length $(length(c)) and $(size(V, 1)) respectively"
+        @assert length(c) == size(V, 1) "a center of length $(length(c)) is " *
+            "incompatible with basis vectors of length $(size(V, 1))"
 
-        @assert dim(P) == size(V, 2) "the number of basis vectors should be compatible " *
-                                     "with the predicates' dimension, but they are $(size(V, 2)) and $(dim(P)) respectively"
+        @assert dim(P) == size(V, 2) "the number of basis vectors " *
+            "$(size(V, 2)) is incompatible with the predicate's dimension " *
+            "$(dim(P))"
 
         return new{N, VN, MN, PT}(c, V, P)
     end
 end
 
-# constructor from center and list of generators
+# constructor from list of generators
 function Star(c::VN, vlist::AbstractVector{VN}, P::PT) where {N, VN<:AbstractVector{N}, PT<:AbstractPolyhedron{N}}
     V = to_matrix(vlist, length(c))
     return Star(c, V, P)
 end
 
-# type used for dispatch
+# analogous AffineMap type
 const STAR{N, VN<:AbstractVector{N},
               MN<:AbstractMatrix{N},
               PT<:AbstractPolyhedron{N}} = AffineMap{N, PT, N, MN, VN}
 
 isoperationtype(::Type{<:Star}) = false
-isconvextype(::Type{<:Star}) = true
-
-# ============================
-# Star set getter functions
-# ============================
 
 """
     center(X::Star)
@@ -185,10 +182,6 @@ A polyhedral set representing the predicate of the star.
 """
 predicate(X::Star) = X.P
 
-# =============================
-# LazySets interface functions
-# =============================
-
 """
     dim(X::Star)
 
@@ -200,7 +193,7 @@ Return the dimension of a star.
 
 ### Output
 
-The dimension of a star.
+The ambient dimension of a star.
 """
 function dim(X::Star)
     return length(X.c)
@@ -209,7 +202,7 @@ end
 """
     σ(d::AbstractVector, X::Star)
 
-Return the support vector of a star.
+Return a support vector of a star.
 
 ### Input
 
@@ -218,7 +211,7 @@ Return the support vector of a star.
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 """
 function σ(d::AbstractVector, X::Star)
     A = basis(X)
@@ -228,7 +221,7 @@ end
 """
     ρ(d::AbstractVector, X::Star)
 
-Return the support function of a star.
+Evaluate the support function of a star.
 
 ### Input
 
@@ -246,7 +239,7 @@ end
 """
     an_element(X::Star)
 
-Return some element of an affine map.
+Return some element of a star.
 
 ### Input
 
@@ -254,8 +247,11 @@ Return some element of an affine map.
 
 ### Output
 
-An element of the star. It relies on the `an_element` function of the
-wrapped set.
+An element of the star.
+
+### Algorithm
+
+We apply the affine map to the result of `an_element` on the predicate.
 """
 function an_element(X::Star)
     return basis(X) * an_element(predicate(X)) + center(X)
@@ -264,11 +260,11 @@ end
 """
     isempty(X::Star)
 
-Return whether an affine map is empty or not.
+Check whether a star is empty.
 
 ### Input
 
-- `am` -- affine map
+- `X` -- star
 
 ### Output
 
@@ -279,9 +275,9 @@ function isempty(X::Star)
 end
 
 """
-    isbounded(am::Star; cond_tol::Number=DEFAULT_COND_TOL)
+    isbounded(X::Star; cond_tol::Number=DEFAULT_COND_TOL)
 
-Determine whether a star is bounded.
+Check whether a star is bounded.
 
 ### Input
 
@@ -305,11 +301,11 @@ end
 """
     ∈(v::AbstractVector, X::Star)
 
-Check whether a given point is contained in a star set.
+Check whether a given point is contained in a star.
 
 ### Input
 
-- `v`  -- point/vector
+- `v` -- point/vector
 - `X` -- star
 
 ### Output
@@ -318,7 +314,8 @@ Check whether a given point is contained in a star set.
 
 ### Algorithm
 
-See [`∈(::AbstractVector, ::AbstractAffineMap)`](@ref).
+The implementation is identical to
+[`∈(::AbstractVector, ::AbstractAffineMap)`](@ref).
 """
 function ∈(x::AbstractVector, X::Star)
     return basis(X) \ (x - center(X)) ∈ predicate(X)
@@ -327,7 +324,7 @@ end
 """
     vertices_list(X::Star; apply_convex_hull::Bool=true)
 
-Return the list of vertices of a star set.
+Return the list of vertices of a star.
 
 ### Input
 
@@ -404,7 +401,8 @@ Return the affine map of a star.
 
 ### Output
 
-The star obtained by the affine map with matrix `M` and displacement `v` to `X`.
+The star obtained by applying the affine map with matrix `M` and displacement
+`v` to `X`.
 """
 function affine_map(M::AbstractMatrix, X::Star, v::AbstractVector)
     c′ = M * X.c + v
@@ -421,11 +419,12 @@ Create a random star.
 
 ### Input
 
-- `Star`       -- type for dispatch
-- `N`              -- (optional, default: `Float64`) numeric type
-- `dim`            -- (optional, default: 2) dimension
-- `rng`            -- (optional, default: `GLOBAL_RNG`) random number generator
-- `seed`           -- (optional, default: `nothing`) seed for reseeding
+- `Star` -- type for dispatch
+- `N`    -- (optional, default: `Float64`) numeric type
+- `dim`  -- (optional, default: 2) dimension
+- `rng`  -- (optional, default: `GLOBAL_RNG`) random number generator
+- `seed` -- (optional, default: `nothing`) seed for reseeding
+- `P`    -- (optional, default: a random `HPolytope`) predicate
 
 ### Output
 
@@ -433,16 +432,19 @@ A random star.
 
 ### Algorithm
 
-This functions calls the function to generate a random zonotope,
-because every zonotope is a star.
+By default we generate a random `HPolytope` of dimension `dim` as predicate.
+Alternatively the predicate can be passed.
+
+All numbers are normally distributed with mean 0 and standard deviation 1.
 """
 function rand(::Type{Star};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int, Nothing}=nothing,
+              P::AbstractPolyhedron=rand(HPolytope, N=N, dim=dim, rng=rng, seed=seed))
     rng = reseed(rng, seed)
-    Z = rand(Zonotope, N=N, dim=dim, rng=rng, seed=seed)
-    X = convert(Star, Z)
-    return X
+    c = randn(N, dim)
+    V = randn(N, dim, LazySets.dim(P))
+    return Star(c, V, P)
 end
