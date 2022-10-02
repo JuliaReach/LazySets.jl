@@ -24,7 +24,7 @@ function default_lp_solver(M::Type{<:Number}, N::Type{<:Number})
 end
 
 # Polyhedra backend (fallback method)
-function default_polyhedra_backend(P::ConvexSet{N}) where {N}
+function default_polyhedra_backend(P::LazySet{N}) where {N}
     require(@__MODULE__, :Polyhedra; fun_name="default_polyhedra_backend")
     error("no default backend for numeric type $N")
 end
