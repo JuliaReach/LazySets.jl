@@ -11,7 +11,7 @@ export VPolytope,
 """
     VPolytope{N, VN<:AbstractVector{N}} <: AbstractPolytope{N}
 
-Type that represents a convex polytope in V-representation.
+Type that represents a convex polytope in vertex representation.
 
 ### Fields
 
@@ -23,13 +23,14 @@ A polytope in vertex representation can be constructed by passing the list of
 vertices. For example, we can build the tetrahedron:
 
 ```jldoctest
-julia> P = VPolytope([0 0 0; 1 0 0; 0 1 0; 0 0 1]);
+julia> P = VPolytope([[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]);
 
 julia> P.vertices
-3-element Vector{Vector{Int64}}:
- [0, 1, 0, 0]
- [0, 0, 1, 0]
- [0, 0, 0, 1]
+4-element Vector{Vector{Int64}}:
+ [0, 0, 0]
+ [1, 0, 0]
+ [0, 1, 0]
+ [0, 0, 1]
 ```
 
 Alternatively, a `VPolytope` can be constructed passing a matrix of vertices,
@@ -57,12 +58,11 @@ struct VPolytope{N, VN<:AbstractVector{N}} <: AbstractPolytope{N}
 end
 
 isoperationtype(::Type{<:VPolytope}) = false
-isconvextype(::Type{<:VPolytope}) = true
 
-# constructor for a VPolytope with empty vertices list
+# constructor with empty vertices list
 VPolytope{N}() where {N} = VPolytope(Vector{Vector{N}}())
 
-# constructor for a VPolytope with no vertices of type Float64
+# constructor with no vertices of type Float64
 VPolytope() = VPolytope{Float64}()
 
 # constructor from rectangular matrix
@@ -71,61 +71,59 @@ function VPolytope(vertices_matrix::MT) where {N, MT<:AbstractMatrix{N}}
     return VPolytope(vertices)
 end
 
-# --- ConvexSet interface functions ---
-
 """
     dim(P::VPolytope)
 
-Return the dimension of a polytope in V-representation.
+Return the dimension of a polytope in vertex representation.
 
 ### Input
 
-- `P`  -- polytope in V-representation
+- `P` -- polytope in vertex representation
 
 ### Output
 
-The ambient dimension of the polytope in V-representation.
-If it is empty, the result is ``-1``.
+The ambient dimension of the polytope in vertex representation.
+If `P` is empty, the result is ``-1``.
 
 ### Examples
 
 ```jldoctest
-julia> v = VPolytope();
+julia> P = VPolytope();
 
-julia> isempty(v.vertices)
+julia> isempty(P.vertices)
 true
 
-julia> dim(v)
+julia> dim(P)
 -1
 
-julia> v = VPolytope([ones(3)]);
+julia> P = VPolytope([ones(3)]);
 
-julia> v.vertices
+julia> P.vertices
 1-element Vector{Vector{Float64}}:
  [1.0, 1.0, 1.0]
 
-julia> dim(v) == 3
+julia> dim(P) == 3
 true
 ```
 """
 function dim(P::VPolytope)
-    return length(P.vertices) == 0 ? -1 : length(P.vertices[1])
+    return isempty(P.vertices) ? -1 : @inbounds length(P.vertices[1])
 end
 
 """
     σ(d::AbstractVector, P::VPolytope)
 
-Return the support vector of a polytope in V-representation in a given
+Return a support vector of a polytope in vertex representation in a given
 direction.
 
 ### Input
 
 - `d` -- direction
-- `P` -- polytope in V-representation
+- `P` -- polytope in vertex representation
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 
 ### Algorithm
 
@@ -137,9 +135,9 @@ function σ(d::AbstractVector, P::VPolytope)
     # base cases
     m = length(P.vertices)
     if m == 0
-        error("the support function for an empty polytope is undefined")
+        error("the support function of an empty polytope is undefined")
     elseif m == 1
-        return P.vertices[1]
+        @inbounds return P.vertices[1]
     end
 
     # evaluate support function in every vertex
@@ -153,7 +151,7 @@ function σ(d::AbstractVector, P::VPolytope)
             max_idx = i
         end
     end
-    return P.vertices[max_idx]
+    @inbounds return P.vertices[max_idx]
 end
 
 """
@@ -197,7 +195,7 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
     if m == 0
         return false
     elseif m == 1
-        return x == vertices[1]
+        return isapprox(x, @inbounds vertices[1])
     end
 
     n = length(x)
@@ -205,8 +203,7 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
         "contained in a polytope of dimension $(dim(P))"
 
     A = Matrix{N}(undef, n+1, m)
-    for j in 1:m
-        v_j = vertices[j]
+    for (j, v_j) in enumerate(vertices)
         # ⋀_i Σ_j λ_j v_j[i] = x[i]
         for i in 1:n
             A[i, j] = v_j[i]
@@ -225,7 +222,7 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
     elseif is_lp_infeasible(lp.status)
         return false
     end
-    @assert false "LP returned status $(lp.status) unexpectedly"
+    error("LP returned status $(lp.status) unexpectedly")
 end
 
 """
@@ -291,9 +288,10 @@ A polytope in vertex representation.
 ### Algorithm
 
 The linear map ``M`` is applied to each vertex of the given set ``P``, obtaining
-a polytope in V-representation. The output type is again a `VPolytope`.
+a polytope in vertex representation. The output type is again a `VPolytope`.
 """
-function linear_map(M::AbstractMatrix, P::VPolytope; apply_convex_hull::Bool=false)
+function linear_map(M::AbstractMatrix, P::VPolytope;
+                    apply_convex_hull::Bool=false)
     @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
         "applied to a set of dimension $(dim(P))"
 
@@ -301,9 +299,9 @@ function linear_map(M::AbstractMatrix, P::VPolytope; apply_convex_hull::Bool=fal
 end
 
 @inline function _linear_map_vrep(M::AbstractMatrix, P::VPolytope,
-                                  algo::LinearMapVRep=LinearMapVRep(nothing);
+                                  algo::LinearMapVRep=LinearMapVRep(nothing);  # ignored
                                   apply_convex_hull::Bool=false)
-    vlist = broadcast(v -> M * v, vertices_list(P))
+    vlist = broadcast(v -> M * v, P.vertices)
     if apply_convex_hull
         convex_hull!(vlist)
     end
@@ -324,13 +322,9 @@ Translate (i.e., shift) a polytope in vertex representation by a given vector.
 
 A translated polytope in vertex representation.
 
-### Algorithm
-
-We add the vector to each vertex of the polytope.
-
 ### Notes
 
-See also [`translate!(::VPolytope, AbstractVector)`](@ref) for the in-place version.
+See [`translate!(::VPolytope, ::AbstractVector)`](@ref) for the in-place version.
 """
 function translate(P::VPolytope, v::AbstractVector)
     return translate!(deepcopy(P), v)
@@ -339,7 +333,8 @@ end
 """
     translate!(P::VPolytope, v::AbstractVector)
 
-Translate (i.e., shift) a polytope in vertex representation by a given vector, in-place.
+Translate (i.e., shift) a polytope in vertex representation by a given vector,
+in-place.
 
 ### Input
 
@@ -352,9 +347,18 @@ The polytope `P` translated by `v`.
 
 ### Notes
 
-See also [`translate(::VPolytope, AbstractVector)`](@ref) for the out-of-place version.
+See [`translate(::VPolytope, ::AbstractVector)`](@ref) for the out-of-place
+version.
+
+### Algorithm
+
+We add the vector to each vertex of the polytope.
 """
 function translate!(P::VPolytope, v::AbstractVector)
+    if isempty(P.vertices)
+        return P
+    end
+
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     for x in P.vertices
@@ -363,12 +367,10 @@ function translate!(P::VPolytope, v::AbstractVector)
     return P
 end
 
-# --- AbstractPolytope interface functions ---
-
 """
     vertices_list(P::VPolytope)
 
-Return the list of vertices of a polytope in V-representation.
+Return the list of vertices of a polytope in vertex representation.
 
 ### Input
 
@@ -376,7 +378,7 @@ Return the list of vertices of a polytope in V-representation.
 
 ### Output
 
-List of vertices.
+The list of vertices.
 """
 function vertices_list(P::VPolytope)
     return P.vertices
@@ -385,20 +387,19 @@ end
 """
     constraints_list(P::VPolytope)
 
-Return the list of constraints defining a polytope in V-representation.
+Return a list of constraints defining a polytope in vertex representation.
 
 ### Input
 
-- `P` -- polytope in V-representation
+- `P` -- polytope in vertex representation
 
 ### Output
 
-The list of constraints of the polytope.
+A list of constraints of the polytope.
 
 ### Algorithm
 
-First the H-representation of ``P`` is computed, then its list of constraints
-is returned.
+We use `tohrep` to compute the constraint representation of `P`.
 """
 function constraints_list(P::VPolytope)
     return constraints_list(tohrep(P))
@@ -409,7 +410,8 @@ end
                               [backend]=nothing,
                               [solver]=nothing) where {N}
 
-Return the polytope obtained by removing the redundant vertices of the given polytope.
+Return the polytope obtained by removing the redundant vertices of the given
+polytope in vertex representation.
 
 ### Input
 
@@ -430,9 +432,9 @@ A new polytope such that its vertices are the convex hull of the given polytope.
 
 The optimization problem associated to removing redundant vertices is handled
 by `Polyhedra`.
-If the polyhedral computations backend requires an LP solver but it has not been
-set, we use `default_lp_solver_polyhedra(N)` to define such solver.
-Otherwise, the redundancy removal function of the polyhedral backend is used.
+If the polyhedral computations backend requires an LP solver, but it has not
+been specified, we use `default_lp_solver_polyhedra(N)` to define such solver.
+Otherwise, the redundancy-removal function of the polyhedral backend is used.
 """
 function remove_redundant_vertices(P::VPolytope{N};
                                    backend=nothing,
@@ -458,7 +460,8 @@ end
     tohrep(P::VPolytope{N};
            [backend]=default_polyhedra_backend(P)) where {N}
 
-Transform a polytope in V-representation to a polytope in H-representation.
+Transform a polytope in vertex representation to a polytope in constraint
+representation.
 
 ### Input
 
@@ -470,8 +473,7 @@ Transform a polytope in V-representation to a polytope in H-representation.
 
 ### Output
 
-The `HPolytope` which is the constraint representation of the given polytope
-in vertex representation.
+A `HPolytope` as the constraint representation of `P`.
 
 ### Notes
 
@@ -480,10 +482,8 @@ depending on the backend.
 """
 function tohrep(P::VPolytope{N};
                 backend=default_polyhedra_backend(P)) where {N}
-    vl = P.vertices
-    if isempty(vl)
-        return EmptySet{N}(dim(P))
-    end
+    @assert !isempty(P.vertices) "cannot convert an empty polytope in vertex " *
+        "representation to constraint representation"
     require(@__MODULE__, :Polyhedra; fun_name="tohrep")
     return convert(HPolytope, polyhedron(P; backend=backend))
 end
@@ -491,8 +491,8 @@ end
 """
     tovrep(P::VPolytope)
 
-Return a vertex representation of the given polytope in vertex
-representation (no-op).
+Return a vertex representation of the given polytope in vertex representation
+(no-op).
 
 ### Input
 
@@ -506,21 +506,13 @@ function tovrep(P::VPolytope)
     return P
 end
 
-# ==========================================
-# Lower level methods that use Polyhedra.jl
-# ==========================================
-
 function load_polyhedra_vpolytope() # function to be loaded by Requires
 return quote
-# see the interface file AbstractPolytope.jl for the imports
+# see the interface file init_Polyhedra.jl for the imports
 
 # VPolytope from a VRep
 function VPolytope(P::VRep{N}) where {N}
-    # TODO: use point type of the VRep #2010
-    vertices = Vector{Vector{N}}()
-    for vi in Polyhedra.points(P)
-        push!(vertices, vi)
-    end
+    vertices = collect(Polyhedra.points(P))
     return VPolytope(vertices)
 end
 
@@ -529,11 +521,12 @@ end
                [backend]=default_polyhedra_backend(P),
                [relative_dimension]=nothing)
 
-Return an `VRep` polyhedron from `Polyhedra.jl` given a polytope in V-representation.
+Return a `VRep` polyhedron from `Polyhedra.jl` given a polytope in vertex
+representation.
 
 ### Input
 
-- `P`       -- polytope
+- `P`       -- polytope in vertex representation
 - `backend` -- (optional, default: `default_polyhedra_backend(P)`) the
                backend for polyhedral computations; see [Polyhedra's
                documentation](https://juliapolyhedra.github.io/) for further
@@ -548,9 +541,10 @@ A `VRep` polyhedron.
 
 ### Notes
 
-The *relative dimension* (or just *dimension*) refers to the dimension of the set
-relative to itself, independently of the ambient dimension. For example, a point
-has (relative) dimension zero, and a line segment has (relative) dimension one.
+The *relative dimension* (or just *dimension*) refers to the dimension of the
+set relative to itself, independently of the ambient dimension. For example, a
+point has (relative) dimension zero, and a line segment has (relative) dimension
+one.
 
 In this library, `LazySets.dim` always returns the ambient dimension of the set,
 such that a line segment in two dimensions has dimension two. However,
@@ -562,11 +556,13 @@ function polyhedron(P::VPolytope;
                     relative_dimension=nothing)
     if isempty(P)
         if relative_dimension == nothing
-            error("the conversion to a `Polyhedra.polyhedron` requires the (relative) dimension " *
-                  "of the `VPolytope` to be known, but it cannot be inferred from an empty set; " *
-                  "try passing it in the keyword argument `relative_dimension`")
+            error("the conversion to a `Polyhedra.polyhedron` requires the " *
+                "(relative) dimension of the `VPolytope` to be known, but it " *
+                "cannot be inferred from an empty set; use the keyword " *
+                "argument `relative_dimension`")
         end
-        return polyhedron(Polyhedra.vrep(P.vertices, d=relative_dimension), backend)
+        return polyhedron(Polyhedra.vrep(P.vertices, d=relative_dimension),
+                          backend)
     end
     return polyhedron(Polyhedra.vrep(P.vertices), backend)
 end
@@ -574,22 +570,21 @@ end
 end # quote
 end # function load_polyhedra_vpolytope()
 
-function project(V::VPolytope, block::AbstractVector{Int}; kwargs...)
-    return _project_vrep(vertices_list(V), dim(V), block)
-end
+function project(P::VPolytope, block::AbstractVector{Int}; kwargs...)
+    if isempty(P.vertices)
+        return P
+    end
 
-function _project_vrep(vlist::AbstractVector{VN}, n, block) where {N, VN<:AbstractVector{N}}
-    M = projection_matrix(block, n, VN)
-    πvertices = broadcast(v -> M * v, vlist)
-
-    m = size(M, 1)
+    m = length(block)
     if m == 1
-        # convex_hull in 1d returns the minimum and maximum points, in that order
-        aux = convex_hull(πvertices)
-        a = first(aux[1])
-        b = length(aux) == 1 ? a : first(aux[2])
-        return Interval(a, b)
-    elseif m == 2
+        l, h = extrema(P, block[1])
+        return Interval(l, h)
+    end
+
+    M = projection_matrix(block, dim(P), eltype(P.vertices))
+    πvertices = broadcast(v -> M * v, P.vertices)
+
+    if m == 2
         return VPolygon(πvertices; apply_convex_hull=true)
     else
         return VPolytope(πvertices)
@@ -597,6 +592,6 @@ function _project_vrep(vlist::AbstractVector{VN}, n, block) where {N, VN<:Abstra
 end
 
 function permute(P::VPolytope, p::AbstractVector{Int})
-    vlist = [v[p] for v in vertices_list(P)]
+    vlist = [v[p] for v in P.vertices]
     return VPolytope(vlist)
 end

@@ -20,14 +20,19 @@ tovrep(::VPolytope)
 polyhedron(::VPolytope)
 linear_map(::AbstractMatrix, ::VPolytope)
 ```
+Inherited from [`LazySet`](@ref):
+* [`high`](@ref high(::LazySet))
+* [`low`](@ref low(::LazySet))
+
 Inherited from [`ConvexSet`](@ref):
+* [`ρ`](@ref ρ(::AbstractVector, ::ConvexSet))
 * [`norm`](@ref norm(::ConvexSet, ::Real))
 * [`radius`](@ref radius(::ConvexSet, ::Real))
 * [`diameter`](@ref diameter(::ConvexSet, ::Real))
 * [`singleton_list`](@ref singleton_list(::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
-* [`linear_map`](@ref linear_map(::AbstractMatrix{NM}, ::AbstractPolyhedron{NP}) where {NM, NP})
+* [`an_element`](@ref an_element(::AbstractPolyhedron))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
