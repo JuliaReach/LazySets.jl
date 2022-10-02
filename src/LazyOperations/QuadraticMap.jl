@@ -1,7 +1,8 @@
 export QuadraticMap
 
 """
-    QuadraticMap{N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}} <: LazySet{N}
+    QuadraticMap{N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}}
+        <: LazySet{N}
 
 Type that represents a quadratic map of a set.
 
@@ -12,7 +13,8 @@ Type that represents a quadratic map of a set.
 
 ### Notes
 
-The quadratic map of a set ``X`` given ``n`` square matrices ``Q^{(i)}`` is defined as
+The quadratic map of a set ``X`` given ``n`` square matrices ``Q^{(i)}`` is
+defined as
 
 ```math
 \\left\\{ \\lambda | \\lambda_i = x^T Q^{(i)} x,~i = 1, \\ldots, n,~x \\in X \\right\\}
@@ -28,7 +30,7 @@ struct QuadraticMap{N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}} 
     function QuadraticMap(Q::MVT, X::S) where {N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}}
         n = dim(X)
         @assert length(Q) == n "the number of matrices ($(length(Q))) needs " *
-            "to match the dimension of the zonotope ($n)"
+            "to match the dimension of the set ($n)"
         @assert all(M -> checksquare(M) == n, Q) "dimension mismatch in the " *
             "matrices of the quadratic map applied to a set of size $n"
         return new{N, S, MVT}(Q, X)
