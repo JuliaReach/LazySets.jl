@@ -11,18 +11,18 @@ function ground(args...)
     sethue("black") # pen color
 end
 
-# convert a lazysets to a polygonal overapproximation with the given tolerance,
-# and then to the function `poly` from Luxor.jl that receives array of points
-function luxify(X::ConvexSet; tol=1e-3)
+# obtain a polygonal overapproximation with the given tolerance and then return
+# a vector of `Luxor.Point`s
+function luxify(X::LazySet; tol=1e-3)
+    @assert dim(X) == 2 "can only work with two-dimensional sets"
 
     # ε-close outer polygonal approximation of X
     P = overapproximate(X, HPolygon, tol)
 
     # convert to vertex representation
-    V = convert(VPolygon, P)
-    out = vertices_list(P)
+    vlist = vertices_list(P)
 
-    out_luxor = [Luxor.Point(Tuple(p)) for p in out]
+    out_luxor = [Luxor.Point(Tuple(p)) for p in vlist]
 
     #return Luxor.poly(out_luxor, :stroke, close=true)
     return out_luxor
@@ -41,7 +41,7 @@ end
 
 # animate an array of sets using Javis.jl
 # TODO pass colors, eg. with default cols = Javis.distinguishable_colors(length(X))
-function Javis.animate(X::AbstractVector{ST}; kwargs...) where {N, ST<:ConvexSet{N}}
+function Javis.animate(X::AbstractVector{ST}; kwargs...) where {N, ST<:LazySet{N}}
 
     # size of the animation
     sz = get(kwargs, :size, (500, 500))
