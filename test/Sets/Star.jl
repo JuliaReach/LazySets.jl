@@ -1,7 +1,6 @@
 using LazySets: STAR
 
 for N in [Float64, Float32, Rational{Int}]
-
     # constructor with basis matrix
     S = Star(N[3, 3], N[1 0; 0 1], BallInf(N[0, 0], N(1)))
 
@@ -66,4 +65,9 @@ for N in [Float64, Float32, Rational{Int}]
     am = affine_map(M, S, v)
     @test isa(am, Star)
     @test isequivalent(am, Star(v, M, B))
+end
+
+for N in [Float64]
+    # random star
+    rand(Star)
 end
