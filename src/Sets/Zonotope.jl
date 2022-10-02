@@ -31,13 +31,14 @@ segments.
 Zonotopes can be equivalently described as the image of a unit infinity-norm
 ball in ``\\mathbb{R}^n`` by an affine transformation.
 
-Zonotopes can be constructed in two different ways: either passing the generators
-as a matrix, where each column represents a generator, or passing a list of vectors
-where each vector represents a generator. Below we illustrate both ways.
+Zonotopes can be constructed in two different ways: either passing the
+generators as a matrix, where each column represents a generator, or passing a
+list of vectors, where each vector represents a generator. Below we illustrate
+both ways.
 
 ### Examples
 
-A two-dimensional zonotope with given center and set of generators:
+A two-dimensional zonotope with given center and matrix of generators:
 
 ```jldoctest zonotope_label
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
@@ -56,12 +57,12 @@ julia> genmat(Z)
  0.1  0.0
  0.0  0.1
 ```
-Here, the first vector in the `Zonotope` constructor corresponds to the zonotope's
-center, and each column of the second argument corresponds to a generator. The
-functions `center` and `genmat` return the center and the generator matrix of this
-zonotope respectively.
+Here, the first vector in the `Zonotope` constructor corresponds to the center
+and each column of the second argument corresponds to a generator. The functions
+`center` and `genmat` respectively return the center and the generator matrix of
+a zonotope.
 
-We can collect its vertices using `vertices_list`:
+We can collect the vertices using `vertices_list`:
 
 ```jldoctest zonotope_label
 julia> vertices_list(Z)
@@ -76,7 +77,7 @@ The support vector along a given direction can be computed using `σ`
 (resp. the support function can be computed using `ρ`):
 
 ```jldoctest zonotope_label
-julia> σ([1., 1.], Z)
+julia> σ([1.0, 1.0], Z)
 2-element Vector{Float64}:
  1.1
  0.1
@@ -86,7 +87,7 @@ Zonotopes admit an alternative constructor that receives a list of
 vectors, each vector representing a generator:
 
 ```jldoctest
-julia> Z = Zonotope(ones(2), [[1., 0.], [0., 1.], [1., 1.]])
+julia> Z = Zonotope(ones(2), [[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
 Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.0, 1.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
 
 julia> genmat(Z)
@@ -110,7 +111,6 @@ struct Zonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZono
 end
 
 isoperationtype(::Type{<:Zonotope}) = false
-isconvextype(::Type{<:Zonotope}) = true
 
 # constructor from center and list of generators
 function Zonotope(center::VN, generators_list::AbstractVector{VN}) where {VN<:AbstractVector}
@@ -121,7 +121,7 @@ end
 """
     remove_zero_generators(Z::Zonotope)
 
-Return a new zonotope removing the generators which are zero of the given zonotope.
+Return a new zonotope removing the generators that are zero.
 
 ### Input
 
@@ -142,9 +142,6 @@ function remove_zero_generators(Z::Zonotope)
     return Zonotope(Z.center, G2)
 end
 
-# --- AbstractCentrallySymmetric interface functions ---
-
-
 """
     center(Z::Zonotope)
 
@@ -161,10 +158,6 @@ The center of the zonotope.
 function center(Z::Zonotope)
     return Z.center
 end
-
-
-# --- AbstractZonotope interface functions ---
-
 
 """
     togrep(Z::Zonotope)
@@ -228,13 +221,9 @@ Return the number of generators of a zonotope.
 
 ### Output
 
-Integer representing the number of generators.
+An integer representing the number of generators.
 """
 ngens(Z::Zonotope) = size(Z.generators, 2)
-
-
-# --- ConvexSet interface functions ---
-
 
 """
     rand(::Type{Zonotope}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
@@ -250,7 +239,7 @@ Create a random zonotope.
 - `rng`            -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`           -- (optional, default: `nothing`) seed for reseeding
 - `num_generators` -- (optional, default: `-1`) number of generators of the
-                      zonotope (see comment below)
+                      zonotope (see the comment below)
 
 ### Output
 
@@ -279,10 +268,6 @@ function rand(::Type{Zonotope};
     return Zonotope(center, generators)
 end
 
-
-# --- Zonotope functions ---
-
-
 """
     scale(α::Real, Z::Zonotope)
 
@@ -299,15 +284,13 @@ The zonotope obtained by applying the numerical scale to the center and
 generators of ``Z``.
 """
 function scale(α::Real, Z::Zonotope)
-    c = α .* Z.center
-    gi = α .* Z.generators
-    return Zonotope(c, gi)
+    return scale!(α, copy(Z))
 end
 
 """
     scale!(α::Real, Z::Zonotope)
 
-Concrete scaling of a zonotope modifing `Z` in-place
+Concrete scaling of a zonotope modifing `Z` in-place.
 
 ### Input
 
@@ -316,19 +299,16 @@ Concrete scaling of a zonotope modifing `Z` in-place
 
 ### Output
 
-The zonotope `Z` after applying the numerical scale `α` to its center and generators.
+The zonotope obtained by applying the numerical scale to the center and
+generators of ``Z``.
 """
 function scale!(α::Real, Z::Zonotope)
     c = Z.center
     G = Z.generators
-    c .= α .* c
-    G .= α .* G
+    c .*= α
+    G .*= α
     return Z
 end
-
-# ============================
-# Zonotope splitting methods
-# ============================
 
 function _split(Z::Zonotope, j::Int)
     c, G = Z.center, Z.generators
@@ -347,7 +327,8 @@ end
 function split!(Z₁::Zonotope, Z₂::Zonotope, Z::Zonotope, j::Int)
     c, G = Z.center, Z.generators
     n, p = size(G)
-    @assert 1 <= j <= p "cannot split a zonotope with $p generators along index $j"
+    @assert 1 <= j <= p "cannot split a zonotope with $p generators along " *
+        "index $j"
 
     c₁, G₁ = Z₁.center, Z₁.generators
     c₂, G₂ = Z₂.center, Z₂.generators
@@ -379,11 +360,11 @@ end end  # quote / load_split_static
 
 function _split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
     p = length(gens)
-    @assert p == length(n) "the number of generators doesn't match the " *
-                            "number of indicated partitions ($p and $(length(n)))"
+    @assert p == length(n) "the number of generators $(length(n)) does not " *
+                           "match the number of indicated partitions $p"
 
-    @assert p <= ngens(Z) "the number of generators to split is greater " *
-                          "than the number of generators of the zonotope ($p and $(ngens(Z)))"
+    @assert p <= ngens(Z) "the number of generators to split ($p) is greater " *
+                   "than the number of generators of the zonotope ($(ngens(Z)))"
 
     Zs = [Z]
     for (i, g) in enumerate(gens)
@@ -401,7 +382,7 @@ end
 """
     linear_map!(Zout::Zonotope, M::AbstractMatrix, Z::Zonotope)
 
-Compute the concrete linear map of a zonotope storing the result in `Zout`.
+Compute the concrete linear map of a zonotope, storing the result in `Zout`.
 
 ### Input
 
@@ -422,13 +403,13 @@ end
 """
     _bound_intersect_2D(Z::Zonotope, L::Line2D)
 
-Return the support function in the direction [0, 1] of the intersection between
-the given zonotope and line.
+Evaluate the support function in the direction [0, 1] of the intersection
+between the given zonotope and line.
 
 ### Input
 
 - `Z` -- zonotope
-- `L` -- vertical line 2D
+- `L` -- vertical 2D line
 
 ### Output
 
@@ -470,17 +451,15 @@ function _bound_intersect_2D(Z::Zonotope, L::Line2D)
         P .= P + 2g(j)
         j += 1
         if j > size(G, 2)
-            error("Got unexpected error, check that the sets intersect")
+            error("got an unexpected error; check that the sets intersect")
         end
     end
     singleton = intersection(LineSegment(P, P+2g(j)), L)
     return element(singleton)[2]
 end
-# ====================================
-# Zonotope vertex enumeration methods
-# ====================================
 
-function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
+function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N};
+                           apply_convex_hull::Bool) where {N}
     if same_sign(G)
         return _vertices_list_2D_positive(c, G, apply_convex_hull=apply_convex_hull)
     else
@@ -490,7 +469,8 @@ function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_con
     end
 end
 
-function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
+function _vertices_list_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N};
+                                    apply_convex_hull::Bool) where {N}
     n, p = size(G)
 
     # TODO special case p = 1 or p = 2 ?
