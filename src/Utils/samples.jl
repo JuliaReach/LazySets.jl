@@ -1,5 +1,5 @@
 # ========================
-# Sampling from a ConvexSet
+# Sampling from a LazySet
 # ========================
 
 """
@@ -16,7 +16,7 @@ set to be sampled, and the third argument is the sampler instance.
 abstract type AbstractSampler end
 
 """
-    sample(X::ConvexSet{N}, num_samples::Int;
+    sample(X::LazySet{N}, num_samples::Int;
            [sampler]=_default_sampler(X),
            [rng]::AbstractRNG=GLOBAL_RNG,
            [seed]::Union{Int, Nothing}=nothing,
@@ -33,8 +33,10 @@ Random sampling of an arbitrary set `X`.
                    falls back to [`CombinedSampler`](@ref)
 - `rng`         -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`        -- (optional, default: `nothing`) seed for reseeding
-- `include_vertices` -- (optional, default: `false`) option to include the vertices of `X`
-- `VN`          -- (optional, default: `Vector{N}`) vector type of the sampled points
+- `include_vertices` -- (optional, default: `false`) option to include the
+                   vertices of `X`
+- `VN`          -- (optional, default: `Vector{N}`) vector type of the sampled
+                   points
 
 ### Output
 
@@ -52,7 +54,7 @@ If `include_vertices == true`, we include all vertices computed with `vertices`.
 Alternatively if a number ``k`` is passed, we plot the first ``k`` vertices
 returned by `vertices(X)`.
 """
-function sample(X::ConvexSet{N}, num_samples::Int;
+function sample(X::LazySet{N}, num_samples::Int;
                 sampler=_default_sampler(X),
                 rng::AbstractRNG=GLOBAL_RNG,
                 seed::Union{Int, Nothing}=nothing,
@@ -76,13 +78,13 @@ function sample(X::ConvexSet{N}, num_samples::Int;
     return D
 end
 
-# without argument, returns a single element (instead of a singleton)
-function sample(X::ConvexSet; kwargs...)
+# without second argument: returns a single element instead of singleton list
+function sample(X::LazySet; kwargs...)
     return sample(X, 1; kwargs...)[1]
 end
 
 # default sampling for LazySets
-_default_sampler(::ConvexSet) = CombinedSampler()
+_default_sampler(::LazySet) = CombinedSampler()
 _default_sampler(::LineSegment{N}) where {N} =
     RejectionSampler(DefaultUniform(zero(N), one(N)), true, Inf)
 _default_sampler(::HalfSpace) = HalfSpaceSampler()
@@ -90,19 +92,15 @@ _default_sampler(::Hyperplane) = HyperplaneSampler()
 _default_sampler(::Line2D) = HyperplaneSampler()
 _default_sampler(::AbstractSingleton) = SingletonSampler()
 
-# ===================
-# Rejection Sampling
-# ===================
-
 """
     RejectionSampler{D} <: AbstractSampler
 
-Type used for rejection sampling of an arbitrary set `X`.
+Type used for rejection sampling of a bounded set `X`.
 
 ### Fields
 
-- `distribution` -- (optional, default: `DefaultUniform`) distribution from which
-                    the sample is drawn
+- `distribution` -- (optional, default: `DefaultUniform`) distribution from
+                    which the sample is drawn
 - `tight`        -- (optional, default: `false`) set to `true` if the support of
                     the distribution is known to coincide with the set `X`
 - `maxiter`      -- (optional, default: `Inf`) maximum number of iterations
@@ -113,7 +111,7 @@ Type used for rejection sampling of an arbitrary set `X`.
 Draw a sample ``x`` from a given distribution of a box-overapproximation of the
 original set ``X`` in all ``n`` dimensions. The function rejects a drawn sample
 ``x`` and redraws as long as the sample is not contained in the original set
-``X``, i.e., ``x ∉ X``.
+``X``, i.e., while ``x ∉ X``.
 
 ### Notes
 
@@ -135,7 +133,7 @@ function RejectionSampler(distr::DefaultUniform; tight::Bool=false, maxiter=Inf)
     return RejectionSampler([distr], tight, maxiter)
 end
 
-function RejectionSampler(X::ConvexSet, distribution=DefaultUniform;
+function RejectionSampler(X::LazySet, distribution=DefaultUniform;
                           tight::Bool=false, maxiter=Inf)
     # define the support of the distribution as the smallest box enclosing X
     n = dim(X)
@@ -147,19 +145,19 @@ function RejectionSampler(X::ConvexSet, distribution=DefaultUniform;
     return RejectionSampler(distr, tight, maxiter)
 end
 
-# the support of this distribution is always tight wrt X
+# the support of this distribution is always tight wrt. X
 function RejectionSampler(X::AbstractHyperrectangle)
     n = dim(X)
     distr = [DefaultUniform(low(X, i), high(X, i)) for i in 1:n]
     return RejectionSampler(distr, true, Inf)
 end
 
-function sample!(D::Vector{VN}, X::ConvexSet, sampler::RejectionSampler;
-                 rng::AbstractRNG=GLOBAL_RNG,
-                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
+                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
+                ) where {N, VN<:AbstractVector{N}}
     U = sampler.distribution
     rng = reseed(rng, seed)
-    @inbounds for i in 1:length(D)
+    @inbounds for i in eachindex(D)
         w = rand(rng, U)
 
         if !(sampler.tight)
@@ -177,17 +175,17 @@ function sample!(D::Vector{VN}, X::ConvexSet, sampler::RejectionSampler;
     return D
 end
 
-function sample!(D::Vector{VN}, L::LineSegment, sampler::RejectionSampler{<:DefaultUniform};
-                 rng::AbstractRNG=GLOBAL_RNG,
-                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
-
+function sample!(D::Vector{VN}, L::LineSegment,
+                 sampler::RejectionSampler{<:DefaultUniform};
+                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
+                ) where {N, VN<:AbstractVector{N}}
     rng = reseed(rng, seed)
     U = sampler.distribution
     @assert U.a >= zero(N) && U.b <= one(N)
     p = L.p
     q = L.q
 
-    @inbounds for i in 1:length(D)
+    @inbounds for i in eachindex(D)
         λ = rand(rng, U)
         D[i] = p + λ * (q - p)
     end
@@ -203,7 +201,14 @@ polytope is flat.
 
 ### Fields
 
-- `variant` -- (default: `true`) option to choose a variant (see below)
+- `variant` -- (optional, default: `true`) choice of a variant (see below)
+
+### Notes
+
+The sampling is not uniform - points in the center of the polytope are more
+likely to be sampled.
+
+The set to be sampled from must provide its vertices via `vertices_list`.
 
 ### Algorithm
 
@@ -215,20 +220,15 @@ Then any point ``p \\in \\mathbb{R}^n`` of the convex polytope ``X`` is a convex
 combination of its vertices, i.e., ``p = \\sum_{i} v_i α_i`` for some
 (non-negative) coefficients ``\\{α_i\\}_i`` that add up to 1.
 The algorithm chooses a random convex combination (the ``α_i``).
-To produce such combination we apply the finite difference operator on a sorted
+To produce this combination, we apply the finite-difference operator on a sorted
 uniform sample over ``[0, 1]``; the method can be found in [1] and [2].
 
 If `variant == true`, we start from a random vertex and then repeatedly walk
 toward a random vertex inside the polytope.
 
-### Notes
-
-The sampling is not uniform - points in the center of the polytope are more
-likely to be sampled.
-
 ### References
 
-[1] *Rubin, Donald B. The bayesian bootstrap. The annals of statistics (1981):
+[1] *Rubin, Donald B. The Bayesian bootstrap. The annals of statistics (1981):
 130-134.*
 
 [2] https://cs.stackexchange.com/questions/3227/uniform-sampling-from-a-simplex/3229
@@ -239,16 +239,16 @@ end
 
 RandomWalkSampler() = RandomWalkSampler(true)
 
-function sample!(D::Vector{VN}, X::ConvexSet, sampler::RandomWalkSampler;
-                 rng::AbstractRNG=GLOBAL_RNG,
-                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
+                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
+                ) where {N, VN<:AbstractVector{N}}
     rng = reseed(rng, seed)
     U = DefaultUniform(zero(N), one(N))
     vlist = vertices_list(X)
     m = length(vlist)
 
     if sampler.variant
-        @inbounds for i in 1:length(D)
+        @inbounds for i in eachindex(D)
             p = vlist[rand(1:m)]  # start from a random vertex
             for j in Random.randperm(m)  # choose a random target vertex
                 p += rand(rng, U) * (vlist[j] - p)  # move toward next vertex
@@ -258,7 +258,7 @@ function sample!(D::Vector{VN}, X::ConvexSet, sampler::RandomWalkSampler;
     else
         # vector used to store the combination coefficients
         r = Vector{N}(undef, m-1)
-        @inbounds for i in 1:length(D)
+        @inbounds for i in eachindex(D)
             # get a list of m uniform numbers (https://cs.stackexchange.com/a/3229)
             # and compute the corresponding linear combination in-place
             rand!(r, rng, U)
@@ -289,9 +289,9 @@ struct CombinedSampler <: AbstractSampler
     #
 end
 
-function sample!(D::Vector{VN}, X::ConvexSet, sampler::CombinedSampler;
-                 rng::AbstractRNG=GLOBAL_RNG,
-                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+function sample!(D::Vector{VN}, X::LazySet, sampler::CombinedSampler;
+                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
+                ) where {N, VN<:AbstractVector{N}}
     # try rejection sampling 100 times
     tmp_sampler = RejectionSampler(X; maxiter=10)
     D2 = Vector{VN}(undef, 1)
@@ -337,6 +337,7 @@ For more information see
 
 ### Algorithm
 
+Currently only hyperrectangles are supported.
 For each point to be sampled, we randomly split the integers `1 .. n` into two
 subgroups of size `k` and `n-k` respectively. For the i-th coordinate in the
 first group, we sample in the interval `low(H, i) .. high(H, i)`. For the i-th
@@ -347,9 +348,9 @@ struct FaceSampler <: AbstractSampler
     dim::Int
 end
 
-function sample!(D::Vector{VN}, X::ConvexSet, sampler::FaceSampler;
-                 rng::AbstractRNG=GLOBAL_RNG,
-                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+function sample!(D::Vector{VN}, X::LazySet, sampler::FaceSampler;
+                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
+                ) where {N, VN<:AbstractVector{N}}
     n = dim(X)
     k = sampler.dim
 
@@ -372,10 +373,11 @@ end
 
 _choose_sorted(k, n; rng=GLOBAL_RNG) = sort!((1:n)[randperm(rng, n)][1:k])
 
-function _sample_faces!(D::Vector{VN}, H::AbstractHyperrectangle, rng, k) where {N, VN<:AbstractVector{N}}
+function _sample_faces!(D::Vector{VN}, H::AbstractHyperrectangle, rng, k
+                       ) where {N, VN<:AbstractVector{N}}
     n = dim(H)
 
-    @inbounds for j in 1:length(D)
+    @inbounds for j in eachindex(D)
         indices = _choose_sorted(k, n; rng=rng)
         # add one more index that is never visited
         indices = vcat(indices, 0)
@@ -399,10 +401,6 @@ function _sample_faces!(D::Vector{VN}, H::AbstractHyperrectangle, rng, k) where 
 
     return D
 end
-
-# ==================
-# Half-space sampler
-# ==================
 
 """
     HalfSpaceSampler{D} <: AbstractSampler
@@ -428,33 +426,25 @@ function HalfSpaceSampler()
 end
 
 function sample!(D::Vector{VN}, H::HalfSpace, sampler::HalfSpaceSampler;
-                 rng::AbstractRNG=GLOBAL_RNG,
-                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
+                ) where {N, VN<:AbstractVector{N}}
     rng = reseed(rng, seed)
     U = sampler.distribution
     if isnothing(U)
         U = DefaultUniform(zero(N), one(N))
     end
     n = dim(H)
-    @inbounds for i in 1:length(D)
+    @inbounds for i in eachindex(D)
         # sample a random point
         x = rand(rng, U, n)
 
-        # check if the point is in H
-        if x ∈ H
-            D[i] = x
-            continue
+        if x ∉ H
+            # reflect point at the defining hyperplane
+            x = _reflect_point_hyperplane(x, H.a, H.b)
         end
-
-        # reflect point at the defining hyperplane
-        y = _reflect_point_hyperplane(x, H.a, H.b)
-        D[i] = y
+        D[i] = x
     end
 end
-
-# ==================
-# Hyperplane sampler
-# ==================
 
 """
     HyperplaneSampler{D} <: AbstractSampler
@@ -480,8 +470,7 @@ function HyperplaneSampler()
 end
 
 function sample!(D::Vector{VN}, hp::Union{Hyperplane, Line2D},
-                 sampler::HyperplaneSampler;
-                 rng::AbstractRNG=GLOBAL_RNG,
+                 sampler::HyperplaneSampler; rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
     rng = reseed(rng, seed)
     U = sampler.distribution
@@ -489,7 +478,7 @@ function sample!(D::Vector{VN}, hp::Union{Hyperplane, Line2D},
         U = DefaultUniform(zero(N), one(N))
     end
     n = dim(hp)
-    @inbounds for i in 1:length(D)
+    @inbounds for i in eachindex(D)
         # sample a random point
         x = rand(rng, U, n)
 
@@ -499,10 +488,6 @@ function sample!(D::Vector{VN}, hp::Union{Hyperplane, Line2D},
     end
 end
 
-# ==================
-# Singleton sampler
-# ==================
-
 """
     SingletonSampler <: AbstractSampler
 
@@ -511,12 +496,11 @@ Type used for sampling from a singleton.
 struct SingletonSampler <: AbstractSampler
 end
 
-function sample!(D::Vector{VN}, S::AbstractSingleton,
-                 sampler::SingletonSampler;
-                 rng::AbstractRNG=GLOBAL_RNG,
-                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+function sample!(D::Vector{VN}, S::AbstractSingleton, sampler::SingletonSampler;
+                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
+                ) where {N, VN<:AbstractVector{N}}
     x = element(S)
-    @inbounds for i in 1:length(D)
+    @inbounds for i in eachindex(D)
         D[i] = copy(x)
     end
 end
@@ -528,26 +512,23 @@ end
 function load_distributions_samples()
 return quote
 
-using .Distributions: Uniform, Normal, Distribution, UnivariateDistribution
-import .Distributions
+using .Distributions: Uniform, Normal, UnivariateDistribution
 
-RejectionSampler(distr::UnivariateDistribution; tight::Bool=false) = RejectionSampler([distr], tight=tight)
+function RejectionSampler(distr::UnivariateDistribution; tight::Bool=false)
+    return RejectionSampler([distr], tight=tight)
+end
 
 function Base.rand(rng::AbstractRNG, U::AbstractVector{<:UnivariateDistribution})
     return rand.(Ref(rng), U)
 end
 
-# ======================================================
-# Sampling from a uniform distribution on balls/spheres
-# ======================================================
-
 """
     _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
-                                 rng::AbstractRNG=GLOBAL_RNG,
-                                 seed::Union{Int, Nothing}=nothing) where {N}
+                                 [rng]::AbstractRNG=GLOBAL_RNG,
+                                 [seed]::Union{Int, Nothing}=nothing) where {N}
 
-Draw samples from a uniform distribution on an ``n``-dimensional unit
-sphere using Muller's method.
+Draw samples from a uniform distribution on an ``n``-dimensional unit sphere
+using Muller's method.
 
 ### Input
 
@@ -559,13 +540,13 @@ sphere using Muller's method.
 
 ### Output
 
-A vector of `nsamples` vectors.
+The modified vector `D`.
 
 ### Algorithm
 
-This function implements Muller's method of normalised Gaussians [1] to uniformly
-sample over the ``n``-dimensional sphere ``S^n`` (which is the bounding surface
-of the ``n``-dimensional unit ball).
+This function implements Muller's method of normalized Gaussians [1] to
+uniformly sample over the ``n``-dimensional sphere ``S^n`` (which is the
+bounding surface of the ``n``-dimensional unit ball).
 
 Given ``n`` canonical Gaussian random variables ``Z₁, Z₂, …, Z_n``, the
 distribution of the vectors
@@ -582,7 +563,7 @@ function _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                       rng::AbstractRNG=GLOBAL_RNG,
                                       seed::Union{Int, Nothing}=nothing) where {N}
     rng = reseed(rng, seed)
-    Zdims = [Normal() for _ in 1:n] # normal distributions, one for each dimension
+    Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
     v = Vector{N}(undef, n) # sample direction
     @inbounds for j in 1:p
         α = zero(N)
@@ -597,8 +578,8 @@ end
 
 """
     _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
-                               rng::AbstractRNG=GLOBAL_RNG,
-                               seed::Union{Int, Nothing}=nothing) where {N}
+                               [rng]::AbstractRNG=GLOBAL_RNG,
+                               [seed]::Union{Int, Nothing}=nothing) where {N}
 
 Draw samples from a uniform distribution on an ``n``-dimensional unit ball
 using Muller's method.
@@ -613,12 +594,12 @@ using Muller's method.
 
 ### Output
 
-A vector of `nsamples` vectors.
+The modified vector `D`.
 
 ### Algorithm
 
-This function implements Muller's method of normalised Gaussians [1] to
-sample from the interior of the ball.
+This function implements Muller's method of normalized Gaussians [1] to
+uniformly sample from the interior of the unit ball.
 
 Given ``n`` Gaussian random variables ``Z₁, Z₂, …, Z_n`` and a uniformly
 distributed random variable ``r`` with support in ``[0, 1]``, the distribution
@@ -638,7 +619,7 @@ function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                     seed::Union{Int, Nothing}=nothing) where {N}
 
     rng = reseed(rng, seed)
-    Zdims = [Normal() for _ in 1:n] # normal distributions, one for each dimension
+    Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
     Zrad = Uniform() # distribution to pick random radius
     one_over_n = one(N)/n
     v = Vector{N}(undef, n) # sample direction
