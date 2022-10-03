@@ -5,14 +5,15 @@ export Complement,
        complement
 
 """
-    Complement{N, S<:ConvexSet{N}} <: LazySet{N}
+    Complement{N, S<:LazySet{N}} <: LazySet{N}
 
-Type that represents the complement of a set, that is the set
+Type that represents the complement of a set, i.e., the set
 
 ```math
-Y = \\{y ∈ \\mathbb{R}^n : y ∉ X\\},
+Y = \\{y ∈ \\mathbb{R}^n : y ∉ X\\}.
 ```
-and it is often denoted with the ``C`` superscript, ``Y = X^C``.
+
+The complement is often denoted with the ``C`` superscript, as in ``Y = X^C``.
 
 ### Fields
 
@@ -20,9 +21,11 @@ and it is often denoted with the ``C`` superscript, ``Y = X^C``.
 
 ### Notes
 
-Since `X` is assumed to be closed, unless `X` is empty or the universe, its
-complement is open (i.e., not closed).
 If `X` is empty, the universe, or a half-space, its complement is convex.
+
+Since `X` is assumed to be closed, unless `X` is empty or the universe, its
+complement is open (i.e., not closed). In this library, all sets are closed, so
+the set is usually not represented exactly at the boundary.
 
 The complement of the complement is the original set again.
 
@@ -38,16 +41,13 @@ julia> Complement(C)
 BallInf{Float64, Vector{Float64}}([0.0, 0.0], 1.0)
 ```
 """
-struct Complement{N, S<:ConvexSet{N}} <: LazySet{N}
+struct Complement{N, S<:LazySet{N}} <: LazySet{N}
     X::S
 end
 
 isoperationtype(::Type{<:Complement}) = true
 
-# the set complement is not convex in general
-isconvextype(::Type{<:Complement}) = false
-
-# special cases which are always convex
+# special cases for which the complement is always convex
 isconvextype(::Type{<:Complement{N, <:Union{EmptySet, HalfSpace, Universe}}}) where {N} = true
 
 is_polyhedral(::Complement) where {N} = false
@@ -67,7 +67,7 @@ Return the dimension of the complement of a set.
 
 ### Output
 
-The dimension of the complement of a set.
+The ambient dimension of the complement of a set.
 """
 function dim(C::Complement)
     return dim(C.X)
@@ -94,14 +94,15 @@ Check whether a given point is contained in the complement of a set.
 ```
 """
 function ∈(x::AbstractVector, C::Complement)
-    @assert length(x) == dim(C)
+    @assert length(x) == dim(C) "a vector of length $(length(x)) is " *
+        "incompatible with a set of dimension $(dim(C))"
     return x ∉ C.X
 end
 
 """
     isempty(C::Complement)
 
-Return if the complement of a set is empty or not.
+Check whether the complement of a set is empty.
 
 ### Input
 
@@ -113,7 +114,7 @@ Return if the complement of a set is empty or not.
 
 ### Algorithm
 
-We use the `isuniversal` method.
+We use the `isuniversal` function.
 """
 function isempty(C::Complement)
     return isuniversal(C.X)
@@ -127,8 +128,6 @@ function isboundedtype(::Type{<:Complement})
     return false
 end
 
-# --  Fallback implementation, requires constraints list of C.X --
-
 """
     constraints_list(C::Complement)
 
@@ -136,7 +135,7 @@ Return the list of constraints of the complement of a set.
 
 ### Input
 
-- `C` -- lazy set complement
+- `C` -- complement of a set
 
 ### Output
 
@@ -145,10 +144,13 @@ A vector of linear constraints.
 ### Notes
 
 The method requires that the list of constraints of the complemented set can be
-obtained. Then, each constraint is complemented and returned in the output array.
-The set union of such array corresponds to the concrete set complement.
+obtained. Then, each constraint is complemented and returned in the output
+vector. The set union of this array corresponds to the concrete set complement.
 """
 function constraints_list(C::Complement)
+    @assert isconvextype(typeof(C.X)) "the constraints list of a complement " *
+        "is only available for the complement of a convex polyhedron"
+
     clist = constraints_list(C.X)
     out = similar(clist)
     @inbounds for (i, ci) in enumerate(clist)
