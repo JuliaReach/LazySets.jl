@@ -225,6 +225,7 @@ an_element(::AbstractPolyhedron{N}) where {N}
 isbounded(::AbstractPolyhedron{N}) where {N}
 vertices_list(::AbstractPolyhedron)
 project(::AbstractPolyhedron{N}, ::AbstractVector{Int}) where {N}
+LazySets._isbounded_stiemke
 ```
 
 Some common functions to work with linear constraints:

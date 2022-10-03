@@ -229,7 +229,7 @@ function isbounded(S::ConvexSet; algorithm="support_function")
     if algorithm == "support_function"
         return _isbounded_unit_dimensions(S)
     elseif algorithm == "stiemke"
-        return _isbounded_stiemke(S)
+        return _isbounded_stiemke(constraints_list(S))
     else
         throw(ArgumentError("unknown algorithm $algorithm"))
     end

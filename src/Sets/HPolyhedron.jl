@@ -639,64 +639,6 @@ end
 end # quote
 end # function load_polyhedra_hpolyhedron()
 
-"""
-    _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver(N),
-                       check_nonempty::Bool=true) where {N}
-
-Determine whether a polyhedron is bounded using Stiemke's theorem of alternatives.
-
-### Input
-
-- `P`       -- polyhedron
-- `backend` -- (optional, default: `default_lp_solver(N)`) the backend used
-               to solve the linear program
-- `check_nonempty` -- (optional, default: `true`) if `true`, check the
-                      precondition to this algorithm that `P` is non-empty
-
-### Output
-
-`true` iff the polyhedron is bounded
-
-### Notes
-
-The algorithm internally calls `isempty` to check whether the polyhedron is empty.
-This computation can be avoided using the `check_nonempty` flag.
-
-### Algorithm
-
-The algorithm is based on Stiemke's theorem of alternatives, see e.g. [1].
-
-Let the polyhedron ``P`` be given in constraint form ``Ax ≤ b``. We assume that
-the polyhedron is not empty.
-
-Proposition 1. If ``\\ker(A)≠\\{0\\}``, then ``P`` is unbounded.
-
-Proposition 2. Assume that ``ker(A)={0}`` and ``P`` is non-empty.
-Then ``P`` is bounded if and only if the following linear
-program admits a feasible solution: ``\\min∥y∥_1`` subject to ``A^Ty=0`` and ``y≥1``.
-
-[1] Mangasarian, Olvi L. *Nonlinear programming.*
-    Society for Industrial and Applied Mathematics, 1994.
-"""
-function _isbounded_stiemke(P::HPolyhedron{N}; solver=LazySets.default_lp_solver(N),
-                            check_nonempty::Bool=true) where {N}
-    if check_nonempty && isempty(P)
-        return true
-    end
-
-    A, b = tosimplehrep(P)
-    m, n = size(A)
-
-    if !isempty(nullspace(A))
-        return false
-    end
-
-    At = copy(transpose(A))
-    c = ones(N, m)
-    lp = linprog(c, At, '=', zeros(n), one(N), Inf, solver)
-    return is_lp_optimal(lp.status)
-end
-
 function is_hyperplanar(P::HPolyhedron)
     clist = P.constraints
     m = length(clist)
