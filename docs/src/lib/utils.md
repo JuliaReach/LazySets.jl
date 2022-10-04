@@ -2,23 +2,11 @@
 CurrentModule = LazySets
 ```
 
-# Utility functions
+# Utilities
 
-## Functions and Macros
+## Macros
 
 ```@docs
-_an_element_helper_hyperplane
-binary_search_constraints
-get_radius!
-is_tighter_same_dir_2D
-sign_cadlag
-_leq_trig
-rectify
-same_block_structure
-_σ_hyperplane_halfspace
-get_constrained_lowdimset
-minmax
-arg_minmax
 @neutral
 @absorbing
 @neutral_absorbing
@@ -39,7 +27,7 @@ CachedPair
 implementing_sets
 ```
 
-## Reading and writing
+## File formats
 
 ```@docs
 LazySets.read_gen(::String)
@@ -65,4 +53,25 @@ LazySets.RandomWalkSampler
 
 ```@docs
 LazySets._vec
+```
+
+## Functions for numbers
+
+```@docs
+sign_cadlag
+minmax
+arg_minmax
+```
+
+## Other functions
+
+```@docs
+_an_element_helper_hyperplane
+binary_search_constraints
+get_constrained_lowdimset
+get_radius!
+is_tighter_same_dir_2D
+_leq_trig
+same_block_structure
+_σ_hyperplane_halfspace
 ```
