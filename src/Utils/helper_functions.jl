@@ -1,5 +1,5 @@
 """
-    sign_cadlag(x::N) where {N<:Real}
+    sign_cadlag(x::Real)
 
 This function works like the sign function but is ``1`` for input ``0``.
 
@@ -27,7 +27,7 @@ julia> LazySets.sign_cadlag.([-0.6, 1.3, 0.0])
   1.0
 ```
 """
-function sign_cadlag(x::N) where {N<:Real}
+function sign_cadlag(x::Real)
     return x < zero(x) ? -one(x) : one(x)
 end
 
@@ -43,12 +43,12 @@ binary) concrete set operations.
 
 - `op`        -- set operation (respectively its `Function` object)
 - `signature` -- (optional, default: `Type[]`) the type signature of the
-                 function without the `ConvexSet` type(s) (see also the `index`
+                 function without the `LazySet` type(s) (see also the `index`
                  option and the `Examples` section below)
 - `index`     -- (optional, default: `1`) index of the set type in the signature
                  in the unary case (see the `binary` option)
 - `type_args` -- (optional, default: `Float64`) type arguments added to the
-                 `ConvexSet`(s) when searching for available methods; valid
+                 `LazySet`(s) when searching for available methods; valid
                  inputs are a type or `nothing`, and in the unary case (see the
                  `binary` option) it can also be a list of types
 - `binary`    -- (optional, default: `false`) flag indicating whether `op` is a
@@ -71,12 +71,15 @@ In the binary case, the lists contain pairs of set types.
 
 ### Examples
 
-```jldoctests
+`tovrep` is only available for polytopic set types in vertex or constraint
+representation (and `HPolyhedron`).
+
+```jldoctests implementing_sets
 julia> using LazySets: implementing_sets
 
 julia> dict = implementing_sets(tovrep);
 
-julia> dict["available"]  # tovrep is only available for polyhedral set types
+julia> dict["available"]
 6-element Vector{Type}:
  HPolygon
  HPolygonOpt
@@ -84,25 +87,41 @@ julia> dict["available"]  # tovrep is only available for polyhedral set types
  HPolytope
  VPolygon
  VPolytope
+```
 
-julia> dict = implementing_sets(σ; signature=Type[AbstractVector{Float64}], index=2);
+Every convex set type implements the function `σ`.
 
-julia> isempty(dict["missing"])  # every set type implements function σ
-true
+```jldoctests implementing_sets
+julia> dict = implementing_sets(σ; signature=Type[AbstractVector], index=2);
 
-julia> N = Rational{Int};  # restriction of the number type
+julia> dict["missing"]
+5-element Vector{Type}:
+ Complement
+ LazySets.AbstractStar
+ QuadraticMap
+ SimpleSparsePolynomialZonotope
+ SparsePolynomialZonotope
+```
+
+Some operations are not available for sets with rational numbers.
+
+```jldoctests implementing_sets
+julia> N = Rational{Int};
 
 julia> dict = implementing_sets(σ; signature=Type[AbstractVector{N}], index=2, type_args=N);
 
-julia> dict["missing"]  # some set types are not available with number type N
-3-element Vector{Type}:
- Ball2
- Ballp
- Ellipsoid
+julia> Ball2 ∈ dict["missing"]
+true
+```
 
-julia> dict = LazySets.implementing_sets(convex_hull; binary=true);  # binary case
+For binary functions, the dictionary contains pairs of set types.
+This check takes several seconds because it considers all possible set-type
+combinations.
 
-julia> (HPolytope, HPolytope) ∈ dict["available"]  # dict contains pairs now
+```jldoctests implementing_sets
+julia> dict = LazySets.implementing_sets(convex_hull; binary=true);
+
+julia> (HPolytope, HPolytope) ∈ dict["available"]
 true
 ```
 """
@@ -130,8 +149,8 @@ function implementing_sets(op::Function;
         "missing" => Vector{Tuple{Type, Type}}(),
         "specific" => Vector{Tuple{Type, Type}}())
     signature_copy = copy(signature)
-    insert!(signature_copy, 1, ConvexSet)  # insert a dummy type
-    for set_type in subtypes(ConvexSet, true)
+    insert!(signature_copy, 1, LazySet)  # insert a dummy type
+    for set_type in subtypes(LazySet, true)
         augmented_set_type = set_type
         try
             if type_args isa Type
@@ -142,7 +161,7 @@ function implementing_sets(op::Function;
             end
         catch e
             # type combination not available
-            push!(binary_dict["missing"], (set_type, ConvexSet))
+            push!(binary_dict["missing"], (set_type, LazySet))
             continue
         end
         signature_copy[1] = augmented_set_type  # replace dummy type
@@ -172,7 +191,7 @@ function _implementing_sets_unary!(dict, op, signature, index, type_args)
         return Tuple{new_signature...}
     end
 
-    for set_type in subtypes(ConvexSet, true)
+    for set_type in subtypes(LazySet, true)
         augmented_set_type = set_type
         try
             if type_args isa Type
@@ -208,9 +227,11 @@ function _implementing_sets_unary!(dict, op, signature, index, type_args)
     end
 end
 
-# check that the given coordinate i can be used to index an arbitrary element in the set X
+# check that the given coordinate i can be used to index an arbitrary element in
+# the set X
 @inline function _check_bounds(X, i)
-    1 <= i <= dim(X) || throw(ArgumentError("there is no index at coordinate $i, since the set is of dimension $(dim(X))"))
+    1 <= i <= dim(X) || throw(ArgumentError("there is no index at coordinate " *
+        "$i because the set is of dimension $(dim(X))"))
 end
 
 """
@@ -228,7 +249,7 @@ A list of polygons in vertex representation.
 
 ### Notes
 
-The `x` and `y` coordinates of each vertex should be separated by an empty space,
+The `x` and `y` coordinates of each vertex should be separated by an empty space
 and polygons are separated by empty lines (even the last polygon). For example:
 
 ```julia
@@ -256,8 +277,8 @@ function read_gen(filename::String)
     Mi = Vector{Vector{Float64}}()
     P = Vector{VPolygon{Float64, Vector{Float64}}}()
 
-    # detects when we finished reading a new polygon, needed because polygons
-    # may be separated by more than one end-of-line
+    # detect when we finished reading a new polygon; needed because polygons may
+    # be separated by more than one end-of-line
     new_polygon = true
     open(filename) do f
         for line in eachline(f)
@@ -275,15 +296,15 @@ function read_gen(filename::String)
 end
 
 """
-    minmax(A, B, C)
+    minmax(a, b, c)
 
-Compute the minimum and maximum of three numbers A, B, C.
+Compute the minimum and maximum of three numbers a, b, c.
 
 ### Input
 
-- `A` -- first number
-- `B` -- second number
-- `C` -- third number
+- `a` -- number
+- `b` -- number
+- `c` -- number
 
 ### Output
 
@@ -296,34 +317,34 @@ julia> LazySets.minmax(1.4, 52.4, -5.2)
 (-5.2, 52.4)
 ```
 """
-function minmax(A, B, C)
-    if A > B
-        min, max = B, A
+function minmax(a, b, c)
+    if a > b
+        min, max = b, a
     else
-        min, max = A, B
+        min, max = a, b
     end
-    if C > max
-        max = C
-    elseif C < min
-        min = C
+    if c > max
+        max = c
+    elseif c < min
+        min = c
     end
     return min, max
 end
 
 """
-    arg_minmax(A, B, C)
+    arg_minmax(a, b, c)
 
-Compute the index (1, 2, 3) of the minimum and maximum of three numbers A, B, C.
+Compute the indices of the minimum and maximum of three numbers a, b, c.
 
 ### Input
 
-- `A` -- first number
-- `B` -- second number
-- `C` -- third number
+- `a` -- first number
+- `b` -- second number
+- `c` -- third number
 
 ### Output
 
-The index of the minimum and maximum of the three given numbers.
+The indices of the minimum and maximum of the three given numbers.
 
 ### Examples
 
@@ -332,17 +353,17 @@ julia> LazySets.arg_minmax(1.4, 52.4, -5.2)
 (3, 2)
 ```
 """
-function arg_minmax(A, B, C)
-    if A > B
-        min, max = B, A
+function arg_minmax(a, b, c)
+    if a > b
+        min, max = b, a
         imin, imax = 2, 1
     else
-        min, max = A, B
+        min, max = a, b
         imin, imax = 1, 2
     end
-    if C > max
+    if c > max
         imax = 3
-    elseif C < min
+    elseif c < min
         imin = 3
     end
     return imin, imax
