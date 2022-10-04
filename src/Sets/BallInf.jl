@@ -57,10 +57,6 @@ end
 
 isoperationtype(::Type{<:BallInf}) = false
 
-
-# --- AbstractHyperrectangle interface functions ---
-
-
 """
     radius_hyperrectangle(B::BallInf, i::Int)
 
@@ -139,9 +135,6 @@ return quote
 end
 end
 
-# --- AbstractCentrallySymmetric interface functions ---
-
-
 """
     center(B::BallInf)
 
@@ -158,10 +151,6 @@ The center of the ball in the infinity norm.
 function center(B::BallInf)
     return B.center
 end
-
-
-# --- LazySet interface functions ---
-
 
 """
     σ(d::AbstractVector, B::BallInf)

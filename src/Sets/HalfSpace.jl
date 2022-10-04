@@ -83,8 +83,6 @@ function _normalize_halfspace(H, p=2)
     return a, b
 end
 
-# --- LazySet interface functions ---
-
 """
     dim(hs::HalfSpace)
 

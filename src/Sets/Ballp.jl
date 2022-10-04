@@ -77,10 +77,6 @@ end
 
 isoperationtype(::Type{<:Ballp}) = false
 
-
-# --- AbstractCentrallySymmetric interface functions ---
-
-
 """
     center(B::Ballp)
 
@@ -97,10 +93,6 @@ The center of the ball in the p-norm.
 function center(B::Ballp)
     return B.center
 end
-
-
-# --- LazySet interface functions ---
-
 
 """
     σ(d::AbstractVector, B::Ballp)
