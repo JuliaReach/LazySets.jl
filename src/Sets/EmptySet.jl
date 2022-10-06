@@ -28,10 +28,6 @@ Alias for `EmptySet{Float64}`.
 """
 const ∅ = EmptySet{Float64}
 
-
-# --- LazySet interface functions ---
-
-
 """
     dim(∅::EmptySet)
 

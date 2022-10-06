@@ -122,10 +122,6 @@ function Ellipsoid(Q::AbstractMatrix{N}; check_posdef::Bool=true) where {N}
     return Ellipsoid(zeros(N, size(Q, 1)), Q; check_posdef=check_posdef)
 end
 
-
-# --- AbstractCentrallySymmetric interface functions ---
-
-
 """
     center(E::Ellipsoid)
 
@@ -159,10 +155,6 @@ The shape matrix of the ellipsoid.
 function shape_matrix(E::Ellipsoid)
     return E.shape_matrix
 end
-
-
-# --- LazySet interface functions ---
-
 
 """
     σ(d::AbstractVector, E::Ellipsoid)

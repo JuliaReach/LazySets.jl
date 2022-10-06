@@ -65,10 +65,6 @@ end
 
 isoperationtype(::Type{<:Ball2}) = false
 
-
-# --- AbstractCentrallySymmetric interface functions ---
-
-
 """
     center(B::Ball2)
 
@@ -85,9 +81,6 @@ The center of the ball in the 2-norm.
 function center(B::Ball2)
     return B.center
 end
-
-
-# --- LazySet interface functions ---
 
 """
     ρ(d::AbstractVector, B::Ball2)

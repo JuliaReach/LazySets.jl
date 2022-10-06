@@ -57,10 +57,6 @@ isoperationtype(::Type{<:Ball1}) = false
 
 _vector_type(B::Ball1{N, VN}) where {N, VN} = VN
 
-
-# --- AbstractCentrallySymmetric interface functions ---
-
-
 """
     center(B::Ball1)
 
@@ -77,10 +73,6 @@ The center of the ball in the 1-norm.
 function center(B::Ball1)
     return B.center
 end
-
-
-# --- AbstractPolytope interface functions ---
-
 
 """
     vertices_list(B::Ball1)
@@ -120,10 +112,6 @@ function vertices_list(B::Ball1)
     end
     return vertices
 end
-
-
-# --- LazySet interface functions ---
-
 
 """
     σ(d::AbstractVector, B::Ball1)
