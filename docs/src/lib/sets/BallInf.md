@@ -16,7 +16,7 @@ rand(::Type{BallInf})
 ρ(::AbstractVector, ::BallInf)
 translate(::BallInf, ::AbstractVector)
 translate!(::BallInf, ::AbstractVector)
-volume(B::BallInf)
+volume(::BallInf)
 ```
 Inherited from [`ConvexSet`](@ref):
 * [`diameter`](@ref diameter(::ConvexSet, ::Real))

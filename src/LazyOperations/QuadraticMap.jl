@@ -17,7 +17,7 @@ The quadratic map of a set ``X`` given ``n`` square matrices ``Q^{(i)}`` is
 defined as
 
 ```math
-\\left\\{ \\lambda | \\lambda_i = x^T Q^{(i)} x,~i = 1, \\ldots, n,~x \\in X \\right\\}
+\\left\\{ \\lambda \\mid \\lambda_i = x^T Q^{(i)} x,~i = 1, \\ldots, n,~x \\in X \\right\\}
 ```
 
 where each coordinate ``i`` is influenced by the ``i``-th matrix ``Q^{(i)}``.

@@ -231,7 +231,7 @@ toward a random vertex inside the polytope.
 [1] *Rubin, Donald B. The Bayesian bootstrap. The annals of statistics (1981):
 130-134.*
 
-[2] https://cs.stackexchange.com/questions/3227/uniform-sampling-from-a-simplex/3229
+[2] [StackExchange post](https://cs.stackexchange.com/a/3229)
 """
 struct RandomWalkSampler <: AbstractSampler
     variant::Bool

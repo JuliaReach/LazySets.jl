@@ -62,12 +62,6 @@ LazySets.RejectionSampler
 LazySets.RandomWalkSampler
 ```
 
-## Volume
-
-```@docs
-volume
-```
-
 ## Symbolics
 
 ```@docs
