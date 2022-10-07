@@ -19,12 +19,13 @@ end end  # quote / function load_makie()
 
 
 # helper function for 3D plotting; converts S to a polytope in H-representation
-function _plot3d_helper(S::ConvexSet, backend)
-    @assert dim(S) <= 3 "plot3d can only be used to plot sets of dimension three (or lower); " *
-        "but the given set is $(dim(S))-dimensional"
+function _plot3d_helper(S::LazySet, backend)
+    @assert dim(S) <= 3 "plot3d can only be used to plot sets of dimension 3 " *
+        "(or lower), but the given set is $(dim(S))-dimensional"
 
-    @assert applicable(constraints_list, S) "plot3d requires that the list of constraints of `S`, " *
-        "`constraints_list(S)` is applicable; try overapproximating with an `HPolytope` first"
+    @assert applicable(constraints_list, S) "plot3d requires that the list " *
+        "of constraints of `S`, `constraints_list(S)` is applicable; try " *
+        "overapproximating with an `HPolytope` first"
 
     @assert isbounded(S) "plot3d requires a bounded set"
 
@@ -36,41 +37,41 @@ function _plot3d_helper(S::ConvexSet, backend)
 end
 
 """
-    plot3d(S::ConvexSet; backend=default_polyhedra_backend(S),
-           alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing,
-           interpolate=false, linewidth=1, overdraw=false, shading=true,
-           transparency=true, visible=true)
+    plot3d(S::LazySet; [backend]=default_polyhedra_backend(S), [alpha]=1.0,
+           [color]=:blue, [colormap]=:viridis, [colorrange]=nothing,
+           [interpolate]=false, [linewidth]=1, [overdraw]=false, [shading]=true,
+           [transparency]=true, [visible]=true)
 
-Plot a three-dimensional convex set using `Makie`.
+Plot a three-dimensional set using `Makie`.
 
 ### Input
 
-- `S`            -- convex set
-- `backend`      -- (optional, default: `default_polyhedra_backend(S)`) polyhedral
-                    computations backend
+- `S`            -- set
+- `backend`      -- (optional, default: `default_polyhedra_backend(S)`) backend
+                    for polyhedral computations
 - `alpha`        -- (optional, default: `1.0`) float in `[0,1]`; the alpha or
                     transparency value
-- `color`        -- (optional, default: `:blue`) `Symbol` or `Colorant`; the color
-                    of the main plot element (markers, lines, etc.) and it can be
-                    a color symbol/string like `:red`
-- `colormap`     -- (optional, default: `:viridis`) the color map of the main plot;
-                    call `available_gradients()` to see what gradients are available,
-                    and it can also be used as `[:red, :black]`
+- `color`        -- (optional, default: `:blue`) `Symbol` or `Colorant`; the
+                    color of the main plot element (markers, lines, etc.), which
+                    can be a color symbol/string like `:red`
+- `colormap`     -- (optional, default: `:viridis`) the color map of the main
+                    plot; use `available_gradients()` to see which gradients are
+                    available, which can also be used as `[:red, :black]`
 - `colorrange`   -- (optional, default: `nothing`, which falls back to
-                    `Makie.Automatic()`) a tuple `(min, max)`
-                    where `min` and `max` specify the data range to be used for
-                    indexing the colormap
-- `interpolate`  -- (optional, default: `false`) a bool for heatmap and images,
-                    it toggles color interpolation between nearby pixels
-- `linewidth`    -- (optional, default: `1`) a number that specifies the width of
-                    the line in `line` and `linesegments` plots
+                    `Makie.Automatic()`) a tuple `(min, max)` where `min` and
+                    `max` specify the data range to be used for indexing the
+                    `colormap`
+- `interpolate`  -- (optional, default: `false`) a boolean for heatmap and
+                    images; toggles color interpolation between nearby pixels
+- `linewidth`    -- (optional, default: `1`) a number that specifies the width
+                    of the line in `line` and `linesegments` plots
 - `overdraw`     -- (optional, default: `false`)
-- `shading`      -- (optional, default: `true`) a boolean that specifies if shading
-                    should be on or not (for meshes)
-- `transparency` -- (optional, default: `true`) if `true`, the set is transparent
-                    otherwise it is displayed as a solid object
-- `visible`      -- (optional, default: `true`) a bool that toggles visibility
-                    of the plot
+- `shading`      -- (optional, default: `true`) a boolean that toggles shading
+                    (for meshes)
+- `transparency` -- (optional, default: `true`) if `true`, the set is
+                    transparent, otherwise it is displayed as a solid object
+- `visible`      -- (optional, default: `true`) a boolean that toggles
+                    visibility of the plot
 
 For a complete list of attributes and usage see
 [Makie's documentation](http://makie.juliaplots.org/stable/plot-attributes).
@@ -79,7 +80,7 @@ For a complete list of attributes and usage see
 
 This plot recipe works by computing the list of constraints of `S` and converting
 to a polytope in H-representation. Then, this polytope is transformed with
-`Polyhedra.Mesh` and it is plotted using the `mesh` function.
+`Polyhedra.Mesh` and plotted using the `mesh` function.
 
 If the function `constraints_list` is not applicable to your set `S`, try
 overapproximation first; e.g. via
@@ -110,31 +111,33 @@ loading `LazySets`, do `using Polyhedra, GLMakie` (or another Makie backend).
 ```julia
 julia> using LazySets, Polyhedra, GLMakie
 
-julia> plot3d(10. * rand(Hyperrectangle, dim=3))
+julia> plot3d(10 * rand(Hyperrectangle, dim=3))
 
-julia> plot3d!(10. * rand(Hyperrectangle, dim=3), color=:red)
+julia> plot3d!(10 * rand(Hyperrectangle, dim=3), color=:red)
 ```
 """
-function plot3d(S::ConvexSet; backend=default_polyhedra_backend(S),
-                alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
-                linewidth=1, overdraw=false, shading=true, transparency=true, visible=true)
-    require(@__MODULE__, :Makie; fun_name="plot3d")
-    require(@__MODULE__, :Polyhedra; fun_name="plot3d")
+function plot3d(S::LazySet; backend=default_polyhedra_backend(S), alpha=1.0,
+                color=:blue, colormap=:viridis, colorrange=nothing,
+                interpolate=false, linewidth=1, overdraw=false, shading=true,
+                transparency=true, visible=true)
+    require(@__MODULE__, [:Makie, :Polyhedra]; fun_name="plot3d")
 
     if colorrange == nothing
         colorrange = Automatic()
     end
     P_poly_mesh = _plot3d_helper(S, backend)
-    return mesh(P_poly_mesh, alpha=alpha, color=color, colormap=colormap, colorrange=colorrange,
-                interpolate=interpolate, linewidth=linewidth, transparency=transparency, visible=visible)
+    return mesh(P_poly_mesh, alpha=alpha, color=color, colormap=colormap,
+                colorrange=colorrange, interpolate=interpolate,
+                linewidth=linewidth, transparency=transparency, visible=visible)
 end
 
 """
-    plot3d!(S::ConvexSet; backend=default_polyhedra_backend(S),
-            alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
-            linewidth=1, overdraw=false, shading=true, transparency=true, visible=true)
+    plot3d!(S::LazySet; backend=default_polyhedra_backend(S), [alpha]=1.0,
+           [color]=:blue, [colormap]=:viridis, [colorrange]=nothing,
+           [interpolate]=false, [linewidth]=1, [overdraw]=false, [shading]=true,
+           [transparency]=true, [visible]=true)
 
-Plot a three-dimensional convex set using Makie.
+Plot a three-dimensional set using Makie.
 
 ### Input
 
@@ -146,16 +149,18 @@ documentation](http://makie.juliaplots.org/stable/plot-attributes).
 
 See the documentation of `plot3d` for examples.
 """
-function plot3d!(S::ConvexSet; backend=default_polyhedra_backend(S),
-                alpha=1.0, color=:blue, colormap=:viridis, colorrange=nothing, interpolate=false,
-                linewidth=1, overdraw=false, shading=true, transparency=true, visible=true)
-    require(@__MODULE__, :Makie; fun_name="plot3d!")
-    require(@__MODULE__, :Polyhedra; fun_name="plot3d!")
+function plot3d!(S::LazySet; backend=default_polyhedra_backend(S), alpha=1.0,
+                 color=:blue, colormap=:viridis, colorrange=nothing,
+                 interpolate=false, linewidth=1, overdraw=false, shading=true,
+                 transparency=true, visible=true)
+    require(@__MODULE__, [:Makie, :Polyhedra]; fun_name="plot3d!")
 
     if colorrange == nothing
         colorrange = Automatic()
     end
     P_poly_mesh = _plot3d_helper(S, backend)
-    return mesh!(P_poly_mesh, alpha=alpha, color=color, colormap=colormap, colorrange=colorrange,
-                 interpolate=interpolate, linewidth=linewidth, transparency=transparency, visible=visible)
+    return mesh!(P_poly_mesh, alpha=alpha, color=color, colormap=colormap,
+                 colorrange=colorrange, interpolate=interpolate,
+                 linewidth=linewidth, transparency=transparency,
+                 visible=visible)
 end
