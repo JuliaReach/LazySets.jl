@@ -919,17 +919,85 @@ Determine whether a polyhedron is bounded.
 
 ### Algorithm
 
-We first check if the polyhedron has more than `max(dim(P), 1)` constraints,
-which is a necessary condition for boundedness.
+We first check if the polyhedron has more than `dim(P)` constraints, which is a
+necessary condition for boundedness.
 
 If so, we check boundedness via `_isbounded_stiemke`.
 """
 function isbounded(P::AbstractPolyhedron{N}; solver=default_lp_solver(N)) where {N}
-    constraints = constraints_list(P)
-    if length(constraints) <= max(dim(P), 1)
+    return isbounded(constraints_list(P); solver=solver)
+end
+
+function isbounded(constraints::AbstractVector{<:HalfSpace{N}};
+                   solver=default_lp_solver(N)) where {N}
+    if isempty(constraints)
+        return false
+    elseif length(constraints) <= dim(first(constraints))
+        return false  # need at least n+1 constraints to be bounded
+    end
+    return _isbounded_stiemke(constraints, solver=solver)
+end
+
+"""
+    _isbounded_stiemke(constraints::AbstractVector{<:HalfSpace{N}};
+                       solver=LazySets.default_lp_solver(N),
+                       check_nonempty::Bool=true) where {N}
+
+Determine whether a list of constraints is bounded using Stiemke's theorem of alternatives.
+
+### Input
+
+- `constraints`    -- list of constraints
+- `backend`        -- (optional, default: `default_lp_solver(N)`) the backend
+                      used to solve the linear program
+- `check_nonempty` -- (optional, default: `true`) if `true`, check the
+                      precondition to this algorithm that `P` is non-empty
+
+### Output
+
+`true` iff the list of constraints is bounded.
+
+### Notes
+
+The list of constraints represents a polyhedron.
+
+The algorithm calls `isempty` to check whether the polyhedron is empty.
+This computation can be avoided using the `check_nonempty` flag.
+
+### Algorithm
+
+The algorithm is based on Stiemke's theorem of alternatives, see, e.g., [1].
+
+Let the polyhedron ``P`` be given in constraint form ``Ax ≤ b``. We assume that
+the polyhedron is non-empty.
+
+Proposition 1. If ``\\ker(A)≠\\{0\\}``, then ``P`` is unbounded.
+
+Proposition 2. Assume that ``ker(A)={0}`` and ``P`` is non-empty.
+Then ``P`` is bounded if and only if the following linear program admits a
+feasible solution: ``\\min∥y∥_1`` subject to ``A^Ty=0`` and ``y≥1``.
+
+[1] Mangasarian, Olvi L. *Nonlinear programming.*
+    Society for Industrial and Applied Mathematics, 1994.
+"""
+function _isbounded_stiemke(constraints::AbstractVector{<:HalfSpace{N}};
+                            solver=LazySets.default_lp_solver(N),
+                            check_nonempty::Bool=true) where {N}
+    if check_nonempty && isempty(HPolyhedron(constraints))
+        return true
+    end
+
+    A, b = tosimplehrep(constraints)
+    m, n = size(A)
+
+    if !isempty(nullspace(A))
         return false
     end
-    return _isbounded_stiemke(HPolyhedron(constraints), solver=solver)
+
+    At = copy(transpose(A))
+    c = ones(N, m)
+    lp = linprog(c, At, '=', zeros(n), one(N), Inf, solver)
+    return is_lp_optimal(lp.status)
 end
 
 """

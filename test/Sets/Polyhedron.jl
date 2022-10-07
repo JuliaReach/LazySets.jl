@@ -168,9 +168,9 @@ for N in [Float64, Float32]
     @test isbounded(p)
     @test !isbounded(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
 
-    @test _isbounded_stiemke(p_univ)
-    @test _isbounded_stiemke(p)
-    @test !_isbounded_stiemke(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
+    @test _isbounded_stiemke(constraints_list(p_univ))
+    @test _isbounded_stiemke(constraints_list(p))
+    @test !_isbounded_stiemke([HalfSpace(N[1, 0], N(1))])
 
     @test _isbounded_unit_dimensions(p_univ)
     @test _isbounded_unit_dimensions(p)

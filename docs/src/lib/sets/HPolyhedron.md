@@ -24,8 +24,10 @@ translate(::HPoly, ::AbstractVector)
 polyhedron(::HPoly)
 remove_redundant_constraints(::HPoly)
 remove_redundant_constraints!(::HPoly)
-LazySets._isbounded_stiemke(::HPolyhedron{N}) where {N}
 ```
+Inherited from [`LazySet`](@ref):
+* [`high`](@ref high(::LazySet))
+* [`low`](@ref low(::LazySet))
 
 Inherited from [`ConvexSet`](@ref):
 * [`norm`](@ref norm(::ConvexSet, ::Real))
@@ -35,6 +37,7 @@ Inherited from [`ConvexSet`](@ref):
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractPolyhedron))
+* [`an_element`](@ref an_element(::AbstractPolyhedron))
 * [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron)
 * [`linear_map`](@ref linear_map(::AbstractMatrix{NM}, ::AbstractPolyhedron{NP}) where {NM, NP})
 
