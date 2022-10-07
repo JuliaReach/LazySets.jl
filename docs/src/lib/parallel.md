@@ -20,9 +20,7 @@ Parallel
 ## Box approximations
 
 ```@docs
-LazySets.Parallel.interval_hull
 LazySets.Parallel.box_approximation
-LazySets.Parallel.symmetric_interval_hull
 LazySets.Parallel.box_approximation_symmetric
 LazySets.Parallel.box_approximation_helper_parallel
 LazySets.Parallel.process_chunk!
