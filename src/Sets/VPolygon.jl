@@ -7,6 +7,14 @@ export VPolygon,
        linear_map,
        project
 
+# heuristic to define the method used to compute the support vector of a polygon
+# in vertex representation; if the number of vertices of the polygon is smaller
+# than this value, the brute force method is used; otherwise binary search is used
+const BINARY_OR_BRUTE_FORCE = 10
+
+# range of the default number of vertices in `rand`
+const DEFAULT_RAND_VERTEX_RANGE = 3:10
+
 """
     VPolygon{N, VN<:AbstractVector{N}} <: AbstractPolygon{N}
 
@@ -18,14 +26,12 @@ Type that represents a polygon by its vertices.
 
 ### Notes
 
-The constructor of `VPolygon` runs a convex hull algorithm on its vertices by
-default, to remove the possibly redundant vertices. The vertices are sorted in
-counter-clockwise fashion. Use the flag `apply_convex_hull=false` to skip the
-computation of the convex hull.
+This type assumes that all vertices are sorted in counter-clockwise fashion.
 
-- `VPolygon(vertices::Vector{Vector{N}};
-            apply_convex_hull::Bool=true,
-            algorithm::String="monotone_chain")`
+To ensure this property, the constructor of `VPolygon` runs a convex-hull
+algorithm on the vertices by default. This also removes redundant vertices.
+If the vertices are known to be sorted, the flag `apply_convex_hull=false` can
+be used to skip this preprocessing.
 
 ### Examples
 
@@ -69,15 +75,13 @@ struct VPolygon{N, VN<:AbstractVector{N}} <: AbstractPolygon{N}
                       algorithm::String="monotone_chain"
                      ) where {N, VN<:AbstractVector{N}}
         if apply_convex_hull
-            return new{N, VN}(convex_hull(vertices, algorithm=algorithm))
-        else
-            return new{N, VN}(vertices)
+            vertices = convex_hull(vertices, algorithm=algorithm)
         end
+        return new{N, VN}(vertices)
     end
 end
 
 isoperationtype(::Type{<:VPolygon}) = false
-isconvextype(::Type{<:VPolygon}) = true
 
 # constructor with empty vertices list
 VPolygon{N}() where {N} = VPolygon(Vector{Vector{N}}(), apply_convex_hull=false)
@@ -88,18 +92,19 @@ VPolygon() = VPolygon{Float64}()
 # constructor from rectangular matrix
 function VPolygon(vertices_matrix::MT; apply_convex_hull::Bool=true,
                   algorithm::String="monotone_chain") where {MT<:AbstractMatrix}
-    @assert size(vertices_matrix, 1) == 2 "the number of rows of the matrix of vertices " *
-                                           "should be 2, but it is $(size(vertices_matrix, 1))"
+    @assert size(vertices_matrix, 1) == 2 "the number of rows of the matrix " *
+        "of vertices should be 2, but it is $(size(vertices_matrix, 1))"
 
     vertices = [vertices_matrix[:, j] for j in 1:size(vertices_matrix, 2)]
-    return VPolygon(vertices; apply_convex_hull=apply_convex_hull, algorithm=algorithm)
+    return VPolygon(vertices; apply_convex_hull=apply_convex_hull,
+                              algorithm=algorithm)
 end
 
 """
     remove_redundant_vertices!(P::VPolygon;
                                [algorithm]::String="monotone_chain")
 
-Remove the redundant vertices of the given polygon.
+Remove the redundant vertices from the given polygon in-place.
 
 ### Input
 
@@ -109,13 +114,13 @@ Remove the redundant vertices of the given polygon.
 
 ### Output
 
-A new polygon such that its vertices are the convex hull of the given polygon.
+The modified polygon whose redundant vertices have been removed.
 
 ### Algorithm
 
-A convex hull algorithm is used to compute the convex hull of the vertices of the
-given input polygon `P`; see `?convex_hull` for details on the available algorithms.
-The vertices of the output polygon are sorted in counter-clockwise fashion.
+A convex-hull algorithm is used to compute the convex hull of the vertices of
+the polygon `P`; see `?convex_hull` for details on the available algorithms.
+The vertices are sorted in counter-clockwise fashion.
 """
 function remove_redundant_vertices!(P::VPolygon;
                                     algorithm::String="monotone_chain")
@@ -127,7 +132,8 @@ end
     remove_redundant_vertices(P::VPolygon;
                               [algorithm]::String="monotone_chain")
 
-Return the polygon obtained by removing the redundant vertices of the given polygon.
+Return a polygon obtained by removing the redundant vertices of the given
+polygon.
 
 ### Input
 
@@ -141,22 +147,41 @@ A new polygon such that its vertices are the convex hull of the given polygon.
 
 ### Algorithm
 
-A convex hull algorithm is used to compute the convex hull of the vertices of the
-given input polygon `P`; see `?convex_hull` for details on the available algorithms.
-The vertices of the output polygon are sorted in counter-clockwise fashion.
+See [`remove_redundant_vertices!(::VPolygon)`](@ref).
 """
 function remove_redundant_vertices(P::VPolygon;
                                    algorithm::String="monotone_chain")
     return remove_redundant_vertices!(copy(P), algorithm=algorithm)
 end
 
-function linear_map(M::AbstractMatrix, P::VPolygon; apply_convex_hull::Bool=false)
-    @assert size(M, 2) == 2 "a linear map of size $(size(M)) cannot be applied to a set of dimension 2"
+"""
+    linear_map(M::AbstractMatrix, P::VPolygon; [apply_convex_hull]::Bool=false)
+
+Concrete linear map of a polygon in vertex representation.
+
+### Input
+
+- `M`                 -- matrix
+- `P`                 -- polygon in vertex representation
+- `apply_convex_hull` -- (optional; default: `false`) flag to apply a
+                         convex-hull operation (only relevant for
+                         higher-dimensional maps)
+
+### Output
+
+The type of the result depends on the dimension. in 1D it is an interval, in 2D
+it is a `VPolygon`, and in all other cases it is a `VPolytope`.
+
+### Algorithm
+
+This implementation uses the internal `_linear_map_vrep` method.
+"""
+function linear_map(M::AbstractMatrix, P::VPolygon;
+                    apply_convex_hull::Bool=false)
+    @assert size(M, 2) == 2 "a linear map of size $(size(M)) cannot be " *
+        "applied to a set of dimension 2"
     return _linear_map_vrep(M, P, apply_convex_hull=apply_convex_hull)
 end
-
-# --- AbstractPolygon interface functions ---
-
 
 """
     tovrep(P::VPolygon)
@@ -169,7 +194,7 @@ Build a vertex representation of the given polygon.
 
 ### Output
 
-The identity, i.e., the same polygon instance.
+The same polygon instance.
 """
 function tovrep(P::VPolygon)
     return P
@@ -188,21 +213,20 @@ Build a constraint representation of the given polygon.
 
 ### Output
 
-The same polygon but in constraint representation, an `AbstractHPolygon`.
+A polygon in constraint representation, an `AbstractHPolygon`.
 
 ### Algorithm
 
-The algorithms consists of adding an edge for each consecutive pair of vertices.
-Since the vertices are already ordered in counter-clockwise fashion (CWW), the
-constraints will be sorted automatically (CCW) if we start with the first edge
-between the first and second vertex.
+The algorithm adds an edge for each consecutive pair of vertices.
+Since the vertices are already ordered in counter-clockwise fashion (CCW), the
+constraints will be sorted automatically (CCW).
 """
 function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
                ) where {N, HPOLYGON<:AbstractHPolygon}
-    vl = vertices_list(P)
+    vl = P.vertices
     n = length(vl)
     if n == 0
-        # no vertex -> empy set
+        # no vertex
         return EmptySet{N}(2)
     elseif n == 1
         # only one vertex -> use function for singletons
@@ -234,35 +258,27 @@ function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
     return HPOLYGON(constraints_list)
 end
 
-
-# --- AbstractPolytope interface functions ---
-
-
 """
     vertices_list(P::VPolygon)
 
-Return the list of vertices of a convex polygon in vertex representation.
+Return the list of vertices of a polygon in vertex representation.
 
 ### Input
 
-- `P` -- a polygon vertex representation
+- `P` -- polygon in vertex representation
 
 ### Output
 
-List of vertices.
+The list of vertices.
 """
 function vertices_list(P::VPolygon)
     return P.vertices
 end
 
-
-# --- ConvexSet interface functions ---
-
-
 """
     σ(d::AbstractVector, P::VPolygon)
 
-Return the support vector of a polygon in a given direction.
+Return a support vector of a polygon in a given direction.
 
 ### Input
 
@@ -271,40 +287,35 @@ Return the support vector of a polygon in a given direction.
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 If the direction has norm zero, the first vertex is returned.
 
 ### Algorithm
 
 This implementation uses a binary search algorithm when the polygon has more
-than ten vertices and a brute-force search when it has ten or less.
-For the brute-force search, it compares the projection of
-each vector along the given direction and runs in ``O(n)`` where
-``n`` is the number of vertices.
-For the binary search the algorithm runs in ``O(log n)``.
-We follow [this implementation](http://geomalgorithms.com/a14-_extreme_pts.html#polyMax_2D())
+than $BINARY_OR_BRUTE_FORCE vertices and a brute-force search when it has
+$BINARY_OR_BRUTE_FORCE or fewer vertices.
+The brute-force search compares the projection of each vector along the given
+direction and runs in ``O(n)`` where ``n`` is the number of vertices.
+The binary search runs in ``O(log n)`` and we follow
+[this implementation](http://geomalgorithms.com/a14-_extreme_pts.html#polyMax_2D())
 based on an algorithm described in [1].
 
-[1] Joseph O'Rourke, Computational Geometry in C (2nd Edition)
+[1] Joseph O'Rourke, *Computational Geometry in C (2nd Edition)*.
 """
 function σ(d::AbstractVector, P::VPolygon)
     @assert !isempty(P.vertices) "the polygon has no vertices"
     return P.vertices[_σ_helper(d, P)]
 end
 
-# heuristic to define the method used to compute the support vector of a polygon
-# in vertex representation; if the number of vertices of the polygon is smaller
-# than this value, the brute force method is used; otherwise binary search is used
-const binary_or_brute_force = 10
-
-# return the index of a support vector of P along d from the list of vertices of P
+# return the index of a support vector of P along d from the vertices list of P
 function _σ_helper(d::AbstractVector, P::VPolygon)
     vlist = P.vertices
     return _σ_helper(d, vlist)
 end
 
 function _σ_helper(d::AbstractVector, vlist::Vector{VN}) where {N, VN<:AbstractVector{N}}
-    if length(vlist) > binary_or_brute_force
+    if length(vlist) > BINARY_OR_BRUTE_FORCE
         return _binary_support_vector(d, vlist)
     else
         return _brute_force_support_vector(d, vlist)
@@ -337,47 +348,48 @@ end
 
 function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, VT<:AbstractVector{T}}
     m = length(vlist)
-    @assert m > 2 "the number of vertices in the binary support vector approach should " *
-                  "be at least three, but it is $m"
+    @assert m > 2 "the number of vertices in the binary-search approach " *
+                  "should be at least three, but it is $m"
 
-    # add extra vertex on the end equal to the first
-    push!(vlist, vlist[1])
+    @inbounds begin
+        # add the first vertex at the end again
+        push!(vlist, vlist[1])
 
-    # start chain = [1,n+1] with P.vertices[n+1] = P.vertices[1]
-    a = 1; b = m + 1
-    A = vlist[2] - vlist[1]
-    upA = _similar_direction(d, A)
-
-    # test if P.vertices[0] is a local maximum
-    if (!upA && !isabove(d, vlist[m], vlist[1]))
-        # if vlist[1] is the maximum, remove the extra point added
-        pop!(vlist)
-        return 1
-    end
-    while true
-        # midpoint of [a,b], and 1<c<n+1
-        c = round(Int, (a + b) / 2)
-        C = vlist[c + 1] - vlist[c]
-        upC = _similar_direction(d, C)
-        if (!upC && !isabove(d, vlist[c - 1], vlist[c]))
-            # vlist[c] is a local maximum, remove the extra point added
-            pop!(vlist)
-            return c
+        # start chain = [1,n+1] with vlist[n+1] = vlist[1]
+        a = 1
+        b = m + 1
+        A = vlist[2] - vlist[1]
+        upA = _similar_direction(d, A)
+        if (!upA && !isabove(d, vlist[m], vlist[1]))
+            # vlist[1] is the maximum
+            pop!(vlist)  # remove the extra point added
+            return 1
         end
+        while true
+            # midpoint of [a,b], and 1<c<n+1
+            c = round(Int, (a + b) / 2)
+            C = vlist[c + 1] - vlist[c]
+            upC = _similar_direction(d, C)
+            if (!upC && !isabove(d, vlist[c - 1], vlist[c]))
+                # vlist[c] is the maximum
+                pop!(vlist)  # remove the extra point added
+                return c
+            end
 
-        # no max yet, so continue with the binary search
-        # pick one of the two subchains [a,c] or [c,b]
-        if (upA && upC && !isabove(d, vlist[a], vlist[c])) ||
-        (!upA && (upC || (!upC && isabove(d, vlist[a], vlist[c]))))
-            a = c
-            A = C
-            upA = upC
-        else
-            b = c
-        end
-        if (b <= a + 1) # the chain is impossibly small
-            pop!(vlist) # remove the extra point added
-            throw(ErrorException("something went wrong")) # return an error
+            # no max yet, so continue with the binary search
+            # pick one of the two subchains [a,c] or [c,b]
+            if (upA && upC && !isabove(d, vlist[a], vlist[c])) ||
+            (!upA && (upC || (!upC && isabove(d, vlist[a], vlist[c]))))
+                a = c
+                A = C
+                upA = upC
+            else
+                b = c
+            end
+            if (b <= a + 1)  # the chain is impossibly small
+                pop!(vlist)  # remove the extra point added
+                error("something went wrong")
+            end
         end
     end
 end
@@ -424,8 +436,7 @@ edge, using the dot product.
 ### Examples
 
 ```jldoctest
-julia> P = VPolygon([[2.0, 3.0], [3.0, 1.0], [5.0, 1.0], [4.0, 5.0]];
-                    apply_convex_hull=false);
+julia> P = VPolygon([[2.0, 3.0], [3.0, 1.0], [5.0, 1.0], [4.0, 5.0]]);
 
 julia> [4.5, 3.1] ∈ P
 false
@@ -436,78 +447,27 @@ true
 ```
 """
 function ∈(x::AbstractVector, P::VPolygon)
-    @assert length(x) == 2
+    @assert length(x) == 2 "a $(length(x))-dimensional vector is " *
+        "incompatible with an $(dim(P))-dimensional set"
 
     # special cases: 0 or 1 vertex
-    if length(P.vertices) == 0
-        return false
-    elseif length(P.vertices) == 1
-        return x == P.vertices[1]
-    end
-
-    if !is_right_turn(P.vertices[1], x, P.vertices[end])
-        return false
-    end
-    for i in 2:length(P.vertices)
-        if !is_right_turn(P.vertices[i], x, P.vertices[i-1])
+    @inbounds begin
+        if length(P.vertices) == 0
             return false
+        elseif length(P.vertices) == 1
+            return x == P.vertices[1]
+        end
+
+        if !is_right_turn(P.vertices[1], x, P.vertices[end])
+            return false
+        end
+        for i in 2:length(P.vertices)
+            if !is_right_turn(P.vertices[i], x, P.vertices[i-1])
+                return false
+            end
         end
     end
     return true
-end
-
-"""
-    _random_zero_sum_vector(rng::AbstractRNG, N::Type{<:Real}, n::Int)
-
-Create a random vector with entries whose sum is zero.
-
-### Input
-
-- `rng` -- random number generator
-- `N`   -- numeric type
-- `n`   -- length of vector
-
-### Output
-
-A random vector of random numbers such that all positive entries come first and
-all negative entries come last, and such that the total sum is zero.
-
-### Algorithm
-
-This is a preprocessing step of the algorithm
-[here](https://stackoverflow.com/a/47358689) based on
-[P. Valtr. Probability that n random points are in convex
-position](https://link.springer.com/article/10.1007%2FBF01271274).
-"""
-function _random_zero_sum_vector(rng::AbstractRNG, N::Type{<:Real}, n::Int)
-    # generate a sorted list of random x and y coordinates
-    list = sort!(randn(rng, N, n))
-    while (length(remove_duplicates_sorted!(list)) < n)
-        # make sure that no duplicates exist
-        list = sort!(append!(list, randn(rng, N, length(list) - n)))
-    end
-    # lists of consecutive points
-    in_l1 = rand(rng, Bool, n-2)
-    l1 = Vector{N}() # normal
-    l2 = Vector{N}() # inverted
-    push!(l1, list[1])
-    push!(l2, list[1])
-    for i in 2:n-1
-        push!(in_l1[i-1] ? l1 : l2, list[i])
-    end
-    push!(l1, list[end])
-    push!(l2, list[end])
-    # convert to vectors representing the distance (order does not matter)
-    dist = Vector{N}()
-    sizehint!(dist, n)
-    for i in 1:length(l1)-1
-        push!(dist, l1[i+1] - l1[i])
-    end
-    for i in 1:length(l2)-1
-        push!(dist, l2[i] - l2[i+1])
-    end
-    @assert isapprox(sum(dist), zero(N), atol=1e-6)
-    return dist
 end
 
 """
@@ -530,16 +490,20 @@ Create a random polygon in vertex representation.
 
 A random polygon in vertex representation.
 
-### Algorithm
-
-We follow the idea [here](https://stackoverflow.com/a/47358689) based on
-[P. Valtr. Probability that n random points are in convex
-position](https://link.springer.com/article/10.1007%2FBF01271274).
-There is also a nice video available
-[here](http://cglab.ca/~sander/misc/ConvexGeneration/convex.html).
+### Notes
 
 The number of vertices can be controlled with the argument `num_vertices`.
-For a negative value we choose a random number in the range `3:10`.
+For a negative value we choose a random number in the range
+`$DEFAULT_RAND_VERTEX_RANGE`.
+
+### Algorithm
+
+We follow the idea described [here](https://stackoverflow.com/a/47358689) based
+on [1]. There is also a nice video available
+[here](http://cglab.ca/~sander/misc/ConvexGeneration/convex.html).
+
+[1] Pavel Valtr: *Probability that n random points are in convex position*.
+Discret. Comput. Geom. 1995.
 """
 function rand(::Type{VPolygon};
               N::Type{<:Real}=Float64,
@@ -550,7 +514,7 @@ function rand(::Type{VPolygon};
     @assert dim == 2 "cannot create a random VPolygon of dimension $dim"
     rng = reseed(rng, seed)
     if num_vertices < 0
-        num_vertices = rand(3:10)
+        num_vertices = rand(DEFAULT_RAND_VERTEX_RANGE)
     end
 
     # special cases, 0 or 1 vertex
@@ -563,8 +527,8 @@ function rand(::Type{VPolygon};
     # general case, >= 2 vertices
 
     # get random horizontal and vertical vectors
-    horiz = _random_zero_sum_vector(rng, N, num_vertices)
-    vert = _random_zero_sum_vector(rng, N, num_vertices)
+    horiz = rand_pos_neg_zerosum_vector(num_vertices, N=N, rng=rng)
+    vert = rand_pos_neg_zerosum_vector(num_vertices, N=N, rng=rng)
 
     # randomly combine horizontal and vertical vectors
     m = num_vertices
@@ -580,22 +544,24 @@ function rand(::Type{VPolygon};
     # connect directions
     vertices = Vector{Vector{N}}(undef, num_vertices)
     # random starting point
-    vertices[1] = randn(rng, N, 2)
-    for i in 1:length(directions)-1
-        vertices[i+1] = vertices[i] + directions[i]
+    @inbounds begin
+        vertices[1] = randn(rng, N, 2)
+        for i in 1:length(directions)-1
+            vertices[i+1] = vertices[i] + directions[i]
+        end
+        @assert isapprox(vertices[end] + directions[end], vertices[1], atol=1e-6)
     end
-    @assert isapprox(vertices[end] + directions[end], vertices[1], atol=1e-6)
     return VPolygon(vertices; apply_convex_hull=true)
 end
 
 """
     constraints_list(P::VPolygon)
 
-Return the list of constraints defining a polygon in V-representation.
+Return the list of constraints defining a polygon in vertex representation.
 
 ### Input
 
-- `P` -- polygon in V-representation
+- `P` -- polygon in vertex representation
 
 ### Output
 
@@ -603,8 +569,7 @@ The list of constraints of the polygon.
 
 ### Algorithm
 
-First the H-representation of ``P`` is computed, then its list of constraints
-is returned.
+We convert to constraint representation using `tohrep`.
 """
 function constraints_list(P::VPolygon)
     return constraints_list(tohrep(P))
@@ -624,14 +589,9 @@ Translate (i.e., shift) a polygon in vertex representation by a given vector.
 
 A translated polygon in vertex representation.
 
-### Algorithm
-
-We add the vector to each vertex of the polygon.
-
 ### Notes
 
-
-See also [`translate!(::VPolygon, AbstractVector)`](@ref) for the in-place version.
+See [`translate!(::VPolygon, ::AbstractVector)`](@ref) for the in-place version.
 """
 function translate(P::VPolygon, v::AbstractVector)
     return translate!(deepcopy(P), v)
@@ -640,7 +600,8 @@ end
 """
     translate!(P::VPolygon, v::AbstractVector)
 
-Translate (i.e., shift) a polygon in vertex representation by a given vector, in-place.
+Translate (i.e., shift) a polygon in vertex representation by a given vector,
+in-place.
 
 ### Input
 
@@ -649,7 +610,7 @@ Translate (i.e., shift) a polygon in vertex representation by a given vector, in
 
 ### Output
 
-A translated polygon in vertex representation.
+The polygon translated by the vector.
 
 ### Algorithm
 
@@ -657,7 +618,8 @@ We add the vector to each vertex of the polygon.
 
 ### Notes
 
-See also [`translate(::VPolygon, AbstractVector)`](@ref) for the out-of-place version.
+See [`translate(::VPolygon, ::AbstractVector)`](@ref) for the out-of-place
+version.
 """
 function translate!(P::VPolygon, v::AbstractVector)
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
@@ -667,10 +629,6 @@ function translate!(P::VPolygon, v::AbstractVector)
     end
     return P
 end
-
-# =======================
-# Concrete intersection
-# =======================
 
 function _isinside(p, a, b)
     @inbounds begin
@@ -694,7 +652,7 @@ function _intersection_line_segments(a, b, s, f)
     return [α, β]
 end
 
-# Note: this method assumes that the vertices are sorted in ccw order
+# Note: this method assumes that the vertices are sorted in CCW order
 function _intersection_vrep_2d(spoly::AbstractVector{VT},
                                cpoly::AbstractVector{VT}) where {VT<:AbstractVector}
     outarr = spoly
@@ -721,11 +679,35 @@ function _intersection_vrep_2d(spoly::AbstractVector{VT},
 end
 
 function project(V::VPolygon, block::AbstractVector{Int}; kwargs...)
-    if length(block) == 2 && 1 ∈ block && 2 ∈ block
-        return V
-    elseif length(block) == 1 && (1 ∈ block || 2 ∈ block)
-        return _project_vrep(vertices_list(V), 2, block)
-    else
-        throw(ArgumentError("can't project a two-dimensional polygon into variables $block"))
+    if length(block) == 1
+        @assert block[1] == 1 || block[1] == 2 "invalid projection to $block"
+        l, h = extrema(V, block[1])
+        return Interval(l, h)
+    elseif length(block) == 2
+        if block[1] == 1 && block[2] == 2
+            return V  # no projection
+        else
+            @assert block[1] == 2 && block[2] == 1 "invalid projection to $block"
+            return permute(V, block)  # swap dimensions
+        end
     end
+    throw(ArgumentError("invalid projection to $block"))
+end
+
+"""
+    permute(V::VPolygon, p::AbstractVector{Int})
+
+Permute the dimensions according to a permutation vector.
+
+### Input
+
+- `P` -- polygon in vertex representation
+- `p` -- permutation vector
+
+### Output
+
+The permuted polygon in vertex representation.
+"""
+function permute(V::VPolygon, p::AbstractVector{Int})
+    return VPolygon([v[p] for v in V.vertices]; apply_convex_hull=true)
 end

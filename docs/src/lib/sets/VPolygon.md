@@ -18,15 +18,15 @@ translate(::VPolygon, ::AbstractVector)
 translate!(::VPolygon, ::AbstractVector)
 remove_redundant_vertices(::VPolygon; ::String="monotone_chain")
 remove_redundant_vertices!(::VPolygon; ::String="monotone_chain")
+permute(::VPolygon, ::AbstractVector{Int})
+linear_map(M::AbstractMatrix, P::VPolygon)
 ```
 Inherited from [`ConvexSet`](@ref):
 * [`norm`](@ref norm(::ConvexSet, ::Real))
 * [`radius`](@ref radius(::ConvexSet, ::Real))
 * [`diameter`](@ref diameter(::ConvexSet, ::Real))
 * [`singleton_list`](@ref singleton_list(::ConvexSet))
-
-Inherited from [`AbstractPolyhedron`](@ref):
-* [`linear_map`](@ref linear_map(::AbstractMatrix{NM}, ::AbstractPolyhedron{NP}) where {NM, NP})
+* [`ρ`](@ref ρ(::AbstractVector, ::ConvexSet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
