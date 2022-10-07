@@ -20,17 +20,6 @@ be used to skip this preprocessing.
 
 ### Examples
 
-A polygon in vertex representation can be constructed by passing the list of
-line segments. For example, we can build the right triangle
-
-```jldoctest polygon_vrep
-julia> P = VPolygon([[0, 0], [1, 0], [0, 1]]);
-
-julia> P.vertices
-3-element Vector{Vector{Int64}}:
- [0, 0]
- [1, 0]
- [0, 1]
 ```
 """
 struct Polygon{N, VN<:AbstractVector{N}} <: AbstractPolygon{N}
