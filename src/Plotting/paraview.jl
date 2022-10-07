@@ -1,4 +1,4 @@
-function writevtk(X::ConvexSet{N}; file="output") where {N}
+function writevtk(X::LazySet; file="output")
     points, connec = triangulate(X)
     ntriangles = length(connec)
     cell = VTKPolyhedron(1:ntriangles, connec...)
@@ -8,7 +8,7 @@ function writevtk(X::ConvexSet{N}; file="output") where {N}
     end
 end
 
-function writevtk(X::AbstractVector{VT}; file="output") where {N, VT<:ConvexSet{N}}
+function writevtk(X::AbstractVector{<:LazySet}; file="output")
     points_list = Vector{Matrix{Float32}}()
     cell_list = Vector{VTKPolyhedron}()
     count = 0
