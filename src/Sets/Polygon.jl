@@ -23,7 +23,7 @@ be used to skip this preprocessing.
 ```
 """
 struct Polygon{N, VN<:AbstractVector{N}} <: AbstractPolygon{N}
-    line_segments::LineSegment{N, VN<:AbstractVector{N}}
+    edges::Vector{LineSegment{N, VN}}
 
     # default constructor that applies a convex hull algorithm
     function Polygon(line_segments::LineSegment{N, VN<:AbstractVector{N}};
