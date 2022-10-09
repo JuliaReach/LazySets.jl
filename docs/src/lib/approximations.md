@@ -51,12 +51,11 @@ approximate
 ## Box Approximations
 
 ```@docs
-ballinf_approximation
 box_approximation
 interval_hull
 symmetric_interval_hull
 box_approximation_symmetric
-box_approximation_helper
+ballinf_approximation
 ```
 
 ## Iterative refinement
