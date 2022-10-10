@@ -79,7 +79,7 @@ for N in [Float64, Rational{Int}, Float32]
 end
 
 for N in [Float64]
-    # empty intersection due to line search
+    # slightly contradicting bounds are interpreted as a flat set
     X = HalfSpace(N[-1], N(0)) ∩ HalfSpace(N[1], N(-1e-15))
-    @test box_approximation(X) isa EmptySet{N}
+    @test box_approximation(X) == Hyperrectangle(N[-5.0e-16], N[0])
 end

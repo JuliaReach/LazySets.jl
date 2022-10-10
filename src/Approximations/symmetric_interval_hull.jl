@@ -1,9 +1,5 @@
-# ================================
-# Concrete symmetric interval hull
-# ================================
-
 """
-    symmetric_interval_hull(S::ConvexSet{N}) where {N}
+    symmetric_interval_hull(S::LazySet{N}) where {N}
 
 Overapproximate a set by a tight hyperrectangle centered in the origin.
 
@@ -15,24 +11,27 @@ Overapproximate a set by a tight hyperrectangle centered in the origin.
 
 A tight hyperrectangle that is centrally symmetric wrt. the origin.
 
-### Algorithm
-
-The center of the box is the origin, and the radius is obtained by computing the
-maximum value of the support function evaluated in the canonical directions.
-
 ### Notes
 
-The result is a hyperrectangle and hence in particular convex.
-
 An alias for this function is `box_approximation_symmetric`.
+
+### Algorithm
+
+The center of the box is the origin, and the radius is obtained via the
+`extrema` function.
 """
-function symmetric_interval_hull(S::ConvexSet{N}) where {N}
-    # fallback returns a hyperrectangular set
-    (c, r) = box_approximation_helper(S)
-    if r[1] < 0
-        return EmptySet{N}(dim(S))
+function symmetric_interval_hull(S::LazySet{N}) where {N}
+    n = dim(S)
+    r = Vector{N}(undef, n)
+    @inbounds for i in 1:n
+        lo, hi = extrema(S, i)
+        if !_geq(hi, lo)
+            # contradicting bounds => set is empty
+            return EmptySet{N}(n)
+        end
+        r[i] = max(abs(lo), abs(hi))
     end
-    return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
+    return Hyperrectangle(zeros(N, length(r)), r)
 end
 
 """
@@ -42,38 +41,23 @@ Alias for `symmetric_interval_hull`.
 """
 box_approximation_symmetric = symmetric_interval_hull
 
-# ===============
-# Specializations
-# ===============
-
-# empty set specialization
-symmetric_interval_hull(∅::EmptySet) = ∅
-
+# concretization of a lazy SymmetricIntervalHull
 function LazySets.concretize(sih::SymmetricIntervalHull)
-    return symmetric_interval_hull(LazySets.concretize(sih.X))
-end
-
-# interval specialization
-function symmetric_interval_hull(x::Interval)
-    abs_inf = abs(min(x))
-    abs_sup = abs(max(x))
-    bound = max(abs_sup, abs_inf)
-    return Interval(-bound, bound)
-end
-
-# hyperrectangle specialization
-@inline function _maxabs(c::N, r::N) where {N}
-    return c >= zero(N) ? c + r : -c + r
+    return symmetric_interval_hull(sih.X)
 end
 
 function symmetric_interval_hull(H::AbstractHyperrectangle{N}) where {N}
     n = dim(H)
     r = Vector{N}(undef, n)
     @inbounds for i in 1:n
-        r[i] = _maxabs(center(H, i), radius_hyperrectangle(H, i))
+        ci = center(H, i)
+        ri = radius_hyperrectangle(H, i)
+        r[i] = ci >= zero(N) ? ci + ri : -ci + ri
     end
     return Hyperrectangle(zeros(N, n), r)
 end
+
+symmetric_interval_hull(∅::EmptySet) = ∅
 
 function symmetric_interval_hull(S::AbstractSingleton{N}) where {N}
     n = dim(S)
@@ -98,9 +82,9 @@ function symmetric_interval_hull(L::LineSegment{N}) where {N}
     return Hyperrectangle(zeros(N, 2), r)
 end
 
-function symmetric_interval_hull(X::LinearMap{N, <:AbstractSingleton}) where {N}
-    n = dim(X)
-    r = abs.(X.M * element(X.X))
+function symmetric_interval_hull(lm::LinearMap{N, <:AbstractSingleton}) where {N}
+    n = dim(lm)
+    r = abs.(lm.M * element(lm.X))
     return Hyperrectangle(zeros(N, n), r)
 end
 
