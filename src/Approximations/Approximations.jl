@@ -1,8 +1,7 @@
 __precompile__(true)
 
 """
-Module `Approximations.jl` -- polygonal approximation of convex sets through
-support vectors.
+Module `Approximations.jl` -- polygonal approximation of sets.
 """
 module Approximations
 
