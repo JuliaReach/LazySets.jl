@@ -1,7 +1,7 @@
 export VPolygonNC
 
 """
-    VPolygonNC{N, VN<:AbstractVector{N}} <: LazySets{N}
+    VPolygonNC{N, VN<:AbstractVector{N}} <: LazySet{N}
 
 Type that represents a non-convex polygon by its vertices.
 
@@ -9,30 +9,19 @@ Type that represents a non-convex polygon by its vertices.
 
 - `vertices` -- the list of vertices
 
-### Notes
-
-This type assumes that all vertices are sorted in counter-clockwise fashion.
-
-To ensure this property, the constructor of `VPolygonNC` applies an algorithm `initial_check` on the vertices by default. This also removes redundant vertices.
-
-
-### Examples
-
 ```
 """
-struct VPolygonNC{N, VN<:AbstractVector{N}} <: LazySets{N}
-    edges::Vector{LineSegment{N, VN}}
+struct VPolygonNC{N, VN<:AbstractVector{N}} <: LazySet{N}
+    vertices::Vector{VN}
 
     # default constructor that applies a convex hull algorithm
-    function VPolygonNC(vertices::Vector{VN};
-                        initial_check::Bool=true,
-                        ) where {N, VN<:AbstractVector{N}}
-        if initial_check
-            vertices = convex_hull(vertices, algorithm=algorithm)
-        end
-        return new{N, VN}(line_segments)
+    function VPolygonNC(vertices::Vector{VN}) where {N, VN<:AbstractVector{N}}
+        return new{N, VN}(vertices)
     end
 end
 
 # constructor with empty vertices list
-VPolygonNC{N}() where {N} = VPolygon(Vector{Vector{N}}(), apply_convex_hull=false)
+VPolygonNC{N}() where {N} = VPolygonNC(Vector{Vector{N}}())
+
+# constructor with no vertices of type Float64
+VPolygonNC() = VPolygonNC{Float64}()
