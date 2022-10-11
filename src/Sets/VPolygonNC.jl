@@ -25,8 +25,6 @@ julia> NCP.vertices
  [2.0, 0.0]
  [1.0, 1.0]
 ```
-
-```
 """
 struct VPolygonNC{N, VN<:AbstractVector{N}} <: LazySet{N}
     vertices::Vector{VN}
