@@ -31,7 +31,6 @@ julia> NCP.vertices
 struct VPolygonNC{N, VN<:AbstractVector{N}} <: LazySet{N}
     vertices::Vector{VN}
 
-    # default constructor that applies a convex hull algorithm
     function VPolygonNC(vertices::Vector{VN}) where {N, VN<:AbstractVector{N}}
         return new{N, VN}(vertices)
     end
