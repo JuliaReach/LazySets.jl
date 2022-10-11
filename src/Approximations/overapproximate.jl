@@ -1,5 +1,3 @@
-import Base: convert
-
 using LazySets: block_to_dimension_indices,
                 substitute_blocks,
                 fast_interval_pow,
@@ -90,7 +88,7 @@ function overapproximate(S::LazySet{N},
         constraints[4] = LinearConstraint(DIR_SOUTH(N), ρ(DIR_SOUTH(N), S))
         return HPolygon(constraints, sort_constraints=false)
     else
-        P = tohrep(_approximate(S, ε))
+        P = overapproximate_hausdorff(S, ε)
         if prune
             remove_redundant_constraints!(P)
         end

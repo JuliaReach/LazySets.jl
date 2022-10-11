@@ -5,6 +5,8 @@ Module `Approximations.jl` -- polygonal approximation of sets.
 """
 module Approximations
 
+import Base: convert
+
 import IntervalArithmetic
 const IA = IntervalArithmetic
 
