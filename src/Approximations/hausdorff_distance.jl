@@ -1,7 +1,7 @@
 export hausdorff_distance
 
 """
-    hausdorff_distance(X::ConvexSet{N}, Y::ConvexSet{N}; [p]::N=N(Inf),
+    hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; [p]::N=N(Inf),
                        [ε]=N(1e-3)) where {N}
 
 Compute the Hausdorff distance between two convex sets up to a given threshold.
@@ -12,7 +12,7 @@ Compute the Hausdorff distance between two convex sets up to a given threshold.
 - `Y` -- convex set
 - `p` -- (optional, default: `Inf`) norm parameter of the Hausdorff distance
 - `ε` -- (optional, default: `1e-3`) precision threshold; the true Hausdorff
-         distance may diverge from the result by at most this value
+         distance is allowed to diverge from the result by at most this value
 
 ### Output
 
@@ -33,8 +33,8 @@ Here ``𝐵_p^n`` is the ``n``-dimensional unit ball in the ``p``-norm.
 The implementation may internally rely on the support function of ``X`` and
 ``Y``; hence any imprecision in the implementation of the support function may
 affect the result.
-At the time of writing, the only set type with imprecise support function is the
-lazy [`Intersection`](@ref).
+At the time of writing, the only convex set type with imprecise support function
+is the lazy [`Intersection`](@ref).
 
 ### Algorithm
 
@@ -51,15 +51,17 @@ Given a value ``δ``, to check whether the sets are within Hausdorff distance
 ``δ``, we simply check the inclusions given above, where on the right-hand side
 we use a lazy `Bloating`.
 """
-function hausdorff_distance(X::ConvexSet{N}, Y::ConvexSet{N}; p::N=N(Inf),
+function hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; p::N=N(Inf),
                             ε=N(1e-3)) where {N}
     @assert ε > zero(N) "the value ε must be positive"
+    @assert isconvextype(typeof(X)) && isconvextype(typeof(Y)) "this " *
+        "implementation requires the sets to be convex"
     @assert isbounded(X) && isbounded(Y) "the Hausdorff distance is only " *
         "defined for compact sets"
 
     n = dim(X)
     @assert dim(Y) == n "the Hausdorff distance is only defined between sets " *
-                        "of the same dimension, but they had dimensions $n " *
+                        "of the same dimension, but they have dimensions $n " *
                         "resp. $(dim(Y))"
 
     # phase 1: find a finite upper bound
@@ -89,15 +91,13 @@ function _mutual_issubset_in_δ_bloating(X, Y, δ, n, p)
            _issubset_in_δ_bloating(Y, X, δ, n, p)
 end
 
-function _issubset_in_δ_bloating(X::ConvexSet{N}, Y, δ, n, p) where {N}
+function _issubset_in_δ_bloating(X, Y, δ, n, p)
     return X ⊆ Bloating(Y, δ, p)
 end
 
 # for polytopes the default implementation of `⊆` requires membership in the rhs
 # set, which will be a Bloating and hence not available; we use the alternative
 # based on constraints_list on the right instead
-function _issubset_in_δ_bloating(X::AbstractPolytope{N}, Y, δ, n, p) where {N}
+function _issubset_in_δ_bloating(X::AbstractPolytope, Y, δ, n, p)
     return LazySets._issubset_constraints_list(X, Bloating(Y, δ, p))
 end
-
-

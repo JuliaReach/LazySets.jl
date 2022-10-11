@@ -5,13 +5,13 @@ Approximate a rectification of a polytopic set with a convex polytope.
 
 ### Input
 
-- `R`                 -- rectification
+- `R`                 -- rectification of a polytopic set
 - `apply_convex_hull` -- (optional; default: `false`) option to remove redundant
                          vertices
 
 ### Output
 
-A polytope in vertex representation.
+A polytope in vertex representation (`VPolygon` in 2D, `VPolytope` otherwise).
 There is no guarantee that the result over- or underapproximates `R`.
 
 ### Algorithm
