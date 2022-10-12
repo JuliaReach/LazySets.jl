@@ -61,15 +61,14 @@ ballinf_approximation
 ## Iterative refinement
 
 ```@docs
+overapproximate_hausdorff
 LocalApproximation
 PolygonalOverapproximation
-new_approx(S::ConvexSet, p1::VN, d1::VN,
-           p2::VN, d2::VN) where {N<:AbstractFloat, VN<:AbstractVector{N}}
-addapproximation!(Ω::PolygonalOverapproximation, p1::VN, d1::VN, p2::VN, d2::VN) where {N<:Real, VN<:AbstractVector{N}}
-refine(::LocalApproximation, ::ConvexSet)
+new_approx
+addapproximation!
+refine(::LocalApproximation, ::LazySet)
 tohrep(::PolygonalOverapproximation)
-_approximate(S::ConvexSet{N}, ε::Real) where {N<:AbstractFloat}
-constraint(::LocalApproximation)
+convert(::Type{HalfSpace}, ::LocalApproximation)
 ```
 
 ## Template directions

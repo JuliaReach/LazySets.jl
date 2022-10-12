@@ -68,7 +68,7 @@ Hausdorff distance.
 
 
 ```@example example_iterative_refinement
-import LazySets.Approximations:PolygonalOverapproximation, addapproximation!
+using LazySets.Approximations: PolygonalOverapproximation, addapproximation!
 
 Ω = PolygonalOverapproximation(b)
 p1, d1, p2, d2 = [1.0, 0.0], [1.0, 0.0], [0.0, 1.0], [0.0, 1.0]
@@ -98,7 +98,7 @@ To illustrate this, first let's add the remaining three approximations to `Ω`
 along the canonical directions, to build a box overapproximation of `b`.
 
 ```@example example_iterative_refinement
-import LazySets.Approximations: refine, tohrep
+using LazySets.Approximations: refine, tohrep
 
 plot(b, 1e-3, aspectratio=1, alpha=0.3)
 
@@ -161,7 +161,7 @@ point epsilon in the given numerical precision.
 ## Algorithm
 
 Having presented the individual steps, we give the pseudocode of the iterative
-refinement algorithm, see `_approximate(S, ε)`.
+refinement algorithm, see `overapproximate_hausdorff(S, ε)`.
 
 The algorithm consists of the following steps:
 
@@ -187,7 +187,7 @@ As a final example consider the iterative refinement of the ball `b` for
 different values of the approximation threshold `ε`.
 
 ```@example example_iterative_refinement
-import LazySets.Approximations:overapproximate, _approximate
+using LazySets.Approximations: overapproximate_hausdorff
 
 p0 = plot(b, 1e-6, aspectratio=1)
 p1 = plot!(p0, overapproximate(b, 1.), alpha=0.4, aspectratio=1)
@@ -205,15 +205,15 @@ Meanwhile, the number of constraints of the polygonal overapproximation
 increases, in this example by a power of 2 when the error is divided by a factor 10.
 
 ```@example example_iterative_refinement
-h = ε ->  length(_approximate(b, ε).constraints)
+h = ε ->  length(overapproximate_hausdorff(b, ε).constraints)
 h(1.), h(0.1), h(0.01)
 ```
 
 !!! note
-    Actually, the plotting function for an arbitrary `ConvexSet` `plot(...)`,
-    called *recipe* in the context of
-    [Plots.jl](https://github.com/JuliaPlots/Plots.jl), is such that it receives
-    a numeric argument `ε` and the routine itself calls `overapproximate`.
+    Actually, the plotting function for an arbitrary convex `LazySet`,
+    `plot(...)` (called *recipe* in the context of
+    [Plots.jl](https://github.com/JuliaPlots/Plots.jl)), receives a numeric
+    argument `ε` and the routine itself calls `overapproximate`.
     However, some sets such as abstract polygons have their own plotting recipe
     and hence do not require the error threshold, since they are plotted exactly
     as the convex hull of their vertices.
