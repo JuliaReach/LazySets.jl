@@ -21,7 +21,7 @@ The subtypes of `LazySet` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(LazySet, false)
-8-element Vector{Any}:
+9-element Vector{Any}:
  AbstractPolynomialZonotope
  Complement
  ConvexSet
@@ -30,6 +30,7 @@ julia> subtypes(LazySet, false)
  Rectification
  UnionSet
  UnionSetArray
+ VPolygonNC
 ```
 
 If we only consider *concrete* subtypes, then:
@@ -38,7 +39,7 @@ If we only consider *concrete* subtypes, then:
 julia> concrete_subtypes = subtypes(LazySet, true);
 
 julia> length(concrete_subtypes)
-53
+54
 
 julia> println.(concrete_subtypes);
 AffineMap
@@ -91,6 +92,7 @@ UnionSet
 UnionSetArray
 Universe
 VPolygon
+VPolygonNC
 VPolytope
 ZeroSet
 Zonotope
