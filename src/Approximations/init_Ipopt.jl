@@ -2,7 +2,7 @@ function default_nln_solver(N::Type{<:Real}=Float64)
     return Ipopt.Optimizer
 end
 
-function _underapproximate_box(X::S, solver) where {S}
+function _underapproximate_box(X::S, solver) where {S<:LazySet}
     if !isconvextype(S) || !(is_polyhedral(X) && isboundedtype(S))
         error("box underapproximation is only available for convex polytopes")
     end
@@ -34,7 +34,14 @@ function _underapproximate_box(X::S, solver) where {S}
     optimize!(model)
 
     # convert solution to hyperrectangle
-    l = value.(x)
-    h = [value(y[1]), value(z[2])]
+    @inbounds begin
+        l = value.(x)
+        h = [value(y[1]), value(z[2])]
+        if l[1] > h[1]  # sometimes l > h, then just swap them
+            tmp = l
+            l = h
+            h = tmp
+        end
+    end
     return Hyperrectangle(low=l, high=h)
 end
