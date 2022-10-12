@@ -4,31 +4,30 @@ using LazySets: isapproxzero
 """
     AbstractDirections{N, VN}
 
-Abstract type for template direction representations.
+Abstract type for representations of direction vectors.
 
 ### Notes
 
-This type is parameterzed by `N` and `VN`, where:
+This type is parameterized by `N` and `VN`, where:
 
 - `N` stands for the numeric type
 - `VN` stands for the vector type with coefficients of type `N`
 
-Each subtype is an iterator over a set of prescribed directions.
-
-All subtypes should implement the standard iterator methods from `Base`, namely
-`Base.length` (returns the number of directions in the template), and `Base.iterate`.
+Each implementing subtype is an iterator over a set of directions.
+For that they implement the standard iterator methods from `Base`, namely
+`Base.length` (returns the number of directions) and `Base.iterate`.
 Moreover, the following methods should be implemented:
 
-- `dim`    -- return the ambient dimension of the template
-- `eltype` -- return the type of each vector in the template
+- `dim`    -- return the ambient dimension of the vectors
+- `eltype` -- return the type of each vector
 
 Optionally, subtypes may implement:
 
-- `isbounding`   -- (defaults to `false`) return `true` if an overapproximation with
-                    a list of template directions results in a bounded set, given a
+- `isbounding`   -- (defaults to `false`) return `true` if an overapproximation
+                    with the direction vectors results in a bounded set, given a
                     bounded input set, and `false` otherwise
-- `isnormalized` -- (defaults to `false`) returns `true` if each direction in the
-                    given template has norm one w.r.t. the usual vector 2-norm
+- `isnormalized` -- (defaults to `false`) is `true` if each direction vector has
+                    norm one w.r.t. the usual vector 2-norm
 """
 abstract type AbstractDirections{N, VN} end
 
@@ -39,30 +38,31 @@ Returns the dimension of the generated directions.
 
 ### Input
 
-- `ad` -- template directions
+- `ad` -- direction vectors
 
 ### Output
 
-The dimension of the generated directions.
+The ambient dimension of the generated directions.
 """
 function dim(ad::AbstractDirections) end
 
 """
+    isbounding(ad::AbstractDirections)
     isbounding(ad::Type{<:AbstractDirections})
 
-Checks if an overapproximation with a list of template directions results in a
+Check whether an overapproximation with a set of direction vectors results in a
 bounded set, given a bounded input set.
 
 ### Input
 
-- `ad` -- template directions
+- `ad` -- direction vectors or a subtype of `AbstractDirections`
 
 ### Output
 
-Given a bounded set ``X``, we can construct an outer approximation of ``X`` by
-using the template directions `ad` as normal vectors of the facets.
-If this function returns `true`, then the result is again a bounded set (i.e., a
-polytope).
+Given a bounded set ``X``, we can construct an outer polyhedral approximation of
+``X`` by using the direction vectors `ad` as normal vectors of the facets.
+If this function returns `true`, then the result is again guaranteed to be a
+bounded set (i.e., a polytope).
 Note that the result does not depend on the specific shape of ``X``, as long as
 ``X`` is bounded.
 
@@ -71,6 +71,10 @@ Note that the result does not depend on the specific shape of ``X``, as long as
 By default, this function returns `false` in order to be conservative.
 Custom subtypes of `AbstractDirections` should hence add a method for this
 function.
+
+The function can be applied to an instance of an `AbstractDirections` subtype or
+to the subtype itself. By default, the check on the instance falls back to the
+check on the subtype.
 """
 function isbounding(ad::Type{<:AbstractDirections})
     return false
@@ -79,18 +83,29 @@ end
 isbounding(::AD) where {AD<:AbstractDirections} = isbounding(AD)
 
 """
+    isnormalized(ad::AbstractDirections)
     isnormalized(ad::Type{<:AbstractDirections})
 
-Returns whether the given template directions is normalized with respect to the
+Check whether the given direction vectors are normalized with respect to the
 2-norm.
 
 ### Input
 
-- `ad` -- template directions
+- `ad` -- direction vectors or a subtype of `AbstractDirections`
 
 ### Output
 
 `true` if the 2-norm of each element in `ad` is one and `false` otherwise.
+
+### Notes
+
+By default, this function returns `false` in order to be conservative.
+Custom subtypes of `AbstractDirections` should hence add a method for this
+function.
+
+The function can be applied to an instance of an `AbstractDirections` subtype or
+to the subtype itself. By default, the check on the instance falls back to the
+check on the subtype.
 """
 function isnormalized(ad::Type{<:AbstractDirections})
     return false
@@ -99,27 +114,28 @@ end
 isnormalized(::AD) where {AD<:AbstractDirections} = isnormalized(AD)
 
 """
-    project(S::ConvexSet,
+    project(S::LazySet,
             block::AbstractVector{Int},
             directions::Type{<:AbstractDirections},
             [n]::Int;
             [kwargs...]
            )
 
-Project a high-dimensional set to a given block using template directions.
+Project a high-dimensional set to a given block using direction vectors.
 
 ### Input
 
 - `S`          -- set
 - `block`      -- block structure - a vector with the dimensions of interest
-- `directions` -- template directions
+- `directions` -- direction vectors
 - `n`          -- (optional, default: `dim(S)`) ambient dimension of the set `S`
 
 ### Output
 
-The template direction approximation of the projection of `S`.
+The polyhedral overapproximation of the projection of `S` in the given
+directions.
 """
-@inline function project(S::ConvexSet,
+@inline function project(S::LazySet,
                          block::AbstractVector{Int},
                          directions::Type{<:AbstractDirections},
                          n::Int=dim(S);
@@ -128,10 +144,6 @@ The template direction approximation of the projection of `S`.
     lm = project(S, block, LinearMap, n; kwargs...)
     return overapproximate(lm, directions(length(block)))
 end
-
-# ==================================================
-# Box directions
-# ==================================================
 
 """
     BoxDirections{N, VN} <: AbstractDirections{N, VN}
@@ -148,13 +160,13 @@ Box directions can be seen as the vectors where only one entry is ±1, and all
 other entries are 0. In dimension ``n``, there are ``2n`` such directions.
 
 The default vector representation used in this template is a
-`ReachabilityBase.Arrays.SingleEntryVector`, although other implementations can be used
-such as a regular `Vector` and a sparse vector, `SparseVector`.
+`ReachabilityBase.Arrays.SingleEntryVector`, although other implementations can
+be used such as a regular `Vector` and a `SparseVector`.
 
 ### Examples
 
-The template can be constructed by passing the dimension. For example, in dimension
-two,
+The template can be constructed by passing the dimension. For example, in
+dimension two:
 
 ```jldoctest dirs_Box
 julia> dirs = BoxDirections(2)
@@ -164,8 +176,8 @@ julia> length(dirs)
 4
 ```
 
-By default, each direction is represented in this iterator as a `SingleEntryVector`,
-i.e. a vector with only one non-zero element,
+By default, each direction is represented as a `SingleEntryVector`, i.e., a
+vector with only one non-zero element,
 
 ```jldoctest dirs_Box
 julia> eltype(dirs)
@@ -197,11 +209,11 @@ struct BoxDirections{N, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
     n::Int
 end
 
-# convenience constructor for type Float64
-BoxDirections(n::Int) = BoxDirections{Float64, SingleEntryVector{Float64}}(n)
-
 # constructor where only N is specified
 BoxDirections{N}(n::Int) where {N} = BoxDirections{N, SingleEntryVector{N}}(n)
+
+# convenience constructor for type Float64
+BoxDirections(n::Int) = BoxDirections{Float64}(n)
 
 Base.eltype(::Type{BoxDirections{N, VN}}) where {N, VN} = VN
 Base.length(bd::BoxDirections) = 2 * bd.n
@@ -211,8 +223,8 @@ dim(bd::BoxDirections) = bd.n
 isbounding(::Type{<:BoxDirections}) = true
 isnormalized(::Type{<:BoxDirections}) = true
 
-# The idea is that positive states run through vectors with +1 entry,
-# and negative states run through vectors with -1 entry
+# The idea is that positive states run through vectors with a +1 entry,
+# and negative states run through vectors with a -1 entry
 # (1, 0)   state = 1
 # (0, 1)   state = 2
 # (0, -1)  state = -2
@@ -231,7 +243,7 @@ function Base.iterate(bd::BoxDirections{N, Vector{N}}, state::Int=1) where {N}
         return nothing
     end
     vec = zeros(N, bd.n)
-    vec[abs(state)] = convert(N, sign(state))
+    @inbounds vec[abs(state)] = convert(N, sign(state))
     state = (state == bd.n) ? -bd.n : state + 1
     return (vec, state)
 end
@@ -245,10 +257,6 @@ function Base.iterate(bd::BoxDirections{N, SparseVector{N, Int}}, state::Int=1) 
     return (vec, state)
 end
 
-# ==================================================
-# Octagonal directions
-# ==================================================
-
 """
     OctDirections{N, VN} <: AbstractDirections{N, VN}
 
@@ -261,13 +269,13 @@ Octagon directions representation.
 ### Notes
 
 Octagon directions consist of all vectors that are zero almost everywhere except
-in two dimensions ``i``, ``j`` (possibly ``i = j``) where it is ``±1``. In dimension
-``n``, there are ``2n^2`` such directions.
+in two dimensions ``i``, ``j`` (possibly ``i = j``) where it is ``±1``. In
+dimension ``n``, there are ``2n^2`` such directions.
 
 ### Examples
 
-The template can be constructed by passing the dimension. For example, in dimension
-two,
+The template can be constructed by passing the dimension. For example, in
+dimension two:
 
 ```jldoctest dirs_Oct
 julia> dirs = OctDirections(2)
@@ -276,14 +284,13 @@ OctDirections{Float64, SparseArrays.SparseVector{Float64, Int64}}(2)
 julia> length(dirs) # number of directions
 8
 ```
-By default, each direction is represented in this iterator as a sparse vector:
+By default, the directions are represented as sparse vectors:
 
 ```jldoctest dirs_Oct
 julia> eltype(dirs)
 SparseArrays.SparseVector{Float64, Int64}
 ```
-In two dimensions, the directions defined by `OctDirections` are normal to
-the facets of an octagon.
+In two dimensions, the directions are normal to the facets of an octagon.
 
 ```jldoctest dirs_Oct
 julia> first(dirs)
@@ -317,11 +324,11 @@ struct OctDirections{N, VN} <: AbstractDirections{N, VN}
     n::Int
 end
 
-# constructor for type Float64
-OctDirections(n::Int) = OctDirections{Float64, SparseVector{Float64, Int}}(n)
-
 # constructor where only N is specified
 OctDirections{N}(n::Int) where {N} = OctDirections{N, SparseVector{N, Int}}(n)
+
+# constructor for type Float64
+OctDirections(n::Int) = OctDirections{Float64}(n)
 
 Base.eltype(::Type{OctDirections{N, VN}}) where {N, VN} = VN
 Base.length(od::OctDirections) = 2 * od.n^2
@@ -331,12 +338,16 @@ dim(od::OctDirections) = od.n
 isbounding(::Type{<:OctDirections}) = true
 isnormalized(::Type{<:OctDirections}) = false
 
-function Base.iterate(od::OctDirections{N, SparseVector{N, Int}}) where {N}
+function _zeros_oct(n, ::Type{<:SparseVector{N}}) where {N}
+    return spzeros(N, n)
+end
+
+function Base.iterate(od::OctDirections{N, VN}) where {N, VN}
     if od.n == 1
         # fall back to box directions in 1D case
         return iterate(od, 1)
     end
-    vec = spzeros(N, od.n)
+    vec = _zeros_oct(od.n, VN)
     vec[1] = one(N)
     vec[2] = one(N)
     return (copy(vec), (vec, 1, 2))
@@ -381,41 +392,19 @@ function _iterate_state(od::OctDirections{N}, state) where {N}
     return (copy(vec), (vec, i, j))
 end
 
-function Base.iterate(od::OctDirections{N, SparseVector{N, Int}}, state::Tuple) where {N}
+function Base.iterate(od::OctDirections, state::Tuple)
     _iterate_state(od, state)
 end
 
-function Base.iterate(od::OctDirections{N, SparseVector{N, Int}}, state::Int) where {N}
+function Base.iterate(od::OctDirections{N, VN}, state::Int) where {N, VN}
     # continue with box directions
-    return iterate(BoxDirections{N, SparseVector{N, Int}}(od.n), state)
+    return iterate(BoxDirections{N, VN}(od.n), state)
 end
 
-# ----------------------------------
-# implementation with regular arrays
-# ----------------------------------
-function Base.iterate(od::OctDirections{N, Vector{N}}) where {N}
-    if od.n == 1
-        # fall back to box directions in 1D case
-        return iterate(od, 1)
-    end
-    vec = zeros(N, od.n)
-    vec[1] = one(N)
-    vec[2] = one(N)
-    return (copy(vec), (vec, 1, 2))
+# implementation with regular Vector
+function _zeros_oct(n, ::Type{Vector{N}}) where {N}
+    return zeros(N, n)
 end
-
-function Base.iterate(od::OctDirections{N, Vector{N}}, state::Tuple) where {N}
-    _iterate_state(od, state)
-end
-
-function Base.iterate(od::OctDirections{N, Vector{N}}, state::Int) where {N}
-    # continue with box directions
-    return iterate(BoxDirections{N, Vector{N}}(od.n), state)
-end
-
-# ==================================================
-# Diagonal directions
-# ==================================================
 
 """
     DiagDirections{N, VN} <: AbstractDirections{N, VN}
@@ -428,13 +417,13 @@ Diagonal directions representation.
 
 ### Notes
 
-Diagonal directions can be seen as all diagonal directions (all
-entries are ±1). In dimension ``n``, there are in total ``2^n`` such directions.
+Diagonal directions are vectors where all entries are ±1. In dimension ``n``,
+there are in total ``2^n`` such directions.
 
 ## Examples
 
 The template can be constructed by passing the dimension. For example, in
-dimension two,
+dimension two:
 
 ```jldoctest dirs_Diag
 julia> dirs = DiagDirections(2)
@@ -443,14 +432,14 @@ DiagDirections{Float64, Vector{Float64}}(2)
 julia> length(dirs) # number of directions
 4
 ```
-By default, each direction is represented in this iterator as a regular vector:
+By default, each direction is represented as a regular `Vector`:
 
 ```jldoctest dirs_Diag
 julia> eltype(dirs)
 Vector{Float64} (alias for Array{Float64, 1})
 ```
-In two dimensions, the directions defined by `DiagDirections` are normal to
-the facets of a ball in the 1-norm.
+In two dimensions, the directions defined by `DiagDirections` are normal to the
+facets of a ball in the 1-norm.
 
 ```jldoctest dirs_Diag
 julia> collect(dirs)
@@ -475,11 +464,11 @@ struct DiagDirections{N, VN} <: AbstractDirections{N, VN}
     n::Int
 end
 
-# constructor for type Float64
-DiagDirections(n::Int) = DiagDirections{Float64, Vector{Float64}}(n)
-
 # constructor where only N is specified
 DiagDirections{N}(n::Int) where {N} = DiagDirections{N, Vector{N}}(n)
+
+# constructor for type Float64
+DiagDirections(n::Int) = DiagDirections{Float64}(n)
 
 Base.eltype(::Type{DiagDirections{N, VN}}) where {N, VN} = VN
 Base.length(dd::DiagDirections) = 2^dd.n
@@ -510,10 +499,6 @@ function Base.iterate(dd::DiagDirections{N}, state::Vector{N}) where {N}
     end
 end
 
-# ==================================================
-# Box-diagonal directions
-# ==================================================
-
 """
     BoxDiagDirections{N, VN} <: AbstractDirections{N, VN}
 
@@ -532,8 +517,8 @@ directions. In dimension ``n``, there are in total ``2^n + 2n`` such directions.
 
 ## Examples
 
-The template can be constructed by passing the dimension. For example, in dimension
-two,
+The template can be constructed by passing the dimension. For example, in
+dimension two:
 
 ```jldoctest dirs_BoxDiag
 julia> dirs = BoxDiagDirections(2)
@@ -542,14 +527,14 @@ BoxDiagDirections{Float64, Vector{Float64}}(2)
 julia> length(dirs) # number of directions
 8
 ```
-By default, each direction is represented in this iterator as a regular vector:
+By default, each direction is represented as a regular vector:
 
 ```jldoctest dirs_BoxDiag
 julia> eltype(dirs)
 Vector{Float64} (alias for Array{Float64, 1})
 ```
-In two dimensions, the directions defined by `BoxDiagDirections` are normal to
-the facets of an octagon.
+In two dimensions, the directions are normal to the facets of an octagon, i.e.,
+the template coincides with [`OctDirections`](@ref).
 
 ```jldoctest dirs_BoxDiag
 julia> collect(dirs)
@@ -578,11 +563,11 @@ struct BoxDiagDirections{N, VN} <: AbstractDirections{N, VN}
     n::Int
 end
 
-# constructor for type Float64
-BoxDiagDirections(n::Int) = BoxDiagDirections{Float64, Vector{Float64}}(n)
-
 # constructor where only N is specified
 BoxDiagDirections{N}(n::Int) where {N} = BoxDiagDirections{N, Vector{N}}(n)
+
+# constructor for type Float64
+BoxDiagDirections(n::Int) = BoxDiagDirections{Float64}(n)
 
 Base.eltype(::Type{BoxDiagDirections{N, VN}}) where {N, VN} = VN
 Base.length(bdd::BoxDiagDirections) = bdd.n == 1 ? 2 : 2^bdd.n + 2 * bdd.n
@@ -622,10 +607,6 @@ function Base.iterate(bdd::BoxDiagDirections{N, Vector{N}}, state::Int) where {N
     return iterate(BoxDirections{N, Vector{N}}(bdd.n), state)
 end
 
-# ==================================================
-# Polar directions
-# ==================================================
-
 """
     PolarDirections{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
 
@@ -633,15 +614,16 @@ Polar directions representation.
 
 ### Fields
 
-- `Nφ` -- length of the partition of the polar angle
+- `Nφ`    -- length of the partition of the polar angle
+- `stack` -- list of computed directions
 
 ### Notes
 
-The `PolarDirections` constructor provides a sample of the unit sphere
+The `PolarDirections` constructor computes a sample of the unit sphere
 in ``\\mathbb{R}^2``, which is parameterized by the polar angle
-``φ ∈ Dφ := [0, 2π]``; see the wikipedia entry
-[Polar coordinate system](https://en.wikipedia.org/wiki/Polar_coordinate_system)
-for details.
+``φ ∈ Dφ := [0, 2π]``; see the Wikipedia entry on the
+[polar coordinate system](https://en.wikipedia.org/wiki/Polar_coordinate_system)
+for details. The resulting directions are stored in `stack`.
 
 The integer argument ``Nφ`` defines how many samples of ``Dφ`` are taken. The
 Cartesian components of each direction are obtained with
@@ -671,16 +653,18 @@ struct PolarDirections{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractDirec
     stack::Vector{VN} # stores the polar directions
 end
 
-# convenience constructors
-PolarDirections(Nφ::Int) = PolarDirections{Float64, Vector{Float64}}(Nφ)
+# constructor where only N is specified
 PolarDirections{N}(Nφ::Int) where {N} = PolarDirections{N, Vector{N}}(Nφ)
+
+# constructor for type Float64
+PolarDirections(Nφ::Int) = PolarDirections{Float64}(Nφ)
 
 function PolarDirections{N, Vector{N}}(Nφ::Int) where {N}
     if Nφ <= 0
-        throw(ArgumentError("Nφ = $Nφ is invalid; it shoud be at least 1"))
+        throw(ArgumentError("Nφ = $Nφ is invalid; it should be at least 1"))
     end
     stack = Vector{Vector{N}}(undef, Nφ)
-    φ = range(N(0), stop=N(2*pi), length=Nφ+1)  # discretization of the polar angle
+    φ = range(N(0), stop=N(2*π), length=Nφ+1)  # discretization of the polar angle
 
     @inbounds for i in 1:Nφ  # skip last (repeated) angle
         stack[i] = N[cos(φ[i]), sin(φ[i])]
@@ -701,10 +685,6 @@ function Base.iterate(pd::PolarDirections{N, Vector{N}}, state::Int=1) where {N}
     return (pd.stack[state], state + 1)
 end
 
-# ==================================================
-# Spherical directions
-# ==================================================
-
 """
     SphericalDirections{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
 
@@ -720,13 +700,14 @@ Spherical directions representation.
 
 The `SphericalDirections` constructor provides a sample of the unit sphere
 in ``\\mathbb{R}^3``, which is parameterized by the azimuthal and polar angles
-``θ ∈ Dθ := [0, π]`` and ``φ ∈ Dφ := [0, 2π]`` respectively, see the wikipedia
-entry [Spherical coordinate system](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
+``θ ∈ Dθ := [0, π]`` and ``φ ∈ Dφ := [0, 2π]`` respectively; see the Wikipedia
+entry on the
+[spherical coordinate system](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
 for details.
 
-The integer arguments ``Nθ`` and ``Nφ`` define how many samples along the domains
-``Dθ`` and ``Dφ`` respectively are taken. The Cartesian components of each direction
-are obtained with
+The integer arguments ``Nθ`` and ``Nφ`` define how many samples along the
+domains ``Dθ`` and ``Dφ`` are respectively taken. The Cartesian components of
+each direction are obtained with
 
 ```math
 [sin(θᵢ)*cos(φᵢ), sin(θᵢ)*sin(φᵢ), cos(θᵢ)].
@@ -737,8 +718,8 @@ are not considered more than once.
 
 ### Examples
 
-A `SphericalDirections` template can be built in different ways. If you pass
-only one integer, the same value is used to discretize both ``θ`` and ``φ``:
+The template can be built in different ways. If you pass only one integer, the
+same value is used to discretize both ``θ`` and ``φ``:
 
 ```jldoctest spherical_directions; filter = r"1232[0-9]*e-17.*2246[0-9]*e-16.*1232[0-9]*e-17"
 julia> sd = SphericalDirections(3);
@@ -750,7 +731,8 @@ julia> length(sd)
 4
 ```
 
-Pass two integers to control the discretization in ``θ`` and in ``φ`` separately:
+Pass two integers to control the discretization in ``θ`` and in ``φ``
+separately:
 
 ```jldoctest spherical_directions
 julia> sd = SphericalDirections(4, 5);
@@ -770,27 +752,32 @@ struct SphericalDirections{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractD
     stack::Vector{VN} # stores the spherical directions
 end
 
-# convenience constructors
-SphericalDirections(Nθ::Int) = SphericalDirections(Nθ, Nθ)
-SphericalDirections(Nθ::Int, Nφ::Int) = SphericalDirections{Float64, Vector{Float64}}(Nθ::Int, Nφ::Int)
+# constructor where only N is specified
 SphericalDirections{N}(Nθ::Int, Nφ::Int) where {N} = SphericalDirections{N, Vector{N}}(Nθ::Int, Nφ::Int)
+
+# constructor for type Float64
+SphericalDirections(Nθ::Int, Nφ::Int) = SphericalDirections{Float64}(Nθ::Int, Nφ::Int)
+
+# constructor with just one length, interpreted as identical lengths
+SphericalDirections(Nθ::Int) = SphericalDirections(Nθ, Nθ)
 
 function SphericalDirections{N, Vector{N}}(Nθ::Int, Nφ::Int) where {N}
     if Nθ <= 1 || Nφ <= 1
-        throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both shoud be at least 2"))
+        throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both should " *
+                            "be at least 2"))
     end
     stack = Vector{Vector{N}}()
-    θ = range(N(0), stop=N(pi), length=Nθ)    # discretization of the azimuthal angle
-    φ = range(N(0), stop=N(2*pi), length=Nφ)  # discretization of the polar angle
+    θ = range(N(0), stop=N(π), length=Nθ)    # discretization of the azimuthal angle
+    φ = range(N(0), stop=N(2*π), length=Nφ)  # discretization of the polar angle
 
     # add north pole (θ = 0)
     push!(stack, N[0, 0, 1])
 
-    # add south pole (θ = pi)
+    # add south pole (θ = π)
     push!(stack, N[0, 0, -1])
 
-    for φᵢ in φ[1:Nφ-1]  # delete repeated angle
-        for θⱼ in θ[2:Nθ-1] # delete north and south poles
+    for φᵢ in φ[1:Nφ-1]  # skip repeated angle
+        for θⱼ in θ[2:Nθ-1]  # skip north and south poles
             d = N[sin(θⱼ)*cos(φᵢ), sin(θⱼ)*sin(φᵢ), cos(θⱼ)]
             push!(stack, d)
         end
@@ -811,39 +798,38 @@ function Base.iterate(sd::SphericalDirections, state::Int=1)
     return (sd.stack[state], state + 1)
 end
 
-# ==================================================
-# Custom template directions
-# ==================================================
-
 """
     CustomDirections{N, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
 
-User-defined template directions.
+User-defined direction vectors.
 
 ### Fields
 
-- `directions`          -- list of template directions
-- `n`                   -- (optional; default: computed from `directions) dimension
+- `directions`          -- list of direction vectors
+- `n`                   -- (optional; default: computed from `directions`)
+                           dimension
 - `check_boundedness`   -- (optional; default: `true`) flag to check boundedness
 - `check_normalization` -- (optional; default: `true`) flag to check whether all
                            directions are normalized
 
 ### Notes
 
-This struct is a wrapper type for a set of user-defined directions which are
-iterated over. It has fields for the list of directions, the set dimension,
-and (boolean) cache fields for the boundedness and normalization properties.
+This struct is a wrapper for a list of user-defined directions. There are fields
+for the list of directions, their dimension, and (boolean) cache fields for the
+boundedness and normalization properties.
 The latter are checked by default upon construction.
 
-To check boundedness, we overapproximate the unit ball in the infinity
-norm using the given directions and check if the resulting set is bounded.
+To check boundedness, we construct the polyhedron with constraints ``d·x <= 1``
+for each direction ``d`` and check if this set is bounded. (Note that the bound
+``1`` is arbitrary and that this set may be empty, which however implies
+boundedness.)
 
 The dimension will also be determined automatically, unless the empty vector is
 passed (in which case the optional argument `n` needs to be specified).
 
-## Examples
+### Examples
 
-Creating a template with box directions in dimension two:
+Create a template with box directions in dimension two:
 
 ```jldoctest
 julia> dirs = CustomDirections([[1.0, 0.0], [-1.0, 0.0], [0.0, 1.0], [0.0, -1.0]]);
@@ -879,15 +865,15 @@ function CustomDirections(directions::Vector{VN},
 end
 
 function _determine_dimension(directions)
-    isempty(directions) && throw(ArgumentError("empty template directions " *
+    isempty(directions) && throw(ArgumentError("empty direction vectors " *
                                                "need a specified dimension"))
-    return length(directions[1])
+    @inbounds return length(directions[1])
 end
 
 function _isbounding(directions::Vector{VN}) where {N, VN<:AbstractVector{N}}
     isempty(directions) && return false
 
-    # check boundedness of the polyhedron `⋂_a ax <= 1` where `a` is a direction
+    # check boundedness of the polyhedron `⋂_d d·x <= 1` for directions `d`
     P = HPolyhedron([HalfSpace(dir, one(N)) for dir in directions])
     return isbounded(P)
 end
@@ -901,9 +887,9 @@ Base.length(cd::CustomDirections) = length(cd.directions)
 
 # interface functions
 dim(cd::CustomDirections) = cd.n
-isbounding(cd::Type{<:CustomDirections}) = false # it is not a property of the type
+isbounding(cd::Type{<:CustomDirections}) = false  # not a property of the type
 isbounding(cd::CustomDirections) = cd.bounded
-isnormalized(cd::Type{<:CustomDirections}) = false # it is not a property of the type
+isnormalized(cd::Type{<:CustomDirections}) = false  # not a property of the type
 isnormalized(cd::CustomDirections) = cd.normalized
 
 function Base.iterate(cd::CustomDirections{N}, state::Int=1) where {N}
