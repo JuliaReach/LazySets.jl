@@ -58,6 +58,7 @@ makedocs(
                 "Star" => "lib/sets/Star.md",
                 "Universe" => "lib/sets/Universe.md",
                 "VPolygon" => "lib/sets/VPolygon.md",
+                "VPolygonNC" => "lib/sets/VPolygonNC.md",
                 "VPolytope" => "lib/sets/VPolytope.md",
                 "ZeroSet" => "lib/sets/ZeroSet.md",
                 "Zonotope" => "lib/sets/Zonotope.md",

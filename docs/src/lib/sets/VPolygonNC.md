@@ -1,5 +1,3 @@
-```@meta
-CurrentModule = LazySets
+```@docs
+VPolygonNC
 ```
-
-# [Non-convex Polygon in vertex representation (VPolygonNC)](@id def_VPolygonNC)
