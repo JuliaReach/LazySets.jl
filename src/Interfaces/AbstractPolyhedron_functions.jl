@@ -842,26 +842,30 @@ function plot_recipe(P::AbstractPolyhedron{N}, ε=zero(N)) where {N}
         return plot_recipe(Q, ε)
     else
         vlist = convex_hull(vertices_list(P))
-        m = length(vlist)
-        if m == 0
-            @warn "received a polyhedron with no vertices during plotting"
-            return plot_recipe(EmptySet{N}(2), ε)
-        end
-
-        x = Vector{N}(undef, m)
-        y = Vector{N}(undef, m)
-        @inbounds for (i, vi) in enumerate(vlist)
-            x[i] = vi[1]
-            y[i] = vi[2]
-        end
-
-        if m > 2
-            # add first vertex to "close" the polygon
-            push!(x, x[1])
-            push!(y, y[1])
-        end
-        return x, y
+        return _plot_recipe_2d_vlist(vlist, N)
     end
+end
+
+function _plot_recipe_2d_vlist(vlist, N)
+    m = length(vlist)
+    if m == 0
+        @warn "received a polyhedron with no vertices during plotting"
+        return plot_recipe(EmptySet{N}(2), zero(N))
+    end
+
+    x = Vector{N}(undef, m)
+    y = Vector{N}(undef, m)
+    @inbounds for (i, vi) in enumerate(vlist)
+        x[i] = vi[1]
+        y[i] = vi[2]
+    end
+
+    if m > 2
+        # add first vertex to "close" the polygon
+        push!(x, x[1])
+        push!(y, y[1])
+    end
+    return x, y
 end
 
 """
