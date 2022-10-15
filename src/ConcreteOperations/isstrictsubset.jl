@@ -1,7 +1,7 @@
 """
-    ⊂(X::ConvexSet{N}, Y::ConvexSet, [witness]::Bool=false) where {N}
+    ⊂(X::LazySet{N}, Y::LazySet, [witness]::Bool=false) where {N}
 
-Strict inclusion check.
+Strict inclusion check of a set in another set.
 
 ### Input
 
@@ -24,7 +24,7 @@ We check inclusion of `X` in `Y` and then check inclusion of `Y` in `X`:
 X ⊂ Y \\Leftrightarrow X ⊆ Y \\land ¬ (Y ⊆ X)
 ```
 """
-function ⊂(X::ConvexSet{N}, Y::ConvexSet, witness::Bool=false) where {N}
+function ⊂(X::LazySet{N}, Y::LazySet, witness::Bool=false) where {N}
     if witness
         res, w = ⊆(X, Y, witness)
         if res
