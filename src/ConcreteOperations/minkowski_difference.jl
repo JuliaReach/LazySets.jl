@@ -1,10 +1,10 @@
 export minkowski_difference, pontryagin_difference
 
 """
-    minkowski_difference(P::ConvexSet, Q::ConvexSet)
+    minkowski_difference(P::LazySet, Q::LazySet)
 
-Concrete Minkowski difference (geometric difference) for a pair of
-convex sets.
+Concrete Minkowski difference (geometric difference) of a polytopic set and a
+compact convex set.
 
 ### Input
 
@@ -18,39 +18,36 @@ An `HPolytope` that corresponds to the Minkowski difference of `P` minus `Q` if
 
 ### Notes
 
-This function requires that the list of constraints of the set `P` is
-available and that the set `Q` is bounded.
+This implementation requires that the set `P` is polyhedral and that the set `Q`
+is bounded.
 
 ### Algorithm
 
-This function implements Theorem 2.3 in [1], which we state next.
+This method implements Theorem 2.3 in [1]:
 
 Suppose ``P`` is a polyhedron
 ```math
 P = \\{z ∈ ℝ^n: sᵢᵀz ≤ rᵢ,~i = 1, …, N\\}.
 ```
 where ``sᵢ ∈ ℝ^n, sᵢ ≠ 0``, and ``rᵢ ∈ ℝ``.
-Assume ``ρ(sᵢ,Q)`` is defined for ``i = 1, …, N``. Then,
+Assume ``ρ(sᵢ,Q)`` is defined for ``i = 1, …, N``.
+Then the Minkowski difference is
 
 ```math
-P ⊖ Q = \\{z ∈ ℝ^n: sᵢᵀz ≤ rᵢ - ρ(sᵢ,Q),~i = 1, …, N\\}.
+\\{z ∈ ℝ^n: sᵢᵀz ≤ rᵢ - ρ(sᵢ,Q),~i = 1, …, N\\}.
 ```
-
-where ``⊖`` is defined as ``P ⊖ Q = \\{z ∈ ℝ^n: z + v ∈ P  ~∀~v ∈ Q\\}`` and is called
-the *Minkowski difference* (also referenced as *Pontryagin difference*, or geometric difference).
-It is denoted in [1] as the operation `P ~ Q`.
 
 [1] Ilya Kolmanovsky and Elmer G. Gilbert (1997). *Theory and computation
 of disturbance invariant sets for discrete-time linear systems.*
 [Mathematical Problems in Engineering Volume 4, Issue 4, Pages
 317-367.](http://dx.doi.org/10.1155/S1024123X98000866)
 """
-function minkowski_difference(P::ConvexSet, Q::ConvexSet)
+function minkowski_difference(P::LazySet, Q::LazySet)
 
-    @assert applicable(constraints_list, P)  "this function " *
-        "requires that the list of constraints of its first argument is applicable, but it is not; " *
-        "if it is bounded, try overapproximating with an `HPolytope` first"
-    @assert isbounded(Q) "this function requires that its second argument is bounded, but it is not"
+    @assert is_polyhedral(P)  "this implementation requires that the first" *
+        "argument is polyhedral; try overapproximating with an `HPolyhedron`"
+    @assert isbounded(Q) "this implementation requires that the second " *
+        "argument is bounded, but it is not"
 
     A, b = tosimplehrep(P)
     g_PminusQ = [b[i] - ρ(A[i, :], Q) for i in eachindex(b)]
@@ -62,18 +59,23 @@ function minkowski_difference(P::ConvexSet, Q::ConvexSet)
 end
 
 """
-    pontryagin_difference(P::ConvexSet, Q::ConvexSet)
+    pontryagin_difference(X::LazySet, Y::LazySet)
 
 An alias for the function `minkowski_difference`.
 
 ### Notes
 
-Due to inconsistent naming conventions, both the name *Minkowski difference* and
-*Pontryagin difference* are used to refer to the geometric difference of two sets.
+There is some inconsistency in the literature regarding the naming conventions.
+In this library, both the names *Minkowski difference* and
+*Pontryagin difference* refer to the geometric difference of two sets.
+Mathematically:
 
+```math
+    X ⊖ Y = \\{z ∈ ℝ^n: z + v ∈ X  ~∀~v ∈ Y\\}
+```
 """
 const pontryagin_difference = minkowski_difference
 
-# concrete minkowski difference with singleton
-minkowski_difference(X::ConvexSet, S::AbstractSingleton) = translate(X, -element(S))
-minkowski_difference(X::ConvexSet, ::ZeroSet) = X
+# concrete Minkowski difference with singleton
+minkowski_difference(X::LazySet, S::AbstractSingleton) = translate(X, -element(S))
+minkowski_difference(X::LazySet, ::ZeroSet) = X

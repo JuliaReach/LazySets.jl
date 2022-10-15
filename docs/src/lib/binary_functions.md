@@ -117,7 +117,7 @@ minkowski_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 
 ## Minkowski difference
 ```@docs
-minkowski_difference(::ConvexSet, ::ConvexSet)
+minkowski_difference(::LazySet, ::LazySet)
 pontryagin_difference
 ```
 
