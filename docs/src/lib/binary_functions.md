@@ -158,9 +158,9 @@ issubset
 ## Set difference
 
 ```@docs
-\(::ConvexSet, ::ConvexSet)
-difference(::IN, ::IN) where {N, IN<:Interval{N}}
-difference(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N}
+\(::LazySet, ::LazySet)
+difference(::Interval{N}, ::Interval) where {N}
+difference(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle) where {N}
 ```
 
 ## Distance
