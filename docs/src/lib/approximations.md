@@ -77,7 +77,7 @@ convert(::Type{HalfSpace}, ::LocalApproximation)
 AbstractDirections
 isbounding
 isnormalized
-project(::ConvexSet, ::AbstractVector{Int}, ::Type{<:AbstractDirections})
+project(::LazySet, ::AbstractVector{Int}, ::Type{<:AbstractDirections})
 BoxDirections
 DiagDirections
 OctDirections
