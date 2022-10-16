@@ -1,27 +1,31 @@
 export cartesian_product
 
 """
-    cartesian_product(X::ConvexSet, Y::ConvexSet; [backend]=nothing, [algorithm]::String="vrep")
+    cartesian_product(X::LazySet, Y::LazySet; [backend]=nothing,
+                      [algorithm]::String="vrep")
 
 Compute the Cartesian product of two sets.
 
 ### Input
 
 - `X`         -- set
-- `Y`         -- another set
-- `backend`   -- (optional, default: `nothing`) the polyhedral computations backend
-- `algorithm` -- (optional, default: "hrep") the method used to transform each set
-                 `X` and `Y` before taking the Cartesian product; choose between:
-                 - "vrep" (use the vertex representation)
-                 - "hrep" (use the constraint representation)
-                 - "hrep_polyhedra" (use the constraint representation and
-                   `Polyhedra`)
+- `Y`         -- set
+- `backend`   -- (optional, default: `nothing`) backend for polyhedral
+                 computation
+- `algorithm` -- (optional, default: "hrep") the method used to transform the
+                 sets `X` and `Y` before taking the Cartesian product; choose
+                 between:
+
+    - "vrep" (use the vertex representation)
+    - "hrep" (use the constraint representation)
+    - "hrep_polyhedra" (use the constraint representation and `Polyhedra`)
 
 ### Output
 
-The `VPolytope` (if `"vrep"` was used) or `HPolytope` (if `"hrep"` or
-`"hrep_polyhedra"` was used) obtained by the concrete Cartesian product of `X`
-and `Y`.
+The `VPolytope` (if `"vrep"` was used) or `HPolytope`/`HPolyhedron` (if `"hrep"`
+or `"hrep_polyhedra"` was used) obtained by the concrete Cartesian product of
+`X` and `Y`. The choice between `HPolytope` and `HPolyhedron` is made based on
+boundedness information deduced from the type.
 
 ### Notes
 
@@ -29,14 +33,15 @@ For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/).
 
 If `X` can be converted to a one-dimensional interval and the vertices of `Y`
-are available use `algorithm="vrep"`.
+are available, use `algorithm="vrep"`.
 """
-function cartesian_product(X::ConvexSet, Y::ConvexSet; backend=nothing, algorithm::String="hrep")
+function cartesian_product(X::LazySet, Y::LazySet; backend=nothing,
+                           algorithm::String="hrep")
 
     if algorithm == "vrep"
         Yv = VPolytope(vertices_list(Y))
-        if dim(X) == 1 # special case
-            Xv = convert(Interval, X)  # works if X is convex
+        if dim(X) == 1 && isconvextype(typeof(X))  # special case
+            Xv = convert(Interval, X)  # works because X is convex
             return cartesian_product(Xv, Yv)
         end
         Xv = VPolytope(vertices_list(X))
@@ -47,18 +52,19 @@ function cartesian_product(X::ConvexSet, Y::ConvexSet; backend=nothing, algorith
 
     elseif algorithm == "hrep_polyhedra"
         Xp = HPolyhedron(constraints_list(X))
-        if isempty(Xp.constraints) && isuniversal(X)
+        if isempty(Xp.constraints) && isuniversal(X)  # `isuniversal` needed for empty HPolytope
             Xp = X isa Universe ? X : Universe(dim(X))
         end
         Yp = HPolyhedron(constraints_list(Y))
-        if isempty(Yp.constraints) && isuniversal(Y)
+        if isempty(Yp.constraints) && isuniversal(Y)  # `isuniversal` needed for empty HPolytope
             Yp = Y isa Universe ? Y : Universe(dim(Y))
         end
         Pout = _cartesian_product_hrep_polyhedra(Xp, Yp; backend1=backend,
                                                          backend2=backend)
 
     else
-        throw(ArgumentError("expected algorithm `vrep` or `hrep`, got $algorithm"))
+        throw(ArgumentError("expected algorithm `\"vrep\"`, `\"hrep\"`, or " *
+            "`\"hrep_polyhedra\"`, but got `$algorithm`"))
     end
     return Pout
 end
@@ -66,13 +72,13 @@ end
 """
     cartesian_product(P1::VPolytope, P2::VPolytope; [backend]=nothing)
 
-Compute the Cartesian product of two polytopes in V-representation.
+Compute the Cartesian product of two polytopes in vertex representation.
 
 ### Input
 
-- `P1`      -- polytope
-- `P2`      -- another polytope
-- `backend` -- (optional, default: `nothing`) the polyhedral computations backend
+- `P1`      -- polytope in vertex representation
+- `P2`      -- polytope in vertex representation
+- `backend` -- (optional, default: `nothing`) backend for polyhedral computation
 
 ### Output
 
@@ -89,9 +95,7 @@ function cartesian_product(P1::VPolytope, P2::VPolytope; backend=nothing)
     return _cartesian_product_vrep(P1, P2, backend1=backend, backend2=backend)
 end
 
-function _cartesian_product_vrep(P1, P2;
-                                 backend1=default_polyhedra_backend(P1),
-                                 backend2=default_polyhedra_backend(P2))
+function _cartesian_product_vrep(P1, P2; backend1=nothing, backend2=nothing)
     if isnothing(backend1)
         backend1 = default_polyhedra_backend(P1)
     end
@@ -109,7 +113,8 @@ function cartesian_product(U1::Universe, U2::Universe)
     return Universe(dim(U1) + dim(U2))
 end
 
-function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:ConvexSet{N}, S2<:ConvexSet} where {N}
+function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:LazySet, S2<:LazySet}
+    N = promote_type(eltype(X), eltype(Y))
     U1 = Universe{N}(dim(X))
     clist1 = [cartesian_product(U1, c) for c in constraints_list(Y)]
     U2 = Universe{N}(dim(Y))
@@ -122,7 +127,8 @@ function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:ConvexSet{N}, S2<:Conv
     end
 end
 
-function _cartesian_product_hrep_polyhedra(P1::PT1, P2::PT2; backend1, backend2) where {PT1, PT2}
+function _cartesian_product_hrep_polyhedra(P1::PT1, P2::PT2; backend1=nothing,
+                                           backend2=nothing) where {PT1, PT2}
     require(@__MODULE__, :Polyhedra; fun_name="`cartesian_product")
 
     if isnothing(backend1)
@@ -172,7 +178,8 @@ function cartesian_product(Z1::AbstractZonotope, Z2::AbstractZonotope)
     return Zonotope(c, G)
 end
 
-function cartesian_product(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
+function cartesian_product(H1::AbstractHyperrectangle,
+                           H2::AbstractHyperrectangle)
     c = vcat(center(H1), center(H2))
     r = vcat(radius_hyperrectangle(H1), radius_hyperrectangle(H2))
     return Hyperrectangle(c, r)
@@ -197,9 +204,10 @@ function cartesian_product(U::Universe, H::HalfSpace)
 end
 
 """
-    cartesian_product(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
+    cartesian_product(P1::SimpleSparsePolynomialZonotope,
+                      P2::SimpleSparsePolynomialZonotope)
 
-computes the cartesian product of the simple sparse polynomial zonotopes `P1` and `P2`.
+Compute the Cartesian product of two simple sparse polynomial zonotopes.
 
 ### Input
 
@@ -208,9 +216,10 @@ computes the cartesian product of the simple sparse polynomial zonotopes `P1` an
 
 ### Output
 
-The cartesian product of `P1` and `P2`
+The Cartesian product of `P1` and `P2`.
 """
-function cartesian_product(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
+function cartesian_product(P1::SimpleSparsePolynomialZonotope,
+                           P2::SimpleSparsePolynomialZonotope)
     c = vcat(center(P1), center(P2))
     G = cat(genmat(P1), genmat(P2), dims=(1, 2))
     E = cat(expmat(P1), expmat(P2), dims=(1, 2))
