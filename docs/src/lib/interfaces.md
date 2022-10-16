@@ -36,6 +36,28 @@ Every set in this library is a subtype of the abstract type `LazySet`.
 LazySet
 ```
 
+### Plotting
+
+Plotting via the `Plots` package is available for one- or two-dimensional sets.
+The default algorithm is to plot an outer approximation using the support
+function (1D) respectively the support vector (2D). This means that (1) plotting
+will fail if these functionalities are not available (e.g., for lazy
+`Intersection`s) and (2) that plots of non-convex sets can be misleading. The
+implementation below internally relies on the function `plot_recipe`. For some
+set types (e.g., `Intersection`), the default implementation is overridden.
+
+```@docs
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::LazySet{N}, ::N=N(1e-3)) where {N}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40; ::Bool=false) where {N, VN<:LazySet{N}}
+```
+
+For three-dimensional sets, we support `Makie`:
+
+```@docs
+plot3d
+plot3d!
+```
+
 ### Globally defined set functions
 
 ```@docs
@@ -47,7 +69,7 @@ extrema(::LazySet)
 ```
 
 The following methods are also defined for `LazySet` but cannot be documented
-due to a bug.
+due to a bug in the documentation package.
 
 ```@docs
 low(::ConvexSet{N}, ::Int) where {N}
@@ -112,22 +134,7 @@ constraints(::ConvexSet)
 vertices(::ConvexSet)
 delaunay
 chebyshev_center_radius(::ConvexSet{N}) where {N}
-```
-
-Plotting is available for general one- or two-dimensional `ConvexSet`s, provided
-that the overapproximation using iterative refinement is available:
-
-```@docs
 plot_recipe(::ConvexSet{N}, ::Any=zero(N)) where {N}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::ConvexSet{N}, ::N=N(1e-3)) where {N}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::N=N(1e-3), ::Int=40; ::Bool=false) where {N, VN<:ConvexSet{N}}
-```
-
-For three-dimensional sets, we support `Makie`:
-
-```@docs
-plot3d
-plot3d!
 ```
 
 ### Set functions that override Base functions

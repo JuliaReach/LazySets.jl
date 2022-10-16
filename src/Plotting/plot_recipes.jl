@@ -49,7 +49,7 @@ function _extract_extrema(p::RecipesBase.AbstractPlot)
     return extrema
 end
 
-function _update_plot_limits!(lims, X::ConvexSet)
+function _update_plot_limits!(lims, X::LazySet)
     box = box_approximation(X)
     isempty(box) && return nothing  # can happen if X is empty or flat
 
@@ -98,13 +98,13 @@ end
 """
     plot_list(list::AbstractVector{VN}, [ε]::N=N(PLOT_PRECISION),
               [Nφ]::Int=PLOT_POLAR_DIRECTIONS; [same_recipe]=false; ...)
-        where {N, VN<:ConvexSet{N}}
+        where {N, VN<:LazySet{N}}
 
-Plot a list of convex sets.
+Plot a list of sets.
 
 ### Input
 
-- `list` -- list of convex sets (1D or 2D)
+- `list` -- list of sets (1D or 2D)
 - `ε`    -- (optional, default: `PLOT_PRECISION`) approximation error bound
 - `Nφ`   -- (optional, default: `PLOT_POLAR_DIRECTIONS`) number of polar
             directions (used to plot lazy intersections)
@@ -147,7 +147,7 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 """
 @recipe function plot_list(list::AbstractVector{VN}, ε::N=N(PLOT_PRECISION),
                            Nφ::Int=PLOT_POLAR_DIRECTIONS; same_recipe=false
-                          ) where {N, VN<:ConvexSet{N}}
+                          ) where {N, VN<:LazySet{N}}
     if same_recipe
         label --> DEFAULT_LABEL
         grid --> DEFAULT_GRID
@@ -170,7 +170,7 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 end
 
 function _plot_list_same_recipe(list::AbstractVector{VN}, ε::N=N(PLOT_PRECISION),
-                               Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N, VN<:ConvexSet{N}}
+                               Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N, VN<:LazySet{N}}
     first = true
     x = Vector{N}()
     y = Vector{N}()
@@ -280,33 +280,34 @@ function _plot_singleton_list_2D(list::AbstractVector{SN}) where {N, SN<:Abstrac
 end
 
 """
-    plot_lazyset(X::ConvexSet{N}, [ε]::N=N(PLOT_PRECISION); ...) where {N}
+    plot_lazyset(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION); ...) where {N}
 
-Plot a convex set.
+Plot a set.
 
 ### Input
 
-- `X` -- convex set
+- `X` -- set
 - `ε` -- (optional, default: `PLOT_PRECISION`) approximation error bound
 
 ### Notes
 
-See [`plot_recipe(::ConvexSet)`](@ref).
+This recipe just defines the default plotting options and then calls the
+function `plot_recipe`, which then implements the set-specific plotting.
 
-For polyhedral set types (subtypes of `AbstractPolyhedron`), the argument `ε` is
-ignored.
+The argument `ε` is ignored by some set types, e.g., for polyhedra (subtypes of
+`AbstractPolyhedron`).
 
 ### Examples
 
 ```julia
 julia> B = Ball2(ones(2), 0.1);
 
-julia> plot(B, 1e-3)  # default accuracy value (explicitly given for clarity)
+julia> plot(B, 1e-3)  # default accuracy value (explicitly given for clarity here)
 
 julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 ```
 """
-@recipe function plot_lazyset(X::ConvexSet{N}, ε::N=N(PLOT_PRECISION)) where {N}
+@recipe function plot_lazyset(X::LazySet{N}, ε::N=N(PLOT_PRECISION)) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -436,7 +437,7 @@ Plot a lazy intersection.
 
 ### Notes
 
-This function is separated from the main `ConvexSet` plot recipe because iterative
+This function is separated from the main `LazySet` plot recipe because iterative
 refinement is not available for lazy intersections (since it uses the support
 vector (but see
 [#1187](https://github.com/JuliaReach/LazySets.jl/issues/1187))).
