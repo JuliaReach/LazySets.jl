@@ -22,12 +22,6 @@ Approximations
 decompose
 ```
 
-### Convenience functions
-
-```@docs
-uniform_partition
-```
-
 ## Overapproximations
 
 ```@docs
