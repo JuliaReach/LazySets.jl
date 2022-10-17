@@ -64,6 +64,7 @@ convex_hull(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 ## Exact sum
 
 ```@docs
+⊞
 exact_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 ```
 
