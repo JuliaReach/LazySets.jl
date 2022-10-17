@@ -96,7 +96,7 @@ function _bounding_hyperrectangle(lims, N)
 end
 
 """
-    plot_list(list::AbstractVector{VN}, [ε]::N=N(PLOT_PRECISION),
+    plot_list(list::AbstractVector{VN}, [ε]::Real=N(PLOT_PRECISION),
               [Nφ]::Int=PLOT_POLAR_DIRECTIONS; [same_recipe]=false; ...)
         where {N, VN<:LazySet{N}}
 
@@ -145,7 +145,7 @@ julia> plot(Bs, 1e-3)  # default accuracy value (explicitly given for clarity)
 julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 ```
 """
-@recipe function plot_list(list::AbstractVector{VN}, ε::N=N(PLOT_PRECISION),
+@recipe function plot_list(list::AbstractVector{VN}, ε::Real=N(PLOT_PRECISION),
                            Nφ::Int=PLOT_POLAR_DIRECTIONS; same_recipe=false
                           ) where {N, VN<:LazySet{N}}
     if same_recipe
@@ -169,7 +169,7 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
     end
 end
 
-function _plot_list_same_recipe(list::AbstractVector{VN}, ε::N=N(PLOT_PRECISION),
+function _plot_list_same_recipe(list::AbstractVector{VN}, ε::Real=N(PLOT_PRECISION),
                                 Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N, VN<:LazySet{N}}
     first = true
     x = Vector{N}()
@@ -248,8 +248,8 @@ function _plot_singleton_list(list)
     elseif n == 2
         _plot_singleton_list_2D(list)
     else
-        throw(ArgumentError("plotting a vector of singletons is only available for dimensions " *
-             "one or two, got dimension $n"))
+        throw(ArgumentError("plotting singletons is only available for " *
+            "dimensions one or two, but got dimension $n"))
     end
 end
 
@@ -280,7 +280,7 @@ function _plot_singleton_list_2D(list::AbstractVector{SN}) where {N, SN<:Abstrac
 end
 
 """
-    plot_lazyset(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION); ...) where {N}
+    plot_lazyset(X::LazySet{N}, [ε]::Real=N(PLOT_PRECISION); ...) where {N}
 
 Plot a set.
 
@@ -307,7 +307,7 @@ julia> plot(B, 1e-3)  # default accuracy value (explicitly given for clarity her
 julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 ```
 """
-@recipe function plot_lazyset(X::LazySet{N}, ε::N=N(PLOT_PRECISION)) where {N}
+@recipe function plot_lazyset(X::LazySet{N}, ε::Real=N(PLOT_PRECISION)) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -365,7 +365,7 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 end
 
 """
-    plot_singleton(S::AbstractSingleton{N}, [ε]::N=zero(N); ...) where {N}
+    plot_singleton(S::AbstractSingleton{N}, [ε]::Real=zero(N); ...) where {N}
 
 Plot a singleton.
 
@@ -380,7 +380,7 @@ Plot a singleton.
 julia> plot(Singleton([0.5, 1.0]))
 ```
 """
-@recipe function plot_singleton(S::AbstractSingleton{N}, ε::N=zero(N)) where {N}
+@recipe function plot_singleton(S::AbstractSingleton{N}, ε::Real=zero(N)) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -403,7 +403,7 @@ julia> plot(Singleton([0.5, 1.0]))
 end
 
 """
-    plot_emptyset(∅::EmptySet, [ε]::N=zero(N); ...)
+    plot_emptyset(∅::EmptySet, [ε]::Real=zero(N); ...)
 
 Plot an empty set.
 
@@ -412,7 +412,7 @@ Plot an empty set.
 - `∅` -- empty set
 - `ε` -- (optional, default: `0`) ignored, used for dispatch
 """
-@recipe function plot_emptyset(∅::EmptySet{N}, ε::N=zero(N)) where {N}
+@recipe function plot_emptyset(∅::EmptySet{N}, ε::Real=zero(N)) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -423,7 +423,7 @@ Plot an empty set.
 end
 
 """
-    plot_intersection(cap::Intersection{N}, [ε]::N=zero(N),
+    plot_intersection(cap::Intersection{N}, [ε]::Real=zero(N),
                       [Nφ]::Int=PLOT_POLAR_DIRECTIONS) where {N}
 
 Plot a lazy intersection.
@@ -454,18 +454,18 @@ julia> plot(X)
 ```
 
 You can specify the accuracy of the overapproximation of the lazy intersection
-by passing a higher value for `Nφ`, which stands for the number of polar
+by passing an explicit value for `Nφ`, which stands for the number of polar
 directions used in the overapproximation.
 This number can also be passed to the `plot` function directly.
 
 ```julia
 julia> plot(overapproximate(X, PolarDirections(100)))
 
-julia> plot(X, -1., 100)  # equivalent to the above line
+julia> plot(X, 0.0, 100)  # equivalent to the above line
 ```
 """
 @recipe function plot_intersection(cap::Intersection{N},
-                                   ε::N=zero(N),
+                                   ε::Real=zero(N),
                                    Nφ::Int=PLOT_POLAR_DIRECTIONS
                                   ) where {N}
     label --> DEFAULT_LABEL
@@ -506,7 +506,7 @@ end
 
 # non-convex sets
 
-@recipe function plot_union(cup::UnionSet{N}, ε::N=N(PLOT_PRECISION)) where {N}
+@recipe function plot_union(cup::UnionSet{N}, ε::Real=N(PLOT_PRECISION)) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -519,7 +519,7 @@ end
     return _plot_list_same_recipe([cup.X, cup.Y], ε)
 end
 
-@recipe function plot_union(cup::UnionSetArray{N}, ε::N=N(PLOT_PRECISION)) where {N}
+@recipe function plot_union(cup::UnionSetArray{N}, ε::Real=N(PLOT_PRECISION)) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -533,7 +533,7 @@ end
 end
 
 @recipe function plot_polyzono(P::AbstractPolynomialZonotope{N},
-                               ε::N=N(PLOT_PRECISION); nsdiv=10,
+                               ε::Real=N(PLOT_PRECISION); nsdiv=10,
                                partition=nothing) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
