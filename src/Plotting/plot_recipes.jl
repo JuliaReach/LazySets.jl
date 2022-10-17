@@ -532,7 +532,9 @@ end
     return _plot_list_same_recipe(array(cup), ε)
 end
 
-@recipe function plot_polyzono(P::SimpleSparsePolynomialZonotope{N}, ε::N=N(PLOT_PRECISION); nsdiv=100, partition=nothing) where {N}
+@recipe function plot_polyzono(P::AbstractPolynomialZonotope{N},
+                               ε::N=N(PLOT_PRECISION); nsdiv=10,
+                               partition=nothing) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
