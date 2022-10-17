@@ -32,7 +32,7 @@ end
 """
     ⊞(X::LazySet, Y::LazySet)
 
-Unicode alias constructor ⊕ (`oplus`) for the (concrete) `exact_sum` function.
+Unicode alias constructor for the (concrete) `exact_sum` function.
 
 ### Notes
 
