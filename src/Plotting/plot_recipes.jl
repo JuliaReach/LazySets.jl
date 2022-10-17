@@ -170,7 +170,7 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 end
 
 function _plot_list_same_recipe(list::AbstractVector{VN}, ε::N=N(PLOT_PRECISION),
-                               Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N, VN<:LazySet{N}}
+                                Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N, VN<:LazySet{N}}
     first = true
     x = Vector{N}()
     y = Vector{N}()
@@ -180,12 +180,12 @@ function _plot_list_same_recipe(list::AbstractVector{VN}, ε::N=N(PLOT_PRECISION
         else
             # hard-code overapproximation here to avoid individual
             # compilations for mixed sets
-            Pi = overapproximate(Xi, ε)
-            vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
+            vlist = plot_vlist(Xi, ε)
             if isempty(vlist)
                 @warn "overapproximation during plotting was empty"
                 continue
             end
+            vlist = transpose(hcat(vlist...))  # transpose vertices
             res = vlist[:, 1], vlist[:, 2]
             if length(res[1]) > 2
                 # add first vertex to "close" the polygon

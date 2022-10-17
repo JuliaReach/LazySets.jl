@@ -285,3 +285,26 @@ function extrema(X::LazySet)
     h = high(X)
     return (l, h)
 end
+
+"""
+    plot_vlist(X::S, ε::Real) where {S<:LazySet}
+
+Return a list of vertices used for plotting a two-dimensional set.
+
+### Input
+
+- `X` -- two-dimensional set
+- `ε` -- precision parameter
+
+### Output
+
+A list of vertices of a polygon `P`.
+For convex `X`, `P` usually satisfies that the Hausdorff distance to `X` is less
+than `ε`.
+"""
+function plot_vlist(X::S, ε::Real) where {S<:LazySet}
+    @assert isconvextype(S) "can only plot convex sets"
+
+    P = overapproximate(X, ε)
+    return convex_hull(vertices_list(P))
+end
