@@ -81,8 +81,10 @@ include("Sets/Ball1.jl")
 include("Sets/Ball2.jl")
 include("Sets/BallInf.jl")
 include("Sets/Ballp.jl")
+include("Sets/DensePolynomialZonotope.jl")
 include("Sets/Ellipsoid.jl")
 include("Sets/EmptySet.jl")
+include("Sets/HParallelotope.jl")
 include("Sets/HPolygon.jl")
 include("Sets/HPolygonOpt.jl")
 include("Sets/HPolytope.jl")
@@ -93,22 +95,16 @@ include("Sets/Interval.jl")
 include("Sets/Line2D.jl")
 include("Sets/Line.jl")
 include("Sets/LineSegment.jl")
+include("Sets/Polygon.jl")
 include("Sets/RotatedHyperrectangle.jl")
 include("Sets/Singleton.jl")
 include("Sets/SimpleSparsePolynomialZonotope.jl")
 include("Sets/SparsePolynomialZonotope.jl")
 include("Sets/Universe.jl")
 include("Sets/VPolygon.jl")
-include("Sets/VPolygonNC.jl")
 include("Sets/VPolytope.jl")
 include("Sets/ZeroSet.jl")
 include("Sets/Zonotope.jl")
-include("Sets/HParallelotope.jl")
-
-# ==================================
-# Types representing non-convex sets
-# ==================================
-include("Sets/DensePolynomialZonotope.jl")
 
 # =================================
 # Types representing set operations

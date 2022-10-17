@@ -1,2 +1,2 @@
-# default Float64 constructors
-@test VPolygonNC() isa VPolygonNC{Float64, Vector{Float64}}
+# default Float64 constructor
+@test Polygon() isa Polygon{Float64, Vector{Float64}}
