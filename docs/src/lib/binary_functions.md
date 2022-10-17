@@ -166,6 +166,6 @@ difference(::AbstractHyperrectangle{N}, ::AbstractHyperrectangle{N}) where {N}
 ## Distance
 
 ```@docs
-distance(::AbstractSingleton, ::ConvexSet; ::Real=2.0)
+distance(::AbstractSingleton, ::LazySet; ::Real=2.0)
 distance(::AbstractHyperrectangle, ::AbstractHyperrectangle; ::Real=2.0)
 ```
