@@ -606,7 +606,7 @@ function _issubset_interval(x::Interval{N}, a::Interval, b::Interval,
     end
 end
 
-function ⊆(x::Interval, U::UnionSetArray, witness::Bool=false) where {N}
+function ⊆(x::Interval, U::UnionSetArray, witness::Bool=false)
     @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
         "$(dim(U))"
     V = _get_interval_array_copy(U)
