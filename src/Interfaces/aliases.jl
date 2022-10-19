@@ -14,7 +14,9 @@ is compact or not depends on the argument(s).
 const CompactSet = Union{
     AbstractCentrallySymmetric,
     AbstractPolytope,
-    EmptySet
+    AbstractPolynomialZonotope,
+    EmptySet,
+    Polygon
     }
 
 """
@@ -30,6 +32,7 @@ is non-compact or not depends on the argument(s).
 const NonCompactSet = Union{
     HalfSpace,
     Hyperplane,
+    Line,
     Line2D,
     Universe
     }

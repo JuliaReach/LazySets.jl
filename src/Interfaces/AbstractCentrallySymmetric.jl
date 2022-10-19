@@ -7,7 +7,7 @@ export AbstractCentrallySymmetric,
 """
     AbstractCentrallySymmetric{N} <: ConvexSet{N}
 
-Abstract type for centrally symmetric convex sets.
+Abstract type for centrally symmetric compact convex sets.
 
 ### Notes
 
