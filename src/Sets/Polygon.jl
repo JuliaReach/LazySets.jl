@@ -48,11 +48,7 @@ function isbounded(P::Polygon)
     return true
 end
 
-function vertices_list(P::Polygon)
-    return P.vertices
-end
-
 function plot_recipe(P::Polygon{N}, ε=zero(N)) where {N}
-    vlist = vertices_list(P)
+    vlist = P.vertices
     return _plot_recipe_2d_vlist(vlist, N)
 end
