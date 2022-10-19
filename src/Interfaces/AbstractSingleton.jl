@@ -2,8 +2,7 @@ import Base.∈
 
 export AbstractSingleton,
        element,
-       an_element,
-       linear_map
+       an_element
 
 """
     AbstractSingleton{N} <: AbstractHyperrectangle{N}
@@ -13,7 +12,8 @@ Abstract type for sets with a single value.
 ### Notes
 
 Every concrete `AbstractSingleton` must define the following function:
-- `element(::AbstractSingleton{N})` -- return the single element
+
+- `element(::AbstractSingleton)` -- return the single element
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractSingleton)
@@ -34,19 +34,16 @@ Return the i-th entry of the element of a set with a single value.
 ### Input
 
 - `S` -- set with a single value
-- `i` -- dimension
+- `i` -- dimension of interest
 
 ### Output
 
 The i-th entry of the element.
 """
 function element(S::AbstractSingleton, i::Int)
+    @boundscheck _check_bounds(S, i)
     return element(S)[i]
 end
-
-
-# --- AbstractHyperrectangle interface functions ---
-
 
 """
     radius_hyperrectangle(S::AbstractSingleton{N}, i::Int) where {N}
@@ -63,9 +60,9 @@ Return the box radius of a set with a single value in a given dimension.
 Zero.
 """
 function radius_hyperrectangle(S::AbstractSingleton{N}, i::Int) where {N}
+    @boundscheck _check_bounds(S, i)
     return zero(N)
 end
-
 
 """
     radius_hyperrectangle(S::AbstractSingleton{N}) where {N}
@@ -84,7 +81,6 @@ function radius_hyperrectangle(S::AbstractSingleton{N}) where {N}
     return zeros(N, dim(S))
 end
 
-
 """
     high(S::AbstractSingleton)
 
@@ -96,7 +92,7 @@ Return the higher coordinates of a set with a single value.
 
 ### Output
 
-A vector with the higher coordinates of the set with a single value.
+A vector with the higher coordinates.
 """
 function high(S::AbstractSingleton)
     return element(S)
@@ -115,9 +111,10 @@ dimension.
 
 ### Output
 
-The higher coordinate of the set with a single value in the given dimension.
+The higher coordinate in the given dimension.
 """
 function high(S::AbstractSingleton, i::Int)
+    @boundscheck _check_bounds(S, i)
     return element(S)[i]
 end
 
@@ -132,7 +129,7 @@ Return the lower coordinates of a set with a single value.
 
 ### Output
 
-A vector with the lower coordinates of the set with a single value.
+A vector with the lower coordinates.
 """
 function low(S::AbstractSingleton)
     return element(S)
@@ -151,15 +148,12 @@ dimension.
 
 ### Output
 
-The lower coordinate of the set with a single value in the given dimension.
+The lower coordinate in the given dimension.
 """
 function low(S::AbstractSingleton, i::Int)
+    @boundscheck _check_bounds(S, i)
     return element(S)[i]
 end
-
-
-# --- AbstractZonotope interface functions ---
-
 
 """
    genmat(S::AbstractSingleton{N}) where {N}
@@ -206,19 +200,11 @@ Return the number of generators of a set with a single value.
 
 ### Output
 
-The number of generators.
-
-### Algorithm
-
-A set with a single value has no generators, so the result is ``0``.
+The number of generators, which is ``0``.
 """
 function ngens(S::AbstractSingleton)
     return 0
 end
-
-
-# --- AbstractCentrallySymmetric interface functions ---
-
 
 """
     center(S::AbstractSingleton)
@@ -231,7 +217,7 @@ Return the center of a set with a single value.
 
 ### Output
 
-The only element of the set.
+The center of the set.
 """
 function center(S::AbstractSingleton)
     return element(S)
@@ -249,16 +235,12 @@ Return the center of a set with a single value in a given dimension.
 
 ### Output
 
-The `i`-th entry of the only element of the set.
+The `i`-th entry of the center of the set.
 """
 function center(S::AbstractSingleton, i::Int)
     @boundscheck _check_bounds(S, i)
     return element(S, i)
 end
-
-
-# --- AbstractPolytope interface functions ---
-
 
 """
     vertices(S::AbstractSingleton{N}) where {N}
@@ -295,32 +277,6 @@ function vertices_list(S::AbstractSingleton)
 end
 
 """
-    linear_map(M::AbstractMatrix, S::AbstractSingleton)
-
-Concrete linear map of an abstract singleton.
-
-### Input
-
-- `M` -- matrix
-- `S` -- abstract singleton
-
-### Output
-
-The abstract singleton of the same type of ``S`` obtained by applying the
-linear map to the element in ``S``.
-"""
-function linear_map(M::AbstractMatrix, S::AbstractSingleton)
-    @assert dim(S) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-                                 "applied to a set of dimension $(dim(S))"
-
-    T = typeof(S)
-    return T(M * element(S))
-end
-
-# --- ConvexSet interface functions ---
-
-
-"""
     σ(d::AbstractVector, S::AbstractSingleton)
 
 Return the support vector of a set with a single value.
@@ -351,7 +307,7 @@ Evaluate the support function of a set with a single value in a given direction.
 
 ### Output
 
-Evaluation of the support function in the given direction.
+The support value in the given direction.
 """
 function ρ(d::AbstractVector, S::AbstractSingleton)
     return dot(d, element(S))
@@ -373,19 +329,19 @@ Check whether a given point is contained in a set with a single value.
 
 ### Notes
 
-This implementation performs an exact comparison, which may be insufficient with
-floating point computations.
+This implementation performs an approximate comparison to account for
+imprecision in floating-point computations.
 """
 function ∈(x::AbstractVector, S::AbstractSingleton)
-    return x == element(S)
+    return _isapprox(x, element(S))
 end
 
 # this operation is forbidden, but it is a common error
-function ∈(S::AbstractSingleton, X::ConvexSet)
-    throw(ArgumentError("cannot make a point-in-set check if the left-hand side is " *
-          "a set; either check for set inclusion, as in `S ⊆ X`, or check for " *
-          "membership, as in `element(S) ∈ X` (the results are equivalent but " *
-          "the implementations may differ)"))
+function ∈(S::AbstractSingleton, X::LazySet)
+    throw(ArgumentError("cannot make a point-in-set check if the left-hand " *
+          "side is a set; either check for set inclusion, as in `S ⊆ X`, or " *
+          "check for membership, as in `element(S) ∈ X` (the results are " *
+          "equivalent, but the implementations may differ)"))
 end
 
 function chebyshev_center_radius(S::AbstractSingleton{N}) where {N}
@@ -407,11 +363,14 @@ Convert a singleton to a pair `(x, y)` of points for plotting.
 A pair `(x, y)` of one point that can be plotted.
 """
 function plot_recipe(S::AbstractSingleton{N}, ε=zero(N)) where {N}
-    @assert dim(S) <= 3 "cannot plot a $(dim(S))-dimensional $(typeof(S))"
-
-    if dim(S) == 1
+    n = dim(S)
+    if n == 1
         return [element(S)[1]], [zero(N)]
-    else
+    elseif n == 2
         return [element(S)[1]], [element(S)[2]]
+    elseif n == 3
+        return [element(S)[1]], [element(S)[2]], [element(S)[3]]
+    else
+        throw(ArgumentError("cannot plot a $n-dimensional $(typeof(S))"))
     end
 end
