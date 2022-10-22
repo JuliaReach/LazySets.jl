@@ -484,7 +484,6 @@ high(::AbstractSingleton)
 high(::AbstractSingleton, ::Int)
 low(::AbstractSingleton)
 low(::AbstractSingleton, ::Int)
-linear_map(::AbstractMatrix, ::AbstractSingleton)
 generators(::AbstractSingleton{N}) where {N}
 genmat(::AbstractSingleton{N}) where {N}
 ngens(::AbstractSingleton)

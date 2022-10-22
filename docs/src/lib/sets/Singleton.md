@@ -14,6 +14,7 @@ rectify(S::Singleton)
 project(::Singleton, ::AbstractVector{Int})
 permute(::Singleton, ::AbstractVector{Int})
 singleton_list(::Singleton)
+linear_map(::AbstractMatrix, ::Singleton)
 ```
 Inherited from [`ConvexSet`](@ref):
 * [`diameter`](@ref diameter(::ConvexSet, ::Real))
@@ -45,7 +46,6 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`vertices_list`](@ref vertices_list(::AbstractSingleton))
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}) where {N})
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N})
-* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractSingleton))
 * [`generators`](@ref generators(::AbstractSingleton{N}) where {N})
 * [`genmat`](@ref genmat(::AbstractSingleton{N}) where {N})
 * [`ngens`](@ref ngens(::AbstractSingleton))
