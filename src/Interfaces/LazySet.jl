@@ -26,11 +26,11 @@ julia> subtypes(LazySet, false)
  Complement
  ConvexSet
  LazySets.AbstractStar
+ Polygon
  QuadraticMap
  Rectification
  UnionSet
  UnionSetArray
- VPolygonNC
 ```
 
 If we only consider *concrete* subtypes, then:
@@ -78,6 +78,7 @@ LineSegment
 LinearMap
 MinkowskiSum
 MinkowskiSumArray
+Polygon
 QuadraticMap
 Rectification
 ResetMap
@@ -92,7 +93,6 @@ UnionSet
 UnionSetArray
 Universe
 VPolygon
-VPolygonNC
 VPolytope
 ZeroSet
 Zonotope

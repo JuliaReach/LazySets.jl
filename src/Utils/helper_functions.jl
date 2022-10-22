@@ -65,10 +65,10 @@ julia> dict["missing"]
 6-element Vector{Type}:
  Complement
  LazySets.AbstractStar
+ Polygon
  QuadraticMap
  SimpleSparsePolynomialZonotope
  SparsePolynomialZonotope
- VPolygonNC
 ```
 
 Some operations are not available for sets with rational numbers.
