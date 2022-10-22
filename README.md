@@ -56,9 +56,11 @@ This library has been applied in a number of scientic works.
 
 The articles appear in reverse chronological order.
 
+[23] **Synthesis of parametric hybrid automata from time series.** Miriam García Soto, Thomas A. Henzinger, and Christian Schilling (2022). Proceedings of the [20th International Symposium on Automated Technology for Verification and Analysis](https://atva-conference.org/2022/), LNCS, vol. 13505, pp. 337-353. [doi: 10.1007/978-3-031-19992-9_22](https://doi.org/10.1007/978-3-031-19992-9_22), [arXiv: 2208.06383](https://arxiv.org/abs/2208.06383).
+
 [22] **Decomposing reach set computations with low-dimensional sets and high-dimensional matrices (extended version).** Sergiy Bogomolov, Marcelo Forets, Goran Frehse, Andreas Podelski, and Christian Schilling (2022). Information and Computation. [doi: 10.1016/j.ic.2022.104937](https://doi.org/10.1016/j.ic.2022.104937).
 
-[21] **Conservative Time Discretization: A Comparative Study.** Marcelo Forets and Christian Schilling (2022). Proceedings of the [17th International Conference on integrated Formal Methods (iFM)](https://ifm22.si.usi.ch/). [arXiv: 2111.01454](https://arxiv.org/abs/2111.01454).
+[21] **Conservative Time Discretization: A Comparative Study.** Marcelo Forets and Christian Schilling (2022). Proceedings of the [17th International Conference on integrated Formal Methods (iFM)](https://ifm22.si.usi.ch/), LNCS, vol. 13274, pp. 149-167. [doi: 10.1007/978-3-031-07727-2_9](https://doi.org/10.1007/978-3-031-07727-2_9), [arXiv: 2111.01454](https://arxiv.org/abs/2111.01454).
 
 [20] **Verification of Neural-Network Control Systems by Integrating Taylor Models and Zonotopes.** Christian Schilling, Marcelo Forets, and Sebastián Guadalupe (2022). Proceedings of the [36th Conference on Artificial Intelligence (AAAI)](https://aaai.org/Conferences/AAAI-22/). [doi: 10.1609/aaai.v36i7.20790](https://doi.org/10.1609/aaai.v36i7.20790).
 
@@ -68,7 +70,7 @@ The articles appear in reverse chronological order.
 
 [17] **Reachability of weakly nonlinear systems using Carleman linearization.** Marcelo Forets and Christian Schilling (2021). Proceedings of the [15th International Conference on Reachability Problems (RP)](https://rp2021.csc.liv.ac.uk/), LNCS, vol. 13035, pp. 85-99. [doi: 10.1007/978-3-030-89716-1_6](https://doi.org/10.1007/978-3-030-89716-1_6), [arXiv: 2108.10390](https://arxiv.org/abs/2108.10390).
 
-[16] **Combined Exact and Heuristics Based Approach to Hamiltonian Path Problem Optimization for Route Planning.** Fernando Hernandez, Rafael Sotelo, and Marcelo Forets (2021). Technical Proceedings of the [2021 Amazon Last Mile Routing Research Challenge](https://hdl.handle.net/1721.1/131235), pp. XXI.1–XXI.12.
+[16] **Combined Exact and Heuristics Based Approach to Hamiltonian Path Problem Optimization for Route Planning.** Fernando Hernandez, Rafael Sotelo, and Marcelo Forets (2021). Technical Proceedings of the [2021 Amazon Last Mile Routing Research Challenge](https://hdl.handle.net/1721.1/131235).
 
 [15] **ARCH-COMP21 Category Report: Continuous and Hybrid Systems with Linear Continuous Dynamics.** Matthias Althoff, Erika Abraham, Marcelo Forets, Goran Frehse, Daniel Freire, Christian Schilling, Stefan Schupp, and Mark Wetzlinger. (2021). 8th International Workshop on Applied Verification of Continuous and Hybrid Systems (ARCH21), vol 80, pp. 1-31. [doi: 10.29007/lhbw](https://doi.org/10.29007/lhbw).
 
@@ -76,7 +78,7 @@ The articles appear in reverse chronological order.
 
 [13] **ARCH-COMP21 Category Report: Artificial Intelligence and Neural Network Controlled Systems for Continuous and Hybrid Systems Plants.** Taylor T. Johnson, Diego Manzanas Lopez, Luis Benet, Marcelo Forets, Christian Schilling, Radoslav Ivanov, Taylor Carpenter, James Weimer, and Insup Lee. (2021). 8th International Workshop on Applied Verification of Continuous and Hybrid Systems (ARCH21), vol 80, pp. 90-119. [doi: https://doi.org/10.29007/kfk9](https://doi.org/10.29007/kfk9).
 
-[12] **Synthesis of hybrid automata with affine dynamics from time-series data.** Miriam García Soto, Thomas A. Henzinger, and Christian Schilling (2021). [24th International Conference on Hybrid Systems: Computation and Control (HSCC)](https://hscc.acm.org/2021/), pp. 2:1-2:11. [doi: 10.1145/3447928.3456704](https://doi.org/10.1145/3447928.3456704), [arXiv: 2102.12734](https://arxiv.org/abs/2102.12734).
+[12] **Synthesis of hybrid automata with affine dynamics from time-series data.** Miriam García Soto, Thomas A. Henzinger, and Christian Schilling (2021). [24th International Conference on Hybrid Systems: Computation and Control (HSCC)](https://hscc.acm.org/2021/). [doi: 10.1145/3447928.3456704](https://doi.org/10.1145/3447928.3456704), [arXiv: 2102.12734](https://arxiv.org/abs/2102.12734).
 
 [11] **Algorithms for verifying deep neural networks.** Changliu Liu, Tomer Arnon, Christopher Lazarus, Christopher A. Strong, Clark W. Barrett, and Mykel J. Kochenderfer (2021). Foundations and Trends in Optimization, vol 4, pp. 244-404. [doi: 10.1561/2400000035](https://doi.org/10.1561/2400000035), [arXiv: 1903.06758](https://arxiv.org/abs/1903.06758).
 
@@ -110,6 +112,7 @@ Several projects in the Julia technical computing stack use this library.
 <summary>Click to see the full list of Julia packages that use LazySets.</summary>
 
 - [ClosedLoopReachability.jl](https://github.com/JuliaReach/ClosedLoopReachability.jl) -- Reachability analysis for closed-loop control systems.
+- [HySynthParametric](https://github.com/HySynth/HySynthParametric) -- Synthesis of parametric linear hybrid automata.
 - [IntervalLinearAlgebra.jl](https://github.com/JuliaIntervals/IntervalLinearAlgebra.jl) -- Routines to perform numerical linear algebra using interval arithmetic.
 - [InvariantSets.jl](https://github.com/ueliwechsler/InvariantSets.jl) -- Compute, approximate and display invariant sets.
 - [InvariantSetApproximation.jl](https://github.com/psace-uofa/InvariantSetApproximation.jl) -- Invariant sets of general discrete-time dynamical systems with controls and uncertainties using graph-based algorithms.
