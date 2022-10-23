@@ -14,7 +14,7 @@ An interval.
 
 ### Algorithm
 
-We use two support-function evaluations.
+We use the `extrema` function.
 """
 function overapproximate(S::LazySet, ::Type{<:Interval})
     @assert dim(S) == 1 "cannot overapproximate a $(dim(S))-dimensional set " *
@@ -26,7 +26,7 @@ end
 """
     overapproximate(cap::Intersection, ::Type{<:Interval})
 
-Return the overapproximation of an intersection with an interval.
+Return the overapproximation of a lazy intersection with an interval.
 
 ### Input
 
@@ -40,7 +40,8 @@ An interval.
 ### Algorithm
 
 The algorithm recursively overapproximates the two intersected sets with
-intervals and then intersects these.
+intervals and then intersects these. (Note that this fails if the sets are
+unbounded.)
 
 For convex sets this algorithm is precise.
 """
@@ -71,7 +72,8 @@ An interval.
 ### Algorithm
 
 The algorithm recursively overapproximates the intersected sets with intervals
-and then intersects these.
+and then intersects these. (Note that this fails if the sets are
+unbounded.)
 
 For convex sets this algorithm is precise.
 """
@@ -83,7 +85,7 @@ function overapproximate(cap::IntersectionArray, ::Type{<:Interval})
     # then copy the default implementation except if result is empty
     X = overapproximate(a[1], Interval)
     @inbounds for i in 2:length(a)
-        Y = a[i]
+        Y = overapproximate(a[i], Interval)
         X = intersection(X, Y)
         if isempty(X)
             return X
