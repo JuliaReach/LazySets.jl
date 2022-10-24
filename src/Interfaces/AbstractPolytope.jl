@@ -12,8 +12,9 @@ Abstract type for compact convex polytopic sets.
 
 ### Notes
 
-Every concrete `AbstractPolytope` must define the following functions:
-- `vertices_list(::AbstractPolytope{N})` -- return a list of all vertices
+Every concrete `AbstractPolytope` must define the following method:
+
+- `vertices_list(::AbstractPolytope)` -- return a list of all vertices
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolytope)
@@ -34,10 +35,6 @@ abstract type AbstractPolytope{N} <: AbstractPolyhedron{N} end
 
 isconvextype(::Type{<:AbstractPolytope}) = true
 
-# =============================================
-# Common AbstractPolytope functions
-# =============================================
-
 function isboundedtype(::Type{<:AbstractPolytope})
     return true
 end
@@ -45,7 +42,7 @@ end
 """
     isbounded(P::AbstractPolytope)
 
-Determine whether a polytopic set is bounded.
+Check whether a polytopic set is bounded.
 
 ### Input
 
@@ -53,7 +50,7 @@ Determine whether a polytopic set is bounded.
 
 ### Output
 
-`true` (since a polytope must be bounded).
+`true` (since a polytopic set must be bounded).
 """
 function isbounded(::AbstractPolytope)
     return true
@@ -62,20 +59,19 @@ end
 """
     isempty(P::AbstractPolytope)
 
-Determine whether a polytope is empty.
+Check whether a polytopic set is empty.
 
 ### Input
 
-- `P` -- abstract polytope
+- `P` -- polytopic set
 
 ### Output
 
-`true` if the given polytope contains no vertices, and `false` otherwise.
+`true` if the given polytopic set contains no vertices, and `false` otherwise.
 
 ### Algorithm
 
-This algorithm checks whether the `vertices_list` of the given polytope is empty
-or not.
+This algorithm checks whether the `vertices_list` of `P` is empty.
 """
 function isempty(P::AbstractPolytope)
     return isempty(vertices_list(P))
@@ -84,17 +80,18 @@ end
 """
     isuniversal(P::AbstractPolytope{N}, [witness]::Bool=false) where {N}
 
-Check whether a polyhedron is universal.
+Check whether a polytopic set is universal.
 
 ### Input
 
-- `P`       -- polyhedron
+- `P`       -- polytopic set
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
 
 * If `witness` option is deactivated: `false`
-* If `witness` option is activated: `(false, v)` where ``v ∉ P``
+* If `witness` option is activated: `(false, v)` where ``v ∉ P`` unless the list
+  of constraints is empty (which should not happen for a normal polytope)
 
 ### Algorithm
 
@@ -122,8 +119,8 @@ end
 
     m = size(M, 1) # output dimension
     if m == 1
-        # TODO: substitute with Interval(convex_hull(vlist)...): convex hull 1D
-        return Interval(minimum(vlist)[1], maximum(vlist)[1])
+        convex_hull!(vlist)
+        return Interval(vlist[1][1], vlist[end][1])
     elseif m == 2
         return VPolygon(vlist)
     else
@@ -156,11 +153,11 @@ end
 """
     volume(P::AbstractPolytope; backend=default_polyhedra_backend(P))
 
-Compute the volume of a polytope.
+Compute the volume of a polytopic set.
 
 ### Input
 
-- `P`       -- polytope
+- `P`       -- polytopic set
 - `backend` -- (optional, default: `default_polyhedra_backend(P)`) the backend
                for polyhedral computations; see [Polyhedra's
                documentation](https://juliapolyhedra.github.io/) for further
