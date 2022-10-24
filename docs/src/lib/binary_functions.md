@@ -104,7 +104,7 @@ linear_combination(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZon
 ## Minkowski sum
 
 ```@docs
-minkowski_sum(::ConvexSet, ::ConvexSet)
+minkowski_sum(::LazySet, ::LazySet)
 minkowski_sum(::AbstractPolyhedron, ::AbstractPolyhedron)
 minkowski_sum(::VPolytope, ::VPolytope)
 minkowski_sum(::AbstractHyperrectangle, ::AbstractHyperrectangle)

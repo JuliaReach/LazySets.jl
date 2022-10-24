@@ -175,7 +175,9 @@ function convex_hull!(points::Vector{VN};
 end
 
 function _convex_hull_2d_preprocess!(points, m=length(points); algorithm=nothing)
-    if m == 2
+    if m == 1
+        return points
+    elseif m == 2
         # two points case in 2d
         return _two_points_2d!(points)
     elseif m == 3
