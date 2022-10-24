@@ -1,19 +1,11 @@
-#= concrete implementations of binary intersections between sets =#
-
 export intersection
 
-for T in [:ConvexSet, :AbstractSingleton, :Interval, :Universe, :LinearMap]
+for T in [:LazySet, :AbstractSingleton, :Interval, :Universe, :LinearMap,
+          :UnionSet, :UnionSetArray]
     @eval begin
-        function intersection(∅::EmptySet, X::$T)
+        @commutative function intersection(∅::EmptySet, X::$T)
             @assert dim(∅) == dim(X) "cannot take the intersection between a " *
-                "$(dim(∅))-dimensional empty set and a $(dim(X))-dimensional set"
-            return ∅
-        end
-
-        # symmetric method
-        function intersection(X::$T, ∅::EmptySet)
-            @assert dim(∅) == dim(X) "cannot take the intersection between a " *
-                "$(dim(∅))-dimensional empty set and a $(dim(X))-dimensional set"
+                "$(dim(∅))-dimensional set and a $(dim(X))-dimensional set"
             return ∅
         end
     end
@@ -27,25 +19,27 @@ function intersection(∅₁::EmptySet, ∅₂::EmptySet)
 end
 
 """
-    intersection(S::AbstractSingleton, X::ConvexSet)
+    intersection(S::AbstractSingleton, X::LazySet)
 
-Return the intersection of a singleton with another set.
+Compute the intersection of a set with a single point with another set.
 
 ### Input
 
-- `S` -- singleton
-- `X` -- another set
+- `S` -- set with a single point
+- `X` -- set
 
 ### Output
 
 If the sets intersect, the result is `S`.
 Otherwise, the result is the empty set.
 """
-@commutative function intersection(S::AbstractSingleton, X::ConvexSet)
+@commutative function intersection(S::AbstractSingleton, X::LazySet)
     return _intersection_singleton(S, X)
 end
 
 function _intersection_singleton(S::AbstractSingleton, X)
+    @assert dim(S) == dim(X) "cannot take the intersection between a " *
+                     "$(dim(S))-dimensional set and a $(dim(X))-dimensional set"
     N = promote_type(eltype(S), eltype(X))
     return element(S) ∈ X ? S : EmptySet{N}(dim(S))
 end
@@ -59,12 +53,12 @@ end
 """
     intersection(L1::Line2D, L2::Line2D)
 
-Return the intersection of two two-dimensional lines.
+Compute the intersection of two two-dimensional lines.
 
 ### Input
 
-- `L1` -- first line
-- `L2` -- second line
+- `L1` -- line
+- `L2` -- line
 
 ### Output
 
@@ -72,7 +66,7 @@ Three outcomes are possible:
 
 - If the lines are identical, the result is the first line.
 - If the lines are parallel and not identical, the result is the empty set.
-- Otherwise the result is the only intersection point.
+- Otherwise the result is the set with the unique intersection point.
 
 ### Algorithm
 
@@ -82,13 +76,14 @@ to compute the intersection point.
 
 ### Examples
 
-The line ``y = -x + 1`` intersected with the line ``y = x``:
+The line ``y = x`` intersected with the line ``y = -x + 1`` respectively with
+itself:
 
 ```jldoctest
-julia> intersection(Line2D([-1., 1.], 0.), Line2D([1., 1.], 1.))
+julia> intersection(Line2D([-1.0, 1], 0.0), Line2D([1.0, 1], 1.0))
 Singleton{Float64, Vector{Float64}}([0.5, 0.5])
 
-julia> intersection(Line2D([1., 1.], 1.), Line2D([1., 1.], 1.))
+julia> intersection(Line2D([1.0, 1], 1.0), Line2D([1.0, 1], 1.0))
 Line2D{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
 ```
 """
@@ -103,60 +98,61 @@ function intersection(L1::Line2D, L2::Line2D)
         end
     else # intersection is a point
         @inbounds begin
-            det⁻¹ = 1/det
-            x = (L1.b * L2.a[2] - L1.a[2] * L2.b) * det⁻¹
-            y = (L1.a[1] * L2.b - L1.b * L2.a[1]) * det⁻¹
+            x = (L1.b * L2.a[2] - L1.a[2] * L2.b) / det
+            y = (L1.a[1] * L2.b - L1.b * L2.a[1]) / det
         end
         return Singleton([x, y])
     end
 end
 
 """
-    intersection(a::LineSegment, b::Line2D)
+    intersection(LS::LineSegment, L2::Line2D)
 
-Compute the intersection of a line and a line segment in two dimensions.
+Compute the intersection of a line segment and a line in two dimensions.
 
 ### Input
 
-- `a` -- LineSegment
-- `b` -- Line2D
+- `LS` -- line segment
+- `L2` -- two-dimensional line
 
 ### Output
 
 If the sets do not intersect, the result is the empty set.
-Otherwise the result is the singleton or line segment that describes the intersection.
+Otherwise the result is the singleton or line segment that describes the
+intersection.
 """
-@commutative function intersection(a::LineSegment, b::Line2D)
-    # cast a as line
-    ap = Line2D(a.p, a.q)
-    # find intersection between a' and b
-    m = intersection(ap, b)
-    if m == ap
-        # if this equals a, then all of the segment is the intersection
-        return a
-    elseif m isa Singleton && m.element ∈ a
-        # if the intersection between lines is in the segment
+@commutative function intersection(LS::LineSegment, L2::Line2D)
+    # cast LS as line
+    L1 = Line2D(LS.p, LS.q)
+    # find intersection between the lines
+    m = intersection(L1, L2)
+    if m == L1
+        # if the lines are equal, then the intersection is the whole line segment
+        return LS
+    elseif m isa Singleton && m.element ∈ LS
+        # the intersection between the lines is in the segment
         return m
     else
         # no intersection
-        N = promote_type(eltype(a), eltype(b))
+        N = promote_type(eltype(LS), eltype(L2))
         return EmptySet{N}(2)
     end
 end
 
 """
-    intersection(a::LineSegment, b::LineSegment)
+    intersection(LS1::LineSegment, LS2::LineSegment)
 
-Return the intersection of two two-dimensional line segments.
+Compute the intersection of two line segments.
 
 ### Input
 
-- `a` -- first line segment
-- `b` -- second line segment
+- `LS1` -- line segment
+- `LS2` -- line segment
 
 ### Output
 
-A singleton, line segment or the empty set depending on the result of the intersection.
+A singleton, line segment, or the empty set depending on the result of the
+intersection.
 
 ### Notes
 
@@ -168,67 +164,65 @@ A singleton, line segment or the empty set depending on the result of the inters
 
 - Otherwise, if there is no intersection, an empty set is returned.
 """
-function intersection(a::LineSegment, b::LineSegment)
+function intersection(LS1::LineSegment, LS2::LineSegment)
 
     # cast each segment as a line
-    ap = Line2D(a.p, a.q)
-    bp = Line2D(b.p, b.q)
+    L1 = Line2D(LS1.p, LS1.q)
+    L2 = Line2D(LS2.p, LS2.q)
 
     # find intersection between the lines
-    m = intersection(ap, bp)
-    N = promote_type(eltype(a), eltype(b))
-    if m == ap
+    m = intersection(L1, L2)
+    N = promote_type(eltype(LS1), eltype(LS2))
+    if m == L1
         # determine which segment is in both
-        p1 = max(min(a.p[1], a.q[1]), min(b.p[1], b.q[1]))
-        p2 = max(min(a.p[2], a.q[2]), min(b.p[2], b.q[2]))
-        q1 = min(max(a.p[1], a.q[1]), max(b.p[1], b.q[1]))
-        q2 = min(max(a.p[2], a.q[2]), max(b.p[2], b.q[2]))
+        p1 = max(min(LS1.p[1], LS1.q[1]), min(LS2.p[1], LS2.q[1]))
+        p2 = max(min(LS1.p[2], LS1.q[2]), min(LS2.p[2], LS2.q[2]))
+        q1 = min(max(LS1.p[1], LS1.q[1]), max(LS2.p[1], LS2.q[1]))
+        q2 = min(max(LS1.p[2], LS1.q[2]), max(LS2.p[2], LS2.q[2]))
         if _isapprox(p1, q1) && _isapprox(p2, q2)
-             # edges have a point in common
-             return Singleton([p1, p2])
+             return Singleton([p1, p2])  # edges have a point in common
 
         elseif _leq(p1, q1) && _leq(p2, q2)
              return LineSegment([p1, p2], [q1, q2])
 
         else
-            # no intersection
-            return EmptySet{N}(2)
+            return EmptySet{N}(2)  # no intersection
         end
 
-    elseif m isa Singleton && m.element ∈ a && m.element ∈ b
-        # if the intersection between lines is in the segments
-        return m
+    elseif m isa Singleton && m.element ∈ LS1 && m.element ∈ LS2
+        return m  # the intersection point between the lines is in the segments
 
     else
-        # no intersection
-        return EmptySet{N}(2)
+        return EmptySet{N}(2)  # no intersection
     end
 end
 
 """
     intersection(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
 
-Return the intersection of two hyperrectangles.
+Compute the intersection of two hyperrectangular sets.
 
 ### Input
 
-- `H1` -- first hyperrectangle
-- `H2` -- second hyperrectangle
+- `H1` -- hyperrectangular set
+- `H2` -- hyperrectangular set
 
 ### Output
 
-If the hyperrectangles do not intersect, the result is the empty set.
+If the hyperrectangular sets do not intersect, the result is the empty set.
 Otherwise the result is the hyperrectangle that describes the intersection.
 
 ### Algorithm
 
 In each isolated direction `i` we compute the rightmost left border and the
-leftmost right border of the hyperrectangles.
+leftmost right border of the hyperrectangular sets.
 If these borders contradict, then the intersection is empty.
-Otherwise the result uses these borders in each dimension.
+Otherwise the resulting hyperrectangle uses these borders in each dimension.
 """
 function intersection(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
     n = dim(H1)
+    @assert n == dim(H2) "cannot take the intersection between a " *
+                     "$n-dimensional set and a $(dim(H2))-dimensional set"
     N = promote_type(eltype(H1), eltype(H2))
     v_high = Vector{N}(undef, n)
     v_low = Vector{N}(undef, n)
@@ -249,12 +243,12 @@ end
 """
     intersection(x::Interval, y::Interval)
 
-Return the intersection of two intervals.
+Compute the intersection of two intervals.
 
 ### Input
 
-- `x` -- first interval
-- `y` -- second interval
+- `x` -- interval
+- `y` -- interval
 
 ### Output
 
@@ -262,11 +256,13 @@ If the intervals do not intersect, the result is the empty set.
 Otherwise the result is the interval that describes the intersection.
 """
 function intersection(x::Interval, y::Interval)
-    if min(y) > max(x) || min(x) > max(y)
+    l = max(min(x), min(y))
+    h = min(max(x), max(y))
+    if l > h
         N = promote_type(eltype(x), eltype(y))
         return EmptySet{N}(1)
     else
-        return Interval(max(min(x), min(y)), min(max(x), max(y)))
+        return Interval(l, h)
     end
 end
 
@@ -319,7 +315,7 @@ zero. Then we distinguish the cases that `hs` is a lower or an upper bound.
 end
 
 function _intersection_interval_halfspace(lo, hi, a, b, N)
-    # idea:
+    # idea: assuming that a != 0, we have
     # ax ≤ b  <=>  x ≤ b/a  (if a > 0)
     # ax ≤ b  <=>  x ≥ b/a  (if a < 0)
     b_over_a = b / a
@@ -330,7 +326,7 @@ function _intersection_interval_halfspace(lo, hi, a, b, N)
         # check whether ax ≤ b for x = lo
         if _leq(lo, b_over_a)
             # new upper bound: min(hi, b_over_a)
-            if _leq(hi, b_over_a)
+            if hi < b_over_a
                 return (empty, lo, hi)
             else
                 return (empty, lo, b_over_a)
@@ -341,7 +337,7 @@ function _intersection_interval_halfspace(lo, hi, a, b, N)
         # check whether ax ≤ b for x = hi
         if _geq(hi, b_over_a)
             # new lower bound: max(lo, b_over_a)
-            if _leq(b_over_a, lo)
+            if b_over_a < lo
                 return (empty, lo, hi)
             else
                 return (empty, b_over_a, hi)
@@ -383,7 +379,7 @@ Otherwise the result is the singleton that describes the intersection.
 end
 
 """
-    intersection(X::Interval, Y::ConvexSet)
+    intersection(X::Interval, Y::LazySet)
 
 Compute the intersection of an interval and a convex set.
 
@@ -398,11 +394,16 @@ If the sets do not intersect, the result is the empty set.
 Otherwise the result is the interval that describes the intersection, which may
 be of type `Singleton` if the intersection is very small.
 """
-@commutative function intersection(X::Interval, Y::ConvexSet)
+@commutative function intersection(X::Interval, Y::LazySet)
     return _intersection_interval(X, Y)
 end
 
-function _intersection_interval(X::Interval, Y::ConvexSet)
+function _intersection_interval(X::Interval, Y::LazySet)
+    @assert dim(Y) == 1 "cannot take the intersection between an interval " *
+                        "and a $(dim(Y))-dimensional set"
+    @assert isconvextype(typeof(Y)) "this implementation requires a convex " *
+                                    "set, but got $(typeof(Y))"
+
     N = promote_type(eltype(X), eltype(Y))
     lower = max(min(X), -ρ(N[-1], Y))
     upper = min(max(X), ρ(N[1], Y))
@@ -428,11 +429,21 @@ end
     i = a.i
     ai = a.v
 
+    if _isapprox(ai, zero(N))
+        if _geq(b, zero(N))
+            # half-space is universal
+            return X
+        else
+            # half-space is empty
+            return EmptySet{N}(dim(H))
+        end
+    end
+
     v_high_i = high(B, i)
     v_low_i = low(B, i)
 
     # intersect the half-space with the hyperrectangle's interval side
-    (empty, lo, hi) = _intersection_interval_halfspace(v_low_i, v_high_i, ai, b, N)
+    empty, lo, hi = _intersection_interval_halfspace(v_low_i, v_high_i, ai, b, N)
 
     if empty
         return EmptySet{N}(n)
@@ -459,12 +470,12 @@ end
 """
     intersection(P1::AbstractHPolygon, P2::AbstractHPolygon; [prune]::Bool=true)
 
-Return the intersection of two polygons in constraint representation.
+Compute the intersection of two polygons in constraint representation.
 
 ### Input
 
-- `P1`    -- first polygon
-- `P2`    -- second polygon
+- `P1`    -- polygon in constraint representation
+- `P2`    -- polygon in constraint representation
 - `prune` -- (optional, default: `true`) flag for removing redundant constraints
 
 ### Output
@@ -482,7 +493,8 @@ one.
 Redundancy of constraints is checked with
 [`remove_redundant_constraints!(::AbstractHPolygon)`](@ref).
 """
-function intersection(P1::AbstractHPolygon, P2::AbstractHPolygon; prune::Bool=true)
+function intersection(P1::AbstractHPolygon, P2::AbstractHPolygon;
+                      prune::Bool=true)
 
     # all constraints of one polygon are processed; now add the other polygon's
     # constraints
@@ -525,7 +537,7 @@ function intersection(P1::AbstractHPolygon, P2::AbstractHPolygon; prune::Bool=tr
 
     # TODO: use common vector type of P1 and P2, see #2046
     N = promote_type(eltype(P1), eltype(P2))
-    c = Vector{LinearConstraint{N, Vector{N}}}(undef, length(c1) + length(c2))
+    c = Vector{HalfSpace{N, Vector{N}}}(undef, length(c1) + length(c2))
     i1 = 1
     i2 = 1
     duplicates = 0
@@ -584,10 +596,8 @@ function intersection(P::AbstractPolygon, Q::AbstractPolygon; prune::Bool=true)
 end
 
 """
-    intersection(P1::AbstractPolyhedron{N},
-                 P2::AbstractPolyhedron{N};
-                 [backend]=default_lp_solver(N),
-                 [prune]::Bool=true) where {N}
+    intersection(P1::AbstractPolyhedron{N}, P2::AbstractPolyhedron{N};
+                 [backend]=default_lp_solver(N), [prune]::Bool=true) where {N}
 
 Compute the intersection of two polyhedra.
 
@@ -596,7 +606,7 @@ Compute the intersection of two polyhedra.
 - `P1`      -- polyhedron
 - `P2`      -- polyhedron
 - `backend` -- (optional, default: `default_lp_solver(N)`) the LP solver used
-               for the removal of redundant constraints; see the `Notes` section
+               for the removal of redundant constraints; see the *Notes* section
                below for details
 - `prune`   -- (optional, default: `true`) flag for removing redundant
                constraints
@@ -613,8 +623,8 @@ The default value of the solver backend is `default_lp_solver(N)` and it is used
 to run a feasiblity LP to remove the redundant constraints of the intersection.
 
 If you want to use the `Polyhedra` library, pass an appropriate backend. For
-example, to use the default Polyhedra library use
-`default_polyhedra_backend(P)` or use `CDDLib.Library()` for the CDD library.
+example, use `default_polyhedra_backend(P)` for the default Polyhedra library,
+or use `CDDLib.Library()` for the CDD library.
 
 There are some shortcomings of the removal of constraints using the default
 Polyhedra library; see e.g. #1038 and Polyhedra#146. It is safer to check for
@@ -657,10 +667,11 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
         end
     else
         # the correct way for this condition would be to check if `backend`
-        # isa Polyhedra.Library; since that would require using Polyhedra: Library
-        # and it is an optional dependency we opt to fallback without checking
+        # isa Polyhedra.Library; since that would require
+        # `using Polyhedra: Library` and it is an optional dependency, we fall
+        # back without checking
 
-        # convert to a Polyhedra's hrep
+        # convert to Polyhedra's hrep
         Qph = polyhedron(Q; backend=backend)
 
         # remove the redundancies
@@ -685,8 +696,7 @@ end
 
 """
     intersection(P1::Union{VPolygon, VPolytope}, P2::Union{VPolygon, VPolytope};
-                 [backend]=nothing,
-                 [prunefunc]=(X -> removevredundancy!(X; ztol=_ztol(eltype(P1)))))
+                 [backend]=nothing, [prunefunc]=nothing)
 
 Compute the intersection of two polytopes in vertex representation.
 
@@ -696,47 +706,56 @@ Compute the intersection of two polytopes in vertex representation.
 - `P2`        -- polytope in vertex representation
 - `backend`   -- (optional, default: `nothing`) the backend for polyhedral
                  computations
-- `prunefunc` -- (optional, default:
-                 `(X -> removevredundancy!(X; ztol=_ztol(eltype(P1))))!`)
-                 function to prune the vertices of the result
+- `prunefunc` -- (optional, default: `nothing`) function to prune the vertices
+                 of the result
 
 ### Output
 
 A `VPolytope`.
+
+### Notes
+
+If `prunefunc` is `nothing`, this implementation sets it to
+`(X -> removevredundancy!(X; ztol=_ztol(eltype(P1))))`.
 """
 function intersection(P1::Union{VPolygon, VPolytope},
                       P2::Union{VPolygon, VPolytope};
-                      backend=nothing,
-                      prunefunc=nothing)
+                      backend=nothing, prunefunc=nothing)
     n = dim(P1)
     @assert n == dim(P2) "expected polytopes with equal dimensions but they " *
                          "are $(dim(P1)) and $(dim(P2)) respectively"
 
-    # fast path for one and two-dimensional sets
+    # fast path for one- and two-dimensional sets
     if n == 1
         Q1 = overapproximate(P1, Interval)
         Q2 = overapproximate(P2, Interval)
         Pint = intersection(Q1, Q2)
-        return convert(VPolytope, Pint)
+        return isempty(Pint) ? Pint : convert(VPolytope, Pint)
     elseif n == 2
         v1 = convex_hull(vertices_list(P1))
         v2 = convex_hull(vertices_list(P2))
         v12 = _intersection_vrep_2d(v1, v2)
-        return VPolytope(v12)
+        return isempty(v12) ? v12 : VPolytope(v12)
     end
 
     if isnothing(backend)
         backend = default_polyhedra_backend(P1)
-    end
-    if isnothing(prunefunc)
-        prunefunc = (X -> removevredundancy!(X; ztol=_ztol(eltype(P1))))
     end
 
     # general case: convert to half-space representation
     Q1 = polyhedron(P1; backend=backend)
     Q2 = polyhedron(P2; backend=backend)
     Pint = Polyhedra.intersect(Q1, Q2)
+
+    if isnothing(prunefunc)
+        prunefunc = (X -> removevredundancy!(X; ztol=_ztol(eltype(P1))))
+    end
     prunefunc(Pint)
+
+    if isempty(Pint)
+        N = promote_type(eltype(P1), eltype(P2))
+        return EmptySet{N}(n)
+    end
     return VPolytope(Pint)
 end
 
@@ -749,17 +768,17 @@ Compute the intersection of two polygons in vertex representation.
 
 - `P1` -- polygon in vertex representation
 - `P2` -- polygon in vertex representation
-- `apply_convex_hull` -- (default, optional: `true`) use the flag to skip the
-                         computation of the convex hull in the resulting `VPolygon`
+- `apply_convex_hull` -- (default, optional: `true`) if `false`, skip the
+                         computation of the convex hull of the resulting polygon
 
 ### Output
 
-A `VPolygon` or an `EmptySet` if the intersection is empty.
+A `VPolygon`, or an `EmptySet` if the intersection is empty.
 
 ### Algorithm
 
-This function applies the [Sutherland–Hodgman polygon
-clipping algorithm](https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm).
+This function applies the [Sutherland–Hodgman polygon clipping
+algorithm](https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm).
 The implementation is based on the one found in
 [rosetta code](http://www.rosettacode.org/wiki/Sutherland-Hodgman_polygon_clipping#Julia).
 """
@@ -777,67 +796,89 @@ function intersection(P1::VPolygon, P2::VPolygon; apply_convex_hull::Bool=true)
 end
 
 """
-    intersection(cup::UnionSet, X::ConvexSet)
+    intersection(cup::UnionSet, X::LazySet)
 
-Return the intersection of a union of two convex sets and another convex set.
+Compute the intersection of a union of two sets and another set.
 
 ### Input
 
-- `cup` -- union of two convex sets
-- `X`   -- convex set
+- `cup` -- union of two sets
+- `X`   -- set
 
 ### Output
 
 The union of the pairwise intersections, expressed as a `UnionSet`.
 If one of those sets is empty, only the other set is returned.
 """
-@commutative function intersection(cup::UnionSet, X::ConvexSet)
+@commutative function intersection(cup::UnionSet, X::LazySet)
+    return _intersection_us(cup, X)
+end
+
+function _intersection_us(cup::UnionSet, X::LazySet)
     return intersection(cup.X, X) ∪ intersection(cup.Y, X)
 end
 
 # disambiguation
 @commutative intersection(S::AbstractSingleton, cup::UnionSet) =
     _intersection_singleton(S, cup)
+@commutative intersection(X::Interval, cup::UnionSet) =
+    _intersection_interval(X, cup)
+@commutative intersection(L::LinearMap, cup::UnionSet) =
+    _intersection_us(cup, L)
+intersection(cup1::UnionSet, cup2::UnionSet) = _intersection_us(cup1, cup2)
 
 """
-    intersection(cup::UnionSetArray, X::ConvexSet)
+    intersection(cup::UnionSetArray, X::LazySet)
 
-Return the intersection of a union of a finite number of convex sets and another
-convex set.
+Compute the intersection of a union of a finite number of sets and another set.
 
 ### Input
 
-- `cup` -- union of a finite number of convex sets
-- `X`   -- convex set
+- `cup` -- union of a finite number of sets
+- `X`   -- set
 
 ### Output
 
 The union of the pairwise intersections, expressed as a `UnionSetArray`.
 """
-@commutative function intersection(cup::UnionSetArray, X::ConvexSet)
+@commutative function intersection(cup::UnionSetArray, X::LazySet)
+    return _intersection_usa(cup, X)
+end
+
+function _intersection_usa(cup::UnionSetArray, X::LazySet)
     return UnionSetArray([intersection(Y, X) for Y in array(cup)])
 end
 
 # disambiguation
 @commutative intersection(S::AbstractSingleton, cup::UnionSetArray) =
     _intersection_singleton(S, cup)
+@commutative intersection(X::Interval, cup::UnionSetArray) =
+    _intersection_interval(X, cup)
+@commutative intersection(L::LinearMap, cup::UnionSetArray) =
+    _intersection_usa(cup, L)
+@commutative function intersection(cup1::UnionSet, cup2::UnionSetArray)
+    return _intersection_us(cup1, cup2)
+end
+intersection(cup1::UnionSetArray, cup2::UnionSetArray) =
+    _intersection_usa(cup1, cup2)
 
 """
-    intersection(L::LinearMap, S::ConvexSet)
+    intersection(L::LinearMap, X::LazySet)
 
-Return the intersection of a lazy linear map and a convex set.
+Compute the intersection of a lazy linear map and a set.
 
 ### Input
 
 - `L` -- linear map
-- `S` -- convex set
+- `X` -- set
 
 ### Output
 
-The polytope obtained by the intersection of `l.M * L.X` and `S`.
+The set obtained by the computing the concrete linear map `L.M * L.X` and
+intersecting with `X`.
 """
-@commutative function intersection(L::LinearMap, S::ConvexSet)
-    return intersection(linear_map(L.M, L.X), S)
+@commutative function intersection(L::LinearMap, X::LazySet)
+    return intersection(linear_map(L.M, L.X), X)
 end
 
 # disambiguation
@@ -848,20 +889,20 @@ end
     _intersection_singleton(S, L)
 
 """
-    intersection(U::Universe, X::ConvexSet)
+    intersection(U::Universe, X::LazySet)
 
-Return the intersection of a universe and a convex set.
+Compute the intersection of a universe and a set.
 
 ### Input
 
 - `U` -- universe
-- `X` -- convex set
+- `X` -- set
 
 ### Output
 
 The set `X`.
 """
-@commutative function intersection(U::Universe, X::ConvexSet)
+@commutative function intersection(U::Universe, X::LazySet)
     return X
 end
 
@@ -869,17 +910,20 @@ end
 intersection(U::Universe, ::Universe) = U
 @commutative intersection(U::Universe, P::AbstractPolyhedron) = P
 @commutative intersection(U::Universe, S::AbstractSingleton) = S
-@commutative intersection(X::Interval, U::Universe) = X
-@commutative intersection(L::LinearMap, U::Universe) = L
+@commutative intersection(U::Universe, X::Interval) = X
+@commutative intersection(U::Universe, L::LinearMap) = L
+@commutative intersection(U::Universe, X::CartesianProductArray) = X
+@commutative intersection(U::Universe, cup::UnionSet) = cup
+@commutative intersection(U::Universe, cup::UnionSetArray) = cup
 
 """
     intersection(P::AbstractPolyhedron, rm::ResetMap)
 
-Return the intersection of a polyhedron and a polyhedral reset map.
+Compute the intersection of a polyhedral set and a polyhedral reset map.
 
 ### Input
 
-- `P`  -- polyhedron
+- `P`  -- polyhedral set
 - `rm` -- polyhedral reset map
 
 ### Output
@@ -888,20 +932,19 @@ A polyhedron.
 
 ### Notes
 
-We assume that `rm` is polyhedral, i.e., has a `constraints_list` method
-defined.
+This method assumes that `rm` is polyhedral, i.e., has a `constraints_list`
+method defined.
 """
 @commutative function intersection(P::AbstractPolyhedron, rm::ResetMap)
     return intersection(P, HPolyhedron(constraints_list(rm)))
 end
 
-# more efficient version for polytopic
+# more specific version for polytopic reset map
 @commutative function intersection(P::AbstractPolyhedron,
                                    rm::ResetMap{N, <:AbstractPolytope}) where {N}
     return intersection(P, HPolytope(constraints_list(rm)))
 end
 
-@commutative intersection(U::Universe, X::CartesianProductArray) = X
 
 # disambiguation
 @commutative intersection(P::AbstractSingleton, rm::ResetMap) =
@@ -917,25 +960,28 @@ end
 """
         intersection(X::CartesianProductArray, Y::CartesianProductArray)
 
-Return the intersection between cartesian products of a finite number of convex sets.
+Compute the intersection between Cartesian products of a finite number of sets
+with identical decomposition.
 
 ### Input
 
- - `X` -- cartesian product of a finite number of convex sets
- - `Y` -- cartesian product of a finite number of convex sets
+ - `X` -- Cartesian product of a finite number of sets
+ - `Y` -- Cartesian product of a finite number of sets
 
 ### Output
 
-The decomposed set which represents concrete intersection between `X` and `Y`
+The decomposed set that represents the concrete intersection of `X` and `Y`.
 
 ### Algorithm
 
-This algorithm intersect corresponding blocks between sets.
+This algorithm intersects the corresponding blocks of the sets.
 """
 function intersection(X::CartesianProductArray, Y::CartesianProductArray)
-    @assert same_block_structure(array(X), array(Y)) "block structure has to be the same"
+    @assert same_block_structure(array(X), array(Y)) "the block structure " *
+                                                     "has to be identical"
 
-    return CartesianProductArray([intersection(array(X)[i], array(Y)[i]) for i in eachindex(array(X))])
+    return CartesianProductArray(
+        [intersection(array(X)[i], array(Y)[i]) for i in eachindex(array(X))])
 end
 
 """
@@ -963,11 +1009,10 @@ All other blocks are not considered by the intersection and remain identical.
 ### Algorithm
 
 The underlying idea of the algorithm is to exploit the unconstrained dimensions
-of `P`.
-Without loss of generality, assume that `cpa` has the structure ``X × Y × Z`` such that only the
-dimensions of ``Y`` are constrained in ``P``, and denoting a suitable projection
-of ``P`` to the dimensions of ``Y`` with ``P|_Y``, we have the following
-equivalence:
+of `P`. Without loss of generality, assume that `cpa` has the structure
+``X × Y × Z`` such that only the dimensions of ``Y`` are constrained in ``P``.
+By denoting a suitable projection of ``P`` to the dimensions of ``Y`` with
+``P|_Y``, we have the following equivalence:
 
 ```math
     (X × Y × Z) ∩ P = X × (Y ∩ P|_Y) × Z
@@ -987,7 +1032,7 @@ Consider this example:
 ```
 
 Even though the constraints of dimension ``x₂`` are decoupled from the rest,
-due to the last constraint the Cartesian product cannot be broken down further.
+due to the last constraint, the Cartesian product cannot be broken down further.
 In particular, the result ``Y ∩ P|_Y`` is a polyhedron in this implementation.
 
 Now we explain the implementation of the above idea.
@@ -997,12 +1042,8 @@ minimal dimension.
 Finally, we convert ``Y`` to a polyhedron and intersect it with a suitable
 projection of `P`.
 """
-@commutative function intersection(cpa::CartesianProductArray, P::AbstractPolyhedron)
-    return _intersection_cpa_polyhedron(cpa, P)
-end
-
-function _intersection_cpa_polyhedron(cpa::CartesianProductArray,
-                                      P::AbstractPolyhedron)
+@commutative function intersection(cpa::CartesianProductArray,
+                                   P::AbstractPolyhedron)
     # search for the indices of the block trisection into
     # "unconstrained | constrained | unconstrained" (the first and third section
     # may be empty)
@@ -1034,7 +1075,7 @@ function _intersection_cpa_polyhedron(cpa::CartesianProductArray,
         lower_bound = upper_bound + 1
     end
     # compute intersection with constrained blocks
-    cap = _intersection_cpa_polyhedron_constrained(
+    cap = _intersection_polyhedron_constrained(
         CartesianProductArray(blocks[cb_start:cb_end]), P, dim_start:dim_end)
 
     # construct result
@@ -1044,11 +1085,10 @@ function _intersection_cpa_polyhedron(cpa::CartesianProductArray,
     return CartesianProductArray(result_array)
 end
 
-function _intersection_cpa_polyhedron_constrained(cpa::CartesianProductArray,
-                                                  P::AbstractPolyhedron,
-                                                  constrained_dims)
-    T = isbounded(cpa) ? HPolytope : HPolyhedron
-    hpoly_low_dim = T(constraints_list(cpa))
+function _intersection_polyhedron_constrained(X::LazySet, P::AbstractPolyhedron,
+                                              constrained_dims)
+    T = isboundedtype(typeof(X)) ? HPolytope : HPolyhedron
+    hpoly_low_dim = T(constraints_list(X))
     cap_low_dim = intersection(hpoly_low_dim, project(P, constrained_dims))
 end
 
@@ -1062,7 +1102,7 @@ end
     intersection(Z::AbstractZonotope{N}, H::HalfSpace{N};
                  [backend]=default_lp_solver(N), [prune]::Bool=true) where {N}
 
-Return the intersection between a zonotopic set and a halfspace.
+Compute the intersection between a zonotopic set and a half-space.
 
 ### Input
 
@@ -1075,24 +1115,38 @@ Return the intersection between a zonotopic set and a halfspace.
 
 ### Output
 
-If the sets do not intersect, the output is the empty set, if the zonotopic set
-is fully contained in the halfspace, the zonotopic set is returned, otherwise the
-output is the concrete intersection between `Z` and `H`.
+If the sets do not intersect, the output is the empty set. If the zonotopic set
+is fully contained in the half-space, the zonotopic set is returned. Otherwise,
+the output is the concrete intersection between `Z` and `H`.
 
 ### Algorithm
 
-First there is a disjointness test, if that is false, there is an inclusion test,
-if that is false then the concrete intersection is computed.
+First there is a disjointness test. If that is negative, there is an inclusion
+test. If that is negative, then the concrete intersection is computed.
 """
 @commutative function intersection(Z::AbstractZonotope{N}, H::HalfSpace{N};
                                    backend=default_lp_solver(N),
                                    prune::Bool=true) where {N}
     n = dim(Z)
-    isdisjoint(Z, H) && return EmptySet(n)
+    isdisjoint(Z, H) && return EmptySet{N}(n)
     issubset(Z, H) && return Z
     return _intersection_poly(Z, H, backend=backend, prune=prune)
 end
 
+"""
+    intersection!(X::Star, H::HalfSpace)
+
+Compute the intersection between a star set and a half-space, in-place.
+
+### Input
+
+- `X` -- star set
+- `H` -- half-space
+
+### Output
+
+The modified star set.
+"""
 function intersection!(X::Star, H::HalfSpace)
     _intersection_star!(center(X), basis(X), predicate(X), H)
     return X
@@ -1105,25 +1159,19 @@ function _intersection_star!(c, V, P::Union{HPoly, HPolygon, HPolygonOpt}, H::Ha
     return addconstraint!(P, H′)
 end
 
-@commutative function intersection(X::Star{N, VN, MN, PT}, H::HalfSpace) where {N,
-        VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:Union{HPoly, HPolygon, HPolygonOpt}}
-    Y = copy(X)
-    return intersection!(Y, H)
-end
-
 """
     intersection(X::Star, H::HalfSpace)
 
-Return the intersection between a star and a halfspace.
+Compute the intersection between a star and a half-space.
 
 ### Input
 
 - `X` -- star
-- `H` -- halfspace
+- `H` -- half-space
 
 ### Output
 
-A star set representing the intersection between a star and a halfspace.
+A star set representing the intersection between a star and a half-space.
 """
 @commutative function intersection(X::Star, H::HalfSpace)
     c = center(X)
@@ -1132,4 +1180,11 @@ A star set representing the intersection between a star and a halfspace.
     Pnew = convert(HPolyhedron{N, Vector{N}}, predicate(X))
     Xnew = Star(c, V, Pnew)
     return intersection!(Xnew, H)
+end
+
+# sets in H-rep copy the set instead
+@commutative function intersection(X::Star{N, VN, MN, PT}, H::HalfSpace) where {N,
+        VN<:AbstractVector{N}, MN<:AbstractMatrix{N},
+        PT<:Union{HPoly, HPolygon, HPolygonOpt}}
+    return intersection!(copy(X), H)
 end
