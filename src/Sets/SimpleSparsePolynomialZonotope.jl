@@ -414,3 +414,20 @@ function rand(::Type{SimpleSparsePolynomialZonotope};
     SSPZ = SimpleSparsePolynomialZonotope(center, generators, expmat)
     return remove_redundant_generators(SSPZ)
 end
+
+"""
+    convex_hull(P::SimpleSparsePolynomialZonotope)
+
+Computes the convex hull of a simple sparse polynomial zonotope.
+
+### Input
+
+- `P` -- simple sparse polynomial zonotope
+
+### Output
+
+The tightest convex simple sparse polynomial zonotope containing `P`.
+"""
+function convex_hull(P::SimpleSparsePolynomialZonotope)
+    return linear_combination(P, P)
+end

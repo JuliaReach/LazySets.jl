@@ -120,6 +120,7 @@ end
     m = size(M, 1) # output dimension
     if m == 1
         convex_hull!(vlist)
+        # points are sorted
         return Interval(vlist[1][1], vlist[end][1])
     elseif m == 2
         return VPolygon(vlist)

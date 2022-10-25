@@ -159,5 +159,6 @@ for N in [Float64, Rational{Int}]
     V1 = VPolytope([N[0, 0], N[1, 0], N[0, 1]])
     V2 = VPolytope([N[1, 1], N[1, 0], N[0, 1]])
     U = UnionSetArray([V1, V2]);
-    @test ispermutation(convex_hull(U), [N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
+    chull = convex_hull(U)
+    @test isequivalent(chull, VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]]))
 end

@@ -52,14 +52,13 @@ isdisjoint(::Line2D, ::Line2D, ::Bool=false)
 ## Convex hull
 
 ```@docs
-convex_hull(::ConvexSet{N}, ::ConvexSet{N}) where {N}
+convex_hull(::LazySet, ::LazySet)
 convex_hull(::HPoly, ::HPoly)
 convex_hull(::VPolytope, ::VPolytope)
 convex_hull(::VPolygon, ::VPolygon)
 convex_hull(::Vector{VN}) where {N, VN<:AbstractVector{N}}
-convex_hull(::UnionSetArray{N, PT}; kwargs...) where {N, PT<:AbstractPolytope{N}}
-monotone_chain!
 convex_hull(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
+monotone_chain!
 ```
 ## Exact sum
 
