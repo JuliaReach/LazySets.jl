@@ -7,15 +7,16 @@ export AbstractPolygon,
 """
     AbstractPolygon{N} <: AbstractPolytope{N}
 
-Abstract type for polygons (i.e., 2D polytopes).
+Abstract type for convex polygons (i.e., two-dimensional polytopes).
 
 ### Notes
 
 Every concrete `AbstractPolygon` must define the following functions:
-- `tovrep(::AbstractPolygon{N})`         -- transform into
-    V-representation
-- `tohrep(::AbstractPolygon{N}) where {S<:AbstractHPolygon{N}}` -- transform
-    into H-representation
+
+- `tovrep(::AbstractPolygon{N})` -- transform into vertex representation
+- `tohrep(::AbstractPolygon{N})` -- transform into constraint representation
+
+The subtypes of `AbstractPolygon` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolygon)
@@ -28,17 +29,14 @@ abstract type AbstractPolygon{N} <: AbstractPolytope{N} end
 
 isconvextype(::Type{<:AbstractPolygon}) = true
 
-# --- ConvexSet interface functions ---
-
-
 """
     dim(P::AbstractPolygon)
 
-Return the ambient dimension of a polygon.
+Return the ambient dimension of a convex polygon.
 
 ### Input
 
-- `P` -- polygon
+- `P` -- convex polygon
 
 ### Output
 
@@ -103,7 +101,7 @@ An integer from 0 to 3, with the following convention:
 ### Algorithm
 
 The idea is to encode the following logic function:
-``11 ↦ 0, 01 ↦ 1, 00 ↦ 2, 10 ↦ 3``, according to the convention of above.
+``11 ↦ 0, 01 ↦ 1, 00 ↦ 2, 10 ↦ 3``, according to the convention above.
 
 This function is inspired from AGPX's answer in:
 [Sort points in clockwise order?](https://stackoverflow.com/a/46635372)
@@ -141,8 +139,8 @@ In particular, this method does not use the arctangent.
 """
 function <=(u::AbstractVector, v::AbstractVector)
     @assert length(u) == length(v) == 2 "comparison of vectors `u` and `v` " *
-           "by their direction requires they are of length 2, " *
-           "but their lengths are $(length(u)) and $(length(v)) respectively"
+           "by their direction requires that they are of length 2, " *
+           "but their lengths are $(length(u)) and $(length(v)), respectively"
 
     return _leq_quadrant(u, v)
 end
@@ -160,7 +158,7 @@ end
 """
     _leq_trig(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
 
-Compares two 2D vectors by their direction.
+Compare two 2D vectors by their direction.
 
 ### Input
 
