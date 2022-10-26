@@ -16,12 +16,18 @@ Such a type combination is necessary as long as Julia does not support
 ### Notes
 
 Every concrete `AbstractCentrallySymmetricPolytope` must define the following
-functions:
+methods:
+
 - from `AbstractCentrallySymmetric`:
   - `center(::AbstractCentrallySymmetricPolytope)` -- return the center point
+  - `center(::AbstractCentrallySymmetricPolytope, i::Int)` -- return the center
+                                                              point at index `i`
 - from `AbstractPolytope`:
-  - `vertices_list(::AbstractCentrallySymmetricPolytope)`
-     -- return a list of all vertices
+  - `vertices_list(::AbstractCentrallySymmetricPolytope)` -- return a list of
+                                                             all vertices
+
+The subtypes of `AbstractCentrallySymmetricPolytope` (including abstract
+interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractCentrallySymmetricPolytope)
@@ -32,11 +38,8 @@ julia> subtypes(AbstractCentrallySymmetricPolytope)
 """
 abstract type AbstractCentrallySymmetricPolytope{N} <: AbstractPolytope{N} end
 
-isconvextype(::Type{<:AbstractCentrallySymmetricPolytope}) = true
-
-
-# --- common AbstractCentrallySymmetric functions (copy-pasted) ---
-
+# common AbstractCentrallySymmetric functions
+# copy-pasted because Julia does not have multiple inheritance
 
 """
     dim(P::AbstractCentrallySymmetricPolytope)
@@ -55,19 +58,18 @@ The ambient dimension of the polytopic set.
     return length(center(P))
 end
 
-
 """
     an_element(P::AbstractCentrallySymmetricPolytope)
 
-Return some element of a centrally symmetric polytope.
+Return some element of a centrally symmetric, polytopic set.
 
 ### Input
 
-- `P` -- centrally symmetric polytope
+- `P` -- centrally symmetric, polytopic set
 
 ### Output
 
-The center of the centrally symmetric polytope.
+The center of the centrally symmetric, polytopic set.
 """
 function an_element(P::AbstractCentrallySymmetricPolytope)
     return center(P)
@@ -76,7 +78,7 @@ end
 """
     isempty(P::AbstractCentrallySymmetricPolytope)
 
-Return if a centrally symmetric, polytopic set is empty or not.
+Check whether a centrally symmetric, polytopic set is empty.
 
 ### Input
 
@@ -94,11 +96,11 @@ end
     isuniversal(S::AbstractCentrallySymmetricPolytope{N},
                 [witness]::Bool=false) where {N}
 
-Check whether a centrally symmetric polytope is universal.
+Check whether a centrally symmetric, polytopic set is universal.
 
 ### Input
 
-- `S`       -- centrally symmetric polytope
+- `S`       -- centrally symmetric, polytopic set
 - `witness` -- (optional, default: `false`) compute a witness if activated
 
 ### Output
@@ -108,6 +110,7 @@ Check whether a centrally symmetric polytope is universal.
 
 ### Algorithm
 
+Centrally symmetric, polytopic sets are bounded.
 A witness is obtained by computing the support vector in direction
 `d = [1, 0, …, 0]` and adding `d` on top.
 """
@@ -125,16 +128,17 @@ end
 """
     center(S::AbstractCentrallySymmetricPolytope, i::Int)
 
-Return the center along a given dimension of a centrally symmetric polytope.
+Return the center of a centrally symmetric, polytopic set along a given
+dimension.
 
 ### Input
 
-- `S` -- centrally symmetric polytope
+- `S` -- centrally symmetric, polytopic set
 - `i` -- dimension of interest
 
 ### Output
 
-The center along a given dimension of the centrally symmetric polytope.
+The center along the given dimension.
 """
 @inline function center(S::AbstractCentrallySymmetricPolytope, i::Int)
     return center(S)[i]
@@ -144,11 +148,11 @@ end
     extrema(S::AbstractCentrallySymmetricPolytope)
 
 Return two vectors with the lowest and highest coordinate of a centrally
-symmetric set.
+symmetric, polytopic set.
 
 ### Input
 
-- `S` -- centrally symmetric set
+- `S` -- centrally symmetric, polytopic set
 
 ### Output
 
@@ -157,11 +161,16 @@ Two vectors with the lowest and highest coordinates of `S`.
 ### Notes
 
 The result is equivalent to `(low(S), high(S))`.
+
+### Algorithm
+
+We compute `high(S)` and then compute the lowest coordinates with the help of
+`center(S)` (which is assumed to be cheaper to obtain).
 """
 function extrema(S::AbstractCentrallySymmetricPolytope)
     # h = c + r
     h = high(S)
-    # l = c - r = -c - r + 2 * c = -h + 2 * c
+    # l = c - r = -c - r + 2 * c = 2 * c - h
     l = 2 .* center(S) .- h
     return (l, h)
 end
@@ -169,27 +178,32 @@ end
 """
     extrema(S::AbstractCentrallySymmetricPolytope, i::Int)
 
-Return the lower and higher coordinate of a centrally symmetric set in a given
-dimension.
+Return the lower and higher coordinate of a centrally symmetric, polytopic set
+in a given dimension.
 
 ### Input
 
-- `S` -- centrally symmetric set
+- `S` -- centrally symmetric, polytopic set
 - `i` -- dimension of interest
 
 ### Output
 
-The lower and higher coordinate of the centrally symmetric set in the given
-dimension.
+The lower and higher coordinate of the centrally symmetric, polytopic set in the
+given dimension.
 
 ### Notes
 
 The result is equivalent to `(low(S, i), high(S, i))`.
+
+### Algorithm
+
+We compute `high(S, i)` and then compute the lowest coordinates with the help of
+`center(S, i)` (which is assumed to be cheaper to obtain).
 """
 function extrema(S::AbstractCentrallySymmetricPolytope, i::Int)
     # h = c + r
     h = high(S, i)
-    # l = c - r = -c - r + 2 * c = -h + 2 * c
-    l = - h + 2 * center(S, i)
+    # l = c - r = -c - r + 2 * c = 2 * c - h
+    l = 2 * center(S, i) - h
     return (l, h)
 end
