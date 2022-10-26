@@ -118,7 +118,7 @@ information, and `false` otherwise.
 ### Notes
 
 Since this operation only acts on types (not on values), it can return false
-negatives, i.e. there may be instances where the set is convex, even though the
+negatives, i.e., there may be instances where the set is convex, even though the
 answer of this function is `false`. The examples below illustrate this point.
 
 ### Examples
@@ -131,18 +131,18 @@ true
 ```
 
 For instance, the union (`UnionSet`) of two sets may in general be either convex
-or not, since convexity cannot be decided by just using type information.
-Hence, `isconvextype` returns `false` if `X` is `Type{<:UnionSet}`.
+or not. Since convexity cannot be decided by just using type information,
+`isconvextype` returns `false`.
 
 ```jldoctest convex_types
 julia> isconvextype(UnionSet)
 false
 ```
 
-However, the type parameters from the set operations allow to decide convexity
-in some cases, by falling back to the convexity of the type of its arguments.
+However, the type parameters of set operations allow to decide convexity in some
+cases by falling back to the convexity information of the type of its arguments.
 Consider for instance the lazy intersection. The intersection of two convex sets
-is always convex, hence we can get:
+is always convex, hence we get:
 
 ```jldoctest convex_types
 julia> isconvextype(Intersection{Float64, BallInf{Float64}, BallInf{Float64}})
@@ -178,7 +178,7 @@ A vector with the lower coordinate of the set in each dimension.
 
 ### Notes
 
-See also [`low(X::LazySet, i::Int)`](@ref).
+See also `low(X::LazySet, i::Int)`.
 
 The result is the lowermost corner of the box approximation, so it is not
 necessarily contained in `X`.
@@ -215,7 +215,7 @@ A vector with the highest coordinate of the set in each dimension.
 
 ### Notes
 
-See also [`high(X::LazySet, i::Int)`](@ref).
+See also `high(X::LazySet, i::Int)`.
 
 The result is the uppermost corner of the box approximation, so it is not
 necessarily contained in `X`.
@@ -270,6 +270,8 @@ Two vectors with the lowest and highest coordinates of `X` in each dimension.
 
 ### Notes
 
+See also [`extrema(X::LazySet, i::Int)`](@ref).
+
 The result is equivalent to `(low(X), high(X))`, but sometimes it can be
 computed more efficiently.
 
@@ -278,7 +280,7 @@ approximation, so they are not necessarily contained in `X`.
 
 ### Algorithm
 
-The bounds are computed with `low` and `high`.
+The bounds are computed with `low` and `high` by default.
 """
 function extrema(X::LazySet)
     l = low(X)
