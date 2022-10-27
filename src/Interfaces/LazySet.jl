@@ -310,3 +310,30 @@ function plot_vlist(X::S, ε::Real) where {S<:LazySet}
     P = overapproximate(X, ε)
     return convex_hull(vertices_list(P))
 end
+
+"""
+    convex_hull(X::LazySet; kwargs...)
+
+Compute the convex hull of a polytopic set.
+
+### Input
+
+- `X` -- polytopic set
+
+### Output
+
+The set `X` itself if its type indicates that it is convex, or a new set with
+the list of the vertices describing the convex hull.
+
+### Algorithm
+
+For non-convex sets, this method relies on the `vertices_list` method.
+"""
+function convex_hull(X::LazySet; kwargs...)
+    if isconvextype(typeof(X))
+        return X
+    end
+
+    vlist = convex_hull(vertices_list(X); kwargs...)
+    return _convex_hull_set(vlist; n=dim(X))
+end
