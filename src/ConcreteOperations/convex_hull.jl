@@ -43,7 +43,7 @@ function convex_hull(X::LazySet, Y::LazySet; algorithm=nothing,
     @assert n == dim(Y) "the convex hull requires two sets of the same " *
                         "dimension, but they have dimension $n and $(dim(Y))"
 
-    vlist = convex_hull!([copy(vertices_list(X)); copy(vertices_list(Y))];
+    vlist = convex_hull!([vertices_list(X); vertices_list(Y)];
                          algorithm=algorithm, backend=backend, solver=solver)
     return _convex_hull_set(vlist; n=n)
 end
