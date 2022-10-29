@@ -183,8 +183,9 @@ set.
 We call `constraints_list` on the lazy Minkowski sum.
 """
 function constraints_list(B::Bloating)
-    @assert (B.p == 1 || B.p == Inf) "the constraints list is only available " *
-        "for bloating in the 1-norm or in the infinity norm"
+    @assert is_polyhedral(B) "the constraints list is only available for " *
+        "polyhedral bloating (which requires a polyhedral base set and the " *
+        "1-norm or the infinity norm)"
     if B.ε < 0
         throw(ArgumentError("computing the constraints list of a negatively " *
                             "bloated set is not supported yet"))
@@ -208,4 +209,26 @@ The center of the wrapped set.
 """
 function center(B::Bloating)
     center(B.X)
+end
+
+"""
+    is_polyhedral(B::Bloating)
+
+Check whether a bloated set is polyhedral.
+
+### Input
+
+- `B` -- bloated set
+
+### Output
+
+`true` if the set is polyhedral.
+
+### Algorithm
+
+We check the sufficient condition that the base set is polyhedral and that the
+norm for bloating is either 1-norm or the infinity norm.
+"""
+function is_polyhedral(B::Bloating)
+    return (B.p == 1 || B.p == Inf) && is_polyhedral(B.X)
 end

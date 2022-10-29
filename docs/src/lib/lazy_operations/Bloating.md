@@ -14,6 +14,7 @@ isempty(::Bloating)
 an_element(::Bloating)
 constraints_list(::Bloating)
 center(::Bloating)
+is_polyhedral(::Bloating)
 ```
 
 Inherited from [`ConvexSet`](@ref):
