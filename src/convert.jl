@@ -1,9 +1,7 @@
 import Base.convert
 
-#= conversion between set types =#
-
 # convert methods for identity (no-ops)
-for T in subtypes(ConvexSet, true)
+for T in subtypes(LazySet, true)
     @eval begin
         Base.convert(::Type{$T}, X::$T) = X
     end
@@ -12,32 +10,38 @@ end
 """
     convert(T::Type{HPOLYGON}, P::VPolygon) where {HPOLYGON<:AbstractHPolygon}
 
-Converts a polygon in vertex representation to a polygon in constraint representation.
+Convert a polygon in vertex representation to a polygon in constraint
+representation.
 
 ### Input
 
-- `HPOLYGON` -- type used for dispatch
+- `HPOLYGON` -- target type
 - `P`        -- polygon in vertex representation
 
 ### Output
 
 A polygon in constraint representation.
 """
-function convert(T::Type{HPOLYGON}, P::VPolygon) where {HPOLYGON<:AbstractHPolygon}
+function convert(T::Type{HPOLYGON},
+                 P::VPolygon) where {HPOLYGON<:AbstractHPolygon}
     return tohrep(P, T)
 end
 
 """
-    convert(::Type{HPOLYGON}, X::ConvexSet; [check_boundedness]::Bool=true) where {HPOLYGON<:AbstractHPolygon}
+    convert(::Type{HPOLYGON}, X::LazySet; [check_boundedness]::Bool=true,
+            prune::Bool=true) where {HPOLYGON<:AbstractHPolygon}
 
-Converts a polyhedral set to a polygon in vertex representation.
+Convert a two-dimensional polytope to a polygon in vertex representation.
 
 ### Input
 
-- `PT` -- type used for dispatch
-- `X`  -- set
-- `check_boundedness` -- (optional, default `true`) if `true` check whether the
-                         set `X` is bounded before creating the polygon
+- `HPOLYGON`          -- target type
+- `X`                 -- two-dimensional polytope
+- `check_boundedness` -- (optional, default `!isboundedtype(typeof(X))`) if
+                         `true` check whether the set `X` is bounded before
+                         creating the polygon
+- `prune`             -- (optional, default: `true`) flag for removing redundant
+                         constraints in the end
 
 ### Output
 
@@ -47,23 +51,27 @@ A polygon in constraint representation.
 
 We compute the list of constraints of `X`, then instantiate the polygon.
 """
-function convert(::Type{HPOLYGON}, X::ConvexSet; check_boundedness::Bool=true) where {HPOLYGON<:AbstractHPolygon}
-    @assert dim(X) == 2 "set must be two-dimensional for conversion, but it is of dimension $(dim(X))"
+function convert(::Type{HPOLYGON}, X::LazySet;
+                 check_boundedness::Bool=!isboundedtype(typeof(X)),
+                 prune::Bool=true) where {HPOLYGON<:AbstractHPolygon}
+    @assert dim(X) == 2 "set must be two-dimensional for conversion, but it " *
+        "has dimension $(dim(X))"
     PT = basetype(HPOLYGON)
     if check_boundedness && !isbounded(X)
-        throw(ArgumentError("expected a bounded set for conversion to `HPolygon`"))
+        throw(ArgumentError("expected a bounded set for conversion to `$PT`"))
     end
-    return PT(constraints_list(X))
+    return PT(constraints_list(X); prune=prune)
 end
 
 """
     convert(::Type{VPolygon}, P::AbstractHPolygon)
 
-Converts a polygon in constraint representation to a polygon in vertex representation.
+Convert a polygon in constraint representation to a polygon in vertex
+representation.
 
 ### Input
 
-- `VPolygon` -- type used for dispatch
+- `VPolygon` -- target type
 - `P`        -- polygon in constraint representation
 
 ### Output
@@ -75,50 +83,14 @@ function convert(::Type{VPolygon}, P::AbstractHPolygon)
 end
 
 """
-    convert(::Type{HPolytope}, P::AbstractHPolygon)
+    convert(::Type{VPolygon}, X::LazySet)
 
-Convert from polygon in H-representation to polytope in H-representation.
-
-### Input
-
-- `type` -- target type
-- `P`    -- source polygon
-
-### Output
-
-The polygon represented as 2D polytope.
-"""
-function convert(::Type{HPolytope}, P::AbstractHPolygon)
-    return HPolytope(P.constraints)
-end
-
-"""
-    convert(::Type{VPolytope}, P::AbstractPolytope)
-
-Convert polytopic type to polytope in V-representation.
+Convert a two-dimensional polytopic set to a polygon in vertex representation.
 
 ### Input
 
-- `type` -- target type
-- `P`    -- source polytope
-
-### Output
-
-The set `P` represented as a `VPolytope`.
-"""
-function convert(::Type{VPolytope}, P::AbstractPolytope)
-    return VPolytope(vertices_list(P))
-end
-
-"""
-    convert(::Type{VPolygon}, X::ConvexSet)
-
-Generic conversion to polygon in vertex representation.
-
-### Input
-
-- `type` -- target type
-- `X`    -- set
+- `VPolygon` -- target type
+- `X`        -- two-dimensional polytopic set
 
 ### Output
 
@@ -126,24 +98,22 @@ The 2D set represented as a polygon.
 
 ### Algorithm
 
-We compute the list of vertices of `X` and wrap the result in a polygon in
-vertex representation, which guarantees that the vertices are sorted in
-counter-clockwise fashion.
+This method uses `vertices_list`.
 """
-function convert(::Type{VPolygon}, X::ConvexSet)
+function convert(::Type{VPolygon}, X::LazySet)
     @assert dim(X) == 2 "set must be two-dimensional for conversion"
     return VPolygon(vertices_list(X))
 end
 
 """
-    convert(::Type{HPolytope}, P::AbstractPolytope)
+    convert(::Type{HPolytope}, X::LazySet)
 
-Convert a polytopic set to a polytope in H-representation.
+Convert a polytopic set to a polytope in constraint representation.
 
 ### Input
 
-- `type` -- target type
-- `P`    -- source polytope
+- `HPolytope` -- target type
+- `X`         -- polytopic set
 
 ### Output
 
@@ -151,81 +121,58 @@ The given polytope represented as a polytope in constraint representation.
 
 ### Algorithm
 
-First the list of constraints of `P` is computed, then the corresponding
-`HPolytope` is created.
+This method uses `constraints_list`.
 """
-function convert(::Type{HPolytope}, P::AbstractPolytope)
-    return HPolytope(constraints_list(P))
-end
-
-"""
-    convert(::Type{HPolyhedron}, P::AbstractPolytope)
-
-Convert a polytopic set to a polyhedron in H-representation.
-
-### Input
-
-- `type` -- target type
-- `P`    -- source polytope
-
-### Output
-
-The given polytope represented as a polyhedron in constraint representation.
-"""
-function convert(::Type{HPolyhedron}, P::AbstractPolytope)
-    return HPolyhedron(constraints_list(P))
-end
-
-function convert(::Type{HPolyhedron}, X::AbstractPolyhedron)
-    return HPolyhedron(constraints_list(X))
-end
-
-# conversion of a lazyset to a polyhedron with dense normal vectors
-function convert(::Type{HPolyhedron{N, Vector{N}}}, X::AbstractPolyhedron) where {N}
-    clist = constraints_list(X)
-    return HPolyhedron([HalfSpace(Vector(c.a), c.b) for c in clist])
-end
-
-function convert(::Type{HPolyhedron}, X::ConvexSet)
-    return HPolyhedron(constraints_list(X))
-end
-
-"""
-    convert(::Type{HPolytope}, P::VPolytope)
-
-Convert from polytope in V-representation to polytope in H-representation.
-
-### Input
-
-- `type` -- target type
-- `P`    -- source polytope
-
-### Output
-
-The polytope in the dual representation.
-
-### Algorithm
-
-The `tohrep` function is invoked. It requires the `Polyhedra` package.
-"""
-function convert(::Type{HPolytope}, P::VPolytope)
-    return tohrep(P)
-end
-
-function convert(::Type{HPolytope}, X::ConvexSet)
+function convert(::Type{HPolytope}, X::LazySet)
+    if !isboundedtype(typeof(X)) || !is_polyhedral(X)
+        error("conversion to `HPolytope` requires a polytopic set")
+    end
     return HPolytope(constraints_list(X))
 end
 
 """
-    convert(::Type{VPolytope}, X::ConvexSet; [prune]::Bool=true)
+    convert(::Type{HPolyhedron}, X::LazySet)
 
-Generic conversion to polytope in vertex representation.
+Convert a polyhedral set to a polyhedron in constraint representation.
 
 ### Input
 
-- `type`  -- target type
-- `X`     -- set
-- `prune` -- (optional, default: `true`) option to remove redundant vertices
+- `HPolyhedron` -- target type
+- `X`           -- polyhedral set
+
+### Output
+
+The given set represented as a polyhedron in constraint representation.
+
+### Algorithm
+
+This method uses `constraints_list`.
+"""
+function convert(::Type{HPolyhedron}, X::LazySet)
+    if !is_polyhedral(X)
+        error("conversion to `HPolyhedron` requires a polyhedral set")
+    end
+    return HPolyhedron(constraints_list(X))
+end
+
+# conversion of a lazyset to a polyhedron with dense normal vectors
+function convert(::Type{HPolyhedron{N, Vector{N}}}, X::LazySet) where {N}
+    if !is_polyhedral(X)
+        error("conversion to `HPolyhedron` requires a polyhedral set")
+    end
+    return HPolyhedron([HalfSpace(Vector(c.a), c.b) for c in constraints(X)])
+end
+
+"""
+    convert(::Type{VPolytope}, X::LazySet; [prune]::Bool=true)
+
+Convert a polytopic set to a polytope in vertex representation.
+
+### Input
+
+- `VPolytope` -- target type
+- `X`         -- polytopic set
+- `prune`     -- (optional, default: `true`) option to remove redundant vertices
 
 ### Output
 
@@ -233,60 +180,11 @@ The given set represented as a polytope in vertex representation.
 
 ### Algorithm
 
-We compute the list of vertices of `X` and wrap the result in a polytope in
-vertex representation, `VPolytope`. Use the option `prune` to select whether or not
-to remove redundant vertices before constructing the polytope.
+This method uses `vertices_list`. Use the option `prune` to select whether to
+remove redundant vertices before constructing the polytope.
 """
-function convert(::Type{VPolytope}, X::ConvexSet; prune::Bool=true)
+function convert(::Type{VPolytope}, X::LazySet; prune::Bool=true)
     return VPolytope(vertices_list(X, prune=prune))
-end
-
-"""
-    convert(::Type{VPolytope}, P::HPolytope)
-
-Convert from polytope in H-representation to polytope in V-representation.
-
-### Input
-
-- `type` -- target type
-- `P`    -- source polytope
-
-### Output
-
-The polytope in the dual representation.
-
-### Algorithm
-
-The `tovrep` function is invoked. It requires the `Polyhedra` package.
-"""
-function convert(::Type{VPolytope}, P::HPolytope)
-    return tovrep(P)
-end
-
-"""
-    convert(::Type{HPOLYGON}, P::HPolytope{N, VN};
-            prune::Bool=true) where {N<:Real, VN<:AbstractVector{N}, HPOLYGON<:AbstractHPolygon}
-
-Convert from 2D polytope in H-representation to polygon in H-representation.
-
-### Input
-
-- `type`  -- target type
-- `P`     -- source polytope (must be 2D)
-- `prune` -- (optional, default: `true`) flag for removing redundant
-             constraints in the end
-### Output
-
-The 2D polytope represented as polygon.
-"""
-function convert(::Type{HPOLYGON}, P::HPolytope{N, VN};
-                 prune::Bool=true) where {N<:Real, VN<:AbstractVector{N}, HPOLYGON<:AbstractHPolygon}
-    @assert dim(P) == 2 "polytope must be two-dimensional for conversion"
-    H = HPOLYGON(Vector{LinearConstraint{N, VN}}())
-    for ci in constraints_list(P)
-        addconstraint!(H, ci; prune=prune)
-    end
-    return H
 end
 
 # fast conversion from a 2D hyperrectangular set to a zonotope
@@ -346,18 +244,14 @@ return quote
     end
 end end  # quote / load_genmat_2D_static
 
-function convert(::Type{Zonotope}, S::Singleton)
-    return Zonotope(center(S), genmat(S))
-end
-
 """
     convert(::Type{Zonotope}, Z::AbstractZonotope)
 
-Converts a zonotopic set to a zonotope.
+Convert a zonotopic set to a zonotope.
 
 ### Input
 
-- `Zonotope` -- type, used for dispatch
+- `Zonotope` -- target type
 - `H`        -- zonotopic set
 
 ### Output
@@ -375,43 +269,43 @@ end
 
 _convert_zonotope_fallback(Z) = Zonotope(center(Z), genmat(Z))
 
-function convert(::Type{Singleton},
-                 cp::CartesianProduct{N, S1, S2}) where {N, S1<:AbstractSingleton{N}, S2<:AbstractSingleton{N}}
+function convert(::Type{Singleton}, cp::CartesianProduct{N, S1, S2}
+                ) where {N, S1<:AbstractSingleton, S2<:AbstractSingleton}
     return Singleton(vcat(element(cp.X), element(cp.Y)))
 end
 
 """
-    convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N<:Real,
-            HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
+    convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N,
+            HN1<:AbstractHyperrectangle, HN2<:AbstractHyperrectangle}
 
-Converts the cartesian product of two hyperrectangular sets to a zonotope.
+Convert the Cartesian product of two hyperrectangular sets to a zonotope.
 
 ### Input
 
-- `Zonotope` -- type, used for dispatch
-- `cp`       -- cartesian product of two hyperrectangular sets
+- `Zonotope` -- target type
+- `cp`       -- Cartesian product of two hyperrectangular sets
 
 ### Output
 
-This method falls back to the conversion of the cartesian product to a single
+This method falls back to the conversion of the Cartesian product to a single
 hyperrectangle, and then from a hyperrectangle to a zonotope.
 """
 function convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}
-                ) where {N<:Real, HN1<:AbstractHyperrectangle{N},
-                         HN2<:AbstractHyperrectangle{N}}
+                ) where {N, HN1<:AbstractHyperrectangle,
+                            HN2<:AbstractHyperrectangle}
     return convert(Zonotope, convert(Hyperrectangle, cp))
 end
 
 """
     convert(::Type{Zonotope}, cpa::CartesianProductArray{N, HN})
-        where {N<:Real, HN<:AbstractHyperrectangle{N}}
+        where {N, HN<:AbstractHyperrectangle}
 
-Converts the cartesian product array of hyperrectangular sets to a zonotope.
+Convert the Cartesian product array of hyperrectangular sets to a zonotope.
 
 ### Input
 
-- `Zonotope` -- type, used for dispatch
-- `cpa`      -- cartesian product array of hyperrectangular sets
+- `Zonotope` -- target type
+- `cpa`      -- Cartesian product array of hyperrectangular sets
 
 ### Output
 
@@ -419,23 +313,23 @@ A zonotope.
 
 ### Algorithm
 
-This method falls back to the conversion of the cartesian product to a single
+This method falls back to the conversion of the Cartesian product to a single
 hyperrectangle, and then from a hyperrectangle to a zonotope.
 """
 function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, HN}
-                ) where {N<:Real, HN<:AbstractHyperrectangle{N}}
+                ) where {N, HN<:AbstractHyperrectangle}
     return convert(Zonotope, convert(Hyperrectangle, cpa))
 end
 
 """
-    convert(::Type{Zonotope}, S::LinearMap{N, ZN}
-           ) where {N, ZN<:AbstractZonotope{N}}
+    convert(::Type{Zonotope}, S::LinearMap{N, ZN})
+        where {N, ZN<:AbstractZonotope}
 
-Converts the lazy linear map of a zonotopic set to a zonotope.
+Convert the lazy linear map of a zonotopic set to a zonotope.
 
 ### Input
 
-- `Zonotope` -- type, used for dispatch
+- `Zonotope` -- target type
 - `S`        -- linear map of a zonotopic set
 
 ### Output
@@ -448,22 +342,22 @@ This method first applies the (concrete) linear map to the zonotopic set and
 then converts the result to a `Zonotope` type.
 """
 function convert(::Type{Zonotope}, S::LinearMap{N, ZN}
-                ) where {N, ZN<:AbstractZonotope{N}}
+                ) where {N, ZN<:AbstractZonotope}
     return convert(Zonotope, linear_map(S.M, S.X))
 end
 
 """
     convert(::Type{Zonotope}, S::LinearMap{N, CartesianProduct{N, HN1, HN2}}
-           ) where {N, HN1<:AbstractHyperrectangle{N},
-                    HN2<:AbstractHyperrectangle{N}}
+           ) where {N, HN1<:AbstractHyperrectangle,
+                    HN2<:AbstractHyperrectangle}
 
-Converts the lazy linear map of the cartesian product of two hyperrectangular
+Convert the lazy linear map of the Cartesian product of two hyperrectangular
 sets to a zonotope.
 
 ### Input
 
-- `Zonotope` -- type, used for dispatch
-- `S`        -- linear map of the cartesian product of hyperrectangular sets
+- `Zonotope` -- target type
+- `S`        -- linear map of the Cartesian product of hyperrectangular sets
 
 ### Output
 
@@ -471,26 +365,26 @@ A zonotope.
 
 ### Algorithm
 
-This method first converts the cartesian product to a zonotope, and then
+This method first converts the Cartesian product to a zonotope, and then
 applies the (concrete) linear map to the zonotope.
 """
 function convert(::Type{Zonotope},
                  S::LinearMap{N, CartesianProduct{N, HN1, HN2}}
-                ) where {N, HN1<:AbstractHyperrectangle{N},
-                         HN2<:AbstractHyperrectangle{N}}
+                ) where {N, HN1<:AbstractHyperrectangle,
+                         HN2<:AbstractHyperrectangle}
     return linear_map(S.M, convert(Zonotope, S.X))
 end
 
 """
-    convert(::Type{Zonotope},S::LinearMap{N, CartesianProductArray{N, HN}}
-           ) where {N, HN<:AbstractHyperrectangle{N}}
+    convert(::Type{Zonotope},S::LinearMap{N, CartesianProductArray{N, HN}})
+        where {N, HN<:AbstractHyperrectangle}
 
-Converts the lazy linear map of the cartesian product of a finite number of
+Convert the lazy linear map of the Cartesian product of a finite number of
 hyperrectangular sets to a zonotope.
 
 ### Input
 
-- `Zonotope` -- type, used for dispatch
+- `Zonotope` -- target type
 - `S`        -- linear map of a `CartesianProductArray` of hyperrectangular sets
 
 ### Output
@@ -499,24 +393,24 @@ A zonotope.
 
 ### Algorithm
 
-This method first converts the cartesian product array to a zonotope, and then
+This method first converts the Cartesian product array to a zonotope, and then
 applies the (concrete) linear map to the zonotope.
 """
 function convert(::Type{Zonotope}, S::LinearMap{N, CartesianProductArray{N, HN}}
-                ) where {N, HN<:AbstractHyperrectangle{N}}
+                ) where {N, HN<:AbstractHyperrectangle}
     return linear_map(S.M, convert(Zonotope, S.X))
 end
 
 """
     convert(::Type{HPOLYGON}, S::AbstractSingleton{N}
-           ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+           ) where {N, HPOLYGON<:AbstractHPolygon}
 
-Convert from singleton to polygon in H-representation.
+Convert a singleton to a polygon in constraint representation.
 
 ### Input
 
-- `type` -- target type
-- `S`    -- singleton
+- `HPOLYGON` -- target type
+- `S`        -- singleton
 
 ### Output
 
@@ -524,44 +418,44 @@ A polygon in constraint representation with the minimal number of constraints
 (three).
 """
 function convert(::Type{HPOLYGON}, S::AbstractSingleton{N}
-                ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
-    constraints_list = Vector{LinearConstraint{N, Vector{N}}}(undef, 3)
+                ) where {N, HPOLYGON<:AbstractHPolygon}
+    constraints_list = Vector{HalfSpace{N, Vector{N}}}(undef, 3)
     o = one(N)
     z = zero(N)
     v = element(S)
-    constraints_list[1] = LinearConstraint([o, o], v[1] + v[2])
-    constraints_list[2] = LinearConstraint([-o, z], -v[1])
-    constraints_list[3] = LinearConstraint([z, -o], -v[2])
+    constraints_list[1] = HalfSpace([o, o], v[1] + v[2])
+    constraints_list[2] = HalfSpace([-o, z], -v[1])
+    constraints_list[3] = HalfSpace([z, -o], -v[2])
     return HPOLYGON(constraints_list)
 end
 
 """
     convert(::Type{HPOLYGON}, L::LineSegment{N}
-          ) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+          ) where {N, HPOLYGON<:AbstractHPolygon}
 
-Convert from line segment to polygon in H-representation.
+Convert a line segment to a polygon in constraint representation.
 
 ### Input
 
-- `type`  -- target type
-- `L`     -- line segment
-- `prune` -- (optional, default: `false`) flag for removing redundant
-             constraints in the end
+- `HPOLYGON` -- target type
+- `L`        -- line segment
+- `prune`    -- (optional, default: `false`) flag for removing redundant
+                constraints in the end
 ### Output
 
 A flat polygon in constraint representation with the minimal number of
 constraints (four).
 """
-function convert(::Type{HPOLYGON}, L::LineSegment{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
+function convert(::Type{HPOLYGON}, L::LineSegment{N}) where {N, HPOLYGON<:AbstractHPolygon}
     H = HPOLYGON{N}()
     c = halfspace_left(L.p, L.q)
     addconstraint!(H, c; prune=false)
-    addconstraint!(H, LinearConstraint(-c.a, -c.b); prune=false)
+    addconstraint!(H, HalfSpace(-c.a, -c.b); prune=false)
     line_dir = L.q - L.p
-    c = LinearConstraint(line_dir, dot(L.q, line_dir))
+    c = HalfSpace(line_dir, dot(L.q, line_dir))
     addconstraint!(H, c; prune=false)
     line_dir = -line_dir
-    addconstraint!(H, LinearConstraint(line_dir, dot(L.p, line_dir)); prune=false)
+    addconstraint!(H, HalfSpace(line_dir, dot(L.p, line_dir)); prune=false)
     return H
 end
 
@@ -572,7 +466,7 @@ Convert a hyperrectangular set to a hyperrectangle.
 
 ### Input
 
-- `Hyperrectangle` -- hyperrectangle type, used for dispatch
+- `Hyperrectangle` -- hyperrectangle target type
 - `H`              -- hyperrectangular set
 
 ### Output
@@ -591,14 +485,14 @@ function convert(::Type{Hyperrectangle}, H::AbstractHyperrectangle)
 end
 
 """
-    convert(::Type{Interval}, H::AbstractHyperrectangle)
+    convert(::Type{Interval}, X::LazySet)
 
-Converts a hyperrectangular set to an interval.
+Convert a one-dimensional convex set to an interval.
 
 ### Input
 
-- `Interval` -- interval type, used for dispatch
-- `H`        -- hyperrectangular set
+- `Interval` -- interval target type
+- `X`        -- one-dimensional convex set
 
 ### Output
 
@@ -611,41 +505,28 @@ julia> convert(Interval, Hyperrectangle([0.5], [0.5]))
 Interval{Float64, IntervalArithmetic.Interval{Float64}}([0, 1])
 ```
 """
-function convert(::Type{Interval}, H::AbstractHyperrectangle)
-    @assert dim(H) == 1 "can only convert a one-dimensional $(typeof(H)) to `Interval`"
-    return Interval(low(H, 1), high(H, 1))
+function convert(::Type{Interval}, X::LazySet)
+    @assert dim(X) == 1 "cannot convert a $(dim(X))-dimensional set to an " *
+                        "`Interval`"
+    if !isconvextype(typeof(X))
+        error("this implementation requires a convex set")
+    end
+
+    l, h = extrema(X, 1)
+    return Interval(l, h)
 end
 
 """
-    convert(::Type{Interval}, S::ConvexSet{N}) where {N<:Real}
+    convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, HN})
+        where {N, HN<:AbstractHyperrectangle}
 
-Converts a convex set to an interval.
-
-### Input
-
-- `Interval` -- interval type, used for dispatch
-- `S`        -- convex set
-
-### Output
-
-An interval.
-"""
-function convert(::Type{Interval}, S::ConvexSet{N}) where {N<:Real}
-    @assert dim(S) == 1 "cannot convert a $(dim(S))-dimensional $(typeof(S)) to `Interval`"
-    return Interval(-ρ(N[-1], S), ρ(N[1], S))
-end
-
-"""
-    convert(::Type{Hyperrectangle},
-            cpa::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
-
-Converts the cartesian product of a finite number of hyperrectangular sets to
+Convert the Cartesian product of a finite number of hyperrectangular sets to
 a single hyperrectangle.
 
 ### Input
 
-- `Hyperrectangle` -- type used for dispatch
-- `S`              -- cartesian product array of hyperrectangular set
+- `Hyperrectangle` -- target type
+- `S`              -- Cartesian product array of hyperrectangular set
 
 ### Output
 
@@ -656,8 +537,8 @@ A hyperrectangle.
 This implementation uses the `center` and `radius_hyperrectangle` methods of
 `AbstractHyperrectangle`.
 """
-function convert(::Type{Hyperrectangle},
-                 cpa::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
+function convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, HN}
+                ) where {N, HN<:AbstractHyperrectangle}
      n = dim(cpa)
      c = Vector{N}(undef, n)
      r = Vector{N}(undef, n)
@@ -672,15 +553,16 @@ function convert(::Type{Hyperrectangle},
 end
 
 """
-    convert(::Type{Hyperrectangle},
-            cp::CartesianProduct{N, HN1, HN2}) where {N<:Real, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
+    convert(::Type{Hyperrectangle}, cp::CartesianProduct{N, HN1, HN2})
+        where {N, HN1<:AbstractHyperrectangle, HN2<:AbstractHyperrectangle}
 
-Converts the cartesian product of two hyperrectangular sets to a single hyperrectangle.
+Convert the Cartesian product of two hyperrectangular sets to a single
+hyperrectangle.
 
 ### Input
 
-- `Hyperrectangle` -- type used for dispatch
-- `S`              -- cartesian product of two hyperrectangular sets
+- `Hyperrectangle` -- target type
+- `S`              -- Cartesian product of two hyperrectangular sets
 
 ### Output
 
@@ -688,12 +570,12 @@ A hyperrectangle.
 
 ### Algorithm
 
-The result is obtained by concatenating the center and radius of each hyperrectangle.
-This implementation uses the `center` and `radius_hyperrectangle` methods of
-`AbstractHyperrectangle`.
+The result is obtained by concatenating the center and radius of each
+hyperrectangle. This implementation uses the `center` and
+`radius_hyperrectangle` methods.
 """
-function convert(::Type{Hyperrectangle},
-                 cp::CartesianProduct{N, HN1, HN2}) where {N<:Real, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
+function convert(::Type{Hyperrectangle}, cp::CartesianProduct{N, HN1, HN2}
+                ) where {N, HN1<:AbstractHyperrectangle, HN2<:AbstractHyperrectangle}
      X, Y = cp.X, cp.Y
      c = vcat(center(X), center(Y))
      r = vcat(radius_hyperrectangle(X), radius_hyperrectangle(Y))
@@ -702,15 +584,15 @@ end
 
 """
     convert(::Type{Hyperrectangle},
-            cpa::CartesianProductArray{N, Interval{N}}) where {N<:Real}
+            cpa::CartesianProductArray{N, IN}) where {N, IN<:Interval}
 
-Converts the cartesian product of a finite number of intervals to a single
+Convert the Cartesian product of a finite number of intervals to a single
 hyperrectangle.
 
 ### Input
 
-- `Hyperrectangle` -- type used for dispatch
-- `S`              -- cartesian product array of intervals
+- `Hyperrectangle` -- target type
+- `S`              -- Cartesian product array of intervals
 
 ### Output
 
@@ -719,10 +601,10 @@ A hyperrectangle.
 ### Algorithm
 
 This implementation uses the `min` and `max` methods of `Interval` to reduce
-the allocatons and improve performance (see LazySets#1143).
+the allocations and improve performance (see LazySets#1143).
 """
 function convert(::Type{Hyperrectangle},
-                 cpa::CartesianProductArray{N, Interval{N}}) where {N<:Real}
+                 cpa::CartesianProductArray{N, IN}) where {N, IN<:Interval}
      # since the sets are intervals, the dimension of cpa is its length
      n = length(array(cpa))
      l = Vector{N}(undef, n)
@@ -736,25 +618,26 @@ end
 
 """
     convert(::Type{CartesianProduct{N, Interval{N}, Interval{N}}},
-            H::AbstractHyperrectangle{N}) where {N<:Real}
+            H::AbstractHyperrectangle{N}) where {N}
 
-Converts a two-dimensional hyperrectangle to the cartesian product of two
+Convert a two-dimensional hyperrectangle to the Cartesian product of two
 intervals.
 
 ### Input
 
-- `CartesianProduct` -- type used for dispatch
+- `CartesianProduct` -- target type
 - `H`                -- hyperrectangle
 
 ### Output
 
-The cartesian product of two intervals.
+The Cartesian product of two intervals.
 """
 function convert(::Type{CartesianProduct{N, Interval{N}, Interval{N}}},
-                 H::AbstractHyperrectangle{N}) where {N<:Real}
-    @assert dim(H) == 2 "the hyperrectangle must be two-dimensional to convert it to " *
-            "the cartesian product of two intervals, but it is $(dim(H))-dimensional; " *
-            "consider converting it to a 'CartesianProductArray{$N, Interval{$N}}' instead"
+                 H::AbstractHyperrectangle{N}) where {N}
+    @assert dim(H) == 2 "the hyperrectangle must be two-dimensional to " *
+            "convert it to the Cartesian product of two intervals, but it is " *
+            "$(dim(H))-dimensional; consider converting it to a " *
+            "`CartesianProductArray{$N, Interval{$N}}` instead"
     Ix = Interval(low(H, 1), high(H, 1))
     Iy =  Interval(low(H, 2), high(H, 2))
     return CartesianProduct(Ix, Iy)
@@ -762,35 +645,35 @@ end
 
 """
     convert(::Type{CartesianProductArray{N, Interval{N}}},
-            H::AbstractHyperrectangle{N}) where {N<:Real}
+            H::AbstractHyperrectangle{N}) where {N}
 
-Converts a hyperrectangle to the cartesian product array of intervals.
+Convert a hyperrectangle to the Cartesian product array of intervals.
 
 ### Input
 
-- `CartesianProductArray` -- type used for dispatch
+- `CartesianProductArray` -- target type
 - `H`                     -- hyperrectangle
 
 ### Output
 
-The cartesian product of a finite number of intervals.
+The Cartesian product of a finite number of intervals.
 """
 function convert(::Type{CartesianProductArray{N, Interval{N}}},
-                 H::AbstractHyperrectangle{N}) where {N<:Real}
+                 H::AbstractHyperrectangle{N}) where {N}
     Iarray = [Interval(low(H, i), high(H, i)) for i in 1:dim(H)]
     return CartesianProductArray(Iarray)
 end
 
 """
     convert(::Type{Zonotope}, cp::CartesianProduct{N, ZN1, ZN2}
-           ) where {N<:Real, ZN1<:AbstractZonotope{N}, ZN2<:AbstractZonotope{N}}
+           ) where {N, ZN1<:AbstractZonotope, ZN2<:AbstractZonotope}
 
-Converts the cartesian product of two zonotopes to a new zonotope.
+Convert the Cartesian product of two zonotopic sets to a new zonotope.
 
 ### Input
 
-- `Zonotope` -- type used for dispatch
-- `S`        -- cartesian product of two zonotopes
+- `Zonotope` -- target type
+- `S`        -- Cartesian product of two zonotopic sets
 
 ### Output
 
@@ -798,15 +681,15 @@ A zonotope.
 
 ### Algorithm
 
-The cartesian product is obtained by:
+The Cartesian product is obtained by:
 
 - Concatenating the centers of each input zonotope.
-- Arranging the generators in block-diagional fashion, and filled with zeros
-  in the off-diagonal; for this reason, the generator matrix of the returned
+- Arranging the generators in block-diagonal fashion, and filled with zeros in
+  the off-diagonal; for this reason, the generator matrix of the returned
   zonotope is built as a sparse matrix.
 """
 function convert(::Type{Zonotope}, cp::CartesianProduct{N, ZN1, ZN2}
-                ) where {N<:Real, ZN1<:AbstractZonotope{N}, ZN2<:AbstractZonotope{N}}
+                ) where {N, ZN1<:AbstractZonotope, ZN2<:AbstractZonotope}
     Z1, Z2 = cp.X, cp.Y
     c = vcat(center(Z1), center(Z2))
     G = blockdiag(sparse(genmat(Z1)), sparse(genmat(Z2)))
@@ -814,73 +697,33 @@ function convert(::Type{Zonotope}, cp::CartesianProduct{N, ZN1, ZN2}
 end
 
 """
-    convert(::Type{HPolytope}, H::AbstractHyperrectangle)
+    convert(::Type{IntervalArithmetic.Interval}, X::LazySet)
 
-Converts a hyperrectangular set to a polytope in constraint representation.
-
-### Input
-
-- `HPolytope` -- type used for dispatch
-- `H`         -- hyperrectangular set
-
-### Output
-
-A polytope in constraint representation.
-"""
-function convert(::Type{HPolytope},
-                 H::AbstractHyperrectangle)
-    return HPolytope(constraints_list(H))
-end
-
-"""
-    convert(::Type{HPOLYGON}, H::AbstractHyperrectangle) where
-        {HPOLYGON<:AbstractHPolygon}
-
-Converts a hyperrectangular set to a polygon in constraint representation.
+Convert a convex set to an `Interval` from `IntervalArithmetic`.
 
 ### Input
 
-- `HPOLYGON`  -- type used for dispatch
-- `H`         -- hyperrectangular set
-
-### Output
-
-A polygon in constraint representation.
-"""
-function convert(X::Type{HPOLYGON},
-                 H::AbstractHyperrectangle) where {HPOLYGON<:AbstractHPolygon}
-    @assert dim(H) == 2 "cannot convert a $(dim(H))-dimensional " *
-        "hyperrectangle into a two-dimensional polygon"
-    return HPOLYGON(constraints_list(H))
-end
-
-"""
-    convert(::Type{IntervalArithmetic.Interval}, X::ConvexSet)
-
-Converts a convex set to an `Interval` from `IntervalArithmetic`.
-
-### Input
-
-- `Interval` -- type used for dispatch, from `IntervalArithmetic`
+- `Interval` -- target type, from `IntervalArithmetic`
 - `X`        -- convex set
 
 ### Output
 
 An `IntervalArithmetic.Interval`.
 """
-function convert(::Type{IntervalArithmetic.Interval}, X::ConvexSet)
-    @assert dim(X) == 1 "cannot convert a $(dim(X))-dimensional set to an interval"
+function convert(::Type{IntervalArithmetic.Interval}, X::LazySet)
+    @assert dim(X) == 1 "cannot convert a $(dim(X))-dimensional set to an " *
+                        "interval"
     return convert(Interval, X).dat
 end
 
 """
     convert(::Type{Interval}, x::IntervalArithmetic.Interval)
 
-Converts an `Interval` from `IntervalArithmetic` to an interval in `LazySets`.
+Convert an `Interval` from `IntervalArithmetic` to an `Interval` in `LazySets`.
 
 ### Input
 
-- `Interval` -- type used for dispatch
+- `Interval` -- target type
 - `x`        -- interval (`IntervalArithmetic.Interval`)
 
 ### Output
@@ -888,17 +731,17 @@ Converts an `Interval` from `IntervalArithmetic` to an interval in `LazySets`.
 A `LazySets.Interval`.
 """
 function convert(::Type{Interval}, x::IntervalArithmetic.Interval)
-    return Interval(IntervalArithmetic.inf(x), IntervalArithmetic.sup(x))
+    return Interval(x)
 end
 
 """
     convert(::Type{IntervalArithmetic.IntervalBox}, H::AbstractHyperrectangle)
 
-Converts a hyperrectangular set to an `IntervalBox` from `IntervalArithmetic`.
+Convert a hyperrectangular set to an `IntervalBox` from `IntervalArithmetic`.
 
 ### Input
 
-- `IntervalBox` -- type used for dispatch
+- `IntervalBox` -- target type
 - `H`           -- hyperrectangular set
 
 ### Output
@@ -912,11 +755,11 @@ end
 """
     convert(::Type{Hyperrectangle}, IB::IntervalArithmetic.IntervalBox)
 
-Converts an `IntervalBox` from `IntervalArithmetic` to a hyperrectangular set.
+Convert an `IntervalBox` from `IntervalArithmetic` to a hyperrectangular set.
 
 ### Input
 
-- `Hyperrectangle` -- type used for dispatch
+- `Hyperrectangle` -- target type
 - `IB`             -- interval box
 
 ### Output
@@ -926,8 +769,8 @@ A `Hyperrectangle`.
 ### Notes
 
 `IntervalArithmetic.IntervalBox` uses *static* vectors to store each component
-interval, hence the resulting `Hyperrectangle` has its center and radius represented
-as a static vector (`SArray`).
+interval; hence the resulting `Hyperrectangle` has its center and radius
+represented as a static vector (`SArray`).
 """
 function convert(::Type{Hyperrectangle}, IB::IntervalArithmetic.IntervalBox)
     low_IB = IntervalArithmetic.inf.(IB)
@@ -944,34 +787,32 @@ end
 
 """
     convert(::Type{Hyperrectangle}, r::Rectification{N, AH})
-        where {N<:Real, AH<:AbstractHyperrectangle{N}}
+        where {N, AH<:AbstractHyperrectangle}
 
-Converts a rectification of a hyperrectangle to a hyperrectangle.
+Convert a rectification of a hyperrectangle to a hyperrectangle.
 
 ### Input
 
-- `Hyperrectangle` -- type used for dispatch
+- `Hyperrectangle` -- target type
 - `r`              -- rectification of a hyperrectangle
 
 ### Output
 
 A `Hyperrectangle`.
 """
-function convert(::Type{Hyperrectangle},
-                 r::Rectification{N, AH}) where {N<:Real,
-                                                 AH<:AbstractHyperrectangle{N}}
+function convert(::Type{Hyperrectangle}, r::Rectification{N, AH}
+                ) where {N, AH<:AbstractHyperrectangle}
     return rectify(r.X)
 end
 
 """
-    convert(::Type{Interval},
-            r::Rectification{N, IN}) where {N<:Real, IN<:Interval{N}}
+    convert(::Type{Interval}, r::Rectification{N, IN}) where {N, IN<:Interval}
 
-Converts a rectification of an interval to an interval.
+Convert a rectification of an interval to an interval.
 
 ### Input
 
-- `Interval` -- type used for dispatch
+- `Interval` -- target type
 - `r`        -- rectification of an interval
 
 ### Output
@@ -979,39 +820,19 @@ Converts a rectification of an interval to an interval.
 An `Interval`.
 """
 function convert(::Type{Interval},
-                 r::Rectification{N, IN}) where {N<:Real, IN<:Interval{N}}
+                 r::Rectification{N, IN}) where {N, IN<:Interval}
     return Interval(rectify([min(r.X), max(r.X)]))
-end
-
-"""
-    convert(::Type{VPolytope},
-            X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
-
-Converts the convex hull array of singletons to a polytope in V-representation.
-
-### Input
-
-- `VPolytope` -- type used for dispatch
-- `X`         -- convex hull array of singletons
-
-### Output
-
-A polytope in vertex representation.
-"""
-function convert(::Type{VPolytope},
-                 X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
-    return VPolytope(vertices_list(X))
 end
 
 """
     convert(::Type{MinkowskiSumArray},
             X::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
 
-Converts the Minkowski sum of a Minkowski sum array to a Minkowski sum array.
+Convert the Minkowski sum of a Minkowski sum array to a Minkowski sum array.
 
 ### Input
 
-- `MinkowskiSumArray`  -- type used for dispatch
+- `MinkowskiSumArray`  -- target type
 - `X`                  -- Minkowski sum of a Minkowski sum array
 
 ### Output
@@ -1024,29 +845,31 @@ function convert(::Type{MinkowskiSumArray},
 end
 
 """
-    convert(::Type{Interval}, x::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval{N}}
+    convert(::Type{Interval}, x::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval}
 
-Converts the Minkowski sum of two intervals into an interval.
+Convert the Minkowski sum of two intervals to an interval.
 
 ### Input
 
-- `Interval` -- type used for dispatch
-- `x`        -- Minkowski sum of a pair of intervals
+- `Interval` -- target type
+- `x`        -- Minkowski sum of two intervals
 
 ### Output
 
 An interval.
 """
-function convert(::Type{Interval}, x::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval{N}}
+function convert(::Type{Interval}, x::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval}
     return minkowski_sum(x.X, x.Y)
 end
 
-function convert(::Type{HalfSpace{N, Vector{N}}}, hs::HalfSpace{N, <:AbstractVector{N}}) where {N}
+# convert to concrete Vector representation
+function convert(::Type{HalfSpace{N, Vector{N}}},
+                 hs::HalfSpace{N, <:AbstractVector{N}}) where {N}
     return HalfSpace(Vector(hs.a), hs.b)
 end
 
 function convert(::Type{Zonotope},
-                 am::AbstractAffineMap{N, <:AbstractZonotope{N}}) where {N<:Real}
+                 am::AbstractAffineMap{N, <:AbstractZonotope{N}}) where {N}
     Z1 = convert(Zonotope, linear_map(matrix(am), set(am)))
     translate!(Z1, vector(am))
     return Z1
@@ -1055,13 +878,13 @@ end
 """
     convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
 
-Converts a zonotopic set of order one into a parallelotope in constraint
+Convert a zonotopic set of order one to a parallelotope in constraint
 representation.
 
 ### Input
 
-- `HParallelotope` -- type used for dispatch
-- `Z`              -- zonotopic set
+- `HParallelotope` -- target type
+- `Z`              -- zonotopic set of order one
 
 ### Output
 
@@ -1070,15 +893,15 @@ A parallelotope in constraint representation.
 ### Notes
 
 This function requires that the list of constraints of `Z` are obtained in
-the particular order returned from the constraints list function of a `Zonotope`.
+the particular order returned from the `constraints_list` function of a
+`Zonotope`. Hence it first converts `Z` to a `Zonotope`.
 """
 function convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
-    @assert order(Z) == 1 "cannot convert a zonotope that is not of order 1 to"*
-                          " a parallelotope"
+    @assert order(Z) == 1 "cannot convert a zonotope that is not of order 1 " *
+                          "to a parallelotope"
     n = dim(Z)
 
-    Z = convert(Zonotope, Z)
-    constraints = constraints_list(Z) # TODO refactor + use _constraints_list_zonotope
+    constraints = _constraints_list_zonotope(Z)
 
     D = Matrix{N}(undef, n, n)
     c = Vector{N}(undef, 2n)
@@ -1093,70 +916,40 @@ function convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
 end
 
 """
-    convert(::Type{Zonotope}, cp::CartesianProduct{N, AZ1, AZ2}) where
-         {N, AZ1<:AbstractZonotope{N}, AZ2<:AbstractZonotope{N}}
-
-Converts a cartesian product of two zonotopes into a zonotope.
-
-### Input
-
-- `Zonotope` -- type used for dispatch
-- `cp`       -- cartesian product of two zonotopes
-
-### Output
-
-A zonotope.
-
-### Notes
-
-This implementation creates a `Zonotope` with sparse vector and matrix representation.
-"""
-function convert(::Type{Zonotope}, cp::CartesianProduct{N, AZ1, AZ2}) where
-         {N, AZ1<:AbstractZonotope{N}, AZ2<:AbstractZonotope{N}}
-    Z1, Z2 = cp.X, cp.Y
-    c = vcat(center(Z1), center(Z2))
-    G = blockdiag(sparse(genmat(Z1)), sparse(genmat(Z2)))
-    return Zonotope(c, G)
-end
-
-"""
     convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ})
-        where {N, AZ<:AbstractZonotope{N}}
+        where {N, AZ<:AbstractZonotope}
 
-Converts a cartesian product array of zonotopes into a zonotope.
+Convert a Cartesian product array of zonotopic sets to a zonotope.
 
 ### Input
 
-- `Zonotope` -- type used for dispatch
-- `cpa`       -- cartesian product array of zonotopes
+- `Zonotope` -- target type
+- `cpa`       -- Cartesian product array of zonotopic sets
 
 ### Output
 
-A zonotope.
-
-### Notes
-
-This function requires the use of `SparseArrays`.
+A zonotope with sparse matrix representation.
 """
-function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ}) where
-        {N, AZ<:AbstractZonotope{N}}
+function convert(::Type{Zonotope}, cpa::CartesianProductArray{N, AZ}
+                ) where {N, AZ<:AbstractZonotope}
     arr = array(cpa)
     c = reduce(vcat, center.(arr))
     G = reduce(blockdiag, sparse.(genmat.(arr)))
     return Zonotope(c, G)
 end
 
+# make a copy of the constraints
 convert(::Type{HPolytope}, P::HPolyhedron) = HPolytope(copy(constraints_list(P)))
 convert(::Type{HPolyhedron}, P::HPolytope) = HPolyhedron(copy(constraints_list(P)))
 
 for T in [HPolygon, HPolygonOpt, HPolytope, HPolyhedron]
 @eval begin
-    function convert(::Type{$T}, P::Intersection{N, S1, S2}) where {N, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
+    function convert(::Type{$T}, P::Intersection)
         clist = vcat(constraints_list(P.X), constraints_list(P.Y))
         return ($T)(clist)
     end
 
-    function convert(::Type{$T}, P::IntersectionArray{N, S}) where {N, S<:AbstractPolyhedron}
+    function convert(::Type{$T}, P::IntersectionArray)
         clist = reduce(vcat, constraints_list.(array(P)))
         return ($T)(clist)
     end
@@ -1166,11 +959,11 @@ end
 """
     convert(::Type{STAR}, P::AbstractPolyhedron{N}) where {N}
 
-Converts a polyhedral set into a star set represented as a lazy affine map.
+Convert a polyhedral set to a star set represented as a lazy affine map.
 
 ### Input
 
-- `STAR` -- type used for dispatch
+- `STAR` -- target type
 - `P`    -- polyhedral set
 
 ### Output
@@ -1187,11 +980,11 @@ end
 """
     convert(::Type{STAR}, X::Star)
 
-Converts a star set into its equivalent representation as a lazy affine map.
+Convert a star set to its equivalent representation as a lazy affine map.
 
 ### Input
 
-- `STAR` -- type used for dispatch
+- `STAR` -- target type
 - `X`    -- star set
 
 ### Output
@@ -1205,11 +998,11 @@ end
 """
     convert(::Type{Star}, P::AbstractPolyhedron{N}) where {N}
 
-Converts a polyhedral set into a star set.
+Convert a polyhedral set to a star set.
 
 ### Input
 
-- `Star` -- type used for dispatch
+- `Star` -- target type
 - `P`    -- polyhedral set
 
 ### Output
@@ -1234,11 +1027,19 @@ function convert(::Type{Hyperplane}, P::HPolyhedron; skip_check::Bool=false)
     return Hyperplane(c1.a, c1.b)
 end
 
-
 """
-    convert(::Type{SimpleSparsePolynomialZonotope}, Z::Zonotope)
+    convert(::Type{SimpleSparsePolynomialZonotope}, Z::AbstractZonotope)
 
 Convert a zonotope to a simple sparse polynomial zonotope.
+
+### Input
+
+- `SimpleSparsePolynomialZonotope` -- target type
+- `Z`                              -- zonotopic set
+
+### Output
+
+A simple sparse polynomial zonotope.
 
 ### Algorithm
 
@@ -1257,11 +1058,22 @@ function convert(::Type{SimpleSparsePolynomialZonotope}, Z::AbstractZonotope)
 end
 
 """
-    convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::SparsePolynomialZonotope)
+    convert(::Type{SimpleSparsePolynomialZonotope},
+            SPZ::SparsePolynomialZonotope)
 
 Convert a sparse polynomial zonotope to simple sparse polynomial zonotope.
+
+### Input
+
+- `SimpleSparsePolynomialZonotope` -- target type
+- `SPZ`                            -- sparse polynomial zonotope
+
+### Output
+
+A simple sparse polynomial zonotope.
 """
-function convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::SparsePolynomialZonotope)
+function convert(::Type{SimpleSparsePolynomialZonotope},
+                 SPZ::SparsePolynomialZonotope)
     c = center(SPZ)
     G = hcat(genmat_dep(SPZ), genmat_indep(SPZ))
     n = ngens_indep(SPZ)
@@ -1270,13 +1082,22 @@ function convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::SparsePolynomialZo
     return SimpleSparsePolynomialZonotope(c, G, E)
 end
 
-
 """
     convert(::Type{SparsePolynomialZonotope}, Z::AbstractZonotope{N}) where {N}
 
 Convert a zonotope to sparse polynomial zonotope.
+
+### Input
+
+- `SparsePolynomialZonotope` -- target type
+- `Z`                        -- zonotopic set
+
+### Output
+
+A sparse polynomial zonotope.
 """
-function convert(::Type{SparsePolynomialZonotope}, Z::AbstractZonotope{N}) where {N}
+function convert(::Type{SparsePolynomialZonotope},
+                 Z::AbstractZonotope{N}) where {N}
     c = center(Z)
     G = genmat(Z)
     n = ngens(Z)
@@ -1288,11 +1109,22 @@ function convert(::Type{SparsePolynomialZonotope}, Z::AbstractZonotope{N}) where
 end
 
 """
-    convert(::Type{SparsePolynomialZonotope}, SSPZ::SimpleSparsePolynomialZonotope)
+    convert(::Type{SparsePolynomialZonotope},
+            SSPZ::SimpleSparsePolynomialZonotope)
 
 Convert a simple sparse polynomial zonotope to a sparse polynomial zonotope.
+
+### Input
+
+- `SparsePolynomialZonotope` -- target type
+- `SSPZ`                     -- simple sparse polynomial zonotope
+
+### Output
+
+A sparse polynomial zonotope.
 """
-function convert(::Type{SparsePolynomialZonotope}, SSPZ::SimpleSparsePolynomialZonotope{N}) where {N}
+function convert(::Type{SparsePolynomialZonotope},
+                 SSPZ::SimpleSparsePolynomialZonotope{N}) where {N}
     c = center(SSPZ)
     G = genmat(SSPZ)
     E = expmat(SSPZ)
