@@ -259,7 +259,7 @@ function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
 end
 
 """
-    vertices_list(P::VPolygon)
+    vertices_list(P::VPolygon; kwargs...)
 
 Return the list of vertices of a polygon in vertex representation.
 
@@ -271,7 +271,7 @@ Return the list of vertices of a polygon in vertex representation.
 
 The list of vertices.
 """
-function vertices_list(P::VPolygon)
+function vertices_list(P::VPolygon; kwargs...)
     return P.vertices
 end
 
