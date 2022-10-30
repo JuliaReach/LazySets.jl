@@ -16,6 +16,6 @@ constraints_list(::Bloating)
 center(::Bloating)
 is_polyhedral(::Bloating)
 ```
-
-Inherited from [`ConvexSet`](@ref):
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`high`](@ref high(::LazySet))
+* [`low`](@ref low(::LazySet))
