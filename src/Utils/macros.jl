@@ -1,13 +1,13 @@
 """
     @neutral(SET, NEUT)
 
-Create functions to make a lazy set operation commutative with a given neutral
-element set type.
+Create functions to make a lazy set operation commutative with a given
+neutral-element set type.
 
 ### Input
 
-- `SET`  -- lazy set operation type
-- `NEUT` -- set type for neutral element
+- `SET`  -- set type of lazy operation
+- `NEUT` -- set type of neutral element
 
 ### Output
 
@@ -16,8 +16,8 @@ Nothing.
 ### Notes
 
 This macro generates four functions (possibly two more if `@absorbing` has been
-used in advance) (possibly two or four more if `@declare_array_version` has been
-used in advance).
+used in advance, and possibly two or four more if `@declare_array_version` has
+been used in advance).
 
 ### Examples
 
@@ -71,13 +71,13 @@ end
 """
     @absorbing(SET, ABS)
 
-Create functions to make a lazy set operation commutative with a given absorbing
-element set type.
+Create functions to make a lazy set operation commutative with a given
+absorbing-element set type.
 
 ### Input
 
-- `SET` -- lazy set operation type
-- `ABS` -- set type for absorbing element
+- `SET` -- set type of lazy operation
+- `ABS` -- set type of absorbing element
 
 ### Output
 
@@ -86,8 +86,8 @@ Nothing.
 ### Notes
 
 This macro generates four functions (possibly two more if `@neutral` has been
-used in advance) (possibly two or four more if `@declare_array_version` has been
-used in advance).
+used in advance, and possibly two or four more if `@declare_array_version` has
+been used in advance).
 
 ### Examples
 
@@ -145,8 +145,8 @@ Create functions to connect a lazy set operation with its array set type.
 
 ### Input
 
-- `SET`    -- lazy set operation type
-- `SETARR` -- array set type
+- `SET`    -- set type of lazy operation
+- `SETARR` -- set type of array version
 
 ### Output
 
@@ -225,22 +225,25 @@ macro declare_array_version(SET, SETARR)
     return nothing
 end
 
-
 """
     @neutral_absorbing(SET, NEUT, ABS)
 
 Create two functions to avoid method ambiguities for a lazy set operation with
-respect to neutral and absorbing element set types.
+respect to neutral-element and absorbing-element set types.
 
 ### Input
 
-- `SET`  -- lazy set operation type
-- `NEUT` -- set type for neutral element
-- `ABS`  -- set type for absorbing element
+- `SET`  -- set type of lazy operation
+- `NEUT` -- set type of neutral element
+- `ABS`  -- set type of absorbing element
 
 ### Output
 
 A quoted expression containing the function definitions.
+
+### Notes
+
+This macro is used internally in other macros.
 
 ### Examples
 
@@ -264,13 +267,13 @@ end
     @array_neutral(FUN, NEUT, SETARR)
 
 Create two functions to avoid method ambiguities for a lazy set operation with
-respect to the neutral element set type and the array set type.
+respect to the neutral-element set type and the array set type.
 
 ### Input
 
 - `FUN`     -- function name
-- `NEUT`    -- set type for neutral element
-- `SETARR`  -- array set type
+- `NEUT`    -- set type of neutral element
+- `SETARR`  -- set type of array version
 
 ### Output
 
@@ -298,13 +301,13 @@ end
     @array_absorbing(FUN, ABS, SETARR)
 
 Create two functions to avoid method ambiguities for a lazy set operation with
-respect to the absorbing element set type and the array set type.
+respect to the absorbing-element set type and the array set type.
 
 ### Input
 
 - `FUN`     -- function name
-- `ABS`     -- set type for absorbing element
-- `SETARR`  -- array set type
+- `ABS`     -- set type of absorbing element
+- `SETARR`  -- set type of array version
 
 ### Output
 
