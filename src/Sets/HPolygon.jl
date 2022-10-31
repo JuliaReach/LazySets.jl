@@ -12,16 +12,19 @@ are sorted in counter-clockwise fashion with respect to their normal directions.
 
 - `constraints`       -- list of linear constraints, sorted by the normal
                          direction in counter-clockwise fashion
+
+### Notes
+
+Further constructor arguments:
+
 - `sort_constraints`  -- (optional, default: `true`) flag for sorting the
-                         constraints (sortedness is a running assumption of this
-                         type)
+                         constraints (being sorted is a running assumption of
+                         this type)
 - `check_boundedness` -- (optional, default: `false`) flag for checking if the
                          constraints make the polygon bounded; (boundedness is a
                          running assumption of this type)
 - `prune`             -- (optional, default: `true`) flag for removing redundant
                          constraints
-
-### Notes
 
 The option `sort_constraints` can be used to deactivate automatic sorting of
 constraints in counter-clockwise fashion, which is an invariant of this type.
@@ -38,19 +41,18 @@ iterative addition of the constraints, and hence one has to initially construct
 an empty list of constraints (which represents an unbounded set).
 The user has to make sure that the `HPolygon` is not used before the constraints
 actually describe a bounded set.
-The function `isbounded` can be used to manually assert boundedness.
 """
 struct HPolygon{N, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
-    constraints::Vector{LinearConstraint{N, VN}}
+    constraints::Vector{HalfSpace{N, VN}}
 
     # default constructor that applies sorting of the given constraints and
     # (checks for and) removes redundant constraints
-    function HPolygon(constraints::Vector{LinearConstraint{N, VN}};
+    function HPolygon(constraints::Vector{HalfSpace{N, VN}};
                       sort_constraints::Bool=true,
                       check_boundedness::Bool=false,
                       prune::Bool=true) where {N, VN<:AbstractVector{N}}
         if sort_constraints
-            sorted_constraints = Vector{LinearConstraint{N, VN}}()
+            sorted_constraints = Vector{HalfSpace{N, VN}}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci; prune=prune)
@@ -66,46 +68,38 @@ struct HPolygon{N, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
 end
 
 isoperationtype(::Type{<:HPolygon}) = false
-isconvextype(::Type{<:HPolygon}) = true
 
-# constructor for an HPolygon with no constraints
+# constructor with no constraints
 function HPolygon{N, VN}() where {N, VN<:AbstractVector{N}}
-    HPolygon(Vector{LinearConstraint{N, VN}}())
+    return HPolygon(Vector{HalfSpace{N, VN}}())
 end
 
-# constructor for an HPolygon with no constraints and given numeric type
+# constructor with no constraints and given numeric type
 function HPolygon{N}() where {N}
-    HPolygon(Vector{LinearConstraint{N, Vector{N}}}())
+    return HPolygon(Vector{HalfSpace{N, Vector{N}}}())
 end
 
-# constructor for an HPolygon without explicit numeric type, defaults to Float64
+# constructor without explicit numeric type, defaults to Float64
 function HPolygon()
-    HPolygon{Float64}()
+    return HPolygon{Float64}()
 end
 
-# constructor for an HPolyhedron with constraints of mixed type
-function HPolygon(constraints::Vector{<:LinearConstraint})
-    HPolygon(_normal_Vector(constraints))
+# constructor with constraints of mixed type
+function HPolygon(constraints::Vector{<:HalfSpace})
+    return HPolygon(_normal_Vector(constraints))
 end
 
-# constructor from a simple H-representation
-HPolygon(A::AbstractMatrix,
-         b::AbstractVector;
-         sort_constraints::Bool=true,
-         check_boundedness::Bool=false,
-         prune::Bool=true) =
+# constructor from a simple constraint representation
+HPolygon(A::AbstractMatrix, b::AbstractVector; sort_constraints::Bool=true,
+         check_boundedness::Bool=false, prune::Bool=true) =
     HPolygon(constraints_list(A, b); sort_constraints=sort_constraints,
              check_boundedness=check_boundedness, prune=prune)
 
-
-# --- ConvexSet interface functions ---
-
-
 """
     σ(d::AbstractVector, P::HPolygon;
-      [linear_search]::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD))
+      [linear_search]::Bool=(length(P.constraints) < $BINARY_SEARCH_THRESHOLD))
 
-Return the support vector of a polygon in a given direction.
+Return a support vector of a polygon in a given direction.
 
 ### Input
 
@@ -125,8 +119,8 @@ norm zero, any vertex is returned.
 Comparison of directions is performed using polar angles; see the overload of
 `<=` for two-dimensional vectors.
 
-For polygons with `BINARY_SEARCH_THRESHOLD = 10` or more constraints we use a
-binary search by default.
+For polygons with $BINARY_SEARCH_THRESHOLD or more constraints we use a binary
+search by default.
 """
 function σ(d::AbstractVector, P::HPolygon;
            linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD))
@@ -184,7 +178,6 @@ function translate(P::HPolygon, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     constraints = [translate(c, v; share=share) for c in constraints_list(P)]
-    return HPolygon(constraints;
-                    sort_constraints=false, check_boundedness=false,
-                    prune=false)
+    return HPolygon(constraints; sort_constraints=false,
+                    check_boundedness=false, prune=false)
 end

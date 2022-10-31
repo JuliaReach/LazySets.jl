@@ -41,11 +41,6 @@ julia> subtypes(AbstractHPolygon)
 """
 abstract type AbstractHPolygon{N} <: AbstractPolygon{N} end
 
-isconvextype(::Type{<:AbstractHPolygon}) = true
-
-# --- AbstractPolygon interface functions ---
-
-
 """
     tovrep(P::AbstractHPolygon)
 
