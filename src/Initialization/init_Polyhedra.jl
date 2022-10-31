@@ -1,6 +1,6 @@
 eval(quote
     import .Polyhedra: polyhedron
-    export polyhedron
+    export polyhedron, triangulate
     using .Polyhedra: HRep, VRep,
                       removehredundancy!, removevredundancy!
 

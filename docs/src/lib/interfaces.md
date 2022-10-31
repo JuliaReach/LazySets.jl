@@ -68,6 +68,7 @@ high(::LazySet)
 extrema(::LazySet, ::Int)
 extrema(::LazySet)
 convex_hull(::LazySet; kwargs...)
+triangulate(::LazySet)
 ```
 
 The following methods are also defined for `LazySet` but cannot be documented
