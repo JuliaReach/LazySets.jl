@@ -329,10 +329,10 @@ an_element(::AbstractHPolygon)
 rand(::Type{HPOLYGON}) where {HPOLYGON<:AbstractHPolygon}
 tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
 tovrep(::AbstractHPolygon)
-addconstraint!(::AbstractHPolygon, ::LinearConstraint)
-addconstraint!(::Vector{LC}, ::LinearConstraint) where {LC<:LinearConstraint}
+addconstraint!(::AbstractHPolygon, ::HalfSpace)
+addconstraint!(::Vector{LC}, ::HalfSpace) where {LC<:HalfSpace}
 normalize(P::AbstractHPolygon{N}, p=N(2)) where {N}
-isredundant(::LinearConstraint, ::LinearConstraint, ::LinearConstraint)
+isredundant(::HalfSpace, ::HalfSpace, ::HalfSpace)
 remove_redundant_constraints!(::AbstractHPolygon)
 constraints_list(::AbstractHPolygon)
 vertices_list(::AbstractHPolygon{N}) where {N}
