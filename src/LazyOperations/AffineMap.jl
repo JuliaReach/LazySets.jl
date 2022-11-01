@@ -4,13 +4,15 @@ export AffineMap
     AffineMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM},
               VN<:AbstractVector{NM}} <: AbstractAffineMap{N, S}
 
-Type that represents an affine transformation ``M⋅X ⊕ v`` of a set ``X``,
-that is the set
+Type that represents an affine transformation ``M⋅X ⊕ v`` of a set ``X``, i.e.,
+the set
 
 ```math
 Y = \\{ y ∈ \\mathbb{R}^n : y = Mx + v,\\qquad x ∈ X \\}.
 ```
-If ``X`` is ``n``-dimensional then ``M`` should be an ``m × n`` matrix and  ``v ∈ \\mathbb{R}^m`.
+
+If ``X`` is ``n``-dimensional, then ``M`` should be an ``m × n`` matrix and
+``v`` should be an ``m``-dimensional vector.
 
 ### Fields
 
@@ -18,16 +20,16 @@ If ``X`` is ``n``-dimensional then ``M`` should be an ``m × n`` matrix and  ``v
 - `X` -- set
 - `v` -- translation vector
 
-The fields' getter functions are `matrix`, `set` and `vector` respectively.
+The fields' getter functions are `matrix`, `set` and `vector`, respectively.
 
 ### Notes
 
 An affine map is the composition of a linear map and a translation. This type is
-parametric in the coefficients of the linear map, `NM`, which may be different from
-the numeric type of the wrapped set, `N`. However, the numeric type of the
+parametric in the coefficients of the linear map, `NM`, which may be different
+from the numeric type of the wrapped set, `N`. However, the numeric type of the
 translation vector should be `NM`.
 
-The affine map preserves convexity: if `X` is convex, then any affine map of `X`
+An affine map preserves convexity: if `X` is convex, then any affine map of `X`
 is convex as well.
 
 ### Examples
@@ -42,9 +44,10 @@ julia> AffineMap(A, X, b3)
 AffineMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}, Vector{Int64}}([1 2; 1 3; 1 4], BallInf{Int64, Vector{Int64}}([0, 0], 1), [1, 2, 3])
 ```
 
-For convenience, `A` does not need to be a matrix but we also allow to use
+For convenience, `A` does not need to be a matrix; we also allow to use
 `UniformScaling`s resp. scalars (interpreted as a scaling, i.e., a scaled
-identity matrix). Scaling by ``1`` is ignored and simplified to a pure `Translation`.
+identity matrix). Scaling by ``1`` is ignored and simplified to a pure
+`Translation`.
 
 ```jldoctest constructors
 julia> using LinearAlgebra
@@ -87,7 +90,7 @@ struct AffineMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM},
     X::S
     v::VN
 
-    # default constructor with dimension match check
+    # default constructor with dimension-match check
     function AffineMap(M::MAT, X::S, v::VN) where {N, S<:ConvexSet{N}, NM,
                                                    MAT<:AbstractMatrix{NM},
                                                    VN<:AbstractVector{NM}}
@@ -104,7 +107,6 @@ struct AffineMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM},
 end
 
 isoperationtype(::Type{<:AffineMap}) = true
-isconvextype(::Type{<:AffineMap{N, S}}) where {N, S} = isconvextype(S)
 
 # convenience constructor from a UniformScaling
 function AffineMap(M::UniformScaling, X::ConvexSet, v::AbstractVector)
@@ -146,10 +148,6 @@ function AffineMap(M::AbstractMatrix, ∅::EmptySet, v::AbstractVector)
     return ∅
 end
 
-
-# --- AbstractAffineMap interface functions ---
-
-
 function matrix(am::AffineMap)
     return am.M
 end
@@ -161,10 +159,6 @@ end
 function set(am::AffineMap)
     return am.X
 end
-
-
-# --- ConvexSet interface functions ---
-
 
 function concretize(am::AffineMap)
     return affine_map(am.M, concretize(am.X), am.v)
