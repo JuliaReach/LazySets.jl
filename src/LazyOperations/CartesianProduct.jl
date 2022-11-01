@@ -319,10 +319,10 @@ We convert the Cartesian product to constraint representation and then call
 This is a fallback implementation and it will fail if the wrapped sets are not polyhedral.
 """
 function linear_map(M::AbstractMatrix, cp::CartesianProduct)
-    return linear_map_cartesian_product(M, cp)
+    return _linear_map_cartesian_product(M, cp)
 end
 
-function linear_map_cartesian_product(M, cp)
+function _linear_map_cartesian_product(M, cp)
     @assert dim(cp) == size(M, 2) "a linear map of size $(size(M)) cannot " *
                                   "be applied to a set of dimension $(dim(cp))"
 
