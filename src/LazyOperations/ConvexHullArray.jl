@@ -3,12 +3,8 @@ import Base.isempty
 export ConvexHullArray, CHArray,
        array
 
-# ================================
-#  Convex hull of an array of sets
-# ================================
-
 """
-    ConvexHullArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
+    ConvexHullArray{N, S<:LazySet{N}} <: ConvexSet{N}
 
 Type that represents the symbolic convex hull of a finite number of sets.
 
@@ -20,9 +16,11 @@ Type that represents the symbolic convex hull of a finite number of sets.
 
 The `EmptySet` is the neutral element for `ConvexHullArray`.
 
+A `ConvexHullArray` is always convex.
+
 Constructors:
 
-- `ConvexHullArray(array::Vector{<:ConvexSet})` -- default constructor
+- `ConvexHullArray(array::Vector{<:LazySet})` -- default constructor
 
 - `ConvexHullArray([n]::Int=0, [N]::Type=Float64)`
   -- constructor for an empty hull with optional size hint and numeric type
@@ -37,7 +35,7 @@ julia> b = [Ball2([2*pi*i/100, sin(2*pi*i/100)], 0.05) for i in 1:100];
 julia> c = ConvexHullArray(b);
 ```
 """
-struct ConvexHullArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
+struct ConvexHullArray{N, S<:LazySet{N}} <: ConvexSet{N}
     array::Vector{S}
 end
 
@@ -46,7 +44,7 @@ isconvextype(::Type{<:ConvexHullArray}) = true
 
 # constructor for an empty hull with optional size hint and numeric type
 function ConvexHullArray(n::Int=0, N::Type=Float64)
-    a = Vector{ConvexSet{N}}()
+    a = Vector{LazySet{N}}()
     sizehint!(a, n)
     return ConvexHullArray(a)
 end
@@ -74,7 +72,7 @@ Return the array of a convex hull of a finite number of sets.
 
 ### Input
 
-- `cha` -- convex hull array
+- `cha` -- convex hull of a finite number of sets
 
 ### Output
 
@@ -91,26 +89,31 @@ Return the dimension of the convex hull of a finite number of sets.
 
 ### Input
 
-- `cha` -- convex hull array
+- `cha` -- convex hull of a finite number of sets
 
 ### Output
 
-The ambient dimension of the convex hull of a finite number of sets.
+The ambient dimension of the convex hull of a finite number of sets, or `0` if
+there is no set in the array.
 """
 function dim(cha::ConvexHullArray)
-    @assert !isempty(cha.array) "an empty convex hull is not allowed"
-    return dim(cha.array[1])
+    return length(cha.array) == 0 ? 0 : dim(cha.array[1])
 end
 
 """
     σ(d::AbstractVector, cha::ConvexHullArray)
 
-Return the support vector of a convex hull array in a given direction.
+Return a support vector of a convex hull of a finite number of sets in a given
+direction.
 
 ### Input
 
 - `d`   -- direction
-- `cha` -- convex hull array
+- `cha` -- convex hull of a finite number of sets
+
+### Output
+
+A support vector in the given direction.
 """
 function σ(d::AbstractVector, cha::ConvexHullArray)
     @assert !isempty(cha.array) "an empty convex hull is not allowed"
@@ -131,21 +134,23 @@ end
 """
     ρ(d::AbstractVector, cha::ConvexHullArray)
 
-Return the support function of a convex hull array in a given direction.
+Evaluate the support function of a convex hull of a finite number of sets in a
+given direction.
 
 ### Input
 
 - `d`   -- direction
-- `cha` -- convex hull array
+- `cha` -- convex hull of a finite number of sets
 
 ### Output
 
-The support function of the convex hull array in the given direction.
+The evaluation of the support function of the convex hull of a finite number of
+sets in the given direction.
 
 ### Algorithm
 
-This algorihm calculates the maximum over all ``ρ(d, X_i)`` where the
-``X_1, …, X_k`` are the sets in the array `cha`.
+This algorihm calculates the maximum over all ``ρ(d, X_i)``, where the
+``X_1, …, X_k`` are the sets in the array of `cha`.
 """
 function ρ(d::AbstractVector, cha::ConvexHullArray)
     return maximum(ρ(d, Xi) for Xi in array(cha))
@@ -154,7 +159,7 @@ end
 """
     isbounded(cha::ConvexHullArray)
 
-Determine whether a convex hull of a finite number of sets is bounded.
+Check whether a convex hull of a finite number of sets is bounded.
 
 ### Input
 
@@ -175,11 +180,11 @@ end
 """
     isempty(cha::ConvexHullArray)
 
-Return if a convex hull array is empty or not.
+Check whether a convex hull of a finite number of sets is empty.
 
 ### Input
 
-- `cha` -- convex hull array
+- `cha` -- convex hull of a finite number of sets
 
 ### Output
 
@@ -193,7 +198,7 @@ end
     vertices_list(cha::ConvexHullArray; [apply_convex_hull]::Bool=true,
                   [backend]=nothing, [prune]::Bool=apply_convex_hull)
 
-Return the list of vertices of the convex hull of a finite number of sets.
+Return a list of vertices of the convex hull of a finite number of sets.
 
 ### Input
 
@@ -207,7 +212,7 @@ Return the list of vertices of the convex hull of a finite number of sets.
 
 ### Output
 
-The list of vertices.
+A list of vertices.
 """
 function vertices_list(cha::ConvexHullArray;
                        apply_convex_hull::Bool=true,
@@ -220,7 +225,7 @@ function vertices_list(cha::ConvexHullArray;
     return vlist
 end
 
-# list of constraints of the convex hull array of singletons
+# list of constraints of a convex-hull array of singletons
 function constraints_list(X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
     n = dim(X)
     ST = n == 2 ? VPolygon : VPolytope
@@ -228,7 +233,7 @@ function constraints_list(X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
     return constraints_list(V)
 end
 
-# membership in convex hull array of singletons
+# membership in a convex-hull array of singletons
 function ∈(x::AbstractVector, X::ConvexHullArray)
     n = length(x)
     ST = n == 2 ? VPolygon : VPolytope
