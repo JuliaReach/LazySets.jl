@@ -53,7 +53,7 @@ dim(::IntersectionArray)
 isbounded(::IntersectionArray)
 ∈(::AbstractVector, ::IntersectionArray)
 array(::IntersectionArray)
-constraints_list(::IntersectionArray{N}) where {N}
+constraints_list(::IntersectionArray)
 ```
 Inherited from [`ConvexSet`](@ref):
 * [`norm`](@ref norm(::ConvexSet, ::Real))

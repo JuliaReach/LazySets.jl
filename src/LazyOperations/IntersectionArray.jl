@@ -1,10 +1,6 @@
 export IntersectionArray,
        array
 
-# ================================
-# Intersection of an array of sets
-# ================================
-
 """
     IntersectionArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
 
@@ -70,10 +66,6 @@ function array(ia::IntersectionArray)
    return ia.array
 end
 
-
-# --- ConvexSet interface functions ---
-
-
 """
     dim(ia::IntersectionArray)
 
@@ -85,7 +77,8 @@ Return the dimension of an intersection of a finite number of sets.
 
 ### Output
 
-The ambient dimension of the intersection of a finite number of sets.
+The ambient dimension of the intersection of a finite number of sets, or `0` if
+there is no set in the array.
 """
 function dim(ia::IntersectionArray)
    return length(ia.array) == 0 ? 0 : dim(ia.array[1])
@@ -94,8 +87,8 @@ end
 """
     σ(d::AbstractVector, ia::IntersectionArray)
 
-Return the support vector of an intersection of a finite number of sets in a
-given direction.
+Return a support vector of an intersection of a finite number of sets in a given
+direction.
 
 ### Input
 
@@ -104,8 +97,12 @@ given direction.
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 If the direction has norm zero, the result depends on the individual sets.
+
+### Algorithm
+
+This implementation computes the concrete intersection, which can be expensive.
 """
 function σ(d::AbstractVector, ia::IntersectionArray)
     X = concretize(ia)
@@ -115,7 +112,7 @@ end
 """
     isbounded(ia::IntersectionArray)
 
-Determine whether an intersection of a finite number of sets is bounded.
+Check whether an intersection of a finite number of sets is bounded.
 
 ### Input
 
@@ -128,13 +125,14 @@ Determine whether an intersection of a finite number of sets is bounded.
 ### Algorithm
 
 We first check if any of the wrapped sets is bounded.
-Otherwise, we check boundedness via [`LazySets._isbounded_unit_dimensions`](@ref).
+Otherwise we check boundedness via
+[`LazySets._isbounded_unit_dimensions`](@ref).
 """
 function isbounded(ia::IntersectionArray)
-   if any(isbounded, ia.array)
-       return true
-   end
-   return _isbounded_unit_dimensions(ia)
+    if any(isbounded, ia.array)
+        return true
+    end
+    return _isbounded_unit_dimensions(ia)
 end
 
 function isboundedtype(::Type{<:IntersectionArray{N, S}}) where {N, S}
@@ -155,18 +153,22 @@ of sets.
 ### Output
 
 `true` iff ``x ∈ ia``.
+
+### Algorithm
+
+A point ``x`` is in the intersection iff it is in each set.
 """
 function ∈(x::AbstractVector, ia::IntersectionArray)
-   for S in ia.array
-       if x ∉ S
-           return false
-       end
-   end
-   return true
+    for S in ia.array
+        if x ∉ S
+            return false
+        end
+    end
+    return true
 end
 
 """
-    constraints_list(ia::IntersectionArray{N}) where {N}
+    constraints_list(ia::IntersectionArray)
 
 Return the list of constraints of an intersection of a finite number of
 (polyhedral) sets.
@@ -189,14 +191,15 @@ We assume that the underlying sets are polyhedral, i.e., offer a method
 We create the polyhedron from the `constraints_list`s of the sets and remove
 redundant constraints.
 """
-function constraints_list(ia::IntersectionArray{N}) where {N}
-   constraints = Vector{LinearConstraint{N, Vector{N}}}() # TODO: use vector type of ia
-   for X in array(ia)
-       clist_X = _normal_Vector(X)
-       append!(constraints, clist_X)
-   end
-   remove_redundant_constraints!(constraints)
-   return constraints
+function constraints_list(ia::IntersectionArray)
+    N = eltype(ia)
+    constraints = Vector{HalfSpace{N, Vector{N}}}() # TODO: use vector type of ia
+    for X in array(ia)
+        clist_X = _normal_Vector(X)
+        append!(constraints, clist_X)
+    end
+    remove_redundant_constraints!(constraints)
+    return constraints
 end
 
 function concretize(ia::IntersectionArray)
