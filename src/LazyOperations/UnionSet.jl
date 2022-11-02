@@ -3,12 +3,8 @@ import Base: isempty, ∈, ∪
 export UnionSet,
        swap
 
-# ========================================
-# Binary set union
-# ========================================
-
 """
-    UnionSet{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: LazySet{N}
+    UnionSet{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
 Type that represents the set union of two sets.
 
@@ -21,19 +17,21 @@ Type that represents the set union of two sets.
 
 The union of convex sets is typically not convex.
 """
-struct UnionSet{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: LazySet{N}
+struct UnionSet{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
 
     # default constructor with dimension check
-    function UnionSet(X::ConvexSet{N}, Y::ConvexSet{N}) where {N}
+    function UnionSet(X::LazySet{N}, Y::LazySet{N}) where {N}
         @assert dim(X) == dim(Y) "sets in a union must have the same dimension"
         return new{N, typeof(X), typeof(Y)}(X, Y)
     end
 end
 
 isoperationtype(::Type{<:UnionSet}) = true
+
 isconvextype(::Type{<:UnionSet}) = false
+
 is_polyhedral(U::UnionSet) = is_polyhedral(U.X) && is_polyhedral(U.Y)
 
 # EmptySet is the neutral element for UnionSet
@@ -47,7 +45,7 @@ is_polyhedral(U::UnionSet) = is_polyhedral(U.X) && is_polyhedral(U.Y)
 
 Alias for `UnionSet`.
 """
-∪(X::ConvexSet, Y::ConvexSet) = UnionSet(X, Y)
+∪(X::LazySet, Y::LazySet) = UnionSet(X, Y)
 
 """
     swap(cup::UnionSet)
@@ -86,7 +84,7 @@ end
 """
     σ(d::AbstractVector, cup::UnionSet; [algorithm]="support_vector")
 
-Return the support vector of the union of two sets in a given direction.
+Return a support vector of the union of two sets in a given direction.
 
 ### Input
 
@@ -95,12 +93,12 @@ Return the support vector of the union of two sets in a given direction.
 - `algorithm` -- (optional, default: "support_vector"): the algorithm to compute
                  the support vector; if "support_vector", use the support
                  vector of each argument; if "support_function" use the support
-                 function of each argument and evaluate the support vector of only
-                 one of them
+                 function of each argument and evaluate the support vector of
+                 only one of them
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 
 ### Algorithm
 
@@ -130,14 +128,15 @@ function σ(d::AbstractVector, cup::UnionSet; algorithm="support_vector")
         return m == 1 ? σ(d, X) : σ(d, Y)
 
     else
-        error("algorithm $algorithm for the support vector of a `UnionSet` is unknown")
+        error("algorithm $algorithm for the support vector of a `UnionSet` is" *
+              "unknown")
     end
 end
 
 """
     ρ(d::AbstractVector, cup::UnionSet)
 
-Return the support function of the union of two sets in a given direction.
+Evaluate the support function of the union of two sets in a given direction.
 
 ### Input
 
@@ -146,12 +145,12 @@ Return the support function of the union of two sets in a given direction.
 
 ### Output
 
-The support function in the given direction.
+The evaluation of the support function in the given direction.
 
 ### Algorithm
 
-The support function of the union of two sets ``X`` and ``Y`` is the maximum of
-the support function of ``X`` and ``Y``.
+The support function of the union of two sets ``X`` and ``Y`` evaluates to the
+maximum of the support-function evaluations of ``X`` and ``Y``.
 """
 function ρ(d::AbstractVector, cup::UnionSet)
     X, Y = cup.X, cup.Y
@@ -173,7 +172,7 @@ An element in the union of two sets.
 
 ### Algorithm
 
-We use `an_element` on the first wrapped set.
+We use `an_element` on the first non-empty wrapped set.
 """
 function an_element(cup::UnionSet)
     if isempty(cup.X)
@@ -220,7 +219,7 @@ end
 """
     isbounded(cup::UnionSet)
 
-Determine whether the union of two sets is bounded.
+Check whether the union of two sets is bounded.
 
 ### Input
 
@@ -239,7 +238,8 @@ function isboundedtype(::Type{<:UnionSet{N, S1, S2}}) where {N, S1, S2}
 end
 
 """
-    vertices_list(cup::UnionSet; apply_convex_hull::Bool=false, backend=nothing)
+    vertices_list(cup::UnionSet; [apply_convex_hull]::Bool=false,
+                  [backend]=nothing)
 
 Return the list of vertices of the union of two sets.
 
