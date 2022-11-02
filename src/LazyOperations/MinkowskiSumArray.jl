@@ -1,10 +1,6 @@
 export MinkowskiSumArray,
        array
 
-# ==================================
-# Minkowski sum of an array of sets
-# ==================================
-
 """
    MinkowskiSumArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
 
@@ -62,7 +58,7 @@ Return the array of a Minkowski sum of a finite number of sets.
 
 ### Input
 
-- `msa` -- Minkowski sum array
+- `msa` -- Minkowski sum of a finite number of sets
 
 ### Output
 
@@ -79,11 +75,12 @@ Return the dimension of a Minkowski sum of a finite number of sets.
 
 ### Input
 
-- `msa` -- Minkowski sum array
+- `msa` -- Minkowski sum of a finite number of sets
 
 ### Output
 
-The ambient dimension of the Minkowski sum of a finite number of sets.
+The ambient dimension of the Minkowski sum of a finite number of sets, or `0` if
+there is no set in the array.
 """
 function dim(msa::MinkowskiSumArray)
    return length(msa.array) == 0 ? 0 : dim(msa.array[1])
@@ -92,17 +89,17 @@ end
 """
    σ(d::AbstractVector, msa::MinkowskiSumArray)
 
-Return the support vector of a Minkowski sum of a finite number of sets in a
-given direction.
+Return a support vector of a Minkowski sum of a finite number of sets in a given
+direction.
 
 ### Input
 
 - `d`   -- direction
-- `msa` -- Minkowski sum array
+- `msa` -- Minkowski sum of a finite number of sets
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 """
 function σ(d::AbstractVector, msa::MinkowskiSumArray)
@@ -110,29 +107,29 @@ function σ(d::AbstractVector, msa::MinkowskiSumArray)
 end
 
 @inline function _σ_msum_array(d::AbstractVector{N},
-                               array::AbstractVector{<:ConvexSet}) where {N}
+                               array::AbstractVector{<:LazySet}) where {N}
     return sum(σ(d, Xi) for Xi in array)
 end
 
 """
    ρ(d::AbstractVector, msa::MinkowskiSumArray)
 
-Return the support function of a Minkowski sum array of a finite number of sets
-in a given direction.
+Evaluate the support function of a Minkowski sum of a finite number of sets in a
+given direction.
 
 ### Input
 
 - `d`   -- direction
-- `msa` -- Minkowski sum array
+- `msa` -- Minkowski sum of a finite number of sets
 
 ### Output
 
-The support function in the given direction.
+The evaluation of the support function in the given direction.
 
 ### Algorithm
 
-The support function of the Minkowski sum of sets is the sum of the support
-functions of each set.
+The support function of the Minkowski sum of multiple sets evaluations to the
+sum of the support-function evaluations of each set.
 """
 function ρ(d::AbstractVector, msa::MinkowskiSumArray)
    return sum(ρ(d, Xi) for Xi in msa.array)
@@ -141,7 +138,7 @@ end
 """
     isbounded(msa::MinkowskiSumArray)
 
-Determine whether a Minkowski sum of a finite number of sets is bounded.
+Check whether a Minkowski sum of a finite number of sets is bounded.
 
 ### Input
 
@@ -162,15 +159,15 @@ end
 """
    isempty(msa::MinkowskiSumArray)
 
-Return if a Minkowski sum array is empty or not.
+Check whether a Minkowski sum of a finite number of sets is empty.
 
 ### Input
 
-- `msa` -- Minkowski sum array
+- `msa` -- Minkowski sum of a finite number of sets
 
 ### Output
 
-`true` iff any of the wrapped sets are empty.
+`true` iff any of the wrapped sets is empty.
 """
 function isempty(msa::MinkowskiSumArray)
    return any(isempty, array(msa))
@@ -179,15 +176,16 @@ end
 """
     center(msa::MinkowskiSumArray)
 
-Return the center of a Minkowski sum array of centrally-symmetric sets.
+Return the center of a Minkowski sum of a finite number of centrally-symmetric
+sets.
 
 ### Input
 
-- `msa` -- Minkowski sum array of centrally-symmetric sets
+- `msa` -- Minkowski sum of a finite number of centrally-symmetric sets
 
 ### Output
 
-The center of the Minkowski sum array.
+The center of the set.
 """
 function center(msa::MinkowskiSumArray)
     sum(center(X) for X in array(msa))
