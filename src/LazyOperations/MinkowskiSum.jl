@@ -15,8 +15,8 @@ X \\oplus Y = \\{x + y : x \\in X, y \\in Y\\}.
 
 ### Fields
 
-- `X` -- first set
-- `Y` -- second set
+- `X` -- set
+- `Y` -- set
 
 ### Notes
 
@@ -38,7 +38,10 @@ struct MinkowskiSum{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
 end
 
 isoperationtype(::Type{<:MinkowskiSum}) = true
-isconvextype(::Type{MinkowskiSum{N, S1, S2}}) where {N, S1, S2} = isconvextype(S1) && isconvextype(S2)
+
+isconvextype(::Type{MinkowskiSum{N, S1, S2}}) where {N, S1, S2} =
+    isconvextype(S1) && isconvextype(S2)
+
 is_polyhedral(ms::MinkowskiSum) = is_polyhedral(ms.X) && is_polyhedral(ms.Y)
 
 # ZeroSet is the neutral element for MinkowskiSum
@@ -49,14 +52,14 @@ is_polyhedral(ms::MinkowskiSum) = is_polyhedral(ms.X) && is_polyhedral(ms.Y)
 # @absorbing(MinkowskiSum, Universe)  # TODO problematic
 
 """
-    X + Y
+    +(X::ConvexSet, Y::ConvexSet)
 
-Convenience constructor for Minkowski sum.
+Convenience constructor for the Minkowski sum of two sets.
 
 ### Input
 
-- `X` -- a set
-- `Y` -- another set
+- `X` -- set
+- `Y` -- set
 
 ### Output
 
@@ -68,6 +71,15 @@ The symbolic Minkowski sum of ``X`` and ``Y``.
     ⊕(X::ConvexSet, Y::ConvexSet)
 
 Unicode alias constructor ⊕ (`oplus`) for the lazy Minkowski sum operator.
+
+### Input
+
+- `X` -- set
+- `Y` -- set
+
+### Output
+
+The symbolic Minkowski sum of ``X`` and ``Y``.
 
 ### Notes
 
@@ -95,15 +107,15 @@ end
 """
     dim(ms::MinkowskiSum)
 
-Return the dimension of a Minkowski sum.
+Return the dimension of a Minkowski sum of two sets.
 
 ### Input
 
-- `ms` -- Minkowski sum
+- `ms` -- Minkowski sum of two sets
 
 ### Output
 
-The ambient dimension of the Minkowski sum.
+The ambient dimension of the Minkowski sum of two sets.
 """
 function dim(ms::MinkowskiSum)
     return dim(ms.X)
@@ -112,21 +124,21 @@ end
 """
     σ(d::AbstractVector, ms::MinkowskiSum)
 
-Return the support vector of a Minkowski sum.
+Return a support vector of a Minkowski sum of two sets.
 
 ### Input
 
 - `d`  -- direction
-- `ms` -- Minkowski sum
+- `ms` -- Minkowski sum of two sets
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 
 ### Algorithm
 
-The support vector in direction ``d`` of the Minkowski sum of two sets ``X``
+A valid support vector in direction ``d`` of the Minkowski sum of two sets ``X``
 and ``Y`` is the sum of the support vectors of ``X`` and ``Y`` in direction
 ``d``.
 """
@@ -137,16 +149,16 @@ end
 """
     ρ(d::AbstractVector, ms::MinkowskiSum)
 
-Return the support function of a Minkowski sum.
+Evaluate the support function of a Minkowski sum of two sets.
 
 ### Input
 
 - `d`  -- direction
-- `ms` -- Minkowski sum
+- `ms` -- Minkowski sum of two sets
 
 ### Output
 
-The support function in the given direction.
+The evaluation of the support function in the given direction.
 
 ### Algorithm
 
@@ -161,11 +173,11 @@ end
 """
     isbounded(ms::MinkowskiSum)
 
-Determine whether a Minkowski sum is bounded.
+Check whether a Minkowski sum of two sets is bounded.
 
 ### Input
 
-- `ms` -- Minkowski sum
+- `ms` -- Minkowski sum of two sets
 
 ### Output
 
@@ -182,11 +194,11 @@ end
 """
     isempty(ms::MinkowskiSum)
 
-Return if a Minkowski sum is empty or not.
+Check whether a Minkowski sum of two sets is empty.
 
 ### Input
 
-- `ms` -- Minkowski sum
+- `ms` -- Minkowski sum of two sets
 
 ### Output
 
@@ -199,11 +211,11 @@ end
 """
     center(ms::MinkowskiSum)
 
-Return the center of a Minkowski sum of centrally-symmetric sets.
+Return the center of a Minkowski sum of two centrally-symmetric sets.
 
 ### Input
 
-- `ms` -- Minkowski sum of centrally-symmetric sets
+- `ms` -- Minkowski sum of two centrally-symmetric sets
 
 ### Output
 
@@ -216,7 +228,7 @@ end
 """
     constraints_list(ms::MinkowskiSum)
 
-Return the list of constraints of a lazy Minkowski sum of two polyhedral sets.
+Return a list of constraints of the Minkowski sum of two polyhedral sets.
 
 ### Input
 
@@ -236,15 +248,16 @@ function constraints_list(ms::MinkowskiSum)
 end
 
 """
-    ∈(x::AbstractVector, ms::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:ConvexSet}
+    ∈(x::AbstractVector, ms::MinkowskiSum{N, S1, S2})
+        where {N, S1<:AbstractSingleton}
 
 Check whether a given point is contained in the Minkowski sum of a singleton
-and a set.
+and another set.
 
 ### Input
 
-- `x`  -- point
-- `ms` -- lazy Minkowski sum of a singleton and a set
+- `x`  -- point/vector
+- `ms` -- Minkowski sum of a singleton and another set
 
 ### Output
 
@@ -252,20 +265,23 @@ and a set.
 
 ### Algorithm
 
-Note that ``x ∈ (S ⊕ P)``, where ``S`` is a singleton set, ``S = \\{s\\}`` and
+Note that ``x ∈ (S ⊕ P)``, where ``S = \\{s\\}``  is a singleton set and
 ``P`` is a set, if and only if ``(x-s) ∈ P``.
 """
-function ∈(x::AbstractVector, ms::MinkowskiSum{N, S1, S2}) where {N, S1<:AbstractSingleton, S2<:ConvexSet}
+function ∈(x::AbstractVector,
+           ms::MinkowskiSum{N, S1}) where {N, S1<:AbstractSingleton}
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 
 # symmetric method
-function ∈(x::AbstractVector, ms::MinkowskiSum{N, <:ConvexSet, <:AbstractSingleton}) where {N}
+function ∈(x::AbstractVector,
+           ms::MinkowskiSum{N, <:LazySet, <:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.Y, ms.X)
 end
 
 # disambiguation
-function ∈(x::AbstractVector, ms::MinkowskiSum{N, <:AbstractSingleton, <:AbstractSingleton}) where {N}
+function ∈(x::AbstractVector,
+           ms::MinkowskiSum{N, <:AbstractSingleton, <:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 
@@ -278,7 +294,7 @@ end
 """
     vertices_list(ms::MinkowskiSum)
 
-Return the list of vertices for the Minkowski sum of two sets.
+Return a list of vertices for the Minkowski sum of two sets.
 
 ### Input
 
@@ -286,7 +302,7 @@ Return the list of vertices for the Minkowski sum of two sets.
 
 ### Output
 
-The list of vertices of the Minkowski sum of two sets.
+A list of vertices of the Minkowski sum of two sets.
 
 ### Algorithm
 
