@@ -88,5 +88,5 @@ for N in [Float64, Float32]
     # translation of a set not represented by a finite number of constraints
     tr = Ball2(zeros(N, 2), N(1)) ⊕ N[1, 0]
     @test ρ(N[1, 0], tr) == N(2)
-    @test_throws AssertionError constraints_list(tr)
+    @test_throws MethodError constraints_list(tr)
 end
