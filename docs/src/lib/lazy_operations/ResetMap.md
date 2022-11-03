@@ -12,8 +12,8 @@ dim(::ResetMap)
 an_element(::ResetMap)
 matrix(::ResetMap)
 vector(::ResetMap)
-constraints_list(::ResetMap{N}) where {N}
-constraints_list(::ResetMap{N, S}) where {N, S<:AbstractHyperrectangle}
+set(::ResetMap)
+constraints_list(::ResetMap)
 ```
 Inherited from [`AbstractAffineMap`](@ref):
 * [`isempty`](@ref isempty(::AbstractAffineMap))
