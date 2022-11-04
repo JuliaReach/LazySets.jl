@@ -13,7 +13,7 @@ dim(::ExponentialMap)
 σ(::AbstractVector, ::ExponentialMap)
 ∈(::AbstractVector, ::ExponentialMap)
 isbounded(::ExponentialMap)
-vertices_list(::ExponentialMap{N}) where {N}
+vertices_list(::ExponentialMap)
 ```
 Inherited from [`AbstractAffineMap`](@ref):
 * [`an_element`](@ref an_element(::AbstractAffineMap))
