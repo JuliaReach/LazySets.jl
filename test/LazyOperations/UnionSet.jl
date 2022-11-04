@@ -119,7 +119,7 @@ for N in [Float64, Rational{Int}, Float32]
     X = project(UnionSetArray([Singleton(N[1, 2, 3]), Singleton(N[4, 5, 6])]),
                 [1, 3])
     # equality is not properly supported yet
-    @test_broken X == UnionSetArray([Singleton(N[1, 3]), Singleton(N[4, 6])])
+    @test X == UnionSetArray([Singleton(N[1, 3]), Singleton(N[4, 6])])
     @test X isa UnionSetArray && array(X) == [Singleton(N[1, 3]), Singleton(N[4, 6])]
 
     # translate
@@ -128,7 +128,7 @@ for N in [Float64, Rational{Int}, Float32]
     B1v = BallInf(v, N(1))
     B2v = Ball1(ones(N, 2) + v, N(1))
     Uarrv = translate(Uarr, v)
-    @test_broken Uarrv == UnionSetArray([B1v, B2v])  # TODO equality does not work
+    @test Uarrv == UnionSetArray([B1v, B2v])
     @test Uarrv isa UnionSetArray && array(Uarrv) == [B1v, B2v]
 end
 

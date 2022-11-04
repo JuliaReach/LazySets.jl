@@ -69,6 +69,40 @@ extrema(::LazySet, ::Int)
 extrema(::LazySet)
 convex_hull(::LazySet; kwargs...)
 triangulate(::LazySet)
+basetype
+isboundedtype(::Type{<:LazySet})
+isbounded(::LazySet)
+_isbounded_unit_dimensions(::LazySet)
+is_polyhedral(::LazySet)
+norm(::LazySet, ::Real=Inf)
+radius(::LazySet, ::Real=Inf)
+diameter(::LazySet, ::Real=Inf)
+affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector)
+exponential_map(::AbstractMatrix, ::LazySet)
+an_element(::LazySet)
+tosimplehrep(::LazySet)
+reflect(::LazySet)
+is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
+isoperationtype(::Type{<:LazySet})
+isoperation(::LazySet)
+isequivalent(::LazySet, ::LazySet)
+surface(::LazySet)
+area(::LazySet{N}) where {N}
+concretize(::LazySet)
+complement(::LazySet)
+project(::LazySet, ::AbstractVector{Int}, ::Nothing=nothing, ::Int=dim(S))
+project(::LazySet, ::AbstractVector{Int}, ::Type{TS}, ::Int=dim(S)) where {TS<:LazySet}
+project(::LazySet, ::AbstractVector{Int}, ::Pair{T, N}, ::Int=dim(S)) where {T<:UnionAll, N<:Real}
+project(::LazySet, ::AbstractVector{Int}, ::Real, ::Int=dim(S))
+rectify(::LazySet, ::Bool=false)
+permute
+rationalize(::Type{T}, ::LazySet{<:AbstractFloat}, ::Real) where {T<:Integer}
+singleton_list(::LazySet)
+constraints(::LazySet)
+vertices(::LazySet)
+delaunay
+chebyshev_center_radius(::LazySet{N}) where {N}
+plot_recipe(::LazySet, ::Any)
 ```
 
 The following methods are also defined for `LazySet` but cannot be documented
@@ -77,75 +111,28 @@ due to a bug in the documentation package.
 ```@docs
 low(::ConvexSet{N}, ::Int) where {N}
 high(::ConvexSet{N}, ::Int) where {N}
-```
-
-## [Convex sets (ConvexSet)](@id def_ConvexSet)
-
-Every convex set in this library implements this interface.
-
-```@docs
-ConvexSet
+an_element(::ConvexSet{N}) where {N}
 ```
 
 ### Support function and support vector
 
-Every `ConvexSet` type must define a function `σ` to compute the support vector.
+Every `LazySet` type must define a function `σ` to compute the support vector.
 The support function, `ρ`, can optionally be defined; otherwise, a fallback
 definition based on `σ` is used.
 
 ```@docs
 σ
 support_vector
-ρ(::AbstractVector, ::ConvexSet)
+ρ(::AbstractVector, ::LazySet)
 support_function
-```
-
-### Other globally defined set functions
-
-```@docs
-basetype
-norm(::ConvexSet, ::Real=Inf)
-radius(::ConvexSet, ::Real=Inf)
-diameter(::ConvexSet, ::Real=Inf)
-isboundedtype(::Type{<:ConvexSet})
-isbounded(::ConvexSet)
-_isbounded_unit_dimensions(::ConvexSet{N}) where {N}
-is_polyhedral(::ConvexSet)
-an_element(::ConvexSet{N}) where {N}
-tosimplehrep(::ConvexSet)
-isuniversal(::ConvexSet{N}, ::Bool=false) where {N}
-affine_map(::AbstractMatrix, ::ConvexSet, ::AbstractVector)
-exponential_map(::AbstractMatrix, ::ConvexSet)
-reflect(::ConvexSet)
-is_interior_point(::AbstractVector{N}, ::ConvexSet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
-isoperationtype(::Type{<:ConvexSet})
-isoperation(::ConvexSet)
-isequivalent(::ConvexSet, ::ConvexSet)
-surface(::ConvexSet{N}) where {N}
-area(::ConvexSet{N}) where {N}
-concretize(::ConvexSet)
-complement(::ConvexSet)
-project(::ConvexSet{N}, ::AbstractVector{Int}, ::Nothing=nothing, ::Int=dim(S)) where {N}
-project(::ConvexSet, ::AbstractVector{Int}, ::Type{TS}, ::Int=dim(S)) where {TS<:ConvexSet}
-project(::ConvexSet, ::AbstractVector{Int}, ::Pair{T, N}, ::Int=dim(S)) where {T<:UnionAll, N<:Real}
-project(::ConvexSet, ::AbstractVector{Int}, ::Real, ::Int=dim(S))
-rectify(::ConvexSet, ::Bool=false)
-permute
-rationalize(::Type{T}, ::ConvexSet{N}, ::Real) where {T<:Integer, N<:AbstractFloat}
-singleton_list(::ConvexSet)
-constraints(::ConvexSet)
-vertices(::ConvexSet)
-delaunay
-chebyshev_center_radius(::ConvexSet{N}) where {N}
-plot_recipe(::ConvexSet{N}, ::Any=zero(N)) where {N}
 ```
 
 ### Set functions that override Base functions
 
 ```@docs
-==(::ConvexSet, ::ConvexSet)
-≈(::ConvexSet, ::ConvexSet)
-copy(::ConvexSet)
+==(::LazySet, ::LazySet)
+≈(::LazySet, ::LazySet)
+copy(::LazySet)
 eltype
 ```
 
@@ -184,6 +171,14 @@ Lazy set operations:
 * [``n``-ary set union (UnionSetArray)](@ref def_UnionSetArray)
 * [Complement](@ref def_Complement)
 * [Rectification](@ref def_Rectification)
+
+## [Convex sets (ConvexSet)](@id def_ConvexSet)
+
+Every convex set in this library implements this interface.
+
+```@docs
+ConvexSet
+```
 
 ## [Centrally symmetric sets (AbstractCentrallySymmetric)](@id def_AbstractCentrallySymmetric)
 
