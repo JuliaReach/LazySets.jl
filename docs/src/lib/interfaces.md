@@ -438,6 +438,8 @@ high(::AbstractHyperrectangle)
 high(::AbstractHyperrectangle, ::Int)
 low(::AbstractHyperrectangle)
 low(::AbstractHyperrectangle, ::Int)
+extrema(::AbstractHyperrectangle)
+extrema(::AbstractHyperrectangle, ::Int)
 isflat(::AbstractHyperrectangle)
 split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N}
 generators(::AbstractHyperrectangle)
