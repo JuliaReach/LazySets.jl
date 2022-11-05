@@ -190,8 +190,8 @@ function isempty(cha::ConvexHullArray)
 end
 
 """
-    vertices_list(cha::ConvexHullArray; apply_convex_hull::Bool=true,
-                  backend=nothing)
+    vertices_list(cha::ConvexHullArray; [apply_convex_hull]::Bool=true,
+                  [backend]=nothing, [prune]::Bool=apply_convex_hull)
 
 Return the list of vertices of the convex hull of a finite number of sets.
 
@@ -202,6 +202,8 @@ Return the list of vertices of the convex hull of a finite number of sets.
                          vertices using a convex-hull algorithm
 - `backend`           -- (optional, default: `nothing`) backend for computing
                          the convex hull (see argument `apply_convex_hull`)
+- `prune`             -- (optional, default: `apply_convex_hull`) alias for
+                         `apply_convex_hull`
 
 ### Output
 
@@ -209,9 +211,10 @@ The list of vertices.
 """
 function vertices_list(cha::ConvexHullArray;
                        apply_convex_hull::Bool=true,
-                       backend=nothing)
+                       backend=nothing,
+                       prune::Bool=apply_convex_hull)
     vlist = vcat([vertices_list(Xi) for Xi in array(cha)]...)
-    if apply_convex_hull
+    if apply_convex_hull || prune
         convex_hull!(vlist, backend=backend)
     end
     return vlist

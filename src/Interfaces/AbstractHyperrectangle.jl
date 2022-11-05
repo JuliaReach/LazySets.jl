@@ -149,7 +149,7 @@ function ngens(H::AbstractHyperrectangle{N}) where {N}
 end
 
 """
-    vertices_list(H::AbstractHyperrectangle)
+    vertices_list(H::AbstractHyperrectangle; kwargs...)
 
 Return the list of vertices of a hyperrectangular set.
 
@@ -184,7 +184,7 @@ entry `1` (but changing it to `-1`).
 This way we only need to change the vertex in those dimensions where `v` has
 changed, which usually is a smaller number than `n`.
 """
-function vertices_list(H::AbstractHyperrectangle)
+function vertices_list(H::AbstractHyperrectangle; kwargs...)
     n = dim(H)
 
     # identify flat dimensions and store them in a binary vector whose entry in

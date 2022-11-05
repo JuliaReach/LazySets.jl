@@ -520,7 +520,7 @@ Return the list of constraints defining a zonotopic set.
 
 ### Input
 
-- `Z`               -- zonotopic set
+- `Z` -- zonotopic set
 
 ### Output
 
@@ -546,6 +546,10 @@ The one-dimensional case is not covered by that algorithm; we manually handle
 this case.
 """
 function constraints_list(Z::AbstractZonotope{N}) where {N<:AbstractFloat}
+    return _constraints_list_zonotope(Z)
+end
+
+function _constraints_list_zonotope(Z::AbstractZonotope{N}) where {N<:AbstractFloat}
     n = dim(Z)
 
     # special handling of the 1D case
