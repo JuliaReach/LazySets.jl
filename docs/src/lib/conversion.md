@@ -30,6 +30,7 @@ convert(::Type{HPOLYGON}, ::VPolygon) where {HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPOLYGON}, ::LineSegment{N}) where {N, HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPOLYGON}, ::AbstractSingleton{N}) where {N, HPOLYGON<:AbstractHPolygon}
 convert(::Type{HPolyhedron}, ::LazySet)
+convert(::Type{HPolyhedron}, ::HRep{N}) where {N}
 convert(::Type{HPolytope}, ::LazySet)
 convert(::Type{VPolygon}, ::LazySet)
 convert(::Type{VPolygon}, ::AbstractHPolygon)
