@@ -31,12 +31,12 @@ plot_recipe(::Intersection{N}, ::N=zero(N), ::Int=40) where {N}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::Intersection{N}, ::Real=zero(N), ::Int=40) where {N}
 ```
 
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`an_element`](@ref an_element(::ConvexSet{N}) where {N})
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet)
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 ### Intersection cache
 
@@ -55,9 +55,9 @@ isbounded(::IntersectionArray)
 array(::IntersectionArray)
 constraints_list(::IntersectionArray)
 ```
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`an_element`](@ref an_element(::ConvexSet{N}) where {N})
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet)
+* [`singleton_list`](@ref singleton_list(::LazySet))

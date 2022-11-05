@@ -15,15 +15,13 @@ rand(::Type{Ellipsoid})
 translate(::Ellipsoid, ::AbstractVector)
 translate!(::Ellipsoid, ::AbstractVector)
 ```
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`rectify`](@ref rectify(::ConvexSet))
-* [`low`](@ref low(::ConvexSet))
-* [`low`](@ref low(::ConvexSet{N}, ::Int) where {N})
-* [`high`](@ref high(::ConvexSet))
-* [`high`](@ref high(::ConvexSet{N}, ::Int) where {N})
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`rectify`](@ref rectify(::LazySet))
+* [`low`](@ref low(::LazySet))
+* [`high`](@ref high(::LazySet))
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))

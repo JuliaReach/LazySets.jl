@@ -21,12 +21,12 @@ constraints_list(::MinkowskiSum)
 ∈(::AbstractVector, ::MinkowskiSum{N, S1}) where {N, S1<:AbstractSingleton}
 vertices_list(::MinkowskiSum)
 ```
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`an_element`](@ref an_element(::ConvexSet{N}) where {N})
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet)
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 ## [``n``-ary Minkowski sum (MinkowskiSumArray)](@id def_MinkowskiSumArray)
 
@@ -40,12 +40,12 @@ isempty(::MinkowskiSumArray)
 array(::MinkowskiSumArray)
 center(::MinkowskiSumArray)
 ```
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`an_element`](@ref an_element(::ConvexSet{N}) where {N})
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet)
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 ## [``n``-ary Minkowski sum with cache (CachedMinkowskiSumArray)](@id def_CachedMinkowskiSumArray)
 
@@ -58,9 +58,9 @@ isempty(::CachedMinkowskiSumArray)
 array(::CachedMinkowskiSumArray)
 forget_sets!(::CachedMinkowskiSumArray)
 ```
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`an_element`](@ref an_element(::ConvexSet))
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet))
+* [`singleton_list`](@ref singleton_list(::LazySet))

@@ -15,17 +15,17 @@ dim(::ExponentialMap)
 isbounded(::ExponentialMap)
 vertices_list(::ExponentialMap{N}) where {N}
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
+
 Inherited from [`AbstractAffineMap`](@ref):
 * [`an_element`](@ref an_element(::AbstractAffineMap))
 * [`isempty`](@ref isempty(::AbstractAffineMap))
 * [`constraints_list`](@ref constraints_list(::AbstractAffineMap))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractAffineMap))
-
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
 
 ### Sparse matrix exponential
 
@@ -43,6 +43,12 @@ dim(::ExponentialProjectionMap)
 σ(::AbstractVector, ::ExponentialProjectionMap)
 isbounded(::ExponentialProjectionMap)
 ```
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
+
 Inherited from [`AbstractAffineMap`](@ref):
 * [`an_element`](@ref an_element(::AbstractAffineMap))
 * [`isempty`](@ref isempty(::AbstractAffineMap))
@@ -50,12 +56,6 @@ Inherited from [`AbstractAffineMap`](@ref):
 * [`vertices_list`](@ref vertices_list(::AbstractAffineMap))
 * [`constraints_list`](@ref constraints_list(::AbstractAffineMap))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractAffineMap))
-
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
 
 ### Projection of a sparse matrix exponential
 

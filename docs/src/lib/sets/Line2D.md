@@ -22,13 +22,11 @@ project(::AbstractVector, ::Line2D)
 Inherited from [`LazySet`](@ref):
 * [`high`](@ref high(::LazySet))
 * [`low`](@ref low(::LazySet))
-
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`low`](@ref low(::ConvexSet, ::Int))
-* [`high`](@ref high(::ConvexSet, ::Int))
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`low`](@ref low(::LazySet, ::Int))
+* [`high`](@ref high(::LazySet, ::Int))
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolyhedron))

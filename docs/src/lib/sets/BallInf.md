@@ -18,10 +18,10 @@ translate(::BallInf, ::AbstractVector)
 translate!(::BallInf, ::AbstractVector)
 volume(::BallInf)
 ```
-Inherited from [`ConvexSet`](@ref):
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
-* [`area`](@ref area(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
+* [`area`](@ref area(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

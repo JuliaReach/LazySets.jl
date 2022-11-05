@@ -22,15 +22,11 @@ isempty(P::HParallelotope)
 Inherited from [`LazySet`](@ref):
 * [`low`](@ref low(::LazySet))
 * [`high`](@ref high(::LazySet))
-
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
-* [`low`](@ref low(::ConvexSet{N}, ::Int) where {N})
-* [`high`](@ref high(::ConvexSet{N}, ::Int) where {N})
-* [`rectify`](@ref rectify(::ConvexSet))
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
+* [`rectify`](@ref rectify(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

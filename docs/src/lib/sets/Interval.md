@@ -36,8 +36,8 @@ split(::Interval, ::AbstractVector{Int})
 chebyshev_center_radius(::Interval)
 ```
 
-Inherited from [`ConvexSet`](@ref):
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

@@ -22,9 +22,8 @@ isempty(::Rectification)
 isbounded(::Rectification{N}) where {N}
 to_union_of_projections(::Rectification, ::Bool=false)
 ```
-
-Inherited from [`ConvexSet`](@ref):
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 ## Rectification cache
 

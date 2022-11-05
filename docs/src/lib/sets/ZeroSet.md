@@ -16,9 +16,9 @@ linear_map(::AbstractMatrix, ::ZeroSet)
 translate(::ZeroSet, ::AbstractVector)
 rectify(Z::ZeroSet)
 ```
-Inherited from [`ConvexSet`](@ref):
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
