@@ -88,7 +88,7 @@ Line2D{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
 ```
 """
 function intersection(L1::Line2D, L2::Line2D)
-    det = _det(L1, L2)
+    det = right_turn(L1.a, L2.a)
     if isapproxzero(det)
         if isapprox(L1.b, L2.b) # lines are identical
             return L1
