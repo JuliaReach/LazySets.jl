@@ -6,9 +6,10 @@ export LinearMap,
        Projection
 
 """
-    LinearMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
+    LinearMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}}
+        <: AbstractAffineMap{N, S}
 
-Type that represents a linear transformation ``M⋅S`` of a set ``S``.
+Type that represents a linear transformation ``M⋅X`` of a set ``X``.
 
 ### Fields
 
@@ -23,38 +24,39 @@ Typically `NM = N`, but there may be exceptions, e.g., if `NM` is an interval
 that holds numbers of type `N`, where `N` is a floating point number type such
 as `Float64`.
 
-The linear map preserves convexity: if `X` is convex, then an linear map of `X`
+The linear map preserves convexity: if `X` is convex, then any linear map of `X`
 is convex as well.
 
 ### Examples
 
-For the examples we create a ``3×2`` matrix and two unit squares, one of them
-being two-dimensional and the other one being one-dimensional.
+For the examples we create a ``3×2`` matrix and a two-dimensional unit square.
 
 ```jldoctest constructors
-julia> A = [1 2; 1 3; 1 4]; X = BallInf([0, 0], 1); Y = BallInf([0], 1);
+julia> M = [1 2; 1 3; 1 4]; X = BallInf([0, 0], 1);
 ```
 
 The function ``*`` can be used as an alias to construct a `LinearMap` object.
 
 ```jldoctest constructors
-julia> lm = LinearMap(A, X)
+julia> lm = LinearMap(M, X)
 LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([1 2; 1 3; 1 4], BallInf{Int64, Vector{Int64}}([0, 0], 1))
 
-julia> lm2 = A * X
+julia> lm2 = M * X
 LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([1 2; 1 3; 1 4], BallInf{Int64, Vector{Int64}}([0, 0], 1))
 
 julia> lm == lm2
 true
 ```
 
-For convenience, `A` does not need to be a matrix but we also allow to use
-vectors (interpreted as an ``n×1`` matrix) and `UniformScaling`s resp. scalars
+For convenience, `M` does not need to be a matrix; we also allow to use vectors
+(interpreted as an ``n×1`` matrix) and `UniformScaling`s resp. scalars
 (interpreted as a scaling, i.e., a scaled identity matrix).
 Scaling by ``1`` is ignored.
 
 ```jldoctest constructors
 julia> using LinearAlgebra: I
+
+julia> Y = BallInf([0], 1);  # one-dimensional interval
 
 julia> [2, 3] * Y
 LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([2; 3;;], BallInf{Int64, Vector{Int64}}([0], 1))
@@ -74,7 +76,7 @@ single `LinearMap` instance.
 Again we can make use of the conversion for convenience.
 
 ```jldoctest constructors
-julia> B = transpose(A); B * lm
+julia> B = transpose(M); B * lm
 LinearMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Matrix{Int64}}([3 9; 9 29], BallInf{Int64, Vector{Int64}}([0, 0], 1))
 
 julia> B = [3, 4, 5]; B * lm
@@ -88,19 +90,19 @@ The application of a `LinearMap` to a `ZeroSet` or an `EmptySet` is simplified
 automatically.
 
 ```jldoctest constructors
-julia> A * ZeroSet{Int}(2)
+julia> M * ZeroSet{Int}(2)
 ZeroSet{Int64}(3)
 
-julia> A * EmptySet{Int}(2)
-EmptySet{Int64}(2)
+julia> M * EmptySet{Int}(2)
+EmptySet{Int64}(3)
 ```
 """
-struct LinearMap{N, S<:ConvexSet{N},
-                 NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
+struct LinearMap{N, S<:ConvexSet{N}, NM,
+                 MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
     M::MAT
     X::S
 
-    # default constructor with dimension match check
+    # default constructor with dimension check
     function LinearMap(M::MAT, X::S) where {N, S<:ConvexSet{N}, NM,
                                             MAT<:AbstractMatrix{NM}}
         @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
@@ -110,35 +112,42 @@ struct LinearMap{N, S<:ConvexSet{N},
 end
 
 isoperationtype(::Type{<:LinearMap}) = true
+
 isconvextype(::Type{<:LinearMap{N, S}}) where {N, S} = isconvextype(S)
 
 """
 ```
-    *(map::Union{AbstractMatrix, UniformScaling, AbstractVector, Real}, X::ConvexSet)
+    *(M::Union{AbstractMatrix, UniformScaling, AbstractVector, Real},
+      X::ConvexSet)
 ```
 
 Alias to create a `LinearMap` object.
 
 ### Input
 
-- `map` -- linear map
-- `X`   -- set
+- `M` -- linear map
+- `X` -- set
 
 ### Output
 
 A lazy linear map, i.e., a `LinearMap` instance.
 """
-function *(map::Union{AbstractMatrix, UniformScaling, AbstractVector, Real}, X::ConvexSet)
-    return LinearMap(map, X)
+function *(M::Union{AbstractMatrix, UniformScaling, AbstractVector, Real},
+           X::ConvexSet)
+    return LinearMap(M, X)
 end
 
 # scaling from the right
-function *(X::ConvexSet, map::Real)
-    return LinearMap(map, X)
+function *(X::ConvexSet, M::Real)
+    return LinearMap(M, X)
 end
 
 # convenience constructor from a vector
 function LinearMap(v::AbstractVector, X::ConvexSet)
+    return _LinearMap_vector(v, X)
+end
+
+function _LinearMap_vector(v, X)
     n = dim(X)
     m = length(v)
     if n == m
@@ -168,21 +177,21 @@ function LinearMap(M::AbstractMatrix, lm::LinearMap)
     return LinearMap(M * lm.M, lm.X)
 end
 
-# disambiguations
+# disambiguation
 function LinearMap(v::AbstractVector, lm::LinearMap)
-    return invoke(LinearMap, Tuple{AbstractVector, ConvexSet}, v, lm)
+    return _LinearMap_vector(v, lm)
 end
 
-function LinearMap(α::Real, lm::LinearMap)
-    return invoke(LinearMap, Tuple{Real, ConvexSet}, α, lm)
-end
-
-# more efficient version
+# more efficient versions when combining `LinearMap`s
 function LinearMap(M::UniformScaling{N}, lm::LinearMap) where {N}
     if M.λ == one(N)
         return lm
     end
     return LinearMap(M.λ * lm.M, lm.X)
+end
+
+function LinearMap(α::Real, lm::LinearMap)
+    return LinearMap(α * lm.M, lm.X)
 end
 
 # ZeroSet is "almost absorbing" for LinearMap (only the dimension changes)
@@ -193,14 +202,13 @@ function LinearMap(M::AbstractMatrix, Z::ZeroSet)
     return ZeroSet{N}(size(M, 1))
 end
 
-# EmptySet is absorbing for LinearMap
+# EmptySet is "almost absorbing" for LinearMap (only the dimension changes)
 function LinearMap(M::AbstractMatrix, ∅::EmptySet)
-    return ∅
+    N = promote_type(eltype(M), eltype(∅))
+    @assert dim(∅) == size(M, 2) "a linear map of size $(size(M)) cannot " *
+            "be applied to a set of dimension $(dim(∅))"
+    return EmptySet{N}(size(M, 1))
 end
-
-
-# --- AbstractAffineMap interface functions ---
-
 
 function matrix(lm::LinearMap)
     return lm.M
@@ -213,10 +221,6 @@ end
 function set(lm::LinearMap)
     return lm.X
 end
-
-
-# --- ConvexSet interface functions ---
-
 
 """
     dim(lm::LinearMap)
@@ -238,7 +242,7 @@ end
 """
     σ(d::AbstractVector, lm::LinearMap)
 
-Return the support vector of the linear map.
+Return a support vector of the linear map.
 
 ### Input
 
@@ -247,7 +251,7 @@ Return the support vector of the linear map.
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 If the direction has norm zero, the result depends on the wrapped set.
 
 ### Notes
@@ -259,14 +263,14 @@ function σ(d::AbstractVector, lm::LinearMap)
     return _σ_linear_map(d, lm.M, lm.X)
 end
 
-function _σ_linear_map(d::AbstractVector, M::AbstractMatrix, X::ConvexSet)
+function _σ_linear_map(d::AbstractVector, M::AbstractMatrix, X::LazySet)
     return M * σ(At_mul_B(M, d), X)
 end
 
 """
     ρ(d::AbstractVector, lm::LinearMap; kwargs...)
 
-Return the support function of the linear map.
+Evaluate the support function of the linear map.
 
 ### Input
 
@@ -277,7 +281,7 @@ Return the support function of the linear map.
 
 ### Output
 
-The support function in the given direction.
+The evaluation of the support function in the given direction.
 If the direction has norm zero, the result depends on the wrapped set.
 
 ### Notes
@@ -289,19 +293,20 @@ function ρ(d::AbstractVector, lm::LinearMap; kwargs...)
     return _ρ_linear_map(d, lm.M, lm.X; kwargs...)
 end
 
-function _ρ_linear_map(d::AbstractVector, M::AbstractMatrix, X::ConvexSet; kwargs...)
+function _ρ_linear_map(d::AbstractVector, M::AbstractMatrix, X::LazySet;
+                       kwargs...)
     return ρ(At_mul_B(M, d), X; kwargs...)
 end
 
 """
     ∈(x::AbstractVector, lm::LinearMap)
 
-Check whether a given point is contained in a linear map of a set.
+Check whether a given point is contained in a linear map.
 
 ### Input
 
 - `x`  -- point/vector
-- `lm` -- linear map of a set
+- `lm` -- linear map
 
 ### Output
 
@@ -364,12 +369,12 @@ end
 """
     vertices_list(lm::LinearMap; prune::Bool=true)
 
-Return the list of vertices of a (polyhedral) linear map.
+Return the list of vertices of a (polytopic) linear map.
 
 ### Input
 
 - `lm`    -- linear map
-- `prune` -- (optional, default: `true`) if true removes redundant vertices
+- `prune` -- (optional, default: `true`) if `true`, we remove redundant vertices
 
 ### Output
 
@@ -377,15 +382,12 @@ A list of vertices.
 
 ### Algorithm
 
-We assume that the underlying set `X` is polyhedral, and compute the list of
-vertices of `X`. The result is just the linear map applied to each vertex of `X`.
+We assume that the underlying set `X` is polytopic and compute the vertices of
+`X`. The result is just the linear map applied to each vertex.
 """
 function vertices_list(lm::LinearMap; prune::Bool=true)
-    # collect list of vertices of the wrapped set
-    vlist_X = vertices_list(lm.X)
-
     # apply the linear map to each vertex
-    vlist = broadcast(x -> lm.M * x, vlist_X)
+    vlist = broadcast(x -> lm.M * x, vertices(lm.X))
 
     return prune ? convex_hull(vlist) : vlist
 end
@@ -410,7 +412,7 @@ We assume that the underlying set `X` is polyhedral, i.e., offers a method
 
 ### Algorithm
 
-We fall back to a concrete set representation and apply `linear_map`.
+We fall back to a concrete set representation by applying `linear_map`.
 """
 function constraints_list(lm::LinearMap)
     return constraints_list(linear_map(lm.M, lm.X))
@@ -428,7 +430,7 @@ Return the linear map of a lazy linear map.
 
 ### Output
 
-The polytope representing the linear map of the lazy linear map of a set.
+A set representing the linear map.
 """
 function linear_map(M::AbstractMatrix, lm::LinearMap)
     return linear_map(M * lm.M, lm.X)
@@ -441,7 +443,7 @@ end
 """
     Projection(X::ConvexSet{N}, variables::AbstractVector{Int}) where {N<:Real}
 
-Return the lazy projection of a set.
+Return a lazy projection of a set.
 
 ### Input
 
@@ -458,13 +460,13 @@ A lazy `LinearMap` that corresponds to projecting `X` along the given variables
 The projection of a three-dimensional cube into the first two coordinates:
 
 ```jldoctest Projection
-julia> B = BallInf(zeros(3), 1.0)
-BallInf{Float64, Vector{Float64}}([0.0, 0.0, 0.0], 1.0)
+julia> B = BallInf([1.0, 2, 3], 1.0)
+BallInf{Float64, Vector{Float64}}([1.0, 2.0, 3.0], 1.0)
 
 julia> Bproj = Projection(B, [1, 2])
-LinearMap{Float64, BallInf{Float64, Vector{Float64}}, Float64, SparseArrays.SparseMatrixCSC{Float64, Int64}}(sparse([1, 2], [1, 2], [1.0, 1.0], 2, 3), BallInf{Float64, Vector{Float64}}([0.0, 0.0, 0.0], 1.0))
+LinearMap{Float64, BallInf{Float64, Vector{Float64}}, Float64, SparseArrays.SparseMatrixCSC{Float64, Int64}}(sparse([1, 2], [1, 2], [1.0, 1.0], 2, 3), BallInf{Float64, Vector{Float64}}([1.0, 2.0, 3.0], 1.0))
 
-julia> isequivalent(Bproj, BallInf(zeros(2), 1.0))
+julia> isequivalent(Bproj, BallInf([1.0, 2], 1.0))
 true
 ```
 """
@@ -474,12 +476,8 @@ function Projection(X::ConvexSet{N}, variables::AbstractVector{Int}) where {N}
 end
 
 """
-    project(S::ConvexSet{N},
-            block::AbstractVector{Int},
-            set_type::Type{LM},
-            [n]::Int=dim(S);
-            [kwargs...]
-           ) where {N, LM<:LinearMap}
+    project(S::ConvexSet{N}, block::AbstractVector{Int}, set_type::Type{LM},
+            [n]::Int=dim(S); [kwargs...]) where {N, LM<:LinearMap}
 
 Project a high-dimensional set to a given block by using a lazy linear map.
 
@@ -494,12 +492,9 @@ Project a high-dimensional set to a given block by using a lazy linear map.
 
 A lazy `LinearMap` representing the projection of the set `S` to block `block`.
 """
-@inline function project(S::ConvexSet{N},
-                         block::AbstractVector{Int},
-                         set_type::Type{LM},
-                         n::Int=dim(S);
-                         kwargs...
-                        ) where {N, LM<:LinearMap}
+@inline function project(S::ConvexSet{N}, block::AbstractVector{Int},
+                         set_type::Type{LM}, n::Int=dim(S);
+                         kwargs...) where {N, LM<:LinearMap}
     M = projection_matrix(block, n, N)
     return M * S
 end
