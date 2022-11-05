@@ -2,16 +2,23 @@ export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
        linear_map, quadratic_map, remove_redundant_generators
 
 """
-    SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
+    SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N},
+                                   MN<:AbstractMatrix{N},
+                                   ME<:AbstractMatrix{<:Integer}}
+        <: AbstractPolynomialZonotope{N}
 
-Type that represents a sparse polynomial zonotope that is *simple* in the sense that there is no distinction between independent and dependent generators.
+Type that represents a sparse polynomial zonotope that is *simple* in the sense
+that there is no distinction between independent and dependent generators.
 
-A simple sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is represented by the set
+A simple sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is
+represented by the set
 ```math
 \\mathcal{PZ} = \\left\\{x \\in \\mathbb{R}^n : x = c + \\sum_{i=1}^h \\left(\\prod_{k=1}^p \\alpha_k^{E_{k, i}} \\right) g_i,~~ \\alpha_k \\in [-1, 1]~~ \\forall i = 1,\\ldots,p \\right\\},
 ```
-where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center), ``G ∈ \\mathbb{R}^{n \\times h}`` is the generator matrix with columns ``g_i``
-(each ``g_i`` is called a *generator*), and where ``E ∈ \\mathbb{N}^{p×h}_{≥0}`` is the exponent matrix with matrix elements ``E_{k, i}``.
+where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center),
+``G ∈ \\mathbb{R}^{n \\times h}`` is the generator matrix with columns ``g_i``
+(each ``g_i`` is called a *generator*), and where ``E ∈ \\mathbb{N}^{p×h}_{≥0}``
+is the exponent matrix with matrix elements ``E_{k, i}``.
 
 ### Fields
 
@@ -21,20 +28,30 @@ where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center), ``G ∈ \\mathbb
 
 ### Notes
 
-Sparse polynomial zonotopes were introduced in [KA21]. The *simple* variation was defined in [K22].
+Sparse polynomial zonotopes were introduced in [1]. The *simple* variation
+was defined in [2].
 
-- [KA21] N. Kochdumper and M. Althoff. *Sparse Polynomial Zonotopes: A Novel Set Representation for Reachability Analysis*. Transactions on Automatic Control, 2021.
-- [K21] N. Kochdumper. *Challenge Problem 5: Polynomial Zonotopes in Julia.* JuliaReach and JuliaIntervals Days 3, 2021.
+- [1] N. Kochdumper and M. Althoff. *Sparse Polynomial Zonotopes: A Novel Set
+Representation for Reachability Analysis*. Transactions on Automatic Control,
+2021.
+- [2] N. Kochdumper. *Challenge Problem 5: Polynomial Zonotopes in Julia.*
+JuliaReach and JuliaIntervals Days 3, 2021.
 """
-struct SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
+struct SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N},
+        MN<:AbstractMatrix{N},
+        ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
     c::VN
     G::MN
     E::ME
 
-    function SimpleSparsePolynomialZonotope(c::VN, G::MN, E::ME) where {N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}}
-        @assert length(c) == size(G, 1) throw(DimensionMismatch("c and G should have the same number of rows"))
-        @assert size(G, 2) == size(E, 2) throw(DimensionMismatch("G and E should have the same number of columns"))
-        @assert all(>=(0), E) throw(ArgumentError("E should have non-negative integers"))
+    function SimpleSparsePolynomialZonotope(c::VN, G::MN, E::ME) where {N<:Real,
+            VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}}
+        @assert length(c) == size(G, 1) throw(DimensionMismatch("c and G " *
+            "should have the same number of rows"))
+        @assert size(G, 2) == size(E, 2) throw(DimensionMismatch("G and E " *
+            "should have the same number of columns"))
+        @assert all(>=(0), E) throw(ArgumentError("E should contain " *
+            "non-negative integers"))
 
         return new{N, VN, MN, ME}(c, G, E)
     end
@@ -44,16 +61,19 @@ end
     PolynomialZonotope = SimpleSparsePolynomialZonotope
 
 Alias for `SimpleSparsePolynomialZonotope`.
+
+### Notes
+
+Another shorthand is `SSPZ`.
 """
 const PolynomialZonotope = SimpleSparsePolynomialZonotope
-
 
 const SSPZ = SimpleSparsePolynomialZonotope
 
 """
     dim(P::SimpleSparsePolynomialZonotope)
 
-Return the dimension of `P`.
+Return the dimension of a simple sparse polynomial zonotope.
 
 ### Input
 
@@ -63,12 +83,12 @@ Return the dimension of `P`.
 
 The ambient dimension of `P`.
 """
-dim(P::SSPZ) = size(P.c, 1)
+dim(P::SSPZ) = length(P.c)
 
 """
     ngens(P::SimpleSparsePolynomialZonotope)
 
-Return the number of generators of `P`.
+Return the number of generators of a simple sparse polynomial zonotope.
 
 ### Input
 
@@ -80,14 +100,16 @@ The number of generators of `P`.
 
 ### Notes
 
-This is equivalent to the number of monomials in the polynomial representation of `P`.
+This number corresponds to the number of monomials in the polynomial
+representation of `P`.
 """
 ngens(P::SSPZ) = size(P.G, 2)
 
 """
     nparams(P::SimpleSparsePolynomialZonotope)
 
-Return the number of parameters in the polynomial representation of `P`.
+Return the number of parameters in the polynomial representation of a simple
+sparse polynomial zonotope.
 
 ### Input
 
@@ -99,7 +121,8 @@ The number of parameters in the polynomial representation of P.
 
 ### Notes
 
-This corresponds to the number rows in the exponent matrix ``E`` (`p` in the set definition).
+This number corresponds to the number of rows in the exponent matrix ``E`` (`p`
+in the mathematical set definition).
 
 ### Examples
 
@@ -116,7 +139,7 @@ nparams(P::SSPZ) = size(P.E, 1)
 """
     order(P::SimpleSparsePolynomialZonotope)
 
-Return the order of `P`.
+Return the order of a simple sparse polynomial zonotope.
 
 ### Input
 
@@ -124,14 +147,15 @@ Return the order of `P`.
 
 ### Output
 
-The order of `P`, defined as the quotient between the number of generators and the ambient dimension.
+The order of `P`, defined as the quotient between the number of generators and
+the ambient dimension.
 """
 order(P::SSPZ) = ngens(P) // dim(P)
 
 """
     center(P::SimpleSparsePolynomialZonotope)
 
-Return the center of `P`.
+Return the center of a simple sparse polynomial zonotope.
 
 ### Input
 
@@ -146,7 +170,7 @@ center(P::SSPZ) = P.c
 """
     genmat(P::SimpleSparsePolynomialZonotope)
 
-Return the matrix of generators of `P`.
+Return the matrix of generators of a simple sparse polynomial zonotope.
 
 ### Input
 
@@ -161,7 +185,7 @@ genmat(P::SSPZ) = P.G
 """
     expmat(P::SimpleSparsePolynomialZonotope)
 
-Return the matrix of exponents of the sparse polynomial zonotope.
+Return the matrix of exponents of a simple sparse polynomial zonotope.
 
 ### Input
 
@@ -173,7 +197,8 @@ The matrix of exponents, where each column is a multidegree.
 
 ### Notes
 
-In the exponent matrix, each row corresponds to a parameter (``\alpha_k`` in the definition) and each column to a monomial.
+In the exponent matrix, each row corresponds to a parameter (``\alpha_k`` in the
+mathematical set definition) and each column corresponds to a monomial.
 
 ### Examples
 
@@ -190,27 +215,30 @@ julia> expmat(S)
 expmat(P::SSPZ) = P.E
 
 """
-    linear_map(M::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling}, P::SimpleSparsePolynomialZonotope)
+    linear_map(M::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling},
+               P::SimpleSparsePolynomialZonotope)
 
-Apply the linear map `M` to the simple sparse polynomial zonotope `P`.
+Apply the linear map `M` to a simple sparse polynomial zonotope.
 
 ### Input
 
-- `M` -- square matrix with size(M) == dim(P)
+- `M` -- matrix
 - `P` -- simple sparse polynomial zonotope
 
 ### Output
 
 The set resulting from applying the linear map `M` to `P`.
 """
-function linear_map(M::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling}, P::SSPZ)
+function linear_map(M::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling},
+                    P::SSPZ)
     return SimpleSparsePolynomialZonotope(M * center(P), M * genmat(P), expmat(P))
 end
 
 """
-    quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+    quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope)
+        where {N, MT<:AbstractMatrix{N}}
 
-Return the quadratic map of the given polynomial zonotope.
+Return the quadratic map of a simple sparse polynomial zonotope.
 
 ### Input
 
@@ -219,7 +247,7 @@ Return the quadratic map of the given polynomial zonotope.
 
 ### Output
 
-The quadratic map of the given zonotope represented as a polynomial zonotope.
+The quadratic map of `P` represented as a simple sparse polynomial zonotope.
 
 ### Algorithm
 
@@ -231,7 +259,8 @@ representation for reachability analysis*. 2021
 [2] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
 verification of cyber-physical systems*. 2021.
 """
-function quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+function quadratic_map(Q::Vector{MT},
+                       S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
     m = length(Q)
     c = center(S)
     h = ngens(S)
@@ -256,26 +285,30 @@ function quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope) where {
             Gnew[j, idxstart:idxend] = G[:, i]' * QiG[j]
         end
     end
-    return remove_redundant_generators(SimpleSparsePolynomialZonotope(cnew, Gnew, Enew))
+    Z = SimpleSparsePolynomialZonotope(cnew, Gnew, Enew)
+    return remove_redundant_generators(Z)
 end
 
 
 """
-    quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope, S2::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+    quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope,
+                  S2::SimpleSparsePolynomialZonotope)
+        where {N, MT<:AbstractMatrix{N}}
 
-Return the quadratic map of the given simple sparse polynomial zonotopes.
-The quadratic map is the set ``\\{x | xᵢ = s₁ᵀQᵢs₂, s₁ ∈ S₁, s₂ ∈ S₂, Qᵢ ∈ Q\\}``
+Return the quadratic map of two simple sparse polynomial zonotopes.
+The quadratic map is the set
+``\\{x | xᵢ = s₁ᵀQᵢs₂, s₁ ∈ S₁, s₂ ∈ S₂, Qᵢ ∈ Q\\}``.
 
 ### Input
 
-- `Q` -- vector of square matrices
+- `Q`  -- vector of square matrices
 - `S1` -- simple sparse polynomial zonotope
 - `S2` -- simple sparse polynomial zonotope
 
 ### Output
 
-The quadratic map of the given simple sparse polynomial zonotopes represented as a simple
-sparse polynomial zonotope.
+The quadratic map of the given simple sparse polynomial zonotopes represented as
+a simple sparse polynomial zonotope.
 
 ### Algorithm
 
@@ -284,7 +317,9 @@ This method implements Proposition 3.1.30 in [1].
 [1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
 verification of cyber-physical systems*. 2021.
 """
-function quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope, S2::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+function quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope,
+                       S2::SimpleSparsePolynomialZonotope
+                      ) where {N, MT<:AbstractMatrix{N}}
     @assert nparams(S1) == nparams(S2)
 
     c1 = center(S1)
@@ -311,7 +346,7 @@ end
 """
     remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
 
-Remove redundant generators from `S`.
+Remove redundant generators from a simple sparse polynomial zonotope.
 
 ### Input
 
@@ -319,7 +354,8 @@ Remove redundant generators from `S`.
 
 ### Output
 
-A new simple sparse polynomial zonotope such that redundant generators have been removed.
+A new simple sparse polynomial zonotope such that redundant generators have been
+removed.
 
 ## Notes
 
@@ -327,11 +363,14 @@ The result uses dense arrays irrespective of the array type of `S`.
 
 ### Algorithm
 
-Let `G` be the generator matrix and `E` the exponent matrix of `S`. The following simplifications are performed:
+Let `G` be the generator matrix and `E` the exponent matrix of `S`. The
+following simplifications are performed:
 
 - Zero columns in `G` and the corresponding columns in `E` are removed.
-- For zero columns in `E`, the corresponding column in `G` is summed to the center.
-- Repeated columns in `E` are grouped together by summing the corresponding columns in `G`.
+- For zero columns in `E`, the corresponding column in `G` is summed to the
+  center.
+- Repeated columns in `E` are grouped together by summing the corresponding
+  columns in `G`.
 """
 function remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
 
@@ -365,11 +404,11 @@ end
 
 """
     rand(::Type{SimpleSparsePolynomialZonotope};
-         [N]::Type{<:Real}=Float64, [dim]::Int=2, [nparams]::Int=2, [maxdeg]::Int=3,
-         [num_generators]::Int=-1,
+         [N]::Type{<:Real}=Float64, [dim]::Int=2, [nparams]::Int=2,
+         [maxdeg]::Int=3, [num_generators]::Int=-1,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
-Create a random zonotope.
+Create a random simple sparse polynomial zonotope.
 
 ### Input
 
@@ -385,7 +424,7 @@ Create a random zonotope.
 
 ### Output
 
-A random zonotope.
+A random simple sparse polynomial zonotope.
 
 ### Algorithm
 
@@ -393,8 +432,8 @@ All numbers are normally distributed with mean 0 and standard deviation 1.
 
 The number of generators can be controlled with the argument `num_generators`.
 For a negative value we choose a random number in the range `dim:2*dim` (except
-if `dim == 1`, in which case we only create a single generator). Note that the final number of
-generators may be lower if redundant monomials are generated.
+if `dim == 1`, in which case we only create a single generator). Note that the
+final number of generators may be lower if redundant monomials are generated.
 """
 function rand(::Type{SimpleSparsePolynomialZonotope};
               N::Type{<:Real}=Float64,
@@ -418,7 +457,7 @@ end
 """
     convex_hull(P::SimpleSparsePolynomialZonotope)
 
-Computes the convex hull of a simple sparse polynomial zonotope.
+Compute the convex hull of a simple sparse polynomial zonotope.
 
 ### Input
 
