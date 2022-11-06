@@ -7,9 +7,9 @@ export ConvexHull, CH,
        swap
 
 """
-    ConvexHull{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
+    ConvexHull{N, S1<:LazySet{N}, S2<:LazySet{N}} <: ConvexSet{N}
 
-Type that represents the convex hull of the union of two sets, that is the set
+Type that represents the convex hull of the union of two sets, i.e., the set
 
 ```math
 Z = \\{z ∈ \\mathbb{R}^n : z = λx + (1-λ)y,\\qquad x ∈ X, y ∈ Y,λ ∈ [0, 1] \\}.
@@ -28,7 +28,7 @@ This type is always convex.
 
 ### Examples
 
-Convex hull of two 100-dimensional Euclidean balls:
+The convex hull of two 100-dimensional Euclidean balls:
 
 ```jldoctest
 julia> b1, b2 = Ball2(zeros(100), 0.1), Ball2(4*ones(100), 0.2);
@@ -39,13 +39,14 @@ julia> typeof(c)
 ConvexHull{Float64, Ball2{Float64, Vector{Float64}}, Ball2{Float64, Vector{Float64}}}
 ```
 """
-struct ConvexHull{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
+struct ConvexHull{N, S1<:LazySet{N}, S2<:LazySet{N}} <: ConvexSet{N}
     X::S1
     Y::S2
 
     # default constructor with dimension check
-    function ConvexHull(X::ConvexSet{N}, Y::ConvexSet{N}) where {N}
-        @assert dim(X) == dim(Y) "sets in a convex hull must have the same dimension"
+    function ConvexHull(X::LazySet{N}, Y::LazySet{N}) where {N}
+        @assert dim(X) == dim(Y) "sets in a convex hull must have the same " *
+            "dimension"
         return new{N, typeof(X), typeof(Y)}(X, Y)
     end
 end
@@ -104,7 +105,7 @@ end
 """
     σ(d::AbstractVector, ch::ConvexHull)
 
-Return the support vector of the convex hull of two sets in a given direction.
+Return a support vector of the convex hull of two sets in a given direction.
 
 ### Input
 
@@ -113,7 +114,7 @@ Return the support vector of the convex hull of two sets in a given direction.
 
 ### Output
 
-The support vector of the convex hull in the given direction.
+A support vector of the convex hull in the given direction.
 """
 function σ(d::AbstractVector, ch::ConvexHull)
     σ1 = σ(d, ch.X)
@@ -126,7 +127,8 @@ end
 """
     ρ(d::AbstractVector, ch::ConvexHull)
 
-Return the support function of the convex hull of two sets in a given direction.
+Evaluate the support function of the convex hull of two sets in a given
+direction.
 
 ### Input
 
@@ -135,7 +137,8 @@ Return the support function of the convex hull of two sets in a given direction.
 
 ### Output
 
-The support function of the convex hull in the given direction.
+The evaluation of the support function of the convex hull in the given
+direction.
 """
 function ρ(d::AbstractVector, ch::ConvexHull)
     return max(ρ(d, ch.X), ρ(d, ch.Y))
@@ -144,7 +147,7 @@ end
 """
     isbounded(ch::ConvexHull)
 
-Determine whether the convex hull of two sets is bounded.
+Check whether the convex hull of two sets is bounded.
 
 ### Input
 
@@ -165,7 +168,7 @@ end
 """
     isempty(ch::ConvexHull)
 
-Return if the convex hull of two sets is empty or not.
+Check whether the convex hull of two sets is empty.
 
 ### Input
 
@@ -180,9 +183,10 @@ function isempty(ch::ConvexHull)
 end
 
 """
-    vertices_list(ch::ConvexHull; apply_convex_hull::Bool=true, backend=nothing)
+    vertices_list(ch::ConvexHull; [apply_convex_hull]::Bool=true,
+                  [backend]=nothing)
 
-Return the list of vertices of the convex hull of two sets.
+Return a list of vertices of the convex hull of two sets.
 
 ### Input
 
@@ -194,7 +198,7 @@ Return the list of vertices of the convex hull of two sets.
 
 ### Output
 
-The list of vertices.
+A list of vertices.
 """
 function vertices_list(ch::ConvexHull;
                        apply_convex_hull::Bool=true,
