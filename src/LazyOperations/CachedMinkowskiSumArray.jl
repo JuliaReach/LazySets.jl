@@ -1,10 +1,6 @@
 export CachedMinkowskiSumArray,
        forget_sets!
 
-# =============================================================
-# Minkowski sum of an array of sets with a support vector cache
-# =============================================================
-
 """
     CachedPair{N}
 
@@ -38,22 +34,22 @@ Support vector queries are cached.
 ### Fields
 
 - `array` -- array of sets
-- `cache` -- cache of support vector query results
+- `cache` -- cache for results of support-vector queries
 
 ### Notes
 
-This type assumes that the dimensions of all elements match.
+This type assumes that the dimensions of all sets in the array match.
 
 The `ZeroSet` is the neutral element and the `EmptySet` is the absorbing element
 for `CachedMinkowskiSumArray`.
 
-The cache (field `cache`) is implemented as dictionary whose keys are directions
-and whose values are pairs `(k, s)` where `k` is the number of elements in the
-array `array` when the support vector was evaluated last time, and `s` is the
-support vector that was obtained. Thus this type assumes that `array` is not
-modified except by adding new sets at the end.
+The cache (field `cache`) is implemented as a dictionary whose keys are
+direction vectors and whose values are pairs `(k, s)` where `k` is the number of
+elements in the array `array` when the support vector was evaluated last time,
+and `s` is the support vector that was obtained. Thus this type assumes that
+`array` is not modified except by adding new sets at the end.
 
-The Minkowski sum preserves convexity: if the set arguments are convex, then
+The Minkowski sum preserves convexity: if all sets are convex, then
 their Minkowski sum is convex as well.
 
 Constructors:
@@ -117,7 +113,8 @@ Return the dimension of a cached Minkowski sum.
 
 ### Output
 
-The ambient dimension of the cached Minkowski sum.
+The ambient dimension of the cached Minkowski sum, or `0` if there is no set in
+the array.
 """
 function dim(cms::CachedMinkowskiSumArray)
     return length(cms.array) == 0 ? 0 : dim(cms.array[1])
@@ -126,7 +123,7 @@ end
 """
     σ(d::AbstractVector, cms::CachedMinkowskiSumArray)
 
-Return the support vector of a cached Minkowski sum in a given direction.
+Return a support vector of a cached Minkowski sum in a given direction.
 
 ### Input
 
@@ -135,7 +132,7 @@ Return the support vector of a cached Minkowski sum in a given direction.
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 
 ### Notes
@@ -171,9 +168,9 @@ function σ(d::AbstractVector, cms::CachedMinkowskiSumArray)
 end
 
 """
-	isbounded(cms::CachedMinkowskiSumArray)
+    isbounded(cms::CachedMinkowskiSumArray)
 
-Determine whether a cached Minkowski sum is bounded.
+Check whether a cached Minkowski sum is bounded.
 
 ### Input
 
@@ -187,10 +184,14 @@ function isbounded(cms::CachedMinkowskiSumArray)
     return all(isbounded, cms.array)
 end
 
+function isboundedtype(::Type{<:CachedMinkowskiSumArray{N, S}}) where {N, S}
+    return isboundedtype(S)
+end
+
 """
     isempty(cms::CachedMinkowskiSumArray)
 
-Return if a cached Minkowski sum array is empty or not.
+Check whether a cached Minkowski sum array is empty.
 
 ### Input
 
@@ -203,8 +204,8 @@ Return if a cached Minkowski sum array is empty or not.
 ### Notes
 
 Forgotten sets cannot be checked anymore.
-Usually they have been empty because otherwise the support vector query should
-have crashed before.
+Normally they should not have been empty because otherwise the support-vector
+query would have crashed before.
 In that case, the cached Minkowski sum should not be used further.
 """
 function isempty(cms::CachedMinkowskiSumArray)
@@ -215,8 +216,8 @@ end
     forget_sets!(cms::CachedMinkowskiSumArray)
 
 Tell a cached Minkowski sum to forget the stored sets (but not the support
-vectors). Only those sets are forgotten such that for each cached direction the
-support vector has been computed before.
+vectors). Only those sets are forgotten for which a support vector has been
+computed in each of the cached directions.
 
 ### Input
 
@@ -229,7 +230,7 @@ The number of sets that have been forgotten.
 ### Notes
 
 This function should only be used under the assertion that no new directions are
-queried in the future; otherwise such support vector results will be incorrect.
+queried in the future; otherwise such support-vector results will be incorrect.
 
 This implementation is optimistic and first tries to remove all sets.
 However, it also checks that for all cached directions the support vector has
