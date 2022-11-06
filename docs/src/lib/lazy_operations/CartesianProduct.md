@@ -43,13 +43,14 @@ isbounded(::CartesianProductArray)
 ∈(::AbstractVector, ::CartesianProductArray)
 isempty(::CartesianProductArray)
 center(::CartesianProductArray)
-constraints_list(cpa::CartesianProductArray{N}) where {N}
-vertices_list(::CartesianProductArray{N}) where {N}
-linear_map(M::AbstractMatrix, cpa::CartesianProductArray)
+constraints_list(::CartesianProductArray)
+vertices_list(::CartesianProductArray)
+linear_map(M::AbstractMatrix, ::CartesianProductArray)
 array(::CartesianProductArray)
-block_structure(cpa::CartesianProductArray)
-block_to_dimension_indices(cpa::CartesianProductArray, vars::Vector{Int})
-substitute_blocks(low_dim_cpa::CartesianProductArray{N}, orig_cpa::CartesianProductArray{N}, blocks::Vector{Tuple{Int,Int}}) where{N}
+volume(::CartesianProductArray)
+block_structure(::CartesianProductArray)
+block_to_dimension_indices(::CartesianProductArray, vars::Vector{Int})
+substitute_blocks(::CartesianProductArray{N}, ::CartesianProductArray{N}, ::Vector{Tuple{Int,Int}}) where {N}
 ```
 Inherited from [`ConvexSet`](@ref):
 * [`norm`](@ref norm(::ConvexSet, ::Real))
