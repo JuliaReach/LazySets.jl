@@ -5,22 +5,28 @@ export InverseLinearMap,
        constraints_list
 
 """
-    InverseLinearMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
+    InverseLinearMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}}
+        <: AbstractAffineMap{N, S}
 
 Given a linear transformation ``M``, this type represents the linear
 transformation ``M⁻¹⋅X`` of a set ``X`` without actually computing ``M⁻¹``.
 
 ### Fields
 
-- `M` -- invertible matrix
+- `M` -- matrix (typically invertible, which can be checked in the constructor)
 - `X` -- set
 
 ### Notes
 
-This type is parametric in the elements of the inverse linear map, `NM`, which is
-independent of the numeric type of the wrapped set (`N`). Typically `NM = N`,
+Many set operations avoid computing the inverse of the matrix.
+
+In principle, the matrix does not have to be invertible (it can for instance be
+rectangular) for many set operations.
+
+This type is parametric in the elements of the inverse linear map, `NM`, which
+is independent of the numeric type of the wrapped set (`N`). Typically `NM = N`,
 but there may be exceptions, e.g., if `NM` is an interval that holds numbers
-of type `N`, where `N` is a floating point number type such as `Float64`.
+of type `N`, where `N` is a floating-point type such as `Float64`.
 
 ### Examples
 
@@ -59,9 +65,10 @@ struct InverseLinearMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}} <: Abst
     X::S
 
     # default constructor with dimension match check
-    function InverseLinearMap(M::MAT, X::S; check_invertibility::Bool=false) where {N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}}
+    function InverseLinearMap(M::MAT, X::S; check_invertibility::Bool=false
+                             ) where {N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}}
         @assert dim(X) == size(M, 1) "a linear map of size $(size(M)) cannot " *
-                                     "be applied to a set of dimension $(dim(X))"
+                                    "be applied to a set of dimension $(dim(X))"
         if check_invertibility
             @assert isinvertible(M) "the linear map is not invertible"
         end
@@ -70,12 +77,14 @@ struct InverseLinearMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}} <: Abst
 end
 
 # convenience constructor from a UniformScaling
-function InverseLinearMap(M::UniformScaling{N}, X::ConvexSet; check_invertibility::Bool=false) where {N}
+function InverseLinearMap(M::UniformScaling{N}, X::ConvexSet;
+                          check_invertibility::Bool=false) where {N}
     return InverseLinearMap(M.λ, X, check_invertibility=check_invertibility)
 end
 
 # convenience constructor from a scalar
-function InverseLinearMap(α::N, X::ConvexSet; check_invertibility::Bool=false) where {N<:Real}
+function InverseLinearMap(α::N, X::ConvexSet;
+                          check_invertibility::Bool=false) where {N<:Real}
     if check_invertibility
         @assert !iszero(α) "the linear map is not invertible"
     end
@@ -88,26 +97,24 @@ function InverseLinearMap(α::N, X::ConvexSet; check_invertibility::Bool=false) 
     return InverseLinearMap(D, X, check_invertibility=false)
 end
 
-# combine two linear maps into a single linear map
+# combine two inverse linear maps into a single inverse linear map
 function InverseLinearMap(M::AbstractMatrix, ilm::InverseLinearMap)
     return InverseLinearMap(ilm.M * M, ilm.X)
 end
 
-# ZeroSet is "almost absorbing" for InverseLinearMap (only the dimension changes)
-function InverseLinearMap(M::AbstractMatrix, Z::ZeroSet)
+# ZeroSet is almost absorbing for InverseLinearMap (only the dimension changes)
+function InverseLinearMap(M::AbstractMatrix, Z::ZeroSet{N}) where {N}
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(Z))"
-    return Z
+    return ZeroSet{N}(size(M, 1))
 end
 
-# EmptySet is absorbing for LinearMap
-function InverseLinearMap(M::AbstractMatrix, ∅::EmptySet)
+# EmptySet is almost absorbing for InverseLinearMap (only the dimension changes)
+function InverseLinearMap(M::AbstractMatrix, ∅::EmptySet{N}) where {N}
     @assert dim(∅) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(∅))"
-    return ∅
+    return EmptySet{N}(size(M, 1))
 end
-
-# --- AbstractAffineMap interface functions ---
 
 function matrix(ilm::InverseLinearMap)
     return inv(ilm.M)
@@ -141,7 +148,7 @@ end
 """
     σ(d::AbstractVector, ilm::InverseLinearMap)
 
-Return the support vector of the inverse linear map.
+Return a support vector of a inverse linear map.
 
 ### Input
 
@@ -150,7 +157,7 @@ Return the support vector of the inverse linear map.
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 If the direction has norm zero, the result depends on the wrapped set.
 
 ### Notes
@@ -167,7 +174,7 @@ end
 """
     ρ(d::AbstractVector, ilm::InverseLinearMap)
 
-Return the support function of the inverse linear map.
+Evaluate the support function of the inverse linear map.
 
 ### Input
 
@@ -176,7 +183,7 @@ Return the support function of the inverse linear map.
 
 ### Output
 
-The support function in the given direction.
+The evaluation of the support function in the given direction.
 If the direction has norm zero, the result depends on the wrapped set.
 
 ### Notes
@@ -251,7 +258,7 @@ Return the list of vertices of a (polyhedral) inverse linear map.
 ### Input
 
 - `ilm`   -- inverse linear map
-- `prune` -- (optional, default: `true`) if `true` removes redundant vertices
+- `prune` -- (optional, default: `true`) if `true`, remove redundant vertices
 
 ### Output
 
@@ -278,7 +285,7 @@ end
 """
     constraints_list(ilm::InverseLinearMap)
 
-Return the list of constraints of a (polyhedral) inverse linear map.
+Return a list of constraints of a (polyhedral) inverse linear map.
 
 ### Input
 
@@ -286,12 +293,7 @@ Return the list of constraints of a (polyhedral) inverse linear map.
 
 ### Output
 
-The list of constraints of the inverse linear map.
-
-### Notes
-
-We assume that the underlying set `X` is polyhedral, i.e., offers a method
-`constraints_list(X)`.
+A list of constraints of the inverse linear map.
 
 ### Algorithm
 
@@ -317,8 +319,8 @@ The set representing the linear map of the lazy inverse linear map of a set.
 
 ### Notes
 
-This implementation is inefficient because it will compute the
-concrete inverse of ``M``, which is what `InverseLinearMap` is supposed to avoid.
+This implementation is inefficient because it computes the concrete inverse of
+``M``, which is what `InverseLinearMap` is supposed to avoid.
 """
 function linear_map(M::AbstractMatrix, ilm::InverseLinearMap)
     return linear_map(M * inv(ilm.M), ilm.X)
