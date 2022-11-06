@@ -1,12 +1,8 @@
 export UnionSetArray,
        array
 
-# ========================================
-# n-ary set union
-# ========================================
-
 """
-   UnionSetArray{N, S<:ConvexSet{N}} <: LazySet{N}
+   UnionSetArray{N, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the set union of a finite number of sets.
 
@@ -18,7 +14,7 @@ Type that represents the set union of a finite number of sets.
 
 The union of convex sets is typically not convex.
 """
-struct UnionSetArray{N, S<:ConvexSet{N}} <: LazySet{N}
+struct UnionSetArray{N, S<:LazySet{N}} <: LazySet{N}
    array::Vector{S}
 end
 
@@ -27,7 +23,7 @@ isconvextype(::Type{<:UnionSetArray}) = false
 
 # constructor for an empty union with optional size hint and numeric type
 function UnionSetArray(n::Int=0, N::Type=Float64)
-   arr = Vector{ConvexSet{N}}()
+   arr = Vector{LazySet{N}}()
    sizehint!(arr, n)
    return UnionSetArray(arr)
 end
@@ -44,7 +40,7 @@ end
 """
    dim(cup::UnionSetArray)
 
-Return the dimension of the set union of a finite number of sets.
+Return the dimension of the union of a finite number of sets.
 
 ### Input
 
@@ -52,10 +48,11 @@ Return the dimension of the set union of a finite number of sets.
 
 ### Output
 
-The ambient dimension of the union of a finite number of sets.
+The ambient dimension of the union of a finite number of sets, or `0` if there
+is no set in the array.
 """
 function dim(cup::UnionSetArray)
-   return dim(cup.array[1])
+   return length(cup.array) == 0 ? 0 : dim(cup.array[1])
 end
 
 """
@@ -69,7 +66,7 @@ Return the array of the union of a finite number of sets.
 
 ### Output
 
-The array that holds the sets.
+The array of the union.
 """
 function array(cup::UnionSetArray)
    return cup.array
@@ -78,7 +75,7 @@ end
 """
    σ(d::AbstractVector, cup::UnionSetArray; [algorithm]="support_vector")
 
-Return the support vector of the union of a finite number of sets in a given
+Return a support vector of the union of a finite number of sets in a given
 direction.
 
 ### Input
@@ -87,13 +84,13 @@ direction.
 - `cup`       -- union of a finite number of sets
 - `algorithm` -- (optional, default: "support_vector"): the algorithm to compute
                  the support vector; if "support_vector", use the support
-                 vector of each argument; if "support_function" use the support
+                 vector of each argument; if "support_function", use the support
                  function of each argument and evaluate the support vector of
                  only one of them
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 
 ### Algorithm
 
@@ -104,7 +101,7 @@ support vector.
 
 The default implementation, with option `algorithm="support_vector"`, computes
 the support vector of all ``X₁, X₂, ...`` and then compares the support function
-using a dot product.
+using the dot product.
 
 If the support function can be computed more efficiently, the alternative
 implementation `algorithm="support_function"` can be used, which evaluates the
@@ -126,14 +123,15 @@ function σ(d::AbstractVector, cup::UnionSetArray; algorithm="support_vector")
        return σ(d, A[m])
 
    else
-       error("algorithm $algorithm for the support vector of a `UnionSetArray` is unknown")
+       error("algorithm $algorithm for the support vector of a " *
+             "`UnionSetArray` is unknown")
    end
 end
 
 """
    ρ(d::AbstractVector, cup::UnionSetArray)
 
-Return the support function of the union of a finite number of sets in a given
+Evaluate the support function of the union of a finite number of sets in a given
 direction.
 
 ### Input
@@ -143,7 +141,7 @@ direction.
 
 ### Output
 
-The support function in the given direction.
+The evaluation of the support function in the given direction.
 
 ### Algorithm
 
@@ -170,7 +168,7 @@ An element in the union of a finite number of sets.
 
 ### Algorithm
 
-We use `an_element` on the first wrapped set.
+We use `an_element` on the first non-empty wrapped set.
 """
 function an_element(cup::UnionSetArray)
     for Xi in array(cup)
@@ -220,7 +218,7 @@ end
 """
    isbounded(cup::UnionSetArray)
 
-Determine whether the union of a finite number of sets is bounded.
+Check whether the union of a finite number of sets is bounded.
 
 ### Input
 
@@ -239,10 +237,10 @@ function isboundedtype(::Type{<:UnionSetArray{N, S}}) where {N, S}
 end
 
 """
-    vertices_list(cup::UnionSetArray; apply_convex_hull::Bool=false,
-                  backend=nothing)
+    vertices_list(cup::UnionSetArray; [apply_convex_hull]::Bool=false,
+                  [backend]=nothing)
 
-Return the list of vertices of the union of a finite number of sets.
+Return a list of vertices of the union of a finite number of sets.
 
 ### Input
 
@@ -254,8 +252,7 @@ Return the list of vertices of the union of a finite number of sets.
 
 ### Output
 
-The list of vertices, possibly reduced to the list of vertices of the convex
-hull.
+A list of vertices, possibly reduced to the list of vertices of the convex hull.
 """
 function vertices_list(cup::UnionSetArray;
                        apply_convex_hull::Bool=false,
