@@ -19,8 +19,9 @@ isbounded(::CartesianProduct)
 isempty(::CartesianProduct)
 center(::CartesianProduct)
 constraints_list(::CartesianProduct)
-vertices_list(cp::CartesianProduct{N}) where {N}
-linear_map(M::AbstractMatrix, cp::CartesianProduct)
+vertices_list(::CartesianProduct)
+linear_map(::AbstractMatrix, ::CartesianProduct)
+volume(::CartesianProduct)
 project(::CartesianProduct{N, IT, HT}, ::AbstractVector{Int}) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
 project(::CartesianProduct{N, IT, ZT}, ::AbstractVector{Int}) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
 project(::CartesianProduct{N, IT, Union{VP1, VP2}}, ::AbstractVector{Int}) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
