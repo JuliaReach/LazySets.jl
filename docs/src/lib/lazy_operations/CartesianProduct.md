@@ -26,12 +26,12 @@ project(::CartesianProduct{N, IT, HT}, ::AbstractVector{Int}) where {N, IT<:Inte
 project(::CartesianProduct{N, IT, ZT}, ::AbstractVector{Int}) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
 project(::CartesianProduct{N, IT, Union{VP1, VP2}}, ::AbstractVector{Int}) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
 ```
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`an_element`](@ref an_element(::ConvexSet)
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet)
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 ## [``n``-ary Cartesian product (CartesianProductArray)](@id def_CartesianProductArray)
 
@@ -53,9 +53,9 @@ block_structure(::CartesianProductArray)
 block_to_dimension_indices(::CartesianProductArray, vars::Vector{Int})
 substitute_blocks(::CartesianProductArray{N}, ::CartesianProductArray{N}, ::Vector{Tuple{Int,Int}}) where {N}
 ```
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`an_element`](@ref an_element(::ConvexSet{N}) where {N})
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`an_element`](@ref an_element(::LazySet)
+* [`singleton_list`](@ref singleton_list(::LazySet))

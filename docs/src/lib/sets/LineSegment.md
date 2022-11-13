@@ -23,14 +23,12 @@ genmat(::LineSegment)
 Inherited from [`LazySet`](@ref):
 * [`high`](@ref high(::LazySet))
 * [`low`](@ref low(::LazySet))
-
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
-* [`high`](@ref high(::ConvexSet, ::Int))
-* [`low`](@ref low(::ConvexSet, ::Int))
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
+* [`high`](@ref high(::LazySet, ::Int))
+* [`low`](@ref low(::LazySet, ::Int))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

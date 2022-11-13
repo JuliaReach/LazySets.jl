@@ -23,13 +23,11 @@ linear_map(::AbstractMatrix, ::VPolytope)
 Inherited from [`LazySet`](@ref):
 * [`high`](@ref high(::LazySet))
 * [`low`](@ref low(::LazySet))
-
-Inherited from [`ConvexSet`](@ref):
-* [`ρ`](@ref ρ(::AbstractVector, ::ConvexSet))
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`an_element`](@ref an_element(::AbstractPolyhedron))

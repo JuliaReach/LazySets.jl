@@ -16,8 +16,8 @@ permute(::Singleton, ::AbstractVector{Int})
 singleton_list(::Singleton)
 linear_map(::AbstractMatrix, ::Singleton)
 ```
-Inherited from [`ConvexSet`](@ref):
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
+Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

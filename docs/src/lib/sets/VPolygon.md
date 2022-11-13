@@ -21,12 +21,12 @@ remove_redundant_vertices!(::VPolygon; ::String="monotone_chain")
 permute(::VPolygon, ::AbstractVector{Int})
 linear_map(M::AbstractMatrix, P::VPolygon)
 ```
-Inherited from [`ConvexSet`](@ref):
-* [`norm`](@ref norm(::ConvexSet, ::Real))
-* [`radius`](@ref radius(::ConvexSet, ::Real))
-* [`diameter`](@ref diameter(::ConvexSet, ::Real))
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
-* [`ρ`](@ref ρ(::AbstractVector, ::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`norm`](@ref norm(::LazySet, ::Real))
+* [`radius`](@ref radius(::LazySet, ::Real))
+* [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
+* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

@@ -34,5 +34,5 @@ low(::EmptySet, ::Int)
 high(::EmptySet, ::Int)
 rectify(::EmptySet)
 ```
-Inherited from [`ConvexSet`](@ref):
-* [`singleton_list`](@ref singleton_list(::ConvexSet))
+Inherited from [`LazySet`](@ref):
+* [`singleton_list`](@ref singleton_list(::LazySet))
