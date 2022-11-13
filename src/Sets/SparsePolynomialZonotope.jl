@@ -3,16 +3,24 @@ export SparsePolynomialZonotope, expmat, nparams, ngens_dep, ngens_indep,
        linear_map, quadratic_map, remove_redundant_generators, reduce_order
 
 """
-    SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, MNI<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}} <: AbstractPolynomialZonotope{N}
+    SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N},
+                             MNI<:AbstractMatrix{N},
+                             ME<:AbstractMatrix{<:Integer},
+                             VI<:AbstractVector{<:Integer}}
+        <: AbstractPolynomialZonotope{N}
 
 Type that represents a sparse polynomial zonotope.
 
-A sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is represented by the set
+A sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is represented by
+the set
 ```math
 \\mathcal{PZ} = \\left\\{x \\in \\mathbb{R}^n : x = c + ∑ᵢ₌₁ʰ\\left(∏ₖ₌₁ᵖ α_k^{E_{k, i}} \\right)Gᵢ+∑ⱼ₌₁^qβⱼGIⱼ,~~ α_k ∈ [-1, 1]~~ ∀ i = 1,…,p, j=1,…,q \\right\\},
 ```
-where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center), ``G ∈ \\mathbb{R}^{n \\times h}`` is the dependent generator matrix with columns ``Gᵢ``,
-``GI ∈ \\mathbb{R}^{n×q}`` is the independent generator matrix and ``E ∈ \\mathbb{N}^{p×h}_{≥0}`` is the exponent matrix with matrix elements ``E_{k, i}``.
+where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center),
+``G ∈ \\mathbb{R}^{n \\times h}`` is the dependent generator matrix with columns
+``Gᵢ``, ``GI ∈ \\mathbb{R}^{n×q}`` is the independent generator matrix, and
+``E ∈ \\mathbb{N}^{p×h}_{≥0}`` is the exponent matrix with matrix elements
+``E_{k, i}``.
 
 ### Fields
 
@@ -20,13 +28,15 @@ where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center), ``G ∈ \\mathbb
 - `G`   -- dependent generator matrix
 - `GI`  -- independent generator matrix
 - `E`   -- exponent matrix
-- `idx` -- identifier vector, vector of positive integers identifing the dependent parameters of `PZ`.
+- `idx` -- identifier vector of positive integers for the dependent parameters
 
 ### Notes
 
-Sparse polynomial zonotopes were introduced in [KA21].
+Sparse polynomial zonotopes were introduced in [1].
 
-- [KA21] N. Kochdumper and M. Althoff. *Sparse Polynomial Zonotopes: A Novel Set Representation for Reachability Analysis*. Transactions on Automatic Control, 2021.
+- [1] N. Kochdumper and M. Althoff. *Sparse Polynomial Zonotopes: A Novel Set
+Representation for Reachability Analysis*. Transactions on Automatic Control,
+2021.
 """
 struct SparsePolynomialZonotope{N,
                                 VN<:AbstractVector{N},
@@ -40,28 +50,35 @@ struct SparsePolynomialZonotope{N,
     E::ME
     idx::VI
 
-    function SparsePolynomialZonotope(c::VN, G::MN, GI::MNI, E::ME, idx::VI) where {N<:Real, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, MNI<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}, VI<:AbstractVector{<:Integer}}
-        @assert length(c) == size(G, 1) throw(DimensionMismatch("c and G should have the same number of rows"))
-        @assert length(c) == size(GI, 1) throw(DimensionMismatch("c and GI should have the same number of rows"))
-        @assert size(G, 2) == size(E, 2) throw(DimensionMismatch("G and E should have the same number of columns"))
-        @assert all(>=(0), E) throw(ArgumentError("E should have non-negative integers"))
-        @assert all(>(0), idx) throw(ArgumentError("identifiers in index vector must be positive integers"))
+    # default constructor with dimension checks
+    function SparsePolynomialZonotope(c::VN, G::MN, GI::MNI, E::ME,
+                                      idx::VI=uniqueID(size(E, 1))
+                                     ) where {N<:Real, VN<:AbstractVector{N},
+                                          MN<:AbstractMatrix{N},
+                                          MNI<:AbstractMatrix{N},
+                                          ME<:AbstractMatrix{<:Integer},
+                                          VI<:AbstractVector{<:Integer}}
+        @assert length(c) == size(G, 1) throw(DimensionMismatch("c and G " *
+            "should have the same number of rows"))
+        @assert length(c) == size(GI, 1) throw(DimensionMismatch("c and GI " *
+            "should have the same number of rows"))
+        @assert size(G, 2) == size(E, 2) throw(DimensionMismatch("G and E " *
+            "should have the same number of columns"))
+        @assert all(>=(0), E) throw(ArgumentError("E should contain " *
+            "non-negative integers"))
+        @assert all(>(0), idx) throw(ArgumentError("identifiers in index " *
+            "vector must be positive integers"))
         return new{N, VN, MN, MNI, ME, VI}(c, G, GI, E, idx)
     end
 end
 
-function SparsePolynomialZonotope(c::AbstractVector, G::AbstractMatrix, GI::AbstractMatrix, E::AbstractMatrix{<:Integer})
-    n = size(E, 1)
-    return SparsePolynomialZonotope(c, G, GI, E, uniqueID(n))
-end
-
-
+# short-hand
 const SPZ = SparsePolynomialZonotope
 
 """
     dim(P::SparsePolynomialZonotope)
 
-Return the dimension of `P`.
+Return the dimension of a sparse polynomial zonotope.
 
 ### Input
 
@@ -76,29 +93,38 @@ dim(P::SPZ) = length(P.c)
 """
     ngens_dep(P::SparsePolynomialZonotope)
 
-Return the number of dependent generators of `P`.
+Return the number of dependent generators of a sparse polynomial zonotope.
 
 ### Input
 
 - `P` -- sparse polynomial zonotope
+
+### Output
+
+The number of dependent generators.
 """
 ngens_dep(P::SPZ) = size(P.G, 2)
 
 """
     ngens_indep(P::SparsePolynomialZonotope)
 
-Return the number of independent generators of `P`.
+Return the number of independent generators of a sparse polynomial zonotope.
 
 ### Input
 
 - `P` -- sparse polynomial zonotope
+
+### Output
+
+The number of independent generators.
 """
 ngens_indep(P::SPZ) = size(P.GI, 2)
 
 """
     nparams(P::SparsePolynomialZonotope)
 
-Return the number of dependent parameters in the polynomial representation of `P`.
+Return the number of dependent parameters in the polynomial representation of a
+sparse polynomial zonotope.
 
 ### Input
 
@@ -106,18 +132,18 @@ Return the number of dependent parameters in the polynomial representation of `P
 
 ### Output
 
-The number of dependent parameters in the polynomial representation of P.
+The number of dependent parameters in the polynomial representation.
 
 ### Notes
 
-This corresponds to the number rows in the exponent matrix ``E``.
+This number corresponds to the number of rows in the exponent matrix ``E``.
 """
 nparams(P::SPZ) = size(P.E, 1)
 
 """
     order(P::SparsePolynomialZonotope)
 
-Return the order of `P`.
+Return the order of a sparse polynomial zonotope.
 
 ### Input
 
@@ -125,14 +151,15 @@ Return the order of `P`.
 
 ### Output
 
-The order of `P`, defined as the quotient between the number of generators and the ambient dimension.
+The order, defined as the quotient between the number of generators and the
+ambient dimension, as a `Rational` number.
 """
 order(P::SPZ) = (ngens_dep(P) + ngens_indep(P)) // dim(P)
 
 """
     center(P::SparsePolynomialZonotope)
 
-Return the center of `P`.
+Return the center of a sparse polynomial zonotope.
 
 ### Input
 
@@ -140,29 +167,37 @@ Return the center of `P`.
 
 ### Output
 
-The center of `P`.
+The center.
 """
 center(P::SPZ) = P.c
 
 """
     genmat_dep(P::SparsePolynomialZonotope)
 
-Return the matrix of dependent generators of `P`.
+Return the matrix of dependent generators of a sparse polynomial zonotope.
 
 ### Input
 
 - `P` -- sparse polynomial zonotope
+
+### Output
+
+The matrix of dependent generators.
 """
 genmat_dep(P::SPZ) = P.G
 
 """
     genmat_indep(P::SparsePolynomialZonotope)
 
-Return the matrix of independent generators of `P`.
+Return the matrix of independent generators of a sparse polynomial zonotope.
 
 ### Input
 
 - `P` -- sparse polynomial zonotope
+
+### Output
+
+The matrix of independent generators.
 """
 genmat_indep(P::SPZ) = P.GI
 
@@ -181,36 +216,50 @@ The matrix of exponents, where each column is a multidegree.
 
 ### Notes
 
-In the exponent matrix, each row corresponds to a parameter (``\alpha_k`` in the definition) and each column to a monomial.
+In the exponent matrix, each row corresponds to a parameter (``\alpha_k`` in the
+definition) and each column to a monomial.
 """
 expmat(P::SPZ) = P.E
 
 """
     indexvector(P::SparsePolynomialZonotope)
 
-Return the index vector of `P`.
+Return the index vector of a sparse polynomial zonotope.
 
 ### Input
 
 - `P` -- sparse polynomial zonotope
 
+### Output
+
+The index vector.
+
 ### Notes
 
-The index vector is a vector of positive integers identifing the dependent parameters of `P`.
+The index vector contains positive integers for the dependent parameters.
 """
 indexvector(P::SPZ) = P.idx
-
 
 """
     uniqueID(n::Int)
 
-Returns a collection of n unique identifiers (intergers 1, …, n).
+Return a collection of n unique identifiers (integers 1, …, n).
+
+### Input
+
+- `n` -- number of variables
+
+### Output
+
+`1:n`.
 """
 uniqueID(n::Int) = 1:n
-"""
-    linear_map(M::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling}, P::SparsePolynomialZonotope)
 
-Apply the linear map `M` to the sparse polynomial zonotope `P`.
+"""
+    linear_map(M::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling},
+               P::SparsePolynomialZonotope)
+
+Apply a linear map to a sparse polynomial zonotope.
 
 ### Input
 
@@ -219,39 +268,42 @@ Apply the linear map `M` to the sparse polynomial zonotope `P`.
 
 ### Output
 
-The set resulting from applying the linear map `M` to `P`.
+The sparse polynomial zonotope resulting from applying the linear map.
 """
-function linear_map(M::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling}, P::SPZ)
+function linear_map(M::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling},
+                    P::SPZ)
     return SparsePolynomialZonotope(M * center(P),
                                     M * genmat_dep(P),
                                     M * genmat_indep(P),
                                     expmat(P),
-                                    indexvector(P)
-                                    )
+                                    indexvector(P))
 end
 
 """
-    rand(::Type{SparsePolynomialZonotope};
-         [N]::Type{<:Real}=Float64, [dim]::Int=2, [nparams]::Int=2, [maxdeg]::Int=3,
+    rand(::Type{SparsePolynomialZonotope}; [N]::Type{<:Real}=Float64,
+         [dim]::Int=2, [nparams]::Int=2, [maxdeg]::Int=3,
          [num_dependent_generators]::Int=-1,
-         [num_independent_generators]::Int=-1,
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
+         [num_independent_generators]::Int=-1, [rng]::AbstractRNG=GLOBAL_RNG,
+         [seed]::Union{Int, Nothing}=nothing)
 
 Create a random sparse polynomial zonotope.
 
 ### Input
 
-- `Zonotope`                   -- type for dispatch
+- `SparsePolynomialZonotope`   -- type for dispatch
 - `N`                          -- (optional, default: `Float64`) numeric type
 - `dim`                        -- (optional, default: 2) dimension
 - `nparams`                    -- (optional, default: 2) number of parameters
-- `maxdeg`                     -- (optinal, default: 3) maximum degree for each parameter
-- `rng`                        -- (optional, default: `GLOBAL_RNG`) random number generator
-- `seed`                       -- (optional, default: `nothing`) seed for reseeding
-- `num_dependent_generators`   -- (optional, default: `-1`) number of dependent generators of
-                                  the zonotope (see comment below)
-- `num_independent_generators` -- (optional, default: `-1`) number of independent generators of
-                                  the zonotope (see comment below)
+- `maxdeg`                     -- (optinal, default: 3) maximum degree for each
+                                  parameter
+- `num_dependent_generators`   -- (optional, default: `-1`) number of dependent
+                                  generators (see comment below)
+- `num_independent_generators` -- (optional, default: `-1`) number of
+                                  independent generators (see comment below)
+- `rng`                        -- (optional, default: `GLOBAL_RNG`) random
+                                  number generator
+- `seed`                       -- (optional, default: `nothing`) seed for
+                                  reseeding
 
 ### Output
 
@@ -261,20 +313,21 @@ A random sparse polynomial zonotope.
 
 All numbers are normally distributed with mean 0 and standard deviation 1.
 
-The number of generators can be controlled with the arguments `num_dependent_generators` and `num_dependent_generators`.
+The number of generators can be controlled with the arguments
+`num_dependent_generators` and `num_dependent_generators`.
 For a negative value we choose a random number in the range `dim:2*dim` (except
-if `dim == 1`, in which case we only create a single generator). Note that the final number of
-generators may be lower if redundant monomials are generated.
+if `dim == 1`, in which case we only create a single generator). Note that the
+final number of generators may be lower if redundant monomials are generated.
 """
 function rand(::Type{SparsePolynomialZonotope};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               nparams::Int=2,
               maxdeg::Int=3,
-              rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing,
               num_dependent_generators::Int=-1,
-              num_independent_generators::Int=-1)
+              num_independent_generators::Int=-1,
+              rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
 
     if num_independent_generators < 0
@@ -282,7 +335,9 @@ function rand(::Type{SparsePolynomialZonotope};
     end
     GI = randn(rng, N, dim, num_independent_generators)
 
-    SSPZ = rand(SimpleSparsePolynomialZonotope; N=N, dim=dim, nparams=nparams, maxdeg=maxdeg, rng=rng, seed=seed, num_generators=num_dependent_generators)
+    SSPZ = rand(SimpleSparsePolynomialZonotope; N=N, dim=dim, nparams=nparams,
+                maxdeg=maxdeg, rng=rng, seed=seed,
+                num_generators=num_dependent_generators)
 
     return SparsePolynomialZonotope(center(SSPZ), genmat(SSPZ), GI, expmat(SSPZ))
 end
@@ -317,7 +372,7 @@ Remove redundant generators from `S`.
 
 ### Output
 
-A new sparse polynomial zonotope such that redundant generators have been removed.
+A new sparse polynomial zonotope where redundant generators have been removed.
 
 ## Notes
 
@@ -325,16 +380,18 @@ The result uses dense arrays irrespective of the array type of `S`.
 
 ### Algorithm
 
-Let `G` be the dependent generator matrix, `E` the exponent matrix and `GI` the independent generator matrix of `S`.
-The following simplifications are performed:
+Let `G` be the dependent generator matrix, `E` the exponent matrix, and `GI` the
+independent generator matrix of `S`. We perform the following simplifications:
 
-- Zero columns in `G` and the corresponding columns in `E` are removed.
-- Zero columns in `GI` are removed.
-- For zero columns in `E`, the corresponding column in `G` is summed to the center.
-- Repeated columns in `E` are grouped together by summing the corresponding columns in `G`.
+- Remove zero columns in `G` and the corresponding columns in `E`.
+- Remove Zero columns in `GI`.
+- For zero columns in `E`, add the corresponding column in `G` to the center.
+- Group repeated columns in `E` together by summing the corresponding columns in
+  `G`.
 """
 function remove_redundant_generators(S::SparsePolynomialZonotope)
-    c, G, E = _remove_redundant_generators_polyzono(center(S), genmat_dep(S), expmat(S))
+    c, G, E = _remove_redundant_generators_polyzono(center(S), genmat_dep(S),
+                                                    expmat(S))
     GI = remove_zero_columns(genmat_indep(S))
     return SparsePolynomialZonotope(c, G, GI, E)
 end
@@ -343,7 +400,8 @@ end
     reduce_order(P::SparsePolynomialZonotope, r::Real,
                  [method]::AbstractReductionMethod=GIR05())
 
-Overapproximate the sparse polynomial zonotope `P` by one which has at most order `r`.
+Overapproximate the sparse polynomial zonotope by another sparse polynomial
+zonotope with order at most `r`.
 
 ### Input
 
@@ -363,7 +421,8 @@ This method implements the algorithm described in Proposition 3.1.39 of [1].
 [1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
 verification of cyber-physical systems*. 2021.
 """
-function reduce_order(P::SparsePolynomialZonotope, r::Real, method::AbstractReductionMethod=GIR05())
+function reduce_order(P::SparsePolynomialZonotope, r::Real,
+                      method::AbstractReductionMethod=GIR05())
     @assert r ≥ 1
     n = dim(P)
     h = ngens_dep(P)
@@ -381,7 +440,8 @@ function reduce_order(P::SparsePolynomialZonotope, r::Real, method::AbstractRedu
     th = sort(norms)[a]
 
     # TODO: case a = 0
-    K = [norms[i] ≤ th for i in 1:h] # ? Is constructing an array of booleans the most efficient way?
+    # TODO is constructing an array of booleans the most efficient way?
+    K = [norms[i] ≤ th for i in 1:h]
     Kbar = .!K
 
     H = [norms[h+i] ≤ th for i in 1:q]
@@ -395,5 +455,6 @@ function reduce_order(P::SparsePolynomialZonotope, r::Real, method::AbstractRedu
 
     cz = center(Z)
     Gz = genmat(Z)
-    return SparsePolynomialZonotope(cz, G[:, Kbar], hcat(GI[:, Hbar], Gz), Ebar[N, :], idx[N])
+    return SparsePolynomialZonotope(cz, G[:, Kbar], hcat(GI[:, Hbar], Gz),
+                                    Ebar[N, :], idx[N])
 end
