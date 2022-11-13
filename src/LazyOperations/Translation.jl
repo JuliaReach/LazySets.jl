@@ -7,7 +7,8 @@ export Translation,
        center
 
 """
-    Translation{N, S<:ConvexSet{N}, VN<:AbstractVector{N}} <: AbstractAffineMap{N, S}
+    Translation{N, S<:ConvexSet{N}, VN<:AbstractVector{N}}
+        <: AbstractAffineMap{N, S}
 
 Type that represents a lazy translation.
 
@@ -28,8 +29,8 @@ linear map ``A`` is the identity matrix and the translation vector ``b`` is
 
 ### Notes
 
-The translation preserves convexity: if `X` is convex, then any translation of
-`X` is convex as well.
+Translation preserves convexity: if `X` is convex, then any translation of `X`
+is convex as well.
 
 ### Example
 
@@ -52,23 +53,19 @@ julia> tr.v
  0.0
  0.0
 ```
-The sum operator `+` is overloaded to create translations:
+
+Both the sum operator `+` and the Minkowski-sum operator `⊕` are overloaded to
+create translations:
 
 ```jldoctest translation
-julia> X + v == Translation(X, v)
-true
-```
-And so does the Minkowski sum operator, `⊕`:
-
-```jldoctest translation
-julia> X ⊕ v == Translation(X, v)
+julia> X + v == X ⊕ v == Translation(X, v)
 true
 ```
 
 The translation of a translation is performed immediately:
 
 ```jldoctest translation
-julia> tr = (X+v)+v
+julia> tr = (X + v) + v
 Translation{Float64, BallInf{Float64, Vector{Float64}}, Vector{Float64}}(BallInf{Float64, Vector{Float64}}([2.0, 2.0, 2.0], 1.0), [2.0, 0.0, 0.0])
 
 julia> tr.v
@@ -86,7 +83,7 @@ julia> dim(tr)
 ```
 
 For the support vector (resp. support function) along vector `d`, use `σ` and
-`ρ` respectively:
+`ρ`, respectively:
 
 ```jldoctest translation
 julia> σ([1.0, 0.0, 0.0], tr)
@@ -98,6 +95,7 @@ julia> σ([1.0, 0.0, 0.0], tr)
 julia> ρ([1.0, 0.0, 0.0], tr)
 5.0
 ```
+
 See the docstring of each of these functions for details.
 
 The `an_element` function is useful to obtain an element of a translation:
@@ -124,16 +122,15 @@ julia> Q isa AffineMap && Q.M == M && Q.X == tr.X && Q.v == 2 * tr.v
 true
 ```
 
-Use the `isempty` method to query if the translation is empty; it falls back
-to the `isempty` method of the wrapped set:
+Use the `isempty` method to check whether the translation is empty:
 
 ```jldoctest translation
 julia> isempty(tr)
 false
 ```
 
-The list of constraints of the translation of a polyhedron (in general, a set
-whose `constraints_list` is available) can be computed from a lazy translation:
+The list of constraints of the translation of a polyhedral set (a set whose
+`constraints_list` is available) can be computed from a lazy translation:
 
 ```jldoctest translation
 julia> constraints_list(tr)
@@ -160,10 +157,25 @@ struct Translation{N, S<:ConvexSet{N}, VN<:AbstractVector{N}} <: AbstractAffineM
 end
 
 isoperationtype(::Type{<:Translation}) = true
+
 isconvextype(::Type{Translation{N, S, VN}}) where {N, S, VN} = isconvextype(S)
 
 # constructor from a Translation: perform the translation immediately
-Translation(tr::Translation{N}, v::AbstractVector{N}) where {N} = Translation(tr.X, tr.v + v)
+Translation(tr::Translation{N}, v::AbstractVector{N}) where {N} =
+    Translation(tr.X, tr.v + v)
+
+# the translation of a lazy linear map is a (lazy) affine map
+Translation(lm::LinearMap, v::AbstractVector) = AffineMap(lm.M, lm.X, v)
+
+# the linear map of a translation is a (lazy) affine map:
+# M * (X ⊕ v) = (M * X) ⊕ (M * v)
+LinearMap(M::AbstractMatrix, tr::Translation) = AffineMap(M, tr.X, M * tr.v)
+
+# EmptySet is absorbing for Translation
+Translation(∅::EmptySet, v::AbstractVector) = ∅
+
+# Universe is absorbing for Translation
+Translation(U::Universe, v::AbstractVector) = U
 
 """
     +(X::ConvexSet, v::AbstractVector)
@@ -194,17 +206,6 @@ Unicode alias constructor ⊕ (`oplus`) for the lazy translation operator.
 # translation from the left
 ⊕(v::AbstractVector, X::ConvexSet) = Translation(X, v)
 
-# the translation of a lazy linear map is a (lazy) affine map
-Translation(lm::LinearMap, v::AbstractVector) = AffineMap(lm.M, lm.X, v)
-
-# the linear map of a translation is a (lazy) affine map:
-# M * (X ⊕ v) = (M * X) ⊕ (M * v)
-LinearMap(M::AbstractMatrix, tr::Translation) = AffineMap(M, tr.X, M * tr.v)
-
-
-# --- AbstractAffineMap interface functions ---
-
-
 function matrix(tr::Translation{N}) where {N}
     return Diagonal(fill(one(N), dim(tr)))
 end
@@ -217,23 +218,19 @@ function set(tr::Translation)
     return tr.X
 end
 
-# ============================
-# ConvexSet interface functions
-# ============================
-
 """
     σ(d::AbstractVector, tr::Translation)
 
-Return the support vector of a translation.
+Return a support vector of a translation.
 
 ### Input
 
 - `d`  -- direction
-- `tr` -- translation
+- `tr` -- translation of a set
 
 ### Output
 
-The support vector in the given direction.
+A support vector in the given direction.
 If the direction has norm zero, the result depends on the wrapped set.
 """
 function σ(d::AbstractVector, tr::Translation)
@@ -243,16 +240,16 @@ end
 """
     ρ(d::AbstractVector, tr::Translation)
 
-Return the support function of a translation.
+Evaluate the support function of a translation.
 
 ### Input
 
 - `d`  -- direction
-- `tr` -- translation
+- `tr` -- translation of a set
 
 ### Output
 
-The support function in the given direction.
+The evaluation of the support function in the given direction.
 """
 function ρ(d::AbstractVector, tr::Translation)
     return dot(d, tr.v) + ρ(d, tr.X)
@@ -265,7 +262,7 @@ Return some element of a translation.
 
 ### Input
 
-- `tr` -- translation
+- `tr` -- translation of a set
 
 ### Output
 
@@ -273,8 +270,8 @@ An element in the translation.
 
 ### Notes
 
-This function first asks for `an_element` function of the wrapped set, then
-translates this element according to the given translation vector.
+This function first asks for `an_element` of the wrapped set, then translates
+this element according to the given translation vector.
 """
 function an_element(tr::Translation)
     return an_element(tr.X) + tr.v
@@ -287,15 +284,15 @@ end
 """
     constraints_list(tr::Translation)
 
-Return the list of constraints of the translation of a set.
+Return a list of constraints of the translation of a set.
 
 ### Input
 
-- `tr` -- lazy translation of a polyhedron
+- `tr` -- translation of a polyhedron
 
 ### Output
 
-The list of constraints of the translation.
+A list of constraints of the translation.
 
 ### Notes
 
@@ -313,9 +310,6 @@ function constraints_list(tr::Translation)
 end
 
 function _constraints_list_translation(X::ConvexSet, v::AbstractVector)
-    @assert applicable(constraints_list, X) "this function requires that " *
-        "the `constraints_list` method is applicable"
-
     constraints_X = constraints_list(X)
     constraints_TX = similar(constraints_X)
     @inbounds for (i, ci) in enumerate(constraints_X)
@@ -340,7 +334,7 @@ Check whether a given point is contained in the translation of a set.
 
 ### Algorithm
 
-This implementation relies on the set membership function for the wrapped set
+This implementation relies on the set-membership function for the wrapped set
 `tr.X`, since ``x ∈ X ⊕ v`` iff ``x - v ∈ X``.
 """
 function ∈(x::AbstractVector, tr::Translation)
@@ -350,7 +344,7 @@ end
 """
     linear_map(M::AbstractMatrix, tr::Translation)
 
-Concrete linear map of a polyhedron in constraint representation.
+Concrete linear map of a translation.
 
 ### Input
 
@@ -380,16 +374,16 @@ end
 """
     center(tr::Translation)
 
-Return the center of the translation of a set.
+Return the center of the translation of a centrally-symmetric set.
 
 ### Input
 
-- `tr` -- translation of a set
+- `tr` -- translation of a centrally-symmetric set
 
 ### Output
 
 The translation of the center of the wrapped set by the translation vector.
 """
 function center(tr::Translation)
-    center(tr.X) + tr.v
+    return center(tr.X) + tr.v
 end
