@@ -27,12 +27,13 @@ struct QuadraticMap{N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}} 
     X::S
 
     # default constructor with dimension match check
-    function QuadraticMap(Q::MVT, X::S) where {N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}}
+    function QuadraticMap(Q::MVT, X::S) where {N, S<:LazySet{N},
+                                       MVT<:AbstractVector{<:AbstractMatrix{N}}}
         n = dim(X)
         @assert length(Q) == n "the number of matrices ($(length(Q))) needs " *
             "to match the dimension of the set ($n)"
         @assert all(M -> checksquare(M) == n, Q) "dimension mismatch in the " *
-            "matrices of the quadratic map applied to a set of size $n"
+            "matrices of the quadratic map applied to a set of dimension $n"
         return new{N, S, MVT}(Q, X)
     end
 end
