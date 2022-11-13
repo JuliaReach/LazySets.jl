@@ -33,13 +33,17 @@ ball in ``\\mathbb{R}^n`` by an affine transformation.
 See [`Zonotope`](@ref) for a standard implementation of this interface.
 
 Every concrete `AbstractZonotope` must define the following functions:
-- `genmat(::AbstractZonotope{N})` -- return the generator matrix
-- `generators(::AbstractZonotope{N})` -- return an iterator over the generators
+
+- `genmat(::AbstractZonotope)` -- return the generator matrix
+
+- `generators(::AbstractZonotope)` -- return an iterator over the generators
 
 Since the functions `genmat` and `generators` can be defined in terms of each
 other, it is sufficient to only genuinely implement one of them and let the
 implementation of the other function call the fallback implementation
 `genmat_fallback` resp. `generators_fallback`.
+
+The subtypes of `AbstractZonotope` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractZonotope)
@@ -53,15 +57,9 @@ julia> subtypes(AbstractZonotope)
 """
 abstract type AbstractZonotope{N} <: AbstractCentrallySymmetricPolytope{N} end
 
-isconvextype(::Type{<:AbstractZonotope}) = true
-
-# --- fallback implementations of AbstractZonotope functions ---
-
-
 """
     genmat_fallback(Z::AbstractZonotope{N};
-                    [gens]=generators(Z),
-                    [ngens]=nothing) where {N}
+                    [gens]=generators(Z), [ngens]=nothing) where {N}
 
 Fallback definition of `genmat` for zonotopic sets.
 
@@ -78,13 +76,12 @@ A matrix where each column represents one generator of `Z`.
 
 ### Notes
 
-Passing the number of generators is much more efficient as otherwise the
-generators have to be obtained from the iterator (`gens`) and stored in an
+Passing the number of generators (`ngens`) is more efficient, since otherwise
+the generators have to be obtained from the iterator (`gens`) and stored in an
 intermediate vector until the final result matrix can be allocated.
 """
 function genmat_fallback(Z::AbstractZonotope{N};
-                         gens=generators(Z),
-                         ngens=nothing) where {N}
+                         gens=generators(Z), ngens=nothing) where {N}
     if isempty(gens)
         return Matrix{N}(undef, dim(Z), 0)
     elseif ngens == nothing
@@ -95,52 +92,16 @@ function genmat_fallback(Z::AbstractZonotope{N};
 end
 
 function _genmat_fallback_generic(Z::AbstractZonotope{N}, gens) where {N}
-    Gv = Vector{Vector{N}}()
-    @inbounds for (i, g) in enumerate(gens)
-        push!(Gv, g)
-    end
-    G = Matrix{N}(undef, dim(Z), length(Gv))
-    @inbounds for (i, g) in enumerate(Gv)
-        G[:, i] = g
-    end
-    return G
+    gens = collect(gens)
+    return _genmat_fallback_ngens(Z, gens, length(gens))
 end
 
 function _genmat_fallback_ngens(Z::AbstractZonotope{N}, gens, ngens) where {N}
     G = Matrix{N}(undef, dim(Z), ngens)
-    @inbounds for (i, g) in enumerate(gens)
+    for (i, g) in enumerate(gens)
         G[:, i] = g
     end
     return G
-end
-
-# iterator that wraps the generator matrix
-struct FallbackGeneratorIterator{M<:AbstractMatrix}
-    G::M
-    n_plus_one::Int
-
-    FallbackGeneratorIterator(G::M) where {M<:AbstractMatrix} =
-        new{M}(G, size(G, 2) + 1)
-end
-
-Base.length(it::FallbackGeneratorIterator) = it.n_plus_one - 1
-
-Base.eltype(::Type{<:FallbackGeneratorIterator{<:AbstractMatrix{N}}}) where {N} =
-    AbstractVector{N}
-
-Base.eltype(::Type{<:FallbackGeneratorIterator{<:Matrix{N}}}) where {N} =
-    Vector{N}
-
-Base.eltype(::Type{<:FallbackGeneratorIterator{<:SparseMatrixCSC{N}}}) where {N} =
-    SparseVector{N}
-
-function Base.iterate(it::FallbackGeneratorIterator, state::Int=1)
-    if state == it.n_plus_one
-        return nothing
-    end
-    g = it.G[:, state]
-    state += 1
-    return (g, state)
 end
 
 """
@@ -157,7 +118,7 @@ Fallback definition of `generators` for zonotopic sets.
 An iterator over the generators of `Z`.
 """
 function generators_fallback(Z::AbstractZonotope)
-    return FallbackGeneratorIterator(genmat(Z))
+    return ColumnIterator(genmat(Z))
 end
 
 """
@@ -179,10 +140,6 @@ function togrep(Z::AbstractZonotope)
     return convert(Zonotope, Z)
 end
 
-
-# --- common AbstractZonotope functions ---
-
-
 """
     ngens(Z::AbstractZonotope)
 
@@ -203,33 +160,29 @@ end
 """
     order(Z::AbstractZonotope)
 
-Return the order of a zonotope.
+Return the order of a zonotopic set.
 
 ### Input
 
-- `Z` -- zonotope
+- `Z` -- zonotopic set
 
 ### Output
 
-A rational number representing the order of the zonotope.
+A rational number representing the order of the zonotopic set.
 
 ### Notes
 
-The order of a zonotope is defined as the quotient of its number of generators
-and its dimension.
+The order of a zonotopic set is defined as the quotient of its number of
+generators and its dimension.
 """
 function order(Z::AbstractZonotope)
     return ngens(Z) // dim(Z)
 end
 
-
-# --- ConvexSet interface functions ---
-
-
 """
     ρ(d::AbstractVector, Z::AbstractZonotope)
 
-Return the support function of a zonotopic set in a given direction.
+Evaluate the support function of a zonotopic set in a given direction.
 
 ### Input
 
@@ -238,11 +191,11 @@ Return the support function of a zonotopic set in a given direction.
 
 ### Output
 
-The support function of the zonotopic set in the given direction.
+The evaluation of the support function in the given direction.
 
 ### Algorithm
 
-The support value is ``cᵀ d + ‖Gᵀ d‖₁`` where ``c`` is the center and ``G`` is
+The support value is ``cᵀ d + ‖Gᵀ d‖₁``, where ``c`` is the center and ``G`` is
 the generator matrix of `Z`.
 """
 function ρ(d::AbstractVector, Z::AbstractZonotope)
@@ -254,7 +207,7 @@ end
 """
     σ(d::AbstractVector, Z::AbstractZonotope)
 
-Return the support vector of a zonotopic set in a given direction.
+Return a support vector of a zonotopic set in a given direction.
 
 ### Input
 
@@ -346,8 +299,11 @@ Concrete linear map of a zonotopic set.
 
 ### Output
 
-The zonotope obtained by applying the linear map to the center and generators
-of ``Z``.
+The zonotope obtained by applying the linear map.
+
+### Algorithm
+
+We apply the linear map to the center and the generators.
 """
 function linear_map(M::AbstractMatrix, Z::AbstractZonotope)
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
@@ -361,25 +317,21 @@ end
 """
     translate(Z::AbstractZonotope, v::AbstractVector)
 
-Translate (i.e., shift) a zonotope by a given vector.
+Translate (i.e., shift) a zonotopic set by a given vector.
 
 ### Input
 
-- `Z`     -- zonotope
-- `v`     -- translation vector
+- `Z` -- zonotopic set
+- `v` -- translation vector
 
 ### Output
 
-A translated zonotope.
+A translated zonotopic set.
 
 ### Notes
 
 See also [`translate!(Z::AbstractZonotope, v::AbstractVector)`](@ref) for the
 in-place version.
-
-### Algorithm
-
-We add the translation vector to the center of the zonotope.
 """
 function translate(Z::AbstractZonotope, v::AbstractVector)
     return translate!(copy(Z), v)
@@ -388,16 +340,16 @@ end
 """
     translate!(Z::AbstractZonotope, v::AbstractVector)
 
-Translate (i.e., shift) a zonotope by a given vector in-place.
+Translate (i.e., shift) a zonotopic set by a given vector in-place.
 
 ### Input
 
-- `Z`     -- zonotope
-- `v`     -- translation vector
+- `Z` -- zonotopic set
+- `v` -- translation vector
 
 ### Output
 
-A translated zonotope.
+A translated zonotopic set.
 
 ### Notes
 
@@ -406,24 +358,20 @@ out-of-place version.
 
 ### Algorithm
 
-We add the translation vector to the center of the zonotope.
+We add the translation vector to the center of the zonotopic set.
 """
 function translate!(Z::AbstractZonotope, v::AbstractVector)
     @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     c = center(Z)
     c .+= v
-    G = genmat(Z)
     return Z
 end
-
-# --- AbstractPolytope interface functions ---
-
 
 """
     vertices_list(Z::AbstractZonotope; [apply_convex_hull]::Bool=true)
 
-Return the vertices of a zonotopic set.
+Return a list of the vertices of a zonotopic set.
 
 ### Input
 
@@ -433,7 +381,7 @@ Return the vertices of a zonotopic set.
 
 ### Output
 
-List of vertices as a vector of vectors.
+A list of the vertices.
 
 ### Algorithm
 
@@ -441,12 +389,12 @@ List of vertices as a vector of vectors.
 
 We use a trick to speed up enumerating vertices of 2-dimensional zonotopic
 sets with all generators in the first quadrant or third quadrant (same sign).
-Namely, sort the generators in angle and add them clockwise in increasing
-order and anticlockwise in decreasing order, the algorithm detail:
-https://math.stackexchange.com/q/3356460
+Namely, sort the generators by angle and add them clockwise in increasing
+order and counterclockwise in decreasing order. A more detailed explanation can
+be found [here](https://math.stackexchange.com/q/3356460).
 
-To avoid cumulative sum from both directions separately, we build a 2d index matrix
-to sum generators for both directions in one matrix-vector product.
+To avoid the cumulative sum from both directions separately, we build a 2D index
+matrix to sum generators for both directions in one matrix-vector product.
 
 #### General case
 
@@ -455,7 +403,7 @@ the center with some linear combination of generators, where the combination
 factors are ``ξ_i ∈ \\{-1, 1\\}``.
 
 There are at most ``2^p`` distinct vertices. Use the flag `apply_convex_hull` to
-control whether a convex hull algorithm is applied to the vertices computed by
+control whether a convex-hull algorithm is applied to the vertices computed by
 this method; otherwise, redundant vertices may be present.
 """
 function vertices_list(Z::AbstractZonotope; apply_convex_hull::Bool=true)
@@ -489,7 +437,7 @@ end
 """
     constraints_list(P::AbstractZonotope)
 
-Return the list of constraints defining a zonotopic set.
+Return a list of constraints defining a zonotopic set.
 
 ### Input
 
@@ -497,7 +445,7 @@ Return the list of constraints defining a zonotopic set.
 
 ### Output
 
-The list of constraints of the zonotopic set.
+A list of constraints of the zonotopic set.
 
 ### Algorithm
 
@@ -516,7 +464,7 @@ end
 """
     constraints_list(Z::AbstractZonotope{N}) where {N<:AbstractFloat}
 
-Return the list of constraints defining a zonotopic set.
+Return a list of constraints defining a zonotopic set.
 
 ### Input
 
@@ -524,7 +472,7 @@ Return the list of constraints defining a zonotopic set.
 
 ### Output
 
-The list of constraints of the zonotopic set.
+A list of constraints of the zonotopic set.
 
 ### Notes
 
@@ -538,12 +486,11 @@ If ``p < n`` or the generator matrix is not full rank, we fall back to the
 
 ### Algorithm
 
-We follow the algorithm presented in *Althoff, Stursberg, Buss: Computing
-Reachable Sets of Hybrid Systems Using a Combination of Zonotopes and Polytopes.
-2009.*
+We follow the algorithm presented in [1]. Since the one-dimensional case is not
+covered by that algorithm, we handle this case separately.
 
-The one-dimensional case is not covered by that algorithm; we manually handle
-this case.
+[1] Althoff, Stursberg, Buss. *Computing Reachable Sets of Hybrid Systems Using
+a Combination of Zonotopes and Polytopes*. 2009.
 """
 function constraints_list(Z::AbstractZonotope{N}) where {N<:AbstractFloat}
     return _constraints_list_zonotope(Z)
@@ -574,7 +521,7 @@ function _constraints_list_zonotope(Z::AbstractZonotope{N}) where {N<:AbstractFl
     G = genmat(Z)
     c = center(Z)
     m = binomial(p, n - 1)
-    constraints = Vector{LinearConstraint{N, Vector{N}}}()
+    constraints = Vector{HalfSpace{N, Vector{N}}}()
     sizehint!(constraints, 2m)
     for columns in StrictlyIncreasingIndices(p, n-1)
         c⁺ = cross_product(view(G, :, columns))
@@ -587,8 +534,8 @@ function _constraints_list_zonotope(Z::AbstractZonotope{N}) where {N<:AbstractFl
         c⁻ = -c⁺
         d⁻ = -d⁺ + 2 * Δd  # identical to dot(c⁻, c) + Δd
 
-        push!(constraints, LinearConstraint(c⁺, d⁺))
-        push!(constraints, LinearConstraint(c⁻, d⁻))
+        push!(constraints, HalfSpace(c⁺, d⁺))
+        push!(constraints, HalfSpace(c⁻, d⁻))
     end
     return constraints
 end
@@ -596,17 +543,17 @@ end
 function _constraints_list_1d(Z::AbstractZonotope{N}) where {N}
     c = center(Z, 1)
     g = sum(abs, genmat(Z))
-    return [LinearConstraint([N(1)], c + g), LinearConstraint([N(-1)], g - c)]
+    return [HalfSpace([N(1)], c + g), HalfSpace([N(-1)], g - c)]
 end
 
 """
     split(Z::AbstractZonotope, j::Int)
 
-Return two zonotopes obtained by splitting the given zonotope.
+Return two zonotopes obtained by splitting the given zonotopic set.
 
 ### Input
 
-- `Z` -- zonotope
+- `Z` -- zonotopic set
 - `j` -- index of the generator to be split
 
 ### Output
@@ -616,7 +563,7 @@ their union is `Z` and their intersection is possibly non-empty.
 
 ### Algorithm
 
-This function implements [Prop. 3, 1], that we state next. The zonotope
+This function implements [Prop. 3, 1], which we state next. The zonotopic set
 ``Z = ⟨c, g^{(1, …, p)}⟩`` is split into:
 
 ```math
@@ -629,22 +576,22 @@ such that ``Z₁ ∪ Z₂ = Z`` and ``Z₁ ∩ Z₂ = Z^*``, where
 Z^* = ⟨c, (g^{(1,…,j-1)}, g^{(j+1,…, p)})⟩.
 ```
 
-[1] *Althoff, M., Stursberg, O., & Buss, M. (2008). Reachability analysis of
-nonlinear systems with uncertain parameters using conservative linearization.
-In Proc. of the 47th IEEE Conference on Decision and Control.*
+[1] Althoff, M., Stursberg, O., & Buss, M. *Reachability analysis of nonlinear
+systems with uncertain parameters using conservative linearization*. CDC 2008.
 """
 function split(Z::AbstractZonotope, j::Int)
     return _split(convert(Zonotope, Z), j)
 end
 
 """
-    split(Z::AbstractZonotope, gens::AbstractVector{Int}, nparts::AbstractVector{Int})
+    split(Z::AbstractZonotope, gens::AbstractVector{Int},
+          nparts::AbstractVector{Int})
 
-Split a zonotope along the given generators into a vector of zonotopes.
+Split a zonotopic set along the given generators into a vector of zonotopes.
 
 ### Input
 
-- `Z`    -- zonotope
+- `Z`    -- zonotopic set
 - `gens` -- vector of indices of the generators to be split
 - `n`    -- vector of integers describing the number of partitions in the
             corresponding generator
@@ -657,7 +604,7 @@ possibly non-empty.
 
 ### Examples
 
-Splitting of a two-dimensional zonotope along its first generator:
+Splitting of a two-dimensional zonotopic set along its first generator:
 
 ```jldoctest zonotope_label
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
@@ -668,11 +615,12 @@ julia> split(Z, [1], [1])
  Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([0.95, 0.0], [0.05 0.0; 0.0 0.1])
  Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.05, 0.0], [0.05 0.0; 0.0 0.1])
 ```
-Here, the first vector in the arguments corresponds to the zonotope's
+Here, the first vector in the arguments corresponds to the zonotopic set's
 generator to be split, and the second vector corresponds to the exponent of
-`2^n` parts that the zonotope will be split into along the corresponding generator.
+`2^n` parts that the set will be split into along the corresponding generator.
 
-Splitting of a two-dimensional zonotope along its generators:
+As an example, below we split a two-dimensional zonotope along both of its
+generators, each time into four parts.
 
 ```
 julia> Z = Zonotope([1.0, 0.0], [0.1 0.0; 0.0 0.1])
@@ -697,13 +645,15 @@ Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.075, -0.025], [0.025 0.0;
 Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.075, 0.025], [0.025 0.0; 0.0 0.025])
 Zonotope{Float64, Vector{Float64}, Matrix{Float64}}([1.075, 0.075], [0.025 0.0; 0.0 0.025])
 ```
-Here the zonotope is split along both of its generators, each time into four parts.
 """
-function split(Z::AbstractZonotope, gens::AbstractVector{Int}, nparts::AbstractVector{Int})
+function split(Z::AbstractZonotope, gens::AbstractVector{Int},
+               nparts::AbstractVector{Int})
     return _split(convert(Zonotope, Z), gens, nparts)
 end
 
-function project(Z::AbstractZonotope{N}, block::AbstractVector{Int}; kwargs...) where {N}
+# project via the concrete linear map, which is typically efficient
+function project(Z::AbstractZonotope{N}, block::AbstractVector{Int};
+                 kwargs...) where {N}
     n = dim(Z)
     M = projection_matrix(block, n, N)
     Z2 = linear_map(M, Z)
@@ -717,52 +667,50 @@ end
 """
     remove_redundant_generators(Z::AbstractZonotope)
 
-Remove all redundant (pairwise linearly dependent) generators of a zonotope.
+Remove all redundant (pairwise linearly dependent) generators of a zonotopic
+set.
 
 ### Input
 
-- `Z` -- zonotope
+- `Z` -- zonotopic set
 
 ### Output
 
-A new zonotope with fewer generators, or the same zonotope if no generator could
-be removed.
+A new zonotope with fewer generators, or the same zonotopic set if no generator
+could be removed.
 
 ### Algorithm
 
-By default this function returns the input zonotope. Subtypes of
-`AbstractZonotope` where generators can be removed have to define a new method.
+By default this implementation returns the input zonotopic set. Subtypes of
+`AbstractZonotope` whose generators can be removed have to define a new method.
 """
 function remove_redundant_generators(Z::AbstractZonotope)
     return Z  # fallback implementation
 end
 
-# ==================================
-# Zonotope order reduction methods
-# ==================================
-
 """
     AbstractReductionMethod
 
-Abstract supertype for zonotope order reduction methods.
+Abstract supertype for order-reduction methods of a zonotopic set.
 """
 abstract type AbstractReductionMethod end
 
 """
     GIR05 <: AbstractReductionMethod
 
-Zonotope order reduction method from [GIR05].
+Zonotope order-reduction method from [1].
 
-- [G05] A. Girard. *Reachability of Uncertain Linear Systems Using Zonotopes*, HSCC. Vol. 5. 2005.
+- [1] A. Girard. *Reachability of Uncertain Linear Systems Using Zonotopes*.
+HSCC 2005.
 """
 struct GIR05 <: AbstractReductionMethod end
 
 """
     COMB03 <: AbstractReductionMethod
 
-Zonotope order reduction method from [COMB03].
+Zonotope order-reduction method from [1].
 
-- [COMB03] C. Combastel. *A state bounding observer based on zonotopes.* In Proc. of the European Control Conference, p. 2589–2594, 2003.
+- [1] C. Combastel. *A state bounding observer based on zonotopes*. ECC 2003.
 """
 struct COMB03 <: AbstractReductionMethod end
 
@@ -770,12 +718,12 @@ struct COMB03 <: AbstractReductionMethod end
     reduce_order(Z::AbstractZonotope, r::Real,
                  [method]::AbstractReductionMethod=GIR05())
 
-Reduce the order of a zonotope by overapproximating with a zonotope with fewer
-generators.
+Reduce the order of a zonotopic set by overapproximating with a zonotope with
+fewer generators.
 
 ### Input
 
-- `Z`      -- zonotope
+- `Z`      -- zonotopic set
 - `r`      -- desired order
 - `method` -- (optional, default: `GIR05()`) the reduction method used
 
@@ -795,15 +743,15 @@ julia> subtypes(AbstractReductionMethod)
 ```
 
 See the documentation of each algorithm for references. These methods split the
-given zonotope `Z` into two zonotopes, `K` and `L`, where `K` contains the most
-"representative" generators and `L` contains the generators that are reduced,
-`Lred`, using a box overapproximation. We follow the notation from [YS18]. See
-also [KSA17].
+given zonotopic set `Z` into two zonotopes, `K` and `L`, where `K` contains the
+most "representative" generators and `L` contains the generators that are
+reduced, `Lred`, using a box overapproximation. We follow the notation from [1].
+See also [2].
 
-- [KSA17] Kopetzki, A. K., Schürmann, B., & Althoff, M. (2017). *Methods for
-order reduction of zonotopes.* CDC.
-- [YS18] Yang, X., & Scott, J. K. (2018). *A comparison of zonotope order
-reduction techniques.* Automatica, 95.
+- [1] Yang, X., & Scott, J. K. *A comparison of zonotope order reduction
+techniques*. Automatica 2018.
+- [2] Kopetzki, A. K., Schürmann, B., & Althoff, M. *Methods for order reduction
+of zonotopes*. CDC 2017.
 """
 function reduce_order(Z::AbstractZonotope, r::Real,
                       method::AbstractReductionMethod=GIR05())
@@ -840,8 +788,8 @@ function reduce_order(Z::AbstractZonotope, r::Real,
     return Zonotope(c, Gred)
 end
 
-# Return the indices of the generators in G (= columns) sorted according to decreasing 2-norm.
-# The generator index with highest score goes first.
+# Return the indices of the generators in G (= columns) sorted according to
+# decreasing 2-norm. The generator index with highest score goes first.
 function _weighted_gens!(indices, G::AbstractMatrix{N}, ::COMB03) where {N}
     p = size(G, 2)
     weights = Vector{N}(undef, p)
@@ -853,8 +801,8 @@ function _weighted_gens!(indices, G::AbstractMatrix{N}, ::COMB03) where {N}
     return indices
 end
 
-# Return the indices of the generators in G (= columns) sorted according to ||⋅||₁ - ||⋅||∞ difference.
-# The generator index with highest score goes first.
+# Return the indices of the generators in G (= columns) sorted according to
+# ||⋅||₁ - ||⋅||∞ difference. The generator index with highest score goes first.
 function _weighted_gens!(indices, G::AbstractMatrix{N}, ::GIR05) where {N}
     n, p = size(G)
     weights = Vector{N}(undef, p)
@@ -874,7 +822,8 @@ function _weighted_gens!(indices, G::AbstractMatrix{N}, ::GIR05) where {N}
     return indices
 end
 
-# compute interval hull of the generators of G (= columns) corresponding to `indices`
+# compute interval hull of the generators of G (= columns) corresponding to
+# `indices`
 function _interval_hull(G::AbstractMatrix{N}, indices) where {N}
     n = size(G, 1)
     Lred = zeros(N, n, n)
@@ -908,7 +857,8 @@ function _interval_hull(G::SMatrix{n, p, N, L}, indices) where {n, p, N, L}
 end
 
 # implementation for static arrays
-function _hcat_KLred(G::SMatrix{n, p, N, L1}, indices, Lred::SMatrix{n, n, N, L2}) where {n, p, N, L1, L2}
+function _hcat_KLred(G::SMatrix{n, p, N, L1}, indices,
+                     Lred::SMatrix{n, n, N, L2}) where {n, p, N, L1, L2}
     m = length(indices)
     K = SMatrix{n, m}(view(G, :, indices))
     return hcat(K, Lred)
