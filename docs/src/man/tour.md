@@ -300,7 +300,7 @@ sections of this manual for further examples.
 ## Exploring the type hierarchy
 
 Every set type in the library inherits from the parametric abstract type
-`ConvexSet{N}`, where `N` is a parameter for the numeric type (typically,
+`LazySet{N}`, where `N` is a parameter for the numeric type (typically,
 double-precision floating point numbers, `Float64`).
 This way one can easily choose between, e.g., floating point (`Float64`) and
 exact (`Rational`) precision with no additional performance penalty:
@@ -319,7 +319,7 @@ using AbstractTrees
 
 AbstractTrees.children(x::Type) = LazySets.subtypes(x, false)
 
-print_tree(ConvexSet)
+print_tree(LazySet)
 ```
 
 Since the list does not fit into the default size, some types are hidden.
@@ -349,7 +349,7 @@ the interface level.
 
 Last but not least, we remark that one of the key design choices of LazySets
 (which, admittedly, may be confusing at first) is that
-**both set representations and set operations subtype `ConvexSet`**.
+**both set representations and set operations subtype `LazySet`**.
 In other words, an "operation between sets" and "a set" are on the same footing
 in terms of belonging to the same type hierarchy. One of the advantages of these
 two mathematical concepts to be "just types" is to conveniently
@@ -358,14 +358,14 @@ compose representations and operations (existing and user-created ones).
 An overview of only the set operations can be obtained like so:
 
 ```@example tour
-filter(isoperationtype, LazySets.subtypes(ConvexSet, true))
+filter(isoperationtype, LazySets.subtypes(LazySet, true))
 ```
 
 The total amount of available representations is larger (if we had used
-`subtypes(ConvexSet)`, that would only show the direct subtypes of `ConvexSet`).
+`subtypes(LazySet)`, that would only show the direct subtypes of `LazySet`).
 
 ```@example tour
-length(LazySets.subtypes(ConvexSet, true))
+length(LazySets.subtypes(LazySet, true))
 ```
 
 

@@ -8,8 +8,8 @@ CurrentModule = LazySets
 
 ```@docs
 CartesianProduct
-×(::ConvexSet, ::ConvexSet)
-*(::ConvexSet, ::ConvexSet)
+×(::LazySet, ::LazySet)
+*(::LazySet, ::LazySet)
 swap(::CartesianProduct)
 dim(::CartesianProduct)
 ρ(::AbstractVector, ::CartesianProduct)

@@ -4,9 +4,6 @@ CurrentModule = LazySets
 
 # [Rectification](@id def_Rectification)
 
-Note that the rectification of a convex set is generally not convex.
-Hence this set type is not part of the convex-set family `ConvexSet`.
-
 ```@docs
 Rectification
 set(::Rectification)

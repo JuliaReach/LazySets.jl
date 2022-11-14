@@ -8,8 +8,8 @@ CurrentModule = LazySets
 
 ```@docs
 MinkowskiSum
-⊕(::ConvexSet, ::ConvexSet)
-+(::ConvexSet, ::ConvexSet)
+⊕(::LazySet, ::LazySet)
++(::LazySet, ::LazySet)
 swap(::MinkowskiSum)
 dim(::MinkowskiSum)
 ρ(::AbstractVector, ::MinkowskiSum)

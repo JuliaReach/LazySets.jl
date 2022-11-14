@@ -51,8 +51,8 @@ plot1
 
 ## Unary operations
 
-The following table lists all operations that take one convex set as argument in
-the columns.
+The following table lists all operations that take one set as argument in the
+columns.
 In the rows we list all set types, both the interfaces (where we abbreviate the
 `Abstract` prefix), the basic set types, and the lazy set operations, each
 sorted alphabetically.
@@ -65,7 +65,7 @@ The table entries have the following meaning.
 | type ↓ \ operation →         | dim | ρ | σ | an_element | ∈ | isempty | isbounded | linear_map | translate | norm | radius | diameter |
 |------------------------------|-----|---|---|------------|---|---------|-----------|------------|-----------|------|--------|----------|
 | **Interfaces**               |     |   |   |            |   |         |           |            |           |      |        |          |
-| `ConvexSet`                    |     | x |   | x          |   |         | x         |            |           |      |        | x        |
+| `LazySet`                    |     | x |   | x          |   |         | x         |            |           |      |        | x        |
 | `APolytope`                  |     | i |   | i          |   | x       | x         | x          |           |      |        | i        |
 | `ACentrallySymmetric`        | x   | i |   | x          |   | x       | x         |            |           |      |        | i        |
 | `ACentrallySymmetricPolytope`| i   | i |   | i          |   | x       | i         | i          |           |      |        | i        |
@@ -215,8 +215,8 @@ diameter(B1), diameter(B2), diameter(BI), diameter(H)
 
 ## Binary operations
 
-The following table lists all operations that take two convex set as argument in
-the entries.
+The following table lists all operations that take two set as argument in the
+entries.
 In the rows we list all set types, both the interfaces (where we abbreviate the
 `Abstract` prefix), the basic set types, and the lazy set operations, each
 sorted alphabetically.
@@ -233,7 +233,7 @@ The table entries consist of subsets of the following list of operations.
 | type ↓ \ type →               |LazyS      |APtop      |ACSym      |ACSPt      |APgon      |AHrec      |AHPgn      |ASing      |Ball1      |Ball2      |BInf       |Ballp      |Ellip      |Empty      |HalfS      |HPgon      |HPhed      |HPtop      |Hplan      |Hrect      |Itrvl      |Line2D       |LineS      |Singl      |Universe   |VPgon      |VPtop      |ZeroS      |Zonot      | CP        | CPA       | CH        | CHA       |EMap       | EPM       |Itsct      |ItscA      |LiMap      | MS        | MSA       | CMS       | ReMap     | SIH       | Transl    | UnionSet  | UnionSArr | Complem   |
 |-------------------------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
 | **Interfaces**                |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |           |
-| `ConvexSet`                     |   ⊎       |⊆  ⊎i      |   ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆  ⊎i      |⊆i ⊎       |⊆i ⊎  ∩    |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |⊆  ⊎       |⊆i ⊎i      |⊆  ⊎       |⊆i ⊎       |⊆i ⊎       |⊆i ⊎i      |⊆i ⊎i      |   ⊎       |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆  ⊎  ∩    |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |⊆i ⊎i      |   ⊎i      |   ⊎  ∩    |   ⊎  ∩    |⊆  ⊎       |
+| `LazySet`                     |   ⊎       |⊆  ⊎i      |   ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆  ⊎i      |⊆i ⊎       |⊆i ⊎  ∩    |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |⊆  ⊎       |⊆i ⊎i      |⊆  ⊎       |⊆i ⊎       |⊆i ⊎       |⊆i ⊎i      |⊆i ⊎i      |   ⊎       |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆  ⊎  ∩    |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |⊆i ⊎i      |   ⊎i      |   ⊎  ∩    |   ⊎  ∩    |⊆  ⊎       |
 | `APolytope`                   |⊆  ⊎i      |⊆i ⊎i ∩    |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆  ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i ∩    |⊆i ⊎i ∩    |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆  ⊎  ∩i   |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i      |   ⊎i ∩i   |   ⊎i ∩i   |⊆i ⊎i      |
 | `ACentrallySymmetric`         |   ⊎i      |⊆i ⊎i      |   ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i      |   ⊎i      |⊆i ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |   ⊎i      |⊆i ⊎i      |⊆i ⊎i      |   ⊎i      |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |   ⊎i      |⊆i ⊎i      |   ⊎i      |   ⊎i ∩i   |   ⊎i ∩i   |⊆i ⊎i      |
 | `ACentrallySymmetricPolytope` |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i ∩i   |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i      |⊆i ⊎i ∩i   |⊆i ⊎i      |   ⊎i ∩i   |   ⊎i ∩i   |⊆i ⊎i      |

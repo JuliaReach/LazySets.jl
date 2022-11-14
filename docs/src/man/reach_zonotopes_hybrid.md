@@ -40,10 +40,10 @@ using Plots, LazySets, LinearAlgebra
 
 function reach_hybrid(As, Ts, init, δ, μ, T, max_order, instant_transitions)
     # initialize queue with initial mode and states at time t=0
-    queue = Vector{Tuple{Zonotope, Integer, Float64}}(undef, 1)
+    queue = Vector{Tuple{LazySet, Integer, Float64}}(undef, 1)
     queue[1] = (init[1], init[2], 0.0)
 
-    res = Tuple{ConvexSet, Int}[]
+    res = Tuple{LazySet, Int}[]
     while !isempty(queue)
         init, loc, t = pop!(queue)
         println("currently in location $loc at time $t")
@@ -92,7 +92,7 @@ function reach_continuous(A, X0, δ, μ, T, max_order)
     N = floor(Int, T/δ)
 
     # preallocate array
-    R = Vector{ConvexSet}(undef, N)
+    R = Vector{Zonotope}(undef, N)
     if N == 0
         return R
     end

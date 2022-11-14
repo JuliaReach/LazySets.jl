@@ -108,8 +108,11 @@ end
 @test EmptySet(2) == ∅(2) == EmptySet{Float64}(2)
 
 # intersection
-for X in LazySets.subtypes(ConvexSet, true)
-    if X <: RotatedHyperrectangle || isoperationtype(X)  # TODO missing rand()
+for X in filter(!isoperationtype, LazySets.subtypes(LazySet, true))
+    if X ∈ [RotatedHyperrectangle, Star, Polygon, DensePolynomialZonotope,
+            SparsePolynomialZonotope, SimpleSparsePolynomialZonotope,
+            LazySets.AbstractStar]
+        # missing rand()
         continue
     end
     Y = rand(X)
