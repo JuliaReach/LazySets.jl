@@ -38,6 +38,18 @@ struct QuadraticMap{N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}} 
     end
 end
 
+function isoperationtype(P::Type{<:QuadraticMap})
+    return true
+end
+
+function isconvextype(P::Type{<:QuadraticMap})
+    return false
+end
+
+function isboundedtype(P::Type{<:QuadraticMap{MVT, S}}) where {MVT, S}
+    return isboundedtype(S)
+end
+
 """
     dim(qm::QuadraticMap)
 
