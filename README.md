@@ -111,6 +111,7 @@ Several projects in the Julia technical computing stack use this library.
 <details>
 <summary>Click to see the full list of Julia packages that use LazySets.</summary>
 
+- [ConvexBodyProximityQueries.jl](https://github.com/arlk/ConvexBodyProximityQueries.jl) -- Proximity computation between convex bodies in 2D/3D.
 - [ClosedLoopReachability.jl](https://github.com/JuliaReach/ClosedLoopReachability.jl) -- Reachability analysis for closed-loop control systems.
 - [HySynthParametric](https://github.com/HySynth/HySynthParametric) -- Synthesis of parametric linear hybrid automata.
 - [IntervalLinearAlgebra.jl](https://github.com/JuliaIntervals/IntervalLinearAlgebra.jl) -- Routines to perform numerical linear algebra using interval arithmetic.
