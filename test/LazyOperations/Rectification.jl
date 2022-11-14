@@ -56,7 +56,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test N[-1, 1] ∉ RB1
     @test N[1, 1] ∈ RB1
     @test N[0, 1] ∈ RB1
-    @test_throws ErrorException N[0, 4] ∈ RB1
+    @test N[0, 4] ∉ RB1
 
     # emptiness
     @test !isempty(RI1)

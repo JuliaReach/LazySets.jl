@@ -19,7 +19,7 @@ dim(::Rectification)
 an_element(::Rectification)
 ∈(::AbstractVector, ::Rectification)
 isempty(::Rectification)
-isbounded(::Rectification{N}) where {N}
+isbounded(::Rectification)
 to_union_of_projections(::Rectification, ::Bool=false)
 ```
 Inherited from [`LazySet`](@ref):
