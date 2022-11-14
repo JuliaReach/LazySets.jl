@@ -1,7 +1,7 @@
 export Bloating
 
 """
-    Bloating{N, S<:ConvexSet{N}} <: ConvexSet{N}
+    Bloating{N, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents a uniform expansion of a set in a given norm (also
 known as *bloating*).
@@ -24,7 +24,7 @@ of `X` and a ball in the `p`-norm of radius `ε` centered in the origin `O`
 Some operations require, or silently assume, that `ε` is positive. Check the
 documentation for further information.
 """
-struct Bloating{N, S<:ConvexSet{N}} <: ConvexSet{N}
+struct Bloating{N, S<:LazySet{N}} <: LazySet{N}
     X::S
     ε::N
     p::N

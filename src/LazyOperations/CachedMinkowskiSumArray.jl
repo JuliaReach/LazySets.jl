@@ -26,7 +26,7 @@ function getindex(cp::CachedPair, idx::Int)
 end
 
 """
-    CachedMinkowskiSumArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
+    CachedMinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the Minkowski sum of a finite number of sets.
 Support vector queries are cached.
@@ -54,17 +54,17 @@ their Minkowski sum is convex as well.
 
 Constructors:
 
-- `CachedMinkowskiSumArray(array::Vector{<:ConvexSet})` -- default constructor
+- `CachedMinkowskiSumArray(array::Vector{<:LazySet})` -- default constructor
 
 - `CachedMinkowskiSumArray([n]::Int=0, [N]::Type=Float64)` -- constructor for an
    empty sum with optional size hint and numeric type
 """
-struct CachedMinkowskiSumArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
+struct CachedMinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
     cache::Dict{AbstractVector{N}, CachedPair{N}}
 
     # default constructor that initializes cache
-    CachedMinkowskiSumArray(arr::Vector{S}) where {N, S<:ConvexSet{N}} =
+    CachedMinkowskiSumArray(arr::Vector{S}) where {N, S<:LazySet{N}} =
         new{N, S}(arr, Dict{AbstractVector{N}, CachedPair{N}}())
 end
 
@@ -73,7 +73,7 @@ isconvextype(::Type{CachedMinkowskiSumArray{N, S}}) where {N, S} = isconvextype(
 
 # constructor for an empty sum with optional size hint and numeric type
 function CachedMinkowskiSumArray(n::Int=0, N::Type=Float64)
-    arr = Vector{ConvexSet{N}}()
+    arr = Vector{LazySet{N}}()
     sizehint!(arr, n)
     return CachedMinkowskiSumArray(arr)
 end

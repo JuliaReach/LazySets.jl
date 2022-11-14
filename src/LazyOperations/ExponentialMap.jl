@@ -153,7 +153,7 @@ function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int};
 end
 
 """
-    ExponentialMap{N, S<:ConvexSet{N}} <: AbstractAffineMap{N, S}
+    ExponentialMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents the action of an exponential map on a set.
 
@@ -201,7 +201,7 @@ julia> E * EmptySet(100)
 ∅(100)
 ```
 """
-struct ExponentialMap{N, S<:ConvexSet{N}} <: AbstractAffineMap{N, S}
+struct ExponentialMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     spmexp::SparseMatrixExp{N}
     X::S
 end
@@ -228,7 +228,7 @@ isconvextype(::Type{ExponentialMap{N, S}}) where {N, S} = isconvextype(S)
 
 """
 ```
-    *(spmexp::SparseMatrixExp, X::ConvexSet)
+    *(spmexp::SparseMatrixExp, X::LazySet)
 ```
 
 Alias to create an `ExponentialMap` object.
@@ -242,7 +242,7 @@ Alias to create an `ExponentialMap` object.
 
 The exponential map of the set.
 """
-function *(spmexp::SparseMatrixExp, X::ConvexSet)
+function *(spmexp::SparseMatrixExp, X::LazySet)
     return ExponentialMap(spmexp, X)
 end
 

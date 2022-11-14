@@ -5,7 +5,7 @@ export MinkowskiSum, ⊕,
        swap
 
 """
-    MinkowskiSum{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
+    MinkowskiSum{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
 
 Type that represents the Minkowski sum of two sets, i.e., the set
 
@@ -26,12 +26,12 @@ for `MinkowskiSum`.
 The Minkowski sum preserves convexity: if the set arguments are convex, then
 their Minkowski sum is convex as well.
 """
-struct MinkowskiSum{N, S1<:ConvexSet{N}, S2<:ConvexSet{N}} <: ConvexSet{N}
+struct MinkowskiSum{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
 
     # default constructor with dimension check
-    function MinkowskiSum(X::ConvexSet{N}, Y::ConvexSet{N}) where {N}
+    function MinkowskiSum(X::LazySet{N}, Y::LazySet{N}) where {N}
         @assert dim(X) == dim(Y) "sets in a Minkowski sum must have the same dimension"
         return new{N, typeof(X), typeof(Y)}(X, Y)
     end
@@ -52,7 +52,7 @@ is_polyhedral(ms::MinkowskiSum) = is_polyhedral(ms.X) && is_polyhedral(ms.Y)
 # @absorbing(MinkowskiSum, Universe)  # TODO problematic
 
 """
-    +(X::ConvexSet, Y::ConvexSet)
+    +(X::LazySet, Y::LazySet)
 
 Convenience constructor for the Minkowski sum of two sets.
 
@@ -65,10 +65,10 @@ Convenience constructor for the Minkowski sum of two sets.
 
 The symbolic Minkowski sum of ``X`` and ``Y``.
 """
-+(X::ConvexSet, Y::ConvexSet) = MinkowskiSum(X, Y)
++(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
 
 """
-    ⊕(X::ConvexSet, Y::ConvexSet)
+    ⊕(X::LazySet, Y::LazySet)
 
 Unicode alias constructor ⊕ (`oplus`) for the lazy Minkowski sum operator.
 
@@ -85,7 +85,7 @@ The symbolic Minkowski sum of ``X`` and ``Y``.
 
 Write `\\oplus[TAB]` to enter this symbol.
 """
-⊕(X::ConvexSet, Y::ConvexSet) = MinkowskiSum(X, Y)
+⊕(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
 
 """
     swap(ms::MinkowskiSum)

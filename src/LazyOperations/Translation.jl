@@ -7,7 +7,7 @@ export Translation,
        center
 
 """
-    Translation{N, S<:ConvexSet{N}, VN<:AbstractVector{N}}
+    Translation{N, S<:LazySet{N}, VN<:AbstractVector{N}}
         <: AbstractAffineMap{N, S}
 
 Type that represents a lazy translation.
@@ -143,12 +143,12 @@ julia> constraints_list(tr)
  HalfSpace{Float64, ReachabilityBase.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, -1.0], -1.0)
 ```
 """
-struct Translation{N, S<:ConvexSet{N}, VN<:AbstractVector{N}} <: AbstractAffineMap{N, S}
+struct Translation{N, S<:LazySet{N}, VN<:AbstractVector{N}} <: AbstractAffineMap{N, S}
     X::S
     v::VN
 
     # default constructor with dimension check
-    function Translation(X::S, v::VN) where {N, VN<:AbstractVector{N}, S<:ConvexSet{N}}
+    function Translation(X::S, v::VN) where {N, VN<:AbstractVector{N}, S<:LazySet{N}}
         @assert dim(X) == length(v) "cannot create a translation of a set of " *
             "dimension $(dim(X)) along a vector of length $(length(v))"
 
@@ -178,7 +178,7 @@ Translation(∅::EmptySet, v::AbstractVector) = ∅
 Translation(U::Universe, v::AbstractVector) = U
 
 """
-    +(X::ConvexSet, v::AbstractVector)
+    +(X::LazySet, v::AbstractVector)
 
 Convenience constructor for a translation.
 
@@ -191,20 +191,20 @@ Convenience constructor for a translation.
 
 The symbolic translation of ``X`` along vector ``v``.
 """
-+(X::ConvexSet, v::AbstractVector) = Translation(X, v)
++(X::LazySet, v::AbstractVector) = Translation(X, v)
 
 # translation from the left
-+(v::AbstractVector, X::ConvexSet) = Translation(X, v)
++(v::AbstractVector, X::LazySet) = Translation(X, v)
 
 """
-    ⊕(X::ConvexSet, v::AbstractVector)
+    ⊕(X::LazySet, v::AbstractVector)
 
 Unicode alias constructor ⊕ (`oplus`) for the lazy translation operator.
 """
-⊕(X::ConvexSet, v::AbstractVector) = Translation(X, v)
+⊕(X::LazySet, v::AbstractVector) = Translation(X, v)
 
 # translation from the left
-⊕(v::AbstractVector, X::ConvexSet) = Translation(X, v)
+⊕(v::AbstractVector, X::LazySet) = Translation(X, v)
 
 function matrix(tr::Translation{N}) where {N}
     return Diagonal(fill(one(N), dim(tr)))
@@ -309,7 +309,7 @@ function constraints_list(tr::Translation)
     return _constraints_list_translation(tr.X, tr.v)
 end
 
-function _constraints_list_translation(X::ConvexSet, v::AbstractVector)
+function _constraints_list_translation(X::LazySet, v::AbstractVector)
     constraints_X = constraints_list(X)
     constraints_TX = similar(constraints_X)
     @inbounds for (i, ci) in enumerate(constraints_X)

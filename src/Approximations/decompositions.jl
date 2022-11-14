@@ -153,7 +153,7 @@ function decompose(S::LazySet{N},
                    partition::AbstractVector{<:AbstractVector{Int}},
                    block_options) where {N}
     n = dim(S)
-    result = Vector{ConvexSet{N}}(undef, length(partition))  # TODO generalize to LazySet
+    result = Vector{LazySet{N}}(undef, length(partition))
 
     @inbounds for (i, block) in enumerate(partition)
         result[i] = project(S, block, block_options[i], n)
@@ -170,7 +170,7 @@ function decompose(S::LazySet{N},
                                         Type{<:AbstractDirections},
                                         Nothing}) where {N}
     n = dim(S)
-    result = Vector{ConvexSet{N}}(undef, length(partition))  # TODO generalize to LazySet
+    result = Vector{LazySet{N}}(undef, length(partition))
 
     @inbounds for (i, block) in enumerate(partition)
         result[i] = project(S, block, block_options, n)

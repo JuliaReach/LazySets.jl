@@ -4,7 +4,7 @@ import Base: isempty
 export ResetMap
 
 """
-    ResetMap{N, S<:ConvexSet{N}} <: AbstractAffineMap{N, S}
+    ResetMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents a lazy reset map.
 A reset map is a special case of an affine map ``A x + b, x ∈ X`` where the
@@ -81,7 +81,7 @@ julia> σ(ones(3), rm)
  0.0
 ```
 """
-struct ResetMap{N, S<:ConvexSet{N}} <: AbstractAffineMap{N, S}
+struct ResetMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     X::S
     resets::Dict{Int, N}
 end

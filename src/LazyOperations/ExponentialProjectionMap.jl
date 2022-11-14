@@ -24,7 +24,7 @@ struct ProjectionSparseMatrixExp{N, MN1<:AbstractSparseMatrix{N},
 end
 
 """
-    ExponentialProjectionMap{N, S<:ConvexSet{N}} <: AbstractAffineMap{N, S}
+    ExponentialProjectionMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
 Type that represents the application of a projection of a sparse matrix
 exponential to a set.
@@ -39,7 +39,7 @@ exponential to a set.
 The exponential projection preserves convexity: if `X` is convex, then any
 exponential projection of `X` is convex as well.
 """
-struct ExponentialProjectionMap{N, S<:ConvexSet{N}} <: AbstractAffineMap{N, S}
+struct ExponentialProjectionMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
     projspmexp::ProjectionSparseMatrixExp
     X::S
 end
@@ -51,7 +51,7 @@ isconvextype(::Type{ExponentialProjectionMap{N, S}}) where {N, S} =
 
 """
 ```
-    *(projspmexp::ProjectionSparseMatrixExp, X::ConvexSet)
+    *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
 ```
 
 Alias to create an `ExponentialProjectionMap` object.
@@ -65,7 +65,7 @@ Alias to create an `ExponentialProjectionMap` object.
 
 The application of the projection of a sparse matrix exponential to the set.
 """
-function *(projspmexp::ProjectionSparseMatrixExp, X::ConvexSet)
+function *(projspmexp::ProjectionSparseMatrixExp, X::LazySet)
     return ExponentialProjectionMap(projspmexp, X)
 end
 
