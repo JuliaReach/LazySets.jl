@@ -60,13 +60,13 @@ long-term support of your contributions.
 New functions and types should be documented according to the
 [JuliaReach Developer's Documentation](https://juliareach.github.io/JuliaReachDevDocs/latest/guidelines/#Writing-docstrings-1).
 
-You can view the source code documentation from inside the REPL by typing `?`
+You can view the source-code documentation from inside the REPL by typing `?`
 followed by the name of the type or function.
-For example, the following command will print the documentation of the `ConvexSet`
+For example, the following command will print the documentation of the `LazySet`
 type:
 
 ```julia
-julia> ?ConvexSet
+julia> ?LazySet
 ```
 
 The documentation you are currently reading is written in [Markdown](https://en.wikipedia.org/wiki/Markdown), and it

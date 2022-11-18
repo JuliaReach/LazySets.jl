@@ -2,7 +2,7 @@ export IntersectionArray,
        array
 
 """
-    IntersectionArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
+    IntersectionArray{N, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the intersection of a finite number of sets.
 
@@ -21,12 +21,12 @@ their intersection is convex as well.
 
 Constructors:
 
-- `IntersectionArray(array::Vector{<:ConvexSet})` -- default constructor
+- `IntersectionArray(array::Vector{<:LazySet})` -- default constructor
 
 - `IntersectionArray([n]::Int=0, [N]::Type=Float64)`
  -- constructor for an empty sum with optional size hint and numeric type
 """
-struct IntersectionArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
+struct IntersectionArray{N, S<:LazySet{N}} <: LazySet{N}
    array::Vector{S}
 end
 
@@ -35,7 +35,7 @@ isconvextype(::Type{IntersectionArray{N, S}}) where {N, S} = isconvextype(S)
 
 # constructor for an empty sum with optional size hint and numeric type
 function IntersectionArray(n::Int=0, N::Type=Float64)
-   arr = Vector{ConvexSet{N}}()
+   arr = Vector{LazySet{N}}()
    sizehint!(arr, n)
    return IntersectionArray(arr)
 end

@@ -6,7 +6,7 @@ export LinearMap,
        Projection
 
 """
-    LinearMap{N, S<:ConvexSet{N}, NM, MAT<:AbstractMatrix{NM}}
+    LinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}}
         <: AbstractAffineMap{N, S}
 
 Type that represents a linear transformation ``M⋅X`` of a set ``X``.
@@ -97,13 +97,13 @@ julia> M * EmptySet{Int}(2)
 EmptySet{Int64}(3)
 ```
 """
-struct LinearMap{N, S<:ConvexSet{N}, NM,
+struct LinearMap{N, S<:LazySet{N}, NM,
                  MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
     M::MAT
     X::S
 
     # default constructor with dimension check
-    function LinearMap(M::MAT, X::S) where {N, S<:ConvexSet{N}, NM,
+    function LinearMap(M::MAT, X::S) where {N, S<:LazySet{N}, NM,
                                             MAT<:AbstractMatrix{NM}}
         @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
             "be applied to a set of dimension $(dim(X))"
@@ -118,7 +118,7 @@ isconvextype(::Type{<:LinearMap{N, S}}) where {N, S} = isconvextype(S)
 """
 ```
     *(M::Union{AbstractMatrix, UniformScaling, AbstractVector, Real},
-      X::ConvexSet)
+      X::LazySet)
 ```
 
 Alias to create a `LinearMap` object.
@@ -133,17 +133,17 @@ Alias to create a `LinearMap` object.
 A lazy linear map, i.e., a `LinearMap` instance.
 """
 function *(M::Union{AbstractMatrix, UniformScaling, AbstractVector, Real},
-           X::ConvexSet)
+           X::LazySet)
     return LinearMap(M, X)
 end
 
 # scaling from the right
-function *(X::ConvexSet, M::Real)
+function *(X::LazySet, M::Real)
     return LinearMap(M, X)
 end
 
 # convenience constructor from a vector
-function LinearMap(v::AbstractVector, X::ConvexSet)
+function LinearMap(v::AbstractVector, X::LazySet)
     return _LinearMap_vector(v, X)
 end
 
@@ -159,7 +159,7 @@ function _LinearMap_vector(v, X)
 end
 
 # convenience constructor from a UniformScaling
-function LinearMap(M::UniformScaling{N}, X::ConvexSet) where {N}
+function LinearMap(M::UniformScaling{N}, X::LazySet) where {N}
     if M.λ == one(N)
         return X
     end
@@ -167,7 +167,7 @@ function LinearMap(M::UniformScaling{N}, X::ConvexSet) where {N}
 end
 
 # convenience constructor from a scalar
-function LinearMap(α::Real, X::ConvexSet)
+function LinearMap(α::Real, X::LazySet)
     n = dim(X)
     return LinearMap(sparse(α * I, n, n), X)
 end
@@ -441,7 +441,7 @@ function concretize(lm::LinearMap)
 end
 
 """
-    Projection(X::ConvexSet{N}, variables::AbstractVector{Int}) where {N<:Real}
+    Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N<:Real}
 
 Return a lazy projection of a set.
 
@@ -470,13 +470,13 @@ julia> isequivalent(Bproj, BallInf([1.0, 2], 1.0))
 true
 ```
 """
-function Projection(X::ConvexSet{N}, variables::AbstractVector{Int}) where {N}
+function Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N}
     M = projection_matrix(variables, dim(X), N)
     return LinearMap(M, X)
 end
 
 """
-    project(S::ConvexSet{N}, block::AbstractVector{Int}, set_type::Type{LM},
+    project(S::LazySet{N}, block::AbstractVector{Int}, set_type::Type{LM},
             [n]::Int=dim(S); [kwargs...]) where {N, LM<:LinearMap}
 
 Project a high-dimensional set to a given block by using a lazy linear map.
@@ -492,7 +492,7 @@ Project a high-dimensional set to a given block by using a lazy linear map.
 
 A lazy `LinearMap` representing the projection of the set `S` to block `block`.
 """
-@inline function project(S::ConvexSet{N}, block::AbstractVector{Int},
+@inline function project(S::LazySet{N}, block::AbstractVector{Int},
                          set_type::Type{LM}, n::Int=dim(S);
                          kwargs...) where {N, LM<:LinearMap}
     M = projection_matrix(block, n, N)

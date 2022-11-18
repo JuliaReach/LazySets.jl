@@ -2,7 +2,7 @@ export MinkowskiSumArray,
        array
 
 """
-   MinkowskiSumArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
+   MinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the Minkowski sum of a finite number of sets.
 
@@ -22,12 +22,12 @@ their Minkowski sum is convex as well.
 
 Constructors:
 
-- `MinkowskiSumArray(array::Vector{<:ConvexSet})` -- default constructor
+- `MinkowskiSumArray(array::Vector{<:LazySet})` -- default constructor
 
 - `MinkowskiSumArray([n]::Int=0, [N]::Type=Float64)`
  -- constructor for an empty sum with optional size hint and numeric type
 """
-struct MinkowskiSumArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
+struct MinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
    array::Vector{S}
 end
 
@@ -36,7 +36,7 @@ isconvextype(::Type{MinkowskiSumArray{N, S}}) where {N, S} = isconvextype(S)
 
 # constructor for an empty sum with optional size hint and numeric type
 function MinkowskiSumArray(n::Int=0, N::Type=Float64)
-   arr = Vector{ConvexSet{N}}()
+   arr = Vector{LazySet{N}}()
    sizehint!(arr, n)
    return MinkowskiSumArray(arr)
 end

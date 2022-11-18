@@ -75,6 +75,18 @@ end
 # short-hand
 const SPZ = SparsePolynomialZonotope
 
+function isoperationtype(P::Type{<:SparsePolynomialZonotope})
+    return false
+end
+
+function isconvextype(P::Type{<:SparsePolynomialZonotope})
+    return false
+end
+
+function isboundedtype(P::Type{<:SparsePolynomialZonotope})
+    return true
+end
+
 """
     dim(P::SparsePolynomialZonotope)
 

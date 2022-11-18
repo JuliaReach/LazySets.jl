@@ -85,11 +85,11 @@ for N in [Float64, Rational{Int}, Float32]
          Singleton(N[7//5, 4//5])])
 
     # array getter
-    v = Vector{ConvexSet{N}}()
+    v = Vector{LazySet{N}}()
     @test array(ConvexHullArray(v)) ≡ v
 
     # in-place modification
-    cha = ConvexHullArray(ConvexSet{N}[])
+    cha = ConvexHullArray(LazySet{N}[])
     @test ConvexHull!(b1, b1) isa ConvexHull && length(array(cha)) == 0
     res = ConvexHull!(b1, cha)
     @test res isa ConvexHullArray && length(array(cha)) == 1

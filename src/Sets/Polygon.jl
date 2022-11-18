@@ -40,6 +40,18 @@ Polygon{N}() where {N} = Polygon(Vector{Vector{N}}())
 # constructor with no vertices of type Float64
 Polygon() = Polygon{Float64}()
 
+function isoperationtype(P::Type{<:Polygon})
+    return false
+end
+
+function isconvextype(P::Type{<:Polygon})
+    return false
+end
+
+function isboundedtype(P::Type{<:Polygon})
+    return true
+end
+
 function dim(P::Polygon)
     return 2
 end

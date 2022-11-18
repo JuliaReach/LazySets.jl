@@ -81,7 +81,7 @@ SphericalDirections
 CustomDirections
 ```
 
-See also `overapproximate(X::ConvexSet, dir::AbstractDirections)::HPolytope`.
+See also [`overapproximate(X::LazySet, dir::AbstractDirections)`](@ref).
 
 ## Hausdorff distance
 

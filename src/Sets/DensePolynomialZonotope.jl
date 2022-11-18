@@ -92,6 +92,14 @@ end
 
 isoperationtype(::Type{<:DensePolynomialZonotope}) = false
 
+function isconvextype(P::Type{<:DensePolynomialZonotope})
+    return false
+end
+
+function isboundedtype(P::Type{<:DensePolynomialZonotope})
+    return true
+end
+
 """
     dim(PZ::DensePolynomialZonotope)
 

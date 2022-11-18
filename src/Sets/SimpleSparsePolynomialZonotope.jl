@@ -70,6 +70,18 @@ const PolynomialZonotope = SimpleSparsePolynomialZonotope
 
 const SSPZ = SimpleSparsePolynomialZonotope
 
+function isoperationtype(P::Type{<:SimpleSparsePolynomialZonotope})
+    return false
+end
+
+function isconvextype(P::Type{<:SimpleSparsePolynomialZonotope})
+    return false
+end
+
+function isboundedtype(P::Type{<:SimpleSparsePolynomialZonotope})
+    return true
+end
+
 """
     dim(P::SimpleSparsePolynomialZonotope)
 

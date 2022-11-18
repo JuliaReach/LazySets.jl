@@ -70,10 +70,10 @@ if test_suite_basic
     # =======================================
     @time @testset "LazySets.CDDLib" begin include("Interfaces/CDDLib.jl") end
 
-    # =======================================
-    # Testing types that inherit from ConvexSet
-    # =======================================
-    @time @testset "LazySets.ConvexSet" begin include("Interfaces/ConvexSet.jl") end
+    # =======================
+    # Testing basic set types
+    # =======================
+    @time @testset "LazySets.LazySet" begin include("Interfaces/LazySet.jl") end
     @time @testset "LazySets.Singleton" begin include("Sets/Singleton.jl") end
     @time @testset "LazySets.Ball1" begin include("Sets/Ball1.jl") end
     @time @testset "LazySets.Ball2" begin include("Sets/Ball2.jl") end
@@ -98,6 +98,9 @@ if test_suite_basic
     @time @testset "LazySets.HParallelotope" begin include("Sets/HParallelotope.jl") end
     @time @testset "LazySets.RotatedHyperrectangle" begin include("Sets/RotatedHyperrectangle.jl") end
     @time @testset "LazySets.Star" begin include("Sets/Star.jl") end
+    @time @testset "LazySets.DensePolynomialZonotope" begin include("Sets/DensePolynomialZonotope.jl") end
+    @time @testset "LazySets.SimpleSparsePolynomialZonotope" begin include("Sets/SimpleSparsePolynomialZonotope.jl") end
+    @time @testset "LazySets.SparsePolynomialZonotope" begin include("Sets/SparsePolynomialZonotope.jl") end
 
     # =========================================
     # Testing types representing set operations
@@ -114,25 +117,18 @@ if test_suite_basic
     @time @testset "LazySets.SymmetricIntervalHull" begin include("LazyOperations/SymmetricIntervalHull.jl") end
     @time @testset "LazySets.Translation" begin include("LazyOperations/Translation.jl") end
     @time @testset "LazySets.AffineMap" begin include("LazyOperations/AffineMap.jl") end
+    @time @testset "LazySets.Complement" begin include("LazyOperations/Complement.jl") end
+    @time @testset "LazySets.Rectification" begin include("LazyOperations/Rectification.jl") end
+    @time @testset "LazySets.UnionSet" begin include("LazyOperations/UnionSet.jl") end
 
     # ======================
     # Testing set interfaces
     # ======================
     @time @testset "LazySets.CompactSet" begin include("Interfaces/CompactSet.jl") end
 
-    # =========================================================
-    # Testing other set types that do not inherit from ConvexSet
-    # =========================================================
-    @time @testset "LazySets.Complement" begin include("LazyOperations/Complement.jl") end
-    @time @testset "LazySets.DensePolynomialZonotope" begin include("Sets/DensePolynomialZonotope.jl") end
-    @time @testset "LazySets.Rectification" begin include("LazyOperations/Rectification.jl") end
-    @time @testset "LazySets.SimpleSparsePolynomialZonotope" begin include("Sets/SimpleSparsePolynomialZonotope.jl") end
-    @time @testset "LazySets.SparsePolynomialZonotope" begin include("Sets/SparsePolynomialZonotope.jl") end
-    @time @testset "LazySets.UnionSet" begin include("LazyOperations/UnionSet.jl") end
-
-    # ===================
-    # Concrete operations
-    # ===================
+    # =======================
+    # Concrete set operations
+    # =======================
     @time @testset "LazySets.area" begin include("ConcreteOperations/area.jl") end
     @time @testset "LazySets.Interior" begin include("ConcreteOperations/interior.jl") end
     @time @testset "LazySets.concrete_convex_hull" begin include("ConcreteOperations/convex_hull.jl") end
@@ -143,9 +139,9 @@ if test_suite_basic
     @time @testset "LazySets.isstrictsubset" begin include("ConcreteOperations/isstrictsubset.jl") end
     @time @testset "LazySets.samples" begin include("ConcreteOperations/samples.jl") end
 
-    # =================================================================
-    # Algorithms for approximation of convex sets using support vectors
-    # =================================================================
+    # ====================================
+    # Algorithms for approximation of sets
+    # ====================================
     @time @testset "LazySets.Approximations.overapproximation" begin include("Approximations/overapproximate.jl") end
     @time @testset "LazySets.Approximations.underapproximation" begin include("Approximations/underapproximate.jl") end
     @time @testset "LazySets.Approximations.template_directions" begin include("Approximations/template_directions.jl") end
@@ -166,11 +162,10 @@ if test_suite_basic
         end
     end
 
-    # ====================================
+    # =====================================================
     # Testing common API of all interfaces
-    # (must be the last test because it
-    #  loads Polyhedra.jl)
-    # ====================================
+    # (must be the last test because it loads Polyhedra.jl)
+    # =====================================================
     include("Utils/check_method_implementation.jl")
     @time @testset "LazySets.interfaces" begin include("Interfaces/interfaces.jl") end
 end

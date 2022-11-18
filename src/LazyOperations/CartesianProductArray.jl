@@ -5,7 +5,7 @@ export CartesianProductArray,
        same_block_structure
 
 """
-    CartesianProductArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
+    CartesianProductArray{N, S<:LazySet{N}} <: LazySet{N}
 
 Type that represents the Cartesian product of a finite number of sets.
 
@@ -22,18 +22,18 @@ their Cartesian product is convex as well.
 
 Constructors:
 
-- `CartesianProductArray(array::Vector{<:ConvexSet})` -- default constructor
+- `CartesianProductArray(array::Vector{<:LazySet})` -- default constructor
 
 - `CartesianProductArray([n]::Int=0, [N]::Type=Float64)`
  -- constructor for an empty product with optional size hint and numeric type
 """
-struct CartesianProductArray{N, S<:ConvexSet{N}} <: ConvexSet{N}
+struct CartesianProductArray{N, S<:LazySet{N}} <: LazySet{N}
    array::Vector{S}
 end
 
 # constructor for an empty product with optional size hint and numeric type
 function CartesianProductArray(n::Int=0, N::Type=Float64)
-   arr = Vector{ConvexSet{N}}()
+   arr = Vector{LazySet{N}}()
    sizehint!(arr, n)
    return CartesianProductArray(arr)
 end
@@ -578,7 +578,7 @@ function substitute_blocks(low_dim_cpa::CartesianProductArray{N},
                            orig_cpa::CartesianProductArray{N},
                            blocks::Vector{Tuple{Int,Int}}) where {N}
 
-    array = Vector{ConvexSet{N}}(undef, length(orig_cpa.array))
+    array = Vector{LazySet{N}}(undef, length(orig_cpa.array))
     index = 1
     for bi in 1:length(orig_cpa.array)
         start_ind, end_index = blocks[bi]

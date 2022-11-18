@@ -13,7 +13,7 @@ the respective sections.
 
 !!! note
     The naming convention is such that all interface names (with the exception
-    of the main abstract type `ConvexSet`) should be preceded by `Abstract`.
+    of the main abstract type `LazySet`) should be preceded by `Abstract`.
 
 The following diagram shows the interface hierarchy.
 

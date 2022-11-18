@@ -31,7 +31,7 @@ Inherited from [`AbstractAffineMap`](@ref):
 
 ```@docs
 SparseMatrixExp
-*(::SparseMatrixExp, ::ConvexSet)
+*(::SparseMatrixExp, ::LazySet)
 get_row(::SparseMatrixExp, ::Int)
 ```
 
@@ -61,5 +61,5 @@ Inherited from [`AbstractAffineMap`](@ref):
 
 ```@docs
 ProjectionSparseMatrixExp
-*(::ProjectionSparseMatrixExp, ::ConvexSet)
+*(::ProjectionSparseMatrixExp, ::LazySet)
 ```
