@@ -144,8 +144,7 @@ Exact inputs are not supported.
 """
 function σ(d::AbstractVector, B::Ball2)
     dnorm = norm(d, 2)
-    N = promote_type(eltype(d), eltype(B))
-    if dnorm <= zero(N)
+    if isapproxzero(dnorm)
         return B.center
     else
         return @. B.center + d * (B.radius / dnorm)
