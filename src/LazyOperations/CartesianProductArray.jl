@@ -147,6 +147,24 @@ function σ(d::AbstractSparseVector, cpa::CartesianProductArray)
     return svec
 end
 
+# faster version for single-entry vectors
+function σ(d::SingleEntryVector, cpa::CartesianProductArray)
+    svec = similar(d)
+    i0 = 1
+    idx = d.i
+    for Xi in cpa.array
+        ni = dim(Xi)
+        i1 = i0 + ni - 1
+        if i0 <= idx && idx <= i1
+            svec[i0:i1] = σ(SingleEntryVector(d.i - i0 + 1, ni, d.v), Xi)
+        else
+            svec[i0:i1] = an_element(Xi)
+        end
+        i0 = i1 + 1
+    end
+    return svec
+end
+
 """
     ρ(d::AbstractVector, cpa::CartesianProductArray)
 
@@ -204,6 +222,21 @@ function ρ(d::AbstractSparseVector, cpa::CartesianProductArray)
                 break
             end
             next_dim = indices[next_idx]
+        end
+        i0 = i1 + 1
+    end
+    return sfun
+end
+
+# faster version for single-entry vectors
+function ρ(d::SingleEntryVector, cpa::CartesianProductArray)
+    i0 = 1
+    idx = d.i
+    for Xi in cpa.array
+        ni = dim(Xi)
+        i1 = i0 + ni - 1
+        if i0 <= idx && idx <= i1
+            return ρ(SingleEntryVector(d.i - i0 + 1, ni, d.v), Xi)
         end
         i0 = i1 + 1
     end
