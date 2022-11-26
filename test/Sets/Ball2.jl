@@ -41,6 +41,8 @@ for N in [Float64, Float32]
     @test σ(d, b) == N[1, 3]
     d = N[0, -1]
     @test σ(d, b) == N[1, 1]
+    d = N[0, 0]
+    @test σ(d, b) ∈ b
 
     # 2D Ball2 radius =/= 1
     b = Ball2(N[0, 0], N(2))
