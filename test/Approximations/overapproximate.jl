@@ -290,6 +290,16 @@ for N in [Float64, Float32]
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
     @test LazySets.Approximations._overapproximate_hparallelotope(Z) === Z
     @test overapproximate(Z, HParallelotope) == HParallelotope(N[0 -1; 1 0], N[1, 1, 1, 1])
+
+    # intersection of zonotope with hyperplane
+    Z = Zonotope(N[2, 2], N[1 0 1//2; 0 1 1//2])
+    H = Hyperplane(N[-1, 1], N(0))
+    Z2 = Zonotope(N[2, 2], hcat(N[3//2; 3//2]))
+    @test remove_redundant_generators(overapproximate(Z ∩ H, Zonotope)) ≈ Z2
+    Z = Zonotope(N[1, 2], N[1 2 3 1//2 0; 3 2 1 0 -1//2])
+    H = Hyperplane(N[-2, 1], N(-1//2))
+    Z2 = Zonotope(N[1.296, 2.092], N[1.592 0.816 0.04 -0.092 -0.296; 3.184 1.632 0.08 -0.184 -0.592])
+    @test overapproximate(Z ∩ H, Zonotope) ≈ Z2
 end
 
 for N in [Float64]

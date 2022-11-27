@@ -15,7 +15,7 @@ A new zonotope with `r` generators, if possible.
 
 ### Algorithm
 
-This function falls back to `reduce_order` with the default algorithm.
+This method falls back to `reduce_order` with the default algorithm.
 """
 function overapproximate(Z::Zonotope, ::Type{<:Zonotope},
                          r::Union{Integer, Rational})
@@ -403,7 +403,7 @@ A zonotope that overapproximates the range of the given Taylor model.
 
 ### Examples
 
-If the polynomials are linear, this functions exactly transforms to a zonotope.
+If the polynomials are linear, this method exactly transforms to a zonotope.
 The nonlinear case necessarily introduces overapproximation error.
 Consider the linear case first:
 
@@ -476,7 +476,7 @@ julia> ρ(d, Z) < ρ(d, X)
 true
 ```
 
-This function also works if the polynomials are non-linear; for example suppose
+This method also works if the polynomials are non-linear; for example suppose
 that we add a third polynomial with a quadratic term:
 
 ```jldoctest oa_tm1
@@ -1008,7 +1008,7 @@ A zonotope overapproximation of the set obtained by rectifying `Z`.
 
 ### Algorithm
 
-This function implements [Theorem 3.1, 1].
+This method implements [Theorem 3.1, 1].
 
 [1] Singh, G., Gehr, T., Mirman, M., Püschel, M., & Vechev, M. *Fast and
 effective robustness certification*. NeurIPS 2018.
@@ -1076,7 +1076,7 @@ A zonotope overapproximation of the convex hull array of zonotopic sets.
 
 ### Algorithm
 
-This function iteratively applies the overapproximation algorithm to the
+This method iteratively applies the overapproximation algorithm to the
 convex hull of two zonotopic sets from the given array of zonotopic sets.
 """
 function overapproximate(CHA::ConvexHullArray{N, <:AbstractZonotope},
@@ -1119,7 +1119,7 @@ Z_Q = \\right\\{ \\lambda | \\lambda_i = x^T Q\\^{(i)} x,~i = 1, \\ldots, n,~x \
 
 ### Algorithm
 
-This function implements [Lemma 1, 1].
+This method implements [Lemma 1, 1].
 
 [1] Matthias Althoff and Bruce H. Krogh. *Avoiding geometric intersection
 operations in reachability analysis of hybrid systems*. HSCC 2012.
@@ -1155,4 +1155,55 @@ function overapproximate(QM::QuadraticMap{N, <:AbstractZonotope},
         end
     end
     return Zonotope(d, remove_zero_columns(h))
+end
+
+"""
+    overapproximate(X::Intersection{N, <:AbstractZonotope, <:Hyperplane},
+                    ::Type{<:Zonotope})
+
+Overapproximate the intersection of a zonotopic set and a hyperplane with a
+zonotope.
+
+### Input
+
+- `X`        -- intersection of a zonotopic set and a hyperplane
+- `Zonotope` -- target set type
+
+### Output
+
+A zonotope overapproximating the intersection.
+
+### Algorithm
+
+This method implements Algorithm 3 in [1].
+
+[1] Moussa Maïga, Nacim Ramdani, Louise Travé-Massuyès, Christophe Combastel:
+*A CSP versus a zonotope-based method for solving guard set intersection in
+nonlinear hybrid reachability*. Mathematics in Computer Science (8) 2014.
+"""
+function overapproximate(X::Intersection{N, <:AbstractZonotope, <:Hyperplane},
+                         ::Type{<:Zonotope}) where {N}
+    return _overapproximate_zonotope_hyperplane(X.X, X.Y)
+end
+
+# symmetric method
+function overapproximate(X::Intersection{N, <:Hyperplane, <:AbstractZonotope},
+                         ::Type{<:Zonotope}) where {N}
+    return _overapproximate_zonotope_hyperplane(X.Y, X.X)
+end
+
+function _overapproximate_zonotope_hyperplane(Z::AbstractZonotope, H::Hyperplane)
+    c, G = center(Z), genmat(Z)
+    a, b = H.a, H.b
+
+    s = G' * a
+    d = b - dot(a, c)
+    V0 = nullspace(s')
+
+    cs = s * d / dot(s, s)
+    Gs = V0 * V0'
+
+    c_cap = c + G * cs
+    G_cap = G * Gs
+    return Zonotope(c_cap, G_cap)
 end
