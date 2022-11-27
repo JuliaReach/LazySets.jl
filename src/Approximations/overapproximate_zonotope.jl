@@ -1198,7 +1198,12 @@ function _overapproximate_zonotope_hyperplane(Z::AbstractZonotope, H::Hyperplane
 
     s = G' * a
     d = b - dot(a, c)
-    V0 = nullspace(s')
+    @static if VERSION >= v"1.7"
+        sT = s'
+    else
+        sT = s' .+ 0  # convert to Vector (`nullspace` fails for lazy transpose)
+    end
+    V0 = nullspace(sT)
 
     cs = s * d / dot(s, s)
     Gs = V0 * V0'
