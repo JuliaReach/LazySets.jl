@@ -402,6 +402,7 @@ reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05())
 
 ```@docs
 LazySets.AbstractReductionMethod
+LazySets.ASB10
 LazySets.COMB03
 LazySets.GIR05
 ```
