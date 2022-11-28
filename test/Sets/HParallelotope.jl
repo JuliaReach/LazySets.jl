@@ -46,6 +46,10 @@ for N in [Float32, Float64, Rational{Int}]
     o = N[2, 2, -4, -1]
     P2 = HParallelotope(H, o)
     @test !isempty(P) && isempty(P2)
+
+    # volume
+    @test volume(P) == N(4)
+    @test volume(P2) == N(2)
 end
 
 for N in [Float32, Float64]
