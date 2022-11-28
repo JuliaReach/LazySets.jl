@@ -404,9 +404,14 @@ compute a witness.
 
 ### Algorithm
 
+The algorithm is taken from [1].
+
 ``Z1 ∩ Z2 = ∅`` iff ``c_1 - c_2 ∉ Z(0, (g_1, g_2))`` where ``c_i`` and ``g_i``
 are the center and generators of zonotope `Zi` and ``Z(c, g)`` represents the
 zonotope with center ``c`` and generators ``g``.
+
+[1] L. J. Guibas, A. T. Nguyen, L. Zhang: *Zonotopes as bounding volumes*. SODA
+2003.
 """
 function isdisjoint(Z1::AbstractZonotope, Z2::AbstractZonotope,
                     witness::Bool=false)
