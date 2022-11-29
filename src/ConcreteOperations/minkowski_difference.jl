@@ -76,6 +76,65 @@ Mathematically:
 """
 const pontryagin_difference = minkowski_difference
 
-# concrete Minkowski difference with singleton
-minkowski_difference(X::LazySet, S::AbstractSingleton) = translate(X, -element(S))
-minkowski_difference(X::LazySet, ::ZeroSet) = X
+for ST in [:LazySet, :AbstractZonotope]
+    # Minkowski difference with singleton is a translation
+    @eval minkowski_difference(X::($ST), S::AbstractSingleton) =
+        translate(X, -element(S))
+
+    # Minkowski difference with ZeroSet is the identity
+    @eval minkowski_difference(X::($ST), ::ZeroSet) = X
+end
+
+"""
+    minkowski_difference(Z1::AbstractZonotope, Z2::AbstractZonotope)
+
+Compute the Minkowski difference of two zonotopic sets.
+
+### Input
+
+- `Z1` -- zonotopic set
+- `Z2` -- zonotopic set
+
+### Output
+
+An `HPolytope` that corresponds to the Minkowski difference of `Z1` minus `Z2`.
+
+### Algorithm
+
+This method implements Theorem 3 in [1].
+
+[1] M. Althoff: *On computing the Minkowski difference of zonotopes*. 2016.
+"""
+function minkowski_difference(Z1::AbstractZonotope, Z2::AbstractZonotope)
+    Gm = genmat(Z1)
+    n, p = size(Gm)
+    @assert dim(Z2) == n "the Minkowski difference only applies to sets of " *
+        "the same dimension, but the arguments have dimension $n and $(dim(Z2))"
+
+    N = promote_type(eltype(Z1), eltype(Z2))
+    cm, Gmᵀ = center(Z1), transpose(Gm)
+    cs, Gsᵀ = center(Z2), transpose(genmat(Z2))
+    Δc = cm - cs
+
+    m = binomial(p, n - 1)
+    constraints = Vector{HalfSpace{N, Vector{N}}}()
+    for columns in StrictlyIncreasingIndices(p, n-1)
+        c⁺ = cross_product(view(Gm, :, columns))
+        iszero(c⁺) && continue
+        normalize!(c⁺, 2)
+
+        Δd = sum(abs, Gmᵀ * c⁺)
+        Δdtrans = sum(abs, Gsᵀ * c⁺)
+
+        c⁺Δc = dot(c⁺, Δc)
+        ΔΔd = Δd - Δdtrans
+        d⁺ = c⁺Δc + ΔΔd
+        c⁻ = -c⁺
+        d⁻ = -c⁺Δc + ΔΔd
+
+        push!(constraints, HalfSpace(c⁺, d⁺))
+        push!(constraints, HalfSpace(c⁻, d⁻))
+    end
+
+    return HPolytope(constraints)
+end
