@@ -16,7 +16,8 @@ genmat(::HParallelotope)
 generators(::HParallelotope)
 constraints_list(::HParallelotope)
 rand(::Type{HParallelotope})
-isempty(P::HParallelotope)
+isempty(::HParallelotope)
+volume(::HParallelotope)
 ```
 
 Inherited from [`LazySet`](@ref):
@@ -30,7 +31,6 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-* [`volume`](@ref volume(::AbstractPolytope))
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N})
