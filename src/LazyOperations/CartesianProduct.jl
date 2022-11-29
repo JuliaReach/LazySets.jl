@@ -151,6 +151,18 @@ function σ(d::AbstractVector, cp::CartesianProduct)
     return [σ(d[1:n1], cp.X); σ(d[n1+1:length(d)], cp.Y)]
 end
 
+# faster version for single-entry vectors
+function σ(d::SingleEntryVector, cp::CartesianProduct)
+    n1 = dim(cp.X)
+    idx = d.i
+    if idx <= n1
+        return [σ(SingleEntryVector(idx, n1, d.v), cp.X); an_element(cp.Y)]
+    else
+        n2 = length(d) - n1
+        return [an_element(cp.X); σ(SingleEntryVector(idx - n1, n2, d.v), cp.Y)]
+    end
+end
+
 """
     ρ(d::AbstractVector, cp::CartesianProduct)
 
@@ -169,6 +181,18 @@ If the direction has norm zero, the result depends on the wrapped sets.
 function ρ(d::AbstractVector, cp::CartesianProduct)
     n1 = dim(cp.X)
     return ρ(d[1:n1], cp.X) + ρ(d[n1+1:length(d)], cp.Y)
+end
+
+# faster version for single-entry vectors
+function ρ(d::SingleEntryVector, cp::CartesianProduct)
+    n1 = dim(cp.X)
+    idx = d.i
+    if idx <= n1
+        return ρ(SingleEntryVector(idx, n1, d.v), cp.X)
+    else
+        n2 = length(d) - n1
+        return ρ(SingleEntryVector(idx - n1, n2, d.v), cp.Y)
+    end
 end
 
 """

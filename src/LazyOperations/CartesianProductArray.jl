@@ -28,14 +28,14 @@ Constructors:
  -- constructor for an empty product with optional size hint and numeric type
 """
 struct CartesianProductArray{N, S<:LazySet{N}} <: LazySet{N}
-   array::Vector{S}
+    array::Vector{S}
 end
 
 # constructor for an empty product with optional size hint and numeric type
 function CartesianProductArray(n::Int=0, N::Type=Float64)
-   arr = Vector{LazySet{N}}()
-   sizehint!(arr, n)
-   return CartesianProductArray(arr)
+    arr = Vector{LazySet{N}}()
+    sizehint!(arr, n)
+    return CartesianProductArray(arr)
 end
 
 isoperationtype(::Type{<:CartesianProductArray}) = true
@@ -61,7 +61,7 @@ Return the array of a Cartesian product of a finite number of sets.
 The array of a Cartesian product of a finite number of sets.
 """
 function array(cpa::CartesianProductArray)
-   return cpa.array
+    return cpa.array
 end
 
 """
@@ -79,7 +79,7 @@ The ambient dimension of the Cartesian product of a finite number of sets, or
 `0` if there is no set in the array.
 """
 function dim(cpa::CartesianProductArray)
-   return length(cpa.array) == 0 ? 0 : sum(dim(Xi) for Xi in cpa.array)
+    return length(cpa.array) == 0 ? 0 : sum(dim(Xi) for Xi in cpa.array)
 end
 
 """
@@ -98,53 +98,71 @@ A support vector in the given direction.
 If the direction has norm zero, the result depends on the product sets.
 """
 function σ(d::AbstractVector, cpa::CartesianProductArray)
-   svec = similar(d)
-   i0 = 1
-   for Xi in cpa.array
-       i1 = i0 + dim(Xi) - 1
-       svec[i0:i1] = σ(d[i0:i1], Xi)
-       i0 = i1 + 1
-   end
-   return svec
+    svec = similar(d)
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        svec[i0:i1] = σ(d[i0:i1], Xi)
+        i0 = i1 + 1
+    end
+    return svec
 end
 
 # faster version for sparse vectors
 function σ(d::AbstractSparseVector, cpa::CartesianProductArray)
-   # idea: We walk through the blocks of `cpa` (i.e., the sets `Xi`) and search
-   # for corresponding non-zero entries in `d` (stored in `indices`).
-   # `next_idx` is the next index of `indices` such that
-   # `next_dim = indices[next_idx]` lies in the next block to consider
-   # (potentially skipping some blocks).
-   svec = similar(d)
-   indices, _ = SparseArrays.findnz(d)
-   if isempty(indices)
-       # direction is the zero vector
-       return an_element(cpa)
-   end
-   next_idx = 1
-   next_dim = indices[next_idx]
-   m = length(indices)
-   i0 = 1
-   for Xi in cpa.array
-       i1 = i0 + dim(Xi) - 1
-       if next_dim <= i1
-           # there is a non-zero entry in this block
-           svec[i0:i1] = σ(d[i0:i1], Xi)
+    # idea: We walk through the blocks of `cpa` (i.e., the sets `Xi`) and search
+    # for corresponding non-zero entries in `d` (stored in `indices`).
+    # `next_idx` is the next index of `indices` such that
+    # `next_dim = indices[next_idx]` lies in the next block to consider
+    # (potentially skipping some blocks).
+    svec = similar(d)
+    indices, _ = SparseArrays.findnz(d)
+    if isempty(indices)
+        # direction is the zero vector
+        return an_element(cpa)
+    end
+    next_idx = 1
+    next_dim = indices[next_idx]
+    m = length(indices)
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        if next_dim <= i1
+            # there is a non-zero entry in this block
+            svec[i0:i1] = σ(d[i0:i1], Xi)
 
-           # find next index outside the current block
-           next_idx += 1
-           while next_idx <= m && indices[next_idx] <= i1
-               next_idx += 1
-           end
-           if next_idx <= m
-               next_dim = indices[next_idx]
-           end
-       else
-           svec[i0:i1] = an_element(Xi)
-       end
-       i0 = i1 + 1
-   end
-   return svec
+            # find next index outside the current block
+            next_idx += 1
+            while next_idx <= m && indices[next_idx] <= i1
+                next_idx += 1
+            end
+            if next_idx <= m
+                next_dim = indices[next_idx]
+            end
+        else
+            svec[i0:i1] = an_element(Xi)
+        end
+        i0 = i1 + 1
+    end
+    return svec
+end
+
+# faster version for single-entry vectors
+function σ(d::SingleEntryVector, cpa::CartesianProductArray)
+    svec = similar(d)
+    i0 = 1
+    idx = d.i
+    for Xi in cpa.array
+        ni = dim(Xi)
+        i1 = i0 + ni - 1
+        if i0 <= idx && idx <= i1
+            svec[i0:i1] = σ(SingleEntryVector(d.i - i0 + 1, ni, d.v), Xi)
+        else
+            svec[i0:i1] = an_element(Xi)
+        end
+        i0 = i1 + 1
+    end
+    return svec
 end
 
 """
@@ -163,51 +181,66 @@ The evaluation of the support function in the given direction.
 If the direction has norm zero, the result depends on the wrapped sets.
 """
 function ρ(d::AbstractVector, cpa::CartesianProductArray)
-   N = promote_type(eltype(d), eltype(cpa))
-   sfun = zero(N)
-   i0 = 1
-   for Xi in cpa.array
-       i1 = i0 + dim(Xi) - 1
-       sfun += ρ(d[i0:i1], Xi)
-       i0 = i1 + 1
-   end
-   return sfun
+    N = promote_type(eltype(d), eltype(cpa))
+    sfun = zero(N)
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        sfun += ρ(d[i0:i1], Xi)
+        i0 = i1 + 1
+    end
+    return sfun
 end
 
 # faster version for sparse vectors
 function ρ(d::AbstractSparseVector, cpa::CartesianProductArray)
-   N = promote_type(eltype(d), eltype(cpa))
-   # idea: see the σ method for AbstractSparseVector
-   sfun = zero(N)
-   indices, _ = SparseArrays.findnz(d)
-   if isempty(indices)
-       # direction is the zero vector
-       return sfun
-   end
-   next_idx = 1
-   next_dim = indices[next_idx]
-   m = length(indices)
-   i0 = 1
-   for Xi in cpa.array
-       i1 = i0 + dim(Xi) - 1
-       if next_dim <= i1
-           # there is a non-zero entry in this block
-           sfun += ρ(d[i0:i1], Xi)
+    N = promote_type(eltype(d), eltype(cpa))
+    # idea: see the σ method for AbstractSparseVector
+    sfun = zero(N)
+    indices, _ = SparseArrays.findnz(d)
+    if isempty(indices)
+        # direction is the zero vector
+        return sfun
+    end
+    next_idx = 1
+    next_dim = indices[next_idx]
+    m = length(indices)
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        if next_dim <= i1
+            # there is a non-zero entry in this block
+            sfun += ρ(d[i0:i1], Xi)
 
-           # find next index outside the current block
-           next_idx += 1
-           while next_idx <= m && indices[next_idx] <= i1
-               next_idx += 1
-           end
-           if next_idx > m
-               # no more non-zero entries
-               break
-           end
-           next_dim = indices[next_idx]
-       end
-       i0 = i1 + 1
-   end
-   return sfun
+            # find next index outside the current block
+            next_idx += 1
+            while next_idx <= m && indices[next_idx] <= i1
+                next_idx += 1
+            end
+            if next_idx > m
+                # no more non-zero entries
+                break
+            end
+            next_dim = indices[next_idx]
+        end
+        i0 = i1 + 1
+    end
+    return sfun
+end
+
+# faster version for single-entry vectors
+function ρ(d::SingleEntryVector, cpa::CartesianProductArray)
+    i0 = 1
+    idx = d.i
+    for Xi in cpa.array
+        ni = dim(Xi)
+        i1 = i0 + ni - 1
+        if i0 <= idx && idx <= i1
+            return ρ(SingleEntryVector(d.i - i0 + 1, ni, d.v), Xi)
+        end
+        i0 = i1 + 1
+    end
+    return sfun
 end
 
 """
@@ -224,7 +257,7 @@ Check whether a Cartesian product of a finite number of sets is bounded.
 `true` iff all wrapped sets are bounded.
 """
 function isbounded(cpa::CartesianProductArray)
-   return all(isbounded, cpa.array)
+    return all(isbounded, cpa.array)
 end
 
 function isboundedtype(::Type{<:CartesianProductArray{N, S}}) where {N, S}
@@ -247,17 +280,17 @@ number of sets.
 `true` iff ``x ∈ \\text{cpa}``.
 """
 function ∈(x::AbstractVector, cpa::CartesianProductArray)
-   @assert length(x) == dim(cpa)
+    @assert length(x) == dim(cpa)
 
-   i0 = 1
-   for Xi in cpa.array
-       i1 = i0 + dim(Xi) - 1
-       if x[i0:i1] ∉ Xi
-           return false
-       end
-       i0 = i1 + 1
-   end
-   return true
+    i0 = 1
+    for Xi in cpa.array
+        i1 = i0 + dim(Xi) - 1
+        if x[i0:i1] ∉ Xi
+            return false
+        end
+        i0 = i1 + 1
+    end
+    return true
 end
 
 """
@@ -274,7 +307,7 @@ Check whether a Cartesian product of a finite number of sets is empty.
 `true` iff any of the sub-blocks is empty.
 """
 function isempty(cpa::CartesianProductArray)
-   return any(isempty, array(cpa))
+    return any(isempty, array(cpa))
 end
 
 """
@@ -322,7 +355,7 @@ function constraints_list(cpa::CartesianProductArray)
             n_low = dim(c_low)
         else
             n_low = dim(c_low_list[1])
-            indices = prev_step : (prev_step + n_low - 1)
+            indices = prev_step:(prev_step+n_low-1)
         end
         for constr in c_low_list
             new_constr = HalfSpace(sparsevec(indices, constr.a, n), constr.b)
@@ -557,7 +590,7 @@ end
 """
     substitute_blocks(low_dim_cpa::CartesianProductArray{N},
                       orig_cpa::CartesianProductArray{N},
-                      blocks::Vector{Tuple{Int,Int}}) where {N}
+                      blocks::Vector{Tuple{Int, Int}}) where {N}
 
 Return a Cartesian product of a finite number of sets (CPA) obtained by merging
 an original CPA with a low-dimensional CPA, which represents the updated subset
@@ -576,7 +609,7 @@ The merged Cartesian product.
 """
 function substitute_blocks(low_dim_cpa::CartesianProductArray{N},
                            orig_cpa::CartesianProductArray{N},
-                           blocks::Vector{Tuple{Int,Int}}) where {N}
+                           blocks::Vector{Tuple{Int, Int}}) where {N}
 
     array = Vector{LazySet{N}}(undef, length(orig_cpa.array))
     index = 1
