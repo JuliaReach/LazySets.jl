@@ -125,7 +125,7 @@ Return the support vector of a 2-norm ball in the given direction.
 ### Output
 
 The support vector in the given direction.
-If the direction has norm zero, the origin is returned.
+If the direction has norm zero, the center is returned.
 
 ### Notes
 
@@ -144,9 +144,8 @@ Exact inputs are not supported.
 """
 function σ(d::AbstractVector, B::Ball2)
     dnorm = norm(d, 2)
-    N = promote_type(eltype(d), eltype(B))
-    if dnorm <= zero(N)
-        return zeros(N, length(d))
+    if isapproxzero(dnorm)
+        return B.center
     else
         return @. B.center + d * (B.radius / dnorm)
     end
