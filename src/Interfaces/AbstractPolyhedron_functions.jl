@@ -660,6 +660,7 @@ function linear_map(M::AbstractMatrix{NM},
         return _linear_map_vrep(M, P, algo; apply_convex_hull=false)
 
     elseif algorithm == "vrep_chull"
+        algo = LinearMapVRep(backend)
         return _linear_map_vrep(M, P, algo; apply_convex_hull=true)
 
     elseif got_inv
