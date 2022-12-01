@@ -78,14 +78,6 @@ for N in [Float64, Float32, Rational{Int}]
     d = N[-1, -1, -1]
     @test σ(d, c) == N[-2, -5, 2]
 
-    # Test Cartesian Product with EmptySet
-    s = Singleton(N[1])
-    E = EmptySet{N}(1)
-    cs1 = E * s
-    cs2 = s * E
-    @test cs1 isa EmptySet
-    @test cs2 isa EmptySet
-
     # Test containment with respect to CartesianProduct
     p1 = HPolygon{N}()
     addconstraint!(p1, LinearConstraint(N[2, 2], N(12)))
@@ -411,9 +403,8 @@ for N in [Float64, Float32, Rational{Int}]
     # absorbing element
     e = EmptySet{N}(2)
     b = BallInf(N[0, 0], N(2))
-    @test absorbing(CartesianProduct) == absorbing(CartesianProductArray) ==
-          EmptySet
-    @test b × e == e × b == cpa × e == e × cpa == e × e == e
+    @test b × e == e × b == e × e == EmptySet{N}(4)
+    @test cpa × e == e × cpa == EmptySet{N}(6)
 
     # volume
     b2 = BallInf(zeros(N, 3), N(3))

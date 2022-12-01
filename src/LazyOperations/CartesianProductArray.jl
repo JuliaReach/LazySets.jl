@@ -15,8 +15,6 @@ Type that represents the Cartesian product of a finite number of sets.
 
 ### Notes
 
-The `EmptySet` is the absorbing element for `CartesianProductArray`.
-
 The Cartesian product preserves convexity: if the set arguments are convex, then
 their Cartesian product is convex as well.
 
@@ -40,9 +38,6 @@ end
 
 isoperationtype(::Type{<:CartesianProductArray}) = true
 isconvextype(::Type{CartesianProductArray{N, S}}) where {N, S} = isconvextype(S)
-
-# EmptySet is the absorbing element for CartesianProductArray
-@absorbing(CartesianProductArray, EmptySet)
 
 # add functions connecting CartesianProduct and CartesianProductArray
 @declare_array_version(CartesianProduct, CartesianProductArray)
