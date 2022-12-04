@@ -124,22 +124,28 @@ for N in [Float64, Rational{Int}, Float32]
     @test ispermutation(collect(generators(Z)), [genmat(Z)[:, j] for j in 1:ngens(Z)])
 
     # test order reduction
-    Zred1 = reduce_order(Z, 1)
-    @test ngens(Zred1) == 2
-    @test order(Zred1) == 1
-    Zred2 = reduce_order(Z, 2)
-    @test ngens(Zred2) == 4
-    @test order(Zred2) == 2
-    Z = Zonotope(N[2, 1], N[-1//2 3//2 1//2 1 0 1; 1//2 3//2 1 1//2 1 0])
-    Zred3 = reduce_order(Z, 2)
-    @test ngens(Zred3) == 4
-    @test order(Zred3) == 2
-    Znogen = Zonotope(N[1, 2], Matrix{N}(undef, 2, 0))
-    @test ngens(Znogen) == 0
-    @test genmat(Znogen) == Matrix{N}(undef, 2, 0)
-    @test collect(generators(Znogen)) == Vector{N}()
-    Zs = Zonotope(SVector{2}(Z.center), SMatrix{2, 6}(Z.generators))
-    @test reduce_order(Zs, 2) isa Zonotope{N, SVector{2, N}, SMatrix{2, 4, N, 8}}
+    for method in [LazySets.ASB10(), LazySets.COMB03(), LazySets.GIR05()]
+        Z = Zonotope(N[2, 1], N[-1//2 3//2 1//2 1; 1//2 3//2 1 1//2])
+        Zred1 = reduce_order(Z, 1, method)
+        @test ngens(Zred1) == 2
+        @test order(Zred1) == 1
+        Zred2 = reduce_order(Z, 2, method)
+        @test ngens(Zred2) == 4
+        @test order(Zred2) == 2
+        Z = Zonotope(N[2, 1], N[-1//2 3//2 1//2 1 0 1; 1//2 3//2 1 1//2 1 0])
+        Zred3 = reduce_order(Z, 2, method)
+        @test ngens(Zred3) == 4
+        @test order(Zred3) == 2
+        Znogen = Zonotope(N[1, 2], Matrix{N}(undef, 2, 0))
+        @test ngens(Znogen) == 0
+        @test genmat(Znogen) == Matrix{N}(undef, 2, 0)
+        @test collect(generators(Znogen)) == Vector{N}()
+    end
+    # order reduction with static arrays
+    for method in [LazySets.COMB03(), LazySets.GIR05()]
+        Zs = Zonotope(SVector{2}(Z.center), SMatrix{2, 6}(Z.generators))
+        @test reduce_order(Zs, 2, method) isa Zonotope{N, SVector{2, N}, SMatrix{2, 4, N, 8}}
+    end
 
     # conversion from zonotopic sets
     Z = Zonotope(N[0, 0], hcat(N[1, 1]))

@@ -715,6 +715,17 @@ Zonotope order-reduction method from [1].
 struct COMB03 <: AbstractReductionMethod end
 
 """
+    ASB10 <: AbstractReductionMethod
+
+Zonotope order-reduction method from [1].
+
+- [1] Althoff, M., Stursberg, O., & Buss, M. *Computing reachable sets of hybrid
+systems using a combination of zonotopes and polytopes*. Nonlinear analysis:
+hybrid systems 2010.
+"""
+struct ASB10 <: AbstractReductionMethod end
+
+"""
     reduce_order(Z::AbstractZonotope, r::Real,
                  [method]::AbstractReductionMethod=GIR05())
 
@@ -737,7 +748,8 @@ The available algorithms are:
 
 ```jldoctest; setup = :(using LazySets: subtypes, AbstractReductionMethod)
 julia> subtypes(AbstractReductionMethod)
-2-element Vector{Any}:
+3-element Vector{Any}:
+ LazySets.ASB10
  LazySets.COMB03
  LazySets.GIR05
 ```
@@ -752,6 +764,9 @@ See also [2].
 techniques*. Automatica 2018.
 - [2] Kopetzki, A. K., Schürmann, B., & Althoff, M. *Methods for order reduction
 of zonotopes*. CDC 2017.
+- [3] Althoff, M., Stursberg, O., & Buss, M. *Computing reachable sets of hybrid
+systems using a combination of zonotopes and polytopes*. Nonlinear analysis:
+hybrid systems 2010.
 """
 function reduce_order(Z::AbstractZonotope, r::Real,
                       method::AbstractReductionMethod=GIR05())
@@ -760,7 +775,7 @@ function reduce_order(Z::AbstractZonotope, r::Real,
     n = dim(Z)
     p = ngens(Z)
 
-    # if r is bigger than the order of Z => don't reduce
+    # if r is bigger than the order of Z => do not reduce
     (r * n >= p) && return Z
 
     c = center(Z)
@@ -768,7 +783,7 @@ function reduce_order(Z::AbstractZonotope, r::Real,
 
     if isone(r)
         # if r = 1 => m = 0 and the generators need not be sorted
-        Lred = _interval_hull(G, 1:p)
+        Lred = _approximate_reduce_order(c, G, 1:p, method)
         return Zonotope(c, Lred)
     end
 
@@ -780,7 +795,7 @@ function reduce_order(Z::AbstractZonotope, r::Real,
     m = floor(Int, n * (r - 1))
 
     # compute interval hull of L
-    Lred = _interval_hull(G, view(indices, (m+1):p))
+    Lred = _approximate_reduce_order(c, G, view(indices, (m+1):p), method)
 
     # concatenate non-reduced and reduced generators
     Gred = _hcat_KLred(G, view(indices, 1:m), Lred)
@@ -788,9 +803,21 @@ function reduce_order(Z::AbstractZonotope, r::Real,
     return Zonotope(c, Gred)
 end
 
+# approximate with a box
+function _approximate_reduce_order(c, G, indices, method::Union{COMB03, GIR05})
+    return _interval_hull(G, indices)
+end
+
+# approximate with a parallelotope
+function _approximate_reduce_order(c, G, indices, method::ASB10)
+    Ztilde = Zonotope(c, view(G, :, indices))
+    Ψ = Approximations._overapproximate_hparallelotope(Ztilde)
+    return genmat(Ψ)
+end
+
 # Return the indices of the generators in G (= columns) sorted according to
 # decreasing 2-norm. The generator index with highest score goes first.
-function _weighted_gens!(indices, G::AbstractMatrix{N}, ::COMB03) where {N}
+function _weighted_gens!(indices, G::AbstractMatrix{N}, ::Union{ASB10, COMB03}) where {N}
     p = size(G, 2)
     weights = Vector{N}(undef, p)
     @inbounds for j in 1:p
