@@ -738,7 +738,7 @@ end end  # quote / load_intervalmatrices_overapproximation()
 
 """
     overapproximate(X::LazySet, ZT::Type{<:Zonotope},
-                    dir::AbstractDirections;
+                    dir::Union{AbstractDirections, Type{<:AbstractDirections}};
                     [algorithm]="vrep", kwargs...)
 
 Overapproximate a set with a zonotope.
@@ -771,7 +771,7 @@ Two algorithms are available:
   [`_overapproximate_zonotope_cpa`](@ref) for further details.
 """
 function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
-                         dir::AbstractDirections;
+                         dir::Union{AbstractDirections, Type{<:AbstractDirections}};
                          algorithm="vrep", kwargs...)
     if algorithm == "vrep"
         return  _overapproximate_zonotope_vrep(X, dir, kwargs...)
@@ -781,13 +781,6 @@ function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
     else
         throw(ArgumentError("algorithm $algorithm is not known"))
     end
-end
-
-# overload on direction type
-function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
-                         dir::Type{<:AbstractDirections};
-                         algorithm="vrep", kwargs...)
-    overapproximate(X, ZT, dir(dim(X)), algorithm=algorithm, kwargs...)
 end
 
 # disambiguation
@@ -932,7 +925,7 @@ end
 function _overapproximate_zonotope_vrep(X::LazySet{N},
                                         dir::Type{<:AbstractDirections};
                                         solver=default_lp_solver(N)) where {N}
-    return _overapproximate_zonotope_vrep(X, dir(dim(X)), solver=solver)
+    return _overapproximate_zonotope_vrep(X, _get_directions(dir, dim(X)), solver=solver)
 end
 
 """
@@ -961,12 +954,16 @@ The implementation is based on Section 8.2.4 in [1].
 [1] Le Guernic, C. *Reachability analysis of hybrid systems with linear
 continuous dynamics* (Doctoral dissertation). 2009.
 """
-function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
+function _overapproximate_zonotope_cpa(X::LazySet, dir::AbstractDirections)
     n = dim(X)
+    if dim(dir) != 2
+        # try to convert to 2D directions
+        dir = _get_directions(typeof(dir), 2)
+    end
     # overapproximate 2D blocks
     if n > 1
         πX_2D = [project(X, [i, i+1]) for i in 1:2:n-1]
-        Z_2D = [_overapproximate_zonotope_vrep(poly, dir(2)) for poly in πX_2D]
+        Z_2D = [_overapproximate_zonotope_vrep(poly, dir) for poly in πX_2D]
     end
 
     if iseven(n)
@@ -987,8 +984,8 @@ function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirection
 end
 
 # overload on direction type
-function _overapproximate_zonotope_cpa(X::LazySet, dir::AbstractDirections)
-    _overapproximate_zonotope_cpa(X, typeof(dir))
+function _overapproximate_zonotope_cpa(X::LazySet, dir::Type{<:AbstractDirections})
+    _overapproximate_zonotope_cpa(X, _get_directions(dir, 2))
 end
 
 """
