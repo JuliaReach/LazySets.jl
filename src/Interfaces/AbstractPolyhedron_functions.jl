@@ -259,8 +259,13 @@ function remove_redundant_constraints!(constraints::AbstractVector{S};
         end
     end
 
-    deleteat!(constraints, setdiff(1:m, non_redundant_indices))
-    return true
+    idx_delete = setdiff(1:m, non_redundant_indices)
+    if !isempty(idx_delete)
+        deleteat!(constraints, idx_delete)
+        return true
+    else
+        return false
+    end
 end
 
 """
