@@ -807,7 +807,8 @@ function _line_search(ℓ, X::S, H::Union{<:HalfSpace, <:Hyperplane, <:Line2D};
 
     # Initialization
     a, b = H.a, H.b
-    f(λ) = ρ(ℓ - λ[1] * a, X) + λ[1] * b
+    m = -ρ(-ℓ, X)  # `m` is a known lower bound for `f` below (Lemma 3 in paper)
+    f(λ) = max(ρ(ℓ - λ[1] * a, X) + λ[1] * b, m)
 
     if haskey(options, :lower)
         lower = pop!(options, :lower)
