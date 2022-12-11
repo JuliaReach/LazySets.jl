@@ -469,7 +469,7 @@ function addconstraint!(constraints::Vector{LC}, new_constraint::HalfSpace;
     if k > 0
         d = new_constraint.a
         if d <= constraints[1].a
-            k = 0
+            k = m
         elseif linear_search
             # linear search
             while d <= constraints[k].a

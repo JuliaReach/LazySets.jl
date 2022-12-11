@@ -182,6 +182,13 @@ for N in [Float64, Float32, Rational{Int}]
         @test is_cyclic_permutation(PQ.vertices, [N[2, -2], N[6, 0], N[8, 2],
                                                 N[8, 4], N[6, 6], N[2, 8]])
 
+        # add new constraints at the end if possible (#1393)
+        B = BallInf(ones(N, 2), N(1))
+        P = convert(t_hp, B)
+        c1, c2, c3, c4 = P.constraints
+        c = [c2, c3, c4, c1]
+        @test t_hp(c).constraints == c
+
         # test for different starting points in vertices_list of minkowski sum
         P = VPolygon([N[4, 0], N[6, 2], N[4, 4]])
         P2 = VPolygon([N[4, 4], N[4, 0], N[6, 2]])
