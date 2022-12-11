@@ -200,6 +200,19 @@ for N in [Float64, Rational{Int}, Float32]
     # projection
     b4 = BallInf(N[4, 3, 2, 1], N(2))
     @test project(b4, [2, 4]) == BallInf(N[3, 1], N(2))
+
+    # delaunay (does not work with Float32)
+    if N != Float32
+        B = BallInf(ones(N, 2), N(1))
+        Y = delaunay(B)
+        @test Y isa UnionSetArray && length(array(Y)) == 2 &&
+              array(Y)[1] isa VPolytope && array(Y)[2] isa VPolytope
+        a = array(Y)
+        a1 = [N[0, 0], [2, 0], [2, 2]]
+        a2 = [N[0, 0], [0, 2], [2, 2]]
+        @test (ispermutation(a[1].vertices, a1) && ispermutation(a[2].vertices, a2)) ||
+              (ispermutation(a[1].vertices, a2) && ispermutation(a[2].vertices, a1))
+    end
 end
 
 # tests that only work with Float64
