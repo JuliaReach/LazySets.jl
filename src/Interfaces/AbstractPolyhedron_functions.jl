@@ -234,13 +234,14 @@ function remove_redundant_constraints!(constraints::AbstractVector{S};
     m, n = size(A)
     non_redundant_indices = 1:m
 
-    i = 1 # counter over reduced constraints
+    i = 1  # counter over reduced (= non-redundant) constraints
 
-    for j in 1:m    # loop over original constraints
+    for j in 1:m  # loop over original constraints
         α = A[j, :]
         Ar = A[non_redundant_indices, :]
         br = b[non_redundant_indices]
-        br[i] = b[j] + one(N)
+        @assert br[i] == b[j]
+        br[i] += one(N)
         lp = linprog(-α, Ar, '<', br, -Inf, Inf, backend)
         if is_lp_infeasible(lp.status)
             # the polyhedron is empty
@@ -252,7 +253,7 @@ function remove_redundant_constraints!(constraints::AbstractVector{S};
                 non_redundant_indices = setdiff(non_redundant_indices, j)
             else
                 # the constraint is not redundant
-                i = i+1
+                i += 1
             end
         else
             error("LP is not optimal; the status of the LP is $(lp.status)")
