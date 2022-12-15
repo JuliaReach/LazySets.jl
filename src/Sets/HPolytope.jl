@@ -191,8 +191,7 @@ function HPolytope(P::HRep)
     convert(HPolytope, P)
 end
 
-end # quote
-end # function load_polyhedra_hpolytope()
+end end  # quote / load_polyhedra_hpolytope()
 
 """
     vertices_list(P::HPolytope; [backend]=nothing, [prune]::Bool=true)

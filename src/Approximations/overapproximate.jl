@@ -596,7 +596,6 @@ return quote
 
 using .IntervalConstraintProgramming: Paving
 
-
 """
     overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN})
         where {L, N, VN}
@@ -635,5 +634,4 @@ function overapproximate(p::Paving{L, N}, ::Type{<:HPolyhedron},
     return overapproximate(p, dirs)
 end
 
-end # quote
-end # load_paving_overapproximation
+end end  # quote / load_paving_overapproximation

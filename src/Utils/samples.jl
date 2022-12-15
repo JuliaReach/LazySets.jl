@@ -509,19 +509,6 @@ end
 # Code requiring Distributions
 # =============================
 
-function load_distributions_samples()
-return quote
-
-using .Distributions: Uniform, Normal, UnivariateDistribution
-
-function RejectionSampler(distr::UnivariateDistribution; tight::Bool=false)
-    return RejectionSampler([distr], tight=tight)
-end
-
-function Base.rand(rng::AbstractRNG, U::AbstractVector{<:UnivariateDistribution})
-    return rand.(Ref(rng), U)
-end
-
 """
     _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                  [rng]::AbstractRNG=GLOBAL_RNG,
@@ -562,18 +549,7 @@ where ``α := \\sqrt{z₁² + z₂² + … + z_n²}``, is uniform over ``S^n``.
 function _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                       rng::AbstractRNG=GLOBAL_RNG,
                                       seed::Union{Int, Nothing}=nothing) where {N}
-    rng = reseed(rng, seed)
-    Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
-    v = Vector{N}(undef, n) # sample direction
-    @inbounds for j in 1:p
-        α = zero(N)
-        for i in 1:n
-            v[i] = rand(rng, Zdims[i])
-            α += v[i]^2
-        end
-        D[j] = v ./ sqrt(α)
-    end
-    return D
+    return _sample_unit_nsphere_muller_distributions!(D, n, p; rng=rng, seed=seed)
 end
 
 """
@@ -617,6 +593,46 @@ where ``α := \\sqrt{z₁² + z₂² + … + z_n²}``, is uniform over the
 function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                     rng::AbstractRNG=GLOBAL_RNG,
                                     seed::Union{Int, Nothing}=nothing) where {N}
+    return _sample_unit_nball_muller_distributions!(D, n, p; rng=rng, seed=seed)
+end
+
+function load_distributions_samples()
+return quote
+
+using .Distributions: Uniform, Normal, UnivariateDistribution
+
+function RejectionSampler(distr::UnivariateDistribution; tight::Bool=false)
+    return RejectionSampler([distr], tight=tight)
+end
+
+function Base.rand(rng::AbstractRNG, U::AbstractVector{<:UnivariateDistribution})
+    return rand.(Ref(rng), U)
+end
+
+function _sample_unit_nsphere_muller_distributions!(D::Vector{Vector{N}},
+                                                    n::Int, p::Int;
+                                                    rng::AbstractRNG=GLOBAL_RNG,
+                                                    seed::Union{Int, Nothing}=nothing
+                                                   ) where {N}
+    rng = reseed(rng, seed)
+    Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
+    v = Vector{N}(undef, n) # sample direction
+    @inbounds for j in 1:p
+        α = zero(N)
+        for i in 1:n
+            v[i] = rand(rng, Zdims[i])
+            α += v[i]^2
+        end
+        D[j] = v ./ sqrt(α)
+    end
+    return D
+end
+
+function _sample_unit_nball_muller_distributions!(D::Vector{Vector{N}}, n::Int,
+                                                  p::Int;
+                                                  rng::AbstractRNG=GLOBAL_RNG,
+                                                  seed::Union{Int, Nothing}=nothing
+                                                 ) where {N}
 
     rng = reseed(rng, seed)
     Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
@@ -636,5 +652,4 @@ function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
     return D
 end
 
-end # quote
-end # function load_distributions_samples()
+end end  # quote / load_distributions_samples()

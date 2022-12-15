@@ -727,9 +727,6 @@ function concretize(cap::Intersection)
     return intersection(concretize(cap.X), concretize(cap.Y))
 end
 
-function load_optim_intersection()
-return quote
-
 """
     _line_search(ℓ, X, H::Union{<:HalfSpace, <:Hyperplane, <:Line2D}; [kwargs...])
 
@@ -799,6 +796,14 @@ julia> v[1]
 """
 function _line_search(ℓ, X::S, H::Union{<:HalfSpace, <:Hyperplane, <:Line2D};
                       kwargs...) where {S<:LazySet}
+    return _line_search_optim(ℓ, X, H; kwargs...)
+end
+
+function load_optim_intersection()
+return quote
+
+function _line_search_optim(ℓ, X::S, H::Union{<:HalfSpace, <:Hyperplane, <:Line2D};
+                            kwargs...) where {S<:LazySet}
     if !isconvextype(S)
         raise(ArgumentError("the first set in the intersection must be convex"))
     end
@@ -837,9 +842,9 @@ function _line_search(ℓ, X::S, H::Union{<:HalfSpace, <:Hyperplane, <:Line2D};
     # Recover results
     fmin, λmin = sol.minimum, sol.minimizer
     return (fmin, λmin)
-end # _line_search
-end # quote
-end # load_optim
+end
+
+end end  # quote / load_optim_intersection
 
 """
     _projection(ℓ, X, H::Union{Hyperplane{N}, Line2D{N}};

@@ -1677,5 +1677,4 @@ function polyhedron(P::LazySet; backend=default_polyhedra_backend(P))
     return polyhedron(Q; backend=backend)
 end
 
-end # quote
-end # function load_polyhedra_lazyset()
+end end  # quote / load_polyhedra_lazyset()

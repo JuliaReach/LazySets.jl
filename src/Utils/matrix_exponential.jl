@@ -30,7 +30,6 @@ end
 
 end end  # quote / load_exponentialutilities
 
-
 function _expmv(::Val{:ExponentialUtilities}, t, A, b)
     return ExponentialUtilities.expv(t, A, b)
 end

@@ -567,8 +567,7 @@ function polyhedron(P::VPolytope;
     return polyhedron(Polyhedra.vrep(P.vertices), backend)
 end
 
-end # quote
-end # function load_polyhedra_vpolytope()
+end end  # quote / load_polyhedra_vpolytope()
 
 function project(P::VPolytope, block::AbstractVector{Int}; kwargs...)
     if isempty(P.vertices)

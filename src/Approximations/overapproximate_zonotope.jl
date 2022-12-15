@@ -338,7 +338,6 @@ end
 
 # function to be loaded by Requires
 function load_taylormodels_overapproximation()
-
 return quote
 
 using .TaylorModels: Taylor1, TaylorN, TaylorModel1, TaylorModelN,
@@ -665,8 +664,7 @@ function _overapproximate_vTM_zonotope(vTM, n, N;
     return Z
 end
 
-end # quote
-end # load_taylormodels_overapproximation
+end end  # quote / load_taylormodels_overapproximation
 
 function load_intervalmatrices_overapproximation()
 return quote
