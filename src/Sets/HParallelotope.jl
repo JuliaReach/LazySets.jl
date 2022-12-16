@@ -40,9 +40,11 @@ for ``i = 1, …, n``. Here ``D_i`` represents the ``i``-th row of ``D`` and
 ``c_i`` the ``i``-th component of ``c``.
 
 Note that, although representing a zonotopic set, an `HParallelotope` can be
-empty if the constraints are contradictory. This may cause problems with default
-methods because the library assumes that zonotopic sets are non-empty. Thus such
-instances are considered illegal.
+empty or unbounded if the constraints are unsuitably chosen. This may cause
+problems with default methods because the library assumes that zonotopic sets
+are non-empty and bounded. Thus such instances are considered illegal. The
+default constructor thus checks these conditions, which can be deactivated by
+passing the argument `check_consistency=false`.
 
 For details as well as applications of parallelotopes in reachability analysis
 we refer to [1] and [2]. For conversions between set representations we refer to
@@ -65,11 +67,22 @@ struct HParallelotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: Abstra
     directions::MN
     offset::VN
 
-    # default constructor with dimension check
-    function HParallelotope(D::MN, c::VN) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
+    # default constructor with dimension and consistency check
+    function HParallelotope(D::MN, c::VN; check_consistency::Bool=true
+                           ) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
         @assert length(c) == 2*checksquare(D) "the length of the offset " *
             "vector should be twice the size of the directions matrix, " *
             "but they have sizes $(length(c)) and $(size(D)) respectively"
+
+        if check_consistency
+            P = HPolyhedron(_constraints_list_hparallelotope(D, c, N, VN))
+            if isempty(P)
+                throw(ArgumentError("the constraints are contradictory"))
+            elseif !isbounded(P)
+                throw(ArgumentError("the constraints are not bounding"))
+            end
+        end
+
         return new{N, VN, MN}(D, c)
     end
 end
@@ -306,11 +319,15 @@ The list of constraints of `P`.
 """
 function constraints_list(P::HParallelotope)
     D, c = P.directions, P.offset
-    n = dim(P)
     N, VN = _parameters(P)
+    return _constraints_list_hparallelotope(D, c, N, VN)
+end
+
+function _constraints_list_hparallelotope(D, c, N, VN)
     if isempty(D)
         return Vector{HalfSpace{N, VN}}(undef, 0)
     end
+    n = size(D, 1)
     clist = Vector{HalfSpace{N, VN}}(undef, 2n)
     @inbounds for i in 1:n
         clist[i] = HalfSpace(D[i, :], c[i])
@@ -319,6 +336,7 @@ function constraints_list(P::HParallelotope)
     return clist
 end
 
+# reason: `Documenter` cannot annotate `constraints_list` with type parameters
 function _parameters(P::HParallelotope{N, VN}) where {N, VN}
     return (N, VN)
 end
@@ -385,7 +403,7 @@ end
 """
     isempty(P::HParallelotope)
 
-Check if a parallelotope in constraint representation is empty.
+Check whether a parallelotope in constraint representation is empty.
 
 ### Input
 
@@ -397,7 +415,8 @@ Check if a parallelotope in constraint representation is empty.
 
 ### Algorithm
 
-We call `isempty` for an `HPolyhedron`.
+We call `isempty` for an `HPolyhedron`. We do not assume `HPolytope` because the
+set may be wrongly represented and in fact be unbounded.
 """
 function isempty(P::HParallelotope)
     return isempty(convert(HPolyhedron, P))
