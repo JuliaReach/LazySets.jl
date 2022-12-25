@@ -573,69 +573,6 @@ function HPolyhedron(P::HRep{N}) where {N}
     convert(HPolyhedron, P)
 end
 
-"""
-    polyhedron(P::HPoly; [backend]=default_polyhedra_backend(P))
-
-Return an `HRep` polyhedron from `Polyhedra.jl` given a polytope in
-constraint representation.
-
-### Input
-
-- `P`       -- polytope
-- `backend` -- (optional, default: call `default_polyhedra_backend(P)`)
-                the polyhedral computations backend
-
-### Output
-
-An `HRep` polyhedron.
-
-### Notes
-
-For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/).
-"""
-function polyhedron(P::HPoly; backend=default_polyhedra_backend(P))
-    A, b = tosimplehrep(P)
-    return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
-end
-
-"""
-    triangulate(X::LazySet)
-
-Triangulate a three-dimensional polyhedral set.
-
-### Input
-
-- `X` -- three-dimensional polyhedral set
-
-### Output
-
-A tuple `(p, c)` where `p` is a matrix, with each column containing a point, and
-`c` is a list of 3-tuples containing the indices of the points in each triangle.
-"""
-function triangulate(X::LazySet)
-    dim(X) == 3 || throw(ArgumentError("the dimension of the set should be " *
-        "three, got $(dim(X))"))
-
-    P = polyhedron(convert(HPolyhedron, X))
-    mes = Mesh(P)
-    coords = Polyhedra.GeometryBasics.coordinates(mes)
-    connec = Polyhedra.GeometryBasics.faces(mes)
-
-    ntriangles = length(connec)
-    npoints = length(coords)
-    @assert npoints == 3 * ntriangles
-    points = Matrix{Float32}(undef, 3, npoints)
-
-    for i in 1:npoints
-        points[:, i] .= coords[i].data
-    end
-
-    connec_tup = getfield.(connec, :data)
-
-    return points, connec_tup
-end
-
 end end  # quote / load_polyhedra_hpolyhedron()
 
 function is_hyperplanar(P::HPolyhedron)

@@ -90,6 +90,7 @@ surface(::LazySet)
 area(::LazySet{N}) where {N}
 concretize(::LazySet)
 complement(::LazySet)
+polyhedron(::LazySet)
 project(::LazySet, ::AbstractVector{Int}, ::Nothing=nothing, ::Int=dim(S))
 project(::LazySet, ::AbstractVector{Int}, ::Type{TS}, ::Int=dim(S)) where {TS<:LazySet}
 project(::LazySet, ::AbstractVector{Int}, ::Pair{T, N}, ::Int=dim(S)) where {T<:UnionAll, N<:Real}
