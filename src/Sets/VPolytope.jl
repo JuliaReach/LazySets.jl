@@ -263,7 +263,7 @@ function rand(::Type{VPolytope};
               num_vertices::Int=-1)
     rng = reseed(rng, seed)
     if num_vertices < 0
-        num_vertices = (dim == 1) ? rand(1:2) : rand(dim:5*dim)
+        num_vertices = (dim == 1) ? rand(rng, 1:2) : rand(rng, dim:5*dim)
     end
     vertices = [randn(rng, N, dim) for i in 1:num_vertices]
     return VPolytope(vertices)

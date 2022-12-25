@@ -235,7 +235,7 @@ function rand(::Type{HPolyhedron};
     constraints_P = constraints_list(P)
     constraints_Q = Vector{eltype(constraints_P)}()
     for i in 1:length(constraints_P)
-        if rand(Bool)
+        if rand(rng, Bool)
             push!(constraints_Q, constraints_P[i])
         end
     end
