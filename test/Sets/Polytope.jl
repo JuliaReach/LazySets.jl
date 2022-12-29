@@ -337,7 +337,7 @@ for N in [Float64]
         b = N[2, 2, -2]
         p2 = HPolytope(A, b)
         @test intersection(p1, p2) isa EmptySet{N}
-        @test intersection(p1, p2; backend=Polyhedra.default_library(2, N)) isa EmptySet{N}
+        @test intersection(p1, p2; backend=LazySets.default_polyhedra_backend(p1)) isa EmptySet{N}
         @test intersection(p1, p2; backend=CDDLib.Library()) isa EmptySet{N}
 
         # intersection with half-space
