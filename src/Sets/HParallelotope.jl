@@ -351,8 +351,8 @@ function rand(::Type{HParallelotope};
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int, Nothing}=nothing)
     rng = reseed(rng, seed)
-    D = randn(N, dim, dim)
-    offset = randn(N, 2 * dim)
+    D = randn(rng, N, dim, dim)
+    offset = randn(rng, N, 2 * dim)
     return HParallelotope(D, offset)
 end
 

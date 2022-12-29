@@ -289,8 +289,8 @@ function rand(::Type{Ellipsoid};
     shape_matrix = Matrix{N}(undef, dim, dim)
     for j in 1:dim
         for i in 1:dim
-            entry = rand(N)
-            if rand(Bool)
+            entry = rand(rng, N)
+            if rand(rng, Bool)
                 entry = -entry
             end
             shape_matrix[i, j] = entry

@@ -444,7 +444,7 @@ function rand(::Type{Star};
               seed::Union{Int, Nothing}=nothing,
               P::AbstractPolyhedron=rand(HPolytope, N=N, dim=dim, rng=rng, seed=seed))
     rng = reseed(rng, seed)
-    c = randn(N, dim)
-    V = randn(N, dim, LazySets.dim(P))
+    c = randn(rng, N, dim)
+    V = randn(rng, N, dim, LazySets.dim(P))
     return Star(c, V, P)
 end

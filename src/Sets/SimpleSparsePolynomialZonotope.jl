@@ -458,10 +458,10 @@ function rand(::Type{SimpleSparsePolynomialZonotope};
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     if num_generators < 0
-        num_generators = (dim == 1) ? 1 : rand(dim:2*dim)
+        num_generators = (dim == 1) ? 1 : rand(rng, dim:2*dim)
     end
     generators = randn(rng, N, dim, num_generators)
-    expmat = rand(0:maxdeg, nparams, num_generators)
+    expmat = rand(rng, 0:maxdeg, nparams, num_generators)
     SSPZ = SimpleSparsePolynomialZonotope(center, generators, expmat)
     return remove_redundant_generators(SSPZ)
 end

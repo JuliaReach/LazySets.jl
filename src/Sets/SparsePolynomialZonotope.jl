@@ -343,13 +343,12 @@ function rand(::Type{SparsePolynomialZonotope};
     rng = reseed(rng, seed)
 
     if num_independent_generators < 0
-        num_independent_generators = (dim == 1) ? 1 : rand(dim:2*dim)
+        num_independent_generators = (dim == 1) ? 1 : rand(rng, dim:2*dim)
     end
     GI = randn(rng, N, dim, num_independent_generators)
 
     SSPZ = rand(SimpleSparsePolynomialZonotope; N=N, dim=dim, nparams=nparams,
-                maxdeg=maxdeg, rng=rng, seed=seed,
-                num_generators=num_dependent_generators)
+                maxdeg=maxdeg, rng=rng, num_generators=num_dependent_generators)
 
     return SparsePolynomialZonotope(center(SSPZ), genmat(SSPZ), GI, expmat(SSPZ))
 end
