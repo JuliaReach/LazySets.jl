@@ -17,6 +17,7 @@ using TaylorModels: set_variables, TaylorModelN
 # ICP currently leads to unsatisfiable package requirements
 # using IntervalConstraintProgramming
 using Symbolics
+import MiniQhull
 
 # ==============================
 # Non-exported helper functions
