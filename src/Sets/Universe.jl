@@ -421,5 +421,4 @@ function polyhedron(U::Universe; backend=default_polyhedra_backend(U))
     return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
 end
 
-end # quote
-end # function load_polyhedra_universe()
+end end  # quote / load_polyhedra_universe()

@@ -11,10 +11,10 @@ This implementation is a refined version of [`HPolygon`](@ref).
 
 ### Fields
 
-- `constraints`       -- list of linear constraints, sorted by the normal
-                         direction in counter-clockwise fashion
-- `ind`               -- index in the list of constraints to begin the search
-                         to evaluate the support vector/function
+- `constraints` -- list of linear constraints, sorted by the normal direction in
+                   counter-clockwise fashion
+- `ind`         -- index in the list of constraints to begin the search to
+                   evaluate the support vector/function
 
 ### Notes
 

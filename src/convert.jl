@@ -214,34 +214,36 @@ end
 
 function load_genmat_2D_static()
 return quote
-    @inline function _genmat_2D(c::SVector{L, N}, rx, ry) where {L, N}
-        flat_x = isapproxzero(rx)
-        flat_y = isapproxzero(ry)
-        if !flat_x && !flat_y
-            G = SMatrix{2, 2, N, 4}(rx, zero(N), zero(N), ry)
-        elseif !flat_x && flat_y
-            G = SMatrix{2, 1, N, 2}(rx, zero(N))
-        elseif flat_x && !flat_y
-            G = SMatrix{2, 1, N, 2}(zero(N), ry)
-        else
-            G = SMatrix{2, 0, N, 0}()
-        end
-        return G
-    end
 
-    # this function is type-stable but doesn't prune the generators according
-    # to flat dimensions of H
-    function _convert_2D_static(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
-        c = center(H)
-        rx = radius_hyperrectangle(H, 1)
-        ry = radius_hyperrectangle(H, 2)
+@inline function _genmat_2D(c::SVector{L, N}, rx, ry) where {L, N}
+    flat_x = isapproxzero(rx)
+    flat_y = isapproxzero(ry)
+    if !flat_x && !flat_y
         G = SMatrix{2, 2, N, 4}(rx, zero(N), zero(N), ry)
-        return Zonotope(c, G)
+    elseif !flat_x && flat_y
+        G = SMatrix{2, 1, N, 2}(rx, zero(N))
+    elseif flat_x && !flat_y
+        G = SMatrix{2, 1, N, 2}(zero(N), ry)
+    else
+        G = SMatrix{2, 0, N, 0}()
     end
+    return G
+end
 
-    function _convert_static(::Type{Zonotope}, H::Hyperrectangle{N, <:SVector, <:SVector}) where {N}
-        return Zonotope(center(H), _genmat_static(H))
-    end
+# this function is type-stable but doesn't prune the generators according
+# to flat dimensions of H
+function _convert_2D_static(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
+    c = center(H)
+    rx = radius_hyperrectangle(H, 1)
+    ry = radius_hyperrectangle(H, 2)
+    G = SMatrix{2, 2, N, 4}(rx, zero(N), zero(N), ry)
+    return Zonotope(c, G)
+end
+
+function _convert_static(::Type{Zonotope}, H::Hyperrectangle{N, <:SVector, <:SVector}) where {N}
+    return Zonotope(center(H), _genmat_static(H))
+end
+
 end end  # quote / load_genmat_2D_static
 
 """

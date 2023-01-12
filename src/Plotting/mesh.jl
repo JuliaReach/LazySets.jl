@@ -1,13 +1,11 @@
 export plot3d, plot3d!
 
-
 function load_polyhedra_mesh()
 return quote
 
 using .Polyhedra: Mesh
 
 end end  # quote / function load_polyhedra_mesh()
-
 
 function load_makie()
 return quote
@@ -16,7 +14,6 @@ using .Makie: mesh, mesh!
 using .Makie: Automatic
 
 end end  # quote / function load_makie()
-
 
 # helper function for 3D plotting; converts S to a polytope in H-representation
 function _plot3d_helper(S::LazySet, backend)

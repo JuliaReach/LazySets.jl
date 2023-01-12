@@ -636,8 +636,7 @@ function triangulate(X::LazySet)
     return points, connec_tup
 end
 
-end # quote
-end # function load_polyhedra_hpolyhedron()
+end end  # quote / load_polyhedra_hpolyhedron()
 
 function is_hyperplanar(P::HPolyhedron)
     clist = P.constraints
