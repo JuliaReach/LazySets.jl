@@ -195,7 +195,7 @@ end
 # alias with HPolyhedron type as second argument
 function overapproximate(X::LazySet, ::Type{<:HPolyhedron},
                          dirs::AbstractDirections; prune::Bool=true)
-    H = _overapproximate_directions(X, dir, prune)
+    H = _overapproximate_directions(X, dirs, prune)
     return HPolyhedron(H)
 end
 
