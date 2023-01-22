@@ -170,9 +170,13 @@ for N in [Float64]
     # default algorithm
     @test ρ(d, X ∩ H) < 1e-6 && ρ(d, H ∩ X) < 1e-6
 
-    # specify  line search algorithm
+    # specify line-search algorithm
     @test ρ(d, X ∩ H, algorithm="line_search") < 1e-6 &&
         ρ(d, H ∩ X, algorithm="line_search") < 1e-6
+    # test approximation errors (see #1144)
+    B = Hyperrectangle(N[0.009231278330571413, 0], N[0.009231221669425305, 1])
+    H = HalfSpace(N[1, 0], N(0))
+    @test ρ([1.0, 0], B ∩ H) >= 0
 
     # boundedness
     @test isbounded(HalfSpace(N[1], N(1)) ∩ HalfSpace(N[-1], N(1)))
