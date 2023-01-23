@@ -1,3 +1,5 @@
+using Polyhedra
+
 # generate a tridiagonal matrix
 function tridiagm(a, b, c, n)
     dd, du = ones(n), ones(n - 1)
@@ -22,5 +24,19 @@ for set_type in (Ball1, BallInf, Hyperrectangle)
         Y = A * X
         SUITE["ρ"]["LinearMap of $(string(set_type))", "dense", n] = @benchmarkable ρ($d, $Y)
         SUITE["σ"]["LinearMap of $(string(set_type))", "dense", n] = @benchmarkable σ($d, $Y)
+    end
+end
+
+
+N = Float64
+for set_type in (HPolytope, HPolyhedron)
+    for n in (2, 5, 10)
+        rng = MersenneTwister(n)
+        d = rand(rng, n)
+        X = rand(set_type, dim=n, rng=rng)
+        SUITE["ρ"]["LP $(string(set_type))", "dense", n] = @benchmarkable ρ($d, $X)
+        SUITE["σ"]["LP $(string(set_type))", "dense", n] = @benchmarkable σ($d, $X)
+        SUITE["ρ"]["Halfspace dir $(string(set_type))", "dense", n] = @benchmarkable ρ($d, $X; algorithm=$("halfspace_direction"))
+        SUITE["σ"]["Halfspace dir $(string(set_type))", "dense", n] = @benchmarkable σ($d, $X; algorithm=$("halfspace_direction"))
     end
 end

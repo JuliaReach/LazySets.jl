@@ -107,10 +107,24 @@ given direction.
 The evaluation of the support function for the polyhedron.
 If a polytope is unbounded in the given direction, we throw an error.
 If a polyhedron is unbounded in the given direction, the result is `Inf`.
+
+### Algorithm
+
+See `σ(d::AbstractVector{M}, P::HPoly{N}; algorithm::String="lp", solver=default_lp_solver(M, N))` for details.
 """
 function ρ(d::AbstractVector{M}, P::HPoly{N};
+           algorithm::String="lp",
            solver=default_lp_solver(M, N)) where {M, N}
-    lp, unbounded = σ_helper(d, P, solver)
+
+    if algorithm == "lp"
+        (lp, unbounded) = σ_helper_lp(d, P, solver)
+        res = lp.sol
+    elseif algorithm == "halfspace_direction"
+        (res, unbounded) = σ_helper_halfspace_direction(d, P)
+    else
+        throw(ArgumentError("unknown algorithm $algorithm"))
+    end
+
     if unbounded
         if P isa HPolytope
             error("the support function in direction $(d) is undefined " *
@@ -118,7 +132,7 @@ function ρ(d::AbstractVector{M}, P::HPoly{N};
         end
         return N(Inf)
     end
-    return dot(d, lp.sol)
+    return dot(d, res)
 end
 
 """
@@ -130,10 +144,17 @@ direction.
 
 ### Input
 
-- `d`      -- direction
-- `P`      -- polyhedron in constraint representation
-- `solver` -- (optional, default: `default_lp_solver(M, N)`) the backend used to
-              solve the linear program
+- `d`         -- direction
+- `P`         -- polyhedron in constraint representation
+- `algorithm` -- (optional, default: "lp") algorithm used to find the support vector
+              in the given direction; for description see the Algorithm section below.
+              Possible choices are
+
+    - `"lp"`
+    - `"halfspace_direction"`
+
+- `solver`    -- (optional, default: `default_lp_solver(M, N)`) the backend used to
+              solve the linear program for the "lp" algorithm.
 
 ### Output
 
@@ -141,10 +162,61 @@ The support vector in the given direction.
 If a polytope is unbounded in the given direction, we throw an error.
 If a polyhedron is unbounded in the given direction, the result contains `±Inf`
 entries.
+
+### Algorithm
+
+This method applies either a LP-based approach or an approach based on direction of
+halfspaces. The default is to apply the LP-based approach. This is the safer algorithm
+as it works correctly for `HPoly` with redundant constraints, i.e. if `P` is empty or
+has redudant constraints, then the approach based on halfspace directions is not
+guaranteed to produce a correct result. 
+
+#### LP
+
+This algorithm solves the following program ``\\min_{Hx \\leq h} -d^\\mathrm{T} x``. If
+both the primal and dual are feasible, the optimal value of x is the support vector.
+If the primal is infeasible, then `P` is empty, and an error is thrown. If the dual is
+infeasible, then the primal is unbounded meaning that the polyhedron is unbounded in 
+the given direction. An infeasibility certificate is used to find the sign of the
+resuling vector of `±Inf`.
+
+#### Halfspace normal vector directions
+
+Note: This algorithm only applies if the `P` contains no redundant constraints. If not,
+this algorithm is not guaranteed to produce a correct result.
+
+This algorithm is solves the problem of finding support vectors by analyzing the normal
+vectors of halfspace constraints. The algorithm relies on the following three key insights:
+
+1. The support vector will always be a vertex or unbounded.
+2. The `dim(P)` constraints with the smallest angle to `d` will constraint the vertex ``x``
+   maximizing ``d^\\mathrm{T}x``.
+3. If the angle between `d` and the normal vector of a halfspace is greater than 
+   ``90^{\\circ}``, then that halfspace cannot constraint the optimal vertex ``x``.
+
+Following this train of thought, the algorithm finds the `dim(P)` constraints with the
+largest  ``\\cos(\\theta) = \\frac{\\langle a, d \\rangle}{\\lVert a \\rVert \\lVert d \\rVert}``
+where ``a`` is the normal vector. Let ``A x \\leq b`` be the system of linear inequalities
+representing the selected constraints. Then only one ``x`` satisfying ``A x = b`` exists,
+which is the support vector and can be found efficently using 
+[factorization](https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#man-linalg-factorizations).
+If fewer than `dim(P)` constraints have a positive ``\\cos(\\theta)``, then the polyhedron is
+unbounded in the given direction.
 """
 function σ(d::AbstractVector{M}, P::HPoly{N};
+           algorithm::String="lp",
            solver=default_lp_solver(M, N)) where {M, N}
-    lp, unbounded = σ_helper(d, P, solver)
+    if algorithm == "lp"
+        return σ_lp(d, P, solver)
+    elseif algorithm == "halfspace_direction"
+        return σ_halfspace_direction(d, P)
+    else
+        throw(ArgumentError("unknown algorithm $algorithm"))
+    end
+end
+
+function σ_lp(d::AbstractVector{M}, P::HPoly{N}, solver) where {M, N}
+    lp, unbounded = σ_helper_lp(d, P, solver)
     if unbounded
         if P isa HPolytope
             error("the support vector in direction $(d) is undefined because " *
@@ -174,7 +246,7 @@ function σ(d::AbstractVector{M}, P::HPoly{N};
     end
 end
 
-function σ_helper(d::AbstractVector, P::HPoly, solver)
+function σ_helper_lp(d::AbstractVector, P::HPoly, solver)
     # represent c = -d as a Vector since GLPK does not accept sparse vectors
     # (see #1011)
     c = to_negative_vector(d)
@@ -200,6 +272,70 @@ function σ_helper(d::AbstractVector, P::HPoly, solver)
         end
     end
     return (lp, unbounded)
+end
+
+function σ_halfspace_direction(d::AbstractVector{M}, P::HPoly{N}) where {M, N}
+    res, unbounded = σ_helper_halfspace_direction(d::AbstractVector, P::HPoly)
+
+    if unbounded
+        if P isa HPolytope
+            error("the support vector in direction $(d) is undefined because " *
+                    "the polytope is unbounded")
+        end
+
+        ray = res
+        res = Vector{N}(undef, length(ray))
+        @inbounds for i in 1:length(ray)
+            if ray[i] == zero(N)
+                res[i] = zero(N)
+            elseif ray[i] > zero(N)
+                res[i] = N(Inf)
+            else
+                res[i] = N(-Inf)
+            end
+        end
+    end
+    return res
+end
+
+
+function σ_helper_halfspace_direction(d::AbstractVector, P::HPoly)
+    constraints = constraints_list(P)
+
+    if length(constraints) == 0
+        res = d
+        unbounded = true
+    else
+        # Copy d as this method should not mutate d or P.
+        d = LinearAlgebra.normalize(d)
+
+        # Since norm(d) == 1.0, we can ignore it in the denomiator
+        # Profview reveals that dot and norm are the bottlenecks
+        # of the entire σ computation with this algorithm.
+        cosine_to_d(h) = dot(h.a, d) / norm(h.a)
+        
+        # If cos is non-positive then the normal vector is orthogonal
+        # to or pointing away from d and cannot bound d.
+        @inline ispositive(x) = x > 0
+
+        constraints = map(h -> (cosine_to_d(h), h), constraints)
+        filter!(ispositive ∘ first, constraints)
+        
+        if length(constraints) > dim(P)
+            # It might be possible to improve the performance of this 
+            # using a min-heap, keeping it at most dim(p) large.
+            partialsort!(constraints, dim(P), by=first, rev=true)
+            constraints = constraints[1:dim(P)]
+        end
+
+        constraints = map(last, constraints)
+
+        unbounded = length(constraints) < dim(P)
+        (A, b) = tosimplehrep(constraints)
+        res = A \ b
+    end
+
+    return res, unbounded
 end
 
 """

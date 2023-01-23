@@ -41,6 +41,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # support vector of polyhedron with no constraints
     @test σ(N[1], p_univ) == N[Inf]
+    @test σ(N[1], p_univ; algorithm="halfspace_direction") == N[Inf]
 
     # is_polyhedral
     @test is_polyhedral(p)
@@ -192,12 +193,24 @@ for N in [Float64]
     # support vector
     d = N[1, 0]
     @test σ(d, p) == N[4, 2]
+    @test σ(d, p; algorithm="halfspace_direction") == N[4, 2]
+    @test ρ(d, p) == 4.0
+    @test ρ(d, p; algorithm="halfspace_direction") == 4.0
     d = N[0, 1]
     @test σ(d, p) == N[2, 4]
+    @test σ(d, p; algorithm="halfspace_direction") == N[2, 4]
+    @test ρ(d, p) == 4.0
+    @test ρ(d, p; algorithm="halfspace_direction") == 4.0
     d = N[-1, 0]
     @test σ(d, p) == N[-1, 1]
+    @test σ(d, p; algorithm="halfspace_direction") == N[-1, 1]
+    @test ρ(d, p) == 1.0
+    @test ρ(d, p; algorithm="halfspace_direction") == 1.0
     d = N[0, -1]
     @test σ(d, p) == N[0, 0]
+    @test σ(d, p; algorithm="halfspace_direction") == N[0, 0]
+    @test ρ(d, p) == 0.0
+    @test ρ(d, p; algorithm="halfspace_direction") == 0.0
 
     # membership
     @test [Inf, Inf] ∉ p
@@ -227,6 +240,8 @@ for N in [Float64]
         d = N[1, 0]
         @test σ(d, p_unbounded)[1] == N(Inf)
         @test ρ(d, p_unbounded) == N(Inf)
+        @test σ(d, p_unbounded; algorithm="halfspace_direction")[1] == N(Inf)
+        @test ρ(d, p_unbounded; algorithm="halfspace_direction") == N(Inf)
         @test_throws ErrorException σ(N[1], p_infeasible)
 
         # isempty
