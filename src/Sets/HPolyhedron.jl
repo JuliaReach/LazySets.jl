@@ -312,7 +312,7 @@ function σ_helper_halfspace_direction(d::AbstractVector, P::HPoly)
         # Since norm(d) == 1.0, we can ignore it in the denomiator
         # Profview reveals that dot and norm are the bottlenecks
         # of the entire σ computation with this algorithm.
-        cosine_to_d(h) = dot(h.a, d) / norm(h.a)
+        @inline cosine_to_d(h) = dot(h.a, d) / norm(h.a)
         
         # If cos is non-positive then the normal vector is orthogonal
         # to or pointing away from d and cannot bound d.
@@ -330,9 +330,18 @@ function σ_helper_halfspace_direction(d::AbstractVector, P::HPoly)
 
         constraints = map(last, constraints)
 
-        unbounded = length(constraints) < dim(P)
-        (A, b) = tosimplehrep(constraints)
-        res = A \ b
+        if length(constraints) < dim(P)
+            unbounded = true
+            # Project d onto Ax ≤ 0 polyhedral cone
+            res = d
+            @inbounds for h in constraints
+                res -= h.a * dot(h.a, res) / norm(h.a)^2
+            end
+        else
+            unbounded = false
+            (A, b) = tosimplehrep(constraints)
+            res = A \ b
+        end
     end
 
     return res, unbounded

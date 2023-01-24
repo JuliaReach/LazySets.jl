@@ -242,6 +242,13 @@ for N in [Float64]
         @test ρ(d, p_unbounded) == N(Inf)
         @test σ(d, p_unbounded; algorithm="halfspace_direction")[1] == N(Inf)
         @test ρ(d, p_unbounded; algorithm="halfspace_direction") == N(Inf)
+
+        d = N[-1, 1]
+        @test σ(d, p_unbounded)[2] == N(Inf)
+        @test ρ(d, p_unbounded) == N(Inf)
+        @test σ(d, p_unbounded; algorithm="halfspace_direction")[2] == N(Inf)
+        @test ρ(d, p_unbounded; algorithm="halfspace_direction") == N(Inf)
+
         @test_throws ErrorException σ(N[1], p_infeasible)
 
         # isempty
