@@ -300,6 +300,10 @@ for N in [Float64, Float32]
     H = Hyperplane(N[-2, 1], N(-1//2))
     Z2 = Zonotope(N[1.296, 2.092], N[1.592 0.816 0.04 -0.092 -0.296; 3.184 1.632 0.08 -0.184 -0.592])
     @test overapproximate(Z ∩ H, Zonotope) ≈ Z2
+
+    # overapproximation with HPolyhedron
+    H = HalfSpace(N[1, 0], N(1))
+    @test overapproximate(H, HPolyhedron, BoxDirections{N}(2)) == HPolyhedron([H])
 end
 
 for N in [Float64]

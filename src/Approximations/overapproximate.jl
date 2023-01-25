@@ -135,7 +135,7 @@ overapproximate(∅::EmptySet, ::Type{<:HPolygon}, ::Real=Inf; kwargs...) = ∅
 overapproximate(∅::EmptySet, ::Type{<:EmptySet}, args...; kwargs...) = ∅
 
 """
-    overapproximate(X::LazySet{N}, dir::AbstractDirections;
+    overapproximate(X::LazySet{N}, dirs::AbstractDirections;
                     [prune]::Bool=true) where {N}
 
 Overapproximate a (possibly unbounded) set with template directions.
@@ -143,21 +143,21 @@ Overapproximate a (possibly unbounded) set with template directions.
 ### Input
 
 - `X`     -- set
-- `dir`   -- directions
+- `dirs`  -- directions
 - `prune` -- (optional, default: `true`) flag for removing redundant constraints
 
 ### Output
 
-A polyhedron overapproximating the set `X` with the directions from `dir`. The
+A polyhedron overapproximating the set `X` with the directions from `dirs`. The
 overapproximation is computed using the support function.
 The result is an `HPolytope` if it is bounded and otherwise an `HPolyhedron`.
 """
-function overapproximate(X::LazySet, dir::AbstractDirections; prune::Bool=true)
-    H = _overapproximate_directions(X, dir, prune)
+function overapproximate(X::LazySet, dirs::AbstractDirections; prune::Bool=true)
+    H = _overapproximate_directions(X, dirs, prune)
 
     # if input is bounded and directions are bounding => output is bounded
     # otherwise, check boundedness of the output
-    if (isbounded(X) && isbounding(dir)) || _isbounded_stiemke(H)
+    if (isbounded(X) && isbounding(dirs)) || _isbounded_stiemke(H)
         return HPolytope(H, check_boundedness=false)
     else
         return HPolyhedron(H)
@@ -165,12 +165,12 @@ function overapproximate(X::LazySet, dir::AbstractDirections; prune::Bool=true)
 end
 
 function _overapproximate_directions(X::LazySet{N},
-                                     dir::AbstractDirections{N, VN},
+                                     dirs::AbstractDirections{N, VN},
                                      prune::Bool) where {N, VN}
     H = Vector{HalfSpace{N, VN}}()
-    sizehint!(H, length(dir))
+    sizehint!(H, length(dirs))
 
-    for d in dir
+    for d in dirs
         sf = ρ(d, X)
         if !isinf(sf)
             push!(H, HalfSpace(d, sf))
@@ -206,42 +206,42 @@ overapproximate(∅::EmptySet, ::Type{<:HPolyhedron}, dirs::AbstractDirections;
                 prune::Bool=true) = ∅
 
 """
-    overapproximate(X::LazySet{N}, dir::Type{<:AbstractDirections}) where {N}
+    overapproximate(X::LazySet{N}, dirs::Type{<:AbstractDirections}) where {N}
 
 Overapproximate a set with template directions.
 
 ### Input
 
-- `X`   -- set
-- `dir` -- type of direction representation
+- `X`    -- set
+- `dirs` -- type of direction representation
 
 ### Output
 
-A polyhedron overapproximating the set `X` with the directions from `dir`.
+A polyhedron overapproximating the set `X` with the directions from `dirs`.
 The result is an `HPolytope` if it is bounded and otherwise an `HPolyhedron`.
 """
 function overapproximate(X::LazySet{N},
-                         dir::Type{<:AbstractDirections}; kwargs...) where {N}
-    return overapproximate(X, dir{N}(dim(X)); kwargs...)
+                         dirs::Type{<:AbstractDirections}; kwargs...) where {N}
+    return overapproximate(X, dirs{N}(dim(X)); kwargs...)
 end
 
 # disambiguation
-overapproximate(∅::EmptySet, dir::Type{<:AbstractDirections}; kwargs...) = ∅
-overapproximate(∅::EmptySet, dir::AbstractDirections; prune::Bool=true) = ∅
+overapproximate(∅::EmptySet, dirs::Type{<:AbstractDirections}; kwargs...) = ∅
+overapproximate(∅::EmptySet, dirs::AbstractDirections; prune::Bool=true) = ∅
 
 function overapproximate_cap_helper(X::LazySet,
                                     P::AbstractPolyhedron,  # polyhedron
-                                    dir::AbstractDirections;
+                                    dirs::AbstractDirections;
                                     kwargs...
                                    )
     Hi = constraints_list(P)
     m = length(Hi)
     N = promote_type(eltype(X), eltype(P))
     constraints = Vector{HalfSpace{N, Vector{N}}}() # TODO: use directions type, see #2031
-    sizehint!(constraints, length(dir))
+    sizehint!(constraints, length(dirs))
     return_type = HPolytope
 
-    for di in dir
+    for di in dirs
         ρ_X_Hi_min = ρ(di, X ∩ Hi[1], kwargs...)
         for i in 2:m
             ρ_X_Hi = ρ(di, X ∩ Hi[i], kwargs...)
@@ -261,7 +261,7 @@ end
 
 """
     overapproximate(cap::Intersection{N, <:LazySet, <:AbstractPolyhedron},
-                    dir::AbstractDirections;
+                    dirs::AbstractDirections;
                     kwargs...
                    ) where {N}
 
@@ -270,22 +270,22 @@ template directions.
 
 ### Input
 
-- `cap`         -- intersection of a set and a polyhedron
-- `dir`         -- template directions
-- `kwargs`      -- additional arguments that are passed to the support function
-                   algorithm
+- `cap`    -- intersection of a set and a polyhedron
+- `dirs`   -- template directions
+- `kwargs` -- additional arguments that are passed to the support function
+              algorithm
 
 ### Output
 
 A polytope or polyhedron in H-representation such that the normal direction of
-each half-space is given by an element of `dir`.
+each half-space is given by an element of `dirs`.
 
 ### Algorithm
 
-Let `di` be a direction drawn from the set of template directions `dir`.
+Let `di` be a direction drawn from the set of template directions `dirs`.
 Let `X` be the set and let `P` be the polyhedron. We overapproximate the set
 `X ∩ H` with a polytope or polyhedron in constraint representation using a given
-set of template directions `dir`.
+set of template directions `dirs`.
 
 The idea is to solve the univariate optimization problem `ρ(di, X ∩ Hi)` for
 each half-space of the set `P` and then take the minimum.
@@ -306,66 +306,66 @@ Computations with Support Functions*. ADHS 2012.
 function overapproximate(cap::Intersection{N,  # TODO use better mechanism to detect polyhedral set
                                            <:LazySet,
                                            <:AbstractPolyhedron},
-                         dir::AbstractDirections;
+                         dirs::AbstractDirections;
                          kwargs...
                         ) where {N}
-    return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
+    return overapproximate_cap_helper(cap.X, cap.Y, dirs; kwargs...)
 end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
                                            <:AbstractPolyhedron,
                                            <:LazySet},
-                         dir::AbstractDirections;
+                         dirs::AbstractDirections;
                          kwargs...
                         ) where {N}
-    return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
+    return overapproximate_cap_helper(cap.Y, cap.X, dirs; kwargs...)
 end
 
 # disambiguation
 function overapproximate(cap::Intersection{N,
                                            <:AbstractPolyhedron,
                                            <:AbstractPolyhedron},
-                         dir::AbstractDirections;
+                         dirs::AbstractDirections;
                          kwargs...
                         ) where {N}
     # important: the result may not be a polytope!
-    return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
+    return overapproximate_cap_helper(cap.X, cap.Y, dirs; kwargs...)
 end
 
 # disambiguation
 function overapproximate(cap::Intersection{N,
                                            <:AbstractPolytope,
                                            <:AbstractPolyhedron},
-                         dir::AbstractDirections;
+                         dirs::AbstractDirections;
                          kwargs...
                         ) where {N}
-    return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
+    return overapproximate_cap_helper(cap.X, cap.Y, dirs; kwargs...)
 end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
                                            <:AbstractPolyhedron,
                                            <:AbstractPolytope},
-                         dir::AbstractDirections;
+                         dirs::AbstractDirections;
                          kwargs...
                         ) where {N}
-    return overapproximate_cap_helper(cap.Y, cap.X, dir; kwargs...)
+    return overapproximate_cap_helper(cap.Y, cap.X, dirs; kwargs...)
 end
 
 # disambiguation
 function overapproximate(cap::Intersection{N,
                                            <:AbstractPolytope,
                                            <:AbstractPolytope},
-                         dir::AbstractDirections;
+                         dirs::AbstractDirections;
                          kwargs...
                         ) where {N}
-    return overapproximate_cap_helper(cap.X, cap.Y, dir; kwargs...)
+    return overapproximate_cap_helper(cap.X, cap.Y, dirs; kwargs...)
 end
 
 """
     overapproximate(cap::Intersection{N, <:HalfSpace, <:AbstractPolytope},
-                    dir::AbstractDirections;
+                    dirs::AbstractDirections;
                     [kwargs]...
                    ) where {N}
 
@@ -374,37 +374,37 @@ of template directions.
 
 ### Input
 
-- `cap`         -- intersection of a half-space and a polytope
-- `dir`         -- template directions
-- `kwargs`      -- additional arguments that are passed to the support function
-                   algorithm
+- `cap`    -- intersection of a half-space and a polytope
+- `dirs`   -- template directions
+- `kwargs` -- additional arguments that are passed to the support function
+              algorithm
 
 ### Output
 
 A polytope in H-representation such that the normal direction of each half-space
-is given by an element of `dir`.
+is given by an element of `dirs`.
 """
 function overapproximate(cap::Intersection{N,
                                            <:HalfSpace,
                                            <:AbstractPolytope},
-                         dir::AbstractDirections;
+                         dirs::AbstractDirections;
                          kwargs...
                         ) where {N}
     H = HPolytope{N, Vector{N}}()
     c = H.constraints
     push!(c, _normal_Vector(cap.X))
     append!(c, _normal_Vector(cap.Y))
-    return overapproximate(H, dir; kwargs...)
+    return overapproximate(H, dirs; kwargs...)
 end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
                                            <:AbstractPolytope,
                                            <:HalfSpace},
-                         dir::AbstractDirections;
+                         dirs::AbstractDirections;
                          kwargs...
                         ) where {N}
-    return overapproximate(swap(cap), dir; kwargs...)
+    return overapproximate(swap(cap), dirs; kwargs...)
 end
 
 function overapproximate(P::SimpleSparsePolynomialZonotope,
