@@ -178,7 +178,7 @@ infeasible, then the primal is unbounded meaning that the polyhedron is unbounde
 the given direction. An infeasibility certificate is used to find the sign of the
 resuling vector of `±Inf`.
 
-#### Halfspace normal vector directions
+#### Half-space normal vector directions
 
 Note: This algorithm only applies if `P` contains no redundant constraints.
 
@@ -192,13 +192,18 @@ relies on the following three key insights:
    ``90^{\\circ}``, then that half-space cannot constrain the optimal vertex ``x``.
 
 Following this train of thought, the algorithm finds the `dim(P)` constraints with the
-largest  ``\\cos(\\theta) = \\frac{\\langle a, d \\rangle}{\\lVert a \\rVert \\lVert d \\rVert}``
+smallestabsolute angle to `d`. To avoid computations, observe that for an angle
+``-\\pi <= \\theta <= \\pi``, the mapping from ``|\\theta|`` to ``\\cos(\\theta)`` is
+monotone decreasing. Hence, the algorithm instead finds the `dim(P)` constraints with the
+largest ``\\cos(\\theta) = \\frac{\\langle a, d \\rangle}{\\lVert a \\rVert \\lVert d \\rVert}``
 where ``a`` is the normal vector. Let ``A x \\leq b`` be the system of linear inequalities
 representing the selected constraints. Then only one ``x`` satisfying ``A x = b`` exists,
 which is the support vector and can be found efficently using 
 [factorization](https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/#man-linalg-factorizations).
 If fewer than `dim(P)` constraints have a positive ``\\cos(\\theta)``, then the polyhedron is
-unbounded in the given direction.
+unbounded in the given direction. To determine for each dimension whether to return `+Inf` or 
+`-Inf`, `d` is projected onto the polyhedral cone ``A x \\leq 0`` iteratively over constraints
+(at most `dim(P)` iterations).
 """
 function σ(d::AbstractVector{M}, P::HPoly{N};
            algorithm::String="lp",
