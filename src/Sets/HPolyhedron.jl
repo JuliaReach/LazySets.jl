@@ -308,20 +308,22 @@ function σ_helper_halfspace_direction(d::AbstractVector, P::HPoly)
         res = d
         unbounded = true
     else
-        # Copy d as this method should not mutate d or P.
+        # Copy `d` as this method should not mutate `d` or `P`.
         d = LinearAlgebra.normalize(d)
 
-        # Since norm(d) == 1.0, we can ignore it in the denomiator
+        # Since `norm(d) == 1.0`, we can ignore it in the denomiator
         # Profview reveals that dot and norm are the bottlenecks
         # of the entire σ computation with this algorithm.
         @inline cosine_to_d(h) = dot(h.a, d) / norm(h.a)
         
-        # If cos is non-positive then the normal vector is orthogonal
-        # to or pointing away from d and cannot bound d.
-        @inline ispositive(x) = x > 0
+        # If cos is negative then the normal vector is pointing
+        # away from d and cannot bound d. A normal vector orthogonal
+        # to `d` can possibly bound `σ` if there exists another
+        # normal vector `a` such that `d = λ a` for some `λ > 0`. 
+        @inline isnonegative(x) = x >= 0
 
         constraints = map(h -> (cosine_to_d(h), h), constraints)
-        filter!(ispositive ∘ first, constraints)
+        filter!(isnonegative ∘ first, constraints)
         
         if length(constraints) > dim(P)
             # It might be possible to improve the performance of this 
