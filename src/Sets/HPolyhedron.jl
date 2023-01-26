@@ -165,11 +165,9 @@ entries.
 
 ### Algorithm
 
-This method applies either a LP-based approach or an approach based on direction of
-halfspaces. The default is to apply the LP-based approach. This is the safer algorithm
-as it works correctly for `HPoly` with redundant constraints, i.e. if `P` is empty or
-has redudant constraints, then the approach based on halfspace directions is not
-guaranteed to produce a correct result. 
+This method applies either an LP-based approach or an approach based on direction of
+half-spaces. The default is to apply the LP-based approach. This is the safer algorithm,
+as it works correctly for `HPoly` with redundant constraints or if `P` is empty.
 
 #### LP
 
@@ -182,17 +180,16 @@ resuling vector of `±Inf`.
 
 #### Halfspace normal vector directions
 
-Note: This algorithm only applies if the `P` contains no redundant constraints. If not,
-this algorithm is not guaranteed to produce a correct result.
+Note: This algorithm only applies if `P` contains no redundant constraints.
 
-This algorithm is solves the problem of finding support vectors by analyzing the normal
-vectors of halfspace constraints. The algorithm relies on the following three key insights:
+This algorithm analyzes the normal vectors of the half-space constraints and
+relies on the following three key insights:
 
 1. The support vector will always be a vertex or unbounded.
-2. The `dim(P)` constraints with the smallest angle to `d` will constraint the vertex ``x``
-   maximizing ``d^\\mathrm{T}x``.
-3. If the angle between `d` and the normal vector of a halfspace is greater than 
-   ``90^{\\circ}``, then that halfspace cannot constraint the optimal vertex ``x``.
+2. The `dim(P)` constraints with the smallest angle to `d` will constrain the
+   vertex ``x`` maximizing ``d^\\mathrm{T}x``.
+3. If the angle between `d` and the normal vector of a half-space is greater than 
+   ``90^{\\circ}``, then that half-space cannot constrain the optimal vertex ``x``.
 
 Following this train of thought, the algorithm finds the `dim(P)` constraints with the
 largest  ``\\cos(\\theta) = \\frac{\\langle a, d \\rangle}{\\lVert a \\rVert \\lVert d \\rVert}``
