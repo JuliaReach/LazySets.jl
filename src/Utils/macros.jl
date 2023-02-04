@@ -1,7 +1,7 @@
 """
     @neutral(SET, NEUT)
 
-Create functions to make a lazy set operation commutative with a given
+Create methods to make a lazy set operation commutative with a given
 neutral-element set type.
 
 ### Input
@@ -21,7 +21,7 @@ been used in advance).
 
 ### Examples
 
-`@neutral(MinkowskiSum, N)` creates at least the following functions:
+`@neutral(MinkowskiSum, N)` creates at least the following methods:
 * `neutral(::MinkowskiSum) = N`
 * `MinkowskiSum(X, N) = X`
 * `MinkowskiSum(N, X) = X`
@@ -71,7 +71,7 @@ end
 """
     @absorbing(SET, ABS)
 
-Create functions to make a lazy set operation commutative with a given
+Create methods to make a lazy set operation commutative with a given
 absorbing-element set type.
 
 ### Input
@@ -91,7 +91,7 @@ been used in advance).
 
 ### Examples
 
-`@absorbing(MinkowskiSum, A)` creates at least the following functions:
+`@absorbing(MinkowskiSum, A)` creates at least the following methods:
 * `absorbing(::MinkowskiSum) = A`
 * `MinkowskiSum(X, A) = A`
 * `MinkowskiSum(A, X) = A`
@@ -141,7 +141,7 @@ end
 """
     @declare_array_version(SET, SETARR)
 
-Create functions to connect a lazy set operation with its array set type.
+Create methods to connect a lazy set operation with its array set type.
 
 ### Input
 
@@ -161,7 +161,7 @@ type).
 ### Examples
 
 `@declare_array_version(MinkowskiSum, MinkowskiSumArray)` creates at least the
-following functions:
+following methods:
 * `array_constructor(::MinkowskiSum) = MinkowskiSumArray`
 * `is_array_constructor(::MinkowskiSumArray) = true`
 * `MinkowskiSum!(X, Y)`
@@ -228,7 +228,7 @@ end
 """
     @neutral_absorbing(SET, NEUT, ABS)
 
-Create two functions to avoid method ambiguities for a lazy set operation with
+Create two methods to avoid method ambiguities for a lazy set operation with
 respect to neutral-element and absorbing-element set types.
 
 ### Input
@@ -247,7 +247,7 @@ This macro is used internally in other macros.
 
 ### Examples
 
-`@neutral_absorbing(MinkowskiSum, N, A)` creates the following functions as
+`@neutral_absorbing(MinkowskiSum, N, A)` creates the following methods as
 quoted expressions:
 * `MinkowskiSum(N, A) = A`
 * `MinkowskiSum(A, N) = A`
@@ -266,7 +266,7 @@ end
 """
     @array_neutral(FUN, NEUT, SETARR)
 
-Create two functions to avoid method ambiguities for a lazy set operation with
+Create two methods to avoid method ambiguities for a lazy set operation with
 respect to the neutral-element set type and the array set type.
 
 ### Input
@@ -281,7 +281,7 @@ A quoted expression containing the function definitions.
 
 ### Examples
 
-`@array_neutral(MinkowskiSum, N, ARR)` creates the following functions as
+`@array_neutral(MinkowskiSum, N, ARR)` creates the following methods as
 quoted expressions:
 * `MinkowskiSum(N, ARR) = ARR`
 * `MinkowskiSum(ARR, N) = ARR`
@@ -300,7 +300,7 @@ end
 """
     @array_absorbing(FUN, ABS, SETARR)
 
-Create two functions to avoid method ambiguities for a lazy set operation with
+Create two methods to avoid method ambiguities for a lazy set operation with
 respect to the absorbing-element set type and the array set type.
 
 ### Input
@@ -315,7 +315,7 @@ A quoted expression containing the function definitions.
 
 ### Examples
 
-`@array_absorbing(MinkowskiSum, ABS, ARR)` creates the following functions as
+`@array_absorbing(MinkowskiSum, ABS, ARR)` creates the following methods as
 quoted expressions:
 * `MinkowskiSum(ABS, ARR) = ABS`
 * `MinkowskiSum(ARR, ABS) = ABS`

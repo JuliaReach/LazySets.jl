@@ -25,7 +25,8 @@ If ``X ⊆ \\mathbb{R}^n`` and ``Y ⊆ \\mathbb{R}^m``, then ``Z`` is
 See also [`CartesianProductArray`](@ref) for an implementation of a Cartesian
 product of more than two sets.
 
-The `EmptySet` is the absorbing element for `CartesianProduct`.
+The `EmptySet` is the almost absorbing element for `CartesianProduct` (except
+that the dimension is adapted).
 
 The Cartesian product preserves convexity: if the set arguments are convex, then
 their Cartesian product is convex as well.
@@ -74,8 +75,17 @@ isconvextype(::Type{CartesianProduct{N, S1, S2}}) where {N, S1, S2} =
 
 is_polyhedral(cp::CartesianProduct) = is_polyhedral(cp.X) && is_polyhedral(cp.Y)
 
-# EmptySet is the absorbing element for CartesianProduct
-@absorbing(CartesianProduct, EmptySet)
+# EmptySet is almost the absorbing element for CartesianProduct, but it should
+# sum up the dimension of both set arguments
+@commutative function CartesianProduct(X::LazySet, ∅::EmptySet)
+    N = promote_type(eltype(X), eltype(∅))
+    return EmptySet{N}(dim(X) + dim(∅))
+end
+function CartesianProduct(∅1::EmptySet, ∅2::EmptySet)
+    N = promote_type(eltype(∅1), eltype(∅2))
+    return EmptySet{N}(dim(∅1) + dim(∅2))
+end
+
 
 """
 ```

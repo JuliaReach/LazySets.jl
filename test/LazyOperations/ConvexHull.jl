@@ -129,6 +129,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test neutral(ConvexHull) == neutral(ConvexHullArray) == EmptySet
     @test CH(b1, e) == CH(e, b1) == b1
     @test CH(cha, e) == CH(e, cha) == cha
+    @test CH(e, e) == e
 
     # vertices list
     B1 = BallInf(zeros(N, 2), N(1))
