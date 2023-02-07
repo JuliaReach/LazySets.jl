@@ -219,7 +219,7 @@ for N in [Float64]
     @test isbounded(p)
 
     if test_suite_polyhedra
-        p_unbounded = HPolyhedron([LinearConstraint(N[-1, 0], N(0))])
+        p_unbounded = HPolyhedron([LinearConstraint(N[-1, 0], N(-1))])
         p_infeasible = HPolyhedron([LinearConstraint(N[1], N(0)),
                                     LinearConstraint(N[-1], N(-1))])
 
@@ -228,6 +228,9 @@ for N in [Float64]
         @test σ(d, p_unbounded)[1] == N(Inf)
         @test ρ(d, p_unbounded) == N(Inf)
         @test_throws ErrorException σ(N[1], p_infeasible)
+        d = N[-1, 1]  # unbounded in y direction, but x value matters
+        @test σ(d, p_unbounded) == N[1, Inf]
+        @test ρ(d, p_unbounded) == N(Inf)
 
         # isempty
         @test !isempty(p_unbounded)

@@ -150,28 +150,34 @@ function σ(d::AbstractVector{M}, P::HPoly{N};
             error("the support vector in direction $(d) is undefined because " *
                   "the polytope is unbounded")
         end
-        # construct the solution from the solver's ray result
-        if lp == nothing
-            ray = d
-        elseif has_lp_infeasibility_ray(lp.model)
-            ray = lp.sol  # infeasibility ray is stored as the solution
-        else
-            error("LP solver did not return an infeasibility ray")
-        end
-        res = Vector{N}(undef, length(ray))
-        @inbounds for i in 1:length(ray)
-            if ray[i] == zero(N)
-                res[i] = zero(N)
-            elseif ray[i] > zero(N)
-                res[i] = N(Inf)
-            else
-                res[i] = N(-Inf)
-            end
-        end
-        return res
+        return _σ_unbounded_lp(d, P, lp)
     else
         return lp.sol
     end
+end
+
+# construct the solution from the solver's ray result
+function _σ_unbounded_lp(d, P::HPoly{N}, lp) where {N}
+    if lp == nothing
+        ray = d
+    elseif has_lp_infeasibility_ray(lp.model)
+        ray = lp.sol  # infeasibility ray is stored as the solution
+    else
+        error("LP solver did not return an infeasibility ray")
+    end
+
+    res = Vector{N}(undef, length(ray))
+    e = isempty(P.constraints) ? zeros(N, length(ray)) : an_element(P)
+    @inbounds for i in eachindex(ray)
+        if isapproxzero(ray[i])
+            res[i] = e[i]
+        elseif ray[i] > zero(N)
+            res[i] = N(Inf)
+        else
+            res[i] = N(-Inf)
+        end
+    end
+    return res
 end
 
 function σ_helper(d::AbstractVector, P::HPoly, solver)
