@@ -1671,10 +1671,73 @@ function load_polyhedra_lazyset()  # function to be loaded by Requires
 return quote
 # see the interface file init_Polyhedra.jl for the imports
 
-# convert to HPolyhedron to ensure `polyhedron` is applicable (TODO see #1505)
+"""
+    polyhedron(P::LazySet; [backend]=default_polyhedra_backend(P))
+
+Compute a set representation from `Polyhedra.jl`.
+
+### Input
+
+- `P`       -- polyhedral set
+- `backend` -- (optional, default: call `default_polyhedra_backend(P)`)
+                the polyhedral computations backend
+
+### Output
+
+A set representation in the `Polyhedra` library.
+
+### Notes
+
+For further information on the supported backends see
+[Polyhedra's documentation](https://juliapolyhedra.github.io/).
+
+### Algorithm
+
+This default implementation uses `tosimplehrep`, which computes the constraint
+representation of `P`. Set types preferring the vertex representation should
+implement their own method.
+"""
 function polyhedron(P::LazySet; backend=default_polyhedra_backend(P))
-    Q = convert(HPolyhedron, P)
-    return polyhedron(Q; backend=backend)
+    A, b = tosimplehrep(P)
+    return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
+end
+
+"""
+    triangulate(X::LazySet)
+
+Triangulate a three-dimensional polyhedral set.
+
+### Input
+
+- `X` -- three-dimensional polyhedral set
+
+### Output
+
+A tuple `(p, c)` where `p` is a matrix, with each column containing a point, and
+`c` is a list of 3-tuples containing the indices of the points in each triangle.
+"""
+function triangulate(X::LazySet)
+    dim(X) == 3 || throw(ArgumentError("the dimension of the set should be " *
+        "three, got $(dim(X))"))
+    @assert is_polyhedral(X) "triangulation requires a polyhedral set"
+
+    P = polyhedron(X)
+    mes = Mesh(P)
+    coords = Polyhedra.GeometryBasics.coordinates(mes)
+    connec = Polyhedra.GeometryBasics.faces(mes)
+
+    ntriangles = length(connec)
+    npoints = length(coords)
+    @assert npoints == 3 * ntriangles
+    points = Matrix{Float32}(undef, 3, npoints)
+
+    for i in 1:npoints
+        points[:, i] .= coords[i].data
+    end
+
+    connec_tup = getfield.(connec, :data)
+
+    return points, connec_tup
 end
 
 end end  # quote / load_polyhedra_lazyset()

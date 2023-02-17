@@ -21,7 +21,6 @@ tovrep(::HPoly)
 normalize(::HPoly{N}, p=N(2)) where {N}
 isempty(::HPoly{N}, ::Bool=false) where {N}
 translate(::HPoly, ::AbstractVector)
-polyhedron(::HPoly)
 remove_redundant_constraints(::HPoly)
 remove_redundant_constraints!(::HPoly)
 ```
