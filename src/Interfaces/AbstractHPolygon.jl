@@ -477,12 +477,11 @@ function addconstraint!(constraints::Vector{LC}, new_constraint::HalfSpace;
             end
         else
             # binary search
-            k = binary_search_constraints(
-                d, constraints, k, 1 + div(k, 2), choose_lower=true)
+            k = binary_search_constraints(d, constraints, choose_lower=true)
         end
     end
 
-    # here constraints[k] <= new_constraint <= constraints[(k%m)+1]
+    # here constraints[k].a <= new_constraint.a <= constraints[(k%m)+1].a
     if prune && m >= 2
         # check if new constraint is redundant
         k += 1
@@ -532,9 +531,8 @@ end
 
 """
     binary_search_constraints(d::AbstractVector{N},
-                              constraints::Vector{<:HalfSpace{N}},
-                              n::Int,
-                              k::Int;
+                              constraints::Vector{<:HalfSpace{N}};
+                              [start_index]::Int=div(length(constraints)+1, 2),
                               [choose_lower]::Bool=false) where {N}
 
 Perform a binary search in the constraints.
@@ -543,39 +541,49 @@ Perform a binary search in the constraints.
 
 - `d`            -- direction
 - `constraints`  -- constraints
-- `n`            -- number of constraints
-- `k`            -- start index
+- `start_index`  -- (optional, default: `div(length(constraints)+1, 2)`) start
+                    index
 - `choose_lower` -- (optional, default: `false`) flag for choosing the lower
                     index (see the 'Output' section)
 
 ### Output
 
 In the default setting, the result is the smallest index `k` such that
-`d <= constraints[k]`, or `n+1` if no such `k` exists.
+`d <= constraints[k].a`, or `length(constraints)+1` if no such `k` exists.
 If the `choose_lower` flag is set, the result is the largest index `k` such
-that `constraints[k] < d`, which is equivalent to being `k-1` in the normal
+that `constraints[k].a < d`, which is equivalent to being `k-1` in the normal
 setting.
 """
 function binary_search_constraints(d::AbstractVector{N},
-                                   constraints::Vector{<:HalfSpace{N}},
-                                   n::Int,
-                                   k::Int;
+                                   constraints::Vector{<:HalfSpace{N}};
+                                   start_index::Int=div(length(constraints)+1, 2),
                                    choose_lower::Bool=false) where {N}
     lower = 1
-    upper = n+1
+    n = length(constraints)
+    upper = n + 1
+    @assert 1 <= start_index <= n "invalid start index $start_index"
+    m = start_index
     while lower + 1 < upper
-        if constraints[k].a <= d
-            lower = k
+        if constraints[m].a <= d
+            lower = m
         else
-            upper = k
+            upper = m
         end
-        k = lower + div(upper - lower, 2)
+        m = div(lower + upper, 2)
     end
+
+    # since `<=` is approximate, it can happen that x <= y and y <= x
+    # we want to return the smallest index, so (linearly) search to the left
+    while lower > 1 && d <= constraints[lower].a && constraints[lower].a <= d
+        lower -= 1
+        upper -= 1
+    end
+
     if choose_lower
         return lower
     else
         if lower == 1 && !(constraints[1].a <= d)
-            # special case for index 1
+            # special case: smaller than all elements in the vector
             return 1
         end
         return upper

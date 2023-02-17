@@ -171,7 +171,7 @@ function σ(d::AbstractVector, P::HPolygonOpt;
                                     Line2D(P.constraints[P.ind + 1])))
     else
         # binary search
-        k = binary_search_constraints(d, P.constraints, n, P.ind)
+        k = binary_search_constraints(d, P.constraints; start_index=P.ind)
         if k == 1 || k == n+1
             P.ind = 1
             # corner cases: wrap-around in constraints list

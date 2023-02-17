@@ -135,7 +135,7 @@ function σ(d::AbstractVector, P::HPolygon;
         end
     else
         # binary search
-        k = binary_search_constraints(d, P.constraints, n, 1 + div(n, 2))
+        k = binary_search_constraints(d, P.constraints)
     end
 
     if k == 1 || k == n+1

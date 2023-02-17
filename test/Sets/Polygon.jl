@@ -196,7 +196,7 @@ for N in [Float64, Float32, Rational{Int}]
         S = VPolygon(D)
         RS = minkowski_sum(R, S)
         @test is_cyclic_permutation(RS.vertices, [N[4, 3], N[11, 3], N[11, 8],
-                                                N[9,12], N[7, 12], N[4, 10]])
+                                                  N[9,12], N[7, 12], N[4, 10]])
     end
 
     # ===================================
@@ -567,6 +567,20 @@ for N in [Float64, Float32]
     # rationalize
     P = VPolygon([N[1, 2], N[3, 4]])
     @test rationalize(P) == VPolygon([[1//1, 2//1], [3//1, 4//1]])
+
+    # test corner case with binary search (#2426)
+    c1 = HalfSpace(N[0.9636463837316949, 0.8950288819001659], N(0.19114554280256102));
+    c2 = HalfSpace(N[0.336341452138065, 0.3367612579000614], N(0.6801677354217885));
+    c3 = HalfSpace(N[0.6052463696308072, 0.606001419182304], N(0.4494286571876329));
+    for ls in [true, false]
+        x = [c1, c2]
+        addconstraint!(x, c3, linear_search=ls)
+        if N == Float64
+            @test x == [c1, c3, c2]
+        else
+            @test x == [c1, c3]
+        end
+    end
 end
 
 for N in [Float64]
