@@ -220,8 +220,12 @@ for N in [Float64, Rational{Int}, Float32]
     # list of constraints
     Z = Zonotope(zeros(N, 3), Matrix(N(1)*I, 3, 3))
     B = BallInf(zeros(N, 3), N(1))  # equivalent to Z
-    constraints = constraints_list(Z)
-    @test constraints isa Vector{<:HalfSpace{N}} && length(constraints) == 6
+    clist = constraints_list(Z)
+    @test clist isa Vector{<:HalfSpace{N}} && length(clist) == 6
+    # test #3209
+    Z2 = Zonotope(zeros(N, 3), N[1.0 1 0; 0 1 1; 0 0 0])
+    clist = constraints_list(Z2)
+    @test clist isa Vector{<:HalfSpace{N}} && length(clist) == 8
 
     # concrete projection returns a zonotope
     πZ12 = project(Z, 1:2)
@@ -362,8 +366,8 @@ for N in [Float64]
     # constraints_list correctness check by subset check (requires LP solver)
     B = BallInf(zeros(N, 3), N(1))
     Z = convert(Zonotope, B)
-    constraints = constraints_list(Z)
-    H = HPolytope(constraints)
+    clist = constraints_list(Z)
+    H = HPolytope(clist)
     @test H ⊆ B && B ⊆ H
 
     gens = N[1 1; -1 1]

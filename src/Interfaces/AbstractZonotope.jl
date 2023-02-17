@@ -476,18 +476,21 @@ A list of constraints of the zonotopic set.
 
 ### Notes
 
-The algorithm assumes that no generator is redundant.
+The main algorithm assumes that the generator matrix is full rank.
 The result has ``2 \\binom{p}{n-1}`` (with ``p`` being the number of generators
 and ``n`` being the ambient dimension) constraints, which is optimal under this
 assumption.
-
-If ``p < n`` or the generator matrix is not full rank, we fall back to the
-(slower) computation based on the vertex representation.
+If this assumption is not given, the implementation tries to work around.
 
 ### Algorithm
 
-We follow the algorithm presented in [1]. Since the one-dimensional case is not
-covered by that algorithm, we handle this case separately.
+We follow the algorithm presented in [1]. Three cases are not covered by that
+algorithm, so we handle them separately. The first case is zonotopes in one
+dimension. The second case is that there are fewer generators than dimensions,
+``p < n``, or the generator matrix is not full rank, in which case we fall back
+to the (slower) computation based on the vertex representation. The third case
+is that the zonotope is flat in some dimensions, in which case we project the
+zonotope to the non-flat dimensions and extend the result later.
 
 [1] Althoff, Stursberg, Buss. *Computing Reachable Sets of Hybrid Systems Using
 a Combination of Zonotopes and Polytopes*. 2009.
@@ -518,7 +521,16 @@ function _constraints_list_zonotope(Z::AbstractZonotope{N}) where {N<:AbstractFl
         return _constraints_list_vrep(Z)
     end
 
+    extend_indices = flat_dimensions(Z)
+    isflat_Z = !isempty(extend_indices)
+    if isflat_Z
+        Z_orig = Z
+        Z = project(Z, setdiff(1:n, extend_indices))
+        n = dim(Z)
+    end
+
     G = genmat(Z)
+    Gᵀ = transpose(G)
     c = center(Z)
     m = binomial(p, n - 1)
     constraints = Vector{HalfSpace{N, Vector{N}}}()
@@ -528,14 +540,34 @@ function _constraints_list_zonotope(Z::AbstractZonotope{N}) where {N<:AbstractFl
         iszero(c⁺) && continue
         normalize!(c⁺, 2)
 
-        Δd = sum(abs, transpose(G) * c⁺)
+        Δd = sum(abs, Gᵀ * c⁺)
 
-        d⁺ = dot(c⁺, c) + Δd
+        c⁺c = dot(c⁺, c)
+        d⁺ = c⁺c + Δd
         c⁻ = -c⁺
-        d⁻ = -d⁺ + 2 * Δd  # identical to dot(c⁻, c) + Δd
+        d⁻ = -c⁺c + Δd
+
+        if isflat_Z
+            c⁺ = extend_with_zeros(c⁺, extend_indices)
+            c⁻ = extend_with_zeros(c⁻, extend_indices)
+        end
 
         push!(constraints, HalfSpace(c⁺, d⁺))
         push!(constraints, HalfSpace(c⁻, d⁻))
+    end
+    if isflat_Z
+        # add constraints about flat dimensions
+        c = center(Z_orig)
+        n = length(c)
+        @inbounds for i in extend_indices
+            ci = c[i]
+            a = zeros(N, n)
+            a[i] = one(N)
+            push!(constraints, HalfSpace(a, ci))
+            a = zeros(N, n)
+            a[i] = -one(N)
+            push!(constraints, HalfSpace(a, -ci))
+        end
     end
     return constraints
 end
@@ -544,6 +576,16 @@ function _constraints_list_1d(Z::AbstractZonotope{N}) where {N}
     c = center(Z, 1)
     g = sum(abs, genmat(Z))
     return [HalfSpace([N(1)], c + g), HalfSpace([N(-1)], g - c)]
+end
+
+function flat_dimensions(Z::AbstractZonotope)
+    G = genmat(Z)
+    @static if VERSION >= v"1.7"
+        res = findall(iszero, eachrow(G))
+    else
+        res = findall(iszero, collect(eachrow(G)))
+    end
+    return res
 end
 
 """
