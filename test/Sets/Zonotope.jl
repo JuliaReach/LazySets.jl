@@ -263,6 +263,24 @@ for N in [Float64, Rational{Int}, Float32]
     Z = Zonotope(N[1, 1], N[1 2 -3; -2 -3 4])
     @test low(Z, 1) == -5 && low(Z, 2) == -8
     @test high(Z, 1) == 7 && high(Z, 2) == 10
+
+    # Minkowski difference (examples taken from Figure 2 in "On computing the
+    # Minkowski difference of zonotopes"; the zonotopes Z_s given in the text
+    # are not the correct expressions)
+    Zm = Zonotope(N[1, 1], N[1 0 1; 0 1 1])
+    Zs = Zonotope(N[0, 0], N[1//2 0; -1//8 1//4])
+    Zd = Zonotope(N[1, 1], N[1 1//2 0; 1 0 5//8])
+    D = minkowski_difference(Zm, Zs)
+    @test isequivalent(D, Zd)
+    if N != Float32  # not enough precision with Float32
+        Zs = Zonotope(N[0, 0], N[1//2 0; -1//2 1//2])
+        Zd = Zonotope(N[1, 1], N[1 1//2; 1 0])
+        D = minkowski_difference(Zm, Zs)
+        @test isequivalent(D, Zd)
+    end
+    Zs = Zonotope(N[0, 0], N[2 0; -1//2 1//2])
+    Zd = EmptySet{N}(2)
+    @test isempty(Zd)
 end
 
 for N in [Float64]
