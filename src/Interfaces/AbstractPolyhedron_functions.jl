@@ -661,6 +661,7 @@ function linear_map(M::AbstractMatrix{NM},
         return _linear_map_vrep(M, P, algo; apply_convex_hull=false)
 
     elseif algorithm == "vrep_chull"
+        algo = LinearMapVRep(backend)
         return _linear_map_vrep(M, P, algo; apply_convex_hull=true)
 
     elseif got_inv
@@ -1136,14 +1137,13 @@ julia> project(P, [1, 2]) |> constraints_list
 """
 function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int};
                  kwargs...) where {N}
-    general_case = false
-
     # cheap case
     clist = nothing  # allocate later
     @inbounds for c in constraints(P)
         status = _check_constrained_dimensions(c, block)
         if status == 0
-            general_case = true
+            # general case
+            clist = _project_polyhedron(P, block; kwargs...)
             break
         elseif status == 1
             # simple projection of half-space
@@ -1156,11 +1156,6 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int};
         elseif status == -1
             # drop the constraint because it became redundant
         end
-    end
-
-    # general case
-    if general_case
-        clist = _project_polyhedron(P, block; kwargs...)
     end
 
     if isnothing(clist)  # set is unconstrained in the given dimensions
