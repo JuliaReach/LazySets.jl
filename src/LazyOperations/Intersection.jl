@@ -251,6 +251,10 @@ The support function of an intersection of ``X`` and ``Y`` is upper-bounded by
 the minimum of the support-function evaluations for ``X`` and ``Y``.
 """
 function ρ(d::AbstractVector, cap::Intersection)
+    return _ρ_min(d, cap)
+end
+
+function _ρ_min(d::AbstractVector, cap::Intersection)
     return min(ρ(d, cap.X), ρ(d, cap.Y))
 end
 
@@ -269,8 +273,7 @@ function ρ_helper(d::AbstractVector{M},
     end
 
     if !use_precise_ρ(cap) || algorithm == "simple"
-        NN = promote_type(N, M)
-        return invoke(ρ, Tuple{typeof(d), Intersection{NN}}, d, cap)
+        return _ρ_min(d, cap)
     elseif algorithm == "line_search"
         require(@__MODULE__, :Optim; fun_name="ρ",
                 explanation="(algorithm $algorithm)")
@@ -447,7 +450,7 @@ function ρ_helper(d::AbstractVector, cap::Intersection{N, S1, S2}; kwargs...
 
     if use_simple_method
         # simple algorithm
-        return invoke(ρ, Tuple{typeof(d), Intersection{N}}, d, cap)
+        return _ρ_min(d, cap)
     end
 
     # more precise algorithm
