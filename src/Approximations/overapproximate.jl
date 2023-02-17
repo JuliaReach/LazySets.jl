@@ -133,6 +133,9 @@ end
 overapproximate(∅::EmptySet, ::Real) = ∅
 overapproximate(∅::EmptySet, ::Type{<:HPolygon}, ::Real=Inf; kwargs...) = ∅
 overapproximate(∅::EmptySet, ::Type{<:EmptySet}, args...; kwargs...) = ∅
+overapproximate(∅::EmptySet, ::Type{<:Zonotope},
+                ::Union{AbstractDirections, Type{<:AbstractDirections}};
+                kwargs...) = ∅
 
 """
     overapproximate(X::LazySet{N}, dirs::AbstractDirections;

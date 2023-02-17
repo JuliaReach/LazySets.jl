@@ -900,3 +900,14 @@ function Base.iterate(cd::CustomDirections{N}, state::Int=1) where {N}
     state = state + 1
     return (vec, state)
 end
+
+# instantiation of template for dimension `n` (not possible for all types)
+function _get_directions(dir::Type{<:Union{BoxDirections, OctDirections,
+                                        DiagDirections, BoxDiagDirections}},
+                         n::Int)
+    return dir(n)
+end
+
+function _get_directions(dir::Type{<:AbstractDirections}, n::Int)
+    error("no automatic choice of directions of type $dir possible")
+end
