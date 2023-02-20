@@ -1199,3 +1199,28 @@ function _project_polyhedron(P::LazySet{N}, block; kwargs...) where {N}
     πP = linear_map(M, P; kwargs...)
     return constraints_list(πP)
 end
+
+function _isempty_polyhedron_lp(constraints::AbstractVector{<:HalfSpace},
+                                witness::Bool=false; solver=nothing)
+    # the caller should verify that there is at least one constraint
+    A, b = tosimplehrep(constraints)
+    return _isempty_polyhedron_lp(A, b, witness; solver=solver)
+end
+
+function _isempty_polyhedron_lp(A::AbstractMatrix{N}, b::AbstractVector{N},
+                                witness::Bool=false; solver=nothing) where {N}
+    # feasibility LP
+    lbounds, ubounds = -Inf, Inf
+    sense = '<'
+    obj = zeros(N, size(A, 2))
+    if isnothing(solver)
+        solver = default_lp_solver(N)
+    end
+    lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
+    if is_lp_optimal(lp.status)
+        return witness ? (false, lp.sol) : false
+    elseif is_lp_infeasible(lp.status)
+        return witness ? (true, N[]) : true
+    end
+    error("LP returned status $(lp.status) unexpectedly")
+end
