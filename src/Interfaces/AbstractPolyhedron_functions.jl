@@ -996,7 +996,7 @@ feasible solution: ``\\min∥y∥_1`` subject to ``A^Ty=0`` and ``y≥1``.
 function _isbounded_stiemke(constraints::AbstractVector{<:HalfSpace{N}};
                             solver=LazySets.default_lp_solver(N),
                             check_nonempty::Bool=true) where {N}
-    if check_nonempty && isempty(HPolyhedron(constraints))
+    if check_nonempty && _isempty_polyhedron_lp(constraints; solver=solver)
         return true
     end
 
