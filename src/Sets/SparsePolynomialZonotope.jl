@@ -53,7 +53,7 @@ struct SparsePolynomialZonotope{N,
     # default constructor with dimension checks
     function SparsePolynomialZonotope(c::VN, G::MN, GI::MNI, E::ME,
                                       idx::VI=uniqueID(size(E, 1))
-                                     ) where {N<:Real, VN<:AbstractVector{N},
+                                     ) where {N, VN<:AbstractVector{N},
                                           MN<:AbstractMatrix{N},
                                           MNI<:AbstractMatrix{N},
                                           ME<:AbstractMatrix{<:Integer},

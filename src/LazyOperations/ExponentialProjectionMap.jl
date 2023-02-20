@@ -74,7 +74,7 @@ function matrix(epm::ExponentialProjectionMap)
     return projspmexp.L * projspmexp.spmexp * projspmexp.R
 end
 
-function vector(epm::ExponentialProjectionMap{N}) where {N<:Real}
+function vector(epm::ExponentialProjectionMap{N}) where {N}
     return spzeros(N, dim(epm))
 end
 
