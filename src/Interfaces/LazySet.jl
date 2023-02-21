@@ -1802,6 +1802,18 @@ function isempty(P::LazySet{N},
     end
 end
 
+function _isempty_polyhedron(P::LazySet{N}, witness::Bool=false;
+                             use_polyhedra_interface::Bool=false,
+                             solver=nothing, backend=nothing) where {N}
+    if use_polyhedra_interface
+        return _isempty_polyhedron_polyhedra(P, witness; solver=solver,
+                                             backend=backend)
+    else
+        return _isempty_polyhedron_lp(constraints_list(P), witness;
+                                      solver=solver)
+    end
+end
+
 function _isempty_polyhedron_polyhedra(P::LazySet{N}, witness::Bool=false;
                                        solver=nothing, backend=nothing) where {N}
     require(@__MODULE__, :Polyhedra; fun_name="isempty",
