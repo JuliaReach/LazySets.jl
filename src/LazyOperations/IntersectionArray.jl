@@ -139,6 +139,10 @@ function isboundedtype(::Type{<:IntersectionArray{N, S}}) where {N, S}
     return isboundedtype(S)
 end
 
+function is_polyhedral(ia::IntersectionArray)
+    return all(is_polyhedral, array(ia))
+end
+
 """
     ∈(x::AbstractVector, ia::IntersectionArray)
 
