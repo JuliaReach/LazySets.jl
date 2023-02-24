@@ -114,8 +114,8 @@ function AffineMap(M::UniformScaling, X::LazySet, v::AbstractVector)
 end
 
 # convenience constructor from a scalar
-function AffineMap(α::N, X::LazySet, v::AbstractVector) where {N<:Real}
-    if α == one(N)
+function AffineMap(α::Real, X::LazySet, v::AbstractVector)
+    if isone(α)
         return Translation(X, v)
     end
     return AffineMap(Diagonal(fill(α, length(v))), X, v)

@@ -83,13 +83,12 @@ function InverseLinearMap(M::UniformScaling{N}, X::LazySet;
 end
 
 # convenience constructor from a scalar
-function InverseLinearMap(α::N, X::LazySet;
-                          check_invertibility::Bool=false) where {N<:Real}
+function InverseLinearMap(α::Real, X::LazySet; check_invertibility::Bool=false)
     if check_invertibility
         @assert !iszero(α) "the linear map is not invertible"
     end
 
-    if α == one(N)
+    if isone(α)
         return X
     end
 

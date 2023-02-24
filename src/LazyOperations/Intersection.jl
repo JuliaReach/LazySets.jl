@@ -461,7 +461,7 @@ end
 
 """
     ρ(d::AbstractVector, cap::Intersection{N, S1, S2}; kwargs...
-     ) where {N<:Real, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
+     ) where {N, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
 
 Evaluate the support function of the intersection between two polyhedral sets.
 

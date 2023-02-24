@@ -441,7 +441,7 @@ function concretize(lm::LinearMap)
 end
 
 """
-    Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N<:Real}
+    Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N}
 
 Return a lazy projection of a set.
 

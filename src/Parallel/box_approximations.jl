@@ -3,7 +3,7 @@ export box_approximation,
        symmetric_interval_hull
 
 """
-    box_approximation(S::LazySet{N}) where {N<:Real}
+    box_approximation(S::LazySet{N}) where {N}
 
 Overapproximation a set by a tight hyperrectangle using a parallel
 implementation.
@@ -22,7 +22,7 @@ The center of the hyperrectangle is obtained by averaging the support function
 of the given set in the canonical directions, and the lengths of the sides can
 be recovered from the distance among support functions in the same directions.
 """
-function box_approximation(S::LazySet{N}) where {N<:Real}
+function box_approximation(S::LazySet{N}) where {N}
     (c, r) = box_approximation_helper_parallel(S)
     if r[1] < 0
         return EmptySet{N}(dim(S))
@@ -31,7 +31,7 @@ function box_approximation(S::LazySet{N}) where {N<:Real}
 end
 
 """
-    box_approximation_symmetric(S::LazySet{N}) where {N<:Real}
+    box_approximation_symmetric(S::LazySet{N}) where {N}
 
 Overapproximate a set by a tight hyperrectangle centered in the origin,
 using a parallel implementation.
@@ -49,13 +49,13 @@ A tight hyperrectangle centered in the origin.
 The center of the box is the origin, and the radius is obtained by computing the
 maximum value of the support function evaluated at the canonical directions.
 """
-function box_approximation_symmetric(S::LazySet{N}) where {N<:Real}
+function box_approximation_symmetric(S::LazySet{N}) where {N}
     (c, r) = box_approximation_helper_parallel(S)
     return Hyperrectangle(zeros(N, length(c)), abs.(c) .+ r)
 end
 
 """
-    box_approximation_helper_parallel(S::LazySet{N}) where {N<:Real}
+    box_approximation_helper_parallel(S::LazySet{N}) where {N}
 
 Parallel implementation for the common code of `box_approximation` and
 `box_approximation_symmetric`.
@@ -82,7 +82,7 @@ functions in the same directions.
 The same load is distributed among all available workers, see
 [`distribute_task!`](@ref).
 """
-@inline function box_approximation_helper_parallel(S::LazySet{N}) where {N<:Real}
+@inline function box_approximation_helper_parallel(S::LazySet{N}) where {N}
     n = dim(S)
     c = SharedVector{N}(n)
     r = SharedVector{N}(n)
@@ -92,9 +92,8 @@ The same load is distributed among all available workers, see
 end
 
 """
-    process_chunk!(S::LazySet{N},
-                   irange::UnitRange{Int},
-                   c::SharedVector{N}, r::SharedVector{N}) where {N<:Real}
+    process_chunk!(S::LazySet{N}, irange::UnitRange{Int},
+                   c::SharedVector{N}, r::SharedVector{N}) where {N}
 
 Kernel to process a given chunk.
 
@@ -118,7 +117,7 @@ the same load is distributed among all available workers. For details see
 """
 function process_chunk!(S::LazySet{N},
                         irange::UnitRange{Int},
-                        c::SharedVector{N}, r::SharedVector{N}) where {N<:Real}
+                        c::SharedVector{N}, r::SharedVector{N}) where {N}
 
     d = zeros(N, dim(S))
 

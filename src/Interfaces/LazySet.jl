@@ -947,7 +947,7 @@ end
 
 """
     is_interior_point(d::AbstractVector{N}, X::LazySet{N};
-                      p=N(Inf), ε=_rtol(N)) where {N<:Real}
+                      p=N(Inf), ε=_rtol(N)) where {N}
 
 Check whether the point `d` is contained in the interior of the set `X`.
 
@@ -970,7 +970,7 @@ The implementation checks if a `Ballp` of norm `p` with center `d` and radius
 This is a numerical check for `d ∈ interior(X)` with error tolerance `ε`.
 """
 function is_interior_point(d::AbstractVector{N}, X::LazySet{N};
-                           p=N(Inf), ε=_rtol(N)) where {N<:Real}
+                           p=N(Inf), ε=_rtol(N)) where {N}
     return Ballp(p, d, ε) ⊆ X
 end
 

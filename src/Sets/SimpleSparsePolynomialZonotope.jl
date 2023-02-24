@@ -44,7 +44,7 @@ struct SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N},
     G::MN
     E::ME
 
-    function SimpleSparsePolynomialZonotope(c::VN, G::MN, E::ME) where {N<:Real,
+    function SimpleSparsePolynomialZonotope(c::VN, G::MN, E::ME) where {N,
             VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}}
         @assert length(c) == size(G, 1) throw(DimensionMismatch("c and G " *
             "should have the same number of rows"))
