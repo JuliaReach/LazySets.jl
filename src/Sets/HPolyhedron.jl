@@ -1,5 +1,4 @@
-import Base: isempty,
-             rand,
+import Base: rand,
              convert
 
 export HPolyhedron,
@@ -9,7 +8,6 @@ export HPolyhedron,
        tohrep, tovrep,
        convex_hull,
        cartesian_product,
-       isempty,
        remove_redundant_constraints,
        remove_redundant_constraints!,
        constrained_dimensions,
@@ -454,92 +452,21 @@ function tovrep(P::HPoly; backend=default_polyhedra_backend(P))
     return VPolytope(P)
 end
 
-"""
-    isempty(P::HPoly{N}, witness::Bool=false;
-            [use_polyhedra_interface]::Bool=false, [solver]=nothing,
-            [backend]=nothing) where {N}
-
-Check whether a polyhedron in constraint representation is empty.
-
-### Input
-
-- `P`       -- polyhedron in constraint representation
-- `witness` -- (optional, default: `false`) compute a witness if activated
-- `use_polyhedra_interface` -- (optional, default: `false`) if `true`, we use
-               the `Polyhedra` interface for the emptiness test
-- `solver`  -- (optional, default: `nothing`) LP-solver backend; uses
-               `default_lp_solver(N)` if not provided
-- `backend` -- (optional, default: `nothing`) backend for polyhedral
-               computations in `Polyhedra`; uses `default_polyhedra_backend(P)`
-               if not provided
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``P = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``P = ∅``
-  * `(false, v)` iff ``P ≠ ∅`` and ``v ∈ P``
-
-### Notes
-
-The default value of the `backend` is set internally and depends on whether the
-`use_polyhedra_interface` option is set or not.
-If the option is set, we use `default_polyhedra_backend(P)`.
-
-Witness production is not supported if `use_polyhedra_interface` is `true`.
-
-### Algorithm
-
-The algorithm sets up a feasibility LP for the constraints of `P`.
-If `use_polyhedra_interface` is `true`, we call `Polyhedra.isempty`.
-Otherwise, we set up the LP internally.
-"""
-function isempty(P::HPoly{N},
+# this method is required mainly for HPolytope (because the fallback for
+# AbstractPolytope is incorrect with no constraints)
+#
+# the method also treats a corner case for problems with Rationals in LP solver
+function isempty(P::HPoly,
                  witness::Bool=false;
                  use_polyhedra_interface::Bool=false,
                  solver=nothing,
-                 backend=nothing) where {N}
+                 backend=nothing)
     if length(constraints_list(P)) < 2
-        # catch corner case because of problems in LP solver for Rationals
         return witness ? (false, an_element(P)) : false
     end
-    if use_polyhedra_interface
-        require(@__MODULE__, :Polyhedra; fun_name="isempty",
-                explanation="with the active option `use_polyhedra_interface`")
-
-        if backend == nothing
-            backend = default_polyhedra_backend(P)
-        end
-
-        if isnothing(solver)
-            result = Polyhedra.isempty(polyhedron(P; backend=backend))
-        else
-            result = Polyhedra.isempty(polyhedron(P; backend=backend), solver)
-        end
-
-        if result
-            return witness ? (true, N[]) : true
-        elseif witness
-            error("witness production is not supported yet")
-        else
-            return false
-        end
-    else
-        A, b = tosimplehrep(P)
-        lbounds, ubounds = -Inf, Inf
-        sense = '<'
-        obj = zeros(N, size(A, 2))
-        if isnothing(solver)
-            solver = default_lp_solver(N)
-        end
-        lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-        if is_lp_optimal(lp.status)
-            return witness ? (false, lp.sol) : false
-        elseif is_lp_infeasible(lp.status)
-            return witness ? (true, N[]) : true
-        end
-        error("LP returned status $(lp.status) unexpectedly")
-    end
+    return _isempty_polyhedron(P, witness;
+                               use_polyhedra_interface=use_polyhedra_interface,
+                               solver=solver, backend=backend)
 end
 
 function load_polyhedra_hpolyhedron() # function to be loaded by Requires

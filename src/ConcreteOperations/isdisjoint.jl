@@ -868,7 +868,7 @@ function _isdisjoint_polyhedron(P::AbstractPolyhedron, X::LazySet,
         if solver == nothing
             solver = default_lp_solver(N)
         end
-        return isempty(HPolyhedron([clist_P; clist_X]), witness; solver=solver)
+        return _isempty_polyhedron_lp([clist_P; clist_X], witness; solver=solver)
     else
         error("algorithm $algorithm unknown")
     end

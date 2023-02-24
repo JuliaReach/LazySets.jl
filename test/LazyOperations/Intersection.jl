@@ -98,8 +98,15 @@ for N in [Float64, Rational{Int}, Float32]
     IArr2 = IntersectionArray([HalfSpace(N[1], N(1))])
     @test !isboundedtype(typeof(IArr2))
 
+    # is_polyhedral
+    @test is_polyhedral(IArr)
+    if N isa AbstractFloat
+        IArr2 = IntersectionArray([B, Ball2(N[0, 0], N(1))])
+        @test !is_polyhedral(IArr2)
+    end
+
     # isempty
-    @test_throws MethodError isempty(IArr)
+    @test !isempty(IArr)
 
     # membership
     @test ones(N, 2) ∈ IArr && N[5, 5] ∉ IArr

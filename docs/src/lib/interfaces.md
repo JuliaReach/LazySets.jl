@@ -77,6 +77,7 @@ is_polyhedral(::LazySet)
 norm(::LazySet, ::Real=Inf)
 radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
+isempty(::LazySet{N}, ::Bool=false) where {N}
 affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector)
 exponential_map(::AbstractMatrix, ::LazySet)
 an_element(::LazySet)

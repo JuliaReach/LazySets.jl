@@ -1,4 +1,4 @@
-import Base: extrema, ==, ≈, copy, eltype, rationalize
+import Base: isempty, extrema, ==, ≈, copy, eltype, rationalize
 import Random.rand
 
 export LazySet,
@@ -24,6 +24,7 @@ export LazySet,
        exponential_map,
        reflect,
        is_interior_point,
+       isempty,
        isoperation,
        isoperationtype,
        isequivalent,
@@ -1741,3 +1742,98 @@ function triangulate(X::LazySet)
 end
 
 end end  # quote / load_polyhedra_lazyset()
+
+"""
+    isempty(P::LazySet{N}, witness::Bool=false;
+            [use_polyhedra_interface]::Bool=false, [solver]=nothing,
+            [backend]=nothing) where {N}
+
+Check whether a polyhedral set is empty.
+
+### Input
+
+- `P`       -- polyhedral set
+- `witness` -- (optional, default: `false`) compute a witness if activated
+- `use_polyhedra_interface` -- (optional, default: `false`) if `true`, we use
+               the `Polyhedra` interface for the emptiness test
+- `solver`  -- (optional, default: `nothing`) LP-solver backend; uses
+               `default_lp_solver(N)` if not provided
+- `backend` -- (optional, default: `nothing`) backend for polyhedral
+               computations in `Polyhedra`; uses `default_polyhedra_backend(P)`
+               if not provided
+
+### Output
+
+* If `witness` option is deactivated: `true` iff ``P = ∅``
+* If `witness` option is activated:
+  * `(true, [])` iff ``P = ∅``
+  * `(false, v)` iff ``P ≠ ∅`` and ``v ∈ P``
+
+### Notes
+
+The default value of the `backend` is set internally and depends on whether the
+`use_polyhedra_interface` option is set or not.
+If the option is set, we use `default_polyhedra_backend(P)`.
+
+Witness production is not supported if `use_polyhedra_interface` is `true`.
+
+### Algorithm
+
+The algorithm sets up a feasibility LP for the constraints of `P`.
+If `use_polyhedra_interface` is `true`, we call `Polyhedra.isempty`.
+Otherwise, we set up the LP internally.
+"""
+function isempty(P::LazySet{N},
+                 witness::Bool=false;
+                 use_polyhedra_interface::Bool=false,
+                 solver=nothing,
+                 backend=nothing) where {N}
+    @assert is_polyhedral(P) "this algorithm requires a polyhedral set"
+    clist = constraints_list(P)
+    if length(clist) < 2
+        # catch corner case because of problems in LP solver for Rationals
+        return witness ? (false, an_element(P)) : false
+    end
+    if use_polyhedra_interface
+        return _isempty_polyhedron_polyhedra(P, witness; solver=solver,
+                                             backend=backend)
+    else
+        return _isempty_polyhedron_lp(clist, witness; solver=solver)
+    end
+end
+
+function _isempty_polyhedron(P::LazySet{N}, witness::Bool=false;
+                             use_polyhedra_interface::Bool=false,
+                             solver=nothing, backend=nothing) where {N}
+    if use_polyhedra_interface
+        return _isempty_polyhedron_polyhedra(P, witness; solver=solver,
+                                             backend=backend)
+    else
+        return _isempty_polyhedron_lp(constraints_list(P), witness;
+                                      solver=solver)
+    end
+end
+
+function _isempty_polyhedron_polyhedra(P::LazySet{N}, witness::Bool=false;
+                                       solver=nothing, backend=nothing) where {N}
+    require(@__MODULE__, :Polyhedra; fun_name="isempty",
+            explanation="with the active option `use_polyhedra_interface`")
+
+    if backend == nothing
+        backend = default_polyhedra_backend(P)
+    end
+
+    if isnothing(solver)
+        result = Polyhedra.isempty(polyhedron(P; backend=backend))
+    else
+        result = Polyhedra.isempty(polyhedron(P; backend=backend), solver)
+    end
+
+    if result
+        return witness ? (true, N[]) : true
+    elseif witness
+        error("witness production is not supported yet")
+    else
+        return false
+    end
+end

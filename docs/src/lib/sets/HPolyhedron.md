@@ -19,7 +19,6 @@ constraints_list(::HPoly)
 tohrep(::HPoly)
 tovrep(::HPoly)
 normalize(::HPoly{N}, p=N(2)) where {N}
-isempty(::HPoly{N}, ::Bool=false) where {N}
 translate(::HPoly, ::AbstractVector)
 remove_redundant_constraints(::HPoly)
 remove_redundant_constraints!(::HPoly)
@@ -31,6 +30,7 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
+* [`isempty`](@ref isempty(::LazySet{N}, ::Bool=false) where {N})
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractPolyhedron))
