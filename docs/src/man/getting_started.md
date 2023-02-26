@@ -55,7 +55,7 @@ After working with `LazySets` for some time, you may want to get the newest
 version.
 For this you can use the following command (e.g., from the REPL):
 ```julia
-Pkg.checkout("LazySets")
+Pkg.update("LazySets")
 ```
 That will check out the latest version in the `master` branch, and precompile it
 the next time you enter a session and execute `using LazySets`.
