@@ -914,7 +914,7 @@ function convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
         c[i+n] = constraints[j+1].b
         j += 2
     end
-    return HParallelotope(D, c)
+    return HParallelotope(D, c; check_consistency=false)
 end
 
 """

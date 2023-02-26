@@ -389,12 +389,11 @@ function rand(::Type{HParallelotope};
             offset[i] = -offset[i-dim] + abs(offset[i])
         end
 
-        P = HParallelotope(D, offset)
-
         # convert to polyhedron to check boundedness
-        Q = HPolyhedron(vcat(P.directions, -P.directions), P.offset)
+        clist = _constraints_list_hparallelotope(D, offset, N, typeof(offset))
+        Q = HPolyhedron(clist)
         if isbounded(Q)
-            return P
+            return P = HParallelotope(D, offset; check_consistency=false)
         end
         # set is unbounded; sample a new set in the next iteration
     end
