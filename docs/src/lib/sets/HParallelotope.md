@@ -16,7 +16,6 @@ genmat(::HParallelotope)
 generators(::HParallelotope)
 constraints_list(::HParallelotope)
 rand(::Type{HParallelotope})
-isempty(::HParallelotope)
 volume(::HParallelotope)
 ```
 
@@ -45,4 +44,5 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
 * [`translate`](@ref translate(::AbstractZonotope, ::AbstractVector))
 * [`vertices_list`](@ref vertices_list(::AbstractZonotope))
+* [`isempty`](@ref isempty(::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))

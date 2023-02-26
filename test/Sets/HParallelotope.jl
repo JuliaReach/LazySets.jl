@@ -56,14 +56,10 @@ for N in [Float32, Float64, Rational{Int}]
     rand(HParallelotope)
 
     # emptiness
-    H = N[1 1; 0 1]
-    o = N[2, 2, -4, -1]
-    P2 = HParallelotope(H, o)
-    @test !isempty(P) && isempty(P2)
+    @test !isempty(P)
 
     # volume
     @test volume(P) == N(4)
-    @test volume(P2) == N(2)
 
     # vertices list
     @test ispermutation(vertices_list(P),

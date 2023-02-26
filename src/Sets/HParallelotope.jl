@@ -400,28 +400,6 @@ function rand(::Type{HParallelotope};
 end
 
 """
-    isempty(P::HParallelotope)
-
-Check whether a parallelotope in constraint representation is empty.
-
-### Input
-
-- `P` -- parallelotope in constraint representation
-
-### Output
-
-`true` iff the constraints are consistent/feasible.
-
-### Algorithm
-
-We call `isempty` for an `HPolyhedron`. We do not assume `HPolytope` because the
-set may be wrongly represented and in fact be unbounded.
-"""
-function isempty(P::HParallelotope)
-    return isempty(convert(HPolyhedron, P))
-end
-
-"""
     volume(P::HParallelotope)
 
 Return the volume of a parallelotope in constraint representation.
