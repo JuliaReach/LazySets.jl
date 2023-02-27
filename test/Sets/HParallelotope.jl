@@ -7,6 +7,20 @@ for N in [Float32, Float64, Rational{Int}]
     c = N[-0.80, -0.95, 0, 0.85, 1, 0]
     P = HParallelotope(D, c)
 
+    # illegal input: empty set
+    D2 = N[1 1; 0 1]
+    c2 = N[5//2, 2, -4, -1]
+    @test_throws ArgumentError HParallelotope(D2, c2)
+    P2 = HParallelotope(D2, c2; check_consistency=false)
+    @test isempty(convert(HPolyhedron, P2))
+
+    # illegal input: unbounded set
+    D2 = N[1 1; 1 1]
+    c2 = N[1, 1, -1, -1]
+    @test_throws ArgumentError HParallelotope(D2, c2)
+    P2 = HParallelotope(D2, c2; check_consistency=false)
+    @test !isbounded(convert(HPolyhedron, P2))
+
     # test getter functions
     @test directions(P) == D
     @test offset(P) == c
@@ -42,14 +56,14 @@ for N in [Float32, Float64, Rational{Int}]
     rand(HParallelotope)
 
     # emptiness
-    H = N[1 1; 0 1]
-    o = N[2, 2, -4, -1]
-    P2 = HParallelotope(H, o)
-    @test !isempty(P) && isempty(P2)
+    @test !isempty(P)
 
     # volume
     @test volume(P) == N(4)
-    @test volume(P2) == N(2)
+
+    # vertices list
+    @test ispermutation(vertices_list(P),
+                        [N[1, 1], N[1, -1], N[-1, 1], N[-1, -1]])
 end
 
 for N in [Float32, Float64]
