@@ -359,7 +359,7 @@ for N in [Float64]
     @test length(vlistZ) == 6
 
     # option to not apply the convex hull operation
-    vlistZ = LazySets._vertices_list_iterative(Z.center, Z.generators, apply_convex_hull=false)
+    vlistZ = LazySets._vertices_list_zonotope_iterative(Z.center, Z.generators, apply_convex_hull=false)
     @test length(vlistZ) == 8
     @test ispermutation(convex_hull(vlistZ), [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
 
