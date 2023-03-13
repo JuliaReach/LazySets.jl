@@ -657,20 +657,7 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
     Q = HPOLY([clist_P1; clist_P2])
 
     # remove redundant constraints
-    if (backend isa AbstractOptimizer) || (backend isa OptimizerWithAttributes)
-        # if Q is empty => the feasiblity LP for the list of constraints of Q
-        # is infeasible and remove_redundant_constraints! returns `false`
-        if !prune || remove_redundant_constraints!(Q, backend=backend)
-            return Q
-        else
-            return EmptySet{N}(dim(P1))
-        end
-    else
-        # the correct way for this condition would be to check if `backend`
-        # isa Polyhedra.Library; since that would require
-        # `using Polyhedra: Library` and it is an optional dependency, we fall
-        # back without checking
-
+    if _is_polyhedra_backend(backend)
         # convert to Polyhedra's hrep
         Qph = polyhedron(Q; backend=backend)
 
@@ -684,6 +671,14 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
         else
             # convert back to HPOLY
             return convert(HPOLY, Qph)
+        end
+    else
+        # if Q is empty => the feasiblity LP for the list of constraints of Q
+        # is infeasible and remove_redundant_constraints! returns `false`
+        if !prune || remove_redundant_constraints!(Q, backend=backend)
+            return Q
+        else
+            return EmptySet{N}(dim(P1))
         end
     end
 end

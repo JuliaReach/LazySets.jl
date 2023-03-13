@@ -1,4 +1,3 @@
-using JuMP.MOI: AbstractOptimizer, OptimizerWithAttributes
 using JuMP: Model, @variable, @objective, @constraint, optimize!,
             termination_status, objective_value, value, primal_status
 

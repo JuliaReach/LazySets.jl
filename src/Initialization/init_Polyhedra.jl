@@ -42,6 +42,11 @@ eval(quote
                 () -> GLPK.Optimizer(method=GLPK.EXACT))
         end
     end
+
+    # solver interface
+    function _is_polyhedra_backend(backend::Polyhedra.Library)
+        return true
+    end
 end)
 
 eval(load_polyhedra_hpolytope())

@@ -37,6 +37,10 @@ function default_lp_solver_polyhedra(N, varargs...)
     error("no default solver for numeric type $N")
 end
 
+function _is_polyhedra_backend(backend)
+    return false
+end
+
 isconvextype(::Type{<:AbstractPolyhedron}) = true
 
 is_polyhedral(::AbstractPolyhedron) = true
