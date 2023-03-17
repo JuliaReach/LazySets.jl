@@ -1,34 +1,33 @@
-using JuMP.MOI: AbstractOptimizer, OptimizerWithAttributes
 using JuMP: Model, @variable, @objective, @constraint, optimize!,
             termination_status, objective_value, value, primal_status
 
 # solver status
 function is_lp_optimal(status)
-    return status == JuMP.MOI.OPTIMAL
+    return status == JuMP.OPTIMAL
 end
 
 function is_lp_infeasible(status; strict::Bool=false)
-    if status == JuMP.MOI.INFEASIBLE
+    if status == JuMP.INFEASIBLE
         return true
     end
     if strict
         return false
     end
-    return status == JuMP.MOI.INFEASIBLE_OR_UNBOUNDED
+    return status == JuMP.INFEASIBLE_OR_UNBOUNDED
 end
 
 function is_lp_unbounded(status; strict::Bool=false)
-    if status == JuMP.MOI.DUAL_INFEASIBLE
+    if status == JuMP.DUAL_INFEASIBLE
         return true
     end
     if strict
         return false
     end
-    return status == JuMP.MOI.INFEASIBLE_OR_UNBOUNDED
+    return status == JuMP.INFEASIBLE_OR_UNBOUNDED
 end
 
 function has_lp_infeasibility_ray(model)
-    return primal_status(model) == JuMP.MOI.INFEASIBILITY_CERTIFICATE
+    return primal_status(model) == JuMP.INFEASIBILITY_CERTIFICATE
 end
 
 # solve a linear program (in the old MathProgBase interface)

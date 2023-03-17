@@ -269,6 +269,11 @@ for N in [Float64]
         c2 = constraints_list(intersection(hs, p1))
         @test length(c1) == 3 && ispermutation(c1, c2)
 
+        # intersection with Polyhedra backend
+        c1p = constraints_list(intersection(p1, hs; backend=LazySets.default_polyhedra_backend(p1)))
+        c2p = constraints_list(intersection(hs, p1; backend=LazySets.default_polyhedra_backend(p1)))
+        @test ispermutation(c1, c1p) && ispermutation(c1p, c2p)
+
         # convex hull
         ch = convex_hull(p1, p2)
         @test ch isa HPolyhedron{N} && isempty(constraints_list(ch))
