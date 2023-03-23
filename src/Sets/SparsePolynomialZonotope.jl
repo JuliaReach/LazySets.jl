@@ -268,8 +268,7 @@ Return a collection of n unique identifiers (integers 1, …, n).
 uniqueID(n::Int) = 1:n
 
 """
-    linear_map(M::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling},
-               P::SparsePolynomialZonotope)
+    linear_map(M::AbstractMatrix, P::SparsePolynomialZonotope)
 
 Apply a linear map to a sparse polynomial zonotope.
 
@@ -282,8 +281,7 @@ Apply a linear map to a sparse polynomial zonotope.
 
 The sparse polynomial zonotope resulting from applying the linear map.
 """
-function linear_map(M::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling},
-                    P::SPZ)
+function linear_map(M::AbstractMatrix, P::SPZ)
     return SparsePolynomialZonotope(M * center(P),
                                     M * genmat_dep(P),
                                     M * genmat_indep(P),

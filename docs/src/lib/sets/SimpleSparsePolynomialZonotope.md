@@ -15,7 +15,7 @@ dim(::SimpleSparsePolynomialZonotope)
 ngens(::SimpleSparsePolynomialZonotope)
 nparams(::SimpleSparsePolynomialZonotope)
 order(::SimpleSparsePolynomialZonotope)
-linear_map(::Union{Real, AbstractMatrix, LinearAlgebra.UniformScaling}, ::SimpleSparsePolynomialZonotope)
+linear_map(::AbstractMatrix, ::SimpleSparsePolynomialZonotope)
 convex_hull(::SimpleSparsePolynomialZonotope)
 quadratic_map(::Vector{MT}, ::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
 quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope, S2::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}

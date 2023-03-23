@@ -199,7 +199,7 @@ function order(PZ::DensePolynomialZonotope)
 end
 
 """
-    linear_map(M::Matrix, PZ::DensePolynomialZonotope)
+    linear_map(M::AbstractMatrix, PZ::DensePolynomialZonotope)
 
 Return the linear map of a polynomial zonotope.
 
@@ -217,7 +217,7 @@ A polynomial zonotope.
 The result's starting point and generators are those of `PZ` multiplied by the
 matrix `M`.
 """
-function linear_map(M::Matrix, PZ::DensePolynomialZonotope)
+function linear_map(M::AbstractMatrix, PZ::DensePolynomialZonotope)
     c = M * PZ.c
     E = [M*Ei for Ei in PZ.E]
     F = [M*Fi for Fi in PZ.F]
