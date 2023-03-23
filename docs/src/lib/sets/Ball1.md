@@ -26,9 +26,7 @@ Inherited from [`LazySet`](@ref):
 * [`rectify`](@ref rectify(::LazySet))
 * [`low`](@ref low(::LazySet))
 * [`high`](@ref high(::LazySet))
-
-Inherited from [`AbstractPolyhedron`](@ref):
-* [`linear_map`](@ref linear_map(::AbstractMatrix{NM}, ::AbstractPolyhedron{NP}) where {NM, NP})
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet)
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

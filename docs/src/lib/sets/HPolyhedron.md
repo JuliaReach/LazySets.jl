@@ -31,12 +31,12 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`isempty`](@ref isempty(::LazySet{N}, ::Bool=false) where {N})
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet)
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractPolyhedron))
 * [`an_element`](@ref an_element(::AbstractPolyhedron))
 * [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron))
-* [`linear_map`](@ref linear_map(::AbstractMatrix{NM}, ::AbstractPolyhedron{NP}) where {NM, NP})
 
 The following methods are specific to `HPolyhedron`.
 

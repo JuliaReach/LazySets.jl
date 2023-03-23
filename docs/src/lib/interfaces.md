@@ -78,6 +78,7 @@ norm(::LazySet, ::Real=Inf)
 radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
 isempty(::LazySet{N}, ::Bool=false) where {N}
+linear_map(::AbstractMatrix, ::LazySet; kwargs...)
 affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector)
 exponential_map(::AbstractMatrix, ::LazySet)
 an_element(::LazySet)
@@ -227,11 +228,11 @@ This interface defines the following functions:
 ∈(::AbstractVector, ::AbstractPolyhedron)
 isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N}
 constrained_dimensions(::AbstractPolyhedron)
-linear_map(::AbstractMatrix{NM}, ::AbstractPolyhedron{NP}) where {NM, NP}
 an_element(::AbstractPolyhedron{N}) where {N}
 isbounded(::AbstractPolyhedron{N}) where {N}
 vertices_list(::AbstractPolyhedron)
 project(::AbstractPolyhedron{N}, ::AbstractVector{Int}) where {N}
+LazySets._linear_map_polyhedron
 LazySets._isbounded_stiemke
 ```
 

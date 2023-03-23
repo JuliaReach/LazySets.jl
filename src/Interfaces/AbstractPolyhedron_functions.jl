@@ -343,11 +343,10 @@ struct LinearMapVRep{T} <: AbstractLinearMapAlgorithm
     backend::T
 end
 
-function _check_algorithm_applies(M::AbstractMatrix{N},
-                                  P::AbstractPolyhedron{N},
+function _check_algorithm_applies(M::AbstractMatrix, P::LazySet,
                                   ::Type{LinearMapInverse};
                                   cond_tol=DEFAULT_COND_TOL,
-                                  throw_error=false) where {N}
+                                  throw_error=false)
 
     inv_condition = issquare(M) && isinvertible(M; cond_tol=cond_tol)
     if !inv_condition
@@ -366,11 +365,10 @@ function _check_algorithm_applies(M::AbstractMatrix{N},
     return true
 end
 
-function _check_algorithm_applies(M::AbstractMatrix{N},
-                                  P::AbstractPolyhedron{N},
+function _check_algorithm_applies(M::AbstractMatrix, P::LazySet,
                                   ::Type{LinearMapInverseRight};
                                   cond_tol=DEFAULT_COND_TOL,
-                                  throw_error=false) where {N}
+                                  throw_error=false)
     inv_condition = issquare(M) && isinvertible(M; cond_tol=cond_tol)
     if !inv_condition
         throw_error && throw(ArgumentError("algorithm \"inverse_right\" " *
@@ -380,10 +378,9 @@ function _check_algorithm_applies(M::AbstractMatrix{N},
     return true
 end
 
-function _check_algorithm_applies(M::AbstractMatrix{N},
-                                  P::AbstractPolyhedron{N},
+function _check_algorithm_applies(M::AbstractMatrix, P::LazySet,
                                   ::Type{LinearMapLift};
-                                  throw_error=false) where {N}
+                                  throw_error=false)
 
     m, n = size(M)
     size_condition = m > n
@@ -405,10 +402,9 @@ function _check_algorithm_applies(M::AbstractMatrix{N},
     return true
 end
 
-function _check_algorithm_applies(M::AbstractMatrix{N},
-                                  P::AbstractPolyhedron{N},
+function _check_algorithm_applies(M::AbstractMatrix, P::LazySet,
                                   ::Type{LinearMapVRep};
-                                  throw_error=false) where {N}
+                                  throw_error=false)
 
     if !isboundedtype(typeof(P))
         throw_error && throw(ArgumentError("algorithm \"vrep\" requires a " *
@@ -430,8 +426,7 @@ function _get_elimination_instance(N, backend, elimination_method)
     return LinearMapElimination(backend, elimination_method)
 end
 
-function _default_linear_map_algorithm(M::AbstractMatrix{N},
-                                       P::AbstractPolyhedron{N};
+function _default_linear_map_algorithm(M::AbstractMatrix{N}, P::LazySet;
                                        cond_tol=DEFAULT_COND_TOL,
                                        backend=nothing,
                                        elimination_method=nothing) where {N}
@@ -447,14 +442,14 @@ function _default_linear_map_algorithm(M::AbstractMatrix{N},
 end
 
 """
-    linear_map(M::AbstractMatrix{NM},
-               P::AbstractPolyhedron{NP};
-               [algorithm]::Union{String, Nothing}=nothing,
-               [check_invertibility]::Bool=true,
-               [cond_tol]::Number=DEFAULT_COND_TOL,
-               [inverse]::Union{AbstractMatrix{N}, Nothing}=nothing,
-               [backend]=nothing,
-               [elimination_method]=nothing) where {NM, NP}
+    _linear_map_polyhedron(M::AbstractMatrix{NM},
+                           P::LazySet{NP};
+                           [algorithm]::Union{String, Nothing}=nothing,
+                           [check_invertibility]::Bool=true,
+                           [cond_tol]::Number=DEFAULT_COND_TOL,
+                           [inverse]::Union{AbstractMatrix{N}, Nothing}=nothing,
+                           [backend]=nothing,
+                           [elimination_method]=nothing) where {NM, NP}
 
 Concrete linear map of a polyhedral set.
 
@@ -634,14 +629,14 @@ the result back to half-space representation is not computed by default, since
 this may be costly. If you use this algorithm and still want to convert back to
 half-space representation, apply `tohrep` to the result of this method.
 """
-function linear_map(M::AbstractMatrix{NM},
-                    P::AbstractPolyhedron{NP};
-                    algorithm::Union{String, Nothing}=nothing,
-                    check_invertibility::Bool=true,
-                    cond_tol::Number=DEFAULT_COND_TOL,
-                    inverse::Union{AbstractMatrix, Nothing}=nothing,
-                    backend=nothing,
-                    elimination_method=nothing) where {NM, NP}
+function _linear_map_polyhedron(M::AbstractMatrix{NM},
+                                P::LazySet{NP};
+                                algorithm::Union{String, Nothing}=nothing,
+                                check_invertibility::Bool=true,
+                                cond_tol::Number=DEFAULT_COND_TOL,
+                                inverse::Union{AbstractMatrix, Nothing}=nothing,
+                                backend=nothing,
+                                elimination_method=nothing) where {NM, NP}
     N = promote_type(NM, NP)
     N != NP && error("conversion between numeric types of polyhedra not " *
         "implemented yet (see #1181)")
@@ -739,15 +734,14 @@ function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron,
 end
 
 # generic function for the AbstractPolyhedron interface => returns an HPolyhedron
-function _linear_map_hrep_helper(M::AbstractMatrix, P::AbstractPolyhedron,
+function _linear_map_hrep_helper(M::AbstractMatrix, P::LazySet,
                                  algo::AbstractLinearMapAlgorithm)
     constraints = _linear_map_hrep(M, P, algo)
     return HPolyhedron(constraints)
 end
 
 # preconditions should have been checked in the caller function
-function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron,
-                          algo::LinearMapInverse)
+function _linear_map_hrep(M::AbstractMatrix, P::LazySet, algo::LinearMapInverse)
     return _linear_map_inverse_hrep(algo.inverse, P)
 end
 
@@ -758,7 +752,7 @@ function linear_map_inverse(Minv::AbstractMatrix, P::AbstractPolyhedron)
     return HPolyhedron(constraints)
 end
 
-function _linear_map_inverse_hrep(Minv::AbstractMatrix, P::AbstractPolyhedron)
+function _linear_map_inverse_hrep(Minv::AbstractMatrix, P::LazySet)
     constraints_P = constraints_list(P)
     constraints_MP = _preallocate_constraints(constraints_P)
     @inbounds for (i, c) in enumerate(constraints_P)

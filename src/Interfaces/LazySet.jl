@@ -20,6 +20,7 @@ export LazySet,
        tosimplehrep,
        isuniversal,
        translate,
+       linear_map,
        affine_map,
        exponential_map,
        reflect,
@@ -1835,5 +1836,27 @@ function _isempty_polyhedron_polyhedra(P::LazySet{N}, witness::Bool=false;
         error("witness production is not supported yet")
     else
         return false
+    end
+end
+
+"""
+    linear_map(M::AbstractMatrix, P::LazySet; kwargs...)
+
+Concrete linear map of a polyhedral set.
+
+### Input
+
+- `M` -- matrix
+- `P` -- polyhedral set
+
+### Output
+
+A set representing the concrete linear map.
+"""
+function linear_map(M::AbstractMatrix, P::LazySet; kwargs...)
+    if is_polyhedral(P)
+        return _linear_map_polyhedron(M, P; kwargs...)
+    else
+        throw(ArgumentError("`linear_map` is not implemented for the given set"))
     end
 end
