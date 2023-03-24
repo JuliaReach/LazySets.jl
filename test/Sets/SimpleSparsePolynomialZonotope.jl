@@ -1,8 +1,8 @@
 for N in [Float64, Float32, Rational{Int}]
     # example from slide 13 of Niklas talk at JuliaReach & JuliaIntervals Days 3
     c = N[2, 0]
-    G = N[1 2;2 2.]
-    E = [1 4;1 2]
+    G = N[1 2; 2 2.]
+    E = [1 4; 1 2]
 
     @test rand(SimpleSparsePolynomialZonotope) isa SimpleSparsePolynomialZonotope
 
@@ -15,29 +15,29 @@ for N in [Float64, Float32, Rational{Int}]
     @test nparams(S) == 2
     @test order(S) == 1 // 1
 
-    @test overapproximate(S, Zonotope) == Zonotope(N[3., 1], N[1 1;2 1.])
+    @test overapproximate(S, Zonotope) == Zonotope(N[3., 1], N[1 1; 2 1.])
     @test length(overapproximate(S, Zonotope; nsdiv=3)) == 9
     @test length(overapproximate(S, Zonotope; partition=(2, 3))) == 6
 
-    LMS = linear_map([1.0 2.0;3.0 4.0], S);
-    @test center(LMS) == [2.0, 6.0]
-    @test genmat(LMS) == [5.0 6.0;11.0 14.0]
+    LMS = linear_map(N[1 2; 3 4], S);
+    @test center(LMS) == N[2, 6]
+    @test genmat(LMS) == N[5 6; 11 14]
     @test expmat(LMS) == expmat(S)
 
-    LMS2 = linear_map(0.5, S)
-    @test center(LMS2) == [1.0, 0.0]
-    @test genmat(LMS2) == [0.5 1;1 1]
+    LMS2 = linear_map(N[1//2 0; 0 1//2], S)
+    @test center(LMS2) == N[1, 0]
+    @test genmat(LMS2) == N[0.5 1; 1 1]
     @test expmat(LMS2) == expmat(LMS2)
 
     MSS = minkowski_sum(S, S)
-    @test center(MSS) == [4.0, 0.0]
-    @test genmat(MSS) == [1 2 1 2;2 2 2 2.]
-    @test expmat(MSS) == [1 4 0 0;1 2 0 0;0 0 1 4;0 0 1 2]
+    @test center(MSS) == N[4, 0]
+    @test genmat(MSS) == N[1 2 1 2; 2 2 2 2.]
+    @test expmat(MSS) == [1 4 0 0; 1 2 0 0; 0 0 1 4; 0 0 1 2]
 
     CPS = cartesian_product(S, S)
-    @test center(CPS) == [2, 0, 2.0, 0]
-    @test genmat(CPS) == [1 2 0 0;2 2 0 0;0 0 1 2;0 0 2 2.]
-    @test expmat(CPS) == [1 4 0 0;1 2 0 0;0 0 1 4;0 0 1 2]
+    @test center(CPS) == N[2, 0, 2, 0]
+    @test genmat(CPS) == N[1 2 0 0; 2 2 0 0; 0 0 1 2; 0 0 2 2.]
+    @test expmat(CPS) == [1 4 0 0; 1 2 0 0; 0 0 1 4; 0 0 1 2]
 
     _c = N[2, 0]
     _g = N[0  0.5  1  0.5  1  0.5  1  -0.5  -1

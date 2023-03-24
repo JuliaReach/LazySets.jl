@@ -21,7 +21,7 @@ vertices_list(::EmptySet)
 norm(::EmptySet, ::Real=Inf)
 radius(::EmptySet, ::Real=Inf)
 diameter(::EmptySet, ::Real=Inf)
-linear_map(::AbstractMatrix{N}, ::EmptySet{N}) where {N}
+linear_map(::AbstractMatrix, ::EmptySet)
 translate(::EmptySet, ::AbstractVector)
 plot_recipe(::EmptySet{N}, ::Any=zero(N)) where {N}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::EmptySet{N}, ::Real=zero(N)) where {N}

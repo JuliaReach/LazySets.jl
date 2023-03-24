@@ -266,8 +266,8 @@ function vertices_list(cup::UnionSet;
     return vlist
 end
 
-function linear_map(A::AbstractMatrix, cup::UnionSet)
-    return UnionSet(linear_map(A, cup.X), linear_map(A, cup.Y))
+function linear_map(M::AbstractMatrix, cup::UnionSet)
+    return UnionSet(linear_map(M, cup.X), linear_map(M, cup.Y))
 end
 
 function volume(cup::UnionSet)

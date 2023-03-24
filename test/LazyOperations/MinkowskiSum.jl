@@ -101,6 +101,11 @@ for N in [Float64, Rational{Int}, Float32]
     # concretize
     @test concretize(ms) == minkowski_sum(B, B)
 
+    # linear_map
+    M = N[1 0; 0 1]
+    Z = linear_map(M, X + Y)  # identity
+    @test isequivalent(X + Y, Z)
+
     # =================
     # MinkowskiSumArray
     # =================
