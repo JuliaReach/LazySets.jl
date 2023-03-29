@@ -656,7 +656,7 @@ The reflection of `x` in `H`.
 The reflection of a point ``x`` in the hyperplane ``a ⋅ x = b`` is
 
 ```math
-    x − 2 \frac{x ⋅ a − b}{a ⋅ a} a
+    x − 2 \\frac{x ⋅ a − b}{a ⋅ a} a
 ```
 
 where ``u · v`` denotes the dot product.
