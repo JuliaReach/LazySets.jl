@@ -374,3 +374,7 @@ function plot_recipe(S::AbstractSingleton{N}, ε=zero(N)) where {N}
         throw(ArgumentError("cannot plot a $n-dimensional $(typeof(S))"))
     end
 end
+
+function reflect(S::AbstractSingleton)
+    return Singleton(-element(S))
+end
