@@ -736,3 +736,7 @@ A scalar representing the distance between point `x` and hyperrectangle `H`.
 
     return distance(x, y; p=p)
 end
+
+function reflect(H::AbstractHyperrectangle)
+    return Hyperrectangle(-center(H), radius_hyperrectangle(H))
+end

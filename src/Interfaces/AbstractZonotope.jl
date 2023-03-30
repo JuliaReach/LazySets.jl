@@ -1006,3 +1006,7 @@ function _hcat_KLred(G::SMatrix{n, p, N, L1}, indices,
 end
 
 end end # quote / load_reduce_order_static
+
+function reflect(Z::AbstractZonotope)
+    return Zonotope(-center(Z), genmat(Z))
+end
