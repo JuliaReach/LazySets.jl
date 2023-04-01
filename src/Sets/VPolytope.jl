@@ -54,7 +54,7 @@ julia> P.vertices
 ```
 """
 struct VPolytope{N, VN<:AbstractVector{N}, VT<:AbstractVector{VN}} <: AbstractPolytope{N}
-    vertices::Vector{VT}
+    vertices::VT
 end
 
 isoperationtype(::Type{<:VPolytope}) = false
