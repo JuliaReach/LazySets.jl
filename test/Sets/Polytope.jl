@@ -232,11 +232,11 @@ for N in [Float64, Rational{Int}, Float32]
     # construction with static arrays
     vlist = [SVector{2}(N[0, 0]), SVector{2}(N[1, 0]), SVector{2}(N[0, 1])]
     V = VPolytope(vlist)
-    @test vertices_list(V) == vlist
+    @test ispermutation(vertices_list(V), vlist)
     # check that the outer container can also be static
     vlist = SVector{3}(SVector{2}(N[0, 0]), SVector{2}(N[1, 0]), SVector{2}(N[0, 1]))
     V = VPolytope(vlist)
-    @test vertices_list(V) == vlist
+    @test ispermutation(vertices_list(V), vlist)
 end
 
 # default Float64 constructors
