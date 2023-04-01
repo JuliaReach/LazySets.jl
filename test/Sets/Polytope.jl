@@ -228,6 +228,15 @@ for N in [Float64, Rational{Int}, Float32]
     P = VPolytope([N[1, 2, 3], N[4, 5, 6]])
     Q = VPolytope([N[3, 1, 2], N[6, 4, 5]])
     @test permute(P, [3, 1, 2]) == Q
+
+    # construction with static arrays
+    vlist = [SVector{2}(N[0, 0]), SVector{2}(N[1, 0]), SVector{2}(N[0, 1])]
+    V = VPolytope(vlist)
+    @test vertices_list(V) == vlist
+    # check that the outer container can also be static
+    vlist = SVector{3}(SVector{2}(N[0, 0]), SVector{2}(N[1, 0]), SVector{2}(N[0, 1]))
+    V = VPolytope(vlist)
+    @test vertices_list(V) == vlist
 end
 
 # default Float64 constructors

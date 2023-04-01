@@ -9,7 +9,7 @@ export VPolytope,
        tovrep
 
 """
-    VPolytope{N, VN<:AbstractVector{N}} <: AbstractPolytope{N}
+    VPolytope{N, VN<:AbstractVector{N}, VT<:AbstractVector{VN}} <: AbstractPolytope{N}
 
 Type that represents a convex polytope in vertex representation.
 
@@ -53,7 +53,7 @@ julia> P.vertices
  [0, 0, 1]
 ```
 """
-struct VPolytope{N, VN<:AbstractVector{N}} <: AbstractPolytope{N}
+struct VPolytope{N, VN<:AbstractVector{N}, VT<:AbstractVector{VN}} <: AbstractPolytope{N}
     vertices::Vector{VN}
 end
 
