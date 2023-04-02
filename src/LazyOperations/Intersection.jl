@@ -262,7 +262,7 @@ function ρ_helper(d::AbstractVector{M},
                   cap::Intersection{N, S1, <:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}},
                   algorithm::String; kwargs...) where {M, N, S1}
     if !isbounded(cap.X)
-        raise(ArgumentError("the first set in the intersection must be bounded"))
+        throw(ArgumentError("the first set in the intersection must be bounded"))
     end
     X = cap.X # compact set
     H = cap.Y # half-space or hyperplane or line
@@ -694,7 +694,7 @@ function plot_recipe(cap::Intersection{N}, ε::N=zero(N),
         return plot_recipe(EmptySet{N}(dim(cap)), ε)
     elseif dim(cap) == 1
         if !isconvextype(cap)
-            raise(ArgumentError("cannot plot a one-dimensional $(typeof(cap))"))
+            throw(ArgumentError("cannot plot a one-dimensional $(typeof(cap))"))
         end
         return plot_recipe(convert(Interval, cap), ε)
     else
@@ -808,7 +808,7 @@ return quote
 function _line_search_optim(ℓ, X::S, H::Union{<:HalfSpace, <:Hyperplane, <:Line2D};
                             kwargs...) where {S<:LazySet}
     if !isconvextype(S)
-        raise(ArgumentError("the first set in the intersection must be convex"))
+        throw(ArgumentError("the first set in the intersection must be convex"))
     end
 
     options = Dict(kwargs)
@@ -911,7 +911,7 @@ function _projection(ℓ, X::S, H::Union{Hyperplane{N}, Line2D{N}};
                      algorithm_2d_intersection=nothing,
                      kwargs...) where {N, S<:LazySet}
     if !isconvextype(S)
-        raise(ArgumentError("the first set in the intersection must be convex"))
+        throw(ArgumentError("the first set in the intersection must be convex"))
     end
 
     n = H.a                  # normal vector to the hyperplane
