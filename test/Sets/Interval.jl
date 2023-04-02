@@ -239,4 +239,9 @@ for N in [Float64, Float32, Rational{Int}]
     # Chebyshev center
     c, r = chebyshev_center_radius(x)
     @test c == center(x) && r == N(1//2)
+
+    # reflect
+    @test reflect(Interval(N(1), N(2))) == Interval(N(-2), N(-1))
+    @test reflect(Interval(N(-1), N(2))) == Interval(N(-2), N(1))
+    @test reflect(Interval(N(-2), N(-1))) == Interval(N(1), N(2))
 end
