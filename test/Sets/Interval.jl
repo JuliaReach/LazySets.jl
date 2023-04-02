@@ -225,6 +225,17 @@ for N in [Float64, Float32, Rational{Int}]
     vlistI = vertices_list(b[1])
     @test is_cyclic_permutation(vlistI, [SA[N(0)], SA[N(1)]])
 
+    # generators
+    @test ngens(x) == 1
+    @test collect(generators(x)) == [N[1/2]]
+    @test genmat(x) == hcat(N[1/2])
+    x_degenerate = Interval(N(1), N(1))
+    @test ngens(x_degenerate) == 0
+    gens = genmat(x_degenerate)
+    @test gens == Matrix{N}(undef, 1, 0) && gens isa Matrix{N}
+    gens = collect(generators(x_degenerate))
+    @test isempty(gens) && gens isa Vector{SingleEntryVector{N}}
+
     # Chebyshev center
     c, r = chebyshev_center_radius(x)
     @test c == center(x) && r == N(1//2)

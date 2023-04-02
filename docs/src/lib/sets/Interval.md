@@ -33,6 +33,7 @@ constraints_list(::Interval)
 rectify(::Interval{N}) where {N}
 diameter(::Interval, ::Real=Inf)
 split(::Interval, ::AbstractVector{Int})
+ngens(::Interval)
 chebyshev_center_radius(::Interval)
 ```
 
@@ -53,7 +54,6 @@ Inherited from [`AbstractZonotope`](@ref):
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
-* [`ngens`](@ref ngens(::AbstractHyperrectangle))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
 * [`low`](@ref low(::AbstractHyperrectangle, ::Int))
