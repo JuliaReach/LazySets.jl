@@ -32,3 +32,4 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`low`](@ref low(::LazySet, ::Int))
 * [`high`](@ref high(::LazySet, ::Int))
+* [`reflect`](@ref reflect(::LazySet))

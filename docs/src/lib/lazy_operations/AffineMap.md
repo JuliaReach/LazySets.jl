@@ -22,3 +22,4 @@ Inherited from [`AbstractAffineMap`](@ref):
 
 Inherited from [`LazySet`](@ref):
 * [`singleton_list`](@ref singleton_list(::LazySet))
+* [`reflect`](@ref reflect(::LazySet))

@@ -27,6 +27,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
+* [`reflect`](@ref reflect(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

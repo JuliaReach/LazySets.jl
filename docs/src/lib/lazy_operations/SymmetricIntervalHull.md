@@ -44,3 +44,4 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`low`](@ref low(::AbstractHyperrectangle))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
+* [`reflect`](@ref reflect(::AbstractHyperrectangle))

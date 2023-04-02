@@ -46,3 +46,4 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`vertices_list`](@ref vertices_list(::AbstractZonotope))
 * [`isempty`](@ref isempty(::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
+* [`reflect`](@ref reflect(::AbstractZonotope))

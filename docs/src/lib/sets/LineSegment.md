@@ -30,6 +30,7 @@ Inherited from [`LazySet`](@ref):
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`high`](@ref high(::LazySet, ::Int))
 * [`low`](@ref low(::LazySet, ::Int))
+* [`reflect`](@ref reflect(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

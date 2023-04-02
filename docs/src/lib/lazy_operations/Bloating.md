@@ -19,3 +19,4 @@ is_polyhedral(::Bloating)
 Inherited from [`LazySet`](@ref):
 * [`high`](@ref high(::LazySet))
 * [`low`](@ref low(::LazySet))
+* [`reflect`](@ref reflect(::LazySet))
