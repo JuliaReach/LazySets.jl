@@ -105,6 +105,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # permutation
     @test permute(U, [1, 2]) == permute(U, [2, 1]) == U
+
+    @test reflect(U) == U
 end
 
 # default Float64 constructor
