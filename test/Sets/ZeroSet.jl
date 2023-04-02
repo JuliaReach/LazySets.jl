@@ -78,4 +78,7 @@ for N in [Float64, Rational{Int}, Float32]
     # concrete Minkowski sum
     @test minkowski_sum(Z, B) == minkowski_sum(B, Z) == B
     @test minkowski_sum(Z, Z) == Z
+
+    # reflect
+    @test reflect(Z) == Z
 end

@@ -14,7 +14,8 @@ element(::ZeroSet{N}) where {N}
 element(::ZeroSet{N}, ::Int) where {N}
 linear_map(::AbstractMatrix, ::ZeroSet)
 translate(::ZeroSet, ::AbstractVector)
-rectify(Z::ZeroSet)
+rectify(::ZeroSet)
+reflect(::ZeroSet)
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
