@@ -232,7 +232,7 @@ function generators(L::LineSegment)
         N = eltype(L)
         return EmptyIterator{Vector{N}}()
     end
-    return [(L.p - L.q) / 2]
+    return SingletonIterator((L.p - L.q) / 2)
 end
 
 """
