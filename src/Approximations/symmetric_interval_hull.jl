@@ -102,29 +102,27 @@ function symmetric_interval_hull(lm::LinearMap{N, <:AbstractHyperrectangle}) whe
     return Hyperrectangle(zeros(N, n), r)
 end
 
-function symmetric_interval_hull(E::ExponentialMap{N, <:AbstractSingleton}) where {N}
-    require(@__MODULE__, :Expokit; fun_name="symmetric_interval_hull")
-
-    v = expmv(one(N), E.spmexp.M, element(E.X))
+function symmetric_interval_hull(E::ExponentialMap{N, <:AbstractSingleton};
+                                 backend=get_exponential_backend()) where {N}
+    v = _expmv(backend, one(N), E.spmexp.M, element(E.X))
     c = zeros(N, dim(E))
     r = abs.(v)
     return Hyperrectangle(c, r)
 end
 
-function symmetric_interval_hull(E::ExponentialMap{N, <:AbstractHyperrectangle}) where {N}
-    require(@__MODULE__, :Expokit; fun_name="symmetric_interval_hull")
-
+function symmetric_interval_hull(E::ExponentialMap{N, <:AbstractHyperrectangle};
+                                 backend=get_exponential_backend()) where {N}
     H = set(E)
     n = dim(H)
     x = zeros(N, n)
-    r = abs.(expmv(one(N), E.spmexp.M, center(H)))
+    r = abs.(_expmv(backend, one(N), E.spmexp.M, center(H)))
     @inbounds for i in 1:n
         x[i] = radius_hyperrectangle(H, i)
         if isapproxzero(x[i])
             x[i] = 0
             continue
         end
-        r .+= abs.(expmv(one(N), E.spmexp.M, x))
+        r .+= abs.(_expmv(backend, one(N), E.spmexp.M, x))
         x[i] = 0
     end
     return Hyperrectangle(zeros(N, n), r)
