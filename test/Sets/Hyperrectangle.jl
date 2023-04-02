@@ -286,6 +286,9 @@ for N in [Float64, Rational{Int}, Float32]
     H = Hyperrectangle(N[1, 2, 3], N[4, 5, 6])
     @test permute(H, 1:3) == H
     @test permute(H, [2, 1, 3]) == Hyperrectangle(N[2, 1, 3], N[5, 4, 6])
+
+    # reflect
+    @test reflect(H) == Hyperrectangle(N[-1, -2, -3], N[4, 5, 6])
 end
 
 # tests that only work with Float64 and Float32

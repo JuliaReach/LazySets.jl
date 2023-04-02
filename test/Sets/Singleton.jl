@@ -158,4 +158,8 @@ for N in [Float64, Rational{Int}, Float32]
     # Chebyshev center
     c, r = chebyshev_center_radius(S)
     @test c == element(S) && r == zero(N)
+
+    # reflect
+    S = Singleton(N[0, -1, 2])
+    @test reflect(S) == Singleton(N[0, 1, -2])
 end

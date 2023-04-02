@@ -285,6 +285,10 @@ for N in [Float64, Rational{Int}, Float32]
     Zs = Zonotope(N[0, 0], N[2 0; -1//2 1//2])
     Zd = EmptySet{N}(2)
     @test isempty(Zd)
+
+    # reflect
+    Z = Zonotope(N[1, -2], N[2 0; -1//2 1//2])
+    @test reflect(Z) == Zonotope(N[-1, 2], N[2 0; -1//2 1//2])
 end
 
 for N in [Float64]

@@ -1007,6 +1007,25 @@ end
 
 end end # quote / load_reduce_order_static
 
+"""
+    reflect(Z::AbstractZonotope)
+
+Concrete reflection of a zonotopic set `Z`, resulting in the reflected set `-Z`.
+
+### Input
+
+- `Z` -- zonotopic set
+
+### Output
+
+A `Zonotope` representing `-Z`.
+
+### Algorithm
+
+If ``Z`` has center ``c`` and generator matrix ``G``, then ``-Z`` has center
+``-c`` and generator matrix ``G``. For the latter, observe that ``G`` and ``-G``
+behave the same way.
+"""
 function reflect(Z::AbstractZonotope)
     return Zonotope(-center(Z), genmat(Z))
 end
