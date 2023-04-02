@@ -34,6 +34,7 @@ low(::EmptySet, ::Int)
 high(::EmptySet, ::Int)
 complement(::EmptySet{N}) where {N}
 rectify(::EmptySet)
+reflect(::EmptySet)
 ```
 Inherited from [`LazySet`](@ref):
 * [`singleton_list`](@ref singleton_list(::LazySet))

@@ -544,3 +544,20 @@ The universe of the same dimension.
 function complement(∅::EmptySet{N}) where {N}
     return Universe{N}(dim(∅))
 end
+
+"""
+    reflect(∅::EmptySet)
+
+Concrete reflection of an empty set.
+
+### Input
+
+- `∅` -- empty set
+
+### Output
+
+The same empty set.
+"""
+function reflect(∅::EmptySet)
+    return ∅
+end

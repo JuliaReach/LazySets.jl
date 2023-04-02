@@ -67,6 +67,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # concrete rectification
     @test rectify(E) == E
+
+    # reflect
+    @test reflect(E) == E
 end
 
 # tests that only work with Float64 and Float32
