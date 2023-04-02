@@ -99,6 +99,10 @@ for N in [Float64, Rational{Int}, Float32]
     # projection
     @test project(Universe{N}(5), [1, 4, 5]) == Universe{N}(3)
 
+    # complement
+    C = complement(U)
+    @test C == EmptySet{N}(2) && C isa EmptySet{N}
+
     # permutation
     @test permute(U, [1, 2]) == permute(U, [2, 1]) == U
 end

@@ -392,6 +392,23 @@ function tosimplehrep(U::Universe)
     return tosimplehrep(constraints_list(U); n=dim(U))
 end
 
+"""
+    complement(U::Universe{N}) where {N}
+
+Return the complement of an universe.
+
+### Input
+
+- `∅` -- universe
+
+### Output
+
+The empty set of the same dimension.
+"""
+function complement(U::Universe{N}) where {N}
+    return EmptySet{N}(dim(U))
+end
+
 function load_polyhedra_universe() # function to be loaded by Requires
 return quote
 # see the interface file init_Polyhedra.jl for the imports
