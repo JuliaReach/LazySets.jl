@@ -370,3 +370,25 @@ function translate(L::LineSegment, v::AbstractVector)
                                 "set by a $(length(v))-dimensional vector"
     return LineSegment(L.p + v, L.q + v)
 end
+
+"""
+    ngens(L::LineSegment)
+
+Return the number of generators of a 2D line segment.
+
+### Input
+
+- `L` -- 2D line segment
+
+### Output
+
+The number of generators.
+
+### Algorithm
+
+A line segment has either one generator, or zero generators if it is a
+degenerated line segment of length zero.
+"""
+function ngens(L::LineSegment)
+    return _isapprox(L.p, L.q) ? 0 : 1
+end
