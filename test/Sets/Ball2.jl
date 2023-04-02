@@ -152,4 +152,7 @@ for N in [Float64, Float32]
     @test box_approximation(B) ≈ Hyperrectangle(low=[l1, l2], high=[h1, h2])
     @test low(B) == [N(-1), N(0)]
     @test high(B) == [N(3), N(4)]
+
+    # reflect
+    @test reflect(b4) == Ball2(N[-4, -3, -2, -1], N(2))
 end

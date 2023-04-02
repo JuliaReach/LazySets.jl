@@ -105,4 +105,7 @@ for N in [Float64, Rational{Int}, Float32]
     # projection
     b4 = Ball1(N[4, 3, 2, 1], N(2))
     @test project(b4, [2, 4]) == Ball1(N[3, 1], N(2))
+
+    # reflect
+    @test reflect(b4) == Ball1(N[-4, -3, -2, -1], N(2))
 end

@@ -225,6 +225,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test gens == Matrix(undef, 2, 0) && gens isa Matrix{N}
     gens = collect(generators(B_degenerated))
     @test isempty(gens) && gens isa Vector{SingleEntryVector{N}}
+
+    # reflect
+    @test reflect(b4) == BallInf(N[-4, -3, -2, -1], N(2))
 end
 
 # tests that only work with Float64

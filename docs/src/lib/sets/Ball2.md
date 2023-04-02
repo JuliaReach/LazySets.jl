@@ -16,6 +16,7 @@ translate(::Ball2, ::AbstractVector)
 translate!(::Ball2, ::AbstractVector)
 chebyshev_center_radius(::Ball2)
 volume(::Ball2)
+reflect(::Ball2)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

@@ -18,6 +18,7 @@ translate(::BallInf, ::AbstractVector)
 translate!(::BallInf, ::AbstractVector)
 ngens(::BallInf)
 volume(::BallInf)
+reflect(::BallInf)
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
