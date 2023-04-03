@@ -588,3 +588,19 @@ for N in [Float64]
         @test ispermutation(vertices_list(overapproximate(Projection(X, [1, 2]), 1e-3)), v12)
     end
 end
+
+for N in [Float64, Rational{Int}]
+    # delaunay triangulation
+    vlist = [N[0, 0, 0], N[0, 0, 1], N[0, 1, 0], N[1, 0, 0]]  # tetrahedron
+    V = VPolytope(vlist)
+    D = delaunay(V)
+    @test length(D) == 1 && isequivalent(array(D)[1], V)
+    D = delaunay(V; compute_triangles_3d=true)
+    @test length(D) == 4
+    for P in array(D)
+        @test isequivalent(P, VPolytope(vlist[[1, 2, 3]])) ||
+              isequivalent(P, VPolytope(vlist[[1, 2, 4]])) ||
+              isequivalent(P, VPolytope(vlist[[1, 3, 4]])) ||
+              isequivalent(P, VPolytope(vlist[[2, 3, 4]]))
+    end
+end
