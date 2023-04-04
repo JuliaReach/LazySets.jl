@@ -31,7 +31,7 @@ where:
 - ``c ∈ \\mathbb{R}^n`` is the starting point (in some particular cases it
   corresponds to the center of a usual zonotope),
 
-- ``E = [E^{[1]} ⋯ E^{[η]}]`` is an ``n × p × η(η+1)/2`` matrix with column
+- ``E = [E^{[1]} ⋯ E^{[η]}]`` is an ``n × p × η`` matrix with column
   blocks
 
 ```math
