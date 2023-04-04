@@ -247,8 +247,7 @@ function _zonotope_overapprox(c, G, E)
 end
 
 """
-    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope};
-                    [nsdiv]=1, [partition]=nothing)
+    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope})
 
 Overapproximate a simple sparse polynomial zonotope with a zonotope.
 
@@ -256,22 +255,12 @@ Overapproximate a simple sparse polynomial zonotope with a zonotope.
 
 - `P`         -- simple sparse polynomial zonotope
 - `Zonotope`  -- target set type
-- `nsdiv`     -- (optional, default: `1`) size of uniform partitioning grid
-- `partition` -- (optional, default: `nothing`) tuple of integers indicating the
-                 number of blocks in each dimensino; the length should match
-                 `nparams(P)`
 
 ### Output
 
 A zonotope.
 """
-function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope};
-                         nsdiv=1, partition=nothing)
-    if !isnothing(partition) || nsdiv != 1
-        return overapproximate(P, UnionSetArray{Zonotope}; nsdiv=nsdiv,
-                               partition=partition)
-    end
-
+function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope})
     cnew, Gnew = _zonotope_overapprox(center(P), genmat(P), expmat(P))
     return Zonotope(cnew, Gnew)
 end

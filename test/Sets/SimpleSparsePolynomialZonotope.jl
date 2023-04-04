@@ -16,8 +16,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test order(S) == 1 // 1
 
     @test overapproximate(S, Zonotope) == Zonotope(N[3., 1], N[1 1; 2 1.])
-    @test length(overapproximate(S, Zonotope; nsdiv=3)) == 9
-    @test length(overapproximate(S, Zonotope; partition=(2, 3))) == 6
+    @test length(overapproximate(S, UnionSetArray{Zonotope}; nsdiv=3)) == 9
+    @test length(overapproximate(S, UnionSetArray{Zonotope}; partition=(2, 3))) == 6
 
     LMS = linear_map(N[1 2; 3 4], S);
     @test center(LMS) == N[2, 6]
