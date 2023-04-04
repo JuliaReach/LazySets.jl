@@ -79,8 +79,7 @@ end
 # intersection
 for X in filter(!isoperationtype, LazySets.subtypes(LazySet, true))
     if X ∈ [RotatedHyperrectangle, Star, Polygon, DensePolynomialZonotope,
-            SparsePolynomialZonotope, SimpleSparsePolynomialZonotope,
-            LazySets.AbstractStar]
+            SparsePolynomialZonotope, SimpleSparsePolynomialZonotope]
         # missing rand()
         continue
     end
