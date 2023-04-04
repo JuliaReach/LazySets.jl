@@ -92,3 +92,10 @@
 # set
 @test check_method_implementation(AbstractAffineMap, set,
                                   Function[S -> (S{Float64},)])
+
+# --- AbstractPolynomialZonotope ---
+
+@test check_method_implementation(AbstractPolynomialZonotope, center,
+                                  Function[S -> (S{Float64},)])
+@test check_method_implementation(AbstractPolynomialZonotope, order,
+                                  Function[S -> (S{Float64},)])

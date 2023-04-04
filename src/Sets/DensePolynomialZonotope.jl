@@ -62,7 +62,7 @@ called the matrix of *single-indexed generators*, where each ``g^{(i)}`` is an
 The polynomial zonotope ``(c, E, F, G)`` defines the set:
 
 ```math
-\\mathcal{PZ} = \\left\\{ c + ∑_{j=1}^p β_j f^{([1], j)} + ∑_{j=1}^p ∑_{k=j}^p β_j β_k f^{([2], j, k)} + \\\\
+\\left\\{ c + ∑_{j=1}^p β_j f^{([1], j)} + ∑_{j=1}^p ∑_{k=j}^p β_j β_k f^{([2], j, k)} + \\\\
 + … + ∑_{j=1}^p ∑_{k=j}^p ⋯ ∑_{m=ℓ}^p β_j β_k ⋯ β_m f^{([η], j, k, …, m)} + \\\\
 + ∑_{i=1}^q γ_i g^{(i)}, \\qquad β_i, γ_i ∈ [-1, 1] \\right\\},
 ```
@@ -71,7 +71,7 @@ to the polynomial order ``η``.
 
 [1] M. Althoff in *Reachability analysis of nonlinear systems using conservative
     polynomialization and non-convex sets*, Hybrid Systems: Computation and
-    Control, 2013, pp. 173–182.
+    Control, 2013, pp. 173-182.
 """
 struct DensePolynomialZonotope{N, VT, VMT, MT} <: AbstractPolynomialZonotope{N}
     c::VT
@@ -92,121 +92,96 @@ end
 
 isoperationtype(::Type{<:DensePolynomialZonotope}) = false
 
-function isconvextype(P::Type{<:DensePolynomialZonotope})
-    return false
-end
-
-function isboundedtype(P::Type{<:DensePolynomialZonotope})
-    return true
-end
-
 """
-    dim(PZ::DensePolynomialZonotope)
+    center(P::DensePolynomialZonotope)
 
-Return the ambient dimension of a polynomial zonotope.
+Return the center of a polynomial zonotope.
 
 ### Input
 
-- `PZ` -- polynomial zonotope
+- `P` -- polynomial zonotope
 
 ### Output
 
-An integer representing the ambient dimension of the polynomial zonotope.
+The center of `P`.
 """
-dim(PZ::DensePolynomialZonotope) = length(PZ.c)
-
-"""
-    σ(d::AbstractVector, PZ::DensePolynomialZonotope)
-
-Return a support vector of a polynomial zonotope along direction `d`.
-
-### Input
-
-- `d`  -- direction
-- `PZ` -- polynomial zonotope
-
-### Output
-
-A support vector.
-
-### Notes
-
-This method is just a dummy and not implemented.
-"""
-function σ(d::AbstractVector, PZ::DensePolynomialZonotope)
-    error("this function is not yet implemented")
-end
+center(P::DensePolynomialZonotope) = P.c
 
 """
-    ρ(d::AbstractVector, PZ::DensePolynomialZonotope)
-
-Evaluate the support function of a polynomial zonotope along direction `d`.
-
-### Input
-
-- `d`  -- direction
-- `PZ` -- polynomial zonotope
-
-### Output
-
-Evaluation of the support function.
-
-### Notes
-
-This method is just a dummy and not implemented.
-"""
-function ρ(d::AbstractVector, PZ::DensePolynomialZonotope)
-    error("this function is not yet implemented")
-end
-
-"""
-    polynomial_order(PZ::DensePolynomialZonotope)
+    polynomial_order(P::DensePolynomialZonotope)
 
 Polynomial order of a polynomial zonotope.
 
 ### Input
 
-- `PZ` -- polynomial zonotope
+- `P` -- polynomial zonotope
 
 ## Output
 
 The polynomial order, defined as the maximal power of the scale factors ``β_i``.
 It is usually denoted ``η``.
 """
-polynomial_order(PZ::DensePolynomialZonotope) = length(PZ.E)
+polynomial_order(P::DensePolynomialZonotope) = length(P.E)
 
 """
-    order(PZ::DensePolynomialZonotope)
+    ngens_indep(P::DensePolynomialZonotope)
+
+Return the number of independent generators of a polynomial zonotope.
+
+### Input
+
+- `P` -- polynomial zonotope
+
+### Output
+
+The number of independent generators of `P`.
+"""
+ngens_indep(P::DensePolynomialZonotope) = size(P.G, 2)
+
+"""
+    ngens_dep(P::DensePolynomialZonotope)
+
+Return the number of dependent generators of a polynomial zonotope.
+
+### Input
+
+- `P` -- polynomial zonotope
+
+### Output
+
+The number of dependent generators of `P`.
+"""
+function ngens_dep(P::DensePolynomialZonotope)
+    η = polynomial_order(P)  # polynomial order
+    p = size(P.E[1], 2)  # number of dependent factors
+    return sum(i -> binomial(p+i-1, i), 1:η)
+end
+
+"""
+    order(P::DensePolynomialZonotope)
 
 Order of a polynomial zonotope.
 
 ### Input
 
-- `PZ` -- polynomial zonotope
+- `P` -- polynomial zonotope
 
 ## Output
 
 The order, a rational number defined as the total number of generators divided
 by the ambient dimension.
 """
-function order(PZ::DensePolynomialZonotope)
-    η = polynomial_order(PZ)  # polynomial order
-    p = size(PZ.E[1], 2)  # number of dependent factors
-    q = size(PZ.G, 2)  # number of independent factors
-    ξ = sum(i -> binomial(p+i-1, i), 1:η) + q
-    n = dim(PZ)
-    return ξ//n
-end
+order(P::DensePolynomialZonotope) = (ngens_dep(P) + ngens_indep(P)) // dim(P)
 
 """
-    linear_map(M::AbstractMatrix, PZ::DensePolynomialZonotope)
+    linear_map(M::AbstractMatrix, P::DensePolynomialZonotope)
 
 Return the linear map of a polynomial zonotope.
 
 ### Input
 
-- `M`  -- matrix
-- `PZ` -- polynomial zonotope
+- `M` -- matrix
+- `P` -- polynomial zonotope
 
 ## Output
 
@@ -214,26 +189,26 @@ A polynomial zonotope.
 
 ### Algorithm
 
-The result's starting point and generators are those of `PZ` multiplied by the
+The result's starting point and generators are those of `P` multiplied by the
 matrix `M`.
 """
-function linear_map(M::AbstractMatrix, PZ::DensePolynomialZonotope)
-    c = M * PZ.c
-    E = [M*Ei for Ei in PZ.E]
-    F = [M*Fi for Fi in PZ.F]
-    G = M * PZ.G
+function linear_map(M::AbstractMatrix, P::DensePolynomialZonotope)
+    c = M * P.c
+    E = [M*Ei for Ei in P.E]
+    F = [M*Fi for Fi in P.F]
+    G = M * P.G
     return DensePolynomialZonotope(c, E, F, G)
 end
 
 """
-    scale(α::Number, PZ::DensePolynomialZonotope)
+    scale(α::Number, P::DensePolynomialZonotope)
 
 Return a polynomial zonotope modified by a scale factor.
 
 ### Input
 
-- `α`  -- scaling factor
-- `PZ` -- polynomial zonotope
+- `α` -- scaling factor
+- `P` -- polynomial zonotope
 
 ## Output
 
@@ -241,13 +216,13 @@ A polynomial zonotope.
 
 ### Algorithm
 
-The result's center and generators are multiples of those of `PZ` by a factor
+The result's center and generators are multiples of those of `P` by a factor
 ``α``.
 """
-function scale(α::Number, PZ::DensePolynomialZonotope)
-    c = α * PZ.c
-    E = [α*Ei for Ei in PZ.E]
-    F = [α*Fi for Fi in PZ.F]
-    G = α * PZ.G
+function scale(α::Number, P::DensePolynomialZonotope)
+    c = α * P.c
+    E = [α*Ei for Ei in P.E]
+    F = [α*Fi for Fi in P.F]
+    G = α * P.G
     return DensePolynomialZonotope(c, E, F, G)
 end

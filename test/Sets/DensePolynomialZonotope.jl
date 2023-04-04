@@ -10,8 +10,11 @@ for N in [Float64, Float32, Rational{Int}]
     p = DensePolynomialZonotope(c, E, F, G)
 
     @test dim(p) == 2
-    @test order(p) == 7//2
     @test polynomial_order(p) == 2
+    @test center(p) == c
+    @test ngens_dep(p) == 5
+    @test ngens_indep(p) == 2
+    @test order(p) == 7//2
 
     # type-specific concrete methods
     scale(N(0.5), p)

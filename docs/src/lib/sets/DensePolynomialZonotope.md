@@ -6,11 +6,13 @@ CurrentModule = LazySets
 
 ```@docs
 DensePolynomialZonotope
-dim(::DensePolynomialZonotope)
-σ(::AbstractVector, ::DensePolynomialZonotope)
-ρ(::AbstractVector, ::DensePolynomialZonotope)
-polynomial_order(pz::DensePolynomialZonotope)
+center(::DensePolynomialZonotope)
+ngens_dep(::DensePolynomialZonotope)
+ngens_indep(::DensePolynomialZonotope)
+polynomial_order(::DensePolynomialZonotope)
 order(::DensePolynomialZonotope)
 linear_map(::AbstractMatrix, ::DensePolynomialZonotope)
 scale(::Number, ::DensePolynomialZonotope)
 ```
+Inherited from [`AbstractPolynomialZonotope`](@ref):
+* [`dim`](@ref dim(::AbstractPolynomialZonotope))
