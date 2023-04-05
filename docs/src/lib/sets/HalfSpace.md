@@ -33,6 +33,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`reflect`](@ref reflect(::LazySet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolyhedron))

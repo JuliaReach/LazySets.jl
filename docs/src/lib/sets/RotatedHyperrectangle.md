@@ -40,3 +40,4 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`translate`](@ref translate(::AbstractZonotope, ::AbstractVector))
 * [`constraints_list`](@ref constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat})
 * [`order`](@ref order(::AbstractZonotope))
+* [`reflect`](@ref reflect(::AbstractZonotope))

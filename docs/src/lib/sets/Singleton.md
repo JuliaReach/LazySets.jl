@@ -51,3 +51,4 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`ngens`](@ref ngens(::AbstractSingleton))
 * [`high`](@ref high(::AbstractSingleton))
 * [`low`](@ref low(::AbstractSingleton))
+* [`reflect`](@ref reflect(::AbstractSingleton))

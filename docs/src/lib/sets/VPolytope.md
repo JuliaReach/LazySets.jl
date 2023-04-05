@@ -19,6 +19,7 @@ tohrep(::VPolytope{N}) where {N}
 tovrep(::VPolytope)
 polyhedron(::VPolytope)
 linear_map(::AbstractMatrix, ::VPolytope)
+reflect(::VPolytope)
 ```
 Inherited from [`LazySet`](@ref):
 * [`high`](@ref high(::LazySet))

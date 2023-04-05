@@ -61,4 +61,7 @@ for N in [Float64, Float32]
     # projection
     b4 = Ballp(N(3), N[4, 3, 2, 1], N(2))
     @test project(b4, [2, 4]) == Ballp(N(3), N[3, 1], N(2))
+
+    # reflection
+    @test reflect(b4) == Ballp(N(3), N[-4, -3, -2, -1], N(2))
 end

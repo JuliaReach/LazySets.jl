@@ -737,6 +737,25 @@ A scalar representing the distance between point `x` and hyperrectangle `H`.
     return distance(x, y; p=p)
 end
 
+"""
+    reflect(H::AbstractHyperrectangle)
+
+Concrete reflection of a hyperrectangular set `H`, resulting in the reflected
+set `-H`.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+A `Hyperrectangle` representing `-H`.
+
+### Algorithm
+
+If ``H`` has center ``c`` and radius ``r``, then ``-H`` has center ``-c`` and
+radius ``r``.
+"""
 function reflect(H::AbstractHyperrectangle)
     return Hyperrectangle(-center(H), radius_hyperrectangle(H))
 end

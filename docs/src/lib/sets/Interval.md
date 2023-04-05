@@ -35,6 +35,7 @@ diameter(::Interval, ::Real=Inf)
 split(::Interval, ::AbstractVector{Int})
 ngens(::Interval)
 chebyshev_center_radius(::Interval)
+reflect(::Interval)
 ```
 
 Inherited from [`LazySet`](@ref):

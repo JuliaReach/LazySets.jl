@@ -237,6 +237,12 @@ for N in [Float64, Rational{Int}, Float32]
     vlist = SVector{3}(SVector{2}(N[0, 0]), SVector{2}(N[1, 0]), SVector{2}(N[0, 1]))
     V = VPolytope(vlist)
     @test ispermutation(vertices_list(V), vlist)
+
+    # reflect
+    P = VPolytope([N[1, 2, 3], N[4, 5, 6]])
+    Q = reflect(P)
+    vlist = [N[-1, -2, -3], N[-4, -5, -6]]
+    @test Q isa VPolytope{N} && ispermutation(vertices_list(Q), vlist)
 end
 
 # default Float64 constructors

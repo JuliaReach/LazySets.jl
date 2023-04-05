@@ -400,6 +400,7 @@ order(::AbstractZonotope)
 togrep(::AbstractZonotope)
 remove_redundant_generators(::AbstractZonotope)
 reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05())
+reflect(::AbstractZonotope)
 ```
 
 ### Order reduction methods
@@ -449,6 +450,7 @@ ngens(::AbstractHyperrectangle{N}) where {N}
 rectify(::AbstractHyperrectangle)
 volume(::AbstractHyperrectangle)
 distance(::AbstractVector, ::AbstractHyperrectangle{N}; ::Real=N(2)) where {N}
+reflect(::AbstractHyperrectangle)
 ```
 
 ### Implementations
@@ -491,6 +493,7 @@ low(::AbstractSingleton, ::Int)
 generators(::AbstractSingleton{N}) where {N}
 genmat(::AbstractSingleton{N}) where {N}
 ngens(::AbstractSingleton)
+reflect(::AbstractSingleton)
 plot_recipe(::AbstractSingleton{N}, ::Any=zero(N)) where {N}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::Real=zero(N)) where {N}
 ```

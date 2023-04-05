@@ -21,6 +21,7 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
+* [`reflect`](@ref reflect(::LazySet))
 
 Inherited from [`AbstractAffineMap`](@ref):
 * [`dim`](@ref dim(::AbstractAffineMap))

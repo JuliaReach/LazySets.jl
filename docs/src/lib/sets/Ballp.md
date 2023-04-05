@@ -12,6 +12,7 @@ center(::Ballp)
 rand(::Type{Ballp})
 translate(::Ballp, ::AbstractVector)
 translate!(::Ballp, ::AbstractVector)
+reflect(::Ballp)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

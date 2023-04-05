@@ -53,3 +53,4 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`vertices_list`](@ref vertices_list(::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
 * [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
+* [`reflect`](@ref reflect(::AbstractZonotope))

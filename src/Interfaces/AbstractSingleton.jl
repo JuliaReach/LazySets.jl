@@ -375,6 +375,20 @@ function plot_recipe(S::AbstractSingleton{N}, ε=zero(N)) where {N}
     end
 end
 
+"""
+    reflect(S::AbstractSingleton)
+
+Concrete reflection of a set with a single value `S`, resulting in the reflected
+set `-S`.
+
+### Input
+
+- `S` -- set with a single value
+
+### Output
+
+A `Singleton` representing `-S`.
+"""
 function reflect(S::AbstractSingleton)
     return Singleton(-element(S))
 end

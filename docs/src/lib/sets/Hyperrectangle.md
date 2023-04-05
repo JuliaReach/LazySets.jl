@@ -50,3 +50,4 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`ngens`](@ref ngens(::AbstractHyperrectangle))
 * [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N})
 * [`rectify`](@ref rectify(::AbstractHyperrectangle))
+* [`reflect`](@ref reflect(::AbstractHyperrectangle))

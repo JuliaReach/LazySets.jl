@@ -14,6 +14,7 @@ rand(::Type{Ball1})
 constraints_list(::Ball1)
 translate(::Ball1, ::AbstractVector)
 translate!(::Ball1, ::AbstractVector)
+reflect(::Ball1)
 ```
 
 Inherited from [`LazySet`](@ref):

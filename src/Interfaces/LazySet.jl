@@ -921,6 +921,15 @@ tosimplehrep(S::LazySet) = tosimplehrep(constraints_list(S))
 
 Concrete reflection of a set `P`, resulting in the reflected set `-P`.
 
+### Input
+
+- `P` -- polyhedral set
+
+### Output
+
+The set `-P`, which is either of type `HPolytope` if `P` is a polytope (i.e.,
+bounded) or of type `HPolyhedron` otherwise.
+
 ### Algorithm
 
 This function requires that the list of constraints of the set `P` is

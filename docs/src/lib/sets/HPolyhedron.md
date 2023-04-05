@@ -32,6 +32,7 @@ Inherited from [`LazySet`](@ref):
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`isempty`](@ref isempty(::LazySet{N}, ::Bool=false) where {N})
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet)
+* [`reflect`](@ref reflect(::LazySet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractPolyhedron))

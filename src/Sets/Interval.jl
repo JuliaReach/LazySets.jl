@@ -747,3 +747,24 @@ The Chebyshev center of an interval is just the center of the interval.
 function chebyshev_center_radius(x::Interval; kwargs...)
     return center(x), _radius(x)
 end
+
+"""
+    reflect(x::Interval)
+
+Concrete reflection of a interval `x`, resulting in the reflected set `-x`.
+
+### Input
+
+- `x` -- interval
+
+### Output
+
+The `Interval` representing `-x`.
+
+### Algorithm
+
+If ``x = [a, b]``, then ``-x = [-b, -a]``.
+"""
+function reflect(x::Interval)
+    return Interval(-max(x), -min(x))
+end
