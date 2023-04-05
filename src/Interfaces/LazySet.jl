@@ -101,7 +101,7 @@ If we only consider *concrete* subtypes, then:
 julia> concrete_subtypes = subtypes(LazySet, true);
 
 julia> length(concrete_subtypes)
-54
+55
 
 julia> println.(concrete_subtypes);
 AffineMap
@@ -150,6 +150,7 @@ Singleton
 SparsePolynomialZonotope
 Star
 SymmetricIntervalHull
+Tetrahedron
 Translation
 UnionSet
 UnionSetArray

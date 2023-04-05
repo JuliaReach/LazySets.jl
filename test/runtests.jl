@@ -84,6 +84,7 @@ if test_suite_basic
     @time @testset "LazySets.PolygonConvex" begin include("Sets/Polygon.jl") end
     @time @testset "LazySets.PolygonNonconvex" begin include("Sets/PolygonNC.jl") end
     @time @testset "LazySets.Polytope" begin include("Sets/Polytope.jl") end
+    @time @testset "LazySets.Tetrahedron" begin include("Sets/Tetrahedron.jl") end
     @time @testset "LazySets.Polyhedron" begin include("Sets/Polyhedron.jl") end
     @time @testset "LazySets.Zonotope" begin include("Sets/Zonotope.jl") end
     @time @testset "LazySets.ZeroSet" begin include("Sets/ZeroSet.jl") end

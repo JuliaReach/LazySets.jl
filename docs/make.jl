@@ -57,6 +57,7 @@ makedocs(
                 "SparsePolynomialZonotope" => "lib/sets/SparsePolynomialZonotope.md",
                 "Singleton" => "lib/sets/Singleton.md",
                 "Star" => "lib/sets/Star.md",
+                "Tetrahedron" => "lib/sets/Tetrahedron.md",
                 "Universe" => "lib/sets/Universe.md",
                 "VPolygon" => "lib/sets/VPolygon.md",
                 "VPolytope" => "lib/sets/VPolytope.md",

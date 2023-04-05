@@ -18,10 +18,11 @@ Every concrete `AbstractPolytope` must define the following method:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolytope)
-4-element Vector{Any}:
+5-element Vector{Any}:
  AbstractCentrallySymmetricPolytope
  AbstractPolygon
  HPolytope
+ Tetrahedron
  VPolytope
 ```
 
