@@ -35,9 +35,9 @@ julia> σ(ones(3), T)
 struct Tetrahedron{N,VN<:AbstractVector{N},VT<:AbstractVector{VN}} <: AbstractPolytope{N}
     vertices::VT
 
-    function Tetrahedron(vertices::AbstractVector)
+    function Tetrahedron(vertices::VT) where {N,VN<:AbstractVector{N},VT<:AbstractVector{VN}}
         @assert length(vertices) == 4 "a tetrahedron requires four vertices"
-        return new(vertices)
+        return new{N,VN,VT}(vertices)
     end
 end
 
@@ -51,7 +51,7 @@ Tetrahedron() = Tetrahedron{Float64}()
 
 # constructor from rectangular matrix
 function Tetrahedron(vertices_matrix::MT) where {N,MT<:AbstractMatrix{N}}
-    vertices = [vertices_matrix[:, j] for j in axes(vertices_matrix, 2)]
+    vertices = collect(eachcol(vertices_matrix))
     return Tetrahedron(vertices)
 end
 
