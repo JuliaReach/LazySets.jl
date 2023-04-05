@@ -89,8 +89,8 @@ Check whether a given point is contained in a tetrahedron.
 
 ### Input
 
-- `x`      -- point/vector
-- `P`      -- tetrahedron in vertex representation
+- `x` -- point/vector
+- `P` -- tetrahedron in vertex representation
 
 ### Output
 
