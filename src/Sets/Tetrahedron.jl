@@ -20,11 +20,11 @@ julia> vertices = [[1, 0, -1/sqrt(2)], [-1, 0, -1/sqrt(2)], [0, 1, 1/sqrt(2)], [
 julia> T = Tetrahedron(vertices); T isa Tetrahedron
 true
 
-julia> zeros(3) ∈ T
-true
-
 julia> dim(T)
 3
+
+julia> zeros(3) ∈ T
+true
 
 julia> σ(ones(3), T)
 3-element Vector{Float64}:
