@@ -90,7 +90,7 @@ end
 # constructor from two numbers with type promotion
 function Interval(lo::N1, hi::N2) where {N1, N2}
     N = promote_type(N1, N2)
-    return Interval(IntervalArithmetic.Interval(N(lo), N(hi)))
+    return Interval(IA.Interval(N(lo), N(hi)))
 end
 
 # constructor from a vector
@@ -102,7 +102,7 @@ end
 
 # constructor from a single number
 function Interval(x::Real)
-    return Interval(IntervalArithmetic.Interval(x))
+    return Interval(IA.Interval(x))
 end
 
 isoperationtype(::Type{<:Interval}) = false
@@ -202,7 +202,7 @@ end
 
 # returns a number, not a vector
 function _center(x::Interval)
-    return IntervalArithmetic.mid(x.dat)
+    return IA.mid(x.dat)
 end
 
 """
@@ -533,7 +533,7 @@ the result of `isapproxzero` when applied to the diameter of the interval.
 In other words, this function depends on the absolute zero tolerance `ABSZTOL`.
 """
 function isflat(x::Interval)
-    return isapproxzero(IntervalArithmetic.diam(x.dat))
+    return isapproxzero(IA.diam(x.dat))
 end
 
 """
@@ -675,7 +675,7 @@ A real number representing the diameter.
 In one dimension all p-norms are identical.
 """
 function diameter(x::Interval, p::Real=Inf)
-    return IntervalArithmetic.diam(x.dat)
+    return IA.diam(x.dat)
 end
 
 """

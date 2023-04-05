@@ -16,10 +16,10 @@ CurrentModule = LazySets
 convert(::Type{Interval}, ::LazySet)
 convert(::Type{Interval}, ::Rectification{N, IN}) where {N, IN<:Interval}
 convert(::Type{Interval}, ::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval}
-convert(::Type{Interval}, ::IntervalArithmetic.Interval)
-convert(::Type{IntervalArithmetic.Interval}, ::LazySet)
-convert(::Type{IntervalArithmetic.IntervalBox}, ::AbstractHyperrectangle)
-convert(::Type{Hyperrectangle}, ::IntervalArithmetic.IntervalBox)
+convert(::Type{Interval}, ::IA.Interval)
+convert(::Type{IA.Interval}, ::LazySet)
+convert(::Type{IA.IntervalBox}, ::AbstractHyperrectangle)
+convert(::Type{Hyperrectangle}, ::IA.IntervalBox)
 convert(::Type{Hyperrectangle}, ::AbstractHyperrectangle)
 convert(::Type{Hyperrectangle}, ::CartesianProduct{N, HN1, HN2}) where {N, HN1<:AbstractHyperrectangle, HN2<:AbstractHyperrectangle}
 convert(::Type{Hyperrectangle}, ::CartesianProductArray{N, HN}) where {N, HN<:AbstractHyperrectangle}

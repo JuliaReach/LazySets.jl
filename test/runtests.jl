@@ -8,9 +8,9 @@ Random.seed!(1234)
 # ========================
 # Optional dependencies
 # ========================
-import Distributions, ExponentialUtilities, Expokit, IntervalArithmetic,
+import Distributions, ExponentialUtilities, Expokit,
        IntervalMatrices, Ipopt, Optim, Pkg, TaylorModels
-const IA = IntervalArithmetic
+import IntervalArithmetic as IA
 using IntervalArithmetic: IntervalBox
 using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
