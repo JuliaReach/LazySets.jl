@@ -108,7 +108,14 @@ for exp_backend in [ExponentialUtilities, Expokit]
         # the exponential map applied to an exponential map
         ExponentialMap(SparseMatrixExp(2*m), emap)
 
-        # for projection tests, let's assume that n is divisible by three
+        # symmetric_interval_hull
+        sih = symmetric_interval_hull(emap)
+        @test sih isa Hyperrectangle{N} && center(sih) == zeros(N, 6)
+        @test radius_hyperrectangle(sih) ≈
+            N[1.4615602805461578, 1.7892495373142225, 1.1215454866370536,
+              1.9033524001317403, 0.5475680039922208, 1.3374631184550847]
+
+        # for projection tests, assume that n is divisible by three
         @assert mod(n, 3) == 0
         nb = div(n, 3)
         # the projection of exp(A) on the (m, m)-dimensional right-most upper block
