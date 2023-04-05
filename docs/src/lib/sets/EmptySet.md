@@ -32,6 +32,7 @@ low(::EmptySet)
 high(::EmptySet)
 low(::EmptySet, ::Int)
 high(::EmptySet, ::Int)
+complement(::EmptySet{N}) where {N}
 rectify(::EmptySet)
 ```
 Inherited from [`LazySet`](@ref):

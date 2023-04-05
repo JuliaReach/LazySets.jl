@@ -74,7 +74,7 @@ The subtypes of `LazySet` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(LazySet, false)
-18-element Vector{Any}:
+17-element Vector{Any}:
  AbstractAffineMap
  AbstractPolynomialZonotope
  Bloating
@@ -85,7 +85,6 @@ julia> subtypes(LazySet, false)
  ConvexSet
  Intersection
  IntersectionArray
- LazySets.AbstractStar
  MinkowskiSum
  MinkowskiSumArray
  Polygon
@@ -101,7 +100,7 @@ If we only consider *concrete* subtypes, then:
 julia> concrete_subtypes = subtypes(LazySet, true);
 
 julia> length(concrete_subtypes)
-55
+54
 
 julia> println.(concrete_subtypes);
 AffineMap
@@ -133,7 +132,6 @@ Intersection
 IntersectionArray
 Interval
 InverseLinearMap
-LazySets.AbstractStar
 Line
 Line2D
 LineSegment
@@ -1349,7 +1347,9 @@ Compute the Delaunay triangulation of the given polytopic set.
 
 ### Input
 
-- `X` -- polytopic set
+- `X`                    -- polytopic set
+- `compute_triangles_3d` -- (optional; default: `false`) flag to compute the 2D
+                            triangulation of a 3D set
 
 ### Output
 
@@ -1357,22 +1357,40 @@ A union of polytopes in vertex representation.
 
 ### Notes
 
-This function requires that you have properly installed the package
-[MiniQhull.jl](https://github.com/gridap/MiniQhull.jl), including the library
+This implementation requires the package
+[MiniQhull.jl](https://github.com/gridap/MiniQhull.jl), which uses the library
 [Qhull](http://www.qhull.org/).
 
 The method works in arbitrary dimension and the requirement is that the list of
 vertices of `X` can be obtained.
 """
-function delaunay(X::LazySet)
+function delaunay(X::LazySet; compute_triangles_3d::Bool=false)
+    vlist, connect_mat = delaunay_vlist_connectivity(X;
+        compute_triangles_3d=compute_triangles_3d)
+    nsimplices = size(connect_mat, 2)
+    if compute_triangles_3d
+        simplices = [VPolytope(vlist[connect_mat[1:3, j]]) for j in 1:nsimplices]
+    else
+        simplices = [VPolytope(vlist[connect_mat[:, j]]) for j in 1:nsimplices]
+    end
+    return UnionSetArray(simplices)
+end
+
+# compute the vertices and the connectivity matrix of the Delaunay triangulation
+#
+# if the flag `compute_triangles_3d` is set, the resulting matrix still has four
+# rows, but the last row has no meaning
+function delaunay_vlist_connectivity(X::LazySet;
+                                     compute_triangles_3d::Bool=false)
     n = dim(X)
-    v = vertices_list(X)
-    m = length(v)
-    coordinates = vcat(v...)
-    connectivity_matrix = delaunay(n, m, coordinates)
-    nelements = size(connectivity_matrix, 2)
-    elements = [VPolytope(v[connectivity_matrix[:, i]]) for i in 1:nelements]
-    return UnionSetArray(elements)
+    @assert !compute_triangles_3d || n == 3 "the `compute_triangles_3d` " *
+                                            "option requires 3D inputs"
+    vlist=vertices_list(X)
+    m = length(vlist)
+    coordinates = vcat(vlist...)
+    flags = compute_triangles_3d ? "qhull Qt" : nothing
+    connectivity_matrix = delaunay(n, m, coordinates, flags)
+    return vlist, connectivity_matrix
 end
 
 end end  # load_delaunay_MiniQhull

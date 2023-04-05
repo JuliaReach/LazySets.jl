@@ -39,15 +39,19 @@ for N in [Float64, Rational{Int}, Float32]
         LazySets.set_rtol(N, r)
     end
 
-    # center/generators
+    # center
     @test center(l) == N[1.5, 1.5]
-    @test collect(generators(l)) ∈ [[N[1/2, 1/2]], [N[-1/2, -1/2]]]
-    @test genmat(l) ∈ [hcat(N[1/2 1/2]), hcat(N[-1/2, -1/2])]
+
+    # generators
     @test ngens(l) == 1
+    @test genmat(l) ∈ [hcat(N[1/2 1/2]), hcat(N[-1/2, -1/2])]
+    @test collect(generators(l)) ∈ [[N[1/2, 1/2]], [N[-1/2, -1/2]]]
     l_degenerate = LineSegment(p, p)
-    @test collect(generators(l_degenerate)) == Vector{N}()
-    @test genmat(l_degenerate) == Matrix{N}(undef, 2, 0)
     @test ngens(l_degenerate) == 0
+    gens = genmat(l_degenerate)
+    @test gens == Matrix{N}(undef, 2, 0) && gens isa Matrix{N}
+    gens = collect(generators(l_degenerate))
+    @test isempty(gens) && gens isa Vector{Vector{N}}
 
     # is_polyhedral
     @test is_polyhedral(l)

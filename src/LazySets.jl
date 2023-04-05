@@ -59,7 +59,7 @@ include("Utils/file_formats.jl")
 # ==================
 include("Interfaces/LazySet.jl")
 include("Interfaces/ConvexSet.jl")
-include("Interfaces/AbstractStar.jl")
+# include("Interfaces/AbstractStar.jl")
 include("Interfaces/AbstractPolynomialZonotope.jl")
 include("Interfaces/AbstractPolyhedron.jl")
 include("Sets/HalfSpace.jl")  # must come before AbstractPolyhedron_functions

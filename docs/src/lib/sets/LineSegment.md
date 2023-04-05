@@ -18,6 +18,7 @@ vertices_list(::LineSegment)
 constraints_list(::LineSegment)
 translate(::LineSegment, ::AbstractVector)
 generators(::LineSegment)
+ngens(::LineSegment)
 genmat(::LineSegment)
 ```
 Inherited from [`LazySet`](@ref):
@@ -39,7 +40,6 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractZonotope`](@ref):
-* [`ngens`](@ref ngens(::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))

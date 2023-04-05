@@ -61,6 +61,10 @@ for N in [Float64, Rational{Int}, Float32]
     # volume
     @test volume(E) == zero(N)
 
+    # complement
+    C = complement(E)
+    @test C == Universe{N}(2) && C isa Universe{N}
+
     # concrete rectification
     @test rectify(E) == E
 end
@@ -79,8 +83,7 @@ end
 # intersection
 for X in filter(!isoperationtype, LazySets.subtypes(LazySet, true))
     if X ∈ [RotatedHyperrectangle, Star, Polygon, DensePolynomialZonotope,
-            SparsePolynomialZonotope, SimpleSparsePolynomialZonotope,
-            LazySets.AbstractStar]
+            SparsePolynomialZonotope, SimpleSparsePolynomialZonotope]
         # missing rand()
         continue
     end

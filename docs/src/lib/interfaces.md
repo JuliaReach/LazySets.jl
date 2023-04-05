@@ -259,6 +259,7 @@ plot_recipe(::AbstractPolyhedron{N}, ::Any=zero(N)) where {N}
 * [Line2D](@ref def_Line2D)
 * [Line](@ref def_Line)
 * [Universe](@ref def_Universe)
+* [Star](@ref def_Star)
 
 ## [Polytopes (AbstractPolytope)](@id def_AbstractPolytope)
 
@@ -530,16 +531,6 @@ linear_map(::AbstractMatrix, ::AbstractAffineMap)
 * [Linear map (LinearMap)](@ref def_LinearMap)
 * [Reset map (ResetMap)](@ref def_ResetMap)
 * [Translation](@ref def_Translation)
-
-## [Star sets (AbstractStar)](@id def_AbstractStar)
-
-```@docs
-AbstractStar
-```
-
-### Implementations
-
-* [Star](@ref def_Star)
 
 ## [Polynomial zonotope sets (AbstractPolynomialZonotope)](@id def_AbstractPolynomialZonotope)
 

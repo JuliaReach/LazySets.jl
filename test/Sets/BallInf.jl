@@ -213,6 +213,18 @@ for N in [Float64, Rational{Int}, Float32]
         @test (ispermutation(a[1].vertices, a1) && ispermutation(a[2].vertices, a2)) ||
               (ispermutation(a[1].vertices, a2) && ispermutation(a[2].vertices, a1))
     end
+
+    # generators
+    B = BallInf(N[0, 0], N(1))
+    @test ngens(B) == 2
+    @test genmat(B) == N[1 0; 0 1]
+    @test ispermutation(collect(generators(B)), [N[1, 0], N[0, 1]])
+    B_degenerated = BallInf(N[0, 0], N(0))
+    @test ngens(B_degenerated) == 0
+    gens = genmat(B_degenerated)
+    @test gens == Matrix(undef, 2, 0) && gens isa Matrix{N}
+    gens = collect(generators(B_degenerated))
+    @test isempty(gens) && gens isa Vector{SingleEntryVector{N}}
 end
 
 # tests that only work with Float64

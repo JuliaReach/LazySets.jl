@@ -404,6 +404,28 @@ function volume(B::BallInf{N}) where {N<:AbstractFloat}
     return vol
 end
 
+"""
+    ngens(B::BallInf)
+
+Return the number of generators of a ball in the infinity norm.
+
+### Input
+
+- `B` -- ball in the infinity norm
+
+### Output
+
+The number of generators.
+
+### Algorithm
+
+A ball in the infinity norm has either one generator for each dimension, or zero
+generators if it is a degenerated ball of radius zero.
+"""
+function ngens(B::BallInf)
+    return iszero(B.radius) ? 0 : dim(B)
+end
+
 function project(B::BallInf, block::AbstractVector{Int}; kwargs...)
     return BallInf(B.center[block], B.radius)
 end
