@@ -16,6 +16,7 @@ rand(::Type{BallInf})
 ρ(::AbstractVector, ::BallInf)
 translate(::BallInf, ::AbstractVector)
 translate!(::BallInf, ::AbstractVector)
+ngens(::BallInf)
 volume(::BallInf)
 ```
 Inherited from [`LazySet`](@ref):
@@ -49,6 +50,5 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
-* [`ngens`](@ref ngens(::AbstractHyperrectangle))
 * [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N})
 * [`rectify`](@ref rectify(::AbstractHyperrectangle))
