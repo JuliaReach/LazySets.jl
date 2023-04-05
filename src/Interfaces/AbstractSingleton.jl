@@ -14,6 +14,8 @@ Abstract type for sets with a single value.
 Every concrete `AbstractSingleton` must define the following function:
 
 - `element(::AbstractSingleton)` -- return the single element
+- `element(::AbstractSingleton, i::Int)` -- return the single element at index
+                                            `i`
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractSingleton)
