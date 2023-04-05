@@ -2,12 +2,15 @@ for N in [Float64, Float32, Rational{Int}]
 
     @test rand(SparsePolynomialZonotope) isa SparsePolynomialZonotope
 
-    # example from Niklas thesis (page 32)
+    # Example 3.1.2 from thesis
     c = N[4, 4]
     G = N[2 1 2;0 2 2]
     GI = hcat(N[1; 0])
     E = [1 0 3;0 1 1]
     PZ = SparsePolynomialZonotope(c, G, GI, E)
+    # Example 3.1.21 from thesis
+    PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1;1 2 1],
+                                   zeros(N, 2, 0), [1 0 1;0 1 3])
 
     @test center(PZ) == c
     @test genmat_dep(PZ) == G
@@ -29,14 +32,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test expmat(LM) == expmat(PZ)
 
     M = N[-0.5 0.2;-0.1 0.6]
-    PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1;1 2 1], zeros(N, 2, 0), [1 0 1;0 1 3])
     LMPZ = linear_map(M, PZ2)
     @test center(LMPZ) == zeros(N, 2)
     @test genmat_dep(LMPZ) ≈ N[-0.8 0.4 -0.3;0.4 1.2 0.5] atol=1e-7
     @test isempty(genmat_indep(LMPZ))
     @test expmat(LMPZ) == [1 0 1;0 1 3]
     @test indexvector(LMPZ) == indexvector(PZ)
-
 
     ESPZ = PZ ⊞ PZ2
     @test center(ESPZ) == [4, 4]
@@ -74,7 +75,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test genmat_indep(PZreduced) == hcat(N[1, 2])
     @test expmat(PZreduced) == [1 2;0 1]
 
-
+    # support function (enclosure)
+    for (d, v) in [(N[1, 0], N(3)), (N[1, 1], N(7)), (N[1, -1], N(3))]
+        v1 = ρ(d, PZ2)  # default enclosure method
+        v2 = ρ(d, PZ2; enclosure_method=RangeEnclosures.NaturalEnclosure())
+        @test v <= v1 <= v2
+    end
 end
 
 SSPZ = SimpleSparsePolynomialZonotope([0.2, -0.6], [1 0;0 0.4], [1 0;0 1])

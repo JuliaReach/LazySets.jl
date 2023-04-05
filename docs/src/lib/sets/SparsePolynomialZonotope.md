@@ -22,4 +22,5 @@ linear_map(::AbstractMatrix, ::SparsePolynomialZonotope)
 translate(::SparsePolynomialZonotope, ::AbstractVector)
 remove_redundant_generators(::SparsePolynomialZonotope)
 reduce_order(::SparsePolynomialZonotope, ::Real, ::AbstractReductionMethod=GIR05())
+ρ(::AbstractVector, ::SparsePolynomialZonotope)
 ```
