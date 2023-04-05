@@ -35,6 +35,11 @@ julia> σ(ones(3), T)
 """
 struct Tetrahedron{N,VN<:AbstractVector{N},VT<:AbstractVector{VN}} <: AbstractPolytope{N}
     vertices::VT
+
+    function Tetrahedron(vertices::AbstractVector)
+        @assert length(vertices) == 4 "a tetrahedron requires four vertices"
+        return new(vertices)
+    end
 end
 
 isoperationtype(::Type{<:Tetrahedron}) = false
