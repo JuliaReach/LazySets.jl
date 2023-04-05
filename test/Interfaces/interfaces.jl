@@ -2,11 +2,14 @@
 
 # --- LazySet ---
 
+# dimension
+@test check_method_implementation(LazySet, dim, Function[S -> (S{Float64},)])
+
+# --- ConvexSet ---
+
 # support vector
 @test check_method_implementation(ConvexSet, σ,
                                   Function[S -> (Vector{Float64}, S{Float64})])
-# dimension
-check_method_implementation(LazySet, dim, Function[S -> (S{Float64},)])
 
 # --- AbstractPolyhedron ---
 
