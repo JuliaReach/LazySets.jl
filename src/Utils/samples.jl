@@ -91,6 +91,7 @@ _default_sampler(::HalfSpace) = HalfSpaceSampler()
 _default_sampler(::Hyperplane) = HyperplaneSampler()
 _default_sampler(::Line2D) = HyperplaneSampler()
 _default_sampler(::AbstractSingleton) = SingletonSampler()
+_default_sampler(::AbstractPolynomialZonotope) = PolynomialZonotopeSampler()
 
 """
     RejectionSampler{D} <: AbstractSampler
@@ -503,6 +504,75 @@ function sample!(D::Vector{VN}, S::AbstractSingleton, sampler::SingletonSampler;
     @inbounds for i in eachindex(D)
         D[i] = copy(x)
     end
+end
+
+"""
+    PolynomialZonotopeSampler{D} <: AbstractSampler
+
+Type used for sampling from polynomial zonotopes.
+
+### Fields
+
+- `distribution` -- (optional, default: `nothing`) distribution from which
+                    samples are drawn
+
+### Notes
+
+If `distribution` is `nothing` (default), the sampling algorithm uses a
+`DefaultUniform` over ``[-1, 1]^n``.
+"""
+struct PolynomialZonotopeSampler{D} <: AbstractSampler
+    distribution::D
+end
+
+function PolynomialZonotopeSampler()
+    return PolynomialZonotopeSampler(nothing)
+end
+
+function sample!(D::Vector{VN}, P::AbstractPolynomialZonotope,
+                 sampler::PolynomialZonotopeSampler;
+                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
+                ) where {N, VN<:AbstractVector{N}}
+    rng = reseed(rng, seed)
+    U = sampler.distribution
+    if isnothing(U)
+        U = DefaultUniform(-one(N), one(N))
+    end
+    @inbounds for i in eachindex(D)
+        # sample a random point
+        x = copy(center(P))
+        _add_generators!(x, P, U, rng)
+        D[i] = x
+    end
+end
+
+function _add_generators!(x, P::DensePolynomialZonotope, U, rng)
+    p = size(P.E[1], 2)
+    βs = rand(rng, U, p)  # dependent factors
+    η = polynomial_order(P)
+    for i in 1:η
+        j = 1
+        for coeffs in NondecreasingIndices(p, i)
+            β = prod(βs[coeffs])
+            if allequal(coeffs)
+                # E
+                Ei = P.E[i]
+                jE = first(coeffs)  # column is any of the (equal) values in coeffs
+                x .+= β * @view Ei[:, jE]
+            else
+                # F
+                Fi = P.F[i-1]  # offset of -1 because F's start with index 2
+                x .+= β * @view Fi[:, j]
+                j += 1
+            end
+        end
+    end
+    # G
+    for g in eachcol(P.G)
+        γ = rand(rng, U)  # independent factors
+        x .+= γ * g
+    end
+    return x
 end
 
 # =============================
