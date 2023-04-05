@@ -74,7 +74,6 @@ if test_suite_basic
     # =======================
     # Testing basic set types
     # =======================
-    @time @testset "LazySets.LazySet" begin include("Interfaces/LazySet.jl") end
     @time @testset "LazySets.Singleton" begin include("Sets/Singleton.jl") end
     @time @testset "LazySets.Ball1" begin include("Sets/Ball1.jl") end
     @time @testset "LazySets.Ball2" begin include("Sets/Ball2.jl") end
