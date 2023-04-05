@@ -17,8 +17,7 @@ The following builds the tetrahedron with edge length 2 from the [wikipedia page
 ```jldoctest
 julia> vertices = [[1, 0, -1/sqrt(2)], [-1, 0, -1/sqrt(2)], [0, 1, 1/sqrt(2)], [0, -1, 1/sqrt(2)]];
 
-julia> T = Tetrahedron(vertices); T isa Tetrahedron
-true
+julia> T = Tetrahedron(vertices);
 
 julia> dim(T)
 3
@@ -105,7 +104,7 @@ function ∈(x::AbstractVector, T::Tetrahedron)
     return x ∈ convert(VPolytope, T)
 end
 
-function rand(::Type{Tetrahedron}; N::Type{<:Real}=Float64, rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing)
+function rand(::Type{Tetrahedron}; N::Type{<:Real}=Float64, rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int,Nothing}=nothing)
     P = rand(VPolytope; N=N, dim=3, rng=rng, seed=seed, num_vertices=4)
     vertices = P.vertices
     return Tetrahedron(vertices)
