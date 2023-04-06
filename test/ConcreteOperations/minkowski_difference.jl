@@ -20,4 +20,22 @@ for N in [Float64, Float32, Rational{Int}]
     H2 = Hyperrectangle(N[5, -1], N[2, 2])
     D = minkowski_difference(H1, H2)
     @test D isa EmptySet{N} && dim(D) == 2
+
+    # zonotopes in 2D (taken from Fig. 2 in [1])
+    # [1] M. Althoff: *On computing the Minkowski difference of zonotopes*. 2022
+    Zm = Zonotope(N[1, 1], N[1 0 1; 0 1 1])
+
+    if N isa AbstractFloat
+        Zs1 = Zonotope(N[0, 0], N[1/2 0; -1/5 1/5])
+        D1 = minkowski_difference(Zm, Zs1)
+        @test D1 ≈ Zonotope(N[1, 1], N[1/2 0 1; 0 3/5 1])
+    end
+
+    Zs2 = Zonotope(N[0, 0], N[1/2 0; -1/2 1/2])
+    D2 = minkowski_difference(Zm, Zs2)
+    @test D2 ≈ Zonotope(N[1, 1], N[1/2 1; 0 1])
+
+    Zs3 = Zonotope(N[0, 0], N[2 0; -1/2 1/2])
+    D3 = minkowski_difference(Zm, Zs3)
+    @test D3 isa EmptySet{N} && dim(D3) == 2
 end
