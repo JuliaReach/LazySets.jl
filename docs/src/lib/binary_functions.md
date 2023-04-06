@@ -120,6 +120,7 @@ minkowski_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 pontryagin_difference
 minkowski_difference(::LazySet, ::LazySet)
 minkowski_difference(::AbstractZonotope, ::AbstractZonotope)
+minkowski_difference(::AbstractHyperrectangle, ::AbstractHyperrectangle)
 minkowski_difference(::Interval, ::Interval)
 ```
 

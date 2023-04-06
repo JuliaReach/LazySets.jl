@@ -76,7 +76,7 @@ Mathematically:
 """
 const pontryagin_difference = minkowski_difference
 
-for ST in [:LazySet, :AbstractZonotope]
+for ST in [:LazySet, :AbstractZonotope, :AbstractHyperrectangle]
     # Minkowski difference with singleton is a translation
     @eval minkowski_difference(X::($ST), S::AbstractSingleton) =
         translate(X, -element(S))
@@ -108,6 +108,37 @@ function minkowski_difference(I1::Interval, I2::Interval)
         return EmptySet{N}(1)
     end
     return Interval(l, h)
+end
+
+"""
+    minkowski_difference(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
+
+Compute the Minkowski difference of two hyperrectangular sets.
+
+### Input
+
+- `H1` -- hyperrectangular set
+- `H2` -- hyperrectangular set
+
+### Output
+
+A `Hyperrectangle` that corresponds to the Minkowski difference of `H1` minus
+`H2`, or an `EmptySet` if the difference is empty.
+"""
+function minkowski_difference(H1::AbstractHyperrectangle,
+                              H2::AbstractHyperrectangle)
+    n = dim(H1)
+    @assert n == dim(H2) "incompatible dimensions"
+
+    N = promote_type(eltype(H1), eltype(H2))
+    r = Vector{N}(undef, n)
+    for i in 1:n
+        r[i] = radius_hyperrectangle(H1, i) - radius_hyperrectangle(H2, i)
+        if r[i] < zero(N)
+            return EmptySet{N}(n)
+        end
+    end
+    return Hyperrectangle(center(H1) - center(H2), r)
 end
 
 """
