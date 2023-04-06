@@ -18,13 +18,6 @@ The `EmptySet` is the absorbing element for `IntersectionArray`.
 
 The intersection preserves convexity: if the set arguments are convex, then
 their intersection is convex as well.
-
-Constructors:
-
-- `IntersectionArray(array::Vector{<:LazySet})` -- default constructor
-
-- `IntersectionArray([n]::Int=0, [N]::Type=Float64)`
- -- constructor for an empty sum with optional size hint and numeric type
 """
 struct IntersectionArray{N, S<:LazySet{N}} <: LazySet{N}
    array::Vector{S}

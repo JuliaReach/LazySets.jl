@@ -51,13 +51,6 @@ and `s` is the support vector that was obtained. Thus this type assumes that
 
 The Minkowski sum preserves convexity: if all sets are convex, then
 their Minkowski sum is convex as well.
-
-Constructors:
-
-- `CachedMinkowskiSumArray(array::Vector{<:LazySet})` -- default constructor
-
-- `CachedMinkowskiSumArray([n]::Int=0, [N]::Type=Float64)` -- constructor for an
-   empty sum with optional size hint and numeric type
 """
 struct CachedMinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
