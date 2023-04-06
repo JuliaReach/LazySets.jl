@@ -1136,3 +1136,7 @@ function convert(::Type{SparsePolynomialZonotope},
 
     return SparsePolynomialZonotope(c, G, GI, E, idx)
 end
+
+function convert(::Type{VPolytope}, T::Tetrahedron)
+    VPolytope(T.vertices)
+end

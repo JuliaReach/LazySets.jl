@@ -103,6 +103,7 @@ include("Sets/SparsePolynomialZonotope.jl")
 include("Sets/Universe.jl")
 include("Sets/VPolygon.jl")
 include("Sets/VPolytope.jl")
+include("Sets/Tetrahedron.jl")
 include("Sets/ZeroSet.jl")
 include("Sets/Zonotope.jl")
 
