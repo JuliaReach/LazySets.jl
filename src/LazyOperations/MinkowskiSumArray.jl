@@ -19,13 +19,6 @@ for `MinkowskiSumArray`.
 
 The Minkowski sum preserves convexity: if the set arguments are convex, then
 their Minkowski sum is convex as well.
-
-Constructors:
-
-- `MinkowskiSumArray(array::Vector{<:LazySet})` -- default constructor
-
-- `MinkowskiSumArray([n]::Int=0, [N]::Type=Float64)`
- -- constructor for an empty sum with optional size hint and numeric type
 """
 struct MinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
    array::Vector{S}

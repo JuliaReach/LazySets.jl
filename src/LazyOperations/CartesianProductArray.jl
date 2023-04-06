@@ -17,13 +17,6 @@ Type that represents the Cartesian product of a finite number of sets.
 
 The Cartesian product preserves convexity: if the set arguments are convex, then
 their Cartesian product is convex as well.
-
-Constructors:
-
-- `CartesianProductArray(array::Vector{<:LazySet})` -- default constructor
-
-- `CartesianProductArray([n]::Int=0, [N]::Type=Float64)`
- -- constructor for an empty product with optional size hint and numeric type
 """
 struct CartesianProductArray{N, S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}

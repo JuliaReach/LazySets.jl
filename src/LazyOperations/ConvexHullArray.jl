@@ -18,13 +18,6 @@ The `EmptySet` is the neutral element for `ConvexHullArray`.
 
 A `ConvexHullArray` is always convex.
 
-Constructors:
-
-- `ConvexHullArray(array::Vector{<:LazySet})` -- default constructor
-
-- `ConvexHullArray([n]::Int=0, [N]::Type=Float64)`
-  -- constructor for an empty hull with optional size hint and numeric type
-
 ### Examples
 
 Convex hull of 100 two-dimensional balls whose centers follow a sinusoidal:
