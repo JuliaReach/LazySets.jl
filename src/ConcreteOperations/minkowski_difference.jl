@@ -157,15 +157,36 @@ An `HPolytope` that corresponds to the Minkowski difference of `Z1` minus `Z2`.
 
 ### Algorithm
 
-This method implements Theorem 3 in [1].
+For one-dimensional sets, we use a simple algorithm for intervals.
+For higher-dimensional sets, this method implements Theorem 3 in [1].
 
 [1] M. Althoff: *On computing the Minkowski difference of zonotopes*. 2016.
 """
 function minkowski_difference(Z1::AbstractZonotope, Z2::AbstractZonotope)
-    Gm = genmat(Z1)
-    n, p = size(Gm)
+    n = dim(Z1)
     @assert dim(Z2) == n "the Minkowski difference only applies to sets of " *
         "the same dimension, but the arguments have dimension $n and $(dim(Z2))"
+
+    if n == 1
+        return _minkowski_difference_1D(Z1, Z2)
+    else
+        return _minkowski_difference_nd(Z1, Z2)
+    end
+end
+
+function _minkowski_difference_1D(Z1::AbstractZonotope, Z2::AbstractZonotope)
+    N = promote_type(eltype(I1), eltype(I2))
+    l = low(I1, 1) - low(I2, 1)
+    if h < l
+        return EmptySet{N}(1)
+    end
+    c = center(Z1, 1) - center(Z2, 1)
+    return Zonotope([c], hcat([(c - l) / 2]))
+end
+
+function _minkowski_difference_nd(Z1::AbstractZonotope, Z2::AbstractZonotope)
+    Gm = genmat(Z1)
+    n, p = size(Gm)
 
     N = promote_type(eltype(Z1), eltype(Z2))
     cm, Gmᵀ = center(Z1), transpose(Gm)
