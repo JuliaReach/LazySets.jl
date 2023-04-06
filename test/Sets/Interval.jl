@@ -4,7 +4,7 @@ for N in [Float64, Float32, Rational{Int}]
     rand(Interval)
 
     # constructor from IntervalArithmetic.Interval
-    x = Interval(IntervalArithmetic.Interval(N(0), N(1)))
+    x = Interval(IA.Interval(N(0), N(1)))
 
     # constructor from a vector
     x = Interval(N[0, 1])
@@ -185,7 +185,7 @@ for N in [Float64, Float32, Rational{Int}]
     B = convert(Interval, M*H)
     @test B isa Interval && low(B) == [N(-1)] && high(B) == [N(1)]
     # conversion to an IntervalArithmetic.Interval
-    B2 = convert(IntervalArithmetic.Interval, M*H)
+    B2 = convert(IA.Interval, M*H)
     @test B2 == B.dat
 
     # set difference

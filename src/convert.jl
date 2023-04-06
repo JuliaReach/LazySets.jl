@@ -712,7 +712,7 @@ Convert a convex set to an `Interval` from `IntervalArithmetic`.
 
 An `IntervalArithmetic.Interval`.
 """
-function convert(::Type{IntervalArithmetic.Interval}, X::LazySet)
+function convert(::Type{IA.Interval}, X::LazySet)
     @assert dim(X) == 1 "cannot convert a $(dim(X))-dimensional set to an " *
                         "interval"
     return convert(Interval, X).dat
@@ -732,7 +732,7 @@ Convert an `Interval` from `IntervalArithmetic` to an `Interval` in `LazySets`.
 
 A `LazySets.Interval`.
 """
-function convert(::Type{Interval}, x::IntervalArithmetic.Interval)
+function convert(::Type{Interval}, x::IA.Interval)
     return Interval(x)
 end
 
@@ -750,8 +750,8 @@ Convert a hyperrectangular set to an `IntervalBox` from `IntervalArithmetic`.
 
 An `IntervalBox`.
 """
-function convert(::Type{IntervalArithmetic.IntervalBox}, H::AbstractHyperrectangle)
-    return IntervalArithmetic.IntervalBox(IntervalArithmetic.interval.(low(H), high(H)))
+function convert(::Type{IA.IntervalBox}, H::AbstractHyperrectangle)
+    return IA.IntervalBox(IA.interval.(low(H), high(H)))
 end
 
 """
@@ -774,16 +774,16 @@ A `Hyperrectangle`.
 interval; hence the resulting `Hyperrectangle` has its center and radius
 represented as a static vector (`SArray`).
 """
-function convert(::Type{Hyperrectangle}, IB::IntervalArithmetic.IntervalBox)
-    low_IB = IntervalArithmetic.inf.(IB)
-    high_IB = IntervalArithmetic.sup.(IB)
+function convert(::Type{Hyperrectangle}, IB::IA.IntervalBox)
+    low_IB = IA.inf.(IB)
+    high_IB = IA.sup.(IB)
     return Hyperrectangle(low=low_IB, high=high_IB)
 end
 
 # method for Interval
-function convert(::Type{Hyperrectangle}, I::IntervalArithmetic.Interval)
-    low_I = [IntervalArithmetic.inf(I)]
-    high_I = [IntervalArithmetic.sup(I)]
+function convert(::Type{Hyperrectangle}, I::IA.Interval)
+    low_I = [IA.inf(I)]
+    high_I = [IA.sup(I)]
     return Hyperrectangle(low=low_I, high=high_I)
 end
 
