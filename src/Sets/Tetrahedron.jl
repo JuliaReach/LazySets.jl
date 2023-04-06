@@ -110,9 +110,7 @@ function ∈(x::AbstractVector, T::Tetrahedron)
            same_side(v[2], v[3], v[4], v[1], x)
 end
 
-"""
-Return `true` iff point `x` lies in the same half-space as `v4` with respect to the hyperplane determined by `v1`, `v2` and `v3`.
-"""
+# Return `true` iff point `x` lies in the same half-space as `v4` with respect to the hyperplane determined by `v1`, `v2` and `v3`.
 function same_side(v1, v2, v3, v4, x)
     normal = cross(v2 - v1, v3 - v1)
     dotv4 = dot(normal, v4 - v1)
