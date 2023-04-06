@@ -79,29 +79,6 @@ function isoperationtype(P::Type{<:SparsePolynomialZonotope})
     return false
 end
 
-function isconvextype(P::Type{<:SparsePolynomialZonotope})
-    return false
-end
-
-function isboundedtype(P::Type{<:SparsePolynomialZonotope})
-    return true
-end
-
-"""
-    dim(P::SparsePolynomialZonotope)
-
-Return the dimension of a sparse polynomial zonotope.
-
-### Input
-
-- `P` -- sparse polynomial zonotope
-
-### Output
-
-The ambient dimension of `P`.
-"""
-dim(P::SPZ) = length(P.c)
-
 """
     ngens_dep(P::SparsePolynomialZonotope)
 

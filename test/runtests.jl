@@ -8,9 +8,9 @@ Random.seed!(1234)
 # ========================
 # Optional dependencies
 # ========================
-import Distributions, ExponentialUtilities, Expokit, IntervalArithmetic,
+import Distributions, ExponentialUtilities, Expokit,
        IntervalMatrices, Ipopt, Optim, Pkg, TaylorModels, RangeEnclosures
-const IA = IntervalArithmetic
+import IntervalArithmetic as IA
 using IntervalArithmetic: IntervalBox
 using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
@@ -74,7 +74,6 @@ if test_suite_basic
     # =======================
     # Testing basic set types
     # =======================
-    @time @testset "LazySets.LazySet" begin include("Interfaces/LazySet.jl") end
     @time @testset "LazySets.Singleton" begin include("Sets/Singleton.jl") end
     @time @testset "LazySets.Ball1" begin include("Sets/Ball1.jl") end
     @time @testset "LazySets.Ball2" begin include("Sets/Ball2.jl") end
@@ -84,6 +83,7 @@ if test_suite_basic
     @time @testset "LazySets.PolygonConvex" begin include("Sets/Polygon.jl") end
     @time @testset "LazySets.PolygonNonconvex" begin include("Sets/PolygonNC.jl") end
     @time @testset "LazySets.Polytope" begin include("Sets/Polytope.jl") end
+    @time @testset "LazySets.Tetrahedron" begin include("Sets/Tetrahedron.jl") end
     @time @testset "LazySets.Polyhedron" begin include("Sets/Polyhedron.jl") end
     @time @testset "LazySets.Zonotope" begin include("Sets/Zonotope.jl") end
     @time @testset "LazySets.ZeroSet" begin include("Sets/ZeroSet.jl") end

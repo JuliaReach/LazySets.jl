@@ -231,14 +231,14 @@ for N in [Float64, Rational{Int}, Float32]
                          HalfSpace(N[-1, 0], N(1)), HalfSpace(N[0, -1], N(1))])
 
     # conversion to and from IntervalArithmetic's IntervalBox type
-    B = IntervalBox(IntervalArithmetic.Interval(0, 1), IntervalArithmetic.Interval(0, 1))
+    B = IntervalBox(IA.Interval(0, 1), IA.Interval(0, 1))
     H = convert(Hyperrectangle, B)
     @test convert(IntervalBox, H) == B
 
     # conversion to and from IntervalArithmetic's Interval type
-    I = IntervalArithmetic.Interval(0, 1)
+    I = IA.Interval(0, 1)
     H = convert(Hyperrectangle, I)
-    @test convert(IntervalArithmetic.Interval, H) == I
+    @test convert(IA.Interval, H) == I
 
     # conversion from other hyperrectangular sets
     H = Hyperrectangle(N[1], N[1])

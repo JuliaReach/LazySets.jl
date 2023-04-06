@@ -4,11 +4,11 @@ __precompile__(true)
 module LazySets
 
 using LinearAlgebra, RecipesBase, Reexport, Requires, SparseArrays
-import GLPK, IntervalArithmetic, ReachabilityBase, JuMP, Random
+import GLPK, JuMP, Random, ReachabilityBase
+import IntervalArithmetic as IA
 
 using IntervalArithmetic: AbstractInterval, mince
 import IntervalArithmetic: radius, ⊂
-const IA = IntervalArithmetic
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×, normalize, normalize!
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle, randperm
@@ -103,6 +103,7 @@ include("Sets/SparsePolynomialZonotope.jl")
 include("Sets/Universe.jl")
 include("Sets/VPolygon.jl")
 include("Sets/VPolytope.jl")
+include("Sets/Tetrahedron.jl")
 include("Sets/ZeroSet.jl")
 include("Sets/Zonotope.jl")
 

@@ -5,12 +5,8 @@ Module `Approximations.jl` -- polygonal approximation of sets.
 """
 module Approximations
 
-import Base: convert
-
-import IntervalArithmetic
-const IA = IntervalArithmetic
-
 using LazySets, ReachabilityBase.Arrays, Requires, LinearAlgebra, SparseArrays
+import IntervalArithmetic as IA
 
 using ReachabilityBase.Comparison: _isapprox, _leq, _geq, _rtol, isapproxzero
 using LazySets: default_lp_solver, _isbounded_stiemke, require, dim, linprog,
@@ -19,6 +15,7 @@ using LazySets: default_lp_solver, _isbounded_stiemke, require, dim, linprog,
 using LazySets.JuMP: Model, set_silent, @variable, @constraint, optimize!,
                      value, @NLobjective
 
+import Base: convert
 import LazySets: project
 
 using ..LazySets: @assert, activate_assertions

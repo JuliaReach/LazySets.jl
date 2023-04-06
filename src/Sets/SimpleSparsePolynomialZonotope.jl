@@ -68,34 +68,12 @@ Another shorthand is `SSPZ`.
 """
 const PolynomialZonotope = SimpleSparsePolynomialZonotope
 
+# short-hand
 const SSPZ = SimpleSparsePolynomialZonotope
 
 function isoperationtype(P::Type{<:SimpleSparsePolynomialZonotope})
     return false
 end
-
-function isconvextype(P::Type{<:SimpleSparsePolynomialZonotope})
-    return false
-end
-
-function isboundedtype(P::Type{<:SimpleSparsePolynomialZonotope})
-    return true
-end
-
-"""
-    dim(P::SimpleSparsePolynomialZonotope)
-
-Return the dimension of a simple sparse polynomial zonotope.
-
-### Input
-
-- `P` -- simple sparse polynomial zonotope
-
-### Output
-
-The ambient dimension of `P`.
-"""
-dim(P::SSPZ) = length(P.c)
 
 """
     ngens(P::SimpleSparsePolynomialZonotope)

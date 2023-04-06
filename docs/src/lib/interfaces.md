@@ -539,6 +539,7 @@ linear_map(::AbstractMatrix, ::AbstractAffineMap)
 
 ```@docs
 AbstractPolynomialZonotope
+dim(::AbstractPolynomialZonotope)
 ```
 
 ### Implementations

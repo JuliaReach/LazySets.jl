@@ -247,8 +247,7 @@ function _zonotope_overapprox(c, G, E)
 end
 
 """
-    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope};
-                    [nsdiv]=1, [partition]=nothing)
+    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope})
 
 Overapproximate a simple sparse polynomial zonotope with a zonotope.
 
@@ -256,22 +255,12 @@ Overapproximate a simple sparse polynomial zonotope with a zonotope.
 
 - `P`         -- simple sparse polynomial zonotope
 - `Zonotope`  -- target set type
-- `nsdiv`     -- (optional, default: `1`) size of uniform partitioning grid
-- `partition` -- (optional, default: `nothing`) tuple of integers indicating the
-                 number of blocks in each dimensino; the length should match
-                 `nparams(P)`
 
 ### Output
 
 A zonotope.
 """
-function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope};
-                         nsdiv=1, partition=nothing)
-    if !isnothing(partition) || nsdiv != 1
-        return overapproximate(P, UnionSetArray{Zonotope}; nsdiv=nsdiv,
-                               partition=partition)
-    end
-
+function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope})
     cnew, Gnew = _zonotope_overapprox(center(P), genmat(P), expmat(P))
     return Zonotope(cnew, Gnew)
 end
@@ -324,8 +313,8 @@ Overapproximate a sparse polynomial zonotope with a zonotope.
 
 ### Input
 
-- `P`         -- sparse polynomial zonotope
-- `Zonotope`  -- target set type
+- `P`        -- sparse polynomial zonotope
+- `Zonotope` -- target set type
 
 ### Output
 
@@ -334,6 +323,35 @@ A zonotope.
 function overapproximate(P::SparsePolynomialZonotope, ::Type{<:Zonotope})
     cnew, Gnew = _zonotope_overapprox(center(P), genmat_dep(P), expmat(P))
     return Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
+end
+
+"""
+    overapproximate(P::DensePolynomialZonotope, ::Type{<:Zonotope})
+
+Overapproximate a polynomial zonotope with a zonotope.
+
+### Input
+
+- `P`        -- polynomial zonotope
+- `Zonotope` -- target set type
+
+### Output
+
+A zonotope.
+
+### Algorithm
+
+This method implements Proposition 1 in [1].
+
+[1] M. Althoff in *Reachability analysis of nonlinear systems using conservative
+    polynomialization and non-convex sets*, Hybrid Systems: Computation and
+    Control, 2013, pp. 173-182.
+"""
+function overapproximate(P::DensePolynomialZonotope, ::Type{<:Zonotope})
+    η = polynomial_order(P)
+    cnew = center(P) + 1/2 * vec(sum(i -> sum(P.E[2i], dims=2), 1:floor(Int, η / 2)))
+    Gnew = hcat([iseven(i) ? 1/2 * P.E[i] : P.E[i] for i in 1:η]..., P.F..., P.G)
+    return Zonotope(cnew, Gnew)
 end
 
 # function to be loaded by Requires

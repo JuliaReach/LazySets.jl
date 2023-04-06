@@ -23,22 +23,15 @@
 @test check_method_implementation(AbstractPolytope, vertices_list,
                                   Function[S -> (S{Float64},)])
 
-# --- AbstractCentrallySymmetric ---
+# --- AbstractCentrallySymmetric and AbstractCentrallySymmetricPolytope ---
 
-# center
-@test check_method_implementation(AbstractCentrallySymmetric, center,
-                                  Function[S -> (S{Float64},)])
-@test check_method_implementation(AbstractCentrallySymmetric, center,
-                                  Function[S -> (S{Float64}, Int64)])
-
-# --- AbstractCentrallySymmetricPolytope ---
-# (copies methods from AbstractCentrallySymmetric)
-
-# center (from AbstractCentrallySymmetric)
-@test check_method_implementation(AbstractCentrallySymmetricPolytope, center,
-                                  Function[S -> (S{Float64},)])
-@test check_method_implementation(AbstractCentrallySymmetricPolytope, center,
-                                  Function[S -> (S{Float64}, Int64)])
+for T in (AbstractCentrallySymmetric, AbstractCentrallySymmetricPolytope)
+    # center
+    @test check_method_implementation(AbstractCentrallySymmetric, center,
+                                    Function[S -> (S{Float64},)])
+    @test check_method_implementation(AbstractCentrallySymmetric, center,
+                                    Function[S -> (S{Float64}, Int64)])
+end
 
 # --- AbstractZonotope ---
 
@@ -91,4 +84,11 @@
                                   Function[S -> (S{Float64},)])
 # set
 @test check_method_implementation(AbstractAffineMap, set,
+                                  Function[S -> (S{Float64},)])
+
+# --- AbstractPolynomialZonotope ---
+
+@test check_method_implementation(AbstractPolynomialZonotope, center,
+                                  Function[S -> (S{Float64},)])
+@test check_method_implementation(AbstractPolynomialZonotope, order,
                                   Function[S -> (S{Float64},)])
