@@ -8,6 +8,7 @@ CurrentModule = LazySets
 LineSegment
 dim(::LineSegment)
 σ(::AbstractVector, ::LineSegment)
+ρ(::AbstractVector, ::LineSegment)
 ∈(::AbstractVector, ::LineSegment)
 center(::LineSegment)
 an_element(::LineSegment)
