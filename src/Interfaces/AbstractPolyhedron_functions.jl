@@ -416,11 +416,11 @@ end
 
 function _get_elimination_instance(N, backend, elimination_method)
     require(@__MODULE__, :Polyhedra; fun_name="linear_map with elimination")
-    if backend == nothing
+    if isnothing(backend)
         require(@__MODULE__, :CDDLib; fun_name="linear_map with elimination")
         backend = default_cddlib_backend(N)
     end
-    if elimination_method == nothing
+    if isnothing(elimination_method)
         elimination_method = Polyhedra.BlockElimination()
     end
     return LinearMapElimination(backend, elimination_method)
@@ -647,12 +647,12 @@ function _linear_map_polyhedron(M::AbstractMatrix{NM},
     size(M, 2) != dim(P) && throw(ArgumentError("a linear map of size " *
                 "$(size(M)) cannot be applied to a set of dimension $(dim(P))"))
 
-    got_algorithm = algorithm != nothing
+    got_algorithm = !isnothing(algorithm)
     got_inv = got_algorithm && (algorithm == "inv" || algorithm == "inverse")
     got_inv_right = got_algorithm && (algorithm ==
         "inv_right" || algorithm == "inverse_right")
 
-    if inverse != nothing
+    if !isnothing(inverse)
         if !got_algorithm || got_inv
             algo = LinearMapInverse(inverse)
         elseif got_inv_right
@@ -726,7 +726,7 @@ function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron,
 
     P_hpoly = HPolytope(constraints_list(P), check_boundedness=false)
     backend = algo.backend
-    if backend == nothing
+    if isnothing(backend)
         backend = default_polyhedra_backend(P)
     end
     P = tovrep(P_hpoly, backend=backend)
@@ -1168,7 +1168,7 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int};
         elseif status == 1
             # simple projection of half-space
             hs = HalfSpace(c.a[block], c.b)
-            if clist == nothing
+            if isnothing(clist)
                 clist = [hs]  # get the right type of the constraints
             else
                 push!(clist, hs)

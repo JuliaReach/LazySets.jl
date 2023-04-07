@@ -1848,7 +1848,7 @@ function _isempty_polyhedron_polyhedra(P::LazySet{N}, witness::Bool=false;
     require(@__MODULE__, :Polyhedra; fun_name="isempty",
             explanation="with the active option `use_polyhedra_interface`")
 
-    if backend == nothing
+    if isnothing(backend)
         backend = default_polyhedra_backend(P)
     end
 

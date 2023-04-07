@@ -253,7 +253,7 @@ for N in [Float64, Rational{Int}, Float32]
         if N<:AbstractFloat || test_suite_polyhedra
             @test isequivalent(Z, Z2)
         end
-        if G2 != nothing
+        if !isnothing(G2)
             @test genmat(remove_redundant_generators(Z)) == G2
         end
 

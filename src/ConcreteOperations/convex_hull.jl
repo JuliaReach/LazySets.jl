@@ -387,7 +387,7 @@ end
 function _convex_hull_2d!(points::Vector{VN};
                           algorithm="monotone_chain"
                          ) where {N, VN<:AbstractVector{N}}
-    if algorithm == nothing
+    if isnothing(algorithm)
         algorithm = default_convex_hull_algorithm(points)
     end
     if algorithm == "monotone_chain"

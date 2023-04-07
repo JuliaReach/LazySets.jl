@@ -119,7 +119,7 @@ function plot3d(S::LazySet; backend=default_polyhedra_backend(S), alpha=1.0,
                 transparency=true, visible=true)
     require(@__MODULE__, [:Makie, :Polyhedra]; fun_name="plot3d")
 
-    if colorrange == nothing
+    if isnothing(colorrange)
         colorrange = Automatic()
     end
     P_poly_mesh = _plot3d_helper(S, backend)
@@ -152,7 +152,7 @@ function plot3d!(S::LazySet; backend=default_polyhedra_backend(S), alpha=1.0,
                  transparency=true, visible=true)
     require(@__MODULE__, [:Makie, :Polyhedra]; fun_name="plot3d!")
 
-    if colorrange == nothing
+    if isnothing(colorrange)
         colorrange = Automatic()
     end
     P_poly_mesh = _plot3d_helper(S, backend)

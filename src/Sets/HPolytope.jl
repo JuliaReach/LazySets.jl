@@ -230,12 +230,12 @@ function vertices_list(P::HPolytope;
     N = eltype(P)
     if isempty(P.constraints)
         return Vector{N}(Vector{N}(undef, 0))  # illegal polytope
-    elseif dim(P) == 2 && backend == nothing
+    elseif dim(P) == 2 && isnothing(backend)
         # use efficient 2D implementation
         return vertices_list(convert(HPolygon, P, prune=prune))
     else
         require(@__MODULE__, :Polyhedra; fun_name="vertices_list")
-        if backend == nothing
+        if isnothing(backend)
             backend = default_polyhedra_backend(P)
         end
         Q = polyhedron(P; backend=backend)
