@@ -327,14 +327,16 @@ function _brute_force_support_vector(d::AbstractVector, P::VPolygon)
 end
 
 function _brute_force_support_vector(d::AbstractVector{M}, vlist::Vector{VT}) where {M, T, VT<:AbstractVector{T}}
-    i_max = 1
-    N = promote_type(M, T)
+    max_idx = 1
+    @inbounds max_ρ = dot(d, vlist[1])
     @inbounds for i in 2:length(vlist)
-        if dot(d, vlist[i] - vlist[i_max]) > zero(N)
-            i_max = i
+        ρ_i = dot(d, vlist[i])
+        if ρ_i > max_ρ
+            max_idx = i
+            max_ρ = ρ_i
         end
     end
-    return i_max
+    return max_idx
 end
 
 function _binary_support_vector(d::AbstractVector, P::VPolygon)
