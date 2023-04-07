@@ -130,19 +130,47 @@ otherwise, for all ``i = 1, …, n``.
 """
 function σ(d::AbstractVector, B::Ballp)
     p = B.p
-    q = p/(p-1)
+    q = p / ( p - 1)
     v = similar(d)
     N = promote_type(eltype(d), eltype(B))
     @inbounds for (i, di) in enumerate(d)
         v[i] = di == zero(N) ? di : abs.(di).^q / di
     end
     vnorm = norm(v, p)
-    if iszero(vnorm)
+    if isapproxzero(vnorm)
         svec = B.center
     else
-        svec = @.(B.center + B.radius * (v/vnorm))
+        svec = @.(B.center + B.radius * (v / vnorm))
     end
     return svec
+end
+
+"""
+    ρ(d::AbstractVector, B::Ballp)
+
+Evaluate the support function of a ball in the p-norm in the given direction.
+
+### Input
+
+- `d` -- direction
+- `B` -- ball in the p-norm
+
+### Output
+
+Evaluation of the support function in the given direction.
+
+### Algorithm
+
+Let ``c`` and ``r`` be the center and radius of the ball ``B`` in the p-norm,
+respectively, and let ``q = \\frac{p}{p-1}``. Then:
+
+```math
+ρ(d, B) = ⟨d, c⟩ + r ‖d‖_q.
+```
+"""
+function ρ(d::AbstractVector, B::Ballp)
+    q = B.p / (B.p - 1)
+    return dot(d, B.center) + B.radius * norm(d, q)
 end
 
 """
