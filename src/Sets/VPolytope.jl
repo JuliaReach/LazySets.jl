@@ -135,7 +135,7 @@ function σ(d::AbstractVector, P::VPolytope)
     # base cases
     m = length(P.vertices)
     if m == 0
-        error("the support function of an empty polytope is undefined")
+        error("the support vector of an empty polytope is undefined")
     elseif m == 1
         @inbounds return P.vertices[1]
     end
@@ -152,6 +152,29 @@ function σ(d::AbstractVector, P::VPolytope)
         end
     end
     @inbounds return P.vertices[max_idx]
+end
+
+"""
+    ρ(d::AbstractVector, P::VPolytope)
+
+Evaluate the support function of a polytope in vertex representation in a given
+direction.
+
+### Input
+
+- `d` -- direction
+- `P` -- polytope in vertex representation
+
+### Output
+
+Evaluation of the support function in the given direction.
+"""
+function ρ(d::AbstractVector, P::VPolytope)
+    if isempty(P.vertices)
+        error("the support function of an empty polytope is undefined")
+    end
+    # evaluate support function in every vertex
+    return maximum(v -> dot(d, v), P.vertices)
 end
 
 """
