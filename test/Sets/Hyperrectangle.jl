@@ -160,6 +160,7 @@ for N in [Float64, Rational{Int}, Float32]
     H = Hyperrectangle(N[0, 0], N[1, 2])
     S = split(H, [2, 2])
     @test S isa Vector{typeof(H)}
+    @test_throws ArgumentError split(H, [0, 4])
     H = Hyperrectangle(SA[N(0), N(0)], SA[N(1), N(2)])
     S = split(H, [2, 2])
     @test S isa Vector{typeof(H)}
