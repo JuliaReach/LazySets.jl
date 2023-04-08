@@ -5,6 +5,7 @@ deps/deps.jl
 *.svg
 *.DS_Store
 .vscode
+Manifest.toml
 
 docs/build/
 docs/site/
