@@ -322,7 +322,7 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
             seriestype := :scatter
         end
         x, y
-    else
+    elseif dim(X) == 2
         # extract limits and extrema of already plotted sets
         p = plotattributes[:plot_object]
         lims = _extract_limits(p, plotattributes)
@@ -361,6 +361,18 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
             end
             x, y
         end
+    elseif dim(X) == 3
+        res = plot_recipe(X, ε)
+        if isempty(res)
+            res
+        else
+            x, y, z, i, j, k = res
+            seriestype := :mesh3d
+            connections := (i, j, k)
+            x, y, z
+        end
+    else
+        throw(ArgumentError("cannot plot a $(dim(X))-dimensional set"))
     end
 end
 
