@@ -115,6 +115,8 @@ for exp_backend in [ExponentialUtilities, Expokit]
             N[1.4615602805461578, 1.7892495373142225, 1.1215454866370536,
               1.9033524001317403, 0.5475680039922208, 1.3374631184550847]
 
+        ### ExponentialProjectionMap
+
         # for projection tests, assume that n is divisible by three
         @assert mod(n, 3) == 0
         nb = div(n, 3)
@@ -140,16 +142,17 @@ for exp_backend in [ExponentialUtilities, Expokit]
         # isempty
         @test !isempty(projmap)
 
-        #compute the support vector of the projection of an exponential map
+        # support vector and support function
         d = N[3//20, 11//50]
-        svec = σ(d, projmap)
-        # check that it works with sparse vectors
-        svec == σ(sparsevec(d), projmap)
+        for d in (d, sparsevec(d))  # check that it works with sparse vectors
+            @test σ(d, projmap) ≈ N[0.1418094366, 1.2940902111]
+            @test ρ(d, projmap) ≈ N(0.3059712619)
+        end
 
         # check consistency with respect to explicit computation of the matrix exponential
         P = L * exp(Matrix(m)) * R
-        svec_explicit = σ(d, P*b)
-        @test svec ≈ svec_explicit
+        @test σ(d, projmap) ≈ σ(d, P*b)
+        @test ρ(d, projmap) ≈ ρ(d, P*b)
 
         # vertices_list
         b = BallInf(N[0, 0], N(1))
