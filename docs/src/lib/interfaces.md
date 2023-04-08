@@ -79,6 +79,7 @@ radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
 isempty(::LazySet{N}, ::Bool=false) where {N}
 linear_map(::AbstractMatrix, ::LazySet; kwargs...)
+linear_map(::Number, ::LazySet; kwargs...)
 affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector)
 exponential_map(::AbstractMatrix, ::LazySet)
 an_element(::LazySet)

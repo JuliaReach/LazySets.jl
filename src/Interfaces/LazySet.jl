@@ -1888,3 +1888,12 @@ function linear_map(M::AbstractMatrix, P::LazySet; kwargs...)
         throw(ArgumentError("`linear_map` is not implemented for the given set"))
     end
 end
+
+"""
+    linear_map(a::Number, P::LazySet; kwargs...)
+
+Alias for `scale(a, P; kwargs...)`.
+"""
+function linear_map(a::Number, P::LazySet; kwargs...)
+    return scale(a, X; kwargs...)
+end
