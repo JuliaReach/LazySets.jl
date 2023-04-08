@@ -44,6 +44,15 @@ end
 # alias
 const is_intersection_empty = isdisjoint
 
+# quick sufficient check that tries to find a separating hyperplane
+# the result `true` is also sufficient for non-convex sets
+function _isdisjoint_convex_sufficient(X::LazySet, Y::LazySet)
+    x = an_element(X)
+    y = an_element(Y)
+    d = x - y
+    return ρ(d, Y) < -ρ(-d, X)
+end
+
 # conversion for IA types
 isdisjoint(X::LazySet, Y::IA.Interval, witness::Bool=false) =
     isdisjoint(X, Interval(Y), witness)
