@@ -4,14 +4,6 @@ eval(quote
     using .Polyhedra: HRep, VRep,
                       removehredundancy!, removevredundancy!
 
-    function default_polyhedra_backend(P::LazySet{N}) where {N}
-        if LazySets.dim(P) == 1
-            return default_polyhedra_backend_1d(N)
-        else
-            return default_polyhedra_backend_nd(N)
-        end
-    end
-
     function default_polyhedra_backend_1d(N::Type{<:Number}, solver=nothing)
         return Polyhedra.IntervalLibrary{N}()
     end

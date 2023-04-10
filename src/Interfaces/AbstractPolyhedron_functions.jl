@@ -8,39 +8,6 @@ export constrained_dimensions,
        an_element,
        vertices_list
 
-# default LP solver for floating-point numbers
-function default_lp_solver(N::Type{<:AbstractFloat})
-    JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(method=GLPK.SIMPLEX))
-end
-
-# default LP solver for rational numbers
-function default_lp_solver(N::Type{<:Rational})
-    JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(method=GLPK.EXACT))
-end
-
-# helper function given two possibly different numeric types
-function default_lp_solver(M::Type{<:Number}, N::Type{<:Number})
-    return default_lp_solver(promote_type(M, N))
-end
-
-# Polyhedra backend (fallback method)
-function default_polyhedra_backend(P::LazySet{N}) where {N}
-    require(@__MODULE__, :Polyhedra; fun_name="default_polyhedra_backend")
-    error("no default backend for numeric type $N")
-end
-
-# default LP solver for Polyhedra (fallback method)
-# NOTE: exists in parallel to `default_lp_solver` because we use different
-# interfaces (see #1493)
-function default_lp_solver_polyhedra(N; kwargs...)
-    require(@__MODULE__, :Polyhedra; fun_name="default_lp_solver_polyhedra")
-    error("no default solver for numeric type $N")
-end
-
-function _is_polyhedra_backend(backend)
-    return false
-end
-
 isconvextype(::Type{<:AbstractPolyhedron}) = true
 
 is_polyhedral(::AbstractPolyhedron) = true
