@@ -8,16 +8,16 @@
 [paper-img]: https://proceedings.juliacon.org/papers/10.21105/jcon.00097/status.svg
 [paper-url]: https://doi.org/10.21105/jcon.00097
 [dev-img]: https://img.shields.io/badge/docs-latest-blue.svg
-[dev-url]: http://juliareach.github.io/LazySets.jl/dev/
-[ci-img]: https://github.com/JuliaReach/LazySets.jl/actions/workflows/ci.yml/badge.svg?branch=master
-[ci-url]: https://github.com/JuliaReach/LazySets.jl/actions/workflows/ci.yml?query=branch%3Amaster
-[cov-img]: http://codecov.io/github/JuliaReach/LazySets.jl/coverage.svg?branch=master
-[cov-url]: https://codecov.io/github/JuliaReach/LazySets.jl?branch=master
-[chat-img]: https://badges.gitter.im/JuliaReach/Lobby.svg
-[chat-url]: https://gitter.im/JuliaReach/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+[dev-url]: https://juliareach.github.io/LazySets.jl/dev/
+[ci-img]: https://github.com/JuliaReach/LazySets.jl/workflows/CI/badge.svg
+[ci-url]: https://github.com/JuliaReach/LazySets.jl/actions/workflows/ci.yml
+[cov-img]: https://codecov.io/github/JuliaReach/LazySets.jl/coverage.svg
+[cov-url]: https://app.codecov.io/github/JuliaReach/LazySets.jl
+[chat-img]: https://img.shields.io/badge/zulip-join_chat-brightgreen.svg
+[chat-url]: https://julialang.zulipchat.com/#narrow/stream/278609-juliareach
 [doi-img]: https://zenodo.org/badge/105701832.svg
 [doi-url]: https://zenodo.org/badge/latestdoi/105701832
-[lic-img]: https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000
+[lic-img]: https://img.shields.io/github/license/mashape/apistatus.svg
 [lic-url]: https://github.com/JuliaReach/LazySets.jl/blob/master/LICENSE
 
 ## ❓ Introduction
@@ -30,7 +30,7 @@ See [below](#-how-to-cite) for how to cite it.
 
 ## 🎯 Resources
 
-- [Manual](http://juliareach.github.io/LazySets.jl/dev/)
+- [Manual](https://juliareach.github.io/LazySets.jl/dev/)
 - [Release notes of the development version](https://github.com/JuliaReach/LazySets.jl/wiki/Release-log-tracker)
 - [Release notes of previous versions](https://github.com/JuliaReach/LazySets.jl/releases)
 - [How to contribute](https://juliareach.github.io/LazySets.jl/dev/about/#Contributing-1)
@@ -96,13 +96,13 @@ The articles appear in reverse chronological order.
 
 [7] **Case Study: Reachability Analysis of a unified Combat-Command-and-Control Model.** Sergiy Bogomolov, Marcelo Forets, and Kostiantyn Potomkin (2020). Proceedings of the [14th International Conference on Reachability Problems (RP)](https://www.irif.fr/~rp2020/), LNCS, vol 12448, pp. 52-66. [doi: 10.1007/978-3-030-61739-4_4](https://doi.org/10.1007/978-3-030-61739-4_4).
 
-[6] **Reachability analysis of linear hybrid systems via block decomposition.** Sergiy Bogomolov, Marcelo Forets, Goran Frehse, Kostiantyn Potomkin, and Christian Schilling (2020). IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems, vol. 39, pp. 4018-4029. Presented at [Embedded Systems Week](http://esweek.hosting2.acm.org/) 2020. [doi: 10.1109/TCAD.2020.3012859](https://doi.org/10.1109/TCAD.2020.3012859), [arXiv: 1905.02458](https://arxiv.org/abs/1905.02458).
+[6] **Reachability analysis of linear hybrid systems via block decomposition.** Sergiy Bogomolov, Marcelo Forets, Goran Frehse, Kostiantyn Potomkin, and Christian Schilling (2020). IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems, vol. 39, pp. 4018-4029. Presented at [Embedded Systems Week](https://esweek.org/) 2020. [doi: 10.1109/TCAD.2020.3012859](https://doi.org/10.1109/TCAD.2020.3012859), [arXiv: 1905.02458](https://arxiv.org/abs/1905.02458).
 
 [5] **ARCH-COMP19 Category Report: Continuous and Hybrid Systems with Linear Continuous Dynamics.** Matthias Althoff, Stanley Bak, Marcelo Forets, Goran Frehse, Niklas Kochdumper, Rajarshi Ray, Christian Schilling, and Stefan Schupp (2019). 6th [International Workshop on Applied Verification of Continuous and Hybrid Systems](https://cps-vo.org/group/ARCH/) (ARCH19), vol 61, pp. 14-40. [doi: 10.29007/bj1w](https://doi.org/10.29007/bj1w).
 
 [4] **ARCH-COMP19 Category Report: Continuous and Hybrid Systems with Nonlinear Dynamics.** Fabian Immler, Matthias Althoff, Luis Benet, Alexandre Chapoutot, Xin Chen, Marcelo Forets, Luca Geretti, Niklas Kochdumper, David P. Sanders, and Christian Schilling (2019). 6th [International Workshop on Applied Verification of Continuous and Hybrid Systems](https://cps-vo.org/group/ARCH/) (ARCH19), vol 61, pp. 41-61. [doi: 10.29007/m75b](https://doi.org/10.29007/m75b).
 
-[3] **JuliaReach: a Toolbox for Set-Based Reachability.** Sergiy Bogomolov, Marcelo Forets, Goran Frehse, Kostiantyn Potomkin, Christian Schilling (2019). Proceedings of the [22nd International Conference on Hybrid Systems: Computation and Control (HSCC)](http://hscc2019.eecs.umich.edu/), pp. 39-44. [doi: 10.1145/3302504.3311804](https://doi.org/10.1145/3302504.3311804), [arXiv: 1901.10736](https://arxiv.org/abs/1901.10736).
+[3] **JuliaReach: a Toolbox for Set-Based Reachability.** Sergiy Bogomolov, Marcelo Forets, Goran Frehse, Kostiantyn Potomkin, Christian Schilling (2019). Proceedings of the 22nd International Conference on Hybrid Systems: Computation and Control (HSCC), pp. 39-44. [doi: 10.1145/3302504.3311804](https://doi.org/10.1145/3302504.3311804), [arXiv: 1901.10736](https://arxiv.org/abs/1901.10736).
 
 [2] **ARCH-COMP18 Category Report: Continuous and Hybrid Systems with Linear Continuous Dynamics.** Matthias Althoff, Stanley Bak, Xin Chen, Chuchu Fan, Marcelo Forets, Goran Frehse, Niklas Kochdumper, Yangge Li, Sayan Mitra, Rajarshi Ray, Christian Schilling, and Stefan Schupp (2018). 5th [International Workshop on Applied Verification of Continuous and Hybrid Systems](https://cps-vo.org/group/ARCH/) (ARCH18), vol 54, pp. 23–52. [doi: 10.29007/73mb](https://doi.org/10.29007/73mb).
 
