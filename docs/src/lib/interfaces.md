@@ -89,7 +89,7 @@ isoperationtype(::Type{<:LazySet})
 isoperation(::LazySet)
 isequivalent(::LazySet, ::LazySet)
 surface(::LazySet)
-area(::LazySet{N}) where {N}
+area(::LazySet)
 concretize(::LazySet)
 complement(::LazySet)
 polyhedron(::LazySet)
