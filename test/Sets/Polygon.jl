@@ -470,13 +470,15 @@ for N in [Float64, Float32, Rational{Int}]
     Z = minkowski_sum(X + Y, Singleton(zeros(N, 2)))
     @test Z isa VPolygon{N} && ispermutation(vertices_list(Z), vlist)
 
-    # area
+    # area & volume
     v1 = N[1, 3]
     v2 = N[2, 1]
     v3 = N[4, 6]
     v4 = N[9, 2]
     P = VPolygon([v1, v2, v3, v4])
-    @test area(P) == N(21)
+    @test area(P) == volume(P) == N(21)
+    Q = tohrep(P)
+    @test area(Q) == volume(Q) == N(21)
 end
 
 for N in [Float64, Float32]
