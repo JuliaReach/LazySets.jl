@@ -1,6 +1,6 @@
 export SparsePolynomialZonotope, expmat, nparams, ngens_dep, ngens_indep,
        genmat_dep, genmat_indep, indexvector, translate,
-       linear_map, quadratic_map, remove_redundant_generators, reduce_order
+       linear_map, quadratic_map, remove_redundant_generators, reduce_order, ρ
 
 """
     SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N},
@@ -443,4 +443,59 @@ function reduce_order(P::SparsePolynomialZonotope, r::Real,
     Gz = genmat(Z)
     return SparsePolynomialZonotope(cz, G[:, Kbar], hcat(GI[:, Hbar], Gz),
                                     Ebar[N, :], idx[N])
+end
+
+"""
+    ρ(d::AbstractVector, P::SparsePolynomialZonotope; [enclosure_method]=nothing)
+
+Bound the support function of ``P`` in the direction ``d``.
+
+### Input
+
+- `d`                -- direction
+- `P`                -- sparse polynomial zonotope
+- `enclosure_method` -- (optional; default: `nothing`) method to use for
+                        enclosure; an `AbstractEnclosureAlgorithm` from the
+                        [`Rangeenclosures`](https://github.com/JuliaReach/RangeEnclosures.jl)
+                        package
+
+### Output
+
+An overapproximation of the support function in the given direction.
+
+### Algorithm
+
+This method implements Proposition 3.1.16 in [1].
+
+[1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
+verification of cyber-physical systems*. 2021.
+"""
+function ρ(d::AbstractVector, P::SparsePolynomialZonotope;
+           enclosure_method=nothing)
+    require(@__MODULE__, :RangeEnclosures; fun_name="ρ")
+    return _ρ_range_enclosures(d, P, enclosure_method)
+end
+
+function _load_rho_range_enclosures()
+    return quote
+        function _ρ_range_enclosures(d::AbstractVector, P::SparsePolynomialZonotope,
+                 method::Union{RangeEnclosures.AbstractEnclosureAlgorithm, Nothing})
+            # default method: BranchAndBoundEnclosure
+            isnothing(method) && (method = BranchAndBoundEnclosure())
+
+            c = center(P)
+            G = genmat_dep(P)
+            GI = genmat_indep(P)
+            E = expmat(P)
+            n = dim(P)
+
+            res = d' * c + sum(abs.(d' * gi) for gi in eachcol(GI); init=zero(eltype(GI)))
+
+            f(x) = sum(d' * gi * prod(x .^ ei) for (gi, ei) in zip(eachcol(G), eachcol(E)) )
+
+            dom = IA.IntervalBox(IA.Interval(-1, 1), n)
+            res += sup(enclose(f, dom, method))
+            return res
+        end
+    end
 end

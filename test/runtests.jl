@@ -9,7 +9,7 @@ Random.seed!(1234)
 # Optional dependencies
 # ========================
 import Distributions, ExponentialUtilities, Expokit,
-       IntervalMatrices, Ipopt, Optim, Pkg, TaylorModels
+       IntervalMatrices, Ipopt, Optim, Pkg, TaylorModels, RangeEnclosures
 import IntervalArithmetic as IA
 using IntervalArithmetic: IntervalBox
 using IntervalMatrices: ±, IntervalMatrix
