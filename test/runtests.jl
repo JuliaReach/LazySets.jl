@@ -9,7 +9,7 @@ Random.seed!(1234)
 # Optional dependencies
 # ========================
 import Distributions, ExponentialUtilities, Expokit, IntervalMatrices, Ipopt,
-       Optim, PkgVersion, TaylorModels, RangeEnclosures
+       MiniQhull, Optim, PkgVersion, RangeEnclosures, SCS, SetProg, TaylorModels
 import IntervalArithmetic as IA
 using IntervalArithmetic: IntervalBox
 using IntervalMatrices: ±, IntervalMatrix
@@ -17,7 +17,6 @@ using TaylorModels: set_variables, TaylorModelN
 # ICP currently leads to unsatisfiable package requirements
 # using IntervalConstraintProgramming
 using Symbolics
-import MiniQhull
 
 # ==============================
 # Non-exported helper functions
