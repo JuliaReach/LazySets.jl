@@ -54,6 +54,8 @@ for exp_backend in [ExponentialUtilities, Expokit]
         # the exponential map of a convex set, same as ExponentialMap(me, b)
         emap = me * b
         @test emap isa ExponentialMap{N}
+        # passing a sparse matrix automatically converts to SparseMatrixExp
+        @test emap == ExponentialMap(m, b)
 
         # absorbing elements
         for neutral in [ZeroSet{N}(6), EmptySet{N}(6)]
