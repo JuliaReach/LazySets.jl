@@ -18,7 +18,7 @@ addconstraint!(::HPoly, ::HalfSpace)
 constraints_list(::HPoly)
 tohrep(::HPoly)
 tovrep(::HPoly)
-normalize(::HPoly{N}, p=N(2)) where {N}
+normalize(::HPoly{N}, p::Real=N(2)) where {N}
 translate(::HPoly, ::AbstractVector)
 remove_redundant_constraints(::HPoly)
 remove_redundant_constraints!(::HPoly)

@@ -13,7 +13,7 @@ dim(::HalfSpace)
 ∈(::AbstractVector, ::HalfSpace)
 an_element(::HalfSpace)
 rand(::Type{HalfSpace})
-normalize(::HalfSpace{N}, p=N(2)) where {N}
+normalize(::HalfSpace{N}, p::Real=N(2)) where {N}
 isbounded(::HalfSpace)
 isuniversal(::HalfSpace, ::Bool=false)
 isempty(::HalfSpace)

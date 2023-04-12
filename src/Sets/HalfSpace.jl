@@ -57,7 +57,7 @@ Alias for `HalfSpace`
 const LinearConstraint = HalfSpace
 
 """
-    normalize(hs::HalfSpace{N}, p=N(2)) where {N}
+    normalize(hs::HalfSpace{N}, p::Real=N(2)) where {N}
 
 Normalize a half-space.
 
@@ -71,7 +71,7 @@ Normalize a half-space.
 A new half-space whose normal direction ``a`` is normalized, i.e., such that
 ``‖a‖_p = 1`` holds.
 """
-function normalize(hs::HalfSpace{N}, p=N(2)) where {N}
+function normalize(hs::HalfSpace{N}, p::Real=N(2)) where {N}
     a, b = _normalize_halfspace(hs, p)
     return HalfSpace(a, b)
 end
