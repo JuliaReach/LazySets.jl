@@ -142,7 +142,7 @@ See [`normalize(::Line, ::Real)`](@ref) / [`normalize!(::Line, ::Real)`](@ref).
 direction(L::Line) = L.d
 
 """
-    normalize!(L::Line, p::Real=2.0)
+    normalize!(L::Line{N}, p::Real=N(2)) where {N}
 
 Normalize the direction of a line storing the result in `L`.
 
@@ -155,13 +155,13 @@ Normalize the direction of a line storing the result in `L`.
 
 A line whose direction has unit norm w.r.t. the given `p`-norm.
 """
-function normalize!(L::Line, p::Real=2.0)
+function normalize!(L::Line{N}, p::Real=N(2)) where {N}
     normalize!(L.d, p)
     return L
 end
 
 """
-    normalize(L::Line, p::Real=2.0)
+    normalize(L::Line{N}, p::Real=N(2)) where {N}
 
 Normalize the direction of a line.
 
@@ -178,7 +178,7 @@ A line whose direction has unit norm w.r.t. the given `p`-norm.
 
 See also [`normalize!(::Line, ::Real)`](@ref) for the in-place version.
 """
-function normalize(L::Line, p::Real=2.0)
+function normalize(L::Line{N}, p::Real=N(2)) where {N}
     normalize!(copy(L), p)
 end
 

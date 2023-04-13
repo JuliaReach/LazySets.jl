@@ -19,8 +19,8 @@ isempty(::Line)
 constraints_list(::Line)
 translate(::Line, ::AbstractVector)
 translate!(::Line, ::AbstractVector)
-normalize(::Line, ::Real=2.0)
-normalize!(::Line, ::Real=2.0)
+normalize(::Line{N}, ::Real=N(2)) where{N}
+normalize!(::Line{N}, ::Real=N(2)) where{N}
 distance(::AbstractVector, ::Line; ::Real=2.0)
 linear_map(::AbstractMatrix, ::Line)
 ```
