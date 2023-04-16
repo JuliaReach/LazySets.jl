@@ -52,6 +52,7 @@ include("Utils/numbers.jl")
 include("Utils/helper_functions.jl")
 include("Utils/macros.jl")
 include("Utils/matrix_exponential.jl")
+include("Utils/lp_solvers.jl")
 include("Utils/file_formats.jl")
 
 # ==================

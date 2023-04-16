@@ -212,6 +212,16 @@ true
 """
 isconvextype(X::Type{<:LazySet}) = false
 
+# Polyhedra backend (fallback method)
+function default_polyhedra_backend(P::LazySet{N}) where {N}
+    require(@__MODULE__, :Polyhedra; fun_name="default_polyhedra_backend")
+    if LazySets.dim(P) == 1
+        return default_polyhedra_backend_1d(N)
+    else
+        return default_polyhedra_backend_nd(N)
+    end
+end
+
 # Note: this method cannot be documented due to a bug in Julia
 function low(X::LazySet, i::Int)
     return _low(X, i)
