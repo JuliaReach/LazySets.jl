@@ -331,7 +331,7 @@ tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
 tovrep(::AbstractHPolygon)
 addconstraint!(::AbstractHPolygon, ::HalfSpace)
 addconstraint!(::Vector{LC}, ::HalfSpace) where {LC<:HalfSpace}
-normalize(P::AbstractHPolygon{N}, p=N(2)) where {N}
+normalize(P::AbstractHPolygon{N}, p::Real=N(2)) where {N}
 isredundant(::HalfSpace, ::HalfSpace, ::HalfSpace)
 remove_redundant_constraints!(::AbstractHPolygon)
 constraints_list(::AbstractHPolygon)

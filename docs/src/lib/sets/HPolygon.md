@@ -31,7 +31,7 @@ Inherited from [`AbstractHPolygon`](@ref):
 * [`vertices_list`](@ref vertices_list(::AbstractHPolygon{N}) where {N})
 * [`tohrep`](@ref tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon})
 * [`tovrep`](@ref tovrep(::AbstractHPolygon))
-* [`normalize`](@ref normalize(::AbstractHPolygon{N}, p=N(2)) where {N})
+* [`normalize`](@ref normalize(::AbstractHPolygon{N}, p::Real=N(2)) where {N})
 * [`isbounded`](@ref isbounded(::AbstractHPolygon, ::Bool=true))
 * [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon, ::HalfSpace))
 * [`isredundant`](@ref isredundant(::HalfSpace, ::HalfSpace, ::HalfSpace))

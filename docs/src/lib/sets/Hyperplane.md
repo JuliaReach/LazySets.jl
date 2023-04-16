@@ -18,7 +18,7 @@ isempty(::Hyperplane)
 constrained_dimensions(::Hyperplane)
 constraints_list(::Hyperplane)
 translate(::Hyperplane, ::AbstractVector)
-normalize(::Hyperplane{N}, p=N(2)) where {N}
+normalize(::Hyperplane{N}, p::Real=N(2)) where {N}
 distance(::AbstractVector, ::Hyperplane{N}) where {N}
 reflect(::AbstractVector, ::Hyperplane)
 project(::AbstractVector, ::Hyperplane)

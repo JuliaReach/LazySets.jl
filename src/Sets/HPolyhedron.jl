@@ -303,7 +303,7 @@ function tohrep(P::HPoly)
 end
 
 """
-    normalize(P::HPoly{N}, p=N(2)) where {N}
+    normalize(P::HPoly{N}, p::Real=N(2)) where {N}
 
 Normalize a polyhedron in constraint representation.
 
@@ -317,7 +317,7 @@ Normalize a polyhedron in constraint representation.
 A new polyhedron in constraint representation whose normal directions ``a_i``
 are normalized, i.e., such that ``‖a_i‖_p = 1`` holds.
 """
-function normalize(P::HPoly{N}, p=N(2)) where {N}
+function normalize(P::HPoly{N}, p::Real=N(2)) where {N}
     constraints = [normalize(hs, p) for hs in constraints_list(P)]
     T = basetype(P)
     return T(constraints)
