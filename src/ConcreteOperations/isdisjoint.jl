@@ -865,7 +865,7 @@ function _isdisjoint_polyhedron(P::AbstractPolyhedron, X::LazySet,
         end
         clist_P = _normal_Vector(P) # TODO
         clist_X = _normal_Vector(X) # TODO
-        if solver == nothing
+        if isnothing(solver)
             solver = default_lp_solver(N)
         end
         return _isempty_polyhedron_lp([clist_P; clist_X], witness; solver=solver)

@@ -116,7 +116,7 @@ isoperationtype(::Type{<:Rectification}) = true
 isconvextype(::Type{<:Rectification}) = false
 
 function _compute_exact_representation!(R::Rectification)
-    if R.cache.set == nothing
+    if isnothing(R.cache.set)
         R.cache.set = to_union_of_projections(R)
     end
     return R.cache.set

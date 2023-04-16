@@ -926,7 +926,7 @@ function _projection(ℓ, X::S, H::Union{Hyperplane{N}, Line2D{N}};
     Xnℓ = lazy_linear_map ? LinearMap(Πnℓ, X) : linear_map(Πnℓ, X)
     Xnℓ⋂Lγ = lazy_2d_intersection ? Intersection(Xnℓ, Lγ) : intersection(Xnℓ, Lγ)
 
-    if algorithm_2d_intersection == nothing
+    if isnothing(algorithm_2d_intersection)
         return ρ(y_dir, Xnℓ⋂Lγ; kwargs...)
     else
         return ρ(y_dir, Xnℓ⋂Lγ, algorithm=algorithm_2d_intersection; kwargs...)

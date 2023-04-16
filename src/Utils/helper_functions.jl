@@ -124,7 +124,7 @@ function implementing_sets(op::Function;
             if type_args isa Type
                 augmented_set_type = set_type{type_args}
             else
-                @assert type_args == nothing "for binary functions, " *
+                @assert isnothing(type_args) "for binary functions, " *
                     "`type_args` must not be a list"
             end
         catch e
@@ -164,7 +164,7 @@ function _implementing_sets_unary!(dict, op, signature, index, type_args)
         try
             if type_args isa Type
                 augmented_set_type = set_type{type_args}
-            elseif type_args != nothing
+            elseif !isnothing(type_args)
                 augmented_set_type = set_type{type_args...}
             end
         catch e

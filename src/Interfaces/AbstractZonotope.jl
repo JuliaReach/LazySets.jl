@@ -84,7 +84,7 @@ function genmat_fallback(Z::AbstractZonotope{N};
                          gens=generators(Z), ngens=nothing) where {N}
     if isempty(gens)
         return Matrix{N}(undef, dim(Z), 0)
-    elseif ngens == nothing
+    elseif isnothing(ngens)
         return _genmat_fallback_generic(Z, gens)
     else
         return _genmat_fallback_ngens(Z, gens, ngens)
@@ -280,7 +280,7 @@ function ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
     sense = ['>'; fill('=', n)]
     obj = [one(N); zeros(N, p)]
 
-    if solver == nothing
+    if isnothing(solver)
         solver = default_lp_solver(N)
     end
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)

@@ -440,12 +440,12 @@ function remove_redundant_vertices(P::VPolytope{N};
                                    backend=nothing,
                                    solver=nothing) where {N}
     require(@__MODULE__, :Polyhedra; fun_name="remove_redundant_vertices")
-    if backend == nothing
+    if isnothing(backend)
         backend = default_polyhedra_backend(P)
     end
     Q = polyhedron(P; backend=backend)
     if Polyhedra.supportssolver(typeof(Q))
-        if solver == nothing
+        if isnothing(solver)
             solver = default_lp_solver_polyhedra(N)
         end
         vQ = Polyhedra.vrep(Q)
@@ -555,7 +555,7 @@ function polyhedron(P::VPolytope;
                     backend=default_polyhedra_backend(P),
                     relative_dimension=nothing)
     if isempty(P)
-        if relative_dimension == nothing
+        if isnothing(relative_dimension)
             error("the conversion to a `Polyhedra.polyhedron` requires the " *
                 "(relative) dimension of the `VPolytope` to be known, but it " *
                 "cannot be inferred from an empty set; use the keyword " *

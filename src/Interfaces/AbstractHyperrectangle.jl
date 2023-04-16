@@ -624,7 +624,7 @@ function split(H::AbstractHyperrectangle{N},
     centers = Vector{StepRangeLen{N}}(undef, dim(H))
     @inbounds for (i, m) in enumerate(num_blocks)
         if m <= 0
-            throw(ArgumentError(m, "each dimension needs at least one block"))
+            throw(ArgumentError("each dimension needs at least one block, got $m"))
         elseif m == one(N)
             centers[i] = range(lo[i] + radius[i], length=1)
         else

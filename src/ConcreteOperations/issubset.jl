@@ -831,7 +831,7 @@ function ⊆(∅::EmptySet, X::LazySet, witness::Bool=false)
     return _issubset_emptyset(∅, X, witness)
 end
 
-function _issubset_emptyset(∅, X, witness)
+function _issubset_emptyset(∅::EmptySet, X::LazySet, witness::Bool=false)
     N = promote_type(eltype(∅), eltype(X))
     return witness ? (true, N[]) : true
 end
@@ -867,7 +867,7 @@ function ⊆(X::LazySet, ∅::EmptySet, witness::Bool=false)
     return _issubset_in_emptyset(X, ∅, witness)
 end
 
-function _issubset_in_emptyset(X, ∅, witness)
+function _issubset_in_emptyset(X::LazySet, ∅::EmptySet, witness::Bool=false)
     if isempty(X)
         N = promote_type(eltype(∅), eltype(X))
         return witness ? (true, N[]) : true
@@ -987,7 +987,7 @@ function ⊆(X::LazySet, U::Universe, witness::Bool=false)
     return _issubset_universe(X, U, witness)
 end
 
-function _issubset_universe(X, U, witness)
+function _issubset_universe(X::LazySet, U::Universe, witness::Bool=false)
     if !witness
         return true
     end
@@ -998,7 +998,8 @@ end
 # disambiguations
 for ST in [:AbstractPolytope, :AbstractHyperrectangle, :AbstractSingleton,
            :LineSegment, :EmptySet, :UnionSet, :UnionSetArray]
-    @eval ⊆(X::($ST), U::Universe, witness::Bool=false) = _issubset_universe(X, U, witness)
+    @eval ⊆(X::($ST), U::Universe, witness::Bool=false) =
+        _issubset_universe(X, U, witness)
 end
 
 """
@@ -1025,7 +1026,7 @@ compute a witness.
 
 We fall back to `isuniversal(X)`.
 """
-function ⊆(U::Universe, X::LazySet, witness::Bool=false)
+function ⊆(::Universe, X::LazySet, witness::Bool=false)
     return isuniversal(X, witness)
 end
 
@@ -1037,7 +1038,7 @@ end
 # disambiguations
 for ST in [:AbstractPolyhedron, :AbstractPolytope, :AbstractHyperrectangle,
            :AbstractSingleton, :EmptySet, :UnionSetArray, :Complement]
-    @eval ⊆(U::Universe, X::($ST), witness::Bool=false) = isuniversal(X, witness)
+    @eval ⊆(::Universe, X::($ST), witness::Bool=false) = isuniversal(X, witness)
 end
 
 """

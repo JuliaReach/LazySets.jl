@@ -156,7 +156,7 @@ end
 
 # construct the solution from the solver's ray result
 function _σ_unbounded_lp(d, P::HPoly{N}, lp) where {N}
-    if lp == nothing
+    if isnothing(lp)
         ray = d
     elseif has_lp_infeasibility_ray(lp.model)
         ray = lp.sol  # infeasibility ray is stored as the solution

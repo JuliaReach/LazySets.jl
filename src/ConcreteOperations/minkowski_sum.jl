@@ -161,12 +161,12 @@ function _minkowski_sum_hrep(A::AbstractMatrix, b::AbstractVector,
                              C::AbstractMatrix, d::AbstractVector;
                              backend=nothing, algorithm=nothing, prune=true)
 
-    if backend == nothing
+    if isnothing(backend)
         N = promote_type(eltype(A), eltype(b), eltype(C), eltype(d))
         backend = default_cddlib_backend(N)
     end
 
-    if algorithm == nothing
+    if isnothing(algorithm)
         algorithm = Polyhedra.FourierMotzkin()
     elseif !(algorithm isa Polyhedra.EliminationAlgorithm)
         error("algorithm $algorithm is not a valid elimination algorithm; " *
@@ -433,7 +433,7 @@ function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
         end
     end
     if apply_convex_hull
-        if backend == nothing
+        if isnothing(backend)
             require(@__MODULE__, :Polyhedra; fun_name="minkowski_sum")
             backend = default_polyhedra_backend_nd(N)
             solver = default_lp_solver_polyhedra(N)
