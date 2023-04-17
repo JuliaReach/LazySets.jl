@@ -12,7 +12,7 @@ Type that represents a tetrahedron in vertex representation.
 ### Examples
 
 A tetrahedron can be constructed by passing the list of vertices.
-The following builds the tetrahedron with edge length 2 from the [wikipedia page Tetrahedron](https://en.wikipedia.org/wiki/Tetrahedron): 
+The following builds the tetrahedron with edge length 2 from the [wikipedia page Tetrahedron](https://en.wikipedia.org/wiki/Tetrahedron):
 
 ```jldoctest
 julia> vertices = [[1, 0, -1/sqrt(2)], [-1, 0, -1/sqrt(2)], [0, 1, 1/sqrt(2)], [0, -1, 1/sqrt(2)]];
@@ -110,20 +110,22 @@ function ∈(x::AbstractVector, T::Tetrahedron)
            same_side(v[2], v[3], v[4], v[1], x)
 end
 
-# Return `true` iff point `x` lies in the same half-space as `v4` with respect to the hyperplane determined by `v1`, `v2` and `v3`.
+# Return `true` iff point `x` lies in the same half-space as `v4` with respect to the hyperplane `H` determined by `v1`, `v2` and `v3`.
 function same_side(v1, v2, v3, v4, x)
     normal = cross(v2 - v1, v3 - v1)
     dotv4 = dot(normal, v4 - v1)
     dotx = dot(normal, x - v1)
-    return signbit(dotv4) == signbit(dotx)
+    # If the point `x` lies in `H` then `dotx` is zero.
+    return signbit(dotv4) == signbit(dotx) || isapproxzero(dotx)
 end
 
-function rand(::Type{Tetrahedron}; N::Type{<:Real}=Float64, rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int,Nothing}=nothing)
+function rand(::Type{Tetrahedron}; N::Type{<:Real}=Float64, rng::AbstractRNG=GLOBAL_RNG,
+              seed::Union{Int,Nothing}=nothing)
     P = rand(VPolytope; N=N, dim=3, rng=rng, seed=seed, num_vertices=4)
     vertices = P.vertices
     return Tetrahedron(vertices)
 end
 
 function constraints_list(T::Tetrahedron)
-    constraints_list(convert(VPolytope, T))
+    return constraints_list(convert(VPolytope, T))
 end
