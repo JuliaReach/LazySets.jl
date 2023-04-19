@@ -404,7 +404,10 @@ function convex_hull(X::LazySet; kwargs...)
     if isconvextype(typeof(X))
         return X
     end
+    return _convex_hull_polytopes(X; kwargs...)
+end
 
+function _convex_hull_polytopes(X; kwargs...)
     vlist = convex_hull(vertices_list(X); kwargs...)
     return _convex_hull_set(vlist; n=dim(X))
 end
