@@ -113,10 +113,13 @@ end
 # Return `true` iff point `x` lies in the same half-space as `v4` with respect to the hyperplane `H` determined by `v1`, `v2` and `v3`.
 function same_side(v1, v2, v3, v4, x)
     normal = cross(v2 - v1, v3 - v1)
-    dotv4 = dot(normal, v4 - v1)
     dotx = dot(normal, x - v1)
+    if isapproxzero(dotx)
+        return true
+    end
+    dotv4 = dot(normal, v4 - v1)
     # If the point `x` lies in `H` then `dotx` is zero.
-    return signbit(dotv4) == signbit(dotx) || isapproxzero(dotx)
+    return signbit(dotv4) == signbit(dotx)
 end
 
 function rand(::Type{Tetrahedron}; N::Type{<:Real}=Float64, rng::AbstractRNG=GLOBAL_RNG,
