@@ -1,4 +1,4 @@
-# check that all interace functions are provided
+# check that all interface functions are implemented
 
 # --- LazySet ---
 

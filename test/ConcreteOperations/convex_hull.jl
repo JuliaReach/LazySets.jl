@@ -50,7 +50,7 @@ for N in [Float64, Rational{Int}]
     @test ispermutation(convex_hull!([N[0, 1], N[0, 2], N[0, 3]]), [N[0, 1], N[0, 3]]) # three points on a vertical line
     @test convex_hull!([N[0, 1], N[0, 1], N[0, 1]]) == [N[0, 1]] # three equal points
 
-    # four vertex case in 2 dimentions
+    # four vertex case in 2 dimensions
     A = N[1, 0]
     B = N[1, 1]
     C = N[-1, 1]

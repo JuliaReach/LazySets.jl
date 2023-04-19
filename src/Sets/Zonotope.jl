@@ -290,7 +290,7 @@ end
 """
     scale!(α::Real, Z::Zonotope)
 
-Concrete scaling of a zonotope modifing `Z` in-place.
+Concrete scaling of a zonotope modifying `Z` in-place.
 
 ### Input
 
