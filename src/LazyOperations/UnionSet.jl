@@ -273,3 +273,7 @@ end
 function volume(cup::UnionSet)
     return volume(cup.X) + volume(cup.Y) - volume(Intersection(cup.X, cup.Y))
 end
+
+function convex_hull(X::UnionSet)
+    return convex_hull(X.X, X.Y)
+end
