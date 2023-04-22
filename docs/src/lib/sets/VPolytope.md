@@ -8,6 +8,7 @@ CurrentModule = LazySets
 VPolytope
 dim(::VPolytope)
 σ(::AbstractVector, ::VPolytope)
+ρ(::AbstractVector, ::VPolytope)
 ∈(::AbstractVector{N}, ::VPolytope{N}) where {N}
 rand(::Type{VPolytope})
 translate(::VPolytope, ::AbstractVector)
@@ -24,7 +25,6 @@ reflect(::VPolytope)
 Inherited from [`LazySet`](@ref):
 * [`high`](@ref high(::LazySet))
 * [`low`](@ref low(::LazySet))
-* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
