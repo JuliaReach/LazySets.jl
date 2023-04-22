@@ -142,7 +142,7 @@ sets in the given direction.
 
 ### Algorithm
 
-This algorihm calculates the maximum over all ``ρ(d, X_i)``, where the
+This algorithm calculates the maximum over all ``ρ(d, X_i)``, where the
 ``X_1, …, X_k`` are the sets in the array of `cha`.
 """
 function ρ(d::AbstractVector, cha::ConvexHullArray)

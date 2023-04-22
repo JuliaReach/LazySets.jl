@@ -281,7 +281,7 @@ Create a random sparse polynomial zonotope.
 - `N`                          -- (optional, default: `Float64`) numeric type
 - `dim`                        -- (optional, default: 2) dimension
 - `nparams`                    -- (optional, default: 2) number of parameters
-- `maxdeg`                     -- (optinal, default: 3) maximum degree for each
+- `maxdeg`                     -- (optional, default: 3) maximum degree for each
                                   parameter
 - `num_dependent_generators`   -- (optional, default: `-1`) number of dependent
                                   generators (see comment below)

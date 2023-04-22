@@ -121,7 +121,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # intersection
     s1 = LineSegment(N[-5.0,-5.0], N[5.0,5.0])
-    # colinear shifted down
+    # collinear shifted down
     s2 = LineSegment(N[-6.0,-6.0], N[4.0,4.0])
     @test intersection(s1, s2) isa LineSegment
     @test isapprox(intersection(s1, s2).p, N[-5,-5])

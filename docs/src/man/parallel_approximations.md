@@ -1,6 +1,6 @@
 # Parallel Approximations
 
-A subset of the approximation algorithms are implemented in parallel in the 
+A subset of the approximation algorithms are implemented in parallel in the
 `LazySets.Parallel` module. In order to use parallel versions of the algorithms,
 you can write:
 
@@ -36,7 +36,7 @@ Pages = ["parallel_approximations.md"]
 Depth = 3
 ```
 
-## Parallel interval hulls 
+## Parallel interval hulls
 
 As an illustration of the symmetric interval hull approximation of a nested
 lazy set computed in parallel, consider the following calculation.
@@ -56,7 +56,7 @@ X0(n) = Ball2(ones(n), 0.1)
 
 # input coefficients matrix (nx2 matrix with coefficients from -1 to 1)
 b(n) = vcat(range(-1, stop=1, length=n))
-B(n) = [b(n) b(n)] 
+B(n) = [b(n) b(n)]
 U = BallInf(zeros(2), 1.2)
 
 # lazy matrix exponential
@@ -79,7 +79,7 @@ in each dimension from `1` to `n`.
 The sequential algorithm returns the following execution times. We use
 the `@btime` macro from the `BenchmarkTools` package to have a more accurate
 timing than `@time`; the `$n` argument is used for interpolation of the arguments
-(if you are not behchmarking, pass `n` to `symmetric_interval_hull`, as usual).
+(if you are not benchmarking, pass `n` to `symmetric_interval_hull`, as usual).
 
 ```julia
 using BenchmarkTools
@@ -95,7 +95,7 @@ end
 ```
 
 For the parallel benchmark, we start Julia with 4 processes with the command
-`$ julia -p 4` and call `LazySets.Parallel.symmetric_interval_hull(Y(n))`. 
+`$ julia -p 4` and call `LazySets.Parallel.symmetric_interval_hull(Y(n))`.
 
 ```julia
 import LazySets.Parallel

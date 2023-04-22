@@ -404,7 +404,7 @@ Create a random simple sparse polynomial zonotope.
 - `N`              -- (optional, default: `Float64`) numeric type
 - `dim`            -- (optional, default: 2) dimension
 - `nparams`        -- (optional, default: 2) number of parameters
-- `maxdeg`         -- (optinal, default: 3) maximum degree for each parameter
+- `maxdeg`         -- (optional, default: 3) maximum degree for each parameter
 - `rng`            -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed`           -- (optional, default: `nothing`) seed for reseeding
 - `num_generators` -- (optional, default: `-1`) number of generators of the
