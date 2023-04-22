@@ -17,6 +17,12 @@ function get_exponential_backend()
     return exponential_backend
 end
 
+# use default backend
+function _expmv(t, A, b; kwargs...)
+    backend = get_exponential_backend()
+    return _expmv(backend, t, A, b; kwargs...)
+end
+
 # ====================
 # ExponentialUtilities
 # ====================
