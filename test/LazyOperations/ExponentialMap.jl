@@ -33,7 +33,7 @@ for exp_backend in [ExponentialUtilities, Expokit]
         me = SparseMatrixExp(m)
 
         # constructor from a dense matrix
-        @test_throws ErrorException SparseMatrixExp(Matrix{N}(I, 2, 2))
+        @test_throws ArgumentError SparseMatrixExp(Matrix{N}(I, 2, 2))
 
         # constructor from a non-square matrix
         # we would use sprandn(N, 2, 3, 0.1) but it is available from Julia v1.1

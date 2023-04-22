@@ -71,7 +71,7 @@ struct SparseMatrixExp{N, MN<:AbstractSparseMatrix{N}} <: AbstractMatrix{N}
 end
 
 SparseMatrixExp(M::AbstractMatrix) =
-    error("only sparse matrices can be used to create a `SparseMatrixExp`")
+    throw(ArgumentError("only sparse matrices can be used to create a `SparseMatrixExp`"))
 
 Base.IndexStyle(::Type{<:SparseMatrixExp}) = IndexCartesian()
 
