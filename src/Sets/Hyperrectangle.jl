@@ -106,6 +106,10 @@ function Hyperrectangle(; high::AbstractVector,
     return Hyperrectangle(center, radius, check_bounds=check_bounds)
 end
 
+function □(c::VNC, r::VNR) where {N, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}}
+    return Hyperrectangle(c, r)
+end
+
 """
     radius_hyperrectangle(H::Hyperrectangle, i::Int)
 
