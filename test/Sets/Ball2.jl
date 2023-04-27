@@ -58,6 +58,9 @@ for N in [Float64, Float32]
     d = N[0, -1]
     @test σ(d, b) == N[0, -2]
 
+    # unicode constructor
+    @test ○(center(b), radius(b)) == b
+
     # boundedness
     @test isbounded(b) && isboundedtype(typeof(b))
 

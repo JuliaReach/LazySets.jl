@@ -62,6 +62,7 @@ plot3d!
 ### Globally defined set functions
 
 ```@docs
+○(c, a)
 isconvextype(::Type{<:LazySet})
 low(::LazySet)
 high(::LazySet)

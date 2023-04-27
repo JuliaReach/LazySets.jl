@@ -114,13 +114,19 @@ struct Ellipsoid{N<:AbstractFloat, VN<:AbstractVector{N},
     end
 end
 
-isoperationtype(::Type{<:Ellipsoid}) = false
-
 # convenience constructor for an ellipsoid centered in the origin
 function Ellipsoid(Q::AbstractMatrix{N}; check_posdef::Bool=true) where {N}
     # TODO: use similar vector type for the center, see #2032
     return Ellipsoid(zeros(N, size(Q, 1)), Q; check_posdef=check_posdef)
 end
+
+function ○(c::VN, shape_matrix::MN) where {N<:AbstractFloat,
+                                           VN<:AbstractVector{N},
+                                           MN<:AbstractMatrix{N}}
+    return Ellipsoid(c, shape_matrix)
+end
+
+isoperationtype(::Type{<:Ellipsoid}) = false
 
 """
     center(E::Ellipsoid)
