@@ -1025,17 +1025,55 @@ On the other hand, if you only want to produce a fast box-overapproximation of
 Finally, we use the plot recipe for the constructed set (interval or polygon).
 """
 function plot_recipe(X::LazySet, ε)
-    @assert dim(X) <= 2 "cannot plot a $(dim(X))-dimensional $(typeof(X))"
+    @assert dim(X) <= 3 "cannot plot a $(dim(X))-dimensional $(typeof(X))"
     @assert isboundedtype(typeof(X)) || isbounded(X) "cannot plot an " *
         "unbounded $(typeof(X))"
     @assert isconvextype(typeof(X)) "can only plot convex sets"
 
     if dim(X) == 1
         Y = convert(Interval, X)
-    else
+    elseif dim(X) == 2
         Y = overapproximate(X, ε)
+    else
+        return _plot_recipe_3d_polytope(X)
     end
     return plot_recipe(Y, ε)
+end
+
+function _plot_recipe_3d_polytope(P::LazySet, N=eltype(P))
+    require(@__MODULE__, :MiniQhull; fun_name="_plot_recipe_3d_polytope")
+    @assert is_polyhedral(P) && isboundedtype(typeof(P)) "3D plotting is " *
+        "only available for polytopes"
+
+    vlist, C = delaunay_vlist_connectivity(P; compute_triangles_3d=true)
+
+    m = length(vlist)
+    if m == 0
+        @warn "received a polyhedron with no vertices during plotting"
+        return plot_recipe(EmptySet{N}(2), zero(N))
+    end
+
+    x = Vector{N}(undef, m)
+    y = Vector{N}(undef, m)
+    z = Vector{N}(undef, m)
+    @inbounds for (i, vi) in enumerate(vlist)
+        x[i] = vi[1]
+        y[i] = vi[2]
+        z[i] = vi[3]
+    end
+
+    l = size(C, 2)
+    i = Vector{Int}(undef, l)
+    j = Vector{Int}(undef, l)
+    k = Vector{Int}(undef, l)
+    @inbounds for idx in 1:l
+        # normalization: -1 for zero indexing; convert to Int on 64-bit systems
+        i[idx] = Int(C[1, idx] - 1)
+        j[idx] = Int(C[2, idx] - 1)
+        k[idx] = Int(C[3, idx] - 1)
+    end
+
+    return x, y, z, i, j, k
 end
 
 """

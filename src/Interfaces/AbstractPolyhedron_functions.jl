@@ -826,7 +826,7 @@ For two-dimensional polytopes (i.e., polygons) we compute their set of vertices
 using `vertices_list` and then plot the convex hull of these vertices.
 """
 function plot_recipe(P::AbstractPolyhedron{N}, ε=zero(N)) where {N}
-    @assert dim(P) <= 2 "cannot plot a $(dim(P))-dimensional $(typeof(P))"
+    @assert dim(P) <= 3 "cannot plot a $(dim(P))-dimensional $(typeof(P))"
     @assert isbounded(P) "cannot plot an unbounded $(typeof(P))"
 
     if dim(P) == 1
@@ -835,9 +835,11 @@ function plot_recipe(P::AbstractPolyhedron{N}, ε=zero(N)) where {N}
             Q = Singleton(center(Q))
         end
         return plot_recipe(Q, ε)
-    else
+    elseif dim(P) == 2
         vlist = convex_hull(vertices_list(P))
         return _plot_recipe_2d_vlist(vlist, N)
+    else
+        return _plot_recipe_3d_polytope(P, N)
     end
 end
 
