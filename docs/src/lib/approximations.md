@@ -47,6 +47,7 @@ approximate
 ```@docs
 box_approximation
 interval_hull
+□(::LazySet)
 symmetric_interval_hull
 box_approximation_symmetric
 ballinf_approximation

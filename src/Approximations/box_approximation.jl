@@ -78,6 +78,13 @@ Alias for `box_approximation`.
 """
 interval_hull = box_approximation
 
+"""
+    □(X::LazySet)
+
+Alias for `box_approximation(X)`.
+"""
+□(X::LazySet) = box_approximation(X)
+
 # AbstractHyperrectangle specialization
 function box_approximation(S::AbstractHyperrectangle)
     return Hyperrectangle(center(S), radius_hyperrectangle(S))
