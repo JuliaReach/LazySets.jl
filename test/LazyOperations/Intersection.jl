@@ -6,6 +6,12 @@ for N in [Float64, Rational{Int}, Float32]
     # intersection of two sets
     I = Intersection(B, H)
 
+    # convenience constructors
+    @test B ∩ H == I
+    cap = IntersectionArray([B, H, B])
+    @test ∩(B, H, B) == ∩([B, H, B]) == cap
+    @test ∩(B) == B
+
     # swap
     I2 = swap(I)
     @test I.X == I2.Y && I.Y == I2.X
