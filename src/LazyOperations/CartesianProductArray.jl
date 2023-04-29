@@ -29,6 +29,31 @@ function CartesianProductArray(n::Int=0, N::Type=Float64)
     return CartesianProductArray(arr)
 end
 
+"""
+```
+    *(X::LazySet, Xs::LazySet...)
+    *(Xs::Vector{<:LazySet})
+```
+
+Alias for the n-ary Cartesian product.
+"""
+*(X::LazySet, Xs::LazySet...) = CartesianProductArray(vcat(X, Xs...))
+*(X::LazySet) = X
+*(Xs::Vector{<:LazySet}) = CartesianProductArray(Xs)
+
+"""
+    ×(X::LazySet, Xs::LazySet...)
+    ×(Xs::Vector{<:LazySet})
+
+Alias for the n-ary Cartesian product.
+
+### Notes
+
+The function symbol can be typed via `\\times[TAB]`.
+"""
+×(X::LazySet, Xs::LazySet...) = *(X, Xs...)
+×(Xs::Vector{<:LazySet}) = *(Xs)
+
 isoperationtype(::Type{<:CartesianProductArray}) = true
 isconvextype(::Type{CartesianProductArray{N, S}}) where {N, S} = isconvextype(S)
 

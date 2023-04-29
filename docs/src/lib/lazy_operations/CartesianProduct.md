@@ -38,6 +38,8 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 CartesianProductArray
+×(::LazySet, ::LazySet...)
+*(::LazySet, ::LazySet...)
 dim(::CartesianProductArray)
 ρ(::AbstractVector, ::CartesianProductArray)
 σ(::AbstractVector, ::CartesianProductArray)
