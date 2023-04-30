@@ -9,6 +9,9 @@ on:
       - master
     tags: '*'
   pull_request:
+    paths-ignore:
+      - 'LICENSE'
+      - 'README.md'
 
 jobs:
   build:
