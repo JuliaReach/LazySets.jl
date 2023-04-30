@@ -138,6 +138,7 @@ if test_suite_basic
     @time @testset "LazySets.isdisjoint" begin include("ConcreteOperations/isdisjoint.jl") end
     @time @testset "LazySets.distance" begin include("ConcreteOperations/distance.jl") end
     @time @testset "LazySets.isstrictsubset" begin include("ConcreteOperations/isstrictsubset.jl") end
+    @time @testset "LazySets.minkowski_difference" begin include("ConcreteOperations/minkowski_difference.jl") end
     @time @testset "LazySets.minkowski_sum" begin include("ConcreteOperations/minkowski_sum.jl") end
     @time @testset "LazySets.samples" begin include("ConcreteOperations/samples.jl") end
 
