@@ -3,6 +3,9 @@ name: Invalidations
 
 on:
   pull_request:
+    paths-ignore:
+      - 'LICENSE'
+      - 'README.md'
 
 concurrency:
   # Skip intermediate builds: always.
