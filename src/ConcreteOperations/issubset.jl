@@ -124,11 +124,7 @@ function _issubset_in_hyperrectangle(S, H, witness)
             return (false, v)
         end
     end
-    if witness
-        return (true, N[])
-    else
-        return true
-    end
+    return _witness_result_empty(witness, true, N)
 end
 
 # disambiguation
@@ -184,12 +180,7 @@ function ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
             end
         end
     end
-
-    if witness
-        return (true, N[])
-    else
-        return true
-    end
+    return _witness_result_empty(witness, true, N)
 end
 
 """
@@ -255,18 +246,10 @@ end
 function _issubset_vertices_list(P, S, witness)
     for v in vertices(P)
         if v ∉ S
-            if witness
-                return (false, v)
-            else
-                return false
-            end
+            return _witness_result(witness, false, v)
         end
     end
-    if witness
-        return (true, N[])
-    else
-        return true
-    end
+    return _witness_result_empty(witness, true, P, S)
 end
 
 """
@@ -311,15 +294,10 @@ function _issubset_constraints_list(S::LazySet, P::LazySet, witness::Bool=false)
 
     @inbounds for H in constraints_list(P)
         if !_leq(ρ(H.a, S), H.b)
-            if witness
-                return (false, σ(H.a, S))
-            else
-                return false
-            end
+            return witness ? (false, σ(H.a, S)) : false
         end
     end
-    N = promote_type(eltype(S), eltype(P))
-    return witness ? (true, N[]) : true
+    return _witness_result_empty(witness, true, S, P)
 end
 
 # disambiguations
@@ -352,14 +330,9 @@ function ⊆(S::AbstractSingleton, X::LazySet, witness::Bool=false)
 end
 
 function _issubset_singleton(S, X, witness)
-    result = element(S) ∈ X
-
-    if witness
-        N = promote_type(eltype(S), eltype(X))
-        return (result, result ? N[] : element(S))
-    else
-        return result
-    end
+    s = element(S)
+    result = s ∈ X
+    return _witness_result_empty(witness, result, S, X, s)
 end
 
 # disambiguations
@@ -389,13 +362,9 @@ single value, and if not, optionally compute a witness.
   * `(false, v)` iff ``S1 ⊈ S2`` and ``v ∈ S1 \\setminus S2``
 """
 function ⊆(S1::AbstractSingleton, S2::AbstractSingleton, witness::Bool=false)
-    result = _isapprox(element(S1), element(S2))
-    if witness
-        N = promote_type(eltype(S1), eltype(S2))
-        return (result, result ? N[] : element(S1))
-    else
-        return result
-    end
+    s1 = element(S1)
+    result = _isapprox(s1, element(S2))
+    return _witness_result_empty(witness, result, S1, S2, s1)
 end
 
 """
@@ -423,13 +392,10 @@ and if not, optionally compute a witness.
 """
 function ⊆(B1::Ball2, B2::Ball2, witness::Bool=false)
     result = norm(B1.center - B2.center, 2) + B1.radius <= B2.radius
-    if !witness
-        return result
-    end
-
     if result
-        N = promote_type(eltype(B1), eltype(B2))
-        return (true, N[])
+        return _witness_result_empty(witness, true, B1, B2)
+    elseif !witness
+        return false
     end
 
     # compute a witness v
@@ -458,13 +424,10 @@ value, and if not, optionally compute a witness.
 """
 function ⊆(B::Union{Ball2, Ballp}, S::AbstractSingleton, witness::Bool=false)
     result = isapproxzero(B.radius) && _isapprox(B.center, element(S))
-    if !witness
-        return result
-    end
-
     if result
-        N = promote_type(eltype(B), eltype(S))
-        return (result, N[])
+        return _witness_result_empty(witness, true, B, S)
+    elseif !witness
+        return false
     end
 
     # compute a witness v
@@ -514,14 +477,10 @@ end
 function _issubset_line_segment(L, S, witness)
     p_in_S = L.p ∈ S
     result = p_in_S && L.q ∈ S
-    if !witness
-        return result
-    elseif result
-        N = promote_type(eltype(L), eltype(S))
-        return (result, N[])
-    else
-        return (result, p_in_S ? L.q : L.p)
+    if result
+        return _witness_result_empty(witness, true, L, S)
     end
+    return witness ? (false, p_in_S ? L.q : L.p) : false
 end
 
 # disambiguation
@@ -545,17 +504,11 @@ Check whether an interval is contained in another interval.
 """
 function ⊆(x::Interval, y::Interval, witness::Bool=false)
     if min(y) > min(x)
-        witness && return (false, low(x))
-        return false
+        return witness ? (false, low(x)) : false
     elseif max(x) > max(y)
-        witness && return (false, high(x))
-        return false
+        return witness ? (false, high(x)) : false
     end
-    if !witness
-        return true
-    end
-    N = promote_type(eltype(x), eltype(y))
-    return (true, N[])
+    return _witness_result_empty(witness, true, x, y)
 end
 
 """
@@ -610,23 +563,18 @@ function _issubset_interval(x::Interval{N}, a::Interval, b::Interval,
     end
     # a is on the left of b
     if min(x) < min(a)
-        witness && return (false, low(x))
-        return false
+        return witness ? (false, low(x)) : false
     end
     y = difference(x, a)
     if y ⊆ b
-        witness && return (true, N[])
-        return true
-    elseif witness
-        if min(b) > min(y)
-            w = [(min(y) + min(b)) / 2]
-        else
-            w = high(y)
-        end
-        return (false, w)
-    else
+        return _witness_result_empty(witness, true, N)
+    elseif !witness
         return false
     end
+
+    # compute witness
+    w = min(b) > min(y) ? [(min(y) + min(b)) / 2] : high(y)
+    return (false, w)
 end
 
 function ⊆(x::Interval, U::UnionSetArray, witness::Bool=false)
@@ -661,18 +609,15 @@ function _issubset_interval!(x::Interval{N}, intervals, witness) where {N}
     for y in intervals
         if min(y) > min(x)
             # lowest point of x is not contained
-            witness && return (false, center(Interval(min(x), min(y))))
-            return false
+            return witness ? (false, center(Interval(min(x), min(y)))) : false
         end
         x = difference(x, y)
         if isempty(x)
-            witness && return (true, N[])
-            return true
+            return _witness_result_empty(witness, true, N)
         end
     end
 
-    witness && return (false, low(x))
-    return false
+    return witness ? (false, low(x)) : false
 end
 
 """
@@ -714,16 +659,10 @@ end
 
 function _issubset_unionsetarray(X, U, witness::Bool=false;
                                  filter_redundant_sets::Bool=true)
-    N = promote_type(eltype(X), eltype(U))
-
     # heuristics (necessary check): is X contained in any set in U?
     for rhs in array(U)
         if X ⊆ rhs
-            if witness
-                return (true, N[])
-            else
-                return true
-            end
+            return _witness_result_empty(witness, true, X, U)
         end
     end
 
@@ -763,22 +702,13 @@ function _issubset_unionsetarray(X, U, witness::Bool=false;
             continue
         end
         if idx == 0
-            if witness
-                return (false, an_element(Y))
-            else
-                return false
-            end
+            return witness ? (false, an_element(Y)) : false
         end
         # split wrt. the i-th set
         rhs = sets[idx]
         append!(queue, array(difference(Y, rhs)))
     end
-
-    if witness
-        return (true, N[])
-    else
-        return true
-    end
+    return _witness_result_empty(witness, true, X, U)
 end
 
 # general container
@@ -832,8 +762,7 @@ function ⊆(∅::EmptySet, X::LazySet, witness::Bool=false)
 end
 
 function _issubset_emptyset(∅::EmptySet, X::LazySet, witness::Bool=false)
-    N = promote_type(eltype(∅), eltype(X))
-    return witness ? (true, N[]) : true
+    return _witness_result_empty(witness, true, ∅, X)
 end
 
 # disambiguations
@@ -869,8 +798,7 @@ end
 
 function _issubset_in_emptyset(X::LazySet, ∅::EmptySet, witness::Bool=false)
     if isempty(X)
-        N = promote_type(eltype(∅), eltype(X))
-        return witness ? (true, N[]) : true
+        return _witness_result_empty(witness, true, X, ∅)
     else
         return witness ? (false, an_element(X)) : false
     end
@@ -889,8 +817,7 @@ for ST in [:AbstractSingleton, :LineSegment]
 end
 
 function ⊆(∅₁::EmptySet, ∅₂::EmptySet, witness::Bool=false)
-    N = promote_type(eltype(∅₁), eltype(∅₂))
-    return witness ? (true, N[]) : true
+    return _witness_result_empty(witness, true, ∅₁, ∅₂)
 end
 
 """
@@ -954,7 +881,7 @@ function _issubset_union_in_set(sets, X::LazySet{N}, witness::Bool=false) where 
             break
         end
     end
-    return witness ? (result, v) : result
+    return _witness_result(witness, result, v)
 end
 
 # disambiguations
@@ -988,11 +915,7 @@ function ⊆(X::LazySet, U::Universe, witness::Bool=false)
 end
 
 function _issubset_universe(X::LazySet, U::Universe, witness::Bool=false)
-    if !witness
-        return true
-    end
-    N = promote_type(eltype(X), eltype(U))
-    return (true, N[])
+    return _witness_result_empty(witness, true, X, U)
 end
 
 # disambiguations
@@ -1145,12 +1068,7 @@ function ⊆(X::CartesianProduct, Y::CartesianProduct, witness::Bool=false;
         w = vcat(an_element(X.X), result[2])
         return (false, w)
     end
-
-    if !witness
-        return true
-    end
-    N = promote_type(eltype(X), eltype(Y))
-    return (true, N[])
+    return _witness_result_empty(witness, true, X, Y)
 end
 
 """
@@ -1219,8 +1137,7 @@ function ⊆(X::CartesianProductArray, Y::CartesianProductArray,
             return (false, w)
         end
     end
-
-    return witness ? (true, N[]) : true
+    return _witness_result_empty(witness, true, N)
 end
 
 """
@@ -1247,8 +1164,6 @@ The algorithm is based on Lemma 3.1 in [1].
 discriminating kernel under-approximation via zonotope scaling*. HSCC 2019.
 """
 function ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, witness::Bool=false)
-    witness && raise(ArgumentError("witness production is not supported yet"))
-
     c = center(Z)
     G = genmat(Z)
     n, m = size(G)
@@ -1261,10 +1176,13 @@ function ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, witness::Bool=false
         ubound = c[i] + aux
         lbound = c[i] - aux
         if !_leq(ubound, high(H, i)) || !_geq(lbound, low(H, i))
+            if witness
+                raise(ArgumentError("witness production is not supported yet"))
+            end
             return false
         end
     end
-    return true
+    return _witness_result_empty(witness, true, Z, H)
 end
 
 for ST in (AbstractZonotope, AbstractSingleton, LineSegment)
@@ -1281,7 +1199,7 @@ for ST in (AbstractZonotope, AbstractSingleton, LineSegment)
     end
 
     # disambiguation
-    @eval function ⊆(Z::$(ST), C::CartesianProduct{N, <:Universe, <:Universe}) where N
+    @eval function ⊆(::$(ST), ::CartesianProduct{N, <:Universe, <:Universe}) where N
         return true
     end
 end

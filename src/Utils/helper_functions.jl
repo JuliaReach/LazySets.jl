@@ -201,3 +201,37 @@ end
     1 <= i <= dim(X) || throw(ArgumentError("there is no index at coordinate " *
         "$i because the set is of dimension $(dim(X))"))
 end
+
+# if `condition` return `(result, N[])`, otherwise return `result`
+# where N is the common numeric type of X and Y
+@inline function _witness_result_empty(condition::Bool, result, X, Y)
+    if condition
+        N = promote_type(eltype(X), eltype(Y))
+        return (result, N[])
+    end
+    return result
+end
+
+# if `condition` return `(result, N[])`, otherwise return `result`
+@inline function _witness_result_empty(condition::Bool, result, N::Type)
+    return condition ? (result, N[]) : result
+end
+
+# if `condition`
+#    if `result`, return `(result, N[])`,
+#    if `!result`, return `(result, witnessFalse)`,
+# otherwise return `result`
+# where N is the common numeric type of X and Y
+@inline function _witness_result_empty(condition::Bool, result::Bool, X, Y,
+                                       witnessFalse)
+    if result
+        return _witness_result_empty(condition, result, X, Y)
+    else
+        return _witness_result(condition, result, witnessFalse)
+    end
+end
+
+# if `condition` return `(result, witness)`, otherwise return `result`
+@inline function _witness_result(condition::Bool, result, witness)
+    return condition ? (result, witness) : result
+end

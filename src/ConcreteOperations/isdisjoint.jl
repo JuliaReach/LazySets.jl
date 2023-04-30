@@ -35,15 +35,10 @@ end
 function _isdisjoint_general(X::LazySet, Y::LazySet, witness::Bool=false)
     cap = intersection(X, Y)
     empty_intersection = isempty(cap)
-    if witness
-        if empty_intersection
-            N = promote_type(eltype(X), eltype(Y))
-            return (true, N[])
-        else
-            return (false, an_element(cap))
-        end
+    if empty_intersection
+        return _witness_result_empty(witness, true, X, Y)
     end
-    return empty_intersection
+    return witness ? (false, an_element(cap)) : false
 end
 
 # alias
@@ -102,11 +97,10 @@ function isdisjoint(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
         end
     end
 
-    if !witness
-        return empty_intersection
-    elseif empty_intersection
-        N = promote_type(eltype(H1), eltype(H2))
-        return (true, N[])
+    if empty_intersection
+        return _witness_result_empty(witness, true, H1, H2)
+    elseif !witness
+        return false
     end
 
     # compute a witness 'v' in the intersection
@@ -176,13 +170,9 @@ end
 # common code for singletons
 function _isdisjoint_singleton(S::AbstractSingleton, X::LazySet,
                                witness::Bool=false)
-    empty_intersection = element(S) ∉ X
-    if witness
-        N = promote_type(eltype(S), eltype(X))
-        return (empty_intersection, empty_intersection ? N[] : element(S))
-    else
-        return empty_intersection
-    end
+    s = element(S)
+    empty_intersection = s ∉ X
+    return _witness_result_empty(witness, empty_intersection, S, X, s)
 end
 
 """
@@ -248,13 +238,9 @@ optionally compute a witness.
 """
 function isdisjoint(S1::AbstractSingleton, S2::AbstractSingleton,
                     witness::Bool=false)
-    empty_intersection = !isapprox(element(S1), element(S2))
-    if witness
-        N = promote_type(eltype(S1), eltype(S2))
-        return (empty_intersection, empty_intersection ? N[] : element(S1))
-    else
-        return empty_intersection
-    end
+    s1 = element(S1)
+    empty_intersection = !isapprox(s1, element(S2))
+    return _witness_result_empty(witness, empty_intersection, S1, S2, s1)
 end
 
 """
@@ -292,11 +278,10 @@ function isdisjoint(B1::Ball2, B2::Ball2, witness::Bool=false)
     center_diff_normed = norm(center(B2) - center(B1), 2)
     empty_intersection = center_diff_normed > B1.radius + B2.radius
 
-    if !witness
-        return empty_intersection
-    elseif empty_intersection
-        N = promote_type(eltype(B1), eltype(B2))
-        return (true, N[])
+    if empty_intersection
+        return _witness_result_empty(witness, true, B1, B2)
+    elseif !witness
+        return false
     end
 
     # compute a witness 'v' in the intersection
@@ -371,7 +356,7 @@ function _isdisjoint(Z::AbstractZonotope, H::Union{Hyperplane, Line2D},
     c, G = center(Z), genmat(Z)
     v = H.b - dot(H.a, c)
 
-    n, p = size(G)
+    p = size(G, 2)
     p == 0 && return !isapproxzero(v)
     asum = abs_sum(H.a, G)
     return !_geq(v, -asum) || !_leq(v, asum)
@@ -421,7 +406,7 @@ function isdisjoint(Z1::AbstractZonotope, Z2::AbstractZonotope,
     Z = Zonotope(zeros(N, n), hcat(genmat(Z1), genmat(Z2)))
     result = (center(Z1) - center(Z2)) ∉ Z
     if result
-        return witness ? (true, N[]) : true
+        return _witness_result_empty(witness, true, N)
     elseif witness
         error("witness production is not supported yet")
     else
@@ -461,31 +446,19 @@ equation of the intersection point, if it exists.
 [1] Ronald Goldman. *Intersection of two lines in three-space*. Graphics Gems
 1990.
 """
-function isdisjoint(L1::LineSegment,
-                               L2::LineSegment,
-                               witness::Bool=false
-                              )
+function isdisjoint(L1::LineSegment, L2::LineSegment, witness::Bool=false)
     r = L1.q - L1.p
-    N = promote_type(eltype(L1), eltype(L2))
     if all(isapproxzero, r)
         # first line segment is a point
         empty_intersection = L1.q ∉ L2
-        if witness
-            return (empty_intersection, empty_intersection ? N[] : L1.q)
-        else
-            return empty_intersection
-        end
+        return _witness_result_empty(witness, empty_intersection, L1, L2, L1.q)
     end
 
     s = L2.q - L2.p
     if all(isapproxzero, s)
         # second line segment is a point
         empty_intersection = L2.q ∉ L1
-        if witness
-            return (empty_intersection, empty_intersection ? N[] : L2.q)
-        else
-            return empty_intersection
-        end
+        return _witness_result_empty(witness, empty_intersection, L1, L2, L2.q)
     end
 
     p1p2 = L2.p - L1.p
@@ -526,12 +499,10 @@ function isdisjoint(L1::LineSegment,
             end
         end
     end
-
-    if witness
-        return (empty_intersection, empty_intersection ? N[] : v)
-    else
-        return empty_intersection
+    if witness && !empty_intersection
+        return (false, v)
     end
+    return _witness_result_empty(witness, empty_intersection, L1, L2)
 end
 
 function _isdisjoint_hyperplane(hp::Union{Hyperplane, Line2D}, X::LazySet,
@@ -548,22 +519,17 @@ function _isdisjoint_hyperplane(hp::Union{Hyperplane, Line2D}, X::LazySet,
     else
         empty_intersection = true
     end
-    if witness
-        if empty_intersection
-            N = promote_type(eltype(hp), eltype(X))
-            v = N[]
-        else
-            point_hp = an_element(hp)
-            point_line = sv_left
-            dir_line = sv_right - sv_left
-            d = dot((point_hp - point_line), normal_hp) /
-                dot(dir_line, normal_hp)
-            v = d * dir_line + point_line
-        end
-        return (empty_intersection, v)
-    else
-        return empty_intersection
+    if !witness || empty_intersection
+        return _witness_result_empty(witness, empty_intersection, hp, X)
     end
+    # compute witness
+    point_hp = an_element(hp)
+    point_line = sv_left
+    dir_line = sv_right - sv_left
+    d = dot((point_hp - point_line), normal_hp) /
+        dot(dir_line, normal_hp)
+    v = d * dir_line + point_line
+    return (false, v)
 end
 
 """
@@ -643,16 +609,10 @@ function _isdisjoint_hyperplane_hyperplane(hp1::Union{Hyperplane, Line2D},
             w = an_element(cap)
         end
     end
-    if witness
-        if res
-            N = promote_type(eltype(hp1), eltype(hp2))
-            return (true, N[])
-        else
-            return (false, w)
-        end
-    else
-        return res
+    if res
+        return _witness_result_empty(witness, true, hp1, hp2)
     end
+    return witness ? (false, w) : false
 end
 
 function _isdisjoint_halfspace(hs::HalfSpace, X::LazySet, witness::Bool=false)
@@ -663,9 +623,7 @@ function _isdisjoint_halfspace(hs::HalfSpace, X::LazySet, witness::Bool=false)
     # for witness production, we compute the support vector instead
     svec = σ(-hs.a, X)
     empty_intersection = svec ∉ hs
-    N = promote_type(eltype(hs), eltype(X))
-    v = empty_intersection ? N[] : svec
-    return (empty_intersection, v)
+    return _witness_result_empty(witness, empty_intersection, hs, X, svec)
 end
 
 """
@@ -755,33 +713,22 @@ function isdisjoint(H1::HalfSpace, H2::HalfSpace, witness::Bool=false)
         b2 = H2.b
         s = (b2 - dot(x1, a2)) / (-k * dot(a1, a1))
         empty_intersection = s > 0
-        if witness
-            if empty_intersection
-                v = N[]
-            else
-                # both defining hyperplanes are contained in each half-space
-                v = x1
-            end
-        end
-    else
-        empty_intersection = false
-        if witness
-            v = zeros(N, length(a1))
-            for i in 1:length(a1)
-                a_sum_i = a1[i] + a2[i]
-                if a_sum[i] != 0
-                    v[i] = (H1.b + H2.b) / a_sum_i
-                    break
-                end
-            end
+        # if `!empty_intersection`, x1 is a witness because both defining
+        # hyperplanes are contained in each half-space
+        return _witness_result_empty(witness, empty_intersection, H1, H2, x1)
+    elseif !witness
+        return false
+    end
+    # compute witness
+    v = zeros(N, length(a1))
+    for i in 1:length(a1)
+        a_sum_i = a1[i] + a2[i]
+        if a_sum[i] != 0
+            v[i] = (H1.b + H2.b) / a_sum_i
+            break
         end
     end
-
-    if !witness
-        return empty_intersection
-    else
-        return (empty_intersection, v)
-    end
+    return (false, v)
 end
 
 # disambiguations
@@ -848,10 +795,7 @@ function _isdisjoint_polyhedron(P::AbstractPolyhedron, X::LazySet,
         # sufficient check for empty intersection using half-space checks
         for Hi in constraints_list(P)
             if isdisjoint(X, Hi)
-                if witness
-                    return (true, N[])
-                end
-                return true
+                return _witness_result_empty(witness, true, N)
             end
         end
         if witness
@@ -921,8 +865,6 @@ intersect, and otherwise optionally compute a witness.
 end
 
 function _isdisjoint_union(sets, X::LazySet{N}, witness::Bool=false) where {N}
-    result = true
-    w = N[]
     for Y in sets
         if witness
             result, w = isdisjoint(Y, X, witness)
@@ -930,10 +872,10 @@ function _isdisjoint_union(sets, X::LazySet{N}, witness::Bool=false) where {N}
             result = isdisjoint(Y, X, witness)
         end
         if !result
-            break
+            return witness ? (false, w) : false
         end
     end
-    return witness ? (result, w) : result
+    return _witness_result_empty(witness, true, N)
 end
 
 # disambiguations
@@ -983,10 +925,9 @@ function _isdisjoint_universe(U::Universe, X::LazySet, witness)
                             "but they are $(dim(X)) and $(dim(U)), respectively"
     result = isempty(X)
     if result
-        N = promote_type(eltype(U), eltype(X))
-        return witness ? (result, N[]) : result
+        return _witness_result_empty(witness, true, U, X)
     else
-        return witness ? (result, an_element(X)) : result
+        return witness ? (false, an_element(X)) : false
     end
 end
 
@@ -1131,12 +1072,7 @@ function isdisjoint(X::CartesianProductArray, Y::CartesianProductArray,
 
     for i in 1:length(X.array)
         if isdisjoint(X.array[i], Y.array[i])
-            if witness
-                N = promote_type(eltype(X), eltype(Y))
-                return (true, N[])
-            else
-                return true
-            end
+            return _witness_result_empty(witness, true, X, Y)
         end
     end
     if witness
@@ -1208,12 +1144,7 @@ end
 function _isdisjoint_emptyset(∅::EmptySet, X::LazySet, witness::Bool=false)
     @assert dim(∅) == dim(X) "the dimensions of the given sets should match, " *
                             "but they are $(dim(∅)) and $(dim(X)), respectively"
-    if witness
-        N = promote_type(eltype(∅), eltype(X))
-        return (true, N[])
-    else
-        return true
-    end
+    return _witness_result_empty(witness, true, ∅, X)
 end
 
 # disambiguations
@@ -1249,16 +1180,10 @@ optionally compute a witness.
 """
 function isdisjoint(L1::Line2D, L2::Line2D, witness::Bool=false)
     disjoint = _isdisjoint(L1, L2)
-    if !witness
-        return disjoint
-    else
-        if disjoint
-            N = promote_type(eltype(L1), eltype(L2))
-            return (true, N[])
-        else
-            return (false, an_element(intersection(L1, L2)))
-        end
+    if disjoint
+        return _witness_result_empty(witness, true, L1, L2)
     end
+    return witness ? (false, an_element(intersection(L1, L2))) : false
 end
 
 # the lines do not intersect <=> det is zero and they are not identical
@@ -1282,7 +1207,7 @@ for ST in [:AbstractZonotope, :AbstractSingleton]
     end
 
     # disambiguation
-    @eval @commutative function isdisjoint(C::CartesianProduct{N, <:Universe, <:Universe}, Z::$(ST)) where N
+    @eval @commutative function isdisjoint(::CartesianProduct{N, <:Universe, <:Universe}, Z::$(ST)) where N
         return false
     end
 end
