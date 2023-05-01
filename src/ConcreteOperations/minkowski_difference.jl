@@ -157,22 +157,85 @@ An `HPolytope` that corresponds to the Minkowski difference of `Z1` minus `Z2`.
 
 ### Algorithm
 
-This method implements Theorem 3 in [1].
+For one-dimensional sets, we use a simple algorithm for intervals.
+For two-dimensional sets, this method implements Proposition 6 in [1].
+For higher-dimensional sets, this method implements Theorem 3 in [1].
 
-[1] M. Althoff: *On computing the Minkowski difference of zonotopes*. 2016.
+[1] M. Althoff: *On computing the Minkowski difference of zonotopes*. 2022.
 """
 function minkowski_difference(Z1::AbstractZonotope, Z2::AbstractZonotope)
-    Gm = genmat(Z1)
-    n, p = size(Gm)
+    n = dim(Z1)
     @assert dim(Z2) == n "the Minkowski difference only applies to sets of " *
         "the same dimension, but the arguments have dimension $n and $(dim(Z2))"
+
+    if n == 1
+        return _minkowski_difference_1d(Z1, Z2)
+    elseif n == 2
+        return _minkowski_difference_2d(Z1, Z2)
+    else
+        return _minkowski_difference_nd(Z1, Z2)
+    end
+end
+
+function _minkowski_difference_1d(Z1::AbstractZonotope, Z2::AbstractZonotope)
+    N = promote_type(eltype(I1), eltype(I2))
+    l = low(I1, 1) - low(I2, 1)
+    if h < l
+        return EmptySet{N}(1)
+    end
+    c = center(Z1, 1) - center(Z2, 1)
+    return Zonotope([c], hcat([(c - l) / 2]))
+end
+
+# implements Proposition 6 in [1]
+# [1] M. Althoff: *On computing the Minkowski difference of zonotopes*. 2022.
+function _minkowski_difference_2d(Zm::AbstractZonotope, Zs::AbstractZonotope)
+    N = promote_type(eltype(Zm), eltype(Zs))
+    Gm = genmat(Zm)
+    n, p = size(Gm)
+    sii = StrictlyIncreasingIndices(p, n-1)
+    C⁺ = Matrix{N}(undef, length(sii), n)
+    for (i, columns) in enumerate(sii)
+        c⁺ = cross_product(view(Gm, :, columns))
+        normalize!(c⁺, 2)
+        C⁺[i, :] .= c⁺
+    end
+    Δd = sum(g -> abs.(C⁺ * g), generators(Zm))
+    Δdtrans = sum(g -> abs.(C⁺ * g), generators(Zs))
+    # stretching factors
+    μ = inv(abs.(C⁺ * Gm)) * (Δd .- Δdtrans)
+    # if a factor is zero, the generator will be zero and can be removed
+    # if a factor is negative, the resulting set is empty
+    zero_gens = 0
+    for v in μ
+        if isapproxzero(v)
+            zero_gens += 1
+        elseif v < zero(N)
+            return EmptySet{N}(2)
+        end
+    end
+    # stretch generators g_j of Gm by μ[j] (for all j) and skip zero cases
+    G = Matrix{N}(undef, n, p - zero_gens)
+    col = 1
+    for j in 1:p
+        if !isapproxzero(μ[j])
+            G[:, col] .= Gm[:, j] * μ[j]
+            col += 1
+        end
+    end
+    c = center(Zm) .- center(Zs)
+    return Zonotope(c, G)
+end
+
+function _minkowski_difference_nd(Z1::AbstractZonotope, Z2::AbstractZonotope)
+    Gm = genmat(Z1)
+    n, p = size(Gm)
 
     N = promote_type(eltype(Z1), eltype(Z2))
     cm, Gmᵀ = center(Z1), transpose(Gm)
     cs, Gsᵀ = center(Z2), transpose(genmat(Z2))
     Δc = cm - cs
 
-    m = binomial(p, n - 1)
     constraints = Vector{HalfSpace{N, Vector{N}}}()
     for columns in StrictlyIncreasingIndices(p, n-1)
         c⁺ = cross_product(view(Gm, :, columns))
