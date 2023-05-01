@@ -566,10 +566,6 @@ function convex_hull(P1::HPoly, P2::HPoly;
     return convert(basetype(P1), Pch)
 end
 
-function convex_hull(X::UnionSet)
-    return convex_hull(X.X, X.Y)
-end
-
 @commutative function convex_hull(X::LazySet, ::EmptySet)
     @assert isconvextype(typeof(X)) "this implementation requires a convex " *
         "set as input"
