@@ -19,7 +19,8 @@ translate!(::VPolygon, ::AbstractVector)
 remove_redundant_vertices(::VPolygon; ::String="monotone_chain")
 remove_redundant_vertices!(::VPolygon; ::String="monotone_chain")
 permute(::VPolygon, ::AbstractVector{Int})
-linear_map(M::AbstractMatrix, P::VPolygon)
+linear_map(::AbstractMatrix, ::VPolygon)
+area(::VPolygon)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
@@ -33,7 +34,7 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N})
-* [`volume`](@ref volume(::AbstractPolytope))
 
 Inherited from [`AbstractPolygon`](@ref):
 * [`dim`](@ref dim(::AbstractPolygon))
+* [`volume`](@ref volume(::AbstractPolygon))

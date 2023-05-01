@@ -1,9 +1,4 @@
 for N in [Float64, Float32, Rational{Int}]
-    # random polygons
-    rand(HPolygon)
-    rand(HPolygonOpt)
-    rand(VPolygon)
-
     # Empty polygon
     p = HPolygon{N}()
 
@@ -474,6 +469,16 @@ for N in [Float64, Float32, Rational{Int}]
     @test Z isa VPolygon{N} && ispermutation(vertices_list(Z), vlist)
     Z = minkowski_sum(X + Y, Singleton(zeros(N, 2)))
     @test Z isa VPolygon{N} && ispermutation(vertices_list(Z), vlist)
+
+    # area & volume
+    v1 = N[1, 3]
+    v2 = N[2, 1]
+    v3 = N[4, 6]
+    v4 = N[9, 2]
+    P = VPolygon([v1, v2, v3, v4])
+    @test area(P) == volume(P) == N(21)
+    Q = tohrep(P)
+    @test area(Q) == volume(Q) == N(21)
 end
 
 for N in [Float64, Float32]
@@ -653,6 +658,11 @@ for N in [Float64]
     Pr = rationalize(BigInt, P, 10*eps(Float64));
     @test isa(Pr, HPolygon{Rational{BigInt}, Vector{Rational{BigInt}}})
 end
+
+# random polygons
+rand(HPolygon)
+rand(HPolygonOpt)
+rand(VPolygon)
 
 # default Float64 constructors
 @test HPolygon() isa HPolygon{Float64, Vector{Float64}}

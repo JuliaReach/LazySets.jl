@@ -1223,9 +1223,9 @@ function surface(X::LazySet)
 end
 
 """
-    area(X::LazySet{N}) where {N}
+    area(X::LazySet)
 
-Compute the area of a two-dimensional polytopic set using the Shoelace formula.
+Compute the area of a two-dimensional polytopic set.
 
 ### Input
 
@@ -1252,16 +1252,28 @@ Let `m` be the number of vertices of `X`. We consider the following instances:
 Otherwise, the general Shoelace formula is used; for details see the
 [Wikipedia page](https://en.wikipedia.org/wiki/Shoelace_formula).
 """
-function area(X::LazySet{N}) where {N}
-    @assert isconvextype(typeof(X)) "this function requires a convex set"
+function area(X::LazySet)
     @assert dim(X) == 2 "this function only applies to two-dimensional sets, " *
-        "but the given set is $(dim(X))-dimensional"
+                        "but the given set is $(dim(X))-dimensional"
+    @assert is_polyhedral(X) && isbounded(X) "this method requires a polytope"
 
-    Xpoly = convert(VPolygon, X)  # sorts vertices
-    vlist = vertices_list(Xpoly)
+    vlist = vertices_list(X)
+    return _area_vlist(vlist)
+end
+
+# Notes:
+# - dimension is expected to be 2D
+# - implementation requires sorting of vertices
+# - convex hull is applied in-place
+function _area_vlist(vlist; apply_convex_hull::Bool=true)
+    if apply_convex_hull
+        convex_hull!(vlist)
+    end
+
     m = length(vlist)
 
     if m <= 2
+        N = eltype(eltype(vlist))
         return zero(N)
     end
 

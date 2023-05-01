@@ -90,7 +90,7 @@ isoperationtype(::Type{<:LazySet})
 isoperation(::LazySet)
 isequivalent(::LazySet, ::LazySet)
 surface(::LazySet)
-area(::LazySet{N}) where {N}
+area(::LazySet)
 concretize(::LazySet)
 complement(::LazySet)
 polyhedron(::LazySet)
@@ -298,7 +298,8 @@ AbstractPolygon
 This interface defines the following functions:
 
 ```@docs
-dim(P::AbstractPolygon)
+dim(::AbstractPolygon)
+volume(::AbstractPolygon)
 ```
 
 The following helper functions are used for sorting directions:

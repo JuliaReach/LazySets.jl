@@ -42,7 +42,7 @@ Return the ambient dimension of a convex polygon.
 
 The ambient dimension of the polygon, which is 2.
 """
-@inline function dim(P::AbstractPolygon)
+@inline function dim(::AbstractPolygon)
     return 2
 end
 
@@ -181,4 +181,25 @@ arguments implements the [`atan2` function](https://en.wikipedia.org/wiki/Atan2)
 """
 function _leq_trig(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
     return jump2pi(atan(u[2], u[1])) <= jump2pi(atan(v[2], v[1]))
+end
+
+"""
+    volume(P::AbstractPolygon)
+
+Compute the volume of a convex polygon.
+
+### Input
+
+- `P` -- convex polygon
+
+### Output
+
+A number representing the volume of `P`.
+
+### Notes
+
+In 2D the volume is equivalent to the area.
+"""
+function volume(P::AbstractPolygon)
+    return area(P)
 end

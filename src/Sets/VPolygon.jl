@@ -713,3 +713,24 @@ The permuted polygon in vertex representation.
 function permute(V::VPolygon, p::AbstractVector{Int})
     return VPolygon([v[p] for v in V.vertices]; apply_convex_hull=true)
 end
+
+"""
+    area(V::VPolygon)
+
+Compute the area of a polygon in vertex representation.
+
+### Input
+
+- `V` -- polygon in vertex representation
+
+### Output
+
+A number representing the area of `V`.
+
+### Algorithm
+
+See [`area(::LazySet)`](@ref).
+"""
+function area(V::VPolygon)
+    return _area_vlist(V.vertices; apply_convex_hull=false)
+end
