@@ -698,7 +698,7 @@ function diameter(S::LazySet, p::Real=Inf)
 end
 
 """
-    affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector; kwargs...)
+    affine_map(M, X::LazySet, v::AbstractVector; kwargs...)
 
 Compute the concrete affine map ``M·X + v``.
 
@@ -716,7 +716,7 @@ A set representing the affine map ``M·X + v``.
 
 The implementation applies the functions `linear_map` and `translate`.
 """
-function affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector; kwargs...)
+function affine_map(M, X::LazySet, v::AbstractVector; kwargs...)
     return translate(linear_map(M, X; kwargs...), v)
 end
 
@@ -1935,4 +1935,13 @@ function linear_map(M::AbstractMatrix, P::LazySet; kwargs...)
     else
         throw(ArgumentError("`linear_map` is not implemented for the given set"))
     end
+end
+
+"""
+    linear_map(a::Number, P::LazySet; kwargs...)
+
+Alias for `scale(a, P; kwargs...)`.
+"""
+function linear_map(a::Number, P::LazySet; kwargs...)
+    return scale(a, X; kwargs...)
 end
