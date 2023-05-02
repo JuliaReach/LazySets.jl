@@ -32,24 +32,17 @@ name of the issue for easier lookup, e.g., `mforets/7`.
 
 ### Unit testing and continuous integration (CI)
 
-This project is synchronized with Travis CI such that each PR gets tested before
-merging (and the build is automatically triggered after each new commit).
-For the maintainability of this project, it is important to understand and fix
-the failing doctests if they exist.
-
-When you modify code in this package, you should make sure that all unit tests
+This project is synchronized with GitHub Actions such that each PR gets tested
+before merging (and the build is automatically triggered after each new commit).
+For the maintainability of this project, it is important to make all unit tests
 pass.
-To run the unit tests locally, you should do:
 
-```
-$ julia --color=yes test/runtests.jl
-```
-
-Alternatively, you can achieve the same from inside the REPL using the following
-command:
+To run the unit tests locally, you can do:
 
 ```julia
-julia> import Pkg; Pkg.test("LazySets")
+julia> using Pkg
+
+julia> Pkg.test("MathematicalPredicates")
 ```
 
 We also advise adding new unit tests when adding new features to ensure
