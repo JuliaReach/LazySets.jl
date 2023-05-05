@@ -125,15 +125,47 @@ exponential, and ``X`` is a set, it follows that
 """
 function σ(d::AbstractVector, eprojmap::ExponentialProjectionMap;
            backend=get_exponential_backend())
-    daux = transpose(eprojmap.projspmexp.L) * d
     N = promote_type(eltype(d), eltype(eprojmap))
-    aux1 = _expmv(backend, one(N), transpose(eprojmap.projspmexp.spmexp.M), daux)
-    daux = At_mul_B(eprojmap.projspmexp.R, aux1)
-    svec = σ(daux, eprojmap.X)
+    Lᵀd = transpose(eprojmap.projspmexp.L) * d
+    eᴹLᵀd = _expmv(backend, one(N), transpose(eprojmap.projspmexp.spmexp.M), Lᵀd)
+    RᵀeᴹLᵀd = At_mul_B(eprojmap.projspmexp.R, eᴹLᵀd)
+    svec = σ(RᵀeᴹLᵀd, eprojmap.X)
+    Rσ = eprojmap.projspmexp.R * svec
+    eᴹRσ = _expmv(backend, one(N), eprojmap.projspmexp.spmexp.M, Rσ)
+    return eprojmap.projspmexp.L * eᴹRσ
+end
 
-    aux2 = eprojmap.projspmexp.R * svec
-    daux = _expmv(backend, one(N), eprojmap.projspmexp.spmexp.M, aux2)
-    return eprojmap.projspmexp.L * daux
+"""
+    ρ(d::AbstractVector, eprojmap::ExponentialProjectionMap;
+      [backend]=get_exponential_backend())
+
+Evaluate the support function of a projection of an exponential map.
+
+### Input
+
+- `d`        -- direction
+- `eprojmap` -- projection of an exponential map
+- `backend`  -- (optional; default: `get_exponential_backend()`) exponentiation
+                backend
+
+### Output
+
+Evaluation of the support function in the given direction.
+If the direction has norm zero, the result depends on the wrapped set.
+
+### Notes
+
+If ``S = (L⋅M⋅R)⋅X``, where ``L`` and ``R`` are matrices, ``M`` is a matrix
+exponential, and ``X`` is a set, it follows that ``ρ(d, S) = ρ(R^T⋅M^T⋅L^T⋅d, X)``
+for any direction ``d``.
+"""
+function ρ(d::AbstractVector, eprojmap::ExponentialProjectionMap;
+           backend=get_exponential_backend())
+    N = promote_type(eltype(d), eltype(eprojmap))
+    Lᵀd = transpose(eprojmap.projspmexp.L) * d
+    eᴹLᵀd = _expmv(backend, one(N), transpose(eprojmap.projspmexp.spmexp.M), Lᵀd)
+    RᵀeᴹLᵀd = At_mul_B(eprojmap.projspmexp.R, eᴹLᵀd)
+    return ρ(RᵀeᴹLᵀd, eprojmap.X)
 end
 
 """

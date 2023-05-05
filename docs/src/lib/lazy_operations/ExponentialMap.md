@@ -42,6 +42,7 @@ get_row(::SparseMatrixExp, ::Int)
 ExponentialProjectionMap
 dim(::ExponentialProjectionMap)
 σ(::AbstractVector, ::ExponentialProjectionMap)
+ρ(::AbstractVector, ::ExponentialProjectionMap)
 isbounded(::ExponentialProjectionMap)
 ```
 Inherited from [`LazySet`](@ref):
