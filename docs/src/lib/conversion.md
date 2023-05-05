@@ -25,10 +25,14 @@ convert(::Type{Hyperrectangle}, ::CartesianProduct{N, HN1, HN2}) where {N, HN1<:
 convert(::Type{Hyperrectangle}, ::CartesianProductArray{N, HN}) where {N, HN<:AbstractHyperrectangle}
 convert(::Type{Hyperrectangle}, ::CartesianProductArray{N, IN}) where {N, IN<:Interval}
 convert(::Type{Hyperrectangle}, ::Rectification{N, AH}) where {N, AH<:AbstractHyperrectangle}
-convert(::Type{HPOLYGON}, ::LazySet) where {HPOLYGON<:AbstractHPolygon}
-convert(::Type{HPOLYGON}, ::VPolygon) where {HPOLYGON<:AbstractHPolygon}
-convert(::Type{HPOLYGON}, ::LineSegment{N}) where {N, HPOLYGON<:AbstractHPolygon}
-convert(::Type{HPOLYGON}, ::AbstractSingleton{N}) where {N, HPOLYGON<:AbstractHPolygon}
+convert(::Type{HPolygon}, ::LazySet)
+convert(::Type{HPolygon}, ::VPolygon)
+convert(::Type{HPolygon}, ::LineSegment{N}) where {N}
+convert(::Type{HPolygon}, ::AbstractSingleton{N}) where {N}
+convert(::Type{HPolygonOpt}, ::LazySet)
+convert(::Type{HPolygonOpt}, ::VPolygon)
+convert(::Type{HPolygonOpt}, ::LineSegment{N}) where {N}
+convert(::Type{HPolygonOpt}, ::AbstractSingleton{N}) where {N}
 convert(::Type{HPolyhedron}, ::LazySet)
 convert(::Type{HPolyhedron}, ::HRep{N}) where {N}
 convert(::Type{HPolytope}, ::LazySet)
