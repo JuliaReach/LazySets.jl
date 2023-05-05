@@ -29,6 +29,9 @@ This is a fallback implementation that computes the concrete intersection,
 A witness is constructed using the `an_element` implementation of the result.
 """
 function isdisjoint(X::LazySet, Y::LazySet, witness::Bool=false)
+    if _isdisjoint_convex_sufficient(X, Y)
+        return _witness_result_empty(witness, true, X, Y)
+    end
     return _isdisjoint_general(X, Y, witness)
 end
 
@@ -43,6 +46,15 @@ end
 
 # alias
 const is_intersection_empty = isdisjoint
+
+# quick sufficient check that tries to find a separating hyperplane
+# the result `true` is also sufficient for non-convex sets
+function _isdisjoint_convex_sufficient(X::LazySet, Y::LazySet)
+    x = an_element(X)
+    y = an_element(Y)
+    d = x - y
+    return ρ(d, Y) < -ρ(-d, X)
+end
 
 # conversion for IA types
 isdisjoint(X::LazySet, Y::IA.Interval, witness::Bool=false) =
@@ -400,6 +412,10 @@ zonotope with center ``c`` and generators ``g``.
 """
 function isdisjoint(Z1::AbstractZonotope, Z2::AbstractZonotope,
                     witness::Bool=false)
+    if _isdisjoint_convex_sufficient(Z1, Z2)
+        return _witness_result_empty(witness, true, Z1, Z2)
+    end
+
     n = dim(Z1)
     @assert n == dim(Z2) "the zonotopes need to have the same dimensions"
     N = promote_type(eltype(Z1), eltype(Z2))
