@@ -7,6 +7,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test X.X == b1
     @test X.Y == b2
 
+    # convenience constructors
+    @test b1 + b2 == b1 ⊕ b2 == X
+    msa = MinkowskiSumArray([b1, b2, b1])
+    @test b1 + b2 + b1 == +(b1, b2, b1) == ⊕(b1, b2, b1) == +([b1, b2, b1]) == ⊕([b1, b2, b1]) == msa
+    @test +(b1) == ⊕(b1) == b1
+
     # swap
     ms2 = swap(X)
     @test X.X == ms2.Y && X.Y == ms2.X

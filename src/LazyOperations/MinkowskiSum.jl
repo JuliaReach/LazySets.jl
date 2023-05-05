@@ -37,6 +37,24 @@ struct MinkowskiSum{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
     end
 end
 
+"""
+    +(X::LazySet, Y::LazySet)
+
+Alias for the Minkowski sum.
+"""
++(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
+
+"""
+    ⊕(X::LazySet, Y::LazySet)
+
+Alias for the Minkowski sum.
+
+### Notes
+
+The function symbol can be typed via `\\oplus[TAB]`.
+"""
+⊕(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
+
 isoperationtype(::Type{<:MinkowskiSum}) = true
 
 isconvextype(::Type{MinkowskiSum{N, S1, S2}}) where {N, S1, S2} =
@@ -50,42 +68,6 @@ is_polyhedral(ms::MinkowskiSum) = is_polyhedral(ms.X) && is_polyhedral(ms.Y)
 # EmptySet and Universe are the absorbing elements for MinkowskiSum
 @absorbing(MinkowskiSum, EmptySet)
 # @absorbing(MinkowskiSum, Universe)  # TODO problematic
-
-"""
-    +(X::LazySet, Y::LazySet)
-
-Convenience constructor for the Minkowski sum of two sets.
-
-### Input
-
-- `X` -- set
-- `Y` -- set
-
-### Output
-
-The symbolic Minkowski sum of ``X`` and ``Y``.
-"""
-+(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
-
-"""
-    ⊕(X::LazySet, Y::LazySet)
-
-Unicode alias constructor ⊕ (`oplus`) for the lazy Minkowski sum operator.
-
-### Input
-
-- `X` -- set
-- `Y` -- set
-
-### Output
-
-The symbolic Minkowski sum of ``X`` and ``Y``.
-
-### Notes
-
-Write `\\oplus[TAB]` to enter this symbol.
-"""
-⊕(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
 
 """
     swap(ms::MinkowskiSum)

@@ -10,6 +10,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test cp.X == b1
     @test cp.Y == b2
 
+    # convenience constructors
+    @test b1 * b2 == b1 × b2 == cp
+    cpa = CartesianProductArray([b1, b2, b1])
+    @test b1 * b2 * b1 == *(b1, b2, b1) == ×(b1, b2, b1) == *([b1, b2, b1]) == ×([b1, b2, b1]) == cpa
+    @test *(b1) == ×(b1) == b1
+
     # swap
     cp2 = swap(cp)
     @test cp.X == cp2.Y && cp.Y == cp2.X

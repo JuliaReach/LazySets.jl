@@ -49,6 +49,7 @@ IntersectionCache
 
 ```@docs
 IntersectionArray
+∩(::LazySet, ::LazySet...)
 dim(::IntersectionArray)
 σ(::AbstractVector, ::IntersectionArray)
 isbounded(::IntersectionArray)

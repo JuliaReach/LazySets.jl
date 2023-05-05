@@ -86,7 +86,6 @@ function CartesianProduct(∅1::EmptySet, ∅2::EmptySet)
     return EmptySet{N}(dim(∅1) + dim(∅2))
 end
 
-
 """
 ```
     *(X::LazySet, Y::LazySet)
@@ -97,13 +96,13 @@ Alias for the binary Cartesian product.
 *(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
 
 """
-    ×
+    ×(X::LazySet, Y::LazySet)
 
-Unicode alias (`times`) for the binary Cartesian product operator.
+Alias for the binary Cartesian product.
 
 ### Notes
 
-Write `\\times[TAB]` to enter this symbol.
+The function symbol can be typed via `\\times[TAB]`.
 """
 ×(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
 

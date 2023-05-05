@@ -24,6 +24,29 @@ struct MinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
    array::Vector{S}
 end
 
+"""
+    +(X::LazySet, Xs::LazySet...)
+    +(Xs::Vector{<:LazySet})
+
+Alias for the n-ary Minkowski sum.
+"""
++(X::LazySet, Xs::LazySet...) = MinkowskiSumArray(vcat(X, Xs...))
++(X::LazySet) = X
++(Xs::Vector{<:LazySet}) = MinkowskiSumArray(Xs)
+
+"""
+    ⊕(X::LazySet, Xs::LazySet...)
+    ⊕(Xs::Vector{<:LazySet})
+
+Alias for the n-ary Minkowski sum.
+
+### Notes
+
+The function symbol can be typed via `\\oplus[TAB]`.
+"""
+⊕(X::LazySet, Xs::LazySet...) = +(X, Xs...)
+⊕(Xs::Vector{<:LazySet}) = +(Xs)
+
 isoperationtype(::Type{<:MinkowskiSumArray}) = true
 isconvextype(::Type{MinkowskiSumArray{N, S}}) where {N, S} = isconvextype(S)
 

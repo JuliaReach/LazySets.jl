@@ -23,6 +23,16 @@ struct IntersectionArray{N, S<:LazySet{N}} <: LazySet{N}
    array::Vector{S}
 end
 
+"""
+    ∩(X::LazySet, Xs::LazySet...)
+    ∩(Xs::Vector{<:LazySet})
+
+Alias for the n-ary lazy intersection.
+"""
+∩(X::LazySet, Xs::LazySet...) = IntersectionArray(vcat(X, Xs...))
+∩(X::LazySet) = X
+∩(Xs::Vector{<:LazySet}) = IntersectionArray(Xs)
+
 isoperationtype(::Type{<:IntersectionArray}) = true
 isconvextype(::Type{IntersectionArray{N, S}}) where {N, S} = isconvextype(S)
 

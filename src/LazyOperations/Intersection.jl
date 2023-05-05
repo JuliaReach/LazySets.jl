@@ -114,6 +114,17 @@ Intersection(H1::HalfSpace, H2::HalfSpace) = HPolyhedron([H1, H2])
 Intersection(H::HalfSpace, P::HPolyhedron) = HPolyhedron(vcat(P.constraints, H))
 Intersection(P::HPolyhedron, H::HalfSpace) = HPolyhedron(vcat(P.constraints, H))
 
+"""
+    ∩(X::LazySet, Y::LazySet)
+
+Alias for the lazy intersection.
+
+### Notes
+
+The function symbol can be typed via `\\cap[TAB]`.
+"""
+∩(X::LazySet, Y::LazySet) = Intersection(X, Y)
+
 isoperationtype(::Type{<:Intersection}) = true
 
 isconvextype(::Type{Intersection{N, S1, S2}}) where {N, S1, S2} =
@@ -126,13 +137,6 @@ is_polyhedral(cap::Intersection) = is_polyhedral(cap.X) && is_polyhedral(cap.Y)
 
 # EmptySet is the absorbing element for Intersection
 @absorbing(Intersection, EmptySet)
-
-"""
-    ∩
-
-Alias for `Intersection`.
-"""
-∩(X::LazySet, Y::LazySet) = Intersection(X, Y)
 
 """
     isempty_known(cap::Intersection)
@@ -164,6 +168,17 @@ Set the status of emptiness in the cache.
 """
 function set_isempty!(cap::Intersection, isempty::Bool)
     return set_isempty!(cap.cache, isempty)
+end
+
+# equality test ignores the IntersectionCache
+function ==(X::Intersection, Y::Intersection)
+    if X.X != Y.X
+        return false
+    end
+    if X.Y != Y.Y
+        return false
+    end
+    return true
 end
 
 """
