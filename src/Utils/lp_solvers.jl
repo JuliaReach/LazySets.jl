@@ -21,7 +21,7 @@ end
 # default LP solver for Polyhedra (fallback method)
 # NOTE: exists in parallel to `default_lp_solver` because we use different
 # interfaces (see #1493)
-function default_lp_solver_polyhedra(N, kwargs...)
+function default_lp_solver_polyhedra(N; kwargs...)
     require(@__MODULE__, :Polyhedra; fun_name="default_lp_solver_polyhedra")
     return error("no default solver for numeric type $N")
 end
