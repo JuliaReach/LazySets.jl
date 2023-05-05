@@ -14,8 +14,8 @@ Type that represents the set union of a finite number of sets.
 
 The union of convex sets is typically not convex.
 """
-struct UnionSetArray{N, S<:LazySet{N}} <: LazySet{N}
-   array::Vector{S}
+struct UnionSetArray{N,S<:LazySet{N}} <: LazySet{N}
+    array::Vector{S}
 end
 
 isoperationtype(::Type{<:UnionSetArray}) = true
@@ -23,9 +23,9 @@ isconvextype(::Type{<:UnionSetArray}) = false
 
 # constructor for an empty union with optional size hint and numeric type
 function UnionSetArray(n::Int=0, N::Type=Float64)
-   arr = Vector{LazySet{N}}()
-   sizehint!(arr, n)
-   return UnionSetArray(arr)
+    arr = Vector{LazySet{N}}()
+    sizehint!(arr, n)
+    return UnionSetArray(arr)
 end
 
 # EmptySet is the neutral element for UnionSetArray
@@ -52,7 +52,7 @@ The ambient dimension of the union of a finite number of sets, or `0` if there
 is no set in the array.
 """
 function dim(cup::UnionSetArray)
-   return length(cup.array) == 0 ? 0 : dim(cup.array[1])
+    return length(cup.array) == 0 ? 0 : dim(cup.array[1])
 end
 
 """
@@ -69,7 +69,7 @@ Return the array of the union of a finite number of sets.
 The array of the union.
 """
 function array(cup::UnionSetArray)
-   return cup.array
+    return cup.array
 end
 
 """
@@ -109,19 +109,19 @@ support function of each set directly and then calls only the support vector of
 one of the ``Xᵢ``.
 """
 function σ(d::AbstractVector, cup::UnionSetArray; algorithm="support_vector")
-   arr = array(cup)
+    arr = array(cup)
 
-   if algorithm == "support_vector"
-       return _σ_union(d, arr)
+    if algorithm == "support_vector"
+        return _σ_union(d, arr)
 
-   elseif algorithm == "support_function"
-       m = argmax(i -> ρ(d, @inbounds arr[i]), eachindex(arr))
-       return σ(d, arr[m])
+    elseif algorithm == "support_function"
+        m = argmax(i -> ρ(d, @inbounds arr[i]), eachindex(arr))
+        return σ(d, arr[m])
 
-   else
-       error("algorithm $algorithm for the support vector of a " *
-             "`UnionSetArray` is unknown")
-   end
+    else
+        error("algorithm $algorithm for the support vector of a " *
+              "`UnionSetArray` is unknown")
+    end
 end
 
 function _σ_union(d::AbstractVector, sets)
@@ -160,7 +160,7 @@ The support function of the union of a finite number of sets ``X₁, X₂, ...``
 can be obtained as the maximum of ``ρ(d, X₂), ρ(d, X₂), ...``.
 """
 function ρ(d::AbstractVector, cup::UnionSetArray)
-   return maximum(Xi -> ρ(d, Xi), array(cup))
+    return maximum(Xi -> ρ(d, Xi), array(cup))
 end
 
 """
@@ -186,7 +186,7 @@ function an_element(cup::UnionSetArray)
             return an_element(Xi)
         end
     end
-    error("an empty set does not have any element")
+    return error("an empty set does not have any element")
 end
 
 """
@@ -205,7 +205,7 @@ sets.
 `true` iff ``x ∈ cup``.
 """
 function ∈(x::AbstractVector, cup::UnionSetArray)
-   return any(X -> x ∈ X, array(cup))
+    return any(X -> x ∈ X, array(cup))
 end
 
 """
@@ -222,7 +222,7 @@ Check whether the union of a finite number of sets is empty.
 `true` iff the union is empty.
 """
 function isempty(cup::UnionSetArray)
-   return all(isempty, array(cup))
+    return all(isempty, array(cup))
 end
 
 """
@@ -239,10 +239,10 @@ Check whether the union of a finite number of sets is bounded.
 `true` iff the union is bounded.
 """
 function isbounded(cup::UnionSetArray)
-   return all(isbounded, array(cup))
+    return all(isbounded, array(cup))
 end
 
-function isboundedtype(::Type{<:UnionSetArray{N, S}}) where {N, S}
+function isboundedtype(::Type{<:UnionSetArray{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
@@ -269,7 +269,7 @@ function vertices_list(cup::UnionSetArray;
                        backend=nothing)
     vlist = vcat([vertices_list(Xi) for Xi in array(cup)]...)
     if apply_convex_hull
-        convex_hull!(vlist, backend=backend)
+        convex_hull!(vlist; backend=backend)
     end
     return vlist
 end

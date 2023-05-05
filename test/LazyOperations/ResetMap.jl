@@ -3,9 +3,9 @@ for N in [Float64, Rational{Int}, Float32]
     b = BallInf(N[2, 2, 2], N(1))
     s = Singleton(N[0, 0])
     r = Dict(1 => N(4), 3 => N(0))
-    r_none = Dict{Int, N}()  # no reset
-    r_1 = Dict{Int, N}(1 => N(1))  # reset x1
-    r_12 = Dict{Int, N}(1 => N(1), 2 => N(1))  # reset x1 and x2
+    r_none = Dict{Int,N}()  # no reset
+    r_1 = Dict{Int,N}(1 => N(1))  # reset x1
+    r_12 = Dict{Int,N}(1 => N(1), 2 => N(1))  # reset x1 and x2
     rm = ResetMap(b, r)
     # rm is the line segment in 3D from [4, 1, 0] to [4, 3, 0]
 
@@ -67,7 +67,7 @@ for N in [Float64, Rational{Int}, Float32]
     # constraints list of a lazy set
     if test_suite_polyhedra && N == Float64
         rm = ResetMap(b, r)
-        rm_id = ResetMap(Matrix(one(N)*I, 3, 3) * b, r)
+        rm_id = ResetMap(Matrix(one(N) * I, 3, 3) * b, r)
         X = HPolytope(constraints_list(rm))
         Y = HPolytope(constraints_list(rm_id))
         @test isequivalent(X, Y)
@@ -77,9 +77,9 @@ end
 for N in [Float64]
     b = BallInf(N[2, 2, 2], N(1))
     r = Dict(1 => N(4), 3 => N(0))
-    r_none = Dict{Int, N}()  # no reset
-    r_1 = Dict{Int, N}(1 => N(1))  # reset x1
-    r_12 = Dict{Int, N}(1 => N(1), 2 => N(1))  # reset x1 and x2
+    r_none = Dict{Int,N}()  # no reset
+    r_1 = Dict{Int,N}(1 => N(1))  # reset x1
+    r_12 = Dict{Int,N}(1 => N(1), 2 => N(1))  # reset x1 and x2
     rm = ResetMap(b, r)
 
     # boundedness

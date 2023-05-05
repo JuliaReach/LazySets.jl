@@ -14,8 +14,8 @@ for N in [Float64, Rational{Int}, Float32]
     gens = collect(generators(R))
     @test ngens(R) == 2
     @test length(gens) == 2 &&
-        (N[2, 1] ∈ gens || N[-2, -1] ∈ gens) &&
-        (N[1, -1] ∈ gens || N[-1, 1] ∈ gens)
+          (N[2, 1] ∈ gens || N[-2, -1] ∈ gens) &&
+          (N[1, -1] ∈ gens || N[-1, 1] ∈ gens)
     @test genmat(R) ∈ [N[2 1; 1 -1], N[-2 1; -1 -1], N[2 -1; 1 1], N[-2 -1; -1 1]]
 
     # support vector and support function

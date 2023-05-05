@@ -73,20 +73,20 @@ to the polynomial order ``η``.
     polynomialization and non-convex sets*, Hybrid Systems: Computation and
     Control, 2013, pp. 173-182.
 """
-struct DensePolynomialZonotope{N, VT, VMT, MT} <: AbstractPolynomialZonotope{N}
+struct DensePolynomialZonotope{N,VT,VMT,MT} <: AbstractPolynomialZonotope{N}
     c::VT
     E::VMT
     F::VMT
     G::MT
 
     # default constructor with dimension check
-    function DensePolynomialZonotope(c::VT, E::VMT, F::VMT, G::MT) where {VT, VMT, MT}
+    function DensePolynomialZonotope(c::VT, E::VMT, F::VMT, G::MT) where {VT,VMT,MT}
         # check polynomial order
         @assert length(E) == 1 + length(F) "incompatible lengths of E and F: " *
-            "$(length(E)) and $(length(F))"
+                                           "$(length(E)) and $(length(F))"
         N = typeof(c[1])
 
-        return new{N, VT, VMT, MT}(c, E, F, G)
+        return new{N,VT,VMT,MT}(c, E, F, G)
     end
 end
 
@@ -154,7 +154,7 @@ The number of dependent generators of `P`.
 function ngens_dep(P::DensePolynomialZonotope)
     η = polynomial_order(P)  # polynomial order
     p = size(P.E[1], 2)  # number of dependent factors
-    return sum(i -> binomial(p+i-1, i), 1:η)
+    return sum(i -> binomial(p + i - 1, i), 1:η)
 end
 
 """
@@ -194,8 +194,8 @@ matrix `M`.
 """
 function linear_map(M::AbstractMatrix, P::DensePolynomialZonotope)
     c = M * P.c
-    E = [M*Ei for Ei in P.E]
-    F = [M*Fi for Fi in P.F]
+    E = [M * Ei for Ei in P.E]
+    F = [M * Fi for Fi in P.F]
     G = M * P.G
     return DensePolynomialZonotope(c, E, F, G)
 end
@@ -221,8 +221,8 @@ The result's center and generators are multiples of those of `P` by a factor
 """
 function scale(α::Number, P::DensePolynomialZonotope)
     c = α * P.c
-    E = [α*Ei for Ei in P.E]
-    F = [α*Fi for Fi in P.F]
+    E = [α * Ei for Ei in P.E]
+    F = [α * Fi for Fi in P.F]
     G = α * P.G
     return DensePolynomialZonotope(c, E, F, G)
 end

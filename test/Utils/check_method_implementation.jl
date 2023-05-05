@@ -42,8 +42,7 @@ function check_method_implementation(interface::Type,
                                      func_name,
                                      args_funcs::AbstractVector{Function};
                                      ignore_types::Vector{Type}=Type[],
-                                     print_results::Bool=false
-                                    )::Bool
+                                     print_results::Bool=false)::Bool
     # first collect all base types that are subtypes of this interface
     # NOTE: 'isleaftype' does not work due to type parameters
     base_types = LazySets.subtypes(interface, true)

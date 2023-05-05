@@ -53,7 +53,7 @@ Return the list of constraints defining a universe.
 The empty list of constraints, as the universe is unconstrained.
 """
 function constraints_list(U::Universe{N}) where {N}
-    return HalfSpace{N, Vector{N}}[]
+    return HalfSpace{N,Vector{N}}[]
 end
 
 """
@@ -199,7 +199,7 @@ function rand(::Type{Universe};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     return Universe{N}(dim)
 end
@@ -278,7 +278,7 @@ that is centered in the origin.
 An error.
 """
 function norm(U::Universe, p::Real=Inf)
-    error("a universe does not have a norm")
+    return error("a universe does not have a norm")
 end
 
 """
@@ -298,7 +298,7 @@ volume.
 An error.
 """
 function radius(U::Universe, p::Real=Inf)
-    error("a universe does not have a radius")
+    return error("a universe does not have a radius")
 end
 
 """
@@ -318,7 +318,7 @@ volume .
 An error.
 """
 function diameter(U::Universe, p::Real=Inf)
-    error("a universe does not have a diameter")
+    return error("a universe does not have a diameter")
 end
 
 """
@@ -361,7 +361,7 @@ end
 
 function linear_map_inverse(Minv::AbstractMatrix{N}, U::Universe{N}) where {N}
     @assert size(Minv, 1) == dim(U) "a linear map of size $(size(Minv)) " *
-        "cannot be applied to a universe of dimension $(dim(U))"
+                                    "cannot be applied to a universe of dimension $(dim(U))"
     n = size(Minv, 2)
     return Universe{N}(n)
 end
@@ -410,35 +410,35 @@ function complement(U::Universe{N}) where {N}
 end
 
 function load_polyhedra_universe() # function to be loaded by Requires
-return quote
-# see the interface file init_Polyhedra.jl for the imports
+    return quote
+        # see the interface file init_Polyhedra.jl for the imports
 
-"""
-    polyhedron(U::Universe; [backend]=default_polyhedra_backend(P))
+        """
+            polyhedron(U::Universe; [backend]=default_polyhedra_backend(P))
 
-Return an `HRep` polyhedron from `Polyhedra.jl` given a universe.
+        Return an `HRep` polyhedron from `Polyhedra.jl` given a universe.
 
-### Input
+        ### Input
 
-- `U`       -- universe
-- `backend` -- (optional, default: call `default_polyhedra_backend(P)`)
-               the backend for polyhedral computations
+        - `U`       -- universe
+        - `backend` -- (optional, default: call `default_polyhedra_backend(P)`)
+                       the backend for polyhedral computations
 
-### Output
+        ### Output
 
-An `HRep` polyhedron.
+        An `HRep` polyhedron.
 
-### Notes
+        ### Notes
 
-For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/).
-"""
-function polyhedron(U::Universe; backend=default_polyhedra_backend(U))
-    A, b = tosimplehrep(U)
-    return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
-end
-
-end end  # quote / load_polyhedra_universe()
+        For further information on the supported backends see
+        [Polyhedra's documentation](https://juliapolyhedra.github.io/).
+        """
+        function polyhedron(U::Universe; backend=default_polyhedra_backend(U))
+            A, b = tosimplehrep(U)
+            return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
+        end
+    end
+end  # quote / load_polyhedra_universe()
 
 """
     reflect(U::Universe)

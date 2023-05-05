@@ -75,7 +75,7 @@ julia> jump2pi(0.5)
 ```
 """
 @inline function jump2pi(x::N) where {N<:AbstractFloat}
-    x < zero(N) ? 2 * pi + x : x
+    return x < zero(N) ? 2 * pi + x : x
 end
 
 """
@@ -139,8 +139,8 @@ In particular, this method does not use the arctangent.
 """
 function <=(u::AbstractVector, v::AbstractVector)
     @assert length(u) == length(v) == 2 "comparison of vectors `u` and `v` " *
-           "by their direction requires that they are of length 2, " *
-           "but their lengths are $(length(u)) and $(length(v)), respectively"
+                                        "by their direction requires that they are of length 2, " *
+                                        "but their lengths are $(length(u)) and $(length(v)), respectively"
 
     return _leq_quadrant(u, v)
 end

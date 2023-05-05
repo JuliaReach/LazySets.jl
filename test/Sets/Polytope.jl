@@ -20,11 +20,11 @@ for N in [Float64, Rational{Int}, Float32]
     b = [N(1), N(2)]
     p = HPolytope(A, b)
     c = p.constraints
-    @test c isa Vector{LinearConstraint{N, Vector{N}}}
+    @test c isa Vector{LinearConstraint{N,Vector{N}}}
     @test c[1].a == N[1, 2] && c[1].b == N(1)
     @test c[2].a == N[-1, 1] && c[2].b == N(2)
     @test_throws AssertionError HPolytope(N[1 0; 0 1], N[1, 1];
-                                         check_boundedness=true)
+                                          check_boundedness=true)
 
     # convert back to matrix and vector
     A2, b2 = tosimplehrep(p)
@@ -90,8 +90,8 @@ for N in [Float64, Rational{Int}, Float32]
                    HalfSpace(N[-0, -1], N(1))])
     P2 = translate(P, N[1, 2])
     @test P2 isa HPolytope{N} && ispermutation(constraints_list(P2),
-        [HalfSpace(N[1, 0], N(2)), HalfSpace(N[0, 1], N(3)),
-         HalfSpace(N[-1, -0], N(0)), HalfSpace(N[-0, -1], N(-1))])
+                                               [HalfSpace(N[1, 0], N(2)), HalfSpace(N[0, 1], N(3)),
+                                                HalfSpace(N[-1, -0], N(0)), HalfSpace(N[-0, -1], N(-1))])
 
     # subset
     H = BallInf(N[0, 0], N(1))
@@ -105,19 +105,19 @@ for N in [Float64, Rational{Int}, Float32]
     LM = linear_map(N[2 3; 1 2], P) # invertible matrix
     @test LM isa HPolytope{N}
     if test_suite_polyhedra
-        LM = linear_map(N[2 3; 0 0], P, algorithm="vrep")  # non-invertible matrix
+        LM = linear_map(N[2 3; 0 0], P; algorithm="vrep")  # non-invertible matrix
         @test LM isa VPolygon{N}
     end
 
     M = N[2 1; 0 1]
-    L1 = linear_map(M, P, algorithm="inverse")  # calculates inv(M) explicitly
-    L2 = linear_map(M, P, algorithm="inverse_right")  # uses transpose(M) \ c.a for each constraint c of P
-    L3 = linear_map(M, P, algorithm="vrep")  # uses V-representation
-    L3ch = linear_map(M, P, algorithm="vrep_chull")  # uses V-representation and eliminates redundant vertices
+    L1 = linear_map(M, P; algorithm="inverse")  # calculates inv(M) explicitly
+    L2 = linear_map(M, P; algorithm="inverse_right")  # uses transpose(M) \ c.a for each constraint c of P
+    L3 = linear_map(M, P; algorithm="vrep")  # uses V-representation
+    L3ch = linear_map(M, P; algorithm="vrep_chull")  # uses V-representation and eliminates redundant vertices
     @test_throws ArgumentError linear_map(M, P, algorithm="xyz")  # unknown algorithm
-    L4 = linear_map(M, P, cond_tol=1e3)  # set a custom tolerance for the condition number (invertibility check)
-    L5 = linear_map(M, P, check_invertibility=false)  # invertibility known
-    L6 = linear_map(M, P, inverse=inv(M))  # pass inverse, uses "inverse"
+    L4 = linear_map(M, P; cond_tol=1e3)  # set a custom tolerance for the condition number (invertibility check)
+    L5 = linear_map(M, P; check_invertibility=false)  # invertibility known
+    L6 = linear_map(M, P; inverse=inv(M))  # pass inverse, uses "inverse"
     L7 = linear_map_inverse(inv(M), P)  # convenience function to pass inverse but not M
     p = center(H)
     @test p ∈ P
@@ -135,10 +135,10 @@ for N in [Float64, Rational{Int}, Float32]
                        HalfSpace(N[0, 1], N(1)),
                        HalfSpace(N[-1, -0], N(1)),
                        HalfSpace(N[-0, -1], N(1))])
-        L7 = linear_map(M, P, algorithm="lift")
+        L7 = linear_map(M, P; algorithm="lift")
         @test L7 isa HPolytope{N}
         if test_suite_polyhedra
-            L7_vrep = linear_map(M, P, algorithm="vrep")
+            L7_vrep = linear_map(M, P; algorithm="vrep")
             if N == Float64
                 @test L7 ⊆ L7_vrep && L7_vrep ⊆ L7
             end
@@ -189,11 +189,11 @@ for N in [Float64, Rational{Int}, Float32]
         # convert empty VPolytope to a polyhedron
         Vempty = VPolytope()
         @test_throws ErrorException polyhedron(Vempty) # needs to pass the (relative) dim
-        Pe = polyhedron(Vempty, relative_dimension=2)
+        Pe = polyhedron(Vempty; relative_dimension=2)
     end
 
     # volume
-    @test volume(p) == N(1//2)
+    @test volume(p) == N(1 // 2)
 
     # translation
     @test translate(p, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]])
@@ -247,7 +247,7 @@ end
 
 # default Float64 constructors
 @test HPolytope() isa HPolytope{Float64}
-@test VPolytope() isa VPolytope{Float64, Vector{Float64}}
+@test VPolytope() isa VPolytope{Float64,Vector{Float64}}
 
 # tests that only work with Float64 and Float32
 for N in [Float64, Float32]
@@ -303,10 +303,10 @@ for N in [Float64]
 
     # membership
     p = VPolytope([N[0, 0], N[1, 0], N[0, 1]])
-    @test N[.49, .49] ∈ p
-    @test N[.51, .51] ∉ p
+    @test N[0.49, 0.49] ∈ p
+    @test N[0.51, 0.51] ∉ p
     q = VPolytope([N[0, 1], N[0, 2]])
-    @test N[0, 1//2] ∉ q
+    @test N[0, 1 // 2] ∉ q
 
     # creation from a matrix (each column is a vertex)
     pmat = VPolytope(copy(N[0 0; 1 0; 0 1]'))
@@ -385,7 +385,7 @@ for N in [Float64]
         # checking for empty intersection (also test symmetric calls)
         P = convert(HPolytope, BallInf(zeros(N, 2), N(1)))
         Q = convert(HPolytope, BallInf(ones(N, 2), N(1)))
-        R = convert(HPolytope, BallInf(3*ones(N, 2), N(1)))
+        R = convert(HPolytope, BallInf(3 * ones(N, 2), N(1)))
         res, w = isdisjoint(P, Q, true)
         @test !isdisjoint(P, Q) && !res && w ∈ P && w ∈ Q
         @test !isdisjoint(P, Q; algorithm="sufficient")
@@ -443,23 +443,23 @@ for N in [Float64]
 
         # 2D intersection
         paux = VPolytope([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
-        qaux = VPolytope([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+        qaux = VPolytope([N[1, -1 / 2], N[-1 / 2, 1], N[-1 / 2, -1 / 2]])
         xaux = intersection(paux, qaux)
-        oaux = VPolytope([N[0, 0], N[1/2, 0], N[0, 1/2]])
+        oaux = VPolytope([N[0, 0], N[1 / 2, 0], N[0, 1 / 2]])
         @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
 
         # mixed types
         paux = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
-        qaux = VPolytope([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+        qaux = VPolytope([N[1, -1 / 2], N[-1 / 2, 1], N[-1 / 2, -1 / 2]])
         xaux = intersection(paux, qaux)
-        oaux = VPolytope([N[0, 0], N[1/2, 0], N[0, 1/2]])
+        oaux = VPolytope([N[0, 0], N[1 / 2, 0], N[0, 1 / 2]])
         @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
 
         # 1D set
         paux = VPolytope([N[0], N[1]])
-        qaux = VPolytope([N[-1/2], N[1/2]])
+        qaux = VPolytope([N[-1 / 2], N[1 / 2]])
         xaux = intersection(paux, qaux)
-        oaux = VPolytope([N[0], N[1/2]])
+        oaux = VPolytope([N[0], N[1 / 2]])
         @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
 
         # isuniversal
@@ -499,7 +499,7 @@ for N in [Float64]
         # concrete minkowski sum
         B = convert(VPolytope, BallInf(N[0, 0, 0], N(1)))
         X = minkowski_sum(B, B)
-        twoB = 2.0*B
+        twoB = 2.0 * B
         @test X ⊆ twoB && twoB ⊆ X
 
         # concrete Reflection
@@ -510,8 +510,8 @@ for N in [Float64]
         @test F4 == F && g4 == g
 
         # same but specifying a custom polyhedral computations backend (CDDLib)
-        X = minkowski_sum(B, B, backend=CDDLib.Library())
-        twoB = 2.0*B
+        X = minkowski_sum(B, B; backend=CDDLib.Library())
+        twoB = 2.0 * B
         @test X ⊆ twoB && twoB ⊆ X
 
         P1 = VPolytope([N[0, 0, 0], N[0, 1, 0]])
@@ -521,8 +521,8 @@ for N in [Float64]
 
         # fallback conversion to vertex representation
         B3 = BallInf(zeros(N, 3), N(1))
-        U = Matrix(N(1)*I, 3, 3) * B3
-        Uv = convert(VPolytope, U, prune=false)
+        U = Matrix(N(1) * I, 3, 3) * B3
+        Uv = convert(VPolytope, U; prune=false)
         @test ispermutation(vertices_list(Uv), vertices_list(B3))
 
         # -----------------
@@ -557,7 +557,7 @@ for N in [Float64]
     # tests that require Symbolics
     @static if isdefined(@__MODULE__, :Symbolics)
         vars = @variables x y
-        p1 = HPolytope([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
+        p1 = HPolytope([x + y <= 1, x + y >= -1, x - y <= 1, x - y >= -1], vars)
         b1 = Ball1(zeros(2), 1.0)
         @test isequivalent(p1, b1)
     end

@@ -59,24 +59,24 @@ packages such as
 Hence, you will have to install and load such an optional dependency to have
 access to the functionality of `SparseMatrixExp`.
 """
-struct SparseMatrixExp{N, MN<:AbstractSparseMatrix{N}} <: AbstractMatrix{N}
+struct SparseMatrixExp{N,MN<:AbstractSparseMatrix{N}} <: AbstractMatrix{N}
     M::MN
 
     # default constructor with dimension check
-    function SparseMatrixExp(M::MN) where {N, MN<:AbstractSparseMatrix{N}}
+    function SparseMatrixExp(M::MN) where {N,MN<:AbstractSparseMatrix{N}}
         @assert size(M, 1) == size(M, 2) "the lazy matrix exponential " *
-            "requires a square matrix, but it has size $(size(M))"
-        return new{N, MN}(M)
+                                         "requires a square matrix, but it has size $(size(M))"
+        return new{N,MN}(M)
     end
 end
 
-SparseMatrixExp(M::AbstractMatrix) =
+function SparseMatrixExp(M::AbstractMatrix)
     throw(ArgumentError("only sparse matrices can be used to create a `SparseMatrixExp`"))
+end
 
 Base.IndexStyle(::Type{<:SparseMatrixExp}) = IndexCartesian()
 
-Base.getindex(spmexp::SparseMatrixExp, I::Vararg{Int, 2}) =
-    get_column(spmexp, I[2])[I[1]]
+Base.getindex(spmexp::SparseMatrixExp, I::Vararg{Int,2}) = get_column(spmexp, I[2])[I[1]]
 
 function size(spmexp::SparseMatrixExp)
     return size(spmexp.M)
@@ -201,7 +201,7 @@ julia> E * EmptySet(100)
 ∅(100)
 ```
 """
-struct ExponentialMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+struct ExponentialMap{N,S<:LazySet{N}} <: AbstractAffineMap{N,S}
     spmexp::SparseMatrixExp{N}
     X::S
 end
@@ -210,7 +210,7 @@ end
 function ExponentialMap(spmexp::SparseMatrixExp, Z::ZeroSet)
     N = promote_type(eltype(spmexp), eltype(Z))
     @assert dim(Z) == size(spmexp, 2) "an exponential map of size " *
-            "$(size(spmexp)) cannot be applied to a set of dimension $(dim(Z))"
+                                      "$(size(spmexp)) cannot be applied to a set of dimension $(dim(Z))"
     return ZeroSet{N}(size(spmexp, 1))
 end
 
@@ -218,7 +218,7 @@ end
 function ExponentialMap(spmexp::SparseMatrixExp, ∅::EmptySet)
     N = promote_type(eltype(spmexp), eltype(∅))
     @assert dim(∅) == size(spmexp, 2) "an exponential map of size " *
-            "$(size(spmexp)) cannot be applied to a set of dimension $(dim(∅))"
+                                      "$(size(spmexp)) cannot be applied to a set of dimension $(dim(∅))"
     return EmptySet{N}(size(spmexp, 1))
 end
 
@@ -229,7 +229,7 @@ end
 
 isoperationtype(::Type{<:ExponentialMap}) = true
 
-isconvextype(::Type{ExponentialMap{N, S}}) where {N, S} = isconvextype(S)
+isconvextype(::Type{ExponentialMap{N,S}}) where {N,S} = isconvextype(S)
 
 """
 ```
@@ -383,7 +383,7 @@ true
 function ∈(x::AbstractVector, em::ExponentialMap;
            backend=get_exponential_backend())
     @assert length(x) == dim(em) "a vector of length $(length(x)) is " *
-        "incompatible with a set of dimension $(dim(em))"
+                                 "incompatible with a set of dimension $(dim(em))"
     N = promote_type(eltype(x), eltype(em))
     y = _expmv(backend, -one(N), em.spmexp.M, x)
     return y ∈ em.X
@@ -440,6 +440,6 @@ function isbounded(em::ExponentialMap)
     return isbounded(em.X)
 end
 
-function isboundedtype(::Type{<:ExponentialMap{N, S}}) where {N, S}
+function isboundedtype(::Type{<:ExponentialMap{N,S}}) where {N,S}
     return isboundedtype(S)
 end

@@ -52,18 +52,18 @@ julia> σ([1.0, 2, 3, 4, 5], B)
  0.3370999312316211
 ```
 """
-struct Ball2{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
+struct Ball2{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
     center::VN
     radius::N
 
     # default constructor with domain constraint for radius
-    function Ball2(center::VN, radius::N) where {N<:AbstractFloat, VN<:AbstractVector{N}}
+    function Ball2(center::VN, radius::N) where {N<:AbstractFloat,VN<:AbstractVector{N}}
         @assert radius >= zero(N) "the radius must not be negative"
-        return new{N, VN}(center, radius)
+        return new{N,VN}(center, radius)
     end
 end
 
-function ○(c::VN, r::N) where {N<:AbstractFloat, VN<:AbstractVector{N}}
+function ○(c::VN, r::N) where {N<:AbstractFloat,VN<:AbstractVector{N}}
     return Ball2(c, r)
 end
 
@@ -230,7 +230,7 @@ function rand(::Type{Ball2};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     radius = abs(randn(rng, N))
@@ -316,11 +316,11 @@ See `_sample_unit_nball_muller!` for implementation details.
 """
 function sample(B::Ball2{N}, nsamples::Int;
                 rng::AbstractRNG=GLOBAL_RNG,
-                seed::Union{Int, Nothing}=nothing) where {N}
+                seed::Union{Int,Nothing}=nothing) where {N}
     require(@__MODULE__, :Distributions; fun_name="sample")
     n = dim(B)
     D = Vector{Vector{N}}(undef, nsamples) # preallocate output
-    _sample_unit_nball_muller!(D, n, nsamples, rng=rng, seed=seed)
+    _sample_unit_nball_muller!(D, n, nsamples; rng=rng, seed=seed)
 
     # customize for the given ball
     r, c = B.radius, B.center
@@ -330,9 +330,7 @@ function sample(B::Ball2{N}, nsamples::Int;
     return D
 end
 
-
 # --- Ball2 functions ---
-
 
 """
     chebyshev_center_radius(B::Ball2; [kwargs]...)
@@ -384,7 +382,7 @@ function volume(B::Ball2)
     if iseven(n)
         vol = Base.pi^k * R^n / factorial(k)
     else
-        vol = 2 * factorial(k) * (4*Base.pi)^k * R^n / factorial(n)
+        vol = 2 * factorial(k) * (4 * Base.pi)^k * R^n / factorial(n)
     end
     return vol
 end

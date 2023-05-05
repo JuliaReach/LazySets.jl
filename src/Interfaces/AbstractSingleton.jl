@@ -341,9 +341,9 @@ end
 # this operation is forbidden, but it is a common error
 function ∈(S::AbstractSingleton, X::LazySet)
     throw(ArgumentError("cannot make a point-in-set check if the left-hand " *
-          "side is a set; either check for set inclusion, as in `S ⊆ X`, or " *
-          "check for membership, as in `element(S) ∈ X` (the results are " *
-          "equivalent, but the implementations may differ)"))
+                        "side is a set; either check for set inclusion, as in `S ⊆ X`, or " *
+                        "check for membership, as in `element(S) ∈ X` (the results are " *
+                        "equivalent, but the implementations may differ)"))
 end
 
 function chebyshev_center_radius(S::AbstractSingleton{N}) where {N}

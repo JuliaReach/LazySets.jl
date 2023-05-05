@@ -5,7 +5,7 @@ export Interval,
        vertices_list,
        isflat,
        linear_map
-       constraints_list
+constraints_list
 
 """
     Interval{N, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
@@ -77,18 +77,18 @@ julia> Interval(0//1, 2//1)
 Interval{Rational{Int64}, IntervalArithmetic.Interval{Rational{Int64}}}([0//1, 2//1])
 ```
 """
-struct Interval{N, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
+struct Interval{N,IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
     dat::IN
 
-    function Interval(dat::IN) where {N, IN<:AbstractInterval{N}}
+    function Interval(dat::IN) where {N,IN<:AbstractInterval{N}}
         @assert isfinite(dat.lo) && isfinite(dat.hi) "intervals must be bounded"
 
-        return new{N, IN}(dat)
+        return new{N,IN}(dat)
     end
 end
 
 # constructor from two numbers with type promotion
-function Interval(lo::N1, hi::N2) where {N1, N2}
+function Interval(lo::N1, hi::N2) where {N1,N2}
     N = promote_type(N1, N2)
     return Interval(IA.Interval(N(lo), N(hi)))
 end
@@ -96,7 +96,7 @@ end
 # constructor from a vector
 function Interval(x::AbstractVector)
     @assert length(x) == 2 "cannot construct an Interval from a " *
-        "$(length(x))-dimensional vector"
+                           "$(length(x))-dimensional vector"
     return @inbounds Interval(x[1], x[2])
 end
 
@@ -138,7 +138,7 @@ The support vector in the given direction.
 """
 function σ(d::AbstractVector, x::Interval)
     @assert length(d) == dim(x) "a $(length(d))-dimensional vector is " *
-        "incompatible with an $(dim(x))-dimensional set"
+                                "incompatible with an $(dim(x))-dimensional set"
     N = promote_type(eltype(d), eltype(x))
     return @inbounds d[1] > zero(N) ? high(x) : low(x)
 end
@@ -159,7 +159,7 @@ Evaluation of the support function in the given direction.
 """
 function ρ(d::AbstractVector, x::Interval)
     @assert length(d) == dim(x) "a $(length(d))-dimensional vector is " *
-        "incompatible with an $(dim(x))-dimensional set"
+                                "incompatible with an $(dim(x))-dimensional set"
     N = promote_type(eltype(d), eltype(x))
     return @inbounds d[1] * (d[1] > zero(N) ? max(x) : min(x))
 end
@@ -259,7 +259,7 @@ Check whether a given point is contained in an interval.
 """
 function ∈(v::AbstractVector, x::Interval)
     @assert length(v) == 1 "a $(length(v))-dimensional vector is " *
-        "incompatible with an interval"
+                           "incompatible with an interval"
     return @inbounds v[1] ∈ x.dat
 end
 
@@ -392,7 +392,7 @@ function rand(::Type{Interval};
               N::Type{<:Real}=Float64,
               dim::Int=1,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     @assert dim == 1 "cannot create a random Interval of dimension $dim"
     rng = reseed(rng, seed)
     x = randn(rng, N)
@@ -437,7 +437,7 @@ half-spaces.
 """
 function constraints_list(x::Interval)
     N = eltype(x)
-    constraints = Vector{HalfSpace{N, SingleEntryVector{N}}}(undef, 2)
+    constraints = Vector{HalfSpace{N,SingleEntryVector{N}}}(undef, 2)
     e₁ = SingleEntryVector(1, 1, one(N))
     @inbounds constraints[1] = HalfSpace(e₁, max(x))
     @inbounds constraints[2] = HalfSpace(-e₁, -min(x))

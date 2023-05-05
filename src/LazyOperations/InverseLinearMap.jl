@@ -60,26 +60,27 @@ julia> InverseLinearMap(A, ZeroSet{Int}(3))
 ZeroSet{Int64}(3)
 ```
 """
-struct InverseLinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
+struct InverseLinearMap{N,S<:LazySet{N},NM,MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N,S}
     M::MAT
     X::S
 
     # default constructor with dimension match check
-    function InverseLinearMap(M::MAT, X::S; check_invertibility::Bool=false
-                             ) where {N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}}
+    function InverseLinearMap(M::MAT, X::S;
+                              check_invertibility::Bool=false) where {N,S<:LazySet{N},NM,
+                                                                      MAT<:AbstractMatrix{NM}}
         @assert dim(X) == size(M, 1) "a linear map of size $(size(M)) cannot " *
-                                    "be applied to a set of dimension $(dim(X))"
+                                     "be applied to a set of dimension $(dim(X))"
         if check_invertibility
             @assert isinvertible(M) "the linear map is not invertible"
         end
-        return new{N, S, NM, MAT}(M, X)
+        return new{N,S,NM,MAT}(M, X)
     end
 end
 
 # convenience constructor from a UniformScaling
 function InverseLinearMap(M::UniformScaling{N}, X::LazySet;
                           check_invertibility::Bool=false) where {N}
-    return InverseLinearMap(M.λ, X, check_invertibility=check_invertibility)
+    return InverseLinearMap(M.λ, X; check_invertibility=check_invertibility)
 end
 
 # convenience constructor from a scalar
@@ -93,7 +94,7 @@ function InverseLinearMap(α::Real, X::LazySet; check_invertibility::Bool=false)
     end
 
     D = Diagonal(fill(α, dim(X)))
-    return InverseLinearMap(D, X, check_invertibility=false)
+    return InverseLinearMap(D, X; check_invertibility=false)
 end
 
 # combine two inverse linear maps into a single inverse linear map
@@ -104,14 +105,14 @@ end
 # ZeroSet is almost absorbing for InverseLinearMap (only the dimension changes)
 function InverseLinearMap(M::AbstractMatrix, Z::ZeroSet{N}) where {N}
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot " *
-            "be applied to a set of dimension $(dim(Z))"
+                                 "be applied to a set of dimension $(dim(Z))"
     return ZeroSet{N}(size(M, 1))
 end
 
 # EmptySet is almost absorbing for InverseLinearMap (only the dimension changes)
 function InverseLinearMap(M::AbstractMatrix, ∅::EmptySet{N}) where {N}
     @assert dim(∅) == size(M, 2) "a linear map of size $(size(M)) cannot " *
-            "be applied to a set of dimension $(dim(∅))"
+                                 "be applied to a set of dimension $(dim(∅))"
     return EmptySet{N}(size(M, 1))
 end
 

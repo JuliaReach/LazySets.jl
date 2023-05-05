@@ -165,7 +165,7 @@ end
 function decompose(S::LazySet{N},
                    partition::AbstractVector{<:AbstractVector{Int}},
                    block_options::Union{Type{<:LazySet},
-                                        Pair{<:UnionAll, <:Real},
+                                        Pair{<:UnionAll,<:Real},
                                         Real,
                                         Type{<:AbstractDirections},
                                         Nothing}) where {N}

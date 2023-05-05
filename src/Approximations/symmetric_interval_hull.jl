@@ -65,7 +65,7 @@ function symmetric_interval_hull(S::AbstractSingleton{N}) where {N}
     return Hyperrectangle(zeros(N, n), r)
 end
 
-function symmetric_interval_hull(P::Union{VPolygon{N}, VPolytope{N}}) where {N}
+function symmetric_interval_hull(P::Union{VPolygon{N},VPolytope{N}}) where {N}
     n = dim(P)
     r = zeros(N, n)
     @inbounds for v in vertices(P)
@@ -82,19 +82,19 @@ function symmetric_interval_hull(L::LineSegment{N}) where {N}
     return Hyperrectangle(zeros(N, 2), r)
 end
 
-function symmetric_interval_hull(lm::LinearMap{N, <:AbstractSingleton}) where {N}
+function symmetric_interval_hull(lm::LinearMap{N,<:AbstractSingleton}) where {N}
     n = dim(lm)
     r = abs.(lm.M * element(lm.X))
     return Hyperrectangle(zeros(N, n), r)
 end
 
-function symmetric_interval_hull(X::MinkowskiSum{N, <:AbstractSingleton, <:AbstractSingleton}) where {N}
+function symmetric_interval_hull(X::MinkowskiSum{N,<:AbstractSingleton,<:AbstractSingleton}) where {N}
     n = dim(X)
     r = abs.(element(X.X) + element(X.Y))
     return Hyperrectangle(zeros(N, n), r)
 end
 
-function symmetric_interval_hull(lm::LinearMap{N, <:AbstractHyperrectangle}) where {N}
+function symmetric_interval_hull(lm::LinearMap{N,<:AbstractHyperrectangle}) where {N}
     n = dim(lm)
     M = lm.M
     H = lm.X
@@ -102,7 +102,7 @@ function symmetric_interval_hull(lm::LinearMap{N, <:AbstractHyperrectangle}) whe
     return Hyperrectangle(zeros(N, n), r)
 end
 
-function symmetric_interval_hull(E::ExponentialMap{N, <:AbstractSingleton};
+function symmetric_interval_hull(E::ExponentialMap{N,<:AbstractSingleton};
                                  backend=get_exponential_backend()) where {N}
     v = _expmv(backend, one(N), E.spmexp.M, element(E.X))
     c = zeros(N, dim(E))
@@ -110,7 +110,7 @@ function symmetric_interval_hull(E::ExponentialMap{N, <:AbstractSingleton};
     return Hyperrectangle(c, r)
 end
 
-function symmetric_interval_hull(E::ExponentialMap{N, <:AbstractHyperrectangle};
+function symmetric_interval_hull(E::ExponentialMap{N,<:AbstractHyperrectangle};
                                  backend=get_exponential_backend()) where {N}
     H = set(E)
     n = dim(H)

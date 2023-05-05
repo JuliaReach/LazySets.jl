@@ -106,34 +106,38 @@ definition. For applications in reachability analysis of neural networks, see
       *Star-based reachability analysis of deep neural networks.*
       In International Symposium on Formal Methods (pp. 670-686). Springer, Cham.
 """
-struct Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}} <: AbstractPolyhedron{N}
+struct Star{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N},PT<:AbstractPolyhedron{N}} <:
+       AbstractPolyhedron{N}
     c::VN # center
     V::MN # basis
     P::PT # predicate
 
     # default constructor with size checks
-    function Star(c::VN, V::MN, P::PT) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}}
+    function Star(c::VN, V::MN,
+                  P::PT) where {N,VN<:AbstractVector{N},MN<:AbstractMatrix{N},
+                                PT<:AbstractPolyhedron{N}}
         @assert length(c) == size(V, 1) "a center of length $(length(c)) is " *
-            "incompatible with basis vectors of length $(size(V, 1))"
+                                        "incompatible with basis vectors of length $(size(V, 1))"
 
         @assert dim(P) == size(V, 2) "the number of basis vectors " *
-            "$(size(V, 2)) is incompatible with the predicate's dimension " *
-            "$(dim(P))"
+                                     "$(size(V, 2)) is incompatible with the predicate's dimension " *
+                                     "$(dim(P))"
 
-        return new{N, VN, MN, PT}(c, V, P)
+        return new{N,VN,MN,PT}(c, V, P)
     end
 end
 
 # constructor from list of generators
-function Star(c::VN, vlist::AbstractVector{VN}, P::PT) where {N, VN<:AbstractVector{N}, PT<:AbstractPolyhedron{N}}
+function Star(c::VN, vlist::AbstractVector{VN},
+              P::PT) where {N,VN<:AbstractVector{N},PT<:AbstractPolyhedron{N}}
     V = to_matrix(vlist, length(c))
     return Star(c, V, P)
 end
 
 # analogous AffineMap type
-const STAR{N, VN<:AbstractVector{N},
-              MN<:AbstractMatrix{N},
-              PT<:AbstractPolyhedron{N}} = AffineMap{N, PT, N, MN, VN}
+const STAR{N,VN<:AbstractVector{N},
+MN<:AbstractMatrix{N},
+PT<:AbstractPolyhedron{N}} = AffineMap{N,PT,N,MN,VN}
 
 isoperationtype(::Type{<:Star}) = false
 
@@ -295,7 +299,7 @@ See [`isbounded(::AbstractAffineMap)`](@ref).
 """
 function isbounded(X::Star; cond_tol::Number=DEFAULT_COND_TOL)
     am = convert(STAR, X)
-    return isbounded(am, cond_tol=cond_tol)
+    return isbounded(am; cond_tol=cond_tol)
 end
 
 """
@@ -342,7 +346,7 @@ See [`vertices_list(::AbstractAffineMap)`](@ref).
 """
 function vertices_list(X::Star; apply_convex_hull::Bool=true)
     am = convert(STAR, X)
-    return vertices_list(am, apply_convex_hull=apply_convex_hull)
+    return vertices_list(am; apply_convex_hull=apply_convex_hull)
 end
 
 """
@@ -441,8 +445,8 @@ function rand(::Type{Star};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing,
-              P::AbstractPolyhedron=rand(HPolytope, N=N, dim=dim, rng=rng, seed=seed))
+              seed::Union{Int,Nothing}=nothing,
+              P::AbstractPolyhedron=rand(HPolytope; N=N, dim=dim, rng=rng, seed=seed))
     rng = reseed(rng, seed)
     c = randn(rng, N, dim)
     V = randn(rng, N, dim, LazySets.dim(P))

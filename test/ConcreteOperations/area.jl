@@ -20,8 +20,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test area(p) ≈ N(35)
 
     # more than four vertices
-    p2 = VPolygon([N[1, 0], N[0, 0], N[0, 1], N[1/2, 2], [1, 1]])
-    @test area(p2) == N(3/2)
+    p2 = VPolygon([N[1, 0], N[0, 0], N[0, 1], N[1 / 2, 2], [1, 1]])
+    @test area(p2) == N(3 / 2)
 
     # non-convex polygon (via list of vertices)
     @test LazySets._area_polygon(vlist) ≈ N(30)

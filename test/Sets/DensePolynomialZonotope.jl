@@ -14,12 +14,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test center(P) == c
     @test ngens_dep(P) == 5
     @test ngens_indep(P) == 1
-    @test order(P) == 3//1
+    @test order(P) == 3 // 1
 
     # type-specific concrete methods
     scale(N(0.5), P)
     linear_map(N[1.0 2.0; 2.0 5.0], P)
-    z = Zonotope(N[1., 2.], Matrix(N(1)I, 2, 2))
+    z = Zonotope(N[1.0, 2.0], Matrix(N(1)I, 2, 2))
     minkowski_sum(P, z)
     minkowski_sum(z, P)
 end

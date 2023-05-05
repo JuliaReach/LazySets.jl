@@ -28,7 +28,7 @@ julia> b = [Ball2([2*pi*i/100, sin(2*pi*i/100)], 0.05) for i in 1:100];
 julia> c = ConvexHullArray(b);
 ```
 """
-struct ConvexHullArray{N, S<:LazySet{N}} <: ConvexSet{N}
+struct ConvexHullArray{N,S<:LazySet{N}} <: ConvexSet{N}
     array::Vector{S}
 end
 
@@ -155,7 +155,7 @@ function isbounded(cha::ConvexHullArray)
     return all(isbounded, cha.array)
 end
 
-function isboundedtype(::Type{<:ConvexHullArray{N, S}}) where {N, S}
+function isboundedtype(::Type{<:ConvexHullArray{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
@@ -202,13 +202,13 @@ function vertices_list(cha::ConvexHullArray;
                        prune::Bool=apply_convex_hull)
     vlist = vcat([vertices_list(Xi) for Xi in array(cha)]...)
     if apply_convex_hull || prune
-        convex_hull!(vlist, backend=backend)
+        convex_hull!(vlist; backend=backend)
     end
     return vlist
 end
 
 # list of constraints of a convex-hull array of singletons
-function constraints_list(X::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+function constraints_list(X::ConvexHullArray{N,Singleton{N,VT}}) where {N,VT}
     n = dim(X)
     ST = n == 2 ? VPolygon : VPolytope
     V = convert(ST, X)

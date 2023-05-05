@@ -47,10 +47,8 @@ function linprog(c, A, sense, b, l, u, solver)
     @constraint(model, A[ge_rows, :] * x .>= b[ge_rows])
     @constraint(model, A[le_rows, :] * x .<= b[le_rows])
     optimize!(model)
-    return (
-        status = termination_status(model),
-        objval = objective_value(model),
-        sol = value.(x),
-        model = model
-    )
+    return (status = termination_status(model),
+            objval = objective_value(model),
+            sol    = value.(x),
+            model  = model)
 end

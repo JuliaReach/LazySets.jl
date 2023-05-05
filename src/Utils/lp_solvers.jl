@@ -1,11 +1,11 @@
 # default LP solver for floating-point numbers
 function default_lp_solver(::Type{<:AbstractFloat})
-    JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(method=GLPK.SIMPLEX))
+    return JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(; method=GLPK.SIMPLEX))
 end
 
 # default LP solver for rational numbers
 function default_lp_solver(::Type{<:Rational})
-    JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(method=GLPK.EXACT))
+    return JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(; method=GLPK.EXACT))
 end
 
 # default LP solver given two possibly different numeric types
@@ -23,5 +23,5 @@ end
 # interfaces (see #1493)
 function default_lp_solver_polyhedra(N, kwargs...)
     require(@__MODULE__, :Polyhedra; fun_name="default_lp_solver_polyhedra")
-    error("no default solver for numeric type $N")
+    return error("no default solver for numeric type $N")
 end

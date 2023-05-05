@@ -14,7 +14,7 @@ function _extract_limits(p::RecipesBase.AbstractPlot,
     if length(p) > 0
         subplot = p[1]
         for symbol in [:x, :y]
-            lims[symbol] = subplot[Symbol(symbol,:axis)][:lims]
+            lims[symbol] = subplot[Symbol(symbol, :axis)][:lims]
         end
     else
         lims[:x] = :auto
@@ -37,7 +37,7 @@ function _extract_extrema(p::RecipesBase.AbstractPlot)
     if length(p) > 0
         subplot = p[1]
         for symbol in [:x, :y]
-            bounds = subplot[Symbol(symbol,:axis)][:extrema]
+            bounds = subplot[Symbol(symbol, :axis)][:extrema]
             emin = bounds.emin
             emax = bounds.emax
             extrema[symbol] = (emin, emax)
@@ -55,7 +55,7 @@ function _update_plot_limits!(lims, X::LazySet)
 
     box_min = low(box)
     box_max = high(box)
-    for (idx,symbol) in enumerate([:x, :y])
+    for (idx, symbol) in enumerate([:x, :y])
         if lims[symbol] != :auto
             # width of the plotting window including the new set in the `symbol` direction
             width = max(lims[symbol][2], box_max[idx]) -
@@ -63,14 +63,14 @@ function _update_plot_limits!(lims, X::LazySet)
 
             # scaling factor for beautification
             ϵ = 0.05
-            offset = width*ϵ
+            offset = width * ϵ
 
             # extend the current plot limits if the new set (plus a small offset) falls outside
             lims[symbol] = (min(lims[symbol][1], box_min[idx] - offset),
                             max(lims[symbol][2], box_max[idx] + offset))
         end
     end
-    nothing
+    return nothing
 end
 
 function _set_auto_limits_to_extrema!(lims, extr)
@@ -86,13 +86,13 @@ function _set_auto_limits_to_extrema!(lims, extr)
         end
     end
     # otherwise keep the old limits
-    nothing
+    return nothing
 end
 
 function _bounding_hyperrectangle(lims, N)
     low_lim = [lims[:x][1] - DEFAULT_PLOT_LIMIT, lims[:y][1] - DEFAULT_PLOT_LIMIT]
     high_lim = [lims[:x][2] + DEFAULT_PLOT_LIMIT, lims[:y][2] + DEFAULT_PLOT_LIMIT]
-    return Hyperrectangle(low=convert.(N, low_lim), high=convert.(N, high_lim))
+    return Hyperrectangle(; low=convert.(N, low_lim), high=convert.(N, high_lim))
 end
 
 """
@@ -146,8 +146,8 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 ```
 """
 @recipe function plot_list(list::AbstractVector{VN}, ε::Real=N(PLOT_PRECISION),
-                           Nφ::Int=PLOT_POLAR_DIRECTIONS; same_recipe=false
-                          ) where {N, VN<:LazySet{N}}
+                           Nφ::Int=PLOT_POLAR_DIRECTIONS;
+                           same_recipe=false) where {N,VN<:LazySet{N}}
     if same_recipe
         label --> DEFAULT_LABEL
         grid --> DEFAULT_GRID
@@ -170,7 +170,7 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 end
 
 function _plot_list_same_recipe(list::AbstractVector{VN}, ε::Real=N(PLOT_PRECISION),
-                                Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N, VN<:LazySet{N}}
+                                Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N,VN<:LazySet{N}}
     first = true
     x = Vector{N}()
     y = Vector{N}()
@@ -207,12 +207,11 @@ function _plot_list_same_recipe(list::AbstractVector{VN}, ε::Real=N(PLOT_PRECIS
         append!(x, x_new)
         append!(y, y_new)
     end
-    x, y
+    return x, y
 end
 
 # recipe for vector of singletons
-@recipe function plot_list(list::AbstractVector{SN}) where {N, SN<:AbstractSingleton{N}}
-
+@recipe function plot_list(list::AbstractVector{SN}) where {N,SN<:AbstractSingleton{N}}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -222,12 +221,11 @@ end
     seriescolor --> DEFAULT_COLOR
     seriestype --> :scatter
 
-    _plot_singleton_list(list)
+    return _plot_singleton_list(list)
 end
 
 # plot recipe for the union of singletons
-@recipe function plot_list(X::UnionSetArray{N, SN}) where {N, SN<:AbstractSingleton{N}}
-
+@recipe function plot_list(X::UnionSetArray{N,SN}) where {N,SN<:AbstractSingleton{N}}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -238,7 +236,7 @@ end
     seriestype --> :scatter
 
     list = array(X)
-    _plot_singleton_list(list)
+    return _plot_singleton_list(list)
 end
 
 function _plot_singleton_list(list)
@@ -249,11 +247,11 @@ function _plot_singleton_list(list)
         _plot_singleton_list_2D(list)
     else
         throw(ArgumentError("plotting singletons is only available for " *
-            "dimensions one or two, but got dimension $n"))
+                            "dimensions one or two, but got dimension $n"))
     end
 end
 
-function _plot_singleton_list_1D(list::AbstractVector{SN}) where {N, SN<:AbstractSingleton{N}}
+function _plot_singleton_list_1D(list::AbstractVector{SN}) where {N,SN<:AbstractSingleton{N}}
     m = length(list)
 
     x = Vector{N}(undef, m)
@@ -263,10 +261,10 @@ function _plot_singleton_list_1D(list::AbstractVector{SN}) where {N, SN<:Abstrac
         p = element(Xi)
         x[i] = p[1]
     end
-    x, y
+    return x, y
 end
 
-function _plot_singleton_list_2D(list::AbstractVector{SN}) where {N, SN<:AbstractSingleton{N}}
+function _plot_singleton_list_2D(list::AbstractVector{SN}) where {N,SN<:AbstractSingleton{N}}
     m = length(list)
     x = Vector{N}(undef, m)
     y = Vector{N}(undef, m)
@@ -276,7 +274,7 @@ function _plot_singleton_list_2D(list::AbstractVector{SN}) where {N, SN<:Abstrac
         x[i] = p[1]
         y[i] = p[2]
     end
-    x, y
+    return x, y
 end
 
 """
@@ -332,8 +330,8 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
             _set_auto_limits_to_extrema!(lims, extr)
             X = intersection(X, _bounding_hyperrectangle(lims, eltype(X)))
 
-        # if there is already a plotted set and the limits are fixed,
-        # automatically adjust the axis limits (e.g. after plotting a unbounded set)
+            # if there is already a plotted set and the limits are fixed,
+            # automatically adjust the axis limits (e.g. after plotting a unbounded set)
         elseif length(p) > 0
             _update_plot_limits!(lims, X)
         end
@@ -347,12 +345,12 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
         else
             x, y = res
             if length(x) == 1 ||
-                    (length(x) == 2 && norm([x[1], y[1]] - [x[2], y[2]]) ≈ 0)
+               (length(x) == 2 && norm([x[1], y[1]] - [x[2], y[2]]) ≈ 0)
                 # single point
                 seriestype := :scatter
             elseif length(x) == 2
                 # flat line segment
-                linecolor   --> DEFAULT_COLOR
+                linecolor --> DEFAULT_COLOR
                 markercolor --> DEFAULT_COLOR
                 markershape --> :circle
                 seriestype := :path
@@ -411,7 +409,7 @@ julia> plot(Singleton([0.5, 1.0]))
         ylims --> lims[:y]
     end
 
-    plot_recipe(S, ε)
+    return plot_recipe(S, ε)
 end
 
 """
@@ -431,7 +429,7 @@ Plot an empty set.
         aspect_ratio --> DEFAULT_ASPECT_RATIO
     end
 
-    plot_recipe(∅)
+    return plot_recipe(∅)
 end
 
 """
@@ -478,8 +476,7 @@ julia> plot(X, 0.0, 100)  # equivalent to the above line
 """
 @recipe function plot_intersection(cap::Intersection{N},
                                    ε::Real=zero(N),
-                                   Nφ::Int=PLOT_POLAR_DIRECTIONS
-                                  ) where {N}
+                                   Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -504,8 +501,8 @@ julia> plot(X, 0.0, 100)  # equivalent to the above line
             cap = Intersection(bounding_box, cap.Y)
         end
 
-    # if there is already a plotted set and the limits are fixed,
-    # automatically adjust the axis limits (e.g. after plotting a unbounded set)
+        # if there is already a plotted set and the limits are fixed,
+        # automatically adjust the axis limits (e.g. after plotting a unbounded set)
     elseif length(p) > 0
         _update_plot_limits!(lims, cap)
     end
@@ -513,7 +510,7 @@ julia> plot(X, 0.0, 100)  # equivalent to the above line
     xlims --> lims[:x]
     ylims --> lims[:y]
 
-    plot_recipe(cap, ε)
+    return plot_recipe(cap, ε)
 end
 
 # non-convex sets

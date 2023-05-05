@@ -118,7 +118,6 @@ the same load is distributed among all available workers. For details see
 function process_chunk!(S::LazySet{N},
                         irange::UnitRange{Int},
                         c::SharedVector{N}, r::SharedVector{N}) where {N}
-
     d = zeros(N, dim(S))
 
     for i in irange

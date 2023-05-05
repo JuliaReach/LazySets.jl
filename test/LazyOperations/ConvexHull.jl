@@ -79,10 +79,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isempty(cha)
 
     # test convex hull array of singleton
-    ConvexHullArray(
-        [Singleton(N[10, 1//2]), Singleton(N[11//10, 1//5]),
-         Singleton(N[7//5, 3//10]), Singleton(N[17//10, 1//2]),
-         Singleton(N[7//5, 4//5])])
+    ConvexHullArray([Singleton(N[10, 1 // 2]), Singleton(N[11 // 10, 1 // 5]),
+                     Singleton(N[7 // 5, 3 // 10]), Singleton(N[17 // 10, 1 // 2]),
+                     Singleton(N[7 // 5, 4 // 5])])
 
     # array getter
     v = Vector{LazySet{N}}()
@@ -138,9 +137,9 @@ for N in [Float64, Rational{Int}, Float32]
     CHarr = ConvexHullArray([B1, B2])
     for X in [Chull, CHarr]
         @test ispermutation(vertices_list(X),
-            [N[1, -1], N[-1, 1], N[-1, -1], N[1, 2], N[2, 1]])
-        @test ispermutation(vertices_list(X, apply_convex_hull=false),
-            [N[1, 1], N[1, -1], N[-1, 1], N[-1, -1],
-            N[1, 2], N[1, 0], N[2, 1], N[0, 1]])
+                            [N[1, -1], N[-1, 1], N[-1, -1], N[1, 2], N[2, 1]])
+        @test ispermutation(vertices_list(X; apply_convex_hull=false),
+                            [N[1, 1], N[1, -1], N[-1, 1], N[-1, -1],
+                             N[1, 2], N[1, 0], N[2, 1], N[0, 1]])
     end
 end

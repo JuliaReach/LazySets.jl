@@ -10,7 +10,8 @@ for N in [Float64, Rational{Int}, Float32]
     # convenience constructors
     @test b1 + b2 == b1 ⊕ b2 == X
     msa = MinkowskiSumArray([b1, b2, b1])
-    @test b1 + b2 + b1 == +(b1, b2, b1) == ⊕(b1, b2, b1) == +([b1, b2, b1]) == ⊕([b1, b2, b1]) == msa
+    @test b1 + b2 + b1 == +(b1, b2, b1) == ⊕(b1, b2, b1) == +([b1, b2, b1]) == ⊕([b1, b2, b1]) ==
+          msa
     @test +(b1) == ⊕(b1) == b1
 
     # swap
@@ -166,8 +167,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # convert m-sum of m-sum array to m-sum array (#1678)
     s = Singleton(N[1, 2, 3])
-    X  = s ⊕ MinkowskiSumArray([s, s])
-    @test convert(MinkowskiSumArray, X) isa MinkowskiSumArray{N, Singleton{N, Vector{N}}}
+    X = s ⊕ MinkowskiSumArray([s, s])
+    @test convert(MinkowskiSumArray, X) isa MinkowskiSumArray{N,Singleton{N,Vector{N}}}
 
     # concretize
     msa = MinkowskiSumArray([B, B])
@@ -247,9 +248,9 @@ for N in [Float64]
     if test_suite_polyhedra
         X = BallInf(N[0, 0], N(1)) ⊕ Singleton(N[1, 2])
         Y = Ball1(N[1, 1], N(1))
-        A = cartesian_product(X, Y, algorithm="vrep")
-        Ah = tohrep(A, backend=CDDLib.Library())
-        B = cartesian_product(X, Y, algorithm="hrep")
+        A = cartesian_product(X, Y; algorithm="vrep")
+        Ah = tohrep(A; backend=CDDLib.Library())
+        B = cartesian_product(X, Y; algorithm="hrep")
         @test Ah ⊆ B && B ⊆ Ah
     end
 end

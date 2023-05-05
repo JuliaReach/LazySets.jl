@@ -81,23 +81,23 @@ julia> σ(ones(3), rm)
  0.0
 ```
 """
-struct ResetMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+struct ResetMap{N,S<:LazySet{N}} <: AbstractAffineMap{N,S}
     X::S
-    resets::Dict{Int, N}
+    resets::Dict{Int,N}
 end
 
 isoperationtype(::Type{<:ResetMap}) = true
 
-isconvextype(::Type{ResetMap{N, S}}) where {N, S} = isconvextype(S)
+isconvextype(::Type{ResetMap{N,S}}) where {N,S} = isconvextype(S)
 
 # ZeroSet is "almost absorbing" for the reset map because only the translation
 # vector remains
-function ResetMap(Z::ZeroSet{N}, resets::Dict{Int, N}) where {N}
+function ResetMap(Z::ZeroSet{N}, resets::Dict{Int,N}) where {N}
     return Singleton(_vector_from_dictionary(resets, dim(Z)))
 end
 
 # EmptySet is absorbing for ResetMap
-function ResetMap(∅::EmptySet{N}, resets::Dict{Int, N}) where {N}
+function ResetMap(∅::EmptySet{N}, resets::Dict{Int,N}) where {N}
     return ∅
 end
 
@@ -151,7 +151,7 @@ function vector(rm::ResetMap)
     return _vector_from_dictionary(rm.resets, dim(rm))
 end
 
-function _vector_from_dictionary(dict::Dict{Int, N}, n::Int) where {N}
+function _vector_from_dictionary(dict::Dict{Int,N}, n::Int) where {N}
     b = sparsevec(Int[], N[], n)
     for (i, val) in dict
         b[i] = val
@@ -269,7 +269,7 @@ function an_element(rm::ResetMap)
     return substitute(rm.resets, an_element(rm.X))
 end
 
-function isboundedtype(::Type{<:ResetMap{N, S}}) where {N, S}
+function isboundedtype(::Type{<:ResetMap{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
@@ -333,10 +333,10 @@ function constraints_list(rm::ResetMap)
     return constraints
 end
 
-function constraints_list(rm::ResetMap{N, S}) where {N, S<:AbstractHyperrectangle}
+function constraints_list(rm::ResetMap{N,S}) where {N,S<:AbstractHyperrectangle}
     H = rm.X
     n = dim(H)
-    constraints = Vector{HalfSpace{N, SingleEntryVector{N}}}(undef, 2*n)
+    constraints = Vector{HalfSpace{N,SingleEntryVector{N}}}(undef, 2 * n)
     j = 1
     for i in 1:n
         ei = SingleEntryVector(i, n, one(N))
@@ -344,11 +344,11 @@ function constraints_list(rm::ResetMap{N, S}) where {N, S<:AbstractHyperrectangl
             # reset dimension => add flat constraints
             v = rm.resets[i]
             constraints[j] = HalfSpace(ei, v)
-            constraints[j+1] = HalfSpace(-ei, -v)
+            constraints[j + 1] = HalfSpace(-ei, -v)
         else
             # non-reset dimension => use the hyperrectangle's constraints
             constraints[j] = HalfSpace(ei, high(H, i))
-            constraints[j+1] = HalfSpace(-ei, -low(H, i))
+            constraints[j + 1] = HalfSpace(-ei, -low(H, i))
         end
         j += 2
     end

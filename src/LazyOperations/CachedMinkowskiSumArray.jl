@@ -22,7 +22,7 @@ function getindex(cp::CachedPair, idx::Int)
     elseif idx == 2
         return cp.vec
     end
-    error("invalid index $idx, can only access a pair at index 1 or 2")
+    return error("invalid index $idx, can only access a pair at index 1 or 2")
 end
 
 """
@@ -52,17 +52,18 @@ and `s` is the support vector that was obtained. Thus this type assumes that
 The Minkowski sum preserves convexity: if all sets are convex, then
 their Minkowski sum is convex as well.
 """
-struct CachedMinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
+struct CachedMinkowskiSumArray{N,S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
-    cache::Dict{AbstractVector{N}, CachedPair{N}}
+    cache::Dict{AbstractVector{N},CachedPair{N}}
 
     # default constructor that initializes cache
-    CachedMinkowskiSumArray(arr::Vector{S}) where {N, S<:LazySet{N}} =
-        new{N, S}(arr, Dict{AbstractVector{N}, CachedPair{N}}())
+    function CachedMinkowskiSumArray(arr::Vector{S}) where {N,S<:LazySet{N}}
+        return new{N,S}(arr, Dict{AbstractVector{N},CachedPair{N}}())
+    end
 end
 
 isoperationtype(::Type{<:CachedMinkowskiSumArray}) = true
-isconvextype(::Type{CachedMinkowskiSumArray{N, S}}) where {N, S} = isconvextype(S)
+isconvextype(::Type{CachedMinkowskiSumArray{N,S}}) where {N,S} = isconvextype(S)
 
 # constructor for an empty sum with optional size hint and numeric type
 function CachedMinkowskiSumArray(n::Int=0, N::Type=Float64)
@@ -149,7 +150,7 @@ function σ(d::AbstractVector, cms::CachedMinkowskiSumArray)
         else
             # has only stored the support vector of the first k sets
             @assert k < l "invalid cache index"
-            svec = svec1 + _σ_msum_array(d, @view arr[k+1:l])
+            svec = svec1 + _σ_msum_array(d, @view arr[(k + 1):l])
         end
     else
         # first-time computation of support vector
@@ -177,7 +178,7 @@ function isbounded(cms::CachedMinkowskiSumArray)
     return all(isbounded, cms.array)
 end
 
-function isboundedtype(::Type{<:CachedMinkowskiSumArray{N, S}}) where {N, S}
+function isboundedtype(::Type{<:CachedMinkowskiSumArray{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 

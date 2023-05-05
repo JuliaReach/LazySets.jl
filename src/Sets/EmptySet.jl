@@ -60,7 +60,7 @@ Return the support vector of an empty set.
 An error.
 """
 function σ(d::AbstractVector, ∅::EmptySet)
-    error("the support vector of an empty set is undefined")
+    return error("the support vector of an empty set is undefined")
 end
 
 """
@@ -78,7 +78,7 @@ Evaluate the support function of an empty set in a given direction.
 An error.
 """
 function ρ(d::AbstractVector, ∅::EmptySet)
-    error("the support function of an empty set is undefined")
+    return error("the support function of an empty set is undefined")
 end
 
 function isboundedtype(::Type{<:EmptySet})
@@ -164,7 +164,7 @@ Return some element of an empty set.
 An error.
 """
 function an_element(∅::EmptySet)
-    error("an empty set does not contain any element")
+    return error("an empty set does not contain any element")
 end
 
 """
@@ -189,7 +189,7 @@ function rand(::Type{EmptySet};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     return EmptySet{N}(dim)
 end
@@ -228,7 +228,7 @@ that is centered in the origin.
 An error.
 """
 function norm(∅::EmptySet, p::Real=Inf)
-    error("the norm of an empty set is undefined")
+    return error("the norm of an empty set is undefined")
 end
 
 """
@@ -248,7 +248,7 @@ volume with the same center.
 An error.
 """
 function radius(∅::EmptySet, p::Real=Inf)
-    error("the radius of an empty set is undefined")
+    return error("the radius of an empty set is undefined")
 end
 
 """
@@ -269,7 +269,7 @@ with the same center.
 An error.
 """
 function diameter(∅::EmptySet, p::Real=Inf)
-    error("the diameter of an empty set is undefined")
+    return error("the diameter of an empty set is undefined")
 end
 
 """
@@ -325,7 +325,7 @@ An empty set.
 function linear_map(M::AbstractMatrix, ∅::EmptySet)
     N = eltype(∅)
     @assert size(M, 2) == dim(∅) "cannot apply a $(size(M))-dimensional " *
-        "matrix to a $(dim(∅))-dimensional set"
+                                 "matrix to a $(dim(∅))-dimensional set"
 
     return EmptySet{N}(size(M, 1))
 end
@@ -428,7 +428,7 @@ and the corresponding radius of an empty set.
 An error.
 """
 function chebyshev_center_radius(∅::EmptySet; kwargs...)
-    error("the Chebyshev center and radius of an empty set are undefined")
+    return error("the Chebyshev center and radius of an empty set are undefined")
 end
 
 """
@@ -450,7 +450,7 @@ An error.
 See also [`low(∅::EmptySet, i::Int)`](@ref).
 """
 function low(∅::EmptySet)
-    error("the lower bound of an empty set is undefined")
+    return error("the lower bound of an empty set is undefined")
 end
 
 """
@@ -472,7 +472,7 @@ An error.
 See also [`high(∅::EmptySet, i::Int)`](@ref).
 """
 function high(∅::EmptySet)
-    error("the upper bound of an empty set is undefined")
+    return error("the upper bound of an empty set is undefined")
 end
 
 """
@@ -490,7 +490,7 @@ Return the lowest coordinate of an empty set in the given direction.
 An error.
 """
 function low(∅::EmptySet, i::Int)
-    error("the lower bound of an empty set is undefined")
+    return error("the lower bound of an empty set is undefined")
 end
 
 """
@@ -508,7 +508,7 @@ Return the highest coordinate of an empty set in the given direction.
 An error.
 """
 function high(∅::EmptySet, i::Int)
-    error("the upper bound of an empty set is undefined")
+    return error("the upper bound of an empty set is undefined")
 end
 
 """

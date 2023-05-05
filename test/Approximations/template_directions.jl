@@ -26,9 +26,9 @@ for N in [Float64, Float32, Rational{Int}]
         @test isbounding(dir)
         @test dim(dir) == n
         box = overapproximate(X, dir)
-        @test length(dir) == length(box.constraints) == 2*n
+        @test length(dir) == length(box.constraints) == 2 * n
         box = overapproximate(X, BoxDirections)
-        @test length(dir) == length(box.constraints) == 2*n
+        @test length(dir) == length(box.constraints) == 2 * n
         box2 = overapproximate(X, HPolytope, dir)
         @test box == box2
 
@@ -50,27 +50,27 @@ for N in [Float64, Float32, Rational{Int}]
         oct = overapproximate(X, dir)
 
         # two constraints are redundant
-        @test length(dir) == 2 * n^2 >=  length(oct.constraints)
+        @test length(dir) == 2 * n^2 >= length(oct.constraints)
 
         # do not remove redundant constraints
-        oct = overapproximate(X, dir, prune=false)
+        oct = overapproximate(X, dir; prune=false)
         @test length(dir) == 2 * n^2 == length(oct.constraints)
 
         oct = overapproximate(X, OctDirections) # same passing only the type
-        @test length(dir) == 2 * n^2 >=  length(oct.constraints)
+        @test length(dir) == 2 * n^2 >= length(oct.constraints)
         # octagon direction using regular arrays
-        @test [v for v in OctDirections{N, Vector{N}}(n)] == Vector(collect.(OctDirections{N}(n)))
+        @test [v for v in OctDirections{N,Vector{N}}(n)] == Vector(collect.(OctDirections{N}(n)))
 
         # box-diagonal directions
         dir = BoxDiagDirections{N}(n)
         @test isbounding(dir)
         @test dim(dir) == n
-        boxdiag = overapproximate(X, dir, prune=false)
+        boxdiag = overapproximate(X, dir; prune=false)
         @test length(dir) == length(boxdiag.constraints) ==
-              (n == 1 ? 2 : 2^n + 2*n)
-        boxdiag = overapproximate(X, BoxDiagDirections, prune=false)
+              (n == 1 ? 2 : 2^n + 2 * n)
+        boxdiag = overapproximate(X, BoxDiagDirections; prune=false)
         @test length(dir) == length(boxdiag.constraints) ==
-              (n == 1 ? 2 : 2^n + 2*n)
+              (n == 1 ? 2 : 2^n + 2 * n)
 
         # spherical directions approximation
         if n == 2 && N in [Float32, Float64]
@@ -126,7 +126,7 @@ for N in [Float64]
         end
         dir = CustomDirections(dirs)
         @test isbounding(dir)
-        @test !isbounding(CustomDirections(dirs[1:end-1]))
+        @test !isbounding(CustomDirections(dirs[1:(end - 1)]))
         P = overapproximate(X, dir)
         @test P isa HPolytope && length(constraints_list(P)) == length(dirs)
     end

@@ -12,8 +12,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # hyperrectangles, nonempty difference
     H1 = Hyperrectangle(N[2, 3], N[1, 3])
-    H2 = Hyperrectangle(N[5/2, -1], N[1/2, 2])
-    @test minkowski_difference(H1, H2) == Hyperrectangle(N[-1/2, 4], N[1/2, 1])
+    H2 = Hyperrectangle(N[5 / 2, -1], N[1 / 2, 2])
+    @test minkowski_difference(H1, H2) == Hyperrectangle(N[-1 / 2, 4], N[1 / 2, 1])
 
     # hyperrectangles, empty difference
     H1 = Hyperrectangle(N[2, 3], N[1, 3])
@@ -41,12 +41,13 @@ for N in [Float64, Float32, Rational{Int}]
 
     # zonotope in 3D
     Zm = Zonotope(N[1, 1, 1], N[1 0 0; 0 1 0; 0 0 1])
-    Zs = Zonotope(N[0, 0, 1], hcat(N[1/2; 0; 0]))
+    Zs = Zonotope(N[0, 0, 1], hcat(N[1 / 2; 0; 0]))
     D = minkowski_difference(Zm, Zs)
-    @test isequivalent(D, HPolytope([
-        HalfSpace(N[0, 0, 1], N(1)), HalfSpace(N[0, 0, -1], N(1)),
-        HalfSpace(N[0, 1, 0], N(2)), HalfSpace(N[0, -1, 0], N(0)),
-        HalfSpace(N[1, 0, 0], N(3/2)), HalfSpace(N[-1, 0, 0], N(-1/2))]))
+    @test isequivalent(D,
+                       HPolytope([HalfSpace(N[0, 0, 1], N(1)), HalfSpace(N[0, 0, -1], N(1)),
+                                  HalfSpace(N[0, 1, 0], N(2)), HalfSpace(N[0, -1, 0], N(0)),
+                                  HalfSpace(N[1, 0, 0], N(3 / 2)),
+                                  HalfSpace(N[-1, 0, 0], N(-1 / 2))]))
     if N == Float64
         @test isequivalent(D, Zonotope(N[1, 1, 0], N[1/2 0 0; 0 1 0; 0 0 1]))
     end
@@ -61,7 +62,7 @@ for N in [Float64]
         radius = 2
         Q3 = Ball1(N[0, 0], N(radius))
         C3 = minkowski_difference(P3, Q3)
-        C3_res = HPolyhedron(N[mx1 0; 0 mx2], N[3 - mx1*radius, 3 - mx2*radius])
+        C3_res = HPolyhedron(N[mx1 0; 0 mx2], N[3 - mx1 * radius, 3 - mx2 * radius])
         @test C3 ⊆ C3_res && C3_res ⊆ C3
     end
 end

@@ -52,23 +52,22 @@ struct SparsePolynomialZonotope{N,
 
     # default constructor with dimension checks
     function SparsePolynomialZonotope(c::VN, G::MN, GI::MNI, E::ME,
-                                      idx::VI=uniqueID(size(E, 1))
-                                     ) where {N, VN<:AbstractVector{N},
-                                          MN<:AbstractMatrix{N},
-                                          MNI<:AbstractMatrix{N},
-                                          ME<:AbstractMatrix{<:Integer},
-                                          VI<:AbstractVector{<:Integer}}
+                                      idx::VI=uniqueID(size(E, 1))) where {N,VN<:AbstractVector{N},
+                                                                           MN<:AbstractMatrix{N},
+                                                                           MNI<:AbstractMatrix{N},
+                                                                           ME<:AbstractMatrix{<:Integer},
+                                                                           VI<:AbstractVector{<:Integer}}
         @assert length(c) == size(G, 1) throw(DimensionMismatch("c and G " *
-            "should have the same number of rows"))
+                                                                "should have the same number of rows"))
         @assert length(c) == size(GI, 1) throw(DimensionMismatch("c and GI " *
-            "should have the same number of rows"))
+                                                                 "should have the same number of rows"))
         @assert size(G, 2) == size(E, 2) throw(DimensionMismatch("G and E " *
-            "should have the same number of columns"))
+                                                                 "should have the same number of columns"))
         @assert all(>=(0), E) throw(ArgumentError("E should contain " *
-            "non-negative integers"))
+                                                  "non-negative integers"))
         @assert all(>(0), idx) throw(ArgumentError("identifiers in index " *
-            "vector must be positive integers"))
-        return new{N, VN, MN, MNI, ME, VI}(c, G, GI, E, idx)
+                                                   "vector must be positive integers"))
+        return new{N,VN,MN,MNI,ME,VI}(c, G, GI, E, idx)
     end
 end
 
@@ -314,11 +313,11 @@ function rand(::Type{SparsePolynomialZonotope};
               num_dependent_generators::Int=-1,
               num_independent_generators::Int=-1,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
 
     if num_independent_generators < 0
-        num_independent_generators = (dim == 1) ? 1 : rand(rng, dim:2*dim)
+        num_independent_generators = (dim == 1) ? 1 : rand(rng, dim:(2 * dim))
     end
     GI = randn(rng, N, dim, num_independent_generators)
 
@@ -430,7 +429,7 @@ function reduce_order(P::SparsePolynomialZonotope, r::Real,
     K = [norms[i] ≤ th for i in 1:h]
     Kbar = .!K
 
-    H = [norms[h+i] ≤ th for i in 1:q]
+    H = [norms[h + i] ≤ th for i in 1:q]
     Hbar = .!H
 
     PZ = SparsePolynomialZonotope(c, G[:, K], GI[:, H], E[:, K], idx)
@@ -479,7 +478,8 @@ end
 function _load_rho_range_enclosures()
     return quote
         function _ρ_range_enclosures(d::AbstractVector, P::SparsePolynomialZonotope,
-                 method::Union{RangeEnclosures.AbstractEnclosureAlgorithm, Nothing})
+                                     method::Union{RangeEnclosures.AbstractEnclosureAlgorithm,
+                                                   Nothing})
             # default method: BranchAndBoundEnclosure
             isnothing(method) && (method = BranchAndBoundEnclosure())
 
@@ -491,7 +491,7 @@ function _load_rho_range_enclosures()
 
             res = d' * c + sum(abs.(d' * gi) for gi in eachcol(GI); init=zero(eltype(GI)))
 
-            f(x) = sum(d' * gi * prod(x .^ ei) for (gi, ei) in zip(eachcol(G), eachcol(E)) )
+            f(x) = sum(d' * gi * prod(x .^ ei) for (gi, ei) in zip(eachcol(G), eachcol(E)))
 
             dom = IA.IntervalBox(IA.Interval(-1, 1), n)
             res += sup(enclose(f, dom, method))

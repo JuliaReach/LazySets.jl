@@ -25,8 +25,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test ngens(h) == 2
     h_flat = Hyperrectangle(N[1, 2, 3, 4, 5], N[1, 0, 2, 0, 3])
     @test collect(generators(h_flat)) ==
-        [SingleEntryVector(1, 5, N(1)), SingleEntryVector(3, 5, N(2)),
-         SingleEntryVector(5, 5, N(3))]
+          [SingleEntryVector(1, 5, N(1)), SingleEntryVector(3, 5, N(2)),
+           SingleEntryVector(5, 5, N(3))]
     @test genmat(h_flat) == N[1 0 0; 0 0 0; 0 2 0; 0 0 0; 0 0 3]
     @test ngens(h_flat) == 3
 
@@ -107,7 +107,7 @@ for N in [Float64, Rational{Int}, Float32]
     l = N[-1, -2]
     h = N[3, 4]
     H1 = Hyperrectangle(c, r)
-    H2 = Hyperrectangle(low=l, high=h)
+    H2 = Hyperrectangle(; low=l, high=h)
     @test H1.center == H2.center
     @test H1.radius == H2.radius
     @test_throws AssertionError Hyperrectangle(low=h, high=l)
@@ -115,10 +115,10 @@ for N in [Float64, Rational{Int}, Float32]
     # constructor without bounds check
     @test_throws AssertionError Hyperrectangle(low=N[1], high=N[0]) # default: true
     @test_throws AssertionError Hyperrectangle(low=N[1], high=N[0], check_bounds=true)
-    @test Hyperrectangle(low=N[1], high=N[0], check_bounds=false) isa Hyperrectangle
+    @test Hyperrectangle(; low=N[1], high=N[0], check_bounds=false) isa Hyperrectangle
 
     # Test low and high methods for a hyperrectangle
-    H = Hyperrectangle(low=l, high=h)
+    H = Hyperrectangle(; low=l, high=h)
     @test low(H) == l
     @test high(H) == h
 
@@ -156,10 +156,10 @@ for N in [Float64, Rational{Int}, Float32]
 
     # split
     @test ispermutation(split(H, [2, 2]),
-        [Hyperrectangle(N[-0.5, 0], N[1.5, 2]),
-         Hyperrectangle(N[2.5, 0], N[1.5, 2]),
-         Hyperrectangle(N[-0.5, 4], N[1.5, 2]),
-         Hyperrectangle(N[2.5, 4], N[1.5, 2])])
+                        [Hyperrectangle(N[-0.5, 0], N[1.5, 2]),
+                         Hyperrectangle(N[2.5, 0], N[1.5, 2]),
+                         Hyperrectangle(N[-0.5, 4], N[1.5, 2]),
+                         Hyperrectangle(N[2.5, 4], N[1.5, 2])])
     H = Hyperrectangle(N[0, 0], N[1, 2])
     S = split(H, [2, 2])
     @test S isa Vector{typeof(H)}
@@ -218,7 +218,8 @@ for N in [Float64, Rational{Int}, Float32]
     H = Hyperrectangle(ones(N, 100), zeros(N, 100))
     vl = vertices_list(H)
     @test vl == [H.center]
-    r = zeros(N, 100); r[1] = N(1)
+    r = zeros(N, 100)
+    r[1] = N(1)
     H = Hyperrectangle(fill(N(1), 100), r)
     vl = vertices_list(H)
     @test ispermutation(vl, [H.center + r, H.center - r])
@@ -255,22 +256,23 @@ for N in [Float64, Rational{Int}, Float32]
           Hyperrectangle(N[0, 0], N[1, 1])
 
     # conversion to a zonotope
-    H = Hyperrectangle(low=N[5//10, 6//10], high=N[124//10, 2355//10])
+    H = Hyperrectangle(; low=N[5 // 10, 6 // 10], high=N[124 // 10, 2355 // 10])
     Hz = convert(Zonotope, H)
-    @test Hz == Zonotope(N[129//20, 2361//20], N[119//20 0//1; 0//1 2349//20])
+    @test Hz == Zonotope(N[129 // 20, 2361 // 20], N[119//20 0//1; 0//1 2349//20])
 
     # conversion of a hyperrectangle with static array components to a zonotope
     # the specialized method for 2D static arrays is also tested
-    H = Hyperrectangle(low=SA[N(5//10), N(6//10)], high=N[N(124//10), N(2355//10)])
+    H = Hyperrectangle(; low=SA[N(5 // 10), N(6 // 10)], high=N[N(124 // 10), N(2355 // 10)])
     Hz = convert(Zonotope, H)
     Hz_sp = LazySets._convert_2D_static(Zonotope, H)
-    Z = Zonotope(SA[N(129//20), N(2361//20)], SA[N(119//20) N(0//1); N(0//1) N(2349//20)])
+    Z = Zonotope(SA[N(129 // 20), N(2361 // 20)],
+                 SA[N(119 // 20) N(0 // 1); N(0 // 1) N(2349 // 20)])
     @test Hz == Z && Hz_sp == Z
 
     # rectification
     H = Hyperrectangle(N[-1, 2], N[4, 5])
     Hrect = rectify(H)
-    @test Hrect.center == N[1.5, 3.5] &&  Hrect.radius == [1.5, 3.5]
+    @test Hrect.center == N[1.5, 3.5] && Hrect.radius == [1.5, 3.5]
 
     # Minkowski sum
     H1 = Hyperrectangle(N[0, 1], N[2, 3])
@@ -278,13 +280,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test minkowski_sum(H1, H2) == Hyperrectangle(N[3, 3], N[3, 3])
 
     # set difference
-    h = Hyperrectangle(low=N[0], high=N[1])
-    q = Hyperrectangle(low=N[0], high=N[0.5])
+    h = Hyperrectangle(; low=N[0], high=N[1])
+    q = Hyperrectangle(; low=N[0], high=N[0.5])
     @test convert(Interval, difference(h, q).array[1]) == Interval(N(0.5), N(1))
 
     # concrete projection
     @test project(Hyperrectangle(N[4, 3, 2, 1], N[8, 7, 6, 5]), [2, 4]) ==
-        Hyperrectangle(N[3, 1], N[7, 5])
+          Hyperrectangle(N[3, 1], N[7, 5])
 
     # permutation
     H = Hyperrectangle(N[1, 2, 3], N[4, 5, 6])
@@ -303,12 +305,12 @@ for N in [Float64, Float32]
     ys = [N[1, 1], N[3, 1], N[1, 5], N[-1, 2], N[-1, -1]]  # closest points in H
     for (x, y) in zip(xs, ys)
         for p in N[1, 2, Inf]
-            @test distance(x, H) == distance(H, x) ≈ distance(x, y, p=N(2))
+            @test distance(x, H) == distance(H, x) ≈ distance(x, y; p=N(2))
         end
     end
 
     # concrete exponential map
     Z = exponential_map(N[1 0; 0 2], H)
     @test Z isa Zonotope && center(Z) == N[exp(1), 2 * exp(2)] &&
-        genmat(Z) == N[2 * exp(1) 0; 0 3 * exp(2)]
+          genmat(Z) == N[2*exp(1) 0; 0 3*exp(2)]
 end

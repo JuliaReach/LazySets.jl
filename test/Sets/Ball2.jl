@@ -139,7 +139,7 @@ for N in [Float64, Float32]
 
     # volume in dimension 3
     B = Ball2(zeros(N, 3), N(2))
-    @test volume(B) ≈ 4/3 * pi * radius(B)^3
+    @test volume(B) ≈ 4 / 3 * pi * radius(B)^3
 
     # projection
     b4 = Ball2(N[4, 3, 2, 1], N(2))
@@ -152,7 +152,7 @@ for N in [Float64, Float32]
     h1 = high(B, 1)
     h2 = high(B, 2)
     @test l1 == N(-1) && l2 == N(0) && h1 == N(3) && h2 == N(4)
-    @test box_approximation(B) ≈ Hyperrectangle(low=[l1, l2], high=[h1, h2])
+    @test box_approximation(B) ≈ Hyperrectangle(; low=[l1, l2], high=[h1, h2])
     @test low(B) == [N(-1), N(0)]
     @test high(B) == [N(3), N(4)]
 

@@ -77,20 +77,20 @@ is nonnegative. To suppress this check, use the `check_bounds` optional flag
 in the constructor. Note that if `check_bounds` is set to `false`, the behavior
 of a set with contradictory bounds is undefined.
 """
-struct Hyperrectangle{N, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}
-                     } <: AbstractHyperrectangle{N}
+struct Hyperrectangle{N,VNC<:AbstractVector{N},VNR<:AbstractVector{N}} <: AbstractHyperrectangle{N}
     center::VNC
     radius::VNR
 
     # default constructor with length comparison & domain constraint for radius
-    function Hyperrectangle(center::VNC, radius::VNR; check_bounds::Bool=true) where
-            {N, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}}
+    function Hyperrectangle(center::VNC, radius::VNR;
+                            check_bounds::Bool=true) where
+             {N,VNC<:AbstractVector{N},VNR<:AbstractVector{N}}
         @assert length(center) == length(radius) "length of center and " *
-            "radius must be equal"
+                                                 "radius must be equal"
         if check_bounds
             @assert all(v -> v >= zero(N), radius) "radius must not be negative"
         end
-        return new{N, VNC, VNR}(center, radius)
+        return new{N,VNC,VNR}(center, radius)
     end
 end
 
@@ -98,15 +98,15 @@ isoperationtype(::Type{<:Hyperrectangle}) = false
 
 # constructor from keyword arguments (lower and upper bounds)
 function Hyperrectangle(; high::AbstractVector,
-                          low::AbstractVector,
-                          check_bounds::Bool=true)
+                        low::AbstractVector,
+                        check_bounds::Bool=true)
     # compute center and radius from high and low vectors
     center = (high .+ low) ./ 2
     radius = high .- center
-    return Hyperrectangle(center, radius, check_bounds=check_bounds)
+    return Hyperrectangle(center, radius; check_bounds=check_bounds)
 end
 
-function □(c::VNC, r::VNR) where {N, VNC<:AbstractVector{N}, VNR<:AbstractVector{N}}
+function □(c::VNC, r::VNR) where {N,VNC<:AbstractVector{N},VNR<:AbstractVector{N}}
     return Hyperrectangle(c, r)
 end
 
@@ -146,36 +146,35 @@ function radius_hyperrectangle(H::Hyperrectangle)
 end
 
 function load_genmat_hyperrectangle_static()
-return quote
+    return quote
+        function genmat(H::Hyperrectangle{N,SVector{L,N},SVector{L,N}}) where {L,N}
+            gens = zeros(MMatrix{L,L,N})
+            nzcol = Vector{Int}()
+            @inbounds for i in 1:L
+                r = H.radius[i]
+                if !isapproxzero(r)
+                    gens[i, i] = r
+                    push!(nzcol, i)
+                end
+            end
+            m = length(nzcol)
+            return SMatrix{L,m}(view(gens, :, nzcol))
+        end
 
-function genmat(H::Hyperrectangle{N, SVector{L, N}, SVector{L, N}}) where {L, N}
-    gens = zeros(MMatrix{L, L, N})
-    nzcol = Vector{Int}()
-    @inbounds for i in 1:L
-        r = H.radius[i]
-        if !isapproxzero(r)
-            gens[i, i] = r
-            push!(nzcol, i)
+        # this function is type stable, but it does not prune the generators
+        # according to flat dimensions of H
+        function _genmat_static(H::Hyperrectangle{N,SVector{L,N},SVector{L,N}}) where {L,N}
+            gens = zeros(MMatrix{L,L,N})
+            @inbounds for i in 1:L
+                r = H.radius[i]
+                gens[i, i] = r
+            end
+            return SMatrix{L,L}(gens)
         end
     end
-    m = length(nzcol)
-    return SMatrix{L, m}(view(gens, :, nzcol))
-end
+end  # quote / load_genmat_hyperrectangle_static()
 
-# this function is type stable, but it does not prune the generators
-# according to flat dimensions of H
-function _genmat_static(H::Hyperrectangle{N, SVector{L, N}, SVector{L, N}}) where {L, N}
-    gens = zeros(MMatrix{L, L, N})
-    @inbounds for i in 1:L
-        r = H.radius[i]
-        gens[i, i] = r
-    end
-    return SMatrix{L, L}(gens)
-end
-
-end end  # quote / load_genmat_hyperrectangle_static()
-
-function genmat(H::Hyperrectangle{N, <:AbstractVector, <:SparseVector{N}}) where {N}
+function genmat(H::Hyperrectangle{N,<:AbstractVector,<:SparseVector{N}}) where {N}
     n = dim(H)
     nze, nzv = findnz(H.radius)
     return sparse(nze, 1:length(nze), nzv, n, length(nze))
@@ -225,7 +224,7 @@ function rand(::Type{Hyperrectangle};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     radius = abs.(randn(rng, N, dim))

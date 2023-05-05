@@ -53,7 +53,7 @@ julia> P.vertices
  [0, 0, 1]
 ```
 """
-struct VPolytope{N, VN<:AbstractVector{N}, VT<:AbstractVector{VN}} <: AbstractPolytope{N}
+struct VPolytope{N,VN<:AbstractVector{N},VT<:AbstractVector{VN}} <: AbstractPolytope{N}
     vertices::VT
 end
 
@@ -66,7 +66,7 @@ VPolytope{N}() where {N} = VPolytope(Vector{Vector{N}}())
 VPolytope() = VPolytope{Float64}()
 
 # constructor from rectangular matrix
-function VPolytope(vertices_matrix::MT) where {N, MT<:AbstractMatrix{N}}
+function VPolytope(vertices_matrix::MT) where {N,MT<:AbstractMatrix{N}}
     vertices = [vertices_matrix[:, j] for j in 1:size(vertices_matrix, 2)]
     return VPolytope(vertices)
 end
@@ -223,16 +223,16 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
 
     n = length(x)
     @assert n == dim(P) "a vector of length $(length(x)) cannot be " *
-        "contained in a polytope of dimension $(dim(P))"
+                        "contained in a polytope of dimension $(dim(P))"
 
-    A = Matrix{N}(undef, n+1, m)
+    A = Matrix{N}(undef, n + 1, m)
     for (j, v_j) in enumerate(vertices)
         # ⋀_i Σ_j λ_j v_j[i] = x[i]
         for i in 1:n
             A[i, j] = v_j[i]
         end
         # Σ_j λ_j = 1
-        A[n+1, j] = one(N)
+        A[n + 1, j] = one(N)
     end
     b = [x; one(N)]
     lbounds = zero(N)
@@ -245,7 +245,7 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
     elseif is_lp_infeasible(lp.status)
         return false
     end
-    error("LP returned status $(lp.status) unexpectedly")
+    return error("LP returned status $(lp.status) unexpectedly")
 end
 
 """
@@ -282,11 +282,11 @@ function rand(::Type{VPolytope};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing,
+              seed::Union{Int,Nothing}=nothing,
               num_vertices::Int=-1)
     rng = reseed(rng, seed)
     if num_vertices < 0
-        num_vertices = (dim == 1) ? rand(rng, 1:2) : rand(rng, dim:5*dim)
+        num_vertices = (dim == 1) ? rand(rng, 1:2) : rand(rng, dim:(5 * dim))
     end
     vertices = [randn(rng, N, dim) for i in 1:num_vertices]
     return VPolytope(vertices)
@@ -316,7 +316,7 @@ a polytope in vertex representation. The output type is again a `VPolytope`.
 function linear_map(M::AbstractMatrix, P::VPolytope;
                     apply_convex_hull::Bool=false)
     @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-        "applied to a set of dimension $(dim(P))"
+                                 "applied to a set of dimension $(dim(P))"
 
     return _linear_map_vrep(M, P; apply_convex_hull=apply_convex_hull)
 end
@@ -506,7 +506,7 @@ depending on the backend.
 function tohrep(P::VPolytope{N};
                 backend=default_polyhedra_backend(P)) where {N}
     @assert !isempty(P.vertices) "cannot convert an empty polytope in vertex " *
-        "representation to constraint representation"
+                                 "representation to constraint representation"
     require(@__MODULE__, :Polyhedra; fun_name="tohrep")
     return convert(HPolytope, polyhedron(P; backend=backend))
 end
@@ -530,67 +530,67 @@ function tovrep(P::VPolytope)
 end
 
 function load_polyhedra_vpolytope() # function to be loaded by Requires
-return quote
-# see the interface file init_Polyhedra.jl for the imports
+    return quote
+        # see the interface file init_Polyhedra.jl for the imports
 
-# VPolytope from a VRep
-function VPolytope(P::VRep{N}) where {N}
-    vertices = collect(Polyhedra.points(P))
-    return VPolytope(vertices)
-end
-
-"""
-    polyhedron(P::VPolytope;
-               [backend]=default_polyhedra_backend(P),
-               [relative_dimension]=nothing)
-
-Return a `VRep` polyhedron from `Polyhedra.jl` given a polytope in vertex
-representation.
-
-### Input
-
-- `P`       -- polytope in vertex representation
-- `backend` -- (optional, default: `default_polyhedra_backend(P)`) the
-               backend for polyhedral computations; see [Polyhedra's
-               documentation](https://juliapolyhedra.github.io/) for further
-               information
-- `relative_dimension` -- (default, optional: `nothing`) an integer representing
-                          the (relative) dimension of the polytope; this
-                          argument is mandatory if the polytope is empty
-
-### Output
-
-A `VRep` polyhedron.
-
-### Notes
-
-The *relative dimension* (or just *dimension*) refers to the dimension of the
-set relative to itself, independently of the ambient dimension. For example, a
-point has (relative) dimension zero, and a line segment has (relative) dimension
-one.
-
-In this library, `LazySets.dim` always returns the ambient dimension of the set,
-such that a line segment in two dimensions has dimension two. However,
-`Polyhedra.dim` will assign a dimension equal to one to a line segment
-because it uses a different convention.
-"""
-function polyhedron(P::VPolytope;
-                    backend=default_polyhedra_backend(P),
-                    relative_dimension=nothing)
-    if isempty(P)
-        if isnothing(relative_dimension)
-            error("the conversion to a `Polyhedra.polyhedron` requires the " *
-                "(relative) dimension of the `VPolytope` to be known, but it " *
-                "cannot be inferred from an empty set; use the keyword " *
-                "argument `relative_dimension`")
+        # VPolytope from a VRep
+        function VPolytope(P::VRep{N}) where {N}
+            vertices = collect(Polyhedra.points(P))
+            return VPolytope(vertices)
         end
-        return polyhedron(Polyhedra.vrep(P.vertices, d=relative_dimension),
-                          backend)
-    end
-    return polyhedron(Polyhedra.vrep(P.vertices), backend)
-end
 
-end end  # quote / load_polyhedra_vpolytope()
+        """
+            polyhedron(P::VPolytope;
+                       [backend]=default_polyhedra_backend(P),
+                       [relative_dimension]=nothing)
+
+        Return a `VRep` polyhedron from `Polyhedra.jl` given a polytope in vertex
+        representation.
+
+        ### Input
+
+        - `P`       -- polytope in vertex representation
+        - `backend` -- (optional, default: `default_polyhedra_backend(P)`) the
+                       backend for polyhedral computations; see [Polyhedra's
+                       documentation](https://juliapolyhedra.github.io/) for further
+                       information
+        - `relative_dimension` -- (default, optional: `nothing`) an integer representing
+                                  the (relative) dimension of the polytope; this
+                                  argument is mandatory if the polytope is empty
+
+        ### Output
+
+        A `VRep` polyhedron.
+
+        ### Notes
+
+        The *relative dimension* (or just *dimension*) refers to the dimension of the
+        set relative to itself, independently of the ambient dimension. For example, a
+        point has (relative) dimension zero, and a line segment has (relative) dimension
+        one.
+
+        In this library, `LazySets.dim` always returns the ambient dimension of the set,
+        such that a line segment in two dimensions has dimension two. However,
+        `Polyhedra.dim` will assign a dimension equal to one to a line segment
+        because it uses a different convention.
+        """
+        function polyhedron(P::VPolytope;
+                            backend=default_polyhedra_backend(P),
+                            relative_dimension=nothing)
+            if isempty(P)
+                if isnothing(relative_dimension)
+                    error("the conversion to a `Polyhedra.polyhedron` requires the " *
+                          "(relative) dimension of the `VPolytope` to be known, but it " *
+                          "cannot be inferred from an empty set; use the keyword " *
+                          "argument `relative_dimension`")
+                end
+                return polyhedron(Polyhedra.vrep(P.vertices; d=relative_dimension),
+                                  backend)
+            end
+            return polyhedron(Polyhedra.vrep(P.vertices), backend)
+        end
+    end
+end  # quote / load_polyhedra_vpolytope()
 
 function project(P::VPolytope, block::AbstractVector{Int}; kwargs...)
     if isempty(P.vertices)

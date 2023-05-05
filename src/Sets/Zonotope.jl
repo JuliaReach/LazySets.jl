@@ -96,17 +96,18 @@ julia> genmat(Z)
  0.0  1.0  1.0
 ```
 """
-struct Zonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+struct Zonotope{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
     center::VN
     generators::MN
 
-    function Zonotope(center::VN, generators::MN) where {N,
-                                                         VN<:AbstractVector{N},
-                                                         MN<:AbstractMatrix{N}}
+    function Zonotope(center::VN,
+                      generators::MN) where {N,
+                                             VN<:AbstractVector{N},
+                                             MN<:AbstractMatrix{N}}
         @assert length(center) == size(generators, 1) "the dimension of the " *
-            "center ($(length(center))) and the generators " *
-            "($(size(generators, 1))) need to match"
-        return new{N, VN, MN}(center, generators)
+                                                      "center ($(length(center))) and the generators " *
+                                                      "($(size(generators, 1))) need to match"
+        return new{N,VN,MN}(center, generators)
     end
 end
 
@@ -257,12 +258,12 @@ function rand(::Type{Zonotope};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing,
+              seed::Union{Int,Nothing}=nothing,
               num_generators::Int=-1)
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     if num_generators < 0
-        num_generators = (dim == 1) ? 1 : rand(rng, dim:2*dim)
+        num_generators = (dim == 1) ? 1 : rand(rng, dim:(2 * dim))
     end
     generators = randn(rng, N, dim, num_generators)
     return Zonotope(center, generators)
@@ -321,14 +322,14 @@ function _split(Z::Zonotope, j::Int)
     G₂ = similar(G)
     Z₂ = Zonotope(c₂, G₂)
 
-    split!(Z₁, Z₂, Z, j)
+    return split!(Z₁, Z₂, Z, j)
 end
 
 function split!(Z₁::Zonotope, Z₂::Zonotope, Z::Zonotope, j::Int)
     c, G = Z.center, Z.generators
     n, p = size(G)
     @assert 1 <= j <= p "cannot split a zonotope with $p generators along " *
-        "index $j"
+                        "index $j"
 
     c₁, G₁ = Z₁.center, Z₁.generators
     c₂, G₂ = Z₂.center, Z₂.generators
@@ -348,15 +349,15 @@ end
 _split_ret(Z₁::Zonotope, Z₂::Zonotope) = (Z₁, Z₂)
 
 function load_split_static()
-return quote
-
-function _split_ret(Z₁::Zonotope{N, SV, SM}, Z₂::Zonotope{N, SV, SM}) where {N, n, p, SV<:MVector{n, N}, SM<:MMatrix{n, p, N}}
-    Z₁ = Zonotope(SVector{n}(Z₁.center), SMatrix{n, p}(Z₁.generators))
-    Z₂ = Zonotope(SVector{n}(Z₂.center), SMatrix{n, p}(Z₂.generators))
-    return Z₁, Z₂
-end
-
-end end  # quote / load_split_static
+    return quote
+        function _split_ret(Z₁::Zonotope{N,SV,SM},
+                            Z₂::Zonotope{N,SV,SM}) where {N,n,p,SV<:MVector{n,N},SM<:MMatrix{n,p,N}}
+            Z₁ = Zonotope(SVector{n}(Z₁.center), SMatrix{n,p}(Z₁.generators))
+            Z₂ = Zonotope(SVector{n}(Z₂.center), SMatrix{n,p}(Z₂.generators))
+            return Z₁, Z₂
+        end
+    end
+end  # quote / load_split_static
 
 function _split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
     p = length(gens)
@@ -364,13 +365,13 @@ function _split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
                            "match the number of indicated partitions $p"
 
     @assert p <= ngens(Z) "the number of generators to split ($p) is greater " *
-                   "than the number of generators of the zonotope ($(ngens(Z)))"
+                          "than the number of generators of the zonotope ($(ngens(Z)))"
 
     Zs = [Z]
     for (i, g) in enumerate(gens)
-        for j = 1:n[i]
+        for j in 1:n[i]
             km = length(Zs)
-            for k = 1:km
+            for k in 1:km
                 append!(Zs, split(Zs[k], g))
             end
             deleteat!(Zs, 1:km)
@@ -435,29 +436,28 @@ function _bound_intersect_2D(Z::Zonotope, L::Line2D)
     G = genmat(Z)
     r = ngens(Z)
     g(x) = view(G, :, x)
-    for i = 1:r
+    for i in 1:r
         gi = g(i)
         if !isupwards(gi)
             gi .= -gi
         end
         P .= P - gi
     end
-    G = sortslices(G, dims=2, by=x->atan(x[2], x[1])) # sort gens
+    G = sortslices(G; dims=2, by=x -> atan(x[2], x[1])) # sort gens
     if P[1] < L.b
-        G .= G[:,end:-1:1]
+        G .= G[:, end:-1:1]
     end
     j = 1
-    while isdisjoint(LineSegment(P, P+2g(j)), L)
+    while isdisjoint(LineSegment(P, P + 2g(j)), L)
         P .= P + 2g(j)
         j += 1
         if j > size(G, 2)
             error("got an unexpected error; check that the sets intersect")
         end
     end
-    singleton = intersection(LineSegment(P, P+2g(j)), L)
+    singleton = intersection(LineSegment(P, P + 2g(j)), L)
     return element(singleton)[2]
 end
-
 
 """
     remove_redundant_generators(Z::Zonotope{N}) where {N}
@@ -500,7 +500,7 @@ function remove_redundant_generators(Z::Zonotope{N}) where {N}
         end
         # "done[j1] = true" not needed because we will never look at it again
         gj1 = G[:, j1]
-        for j2 in (j1+1):p  # look at all generators to the right
+        for j2 in (j1 + 1):p  # look at all generators to the right
             if done[j2]  # skip if the generator was already removed
                 continue
             end

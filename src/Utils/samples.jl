@@ -57,10 +57,9 @@ returned by `vertices(X)`.
 function sample(X::LazySet{N}, num_samples::Int;
                 sampler=_default_sampler(X),
                 rng::AbstractRNG=GLOBAL_RNG,
-                seed::Union{Int, Nothing}=nothing,
+                seed::Union{Int,Nothing}=nothing,
                 include_vertices=false,
                 VN=Vector{N}) where {N}
-
     D = Vector{VN}(undef, num_samples) # preallocate output
     sample!(D, X, sampler; rng=rng, seed=seed)
 
@@ -85,8 +84,9 @@ end
 
 # default sampling for LazySets
 _default_sampler(::LazySet) = CombinedSampler()
-_default_sampler(::LineSegment{N}) where {N} =
-    RejectionSampler(DefaultUniform(zero(N), one(N)), true, Inf)
+function _default_sampler(::LineSegment{N}) where {N}
+    return RejectionSampler(DefaultUniform(zero(N), one(N)), true, Inf)
+end
 _default_sampler(::HalfSpace) = HalfSpaceSampler()
 _default_sampler(::Hyperplane) = HyperplaneSampler()
 _default_sampler(::Line2D) = HyperplaneSampler()
@@ -154,8 +154,8 @@ function RejectionSampler(X::AbstractHyperrectangle)
 end
 
 function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
-                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
-                ) where {N, VN<:AbstractVector{N}}
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     U = sampler.distribution
     rng = reseed(rng, seed)
     @inbounds for i in eachindex(D)
@@ -178,8 +178,8 @@ end
 
 function sample!(D::Vector{VN}, L::LineSegment,
                  sampler::RejectionSampler{<:DefaultUniform};
-                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
-                ) where {N, VN<:AbstractVector{N}}
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     rng = reseed(rng, seed)
     U = sampler.distribution
     @assert U.a >= zero(N) && U.b <= one(N)
@@ -241,8 +241,8 @@ end
 RandomWalkSampler() = RandomWalkSampler(true)
 
 function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
-                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
-                ) where {N, VN<:AbstractVector{N}}
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     rng = reseed(rng, seed)
     U = DefaultUniform(zero(N), one(N))
     vlist = vertices_list(X)
@@ -258,18 +258,18 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
         end
     else
         # vector used to store the combination coefficients
-        r = Vector{N}(undef, m-1)
+        r = Vector{N}(undef, m - 1)
         @inbounds for i in eachindex(D)
             # get a list of m uniform numbers (https://cs.stackexchange.com/a/3229)
             # and compute the corresponding linear combination in-place
             rand!(r, rng, U)
             sort!(r)
             D[i] = r[1] * vlist[1]  # r[1] - 0 == r[1]
-            for j in 2:m-1
-                α = r[j] - r[j-1]
+            for j in 2:(m - 1)
+                α = r[j] - r[j - 1]
                 D[i] .+= α * vlist[j]
             end
-            D[i] .+= (1 - r[m-1]) * vlist[m]
+            D[i] .+= (1 - r[m - 1]) * vlist[m]
         end
     end
 
@@ -291,8 +291,8 @@ struct CombinedSampler <: AbstractSampler
 end
 
 function sample!(D::Vector{VN}, X::LazySet, sampler::CombinedSampler;
-                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
-                ) where {N, VN<:AbstractVector{N}}
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     # try rejection sampling 100 times
     tmp_sampler = RejectionSampler(X; maxiter=10)
     D2 = Vector{VN}(undef, 1)
@@ -350,8 +350,8 @@ struct FaceSampler <: AbstractSampler
 end
 
 function sample!(D::Vector{VN}, X::LazySet, sampler::FaceSampler;
-                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
-                ) where {N, VN<:AbstractVector{N}}
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     n = dim(X)
     k = sampler.dim
 
@@ -366,7 +366,7 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::FaceSampler;
     end
 
     0 <= k < n || throw(ArgumentError("cannot sample from " *
-        "$(sampler.dim)-dimensional faces for a set of dimension $n"))
+                                      "$(sampler.dim)-dimensional faces for a set of dimension $n"))
 
     rng = reseed(rng, seed)
     return _sample_faces!(D, X, rng, k)
@@ -374,8 +374,8 @@ end
 
 _choose_sorted(k, n; rng=GLOBAL_RNG) = sort!((1:n)[randperm(rng, n)][1:k])
 
-function _sample_faces!(D::Vector{VN}, H::AbstractHyperrectangle, rng, k
-                       ) where {N, VN<:AbstractVector{N}}
+function _sample_faces!(D::Vector{VN}, H::AbstractHyperrectangle, rng,
+                        k) where {N,VN<:AbstractVector{N}}
     n = dim(H)
 
     @inbounds for j in eachindex(D)
@@ -427,8 +427,8 @@ function HalfSpaceSampler()
 end
 
 function sample!(D::Vector{VN}, H::HalfSpace, sampler::HalfSpaceSampler;
-                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
-                ) where {N, VN<:AbstractVector{N}}
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     rng = reseed(rng, seed)
     U = sampler.distribution
     if isnothing(U)
@@ -470,9 +470,9 @@ function HyperplaneSampler()
     return HyperplaneSampler(nothing)
 end
 
-function sample!(D::Vector{VN}, hp::Union{Hyperplane, Line2D},
+function sample!(D::Vector{VN}, hp::Union{Hyperplane,Line2D},
                  sampler::HyperplaneSampler; rng::AbstractRNG=GLOBAL_RNG,
-                 seed::Union{Int, Nothing}=nothing) where {N, VN<:AbstractVector{N}}
+                 seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     rng = reseed(rng, seed)
     U = sampler.distribution
     if isnothing(U)
@@ -498,8 +498,8 @@ struct SingletonSampler <: AbstractSampler
 end
 
 function sample!(D::Vector{VN}, S::AbstractSingleton, sampler::SingletonSampler;
-                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
-                ) where {N, VN<:AbstractVector{N}}
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     x = element(S)
     @inbounds for i in eachindex(D)
         D[i] = copy(x)
@@ -531,8 +531,8 @@ end
 
 function sample!(D::Vector{VN}, P::AbstractPolynomialZonotope,
                  sampler::PolynomialZonotopeSampler;
-                 rng::AbstractRNG=GLOBAL_RNG, seed::Union{Int, Nothing}=nothing
-                ) where {N, VN<:AbstractVector{N}}
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     rng = reseed(rng, seed)
     U = sampler.distribution
     if isnothing(U)
@@ -561,7 +561,7 @@ function _add_generators!(x, P::DensePolynomialZonotope, U, rng)
                 x .+= β * @view Ei[:, jE]
             else
                 # F
-                Fi = P.F[i-1]  # offset of -1 because F's start with index 2
+                Fi = P.F[i - 1]  # offset of -1 because F's start with index 2
                 x .+= β * @view Fi[:, j]
                 j += 1
             end
@@ -618,7 +618,7 @@ where ``α := \\sqrt{z₁² + z₂² + … + z_n²}``, is uniform over ``S^n``.
 """
 function _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                       rng::AbstractRNG=GLOBAL_RNG,
-                                      seed::Union{Int, Nothing}=nothing) where {N}
+                                      seed::Union{Int,Nothing}=nothing) where {N}
     return _sample_unit_nsphere_muller_distributions!(D, n, p; rng=rng, seed=seed)
 end
 
@@ -662,64 +662,60 @@ where ``α := \\sqrt{z₁² + z₂² + … + z_n²}``, is uniform over the
 """
 function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                     rng::AbstractRNG=GLOBAL_RNG,
-                                    seed::Union{Int, Nothing}=nothing) where {N}
+                                    seed::Union{Int,Nothing}=nothing) where {N}
     return _sample_unit_nball_muller_distributions!(D, n, p; rng=rng, seed=seed)
 end
 
 function load_distributions_samples()
-return quote
+    return quote
+        using .Distributions: Uniform, Normal, UnivariateDistribution
 
-using .Distributions: Uniform, Normal, UnivariateDistribution
-
-function RejectionSampler(distr::UnivariateDistribution; tight::Bool=false)
-    return RejectionSampler([distr], tight=tight)
-end
-
-function Base.rand(rng::AbstractRNG, U::AbstractVector{<:UnivariateDistribution})
-    return rand.(Ref(rng), U)
-end
-
-function _sample_unit_nsphere_muller_distributions!(D::Vector{Vector{N}},
-                                                    n::Int, p::Int;
-                                                    rng::AbstractRNG=GLOBAL_RNG,
-                                                    seed::Union{Int, Nothing}=nothing
-                                                   ) where {N}
-    rng = reseed(rng, seed)
-    Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
-    v = Vector{N}(undef, n) # sample direction
-    @inbounds for j in 1:p
-        α = zero(N)
-        for i in 1:n
-            v[i] = rand(rng, Zdims[i])
-            α += v[i]^2
+        function RejectionSampler(distr::UnivariateDistribution; tight::Bool=false)
+            return RejectionSampler([distr]; tight=tight)
         end
-        D[j] = v ./ sqrt(α)
-    end
-    return D
-end
 
-function _sample_unit_nball_muller_distributions!(D::Vector{Vector{N}}, n::Int,
-                                                  p::Int;
-                                                  rng::AbstractRNG=GLOBAL_RNG,
-                                                  seed::Union{Int, Nothing}=nothing
-                                                 ) where {N}
-
-    rng = reseed(rng, seed)
-    Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
-    Zrad = Uniform() # distribution to pick random radius
-    one_over_n = one(N)/n
-    v = Vector{N}(undef, n) # sample direction
-    @inbounds for j in 1:p
-        α = zero(N)
-        for i in 1:n
-            v[i] = rand(rng, Zdims[i])
-            α += v[i]^2
+        function Base.rand(rng::AbstractRNG, U::AbstractVector{<:UnivariateDistribution})
+            return rand.(Ref(rng), U)
         end
-        r = rand(rng, Zrad)
-        β = r^one_over_n / sqrt(α)
-        D[j] = v .* β
-    end
-    return D
-end
 
-end end  # quote / load_distributions_samples()
+        function _sample_unit_nsphere_muller_distributions!(D::Vector{Vector{N}},
+                                                            n::Int, p::Int;
+                                                            rng::AbstractRNG=GLOBAL_RNG,
+                                                            seed::Union{Int,Nothing}=nothing) where {N}
+            rng = reseed(rng, seed)
+            Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
+            v = Vector{N}(undef, n) # sample direction
+            @inbounds for j in 1:p
+                α = zero(N)
+                for i in 1:n
+                    v[i] = rand(rng, Zdims[i])
+                    α += v[i]^2
+                end
+                D[j] = v ./ sqrt(α)
+            end
+            return D
+        end
+
+        function _sample_unit_nball_muller_distributions!(D::Vector{Vector{N}}, n::Int,
+                                                          p::Int;
+                                                          rng::AbstractRNG=GLOBAL_RNG,
+                                                          seed::Union{Int,Nothing}=nothing) where {N}
+            rng = reseed(rng, seed)
+            Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
+            Zrad = Uniform() # distribution to pick random radius
+            one_over_n = one(N) / n
+            v = Vector{N}(undef, n) # sample direction
+            @inbounds for j in 1:p
+                α = zero(N)
+                for i in 1:n
+                    v[i] = rand(rng, Zdims[i])
+                    α += v[i]^2
+                end
+                r = rand(rng, Zrad)
+                β = r^one_over_n / sqrt(α)
+                D[j] = v .* β
+            end
+            return D
+        end
+    end
+end  # quote / load_distributions_samples()

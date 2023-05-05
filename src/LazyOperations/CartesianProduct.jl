@@ -59,19 +59,20 @@ julia> convert(Hyperrectangle, I12)
 Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([0.5, 3.0], [0.5, 1.0])
 ```
 """
-struct CartesianProduct{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+struct CartesianProduct{N,S1<:LazySet{N},S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
 
     function CartesianProduct(X::LazySet{N}, Y::LazySet{N}) where {N}
-        return new{N, typeof(X), typeof(Y)}(X, Y)
+        return new{N,typeof(X),typeof(Y)}(X, Y)
     end
 end
 
 isoperationtype(::Type{<:CartesianProduct}) = true
 
-isconvextype(::Type{CartesianProduct{N, S1, S2}}) where {N, S1, S2} =
-    isconvextype(S1) && isconvextype(S2)
+function isconvextype(::Type{CartesianProduct{N,S1,S2}}) where {N,S1,S2}
+    return isconvextype(S1) && isconvextype(S2)
+end
 
 is_polyhedral(cp::CartesianProduct) = is_polyhedral(cp.X) && is_polyhedral(cp.Y)
 
@@ -157,7 +158,7 @@ If the direction has norm zero, the result depends on the wrapped sets.
 """
 function σ(d::AbstractVector, cp::CartesianProduct)
     n1 = dim(cp.X)
-    return [σ(d[1:n1], cp.X); σ(d[n1+1:length(d)], cp.Y)]
+    return [σ(d[1:n1], cp.X); σ(d[(n1 + 1):length(d)], cp.Y)]
 end
 
 # faster version for single-entry vectors
@@ -189,7 +190,7 @@ If the direction has norm zero, the result depends on the wrapped sets.
 """
 function ρ(d::AbstractVector, cp::CartesianProduct)
     n1 = dim(cp.X)
-    return ρ(d[1:n1], cp.X) + ρ(d[n1+1:length(d)], cp.Y)
+    return ρ(d[1:n1], cp.X) + ρ(d[(n1 + 1):length(d)], cp.Y)
 end
 
 # faster version for single-entry vectors
@@ -221,7 +222,7 @@ function isbounded(cp::CartesianProduct)
     return isbounded(cp.X) && isbounded(cp.Y)
 end
 
-function isboundedtype(::Type{<:CartesianProduct{N, S1, S2}}) where {N, S1, S2}
+function isboundedtype(::Type{<:CartesianProduct{N,S1,S2}}) where {N,S1,S2}
     return isboundedtype(S1) && isboundedtype(S2)
 end
 
@@ -244,7 +245,7 @@ function ∈(x::AbstractVector, cp::CartesianProduct)
 
     n1 = dim(cp.X)
     return view(x, 1:n1) ∈ cp.X &&
-           view(x, n1+1:length(x)) ∈ cp.Y
+           view(x, (n1 + 1):length(x)) ∈ cp.Y
 end
 
 """
@@ -278,7 +279,7 @@ Return the center of a Cartesian product of centrally-symmetric sets.
 The center of the Cartesian product.
 """
 function center(cp::CartesianProduct)
-    vcat(center(cp.X), center(cp.Y))
+    return vcat(center(cp.X), center(cp.Y))
 end
 
 """
@@ -388,7 +389,7 @@ function project(cp::CartesianProduct, block::AbstractVector{Int}; kwargs...)
     # projection is a new Cartesian product of the block-wise projections
     for (i, bi) in enumerate(block)
         if bi > n1
-            X = project(cp.X, block[1:i-1]; kwargs...)
+            X = project(cp.X, block[1:(i - 1)]; kwargs...)
             Y = project(cp.Y, block[i:end] .- n1; kwargs...)
             return CartesianProduct(X, Y)
         end
@@ -412,8 +413,8 @@ hyperrectangular set.
 A hyperrectangle representing the projection of the Cartesian product `cp` on
 the dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N, IT, HT}, block::AbstractVector{Int};
-                 kwargs...) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
+function project(cp::CartesianProduct{N,IT,HT}, block::AbstractVector{Int};
+                 kwargs...) where {N,IT<:Interval,HT<:AbstractHyperrectangle{N}}
     I = cp.X
     H = cp.Y
     block_vec = collect(block)
@@ -425,7 +426,7 @@ function project(cp::CartesianProduct{N, IT, HT}, block::AbstractVector{Int};
         cH = vcat(center(I), center(H))
         rH = vcat(radius_hyperrectangle(I), radius_hyperrectangle(H))
     end
-    return Hyperrectangle(cH[block_vec], rH[block_vec], check_bounds=false)
+    return Hyperrectangle(cH[block_vec], rH[block_vec]; check_bounds=false)
 end
 
 """
@@ -444,8 +445,8 @@ Concrete projection of the Cartesian product of an interval and a zonotopic set.
 A zonotope representing the projection of the Cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N, IT, ZT}, block::AbstractVector{Int};
-                 kwargs...) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
+function project(cp::CartesianProduct{N,IT,ZT}, block::AbstractVector{Int};
+                 kwargs...) where {N,IT<:Interval,ZT<:AbstractZonotope{N}}
     block_vec = collect(block)
     Z = cp.Y
     if 1 ∉ block_vec
@@ -475,9 +476,9 @@ representation.
 A `VPolytope` representing the projection of the Cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N, IT, Union{VP1, VP2}},
+function project(cp::CartesianProduct{N,IT,Union{VP1,VP2}},
                  block::AbstractVector{Int};
-                 kwargs...) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
+                 kwargs...) where {N,IT<:Interval,VP1<:VPolygon{N},VP2<:VPolytope{N}}
     I = cp.X
     P = cp.Y
     block_vec = collect(block)

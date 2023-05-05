@@ -23,7 +23,7 @@ function writevtk(X::AbstractVector{<:LazySet}; file="output")
     end
     points_matrix = reduce(hcat, points_list)
 
-    vtk_grid(file, points_matrix,  cell_list; compress=false) do vtk
+    vtk_grid(file, points_matrix, cell_list; compress=false) do vtk
         #
     end
 end

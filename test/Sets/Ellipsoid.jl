@@ -54,9 +54,9 @@ for N in [Float64, Float32]
     E = Ellipsoid(N[1, 2], Diagonal(N[0.5, 2]))
     # Test Support Vector
     d = N[1, 0]
-    @test σ(d, E) ≈ N[1+sqrt(0.5), 2]
+    @test σ(d, E) ≈ N[1 + sqrt(0.5), 2]
     d = N[-1, 0]
-    @test σ(d, E) ≈ N[1-sqrt(0.5), 2]
+    @test σ(d, E) ≈ N[1 - sqrt(0.5), 2]
     d = N[0, 1]
     @test σ(d, E) ≈ N[1, 2 + sqrt(2)]
     d = N[0, -1]
@@ -90,7 +90,6 @@ for N in [Float64, Float32]
 
     # check_posdef optional constructor flag
     @test_throws ArgumentError Ellipsoid(N[1 1; 1 1])
-    E = Ellipsoid(N[1 1; 1 1], check_posdef=false)
+    E = Ellipsoid(N[1 1; 1 1]; check_posdef=false)
     @test E.center == zeros(2) && E.shape_matrix == N[1 1; 1 1]
-
 end

@@ -47,7 +47,7 @@ For convex sets this algorithm is precise.
 """
 function overapproximate(cap::Intersection, ::Type{<:Interval})
     @assert dim(cap) == 1 "cannot overapproximate a $(dim(cap))-dimensional " *
-                        "intersection with an `Interval`"
+                          "intersection with an `Interval`"
     # TODO this does not work for unbounded sets; better define extrema and
     # then copy the default implementation except if result is empty
     X = overapproximate(cap.X, Interval)
@@ -79,7 +79,7 @@ For convex sets this algorithm is precise.
 """
 function overapproximate(cap::IntersectionArray, ::Type{<:Interval})
     @assert dim(cap) == 1 "cannot overapproximate a $(dim(cap))-dimensional " *
-                        "intersection with an `Interval`"
+                          "intersection with an `Interval`"
     a = array(cap)
     # TODO this does not work for unbounded sets; better define extrema and
     # then copy the default implementation except if result is empty

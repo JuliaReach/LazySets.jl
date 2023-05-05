@@ -36,17 +36,17 @@ for N in [Float64, Float32, Rational{Int}]
     # hyperrectangle and Universe
     H = Hyperrectangle(N[1, 2], N[3, 4])
     HU = cartesian_product(H, U)
-    @test HU isa HPolyhedron{N, SingleEntryVector{N}} && isequivalent(HU,
-        HPolyhedron([HalfSpace(N[1, 0, 0, 0], N(4)),
-                     HalfSpace(N[-1, 0, 0, 0], N(2)),
-                     HalfSpace(N[0, 1, 0, 0], N(6)),
-                     HalfSpace(N[0, -1, 0, 0], N(2))]))
+    @test HU isa HPolyhedron{N,SingleEntryVector{N}} && isequivalent(HU,
+                                                                     HPolyhedron([HalfSpace(N[1, 0, 0, 0], N(4)),
+                                                                                  HalfSpace(N[-1, 0, 0, 0], N(2)),
+                                                                                  HalfSpace(N[0, 1, 0, 0], N(6)),
+                                                                                  HalfSpace(N[0, -1, 0, 0], N(2))]))
     UH = cartesian_product(U, H)
-    @test UH isa HPolyhedron{N, SingleEntryVector{N}} && isequivalent(UH,
-        HPolyhedron([HalfSpace(N[0, 0, 1, 0], N(4)),
-                     HalfSpace(N[0, 0, -1, 0], N(2)),
-                     HalfSpace(N[0, 0, 0, 1], N(6)),
-                     HalfSpace(N[0, 0, 0, -1], N(2))]))
+    @test UH isa HPolyhedron{N,SingleEntryVector{N}} && isequivalent(UH,
+                                                                     HPolyhedron([HalfSpace(N[0, 0, 1, 0], N(4)),
+                                                                                  HalfSpace(N[0, 0, -1, 0], N(2)),
+                                                                                  HalfSpace(N[0, 0, 0, 1], N(6)),
+                                                                                  HalfSpace(N[0, 0, 0, -1], N(2))]))
 
     # HalfSpace and Universe
     H1 = HalfSpace(N[0, 4, 0], N(5))

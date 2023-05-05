@@ -37,23 +37,27 @@ Representation for Reachability Analysis*. Transactions on Automatic Control,
 - [2] N. Kochdumper. *Challenge Problem 5: Polynomial Zonotopes in Julia.*
 JuliaReach and JuliaIntervals Days 3, 2021.
 """
-struct SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N},
-        MN<:AbstractMatrix{N},
-        ME<:AbstractMatrix{<:Integer}} <: AbstractPolynomialZonotope{N}
+struct SimpleSparsePolynomialZonotope{N,VN<:AbstractVector{N},
+                                      MN<:AbstractMatrix{N},
+                                      ME<:AbstractMatrix{<:Integer}} <:
+       AbstractPolynomialZonotope{N}
     c::VN
     G::MN
     E::ME
 
-    function SimpleSparsePolynomialZonotope(c::VN, G::MN, E::ME) where {N,
-            VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, ME<:AbstractMatrix{<:Integer}}
+    function SimpleSparsePolynomialZonotope(c::VN, G::MN,
+                                            E::ME) where {N,
+                                                          VN<:AbstractVector{N},
+                                                          MN<:AbstractMatrix{N},
+                                                          ME<:AbstractMatrix{<:Integer}}
         @assert length(c) == size(G, 1) throw(DimensionMismatch("c and G " *
-            "should have the same number of rows"))
+                                                                "should have the same number of rows"))
         @assert size(G, 2) == size(E, 2) throw(DimensionMismatch("G and E " *
-            "should have the same number of columns"))
+                                                                 "should have the same number of columns"))
         @assert all(>=(0), E) throw(ArgumentError("E should contain " *
-            "non-negative integers"))
+                                                  "non-negative integers"))
 
-        return new{N, VN, MN, ME}(c, G, E)
+        return new{N,VN,MN,ME}(c, G, E)
     end
 end
 
@@ -248,7 +252,7 @@ representation for reachability analysis*. 2021
 verification of cyber-physical systems*. 2021.
 """
 function quadratic_map(Q::Vector{MT},
-                       S::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+                       S::SimpleSparsePolynomialZonotope) where {N,MT<:AbstractMatrix{N}}
     m = length(Q)
     c = center(S)
     h = ngens(S)
@@ -276,7 +280,6 @@ function quadratic_map(Q::Vector{MT},
     Z = SimpleSparsePolynomialZonotope(cnew, Gnew, Enew)
     return remove_redundant_generators(Z)
 end
-
 
 """
     quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope,
@@ -306,8 +309,7 @@ This method implements Proposition 3.1.30 in [1].
 verification of cyber-physical systems*. 2021.
 """
 function quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope,
-                       S2::SimpleSparsePolynomialZonotope
-                      ) where {N, MT<:AbstractMatrix{N}}
+                       S2::SimpleSparsePolynomialZonotope) where {N,MT<:AbstractMatrix{N}}
     @assert nparams(S1) == nparams(S2)
 
     c1 = center(S1)
@@ -361,7 +363,6 @@ following simplifications are performed:
   columns in `G`.
 """
 function remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
-
     c, G, E = _remove_redundant_generators_polyzono(center(S), genmat(S), expmat(S))
 
     return SimpleSparsePolynomialZonotope(c, G, E)
@@ -372,7 +373,7 @@ function _remove_redundant_generators_polyzono(c, G, E)
     Enew = Matrix{eltype(E)}(undef, size(E, 1), 0)
     cnew = copy(c)
 
-    visited_exps = Dict{Vector{Int}, Int}()
+    visited_exps = Dict{Vector{Int},Int}()
     @inbounds for (gi, ei) in zip(eachcol(G), eachcol(E))
         iszero(gi) && continue
         if iszero(ei)
@@ -429,12 +430,12 @@ function rand(::Type{SimpleSparsePolynomialZonotope};
               nparams::Int=2,
               maxdeg::Int=3,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing,
+              seed::Union{Int,Nothing}=nothing,
               num_generators::Int=-1)
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     if num_generators < 0
-        num_generators = (dim == 1) ? 1 : rand(rng, dim:2*dim)
+        num_generators = (dim == 1) ? 1 : rand(rng, dim:(2 * dim))
     end
     generators = randn(rng, N, dim, num_generators)
     expmat = rand(rng, 0:maxdeg, nparams, num_generators)

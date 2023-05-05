@@ -13,7 +13,8 @@ for N in [Float64, Float32, Rational{Int}]
     # convenience constructors
     @test b1 * b2 == b1 × b2 == cp
     cpa = CartesianProductArray([b1, b2, b1])
-    @test b1 * b2 * b1 == *(b1, b2, b1) == ×(b1, b2, b1) == *([b1, b2, b1]) == ×([b1, b2, b1]) == cpa
+    @test b1 * b2 * b1 == *(b1, b2, b1) == ×(b1, b2, b1) == *([b1, b2, b1]) == ×([b1, b2, b1]) ==
+          cpa
     @test *(b1) == ×(b1) == b1
 
     # swap
@@ -123,10 +124,10 @@ for N in [Float64, Float32, Rational{Int}]
     # constraints_list
     hlist = constraints_list(CartesianProduct(i1, i2))
     @test ispermutation(hlist,
-        [LinearConstraint(sparsevec(N[1], N[1], 2), N(1)),
-        LinearConstraint(sparsevec(N[1], N[-1], 2), N(0)),
-        LinearConstraint(sparsevec(N[2], N[1], 2),  N(3)),
-        LinearConstraint(sparsevec(N[2], N[-1], 2), N(-2))])
+                        [LinearConstraint(sparsevec(N[1], N[1], 2), N(1)),
+                         LinearConstraint(sparsevec(N[1], N[-1], 2), N(0)),
+                         LinearConstraint(sparsevec(N[2], N[1], 2), N(3)),
+                         LinearConstraint(sparsevec(N[2], N[-1], 2), N(-2))])
     @test all(H -> dim(H) == 2, hlist)
     # empty constraints list is handled correctly
     H = HalfSpace(N[1], N(0))
@@ -138,11 +139,11 @@ for N in [Float64, Float32, Rational{Int}]
     M = N[2 1; 0 2]  # invertible matrix
     lm = linear_map(M, cp)
     @test lm isa HPolytope{N} && length(constraints_list(lm)) ==
-        length(constraints_list(cp)) == 4
+                                 length(constraints_list(cp)) == 4
     M = N[2 1; 0 0]  # singular matrix
     lm = linear_map(M, cp)
     @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
-    @test box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
+    @test box_approximation(lm) == Hyperrectangle(N[7 // 2, 0], N[3 // 2, 0])
 
     cp = CartesianProduct(VPolytope([N[1]]), VPolytope([N[2]]))
     if test_suite_polyhedra
@@ -181,27 +182,27 @@ for N in [Float64, Float32, Rational{Int}]
     # ==================================
 
     # convert the cartesian product of two hyperrectangles to one hyperrectangle
-    h1 = Hyperrectangle(N[1/2],  N[1/2])
-    h2 = Hyperrectangle(N[2.5, 4.5],  N[1/2, 1/2])
+    h1 = Hyperrectangle(N[1 / 2], N[1 / 2])
+    h2 = Hyperrectangle(N[2.5, 4.5], N[1 / 2, 1 / 2])
     H = convert(Hyperrectangle, h1 × h2)
     @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
 
     # make one of the sets a BallInf, to test that the conversion does
     # not depend on the Hyperrectangle type
-    b1 = BallInf(N[1/2],  N(1/2))
+    b1 = BallInf(N[1 / 2], N(1 / 2))
     H = convert(Hyperrectangle, b1 × h2)
     @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
 
     # convert a hyperrectangle to a cartesian product of intervals
     H = Hyperrectangle(N[0, 0], N[1, 1])
-    Hcp = convert(CartesianProduct{N, Interval{N}, Interval{N}}, H)
+    Hcp = convert(CartesianProduct{N,Interval{N},Interval{N}}, H)
     @test Hcp isa CartesianProduct &&
           Hcp.X == Interval(N(-1), N(1)) &&
           Hcp.Y == Interval(N(-1), N(1))
 
     # checking that the order is correct
     H = Hyperrectangle(N[0, 1], N[1, 3])
-    Hcp = convert(CartesianProduct{N, Interval{N}, Interval{N}}, H)
+    Hcp = convert(CartesianProduct{N,Interval{N},Interval{N}}, H)
     @test Hcp isa CartesianProduct &&
           Hcp.X == Interval(N(-1), N(1)) &&
           Hcp.Y == Interval(N(-2), N(4))
@@ -278,19 +279,19 @@ for N in [Float64, Float32, Rational{Int}]
     i2 = Interval(N[2, 3])
     i3 = Interval(N[4, 5])
     vlist = vertices_list(CartesianProductArray([i1, i2, i3]))
-    @test ispermutation(vlist, [N[0, 2, 4], N[0, 3, 4], N[1, 2, 4],
-        N[1, 3, 4], N[0, 2, 5], N[0, 3, 5], N[1, 2, 5], N[1, 3, 5]])
+    @test ispermutation(vlist,
+                        [N[0, 2, 4], N[0, 3, 4], N[1, 2, 4],
+                         N[1, 3, 4], N[0, 2, 5], N[0, 3, 5], N[1, 2, 5], N[1, 3, 5]])
 
     # constraints_list
     hlist = constraints_list(CartesianProductArray([i1, i2, i3]))
     @test ispermutation(hlist,
-        [LinearConstraint(sparsevec(N[1], N[1], 3), N(1)),
-        LinearConstraint(sparsevec(N[1], N[-1], 3), N(0)),
-        LinearConstraint(sparsevec(N[2], N[1], 3), N(3)),
-        LinearConstraint(sparsevec(N[2], N[-1], 3), N(-2)),
-        LinearConstraint(sparsevec(N[3], N[1], 3), N(5)),
-        LinearConstraint(sparsevec(N[3], N[-1], 3), N(-4)),
-        ])
+                        [LinearConstraint(sparsevec(N[1], N[1], 3), N(1)),
+                         LinearConstraint(sparsevec(N[1], N[-1], 3), N(0)),
+                         LinearConstraint(sparsevec(N[2], N[1], 3), N(3)),
+                         LinearConstraint(sparsevec(N[2], N[-1], 3), N(-2)),
+                         LinearConstraint(sparsevec(N[3], N[1], 3), N(5)),
+                         LinearConstraint(sparsevec(N[3], N[-1], 3), N(-4))])
     @test all(H -> dim(H) == 3, hlist)
     # empty constraints list is handled correctly
     H = HalfSpace(N[1], N(0))
@@ -319,11 +320,11 @@ for N in [Float64, Float32, Rational{Int}]
     M = N[2 1; 0 2]  # invertible matrix
     lm = linear_map(M, cpa)
     @test lm isa HPolytope{N} && length(constraints_list(lm)) ==
-        length(constraints_list(cpa)) == 4
+                                 length(constraints_list(cpa)) == 4
     M = N[2 1; 0 0]  # singular matrix
     lm = linear_map(M, cpa)
     @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
-    @test box_approximation(lm) == Hyperrectangle(N[7//2, 0], N[3//2, 0])
+    @test box_approximation(lm) == Hyperrectangle(N[7 // 2, 0], N[3 // 2, 0])
 
     cpa = CartesianProductArray([VPolytope([N[1]]), VPolytope([N[2]])])
     if test_suite_polyhedra
@@ -344,8 +345,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test project(cpa, [3, 5]) == Singleton(N[13, 15])
     @test project(cpa, [2, 7]) == Singleton(N[12]) × Singleton(N[17])
     @test project(cpa, [1, 4, 5]) == Singleton(N[11]) × Singleton(N[14, 15])
-    @test project(cpa, [1, 4, 7]) == CartesianProductArray(
-        [Singleton(N[11]), Singleton(N[14]), Singleton(N[17])])
+    @test project(cpa, [1, 4, 7]) ==
+          CartesianProductArray([Singleton(N[11]), Singleton(N[14]), Singleton(N[17])])
 
     # ========================================
     # Conversions of Cartesian Product Arrays
@@ -359,8 +360,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
 
     M = hcat(N(1))
-    h1 = Hyperrectangle(N[1/2],  N[1/2])
-    h2 = Hyperrectangle(N[2.5, 4.5],  N[1/2, 1/2])
+    h1 = Hyperrectangle(N[1 / 2], N[1 / 2])
+    h2 = Hyperrectangle(N[2.5, 4.5], N[1 / 2, 1 / 2])
     H = convert(Hyperrectangle, CartesianProductArray([h1, h2]))
     @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
 
@@ -387,15 +388,15 @@ for N in [Float64, Float32, Rational{Int}]
     # convert a hyperrectangle to the cartesian product array of intervals
     # convert a hyperrectangle to a cartesian product of intervals
     H = Hyperrectangle(N[0, 0, 0], N[1, 1, 1])
-    Hcp = convert(CartesianProductArray{N, Interval{N}}, H)
+    Hcp = convert(CartesianProductArray{N,Interval{N}}, H)
     @test Hcp isa CartesianProductArray &&
           all([Hcpi == Interval(N(-1), N(1)) for Hcpi in array(Hcp)])
 
     # check that the order is correct
     H = Hyperrectangle(N[0, 1, 2], N[1, 2, 3])
-    Hcp = convert(CartesianProductArray{N, Interval{N}}, H)
+    Hcp = convert(CartesianProductArray{N,Interval{N}}, H)
     @test Hcp isa CartesianProductArray &&
-          all([array(Hcp)[i] == Interval(N(-1), N(2*i-1)) for i in 1:3])
+          all([array(Hcp)[i] == Interval(N(-1), N(2 * i - 1)) for i in 1:3])
 
     cpa = CartesianProductArray([Zonotope(N[0, 0], N[1 0; 0 1]),
                                  Zonotope(N[1, 1], N[0 1; 1 0])])
@@ -423,8 +424,8 @@ for N in [Float64, Float32]
     # is_intersection_empty
     i1 = Interval(N[0, 1])
     i2 = Interval(N[2, 3])
-    h1 = Hyperrectangle(low=N[3, 4], high=N[5, 7])
-    h2 = Hyperrectangle(low=N[5, 5], high=N[6, 8])
+    h1 = Hyperrectangle(; low=N[3, 4], high=N[5, 7])
+    h2 = Hyperrectangle(; low=N[5, 5], high=N[6, 8])
     cpa1 = CartesianProductArray([i1, i2, h1])
     cpa2 = CartesianProductArray([i1, i2, h2])
     G = HalfSpace(N[1, 0, 0, 0], N(1))
@@ -462,9 +463,10 @@ for N in [Float64]
     cap = intersection(cpa, P)
     @test cap isa CartesianProductArray && length(array(cap)) == 1
     Q = array(cap)[1]
-    @test ispermutation(constraints_list(Q), [HalfSpace(N[-1, 0, 0], N(0)),
-        HalfSpace(N[0, 1, 0], N(2)), HalfSpace(N[0, -1, 0], N(-1)),
-        HalfSpace(N[0, 0, -1], N(-2)), HalfSpace(N[1, 0, 1], N(2))])
+    @test ispermutation(constraints_list(Q),
+                        [HalfSpace(N[-1, 0, 0], N(0)),
+                         HalfSpace(N[0, 1, 0], N(2)), HalfSpace(N[0, -1, 0], N(-1)),
+                         HalfSpace(N[0, 0, -1], N(-2)), HalfSpace(N[1, 0, 1], N(2))])
     # some dimensions are unconstrained
     cpa = CartesianProductArray([Interval(N[0, 1]),
                                  Hyperrectangle(N[2, 3], N[1, 1]),
@@ -476,8 +478,9 @@ for N in [Float64]
         @test array(cap)[1] === array(cpa)[1]
     end
     Q = array(cap)[2]
-    @test ispermutation(constraints_list(Q), [HalfSpace(N[-1, 0], N(-1)),
-        HalfSpace(N[0, -1], N(-2)), HalfSpace(N[1, 1], N(3))])
+    @test ispermutation(constraints_list(Q),
+                        [HalfSpace(N[-1, 0], N(-1)),
+                         HalfSpace(N[0, -1], N(-2)), HalfSpace(N[1, 1], N(3))])
 
     if test_suite_polyhedra
         # projection to mixed dimensions

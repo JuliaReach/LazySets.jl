@@ -60,7 +60,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # approximate permutation check
     v1 = [N[1, 2], N[2, 3], N[3, 4]]
-    tol = Base.rtoldefault(N)/2
+    tol = Base.rtoldefault(N) / 2
     v2 = [N[3 + tol, 4 - tol], N[2 - tol, 3 + tol], N[1 + tol, 2 + tol]]
     v3 = [N[2, 3], N[1, 2], N[4, 4]]
     @test ispermutation(v1, v2) && !ispermutation(v2, v3)
@@ -88,9 +88,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # same sign
     A = (N isa AbstractFloat) ? rand(N, 100, 100) : ones(N, 100, 100)
-    @test same_sign(A, optimistic=true) == same_sign(A, optimistic=false) == true
+    @test same_sign(A; optimistic=true) == same_sign(A; optimistic=false) == true
     A[50, 50] = N(-1)
-    @test same_sign(A, optimistic=true) == same_sign(A, optimistic=false) == false
+    @test same_sign(A; optimistic=true) == same_sign(A; optimistic=false) == false
 
     # ============================================
     # Corresponding vector types and matrix types
@@ -99,9 +99,9 @@ for N in [Float64, Rational{Int}, Float32]
     # sparse
     vec = sparsevec([1, 3], N[1, 3], 3)
     mat = sparse([1, 3], [1, 3], N[1, 3], 3, 3)
-    @test vector_type(typeof(vec)) == SparseVector{N, Int}
+    @test vector_type(typeof(vec)) == SparseVector{N,Int}
     @test matrix_type(typeof(vec)) == SparseMatrixCSC{N,Int64}
-    @test vector_type(typeof(mat)) == SparseVector{N, Int}
+    @test vector_type(typeof(mat)) == SparseVector{N,Int}
     @test matrix_type(typeof(mat)) == SparseMatrixCSC{N,Int64}
 
     # regular
@@ -115,7 +115,7 @@ for N in [Float64, Rational{Int}, Float32]
     # other: Diagonal
     mat = Diagonal(N[1, 2])
     @test vector_type(typeof(mat)) == Vector{N}
-    @assert matrix_type(typeof(mat)) == Diagonal{N, Vector{N}}
+    @assert matrix_type(typeof(mat)) == Diagonal{N,Vector{N}}
 end
 
 for N in [Float64, Float32]
@@ -130,17 +130,17 @@ for N in [Float64, Float32]
     A[:, 1] = A[:, 5] = A[:, n] = zeros(N, m)
     nzcol = nonzero_columns(A)
     B = A[:, nzcol]
-    @test size(B) == (m, n-3)
+    @test size(B) == (m, n - 3)
     Asp = sparse(A)
     @test nonzero_columns(Asp) == [2, 3, 4, 6, 7, 8, 9]
 
     # extend by orthogonal complement
-    M = N[1 1; 2 2; 3 4.]
+    M = N[1 1; 2 2; 3 4.0]
     @assert rank(M) == 2
     Mext, inv_Mext = extend(M)
     @test rank(Mext) == 3
     @test Mext * inv_Mext ≈ Matrix(one(N)I, 3, 3)
-    Md = N[1 1; 2 2; 3 3.]
+    Md = N[1 1; 2 2; 3 3.0]
     @test_throws ArgumentError extend(Md) # test default argument check
     @test_throws ArgumentError extend(Md, check_rank=true)
 end

@@ -50,26 +50,26 @@ an empty list of constraints (which represents an unbounded set).
 The user has to make sure that the `HPolygonOpt` is not used before the
 constraints actually describe a bounded set.
 """
-mutable struct HPolygonOpt{N, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
-    constraints::Vector{HalfSpace{N, VN}}
+mutable struct HPolygonOpt{N,VN<:AbstractVector{N}} <: AbstractHPolygon{N}
+    constraints::Vector{HalfSpace{N,VN}}
     ind::Int
 
     # default constructor that applies sorting of the given constraints and
     # (checks for and) removes redundant constraints
-    function HPolygonOpt(constraints::Vector{HalfSpace{N, VN}},
+    function HPolygonOpt(constraints::Vector{HalfSpace{N,VN}},
                          ind::Int=1;
                          sort_constraints::Bool=true,
                          check_boundedness::Bool=false,
-                         prune::Bool=true) where {N, VN<:AbstractVector{N}}
+                         prune::Bool=true) where {N,VN<:AbstractVector{N}}
         if sort_constraints
-            sorted_constraints = Vector{HalfSpace{N, VN}}()
+            sorted_constraints = Vector{HalfSpace{N,VN}}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci; prune=prune)
             end
-            P = new{N, VN}(sorted_constraints, ind)
+            P = new{N,VN}(sorted_constraints, ind)
         else
-            P = new{N, VN}(constraints, ind)
+            P = new{N,VN}(constraints, ind)
         end
         @assert (!check_boundedness ||
                  isbounded(P, false)) "the polygon is not bounded"
@@ -80,13 +80,13 @@ end
 isoperationtype(::Type{<:HPolygonOpt}) = false
 
 # constructor with no constraints
-function HPolygonOpt{N, VN}() where {N, VN<:AbstractVector{N}}
-    return HPolygonOpt(Vector{HalfSpace{N, VN}}())
+function HPolygonOpt{N,VN}() where {N,VN<:AbstractVector{N}}
+    return HPolygonOpt(Vector{HalfSpace{N,VN}}())
 end
 
 # constructor with no constraints and given numeric type
 function HPolygonOpt{N}() where {N}
-    return HPolygonOpt(Vector{HalfSpace{N, Vector{N}}}())
+    return HPolygonOpt(Vector{HalfSpace{N,Vector{N}}}())
 end
 
 # constructor without explicit numeric type, defaults to Float64
@@ -100,10 +100,11 @@ function HPolygonOpt(constraints::Vector{<:HalfSpace})
 end
 
 # constructor from a simple constraint representation
-HPolygonOpt(A::AbstractMatrix, b::AbstractVector; sort_constraints::Bool=true,
-            check_boundedness::Bool=false, prune::Bool=true) =
-    HPolygonOpt(constraints_list(A, b); sort_constraints=sort_constraints,
-                check_boundedness=check_boundedness, prune=prune)
+function HPolygonOpt(A::AbstractMatrix, b::AbstractVector; sort_constraints::Bool=true,
+                     check_boundedness::Bool=false, prune::Bool=true)
+    return HPolygonOpt(constraints_list(A, b); sort_constraints=sort_constraints,
+                       check_boundedness=check_boundedness, prune=prune)
+end
 
 """
     σ(d::AbstractVector, P::HPolygonOpt;
@@ -140,7 +141,7 @@ function σ(d::AbstractVector, P::HPolygonOpt;
         # linear search
         if (d <= P.constraints[P.ind].a)
             # search backward
-            k = P.ind-1
+            k = P.ind - 1
             while (k >= 1 && d <= P.constraints[k].a)
                 k -= 1
             end
@@ -154,17 +155,17 @@ function σ(d::AbstractVector, P::HPolygonOpt;
             end
         else
             # search forward
-            k = P.ind+1
+            k = P.ind + 1
             while (k <= n && P.constraints[k].a <= d)
                 k += 1
             end
-            if (k == n+1)
+            if (k == n + 1)
                 P.ind = n
                 # corner case: wrap-around in constraints list
                 return element(intersection(Line2D(P.constraints[n]),
                                             Line2D(P.constraints[1])))
             else
-                P.ind = k-1
+                P.ind = k - 1
             end
         end
         return element(intersection(Line2D(P.constraints[P.ind]),
@@ -172,14 +173,14 @@ function σ(d::AbstractVector, P::HPolygonOpt;
     else
         # binary search
         k = binary_search_constraints(d, P.constraints; start_index=P.ind)
-        if k == 1 || k == n+1
+        if k == 1 || k == n + 1
             P.ind = 1
             # corner cases: wrap-around in constraints list
             return element(intersection(Line2D(P.constraints[n]),
                                         Line2D(P.constraints[1])))
         else
             P.ind = k
-            return element(intersection(Line2D(P.constraints[k-1]),
+            return element(intersection(Line2D(P.constraints[k - 1]),
                                         Line2D(P.constraints[k])))
         end
     end

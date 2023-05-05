@@ -43,5 +43,5 @@ function _underapproximate_box(X::S, solver) where {S<:LazySet}
             h = tmp
         end
     end
-    return Hyperrectangle(low=l, high=h)
+    return Hyperrectangle(; low=l, high=h)
 end

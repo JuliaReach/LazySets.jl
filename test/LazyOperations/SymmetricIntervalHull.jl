@@ -15,7 +15,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws AssertionError SymmetricIntervalHull(h0)
 
     # pass boundedness constructor flag
-    S = SymmetricIntervalHull(h0, check_boundedness=false)
+    S = SymmetricIntervalHull(h0; check_boundedness=false)
     @test S.X == h0
 
     # dimension

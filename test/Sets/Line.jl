@@ -5,7 +5,7 @@ for N in [Float64, Rational{Int}, Float32]
     rand(Line)
 
     # construction
-    l1 = Line(from=N[0, 1], to=N[1, 1]) # two points on the line
+    l1 = Line(; from=N[0, 1], to=N[1, 1]) # two points on the line
     l2 = Line(N[0, 1], N[1, 0]) # point and direction
 
     # construction given a 2d direction and offset
@@ -77,7 +77,7 @@ for N in [Float64, Float32]
 
     # concrete linear map
     mirror = N[-1 0; 0 1]
-    l = Line(from=N[0, 1], to=N[1, 1])
+    l = Line(; from=N[0, 1], to=N[1, 1])
     @test isequivalent(linear_map(mirror, l), l)
     rot = N[0 -1; 1 0] # π/2 ccw rotation
     @test isequivalent(linear_map(rot, l), Line(N[-1, 0], N[0, 1]))
@@ -85,8 +85,8 @@ for N in [Float64, Float32]
     # construction from two points on the line with and without normalization
     from = N[0, 1]
     to = N[2, 3]
-    L = Line(from=from, to=to, normalize=true)
+    L = Line(; from=from, to=to, normalize=true)
     @test isequivalent(L, Line(N[0, 1], N[1, 1])) && norm(L.d) ≈ N(1)
-    L = Line(from=from, to=to, normalize=false)
+    L = Line(; from=from, to=to, normalize=false)
     @test isequivalent(L, Line(N[0, 1], N[1, 1]))
 end

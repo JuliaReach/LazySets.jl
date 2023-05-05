@@ -39,15 +39,15 @@ julia> typeof(c)
 ConvexHull{Float64, Ball2{Float64, Vector{Float64}}, Ball2{Float64, Vector{Float64}}}
 ```
 """
-struct ConvexHull{N, S1<:LazySet{N}, S2<:LazySet{N}} <: ConvexSet{N}
+struct ConvexHull{N,S1<:LazySet{N},S2<:LazySet{N}} <: ConvexSet{N}
     X::S1
     Y::S2
 
     # default constructor with dimension check
     function ConvexHull(X::LazySet{N}, Y::LazySet{N}) where {N}
         @assert dim(X) == dim(Y) "sets in a convex hull must have the same " *
-            "dimension"
-        return new{N, typeof(X), typeof(Y)}(X, Y)
+                                 "dimension"
+        return new{N,typeof(X),typeof(Y)}(X, Y)
     end
 end
 
@@ -161,7 +161,7 @@ function isbounded(ch::ConvexHull)
     return isbounded(ch.X) && isbounded(ch.Y)
 end
 
-function isboundedtype(::Type{<:ConvexHull{N, S1, S2}}) where {N, S1, S2}
+function isboundedtype(::Type{<:ConvexHull{N,S1,S2}}) where {N,S1,S2}
     return isboundedtype(S1) && isboundedtype(S2)
 end
 
@@ -205,7 +205,7 @@ function vertices_list(ch::ConvexHull;
                        backend=nothing)
     vlist = vcat(vertices_list(ch.X), vertices_list(ch.Y))
     if apply_convex_hull
-        convex_hull!(vlist, backend=backend)
+        convex_hull!(vlist; backend=backend)
     end
     return vlist
 end

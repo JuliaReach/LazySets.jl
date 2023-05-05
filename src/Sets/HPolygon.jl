@@ -42,24 +42,24 @@ an empty list of constraints (which represents an unbounded set).
 The user has to make sure that the `HPolygon` is not used before the constraints
 actually describe a bounded set.
 """
-struct HPolygon{N, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
-    constraints::Vector{HalfSpace{N, VN}}
+struct HPolygon{N,VN<:AbstractVector{N}} <: AbstractHPolygon{N}
+    constraints::Vector{HalfSpace{N,VN}}
 
     # default constructor that applies sorting of the given constraints and
     # (checks for and) removes redundant constraints
-    function HPolygon(constraints::Vector{HalfSpace{N, VN}};
+    function HPolygon(constraints::Vector{HalfSpace{N,VN}};
                       sort_constraints::Bool=true,
                       check_boundedness::Bool=false,
-                      prune::Bool=true) where {N, VN<:AbstractVector{N}}
+                      prune::Bool=true) where {N,VN<:AbstractVector{N}}
         if sort_constraints
-            sorted_constraints = Vector{HalfSpace{N, VN}}()
+            sorted_constraints = Vector{HalfSpace{N,VN}}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci; prune=prune)
             end
-            P = new{N, VN}(sorted_constraints)
+            P = new{N,VN}(sorted_constraints)
         else
-            P = new{N, VN}(constraints)
+            P = new{N,VN}(constraints)
         end
         @assert (!check_boundedness ||
                  isbounded(P, false)) "the polygon is not bounded"
@@ -70,13 +70,13 @@ end
 isoperationtype(::Type{<:HPolygon}) = false
 
 # constructor with no constraints
-function HPolygon{N, VN}() where {N, VN<:AbstractVector{N}}
-    return HPolygon(Vector{HalfSpace{N, VN}}())
+function HPolygon{N,VN}() where {N,VN<:AbstractVector{N}}
+    return HPolygon(Vector{HalfSpace{N,VN}}())
 end
 
 # constructor with no constraints and given numeric type
 function HPolygon{N}() where {N}
-    return HPolygon(Vector{HalfSpace{N, Vector{N}}}())
+    return HPolygon(Vector{HalfSpace{N,Vector{N}}}())
 end
 
 # constructor without explicit numeric type, defaults to Float64
@@ -90,10 +90,11 @@ function HPolygon(constraints::Vector{<:HalfSpace})
 end
 
 # constructor from a simple constraint representation
-HPolygon(A::AbstractMatrix, b::AbstractVector; sort_constraints::Bool=true,
-         check_boundedness::Bool=false, prune::Bool=true) =
-    HPolygon(constraints_list(A, b); sort_constraints=sort_constraints,
-             check_boundedness=check_boundedness, prune=prune)
+function HPolygon(A::AbstractMatrix, b::AbstractVector; sort_constraints::Bool=true,
+                  check_boundedness::Bool=false, prune::Bool=true)
+    return HPolygon(constraints_list(A, b); sort_constraints=sort_constraints,
+                    check_boundedness=check_boundedness, prune=prune)
+end
 
 """
     σ(d::AbstractVector, P::HPolygon;
@@ -138,13 +139,13 @@ function σ(d::AbstractVector, P::HPolygon;
         k = binary_search_constraints(d, P.constraints)
     end
 
-    if k == 1 || k == n+1
+    if k == 1 || k == n + 1
         # corner cases: wrap-around in constraints list
         return element(intersection(Line2D(P.constraints[1]),
                                     Line2D(P.constraints[n])))
     else
         return element(intersection(Line2D(P.constraints[k]),
-                                    Line2D(P.constraints[k-1])))
+                                    Line2D(P.constraints[k - 1])))
     end
 end
 

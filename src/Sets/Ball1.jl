@@ -42,20 +42,20 @@ julia> σ([0.0, 1.0], B)
  1.0
 ```
 """
-struct Ball1{N, VN<:AbstractVector{N}} <: AbstractCentrallySymmetricPolytope{N}
+struct Ball1{N,VN<:AbstractVector{N}} <: AbstractCentrallySymmetricPolytope{N}
     center::VN
     radius::N
 
     # default constructor with domain constraint for radius
-    function Ball1(center::VN, radius::N) where {N, VN<:AbstractVector{N}}
+    function Ball1(center::VN, radius::N) where {N,VN<:AbstractVector{N}}
         @assert radius >= zero(N) "the radius must not be negative"
-        return new{N, VN}(center, radius)
+        return new{N,VN}(center, radius)
     end
 end
 
 isoperationtype(::Type{<:Ball1}) = false
 
-_vector_type(B::Ball1{N, VN}) where {N, VN} = VN
+_vector_type(B::Ball1{N,VN}) where {N,VN} = VN
 
 """
     center(B::Ball1)
@@ -204,7 +204,7 @@ true
 """
 function ∈(x::AbstractVector, B::Ball1, failfast::Bool=false)
     @assert length(x) == dim(B) "a $(length(x))-dimensional vector is " *
-        "incompatible with a $(dim(B))-dimensional set"
+                                "incompatible with a $(dim(B))-dimensional set"
     N = promote_type(eltype(x), eltype(B))
     sum = zero(N)
     @inbounds for (i, xi) in enumerate(x)
@@ -244,8 +244,7 @@ function rand(::Type{Ball1};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing
-             )
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     radius = abs(randn(rng, N))
@@ -279,8 +278,8 @@ function constraints_list(B::Ball1)
     n = dim(B)
     c, r = B.center, B.radius
     N = eltype(B)
-    clist = Vector{HalfSpace{N, Vector{N}}}(undef, 2^n)
-    for (i, di) in enumerate(Iterators.product([[one(N), -one(N)] for i = 1:n]...))
+    clist = Vector{HalfSpace{N,Vector{N}}}(undef, 2^n)
+    for (i, di) in enumerate(Iterators.product([[one(N), -one(N)] for i in 1:n]...))
         d = collect(di) # tuple -> vector
         clist[i] = HalfSpace(d, dot(d, c) + r)
     end

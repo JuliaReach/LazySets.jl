@@ -143,26 +143,25 @@ julia> constraints_list(tr)
  HalfSpace{Float64, ReachabilityBase.Arrays.SingleEntryVector{Float64}}([0.0, 0.0, -1.0], -1.0)
 ```
 """
-struct Translation{N, S<:LazySet{N}, VN<:AbstractVector{N}} <: AbstractAffineMap{N, S}
+struct Translation{N,S<:LazySet{N},VN<:AbstractVector{N}} <: AbstractAffineMap{N,S}
     X::S
     v::VN
 
     # default constructor with dimension check
-    function Translation(X::S, v::VN) where {N, VN<:AbstractVector{N}, S<:LazySet{N}}
+    function Translation(X::S, v::VN) where {N,VN<:AbstractVector{N},S<:LazySet{N}}
         @assert dim(X) == length(v) "cannot create a translation of a set of " *
-            "dimension $(dim(X)) along a vector of length $(length(v))"
+                                    "dimension $(dim(X)) along a vector of length $(length(v))"
 
-        return new{N, S, VN}(X, v)
+        return new{N,S,VN}(X, v)
     end
 end
 
 isoperationtype(::Type{<:Translation}) = true
 
-isconvextype(::Type{Translation{N, S, VN}}) where {N, S, VN} = isconvextype(S)
+isconvextype(::Type{Translation{N,S,VN}}) where {N,S,VN} = isconvextype(S)
 
 # constructor from a Translation: perform the translation immediately
-Translation(tr::Translation{N}, v::AbstractVector{N}) where {N} =
-    Translation(tr.X, tr.v + v)
+Translation(tr::Translation{N}, v::AbstractVector{N}) where {N} = Translation(tr.X, tr.v + v)
 
 # the translation of a lazy linear map is a (lazy) affine map
 Translation(lm::LinearMap, v::AbstractVector) = AffineMap(lm.M, lm.X, v)
@@ -277,7 +276,7 @@ function an_element(tr::Translation)
     return an_element(tr.X) + tr.v
 end
 
-function isboundedtype(::Type{<:Translation{N, S}}) where {N, S}
+function isboundedtype(::Type{<:Translation{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
@@ -362,7 +361,7 @@ We compute `translate(linear_map(M, tr.X), M * tr.v)`.
 """
 function linear_map(M::AbstractMatrix, tr::Translation)
     @assert dim(tr) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-        "applied to a set of dimension $(dim(tr))"
+                                  "applied to a set of dimension $(dim(tr))"
 
     return translate(linear_map(M, tr.X), M * tr.v)
 end

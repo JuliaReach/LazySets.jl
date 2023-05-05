@@ -55,9 +55,9 @@ function hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; p::N=N(Inf),
                             ε=N(1e-3)) where {N}
     @assert ε > zero(N) "the value ε must be positive"
     @assert isconvextype(typeof(X)) && isconvextype(typeof(Y)) "this " *
-        "implementation requires the sets to be convex"
+                                                               "implementation requires the sets to be convex"
     @assert isbounded(X) && isbounded(Y) "the Hausdorff distance is only " *
-        "defined for compact sets"
+                                         "defined for compact sets"
 
     n = dim(X)
     @assert dim(Y) == n "the Hausdorff distance is only defined between sets " *

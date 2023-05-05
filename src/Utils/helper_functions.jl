@@ -99,9 +99,9 @@ function implementing_sets(op::Function;
                            type_args=Float64,
                            binary::Bool=false)
     function get_unary_dict()
-        return Dict{String, Vector{Type}}("available" => Vector{Type}(),
-                                          "missing" => Vector{Type}(),
-                                          "specific" => Vector{Type}())
+        return Dict{String,Vector{Type}}("available" => Vector{Type}(),
+                                         "missing" => Vector{Type}(),
+                                         "specific" => Vector{Type}())
     end
 
     if !binary
@@ -112,10 +112,9 @@ function implementing_sets(op::Function;
     end
 
     # binary case by considering all set types as second argument
-    binary_dict = Dict{String, Vector{Tuple{Type, Type}}}(
-        "available" => Vector{Tuple{Type, Type}}(),
-        "missing" => Vector{Tuple{Type, Type}}(),
-        "specific" => Vector{Tuple{Type, Type}}())
+    binary_dict = Dict{String,Vector{Tuple{Type,Type}}}("available" => Vector{Tuple{Type,Type}}(),
+                                                        "missing" => Vector{Tuple{Type,Type}}(),
+                                                        "specific" => Vector{Tuple{Type,Type}}())
     signature_copy = copy(signature)
     insert!(signature_copy, 1, LazySet)  # insert a dummy type
     for set_type in subtypes(LazySet, true)
@@ -125,7 +124,7 @@ function implementing_sets(op::Function;
                 augmented_set_type = set_type{type_args}
             else
                 @assert isnothing(type_args) "for binary functions, " *
-                    "`type_args` must not be a list"
+                                             "`type_args` must not be a list"
             end
         catch e
             # type combination not available
@@ -198,8 +197,8 @@ end
 # check that the given coordinate i can be used to index an arbitrary element in
 # the set X
 @inline function _check_bounds(X, i)
-    1 <= i <= dim(X) || throw(ArgumentError("there is no index at coordinate " *
-        "$i because the set is of dimension $(dim(X))"))
+    return 1 <= i <= dim(X) || throw(ArgumentError("there is no index at coordinate " *
+                                                   "$i because the set is of dimension $(dim(X))"))
 end
 
 # if `condition` return `(result, N[])`, otherwise return `result`

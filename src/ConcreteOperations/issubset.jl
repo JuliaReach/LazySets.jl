@@ -28,9 +28,9 @@ function issubset end
 # error message
 function ⊆(::AbstractVector, ::LazySet)
     throw(ArgumentError("cannot make an inclusion check if the left-hand side " *
-          "is a vector; either wrap it as a set with one element, as in " *
-          "`Singleton(v) ⊆ X`, or check for set membership, as in `v ∈ X` " *
-          "(they behave equivalently although the implementations may differ)"))
+                        "is a vector; either wrap it as a set with one element, as in " *
+                        "`Singleton(v) ⊆ X`, or check for set membership, as in `v ∈ X` " *
+                        "(they behave equivalently although the implementations may differ)"))
 end
 
 # conversion for IA types
@@ -128,8 +128,9 @@ function _issubset_in_hyperrectangle(S, H, witness)
 end
 
 # disambiguation
-⊆(P::AbstractPolytope, H::AbstractHyperrectangle, witness::Bool=false) =
-    _issubset_in_hyperrectangle(P, H, witness)
+function ⊆(P::AbstractPolytope, H::AbstractHyperrectangle, witness::Bool=false)
+    return _issubset_in_hyperrectangle(P, H, witness)
+end
 
 """
     ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
@@ -302,8 +303,9 @@ end
 
 # disambiguations
 for ST in [:AbstractPolytope, :AbstractHyperrectangle, :LineSegment]
-    @eval ⊆(X::($ST), P::AbstractPolyhedron, witness::Bool=false) =
-        _issubset_constraints_list(X, P, witness)
+    @eval function ⊆(X::($ST), P::AbstractPolyhedron, witness::Bool=false)
+        return _issubset_constraints_list(X, P, witness)
+    end
 end
 
 """
@@ -338,8 +340,9 @@ end
 # disambiguations
 for ST in [:AbstractHyperrectangle, :AbstractPolyhedron, :UnionSetArray,
            :Complement]
-    @eval ⊆(X::AbstractSingleton, Y::($ST), witness::Bool=false) =
-        _issubset_singleton(X, Y, witness)
+    @eval function ⊆(X::AbstractSingleton, Y::($ST), witness::Bool=false)
+        return _issubset_singleton(X, Y, witness)
+    end
 end
 
 """
@@ -422,7 +425,7 @@ value, and if not, optionally compute a witness.
   * `(true, [])` iff ``B ⊆ S``
   * `(false, v)` iff ``B ⊈ S`` and ``v ∈ B \\setminus S``
 """
-function ⊆(B::Union{Ball2, Ballp}, S::AbstractSingleton, witness::Bool=false)
+function ⊆(B::Union{Ball2,Ballp}, S::AbstractSingleton, witness::Bool=false)
     result = isapproxzero(B.radius) && _isapprox(B.center, element(S))
     if result
         return _witness_result_empty(witness, true, B, S)
@@ -484,8 +487,9 @@ function _issubset_line_segment(L, S, witness)
 end
 
 # disambiguation
-⊆(L::LineSegment, H::AbstractHyperrectangle, witness::Bool=false) =
-    _issubset_line_segment(L, H, witness)
+function ⊆(L::LineSegment, H::AbstractHyperrectangle, witness::Bool=false)
+    return _issubset_line_segment(L, H, witness)
+end
 
 """
     ⊆(x::Interval, y::Interval, [witness]::Bool=false)
@@ -540,7 +544,7 @@ Otherwise we compute the set difference ``y = x \\ a`` and check whether
 """
 function ⊆(x::Interval, U::UnionSet, witness::Bool=false)
     @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
-        "$(dim(U))"
+                        "$(dim(U))"
     if !isconvextype(typeof(U.X)) || !isconvextype(typeof(U.Y))
         error("an inclusion check for the given combination of set types is " *
               "not available")
@@ -549,7 +553,7 @@ function ⊆(x::Interval, U::UnionSet, witness::Bool=false)
                               witness)
 end
 
-function ⊆(x::Interval, U::UnionSet{N, <:Interval, <:Interval},
+function ⊆(x::Interval, U::UnionSet{N,<:Interval,<:Interval},
            witness::Bool=false) where {N}
     return _issubset_interval(x, U.X, U.Y, witness)
 end
@@ -579,16 +583,16 @@ end
 
 function ⊆(x::Interval, U::UnionSetArray, witness::Bool=false)
     @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
-        "$(dim(U))"
+                        "$(dim(U))"
     V = _get_interval_array_copy(U)
     return _issubset_interval!(x, V, witness)
 end
 
 # disambiguation
-function ⊆(x::Interval, U::UnionSetArray{N, <:AbstractHyperrectangle},
+function ⊆(x::Interval, U::UnionSetArray{N,<:AbstractHyperrectangle},
            witness::Bool=false) where {N}
     @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
-        "$(dim(U))"
+                        "$(dim(U))"
     V = _get_interval_array_copy(U)
     return _issubset_interval!(x, V, witness)
 end
@@ -597,13 +601,13 @@ function _get_interval_array_copy(U::UnionSetArray)
     return [convert(Interval, X) for X in array(U)]
 end
 
-function _get_interval_array_copy(U::UnionSetArray{N, <:AbstractVector{<:Interval}}) where {N}
+function _get_interval_array_copy(U::UnionSetArray{N,<:AbstractVector{<:Interval}}) where {N}
     return copy(array(U))
 end
 
 function _issubset_interval!(x::Interval{N}, intervals, witness) where {N}
     # sort intervals by lower bound
-    sort!(intervals, lt=(x, y) -> min(x) <= min(y))
+    sort!(intervals; lt=(x, y) -> min(x) <= min(y))
 
     # subtract intervals from x
     for y in intervals
@@ -718,7 +722,7 @@ end
 
 # hyperrectangle container
 function _inclusion_in_union_container(H::AbstractHyperrectangle,
-                                       U::UnionSetArray{N, <:AbstractHyperrectangle}) where {N}
+                                       U::UnionSetArray{N,<:AbstractHyperrectangle}) where {N}
     return AbstractHyperrectangle{N}[]
 end
 
@@ -733,13 +737,14 @@ end
 
 # disambiguations
 for ST in [:LineSegment]
-    @eval ⊆(X::($ST), U::UnionSetArray, witness::Bool=false) =
-        _issubset_unionsetarray(X, U, witness)
+    @eval function ⊆(X::($ST), U::UnionSetArray, witness::Bool=false)
+        return _issubset_unionsetarray(X, U, witness)
+    end
 end
 # disambiguation with additional kwarg
-⊆(X::AbstractPolytope, U::UnionSetArray, witness::Bool=false; algorithm=nothing) =
-    _issubset_unionsetarray(X, U, witness)
-
+function ⊆(X::AbstractPolytope, U::UnionSetArray, witness::Bool=false; algorithm=nothing)
+    return _issubset_unionsetarray(X, U, witness)
+end
 
 """
     ⊆(∅::EmptySet, X::LazySet, witness::Bool=false)
@@ -768,8 +773,7 @@ end
 # disambiguations
 for ST in [:AbstractPolyhedron, :AbstractHyperrectangle, :Complement, :UnionSet,
            :UnionSetArray]
-    @eval ⊆(∅::EmptySet, X::($ST), witness::Bool=false) =
-        _issubset_emptyset(∅, X, witness)
+    @eval ⊆(∅::EmptySet, X::($ST), witness::Bool=false) = _issubset_emptyset(∅, X, witness)
 end
 
 """
@@ -806,14 +810,12 @@ end
 
 # disambiguations
 for ST in [:AbstractPolytope, :UnionSet, :UnionSetArray]
-    @eval ⊆(X::($ST), ∅::EmptySet, witness::Bool=false) =
-        _issubset_in_emptyset(X, ∅, witness)
+    @eval ⊆(X::($ST), ∅::EmptySet, witness::Bool=false) = _issubset_in_emptyset(X, ∅, witness)
 end
 
 # disambiguations for sets that are never empty
 for ST in [:AbstractSingleton, :LineSegment]
-    @eval ⊆(X::($ST), ::EmptySet, witness::Bool=false) =
-        witness ? (false, an_element(X)) : false
+    @eval ⊆(X::($ST), ::EmptySet, witness::Bool=false) = witness ? (false, an_element(X)) : false
 end
 
 function ⊆(∅₁::EmptySet, ∅₂::EmptySet, witness::Bool=false)
@@ -887,11 +889,13 @@ end
 # disambiguations
 for ST in [:AbstractHyperrectangle, :AbstractPolyhedron, :UnionSet,
            :UnionSetArray]
-    @eval ⊆(U::UnionSet, X::($ST), witness::Bool=false) =
-        _issubset_union_in_set((U.X, U.Y), X, witness)
+    @eval function ⊆(U::UnionSet, X::($ST), witness::Bool=false)
+        return _issubset_union_in_set((U.X, U.Y), X, witness)
+    end
 
-    @eval ⊆(U::UnionSetArray, X::($ST), witness::Bool=false) =
-        _issubset_union_in_set(array(U), X, witness)
+    @eval function ⊆(U::UnionSetArray, X::($ST), witness::Bool=false)
+        return _issubset_union_in_set(array(U), X, witness)
+    end
 end
 
 """
@@ -921,8 +925,7 @@ end
 # disambiguations
 for ST in [:AbstractPolytope, :AbstractHyperrectangle, :AbstractSingleton,
            :LineSegment, :EmptySet, :UnionSet, :UnionSetArray]
-    @eval ⊆(X::($ST), U::Universe, witness::Bool=false) =
-        _issubset_universe(X, U, witness)
+    @eval ⊆(X::($ST), U::Universe, witness::Bool=false) = _issubset_universe(X, U, witness)
 end
 
 """
@@ -998,8 +1001,7 @@ end
 
 # disambiguations
 for ST in [:AbstractPolytope, :LineSegment, :UnionSet, :UnionSetArray]
-    @eval ⊆(X::($ST), C::Complement, witness::Bool=false) =
-        isdisjoint(X, C.X, witness)
+    @eval ⊆(X::($ST), C::Complement, witness::Bool=false) = isdisjoint(X, C.X, witness)
 end
 
 """
@@ -1131,7 +1133,7 @@ function ⊆(X::CartesianProductArray, Y::CartesianProductArray,
             for j in 1:length(aX)
                 Xj = aX[j]
                 l = k + dim(Xj)
-                w[k:l-1] = j == i ? result[2] : an_element(Xj)
+                w[k:(l - 1)] = j == i ? result[2] : an_element(Xj)
                 k = l
             end
             return (false, w)
@@ -1168,7 +1170,7 @@ function ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, witness::Bool=false
     G = genmat(Z)
     n, m = size(G)
     N = promote_type(eltype(Z), eltype(H))
-    @inbounds for i = 1:n
+    @inbounds for i in 1:n
         aux = zero(N)
         for j in 1:m
             aux += abs(G[i, j])
@@ -1186,20 +1188,20 @@ function ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, witness::Bool=false
 end
 
 for ST in (AbstractZonotope, AbstractSingleton, LineSegment)
-    @eval function ⊆(Z::$(ST), C::CartesianProduct{N, <:LazySet, <:Universe}) where N
+    @eval function ⊆(Z::$(ST), C::CartesianProduct{N,<:LazySet,<:Universe}) where {N}
         X = C.X
         Zp = project(Z, 1:dim(X))
         return ⊆(Zp, X)
     end
 
-    @eval function ⊆(Z::$(ST), C::CartesianProduct{N, <:Universe, <:LazySet}) where N
+    @eval function ⊆(Z::$(ST), C::CartesianProduct{N,<:Universe,<:LazySet}) where {N}
         Y = C.Y
-        Zp = project(Z, dim(C.X)+1:dim(C))
+        Zp = project(Z, (dim(C.X) + 1):dim(C))
         return ⊆(Zp, Y)
     end
 
     # disambiguation
-    @eval function ⊆(::$(ST), ::CartesianProduct{N, <:Universe, <:Universe}) where N
+    @eval function ⊆(::$(ST), ::CartesianProduct{N,<:Universe,<:Universe}) where {N}
         return true
     end
 end
