@@ -222,6 +222,11 @@ function ExponentialMap(spmexp::SparseMatrixExp, ∅::EmptySet)
     return EmptySet{N}(size(spmexp, 1))
 end
 
+# auto-convert M to SparseMatrixExp
+function ExponentialMap(M::AbstractMatrix, X::LazySet)
+    return ExponentialMap(SparseMatrixExp(M), X)
+end
+
 isoperationtype(::Type{<:ExponentialMap}) = true
 
 isconvextype(::Type{ExponentialMap{N, S}}) where {N, S} = isconvextype(S)
