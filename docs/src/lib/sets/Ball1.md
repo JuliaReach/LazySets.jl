@@ -7,6 +7,7 @@ CurrentModule = LazySets
 ```@docs
 Ball1
 σ(::AbstractVector, ::Ball1)
+ρ(::AbstractVector, ::Ball1)
 ∈(::AbstractVector, ::Ball1, ::Bool=false)
 vertices_list(::Ball1)
 center(::Ball1)
@@ -18,7 +19,6 @@ reflect(::Ball1)
 ```
 
 Inherited from [`LazySet`](@ref):
-* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))

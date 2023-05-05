@@ -7,6 +7,7 @@ CurrentModule = LazySets
 ```@docs
 Ballp
 σ(::AbstractVector, ::Ballp)
+ρ(::AbstractVector, ::Ballp)
 ∈(::AbstractVector, ::Ballp)
 center(::Ballp)
 rand(::Type{Ballp})
