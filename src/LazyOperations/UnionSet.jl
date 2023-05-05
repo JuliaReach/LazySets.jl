@@ -124,8 +124,8 @@ function σ(d::AbstractVector, cup::UnionSet; algorithm="support_vector")
         return dot(d, σX) > dot(d, σY) ? σX : σY
 
     elseif algorithm == "support_function"
-        m = argmax([ρ(d, X), ρ(d, Y)])
-        return m == 1 ? σ(d, X) : σ(d, Y)
+        ρX, ρY = ρ(d, X), ρ(d, Y)
+        return ρX > ρY ? σ(d, X) : σ(d, Y)
 
     else
         error("algorithm $algorithm for the support vector of a `UnionSet` is" *

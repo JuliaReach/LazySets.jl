@@ -110,18 +110,7 @@ A support vector in the given direction.
 """
 function σ(d::AbstractVector, cha::ConvexHullArray)
     @assert !isempty(cha.array) "an empty convex hull is not allowed"
-    svec = d
-    N = eltype(d)
-    rmax = N(-Inf)
-    for chi in cha.array
-        si = σ(d, chi)
-        ri = dot(d, si)
-        if ri > rmax
-            rmax = ri
-            svec = si
-        end
-    end
-    return svec
+    return _σ_union(d, array(cha))
 end
 
 """

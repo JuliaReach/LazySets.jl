@@ -109,23 +109,34 @@ support function of each set directly and then calls only the support vector of
 one of the ``Xᵢ``.
 """
 function σ(d::AbstractVector, cup::UnionSetArray; algorithm="support_vector")
-   A = array(cup)
+   arr = array(cup)
 
    if algorithm == "support_vector"
-       σarray = map(Xi -> σ(d, Xi), A)
-       ρarray = map(vi -> dot(d, vi), σarray)
-       m = argmax(ρarray)
-       return σarray[m]
+       return _σ_union(d, arr)
 
    elseif algorithm == "support_function"
-       ρarray = map(Xi -> ρ(d, Xi), A)
-       m = argmax(ρarray)
-       return σ(d, A[m])
+       m = argmax(i -> ρ(d, @inbounds arr[i]), eachindex(arr))
+       return σ(d, arr[m])
 
    else
        error("algorithm $algorithm for the support vector of a " *
              "`UnionSetArray` is unknown")
    end
+end
+
+function _σ_union(d::AbstractVector, sets)
+    σmax = d
+    N = eltype(d)
+    ρmax = N(-Inf)
+    for Xi in sets
+        σX = σ(d, Xi)
+        ρX = dot(d, σX)
+        if ρX > ρmax
+            ρmax = ρX
+            σmax = σX
+        end
+    end
+    return σmax
 end
 
 """
@@ -149,8 +160,7 @@ The support function of the union of a finite number of sets ``X₁, X₂, ...``
 can be obtained as the maximum of ``ρ(d, X₂), ρ(d, X₂), ...``.
 """
 function ρ(d::AbstractVector, cup::UnionSetArray)
-   A = array(cup)
-   return maximum(Xi -> ρ(d, Xi), A)
+   return maximum(Xi -> ρ(d, Xi), array(cup))
 end
 
 """
