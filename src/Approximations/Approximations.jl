@@ -10,10 +10,10 @@ import IntervalArithmetic as IA
 
 using ReachabilityBase.Comparison: _isapprox, _leq, _geq, _rtol, isapproxzero
 using LazySets: default_lp_solver, _isbounded_stiemke, require, dim, linprog,
-                is_lp_optimal, _normal_Vector,
+                is_lp_optimal, _normal_Vector, default_sdp_solver,
                 get_exponential_backend, _expmv
 using LazySets.JuMP: Model, set_silent, @variable, @constraint, optimize!,
-                     value, @NLobjective
+                     value, @NLobjective, @objective
 
 import Base: convert
 import LazySets: project
