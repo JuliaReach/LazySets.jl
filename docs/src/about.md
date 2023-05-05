@@ -58,7 +58,7 @@ followed by the name of the type or function.
 For example, the following command will print the documentation of the `LazySet`
 type:
 
-```julia
+```
 julia> ?LazySet
 ```
 

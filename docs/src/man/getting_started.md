@@ -62,7 +62,7 @@ The full list of optional dependencies can be found in section [Optional Feature
 
 To run the full test suite, do
 
-```julia
+```
 ] test LazySets
 ```
 Please note that it is required that you first install all the optional dependencies as specified in [Installing all dependencies](@ref).
