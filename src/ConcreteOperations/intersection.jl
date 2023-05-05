@@ -848,7 +848,7 @@ end
 @commutative intersection(S::AbstractSingleton, cup::UnionSetArray) =
     _intersection_singleton(S, cup)
 @commutative intersection(X::Interval, cup::UnionSetArray) =
-    _intersection_interval(X, cup)
+    _intersection_usa(cup, X)
 @commutative intersection(L::LinearMap, cup::UnionSetArray) =
     _intersection_usa(cup, L)
 @commutative function intersection(cup1::UnionSet, cup2::UnionSetArray)
