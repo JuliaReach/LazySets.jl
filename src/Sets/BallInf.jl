@@ -55,6 +55,10 @@ struct BallInf{N, VN<:AbstractVector{N}} <: AbstractHyperrectangle{N}
     end
 end
 
+function □(c::VN, r::N) where {N, VN<:AbstractVector{N}}
+    return BallInf(c, r)
+end
+
 isoperationtype(::Type{<:BallInf}) = false
 
 """

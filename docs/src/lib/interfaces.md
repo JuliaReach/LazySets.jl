@@ -62,6 +62,7 @@ plot3d!
 ### Globally defined set functions
 
 ```@docs
+○(c, a)
 isconvextype(::Type{<:LazySet})
 low(::LazySet)
 high(::LazySet)
@@ -431,6 +432,7 @@ AbstractHyperrectangle
 This interface defines the following functions:
 
 ```@docs
+□(c, r)
 norm(::AbstractHyperrectangle, ::Real=Inf)
 radius(::AbstractHyperrectangle, ::Real=Inf)
 σ(::AbstractVector, ::AbstractHyperrectangle)

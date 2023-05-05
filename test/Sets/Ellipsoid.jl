@@ -62,6 +62,9 @@ for N in [Float64, Float32]
     d = N[0, -1]
     @test σ(d, E) ≈ N[1, 2 - sqrt(2)]
 
+    # unicode constructor
+    @test ○(center(E), shape_matrix(E)) == E
+
     # boundedness
     @test isbounded(E)
 

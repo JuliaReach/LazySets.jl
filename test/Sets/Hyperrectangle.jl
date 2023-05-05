@@ -95,6 +95,9 @@ for N in [Float64, Rational{Int}, Float32]
     # diameter
     @test diameter(h) == norm(N[5, 3] - N[1, 1], Inf)
 
+    # unicode constructor
+    @test □(center(h), radius_hyperrectangle(h)) == h
+
     # generators matrix for sparse hyperrectangle
     @test genmat(Hyperrectangle(sparsevec(N[3, 2]), sparsevec(N[2, 1]))) isa SparseMatrixCSC
 

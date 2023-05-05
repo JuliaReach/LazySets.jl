@@ -16,7 +16,7 @@ using LazySets.JuMP: Model, set_silent, @variable, @constraint, optimize!,
                      value, @NLobjective, @objective
 
 import Base: convert
-import LazySets: project
+import LazySets: project, □
 
 using ..LazySets: @assert, activate_assertions
 # activate assertions by default

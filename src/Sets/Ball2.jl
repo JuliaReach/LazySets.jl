@@ -63,6 +63,10 @@ struct Ball2{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractCentrallySymmet
     end
 end
 
+function ○(c::VN, r::N) where {N<:AbstractFloat, VN<:AbstractVector{N}}
+    return Ball2(c, r)
+end
+
 isoperationtype(::Type{<:Ball2}) = false
 
 """

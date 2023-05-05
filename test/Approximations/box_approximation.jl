@@ -38,6 +38,9 @@ for N in [Float64, Rational{Int}, Float32]
     E = EmptySet{N}(2)
     @test box_approximation(E) == E
 
+    # alias constructors
+    @test interval_hull(b) == □(b) == box_approximation(b)
+
     # ===================================================================
     # Testing box_approximation_symmetric (= symmetric interval hull)
     # ===================================================================

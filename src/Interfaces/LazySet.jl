@@ -40,7 +40,8 @@ export LazySet,
        project,
        rectify,
        permute,
-       chebyshev_center_radius
+       chebyshev_center_radius,
+       ○
 
 """
     LazySet{N}
@@ -161,6 +162,27 @@ Zonotope
 ```
 """
 abstract type LazySet{N} end
+
+"""
+    ○(c, a)
+
+Convenience constructor of `Ellipsoid`s or `Ball2`s depending on the type of `a`.
+
+### Input
+
+- `c` -- center
+- `a` -- additional parameter (either a shape matrix for `Ellipsoid` or a radius
+         for `Ball2`)
+
+### Output
+
+A `Ellipsoid`s or `Ball2`s depending on the type of `a`.
+
+### Notes
+
+The function symbol can be typed via `\\bigcirc[TAB]`.
+"""
+function ○(c, a) end
 
 """
     isconvextype(X::Type{<:LazySet})
