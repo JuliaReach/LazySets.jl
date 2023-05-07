@@ -258,27 +258,24 @@ If `solver == nothing`, we fall back to `default_lp_solver(N)`.
 
 ### Algorithm
 
-The membership problem is computed by stating and solving the following linear
-program.
+The membership problem is reduced to the following linear program.
 Let ``p`` and ``n`` be the number of generators and ambient dimension,
 respectively.
-We consider the minimization of ``x_0`` in the ``p+1``-dimensional space of
-elements ``(x_0, ξ_1, …, ξ_p)`` constrained to ``0 ≤ x_0 ≤ ∞``,
-``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p``, and such that ``x-c = Gξ`` holds.
-If a feasible solution exists, the optimal value ``x_0 = 0`` is achieved.
+We consider the ``p``-dimensional space of elements ``(ξ_1, …, ξ_p)``
+constrained to ``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p`` such that
+``x-c = Gξ`` holds.
 """
 function ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
     @assert length(x) == dim(Z)
 
     p, n = ngens(Z), dim(Z)
     N = promote_type(eltype(x), eltype(Z))
-    # (n+1) x (p+1) matrix with block-diagonal blocks 1 and genmat(Z)
-    A = [[one(N); zeros(N, p)]'; [zeros(N, n) genmat(Z)]]
-    b = [zero(N); (x - center(Z))]
-    lbounds = [zero(N); fill(-one(N), p)]
-    ubounds = [N(Inf); ones(N, p)]
-    sense = ['>'; fill('=', n)]
-    obj = [one(N); zeros(N, p)]
+    A = genmat(Z)
+    sense = '='
+    b = x .- center(Z)
+    lbounds = -one(N)
+    ubounds = one(N)
+    obj = zeros(N, p)
 
     if isnothing(solver)
         solver = default_lp_solver(N)
