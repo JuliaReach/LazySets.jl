@@ -15,10 +15,9 @@ Compute the exact sum of sparse polyomial zonotopes ``P₁`` and ``P₂``.
 A `SparsePolynomialZonotope` representing the exact sum ``P₁ ⊞ P₂``.
 """
 function exact_sum(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
-
     indexvector(P1) == indexvector(P2) || throw(ArgumentError("the exact sum " *
-        "is currently only implemented for sparse polynomial zonotopes with " *
-        "the same index vector"))
+                                                              "is currently only implemented for sparse polynomial zonotopes with " *
+                                                              "the same index vector"))
 
     c = center(P1) + center(P2)
     G = hcat(genmat_dep(P1), genmat_dep(P2))

@@ -85,7 +85,7 @@ A matrix where each column represents one generator of `H`.
 """
 function genmat(H::AbstractHyperrectangle)
     gens = generators(H)
-    return genmat_fallback(H, gens=gens, ngens=length(gens))
+    return genmat_fallback(H; gens=gens, ngens=length(gens))
 end
 
 # iterator that wraps the generator matrix
@@ -95,7 +95,7 @@ struct HyperrectangleGeneratorIterator{AH<:AbstractHyperrectangle}
     dim::Int  # total number of dimensions of `H` (stored for efficiency)
 
     function HyperrectangleGeneratorIterator(H::AH) where {N,
-            AH<:AbstractHyperrectangle{N}}
+                                                           AH<:AbstractHyperrectangle{N}}
         n = dim(H)
         nonflats = _nonflat_dimensions(H)
         return new{AH}(H, nonflats, n)
@@ -117,11 +117,12 @@ end
 
 Base.length(it::HyperrectangleGeneratorIterator) = length(it.nonflats)
 
-Base.eltype(::Type{<:HyperrectangleGeneratorIterator{<:AbstractHyperrectangle{N}}}) where {N} =
-    SingleEntryVector{N}
+function Base.eltype(::Type{<:HyperrectangleGeneratorIterator{<:AbstractHyperrectangle{N}}}) where {N}
+    return SingleEntryVector{N}
+end
 
 function Base.iterate(it::HyperrectangleGeneratorIterator{<:AH},
-                      state::Int=1) where {N, AH<:AbstractHyperrectangle{N}}
+                      state::Int=1) where {N,AH<:AbstractHyperrectangle{N}}
     if state > length(it.nonflats)
         return nothing
     end
@@ -264,13 +265,13 @@ A list of ``2n`` linear constraints, where ``n`` is the dimension of `H`.
 """
 function constraints_list(H::AbstractHyperrectangle{N}) where {N}
     n = dim(H)
-    constraints = Vector{HalfSpace{N, SingleEntryVector{N}}}(undef, 2*n)
+    constraints = Vector{HalfSpace{N,SingleEntryVector{N}}}(undef, 2 * n)
     b, c = high(H), -low(H)
     one_N = one(N)
     @inbounds for i in 1:n
         ei = SingleEntryVector(i, n, one_N)
         constraints[i] = HalfSpace(ei, b[i])
-        constraints[i+n] = HalfSpace(-ei, c[i])
+        constraints[i + n] = HalfSpace(-ei, c[i])
     end
     return constraints
 end
@@ -632,7 +633,7 @@ A list of `Hyperrectangle`s.
 function split(H::AbstractHyperrectangle{N},
                num_blocks::AbstractVector{Int}) where {N}
     @assert length(num_blocks) == dim(H) "the number of blocks " *
-       "($(length(num_blocks))) must be specified in each dimension ($(dim(H)))"
+                                         "($(length(num_blocks))) must be specified in each dimension ($(dim(H)))"
     R = radius_hyperrectangle(H)
     T = similar_type(R)
     radius = similar(R)
@@ -648,10 +649,10 @@ function split(H::AbstractHyperrectangle{N},
         if m <= 0
             throw(ArgumentError("each dimension needs at least one block, got $m"))
         elseif m == one(N)
-            centers[i] = range(lo[i] + radius[i], length=1)
+            centers[i] = range(lo[i] + radius[i]; length=1)
         else
             radius[i] /= m
-            centers[i] = range(lo[i] + radius[i], step=(2 * radius[i]),
+            centers[i] = range(lo[i] + radius[i]; step=(2 * radius[i]),
                                length=m)
             total_number *= m
         end
@@ -659,7 +660,7 @@ function split(H::AbstractHyperrectangle{N},
     radius = convert(T, radius)
 
     # create hyperrectangles for every combination of the center points
-    result = Vector{Hyperrectangle{N, T, T}}(undef, total_number)
+    result = Vector{Hyperrectangle{N,T,T}}(undef, total_number)
     @inbounds for (i, center) in enumerate(product(centers...))
         c = convert(T, collect(center))
         result[i] = Hyperrectangle(c, copy(radius))
@@ -681,7 +682,7 @@ Concrete rectification of a hyperrectangular set.
 The `Hyperrectangle` that corresponds to the rectification of `H`.
 """
 function rectify(H::AbstractHyperrectangle)
-    Hyperrectangle(low=rectify(low(H)), high=rectify(high(H)))
+    return Hyperrectangle(; low=rectify(low(H)), high=rectify(high(H)))
 end
 
 """
@@ -710,7 +711,7 @@ function project(H::AbstractHyperrectangle, block::AbstractVector{Int};
                  kwargs...)
     πc = center(H)[block]
     πr = radius_hyperrectangle(H)[block]
-    return Hyperrectangle(πc, πr, check_bounds=false)
+    return Hyperrectangle(πc, πr; check_bounds=false)
 end
 
 """
@@ -732,7 +733,7 @@ A scalar representing the distance between point `x` and hyperrectangle `H`.
 @commutative function distance(x::AbstractVector, H::AbstractHyperrectangle{N};
                                p::Real=N(2)) where {N}
     @assert length(x) == dim(H) "a vector of length $(length(x)) is " *
-        "incompatible with a set of dimension $(dim(H))"
+                                "incompatible with a set of dimension $(dim(H))"
 
     # compute closest point
     y = similar(x)

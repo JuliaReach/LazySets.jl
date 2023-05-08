@@ -44,18 +44,18 @@ julia> ρ([1.0, 1.0], B)
 2.0
 ```
 """
-struct BallInf{N, VN<:AbstractVector{N}} <: AbstractHyperrectangle{N}
+struct BallInf{N,VN<:AbstractVector{N}} <: AbstractHyperrectangle{N}
     center::VN
     radius::N
 
     # default constructor with domain constraint for radius
-    function BallInf(center::VN, radius::N) where {N, VN<:AbstractVector{N}}
+    function BallInf(center::VN, radius::N) where {N,VN<:AbstractVector{N}}
         @assert radius >= zero(N) "the radius must not be negative"
-        return new{N, VN}(center, radius)
+        return new{N,VN}(center, radius)
     end
 end
 
-function □(c::VN, r::N) where {N, VN<:AbstractVector{N}}
+function □(c::VN, r::N) where {N,VN<:AbstractVector{N}}
     return BallInf(c, r)
 end
 
@@ -77,7 +77,7 @@ The box radius of the ball in the infinity norm in the given dimension.
 """
 function radius_hyperrectangle(B::BallInf, i::Int)
     @assert 1 <= i <= dim(B) "cannot compute the radius of a " *
-        "$(dim(B))-dimensional set in dimension $i"
+                             "$(dim(B))-dimensional set in dimension $i"
     return B.radius
 end
 
@@ -124,21 +124,20 @@ function isflat(B::BallInf)
 end
 
 function load_genmat_ballinf_static()
-return quote
-
-function genmat(B::BallInf{N, SVector{L, N}}) where {L, N}
-    if isflat(B)
-        return SMatrix{L, 0, N, 0}()
-    else
-        gens = zeros(MMatrix{L, L})
-        @inbounds for i in 1:L
-            gens[i, i] = B.radius
+    return quote
+        function genmat(B::BallInf{N,SVector{L,N}}) where {L,N}
+            if isflat(B)
+                return SMatrix{L,0,N,0}()
+            else
+                gens = zeros(MMatrix{L,L})
+                @inbounds for i in 1:L
+                    gens[i, i] = B.radius
+                end
+                return SMatrix(gens)
+            end
         end
-        return SMatrix(gens)
     end
-end
-
-end end  # quote / load_genmat_ballinf_static()
+end  # quote / load_genmat_ballinf_static()
 
 """
     center(B::BallInf)
@@ -296,7 +295,7 @@ function rand(::Type{BallInf};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     radius = abs(randn(rng, N))

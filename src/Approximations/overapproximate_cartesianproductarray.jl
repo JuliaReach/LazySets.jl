@@ -15,9 +15,8 @@ original block structure.
 
 A `CartesianProductArray` representing the decomposed linear map.
 """
-function overapproximate(lm::LinearMap{N, <:CartesianProductArray},
-                         ::Type{<:CartesianProductArray{N, S}}
-                        ) where {N, S<:LazySet}
+function overapproximate(lm::LinearMap{N,<:CartesianProductArray},
+                         ::Type{<:CartesianProductArray{N,S}}) where {N,S<:LazySet}
     cpa = array(lm.X)
     arr = Vector{S}(undef, length(cpa))
     return _overapproximate_lm_cpa!(arr, lm.M, cpa, S)
@@ -41,7 +40,7 @@ directions while keeping the original block structure.
 
 A `CartesianProductArray` representing the decomposed linear map.
 """
-function overapproximate(lm::LinearMap{N, <:CartesianProductArray},
+function overapproximate(lm::LinearMap{N,<:CartesianProductArray},
                          ::Type{<:CartesianProductArray},
                          dir::Type{<:AbstractDirections}) where {N}
     cpa = array(lm.X)
@@ -67,7 +66,7 @@ while keeping the original block structure.
 
 A `CartesianProductArray` representing the decomposed linear map.
 """
-function overapproximate(lm::LinearMap{N, <:CartesianProductArray},
+function overapproximate(lm::LinearMap{N,<:CartesianProductArray},
                          ::Type{<:CartesianProductArray},
                          set_type::Type{<:LazySet}) where {N}
     cpa = array(lm.X)
@@ -78,13 +77,12 @@ end
 function _overapproximate_lm_cpa!(arr, M, cpa, overapprox_option)
     # construct Minkowski sum for block row
     function _block_row(cpa::Vector{S}, M::AbstractMatrix,
-                        row_range::UnitRange{Int}) where {N, S<:LazySet{N}}
-        arr_inner = Vector{LinearMap{N, <:S}}(undef, length(cpa))
+                        row_range::UnitRange{Int}) where {N,S<:LazySet{N}}
+        arr_inner = Vector{LinearMap{N,<:S}}(undef, length(cpa))
         col_start_ind, col_end_ind = 1, 0
         @inbounds for (j, bj) in enumerate(cpa)
             col_end_ind += dim(bj)
-            arr_inner[j] =
-                LinearMap(M[row_range, col_start_ind:col_end_ind], bj)
+            arr_inner[j] = LinearMap(M[row_range, col_start_ind:col_end_ind], bj)
             col_start_ind = col_end_ind + 1
         end
         return MinkowskiSumArray(arr_inner)
@@ -127,7 +125,7 @@ This implementation currently only supports resets to zero.
 We convert the `ResetMap` into a `LinearMap` and then call the corresponding
 `overapproximate` method.
 """
-function overapproximate(rm::ResetMap{N, <:CartesianProductArray},
+function overapproximate(rm::ResetMap{N,<:CartesianProductArray},
                          ::Type{<:CartesianProductArray}, oa) where {N}
     if any(!iszero, values(rm.resets))
         error("this implementation only support resets to zero")
@@ -174,12 +172,10 @@ The result is a `CartesianProductArray` with the same block structure as in `X`.
 function overapproximate(cap::Intersection{N,
                                            <:CartesianProductArray,
                                            <:AbstractPolyhedron},
-                            ::Type{<:CartesianProductArray}, oa) where {N}
-
+                         ::Type{<:CartesianProductArray}, oa) where {N}
     cpa, P = cap.X, cap.Y
 
-    cpa_low_dim, vars, block_structure, blocks =
-        get_constrained_lowdimset(cpa, P)
+    cpa_low_dim, vars, block_structure, blocks = get_constrained_lowdimset(cpa, P)
 
     hpoly_low_dim = HPolytope(constraints_list(cpa_low_dim))
     low_intersection = intersection(hpoly_low_dim, project(P, vars))
@@ -195,8 +191,8 @@ end
 
 # symmetric method
 function overapproximate(cap::Intersection{N,
-                                            <:AbstractPolyhedron,
-                                            <:CartesianProductArray},
-                            ::Type{<:CartesianProductArray}, oa) where {N}
-    overapproximate(Intersection(cap.Y, cap.X), oa)
+                                           <:AbstractPolyhedron,
+                                           <:CartesianProductArray},
+                         ::Type{<:CartesianProductArray}, oa) where {N}
+    return overapproximate(Intersection(cap.Y, cap.X), oa)
 end

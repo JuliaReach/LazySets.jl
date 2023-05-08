@@ -37,7 +37,6 @@ are available, use `algorithm="vrep"`.
 """
 function cartesian_product(X::LazySet, Y::LazySet; backend=nothing,
                            algorithm::String="hrep")
-
     if algorithm == "vrep"
         Yv = VPolytope(vertices_list(Y))
         if dim(X) == 1 && isconvextype(typeof(X))  # special case
@@ -45,7 +44,7 @@ function cartesian_product(X::LazySet, Y::LazySet; backend=nothing,
             return cartesian_product(Xv, Yv)
         end
         Xv = VPolytope(vertices_list(X))
-        Pout = cartesian_product(Xv, Yv, backend=backend)
+        Pout = cartesian_product(Xv, Yv; backend=backend)
 
     elseif algorithm == "hrep"
         Pout = _cartesian_product_hrep(X, Y)
@@ -60,11 +59,11 @@ function cartesian_product(X::LazySet, Y::LazySet; backend=nothing,
             Yp = Y isa Universe ? Y : Universe(dim(Y))
         end
         Pout = _cartesian_product_hrep_polyhedra(Xp, Yp; backend1=backend,
-                                                         backend2=backend)
+                                                 backend2=backend)
 
     else
         throw(ArgumentError("expected algorithm `\"vrep\"`, `\"hrep\"`, or " *
-            "`\"hrep_polyhedra\"`, but got `$algorithm`"))
+                            "`\"hrep_polyhedra\"`, but got `$algorithm`"))
     end
     return Pout
 end
@@ -92,7 +91,7 @@ For further information on the supported backends see
 function cartesian_product(P1::VPolytope, P2::VPolytope; backend=nothing)
     require(@__MODULE__, :Polyhedra; fun_name="cartesian_product")
 
-    return _cartesian_product_vrep(P1, P2, backend1=backend, backend2=backend)
+    return _cartesian_product_vrep(P1, P2; backend1=backend, backend2=backend)
 end
 
 function _cartesian_product_vrep(P1, P2; backend1=nothing, backend2=nothing)
@@ -113,7 +112,7 @@ function cartesian_product(U1::Universe, U2::Universe)
     return Universe(dim(U1) + dim(U2))
 end
 
-function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:LazySet, S2<:LazySet}
+function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:LazySet,S2<:LazySet}
     N = promote_type(eltype(X), eltype(Y))
     U1 = Universe{N}(dim(X))
     clist1 = [cartesian_product(U1, c) for c in constraints_list(Y)]
@@ -128,7 +127,7 @@ function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:LazySet, S2<:LazySet}
 end
 
 function _cartesian_product_hrep_polyhedra(P1::PT1, P2::PT2; backend1=nothing,
-                                           backend2=nothing) where {PT1, PT2}
+                                           backend2=nothing) where {PT1,PT2}
     require(@__MODULE__, :Polyhedra; fun_name="`cartesian_product")
 
     if isnothing(backend1)
@@ -147,7 +146,7 @@ function _cartesian_product_hrep_polyhedra(P1::PT1, P2::PT2; backend1=nothing,
 end
 
 # if the first set is an interval => the result is always a polytope
-function cartesian_product(I::Interval, P::Union{VPolygon, VPolytope})
+function cartesian_product(I::Interval, P::Union{VPolygon,VPolytope})
     a = min(I)
     b = max(I)
     vlist = vertices_list(P)
@@ -221,7 +220,7 @@ The Cartesian product of `P1` and `P2`.
 function cartesian_product(P1::SimpleSparsePolynomialZonotope,
                            P2::SimpleSparsePolynomialZonotope)
     c = vcat(center(P1), center(P2))
-    G = cat(genmat(P1), genmat(P2), dims=(1, 2))
-    E = cat(expmat(P1), expmat(P2), dims=(1, 2))
+    G = cat(genmat(P1), genmat(P2); dims=(1, 2))
+    E = cat(expmat(P1), expmat(P2); dims=(1, 2))
     return SimpleSparsePolynomialZonotope(c, G, E)
 end

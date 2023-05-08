@@ -22,7 +22,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     d = decompose(b, [[i] for i in 1:6], Interval)
     @test d.array[1] isa Interval &&
-        σ(N[1], d.array[1])[1] == one(N) && σ(N[-1], d.array[1])[1] == -one(N)
+          σ(N[1], d.array[1])[1] == one(N) && σ(N[-1], d.array[1])[1] == -one(N)
 
     d = decompose(b, partition, nothing)
     @test d.array[1] isa Zonotope{N} && test_directions(d.array[1])

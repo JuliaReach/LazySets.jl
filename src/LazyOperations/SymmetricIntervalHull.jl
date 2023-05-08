@@ -35,13 +35,13 @@ which in particular is convex.
 
 An alias for this function is `⊡`.
 """
-struct SymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractHyperrectangle{N}
+struct SymmetricIntervalHull{N,S<:LazySet{N}} <: AbstractHyperrectangle{N}
     X::S
     cache::Vector{N}
 
     # default constructor that initializes cache
     function SymmetricIntervalHull(X::S;
-                                   check_boundedness::Bool=true) where {N, S<:LazySet{N}}
+                                   check_boundedness::Bool=true) where {N,S<:LazySet{N}}
         @assert !check_boundedness || isboundedtype(typeof(X)) ||
                 isbounded(X) "the symmetric interval hull is only defined " *
                              "for bounded sets"
@@ -49,7 +49,7 @@ struct SymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractHyperrectangle{N}
         # fill cache with default value -1 (actual bounds cannot be negative)
         cache = fill(-one(N), dim(X))
 
-        return new{N, S}(X, cache)
+        return new{N,S}(X, cache)
     end
 end
 
@@ -206,7 +206,7 @@ queries.
 """
 function σ(d::AbstractVector, sih::SymmetricIntervalHull)
     @assert length(d) == dim(sih) "cannot compute the support vector of a " *
-        "$(dim(sih))-dimensional set along a vector of length $(length(d))"
+                                  "$(dim(sih))-dimensional set along a vector of length $(length(d))"
 
     N = promote_type(eltype(d), eltype(sih))
     svec = similar(d)
@@ -224,7 +224,7 @@ end
 function σ(d::SingleEntryVector, sih::SymmetricIntervalHull)
     N = promote_type(eltype(d), eltype(sih))
     @assert length(d) == dim(sih) "a $(d.n)-dimensional vector is " *
-                               "incompatible with a $(dim(sih))-dimensional set"
+                                  "incompatible with a $(dim(sih))-dimensional set"
 
     entry = get_radius!(sih, d.i)
     if d.v < zero(N)
@@ -236,7 +236,7 @@ end
 # faster support-function evaluation for SingleEntryVector
 function ρ(d::SingleEntryVector, sih::SymmetricIntervalHull)
     @assert length(d) == dim(sih) "a $(d.n)-dimensional vector is " *
-                               "incompatible with a $(dim(sih))-dimensional set"
+                                  "incompatible with a $(dim(sih))-dimensional set"
     return abs(d.v) * get_radius!(sih, d.i)
 end
 

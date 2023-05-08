@@ -1,7 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
     B1 = BallInf(zeros(N, 2), N(1))
     B2 = Ball1(ones(N, 2), N(1))
-    B3 = Hyperrectangle(low=N[-1, -1], high=N[2, 2])
+    B3 = Hyperrectangle(; low=N[-1, -1], high=N[2, 2])
     S = Singleton(N[10, 10])
     UXY = UnionSet(B1, B2)
 
@@ -37,10 +37,10 @@ for N in [Float64, Rational{Int}, Float32]
         # support vector (default algorithm)
         d = N[1, 0]
         @test σ(d, U) == [N(2), N(1)]
-        @test σ(d, U, algorithm="support_vector") == [N(2), N(1)]
+        @test σ(d, U; algorithm="support_vector") == [N(2), N(1)]
 
         # support vector (support function algorithm)
-        @test σ(d, U, algorithm="support_function") == [N(2), N(1)]
+        @test σ(d, U; algorithm="support_function") == [N(2), N(1)]
 
         # support function
         @test ρ(d, U) == N(2)
@@ -73,10 +73,10 @@ for N in [Float64, Rational{Int}, Float32]
 
         # vertices list
         @test ispermutation(vertices_list(U),
-            [N[1, 1], N[1, -1], N[-1, 1], N[-1, -1],
-            N[1, 2], N[1, 0], N[2, 1], N[0, 1]])
-        @test ispermutation(vertices_list(U, apply_convex_hull=true),
-            [N[1, -1], N[-1, 1], N[-1, -1], N[1, 2], N[2, 1]])
+                            [N[1, 1], N[1, -1], N[-1, 1], N[-1, -1],
+                             N[1, 2], N[1, 0], N[2, 1], N[0, 1]])
+        @test ispermutation(vertices_list(U; apply_convex_hull=true),
+                            [N[1, -1], N[-1, 1], N[-1, -1], N[1, 2], N[2, 1]])
     end
 
     # linear map
@@ -135,7 +135,7 @@ end
 for N in [Float64]
     B1 = BallInf(zeros(N, 2), N(1))
     B2 = Ball1(ones(N, 2), N(1))
-    B3 = Hyperrectangle(low=N[-1, -1], high=N[2, 2])
+    B3 = Hyperrectangle(; low=N[-1, -1], high=N[2, 2])
     S = Singleton(N[10, 10])
     UXY = UnionSet(B1, B2)
     Uarr = UnionSetArray([B1, B2])

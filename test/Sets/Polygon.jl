@@ -67,7 +67,7 @@ for N in [Float64, Float32, Rational{Int}]
     HPolytope(constraints_list(po))
 
     # conversion from other set type
-    H = Hyperrectangle(low=N[-1, -1], high=N[1, 1])
+    H = Hyperrectangle(; low=N[-1, -1], high=N[1, 1])
     HPolygon(constraints_list(H))
     HPolygonOpt(constraints_list(H))
 
@@ -79,10 +79,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test isbounded(p) && isbounded(po)
     @test !isbounded(HPolygon{N}(), false) &&
           !isbounded(HPolygonOpt{N}(), false)
-    @test_throws AssertionError HPolygon(LinearConstraint{N, Vector{N}}[];
-                                        check_boundedness=true)
-    @test_throws AssertionError HPolygonOpt(LinearConstraint{N, Vector{N}}[];
-                                           check_boundedness=true)
+    @test_throws AssertionError HPolygon(LinearConstraint{N,Vector{N}}[];
+                                         check_boundedness=true)
+    @test_throws AssertionError HPolygonOpt(LinearConstraint{N,Vector{N}}[];
+                                            check_boundedness=true)
 
     # subset
     b1 = Ball1(N[0, 0], N(1))
@@ -107,19 +107,19 @@ for N in [Float64, Float32, Rational{Int}]
         # test support vector, with linear and binary search
         d = N[1, 0]
         @test σ(d, hp) == N[4, 2]
-        @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
+        @test σ(d, hp; linear_search=true) == σ(d, hp; linear_search=false)
         d = N[0, 1]
         @test σ(d, hp) == N[2, 4]
-        @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
+        @test σ(d, hp; linear_search=true) == σ(d, hp; linear_search=false)
         d = N[0, -1]
         @test σ(d, hp) == N[0, 0]
-        @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
+        @test σ(d, hp; linear_search=true) == σ(d, hp; linear_search=false)
         d = N[-1, 0]
         @test σ(d, hp) == N[-1, 1]
-        @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
+        @test σ(d, hp; linear_search=true) == σ(d, hp; linear_search=false)
         d = N[1, -1]
         @test σ(d, hp) == N[4, 2]
-        @test σ(d, hp, linear_search=true) == σ(d, hp, linear_search=false)
+        @test σ(d, hp; linear_search=true) == σ(d, hp; linear_search=false)
 
         # membership
         @test N[0, 0] ∈ hp
@@ -163,9 +163,8 @@ for N in [Float64, Float32, Rational{Int}]
         @test ispermutation(constraints_list(vp), hp.constraints)
 
         # translation
-        @test translate(hp, N[1, 2]) == t_hp(
-            [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
-             HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
+        @test translate(hp, N[1, 2]) == t_hp([HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
+                                              HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
 
         # test for concrete minkowski sum
         A = [N[4, 0], N[6, 2], N[4, 4]]
@@ -174,14 +173,16 @@ for N in [Float64, Float32, Rational{Int}]
         P = VPolygon(A)
         Q = VPolygon(B)
         PQ = minkowski_sum(P, Q)
-        @test is_cyclic_permutation(PQ.vertices, [N[2, -2], N[6, 0], N[8, 2],
-                                                N[8, 4], N[6, 6], N[2, 8]])
+        @test is_cyclic_permutation(PQ.vertices,
+                                    [N[2, -2], N[6, 0], N[8, 2],
+                                     N[8, 4], N[6, 6], N[2, 8]])
 
         # test for different starting points in vertices_list of minkowski sum
         P = VPolygon([N[4, 0], N[6, 2], N[4, 4]])
         P2 = VPolygon([N[4, 4], N[4, 0], N[6, 2]])
         Q = VPolygon([N[-2, -2], N[2, 0], N[2, 2], N[-2, 4]])
-        @test is_cyclic_permutation(vertices_list(minkowski_sum(P, Q)), vertices_list(minkowski_sum(P2, Q)))
+        @test is_cyclic_permutation(vertices_list(minkowski_sum(P, Q)),
+                                    vertices_list(minkowski_sum(P2, Q)))
 
         # test for corner case of parallel edges in minkowski sum
         C = [N[10, 5], N[10, 10], N[8, 10], N[5, 8], N[5, 5]]
@@ -190,8 +191,9 @@ for N in [Float64, Float32, Rational{Int}]
         R = VPolygon(C)
         S = VPolygon(D)
         RS = minkowski_sum(R, S)
-        @test is_cyclic_permutation(RS.vertices, [N[4, 3], N[11, 3], N[11, 8],
-                                                  N[9,12], N[7, 12], N[4, 10]])
+        @test is_cyclic_permutation(RS.vertices,
+                                    [N[4, 3], N[11, 3], N[11, 8],
+                                     N[9, 12], N[7, 12], N[4, 10]])
     end
 
     # ===================================
@@ -213,9 +215,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     # concrete intersection of V-rep
     paux = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
-    qaux = VPolygon([N[1, -1/2], N[-1/2, 1], N[-1/2, -1/2]])
+    qaux = VPolygon([N[1, -1 / 2], N[-1 / 2, 1], N[-1 / 2, -1 / 2]])
     xaux = intersection(paux, qaux)
-    oaux = VPolygon([N[0, 0], N[1/2, 0], N[0, 1/2]])
+    oaux = VPolygon([N[0, 0], N[1 / 2, 0], N[0, 1 / 2]])
     @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
     @test LazySets._intersection_vrep_2d(paux.vertices, qaux.vertices) == xaux.vertices
 
@@ -298,33 +300,33 @@ for N in [Float64, Float32, Rational{Int}]
     @test tovrep(vp) == vp
 
     # test convex hull of a set of points using the default algorithm
-    v1 = N[1//10, 3//10]
-    v2 = N[1//5, 1//10]
-    v3 = N[2//5, 3//5]
-    v4 = N[9//10, 1//5]
-    v5 = N[3//10, 7//25]
+    v1 = N[1 // 10, 3 // 10]
+    v2 = N[1 // 5, 1 // 10]
+    v3 = N[2 // 5, 3 // 5]
+    v4 = N[9 // 10, 1 // 5]
+    v5 = N[3 // 10, 7 // 25]
     points = [v4, v3, v2, v1, v5]
     vp = VPolygon(points) # by default, a convex hull is run
     @test ispermutation(vertices_list(vp), [v1, v2, v3, v4])
 
-    vp = VPolygon(points, apply_convex_hull=false) # we can turn it off
+    vp = VPolygon(points; apply_convex_hull=false) # we can turn it off
     @test ispermutation(vertices_list(vp), [v1, v2, v3, v4, v5])
 
     # test for pre-sorted points
-    v3_new = N[2//5, 3//10]
+    v3_new = N[2 // 5, 3 // 10]
     points = [v1, v2, v3_new, v3, v4]
-    vp = VPolygon(points, algorithm="monotone_chain_sorted")
+    vp = VPolygon(points; algorithm="monotone_chain_sorted")
     @test ispermutation(vertices_list(vp), [v1, v2, v3, v4])
 
     # test that #83 is fixed
     p = VPolygon([N[2, 3]])
     @test N[2, 3] ∈ p
     @test N[3, 2] ∉ p
-    v = N[-1, -17//5]
+    v = N[-1, -17 // 5]
     p = VPolygon([N[2, 3], v])
     @test v ∈ p
 
-    P = VPolygon([N[0, 0], [0, 1], [0, 2]], apply_convex_hull=false)
+    P = VPolygon([N[0, 0], [0, 1], [0, 2]]; apply_convex_hull=false)
     Q = remove_redundant_vertices(P)
     @test length(P.vertices) == 3 && length(Q.vertices) == 2
 
@@ -337,7 +339,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # membership
     point = N[0, 1]
-    @test point ∉ VPolygon(Vector{Vector{N}}(), apply_convex_hull=false)
+    @test point ∉ VPolygon(Vector{Vector{N}}(); apply_convex_hull=false)
     @test point ∉ VPolygon([N[0, 2]])
     @test point ∈ VPolygon([N[0, 0], N[0, 2]])
     @test point ∉ VPolygon([N[1, 0], N[1, 2]])
@@ -370,23 +372,23 @@ for N in [Float64, Float32, Rational{Int}]
 
     for (i, vi) in enumerate(v)
         for j in i:8
-                @test vi <= v[j]
+            @test vi <= v[j]
         end
     end
 
     # hrep conversion
-    v1 = N[9//10, 1//5]
-    v2 = N[2//5, 3//5]
-    v3 = N[1//5, 1//10]
-    v4 = N[1//10, 3//10]
-    v5 = N[7//10, 2//5]
-    v6 = N[4//5, 3//10]
-    v7 = N[3//10, 11//20]
-    v8 = N[1//5, 9//20]
+    v1 = N[9 // 10, 1 // 5]
+    v2 = N[2 // 5, 3 // 5]
+    v3 = N[1 // 5, 1 // 10]
+    v4 = N[1 // 10, 3 // 10]
+    v5 = N[7 // 10, 2 // 5]
+    v6 = N[4 // 5, 3 // 10]
+    v7 = N[3 // 10, 11 // 20]
+    v8 = N[1 // 5, 9 // 20]
     points5 = [v1, v2, v3, v4, v5, v6, v7, v8]
     for i in [0, 1, 2, 4, 8]
         points = i == 0 ? Vector{Vector{N}}() : points5[1:i]
-        vp = VPolygon(points, apply_convex_hull=i > 0)
+        vp = VPolygon(points; apply_convex_hull=i > 0)
         h1 = tohrep(vp)
         @test convert(HPolygon, vp) == h1
         if i == 0
@@ -396,19 +398,19 @@ for N in [Float64, Float32, Rational{Int}]
             @test v1 ∈ h1
         elseif i == 2
             c = h1.constraints[1]
-            @test c.a ≈ N[2//5, 1//2] && c.b ≈ N(23//50)
+            @test c.a ≈ N[2 // 5, 1 // 2] && c.b ≈ N(23 // 50)
             c = h1.constraints[3]
-            @test c.a ≈ N[-2//5, -1//2] && c.b ≈ N(-23//50)
+            @test c.a ≈ N[-2 // 5, -1 // 2] && c.b ≈ N(-23 // 50)
         elseif i == 4
             @test length(h1.constraints) == 4
             c = h1.constraints[1]
-            @test c.a ≈ N[2//5, 1//2] && c.b ≈ N(23//50)
+            @test c.a ≈ N[2 // 5, 1 // 2] && c.b ≈ N(23 // 50)
             c = h1.constraints[2]
-            @test c.a ≈ N[-3//10, 3//10] && c.b ≈ N(3//50)
+            @test c.a ≈ N[-3 // 10, 3 // 10] && c.b ≈ N(3 // 50)
             c = h1.constraints[3]
-            @test c.a ≈ N[-1//5, -1//10] && c.b ≈ N(-1//20)
+            @test c.a ≈ N[-1 // 5, -1 // 10] && c.b ≈ N(-1 // 20)
             c = h1.constraints[4]
-            @test c.a ≈ N[1//10, -7//10] && c.b ≈ N(-1//20)
+            @test c.a ≈ N[1 // 10, -7 // 10] && c.b ≈ N(-1 // 20)
         end
 
         # check that constraints are sorted correctly
@@ -445,8 +447,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # concrete projection of a cartesian product
     @test project(I × V, 2:3) === V
-    @test project(I×V, 1:1) == I
-    @test isequivalent(project(I×V, 1:2), VPolygon([N[0, -1], N[1, -1], N[1, 1], [0, 1]]))
+    @test project(I × V, 1:1) == I
+    @test isequivalent(project(I × V, 1:2), VPolygon([N[0, -1], N[1, -1], N[1, 1], [0, 1]]))
 
     # rectification
     P = VPolygon([N[-1, 2], N[1, 1], N[1, 3]])
@@ -455,7 +457,7 @@ for N in [Float64, Float32, Rational{Int}]
     Q2 = rectify(P, false)
     for (d, res) in [(N[-1, 0], N(0)),
                      (N[0, -1], N(-1)),
-                     (N[-1, -1], N(-3//2))]
+                     (N[-1, -1], N(-3 // 2))]
         @test ρ(d, Q1) == res
         @test abs(ρ(d, Q1) - ρ(d, Q2)) < 1e-8  # precision of lazy intersection not good
     end
@@ -465,7 +467,7 @@ for N in [Float64, Float32, Rational{Int}]
     Y = Ball1(zeros(N, 2), N(1))
     Z = minkowski_sum(X, Y)
     # the vertices are [±1, ±2] and [±2, ±1]
-    vlist = [[[N(-1)^i * k, N(-1)^j * (3-k)] for i in 1:2, j in 1:2, k in 1:2]...]
+    vlist = [[[N(-1)^i * k, N(-1)^j * (3 - k)] for i in 1:2, j in 1:2, k in 1:2]...]
     @test Z isa VPolygon{N} && ispermutation(vertices_list(Z), vlist)
     Z = minkowski_sum(X + Y, Singleton(zeros(N, 2)))
     @test Z isa VPolygon{N} && ispermutation(vertices_list(Z), vlist)
@@ -482,15 +484,15 @@ for N in [Float64, Float32, Rational{Int}]
 end
 
 for N in [Float64, Float32]
-    v1 = N[1//10, 3//10]
-    v2 = N[1//5, 1//10]
-    v3 = N[2//5, 3//10]
-    v4 = N[2//5, 3//5]
-    v5 = N[9//10, 1//5]
+    v1 = N[1 // 10, 3 // 10]
+    v2 = N[1 // 5, 1 // 10]
+    v3 = N[2 // 5, 3 // 10]
+    v4 = N[2 // 5, 3 // 5]
+    v5 = N[9 // 10, 1 // 5]
 
     # test support vector of a VPolygon
     points = [v1, v2, v3, v4, v5]
-    vp = VPolygon(points, algorithm="monotone_chain_sorted")
+    vp = VPolygon(points; algorithm="monotone_chain_sorted")
     d = N[1, 0]
     @test σ(d, vp) == points[5]
     d = N[0, 1]
@@ -499,10 +501,10 @@ for N in [Float64, Float32]
     @test σ(d, vp) == points[1]
     d = N[0, -1]
     @test σ(d, vp) == points[2]
-    dirs = [N[1, 0], N[1, 1//2], N[1//2, 1//2], N[1//2, 1], N[0, 1],
-            N[-1//2, 1], N[-1//2, 1//2], N[-1, 1//2], N[-1, 0], N[1, -1//2],
-            N[1//2, -1//2], N[1//2, -1], N[0, -1], N[-1//2, -1],
-            N[-1//2, -1//2], N[-1, -1//2]]
+    dirs = [N[1, 0], N[1, 1 // 2], N[1 // 2, 1 // 2], N[1 // 2, 1], N[0, 1],
+            N[-1 // 2, 1], N[-1 // 2, 1 // 2], N[-1, 1 // 2], N[-1, 0], N[1, -1 // 2],
+            N[1 // 2, -1 // 2], N[1 // 2, -1], N[0, -1], N[-1 // 2, -1],
+            N[-1 // 2, -1 // 2], N[-1, -1 // 2]]
     B = Ball2(zeros(N, 2), N(1))
     P = HPolygon([HalfSpace(di, ρ(di, B)) for di in dirs])
     vlistP = vertices_list(P)
@@ -517,14 +519,14 @@ for N in [Float64, Float32]
     n = 10
     for i in 1:n
         constraint = LinearConstraint(rand(N, 2), rand(N))
-        addconstraint!(p1, constraint, linear_search=true)
-        addconstraint!(p2, constraint, linear_search=i<=2)
-        addconstraint!(po1, constraint, linear_search=true)
-        addconstraint!(po2, constraint, linear_search=i<=2)
+        addconstraint!(p1, constraint; linear_search=true)
+        addconstraint!(p2, constraint; linear_search=i <= 2)
+        addconstraint!(po1, constraint; linear_search=true)
+        addconstraint!(po2, constraint; linear_search=i <= 2)
     end
     n = length(p1.constraints)
     all_equal = n == length(p2.constraints) == length(po1.constraints) ==
-        length(po2.constraints)
+                length(po2.constraints)
     if all_equal  # may be violated, see #2426
         for i in 1:n
             @test allequal([p1.constraints[i], p2.constraints[i],
@@ -542,20 +544,19 @@ for N in [Float64, Float32]
     end
 
     # check redundancy removal
-    p2 = HPolygon([
-        HalfSpace(N[-1.29817, 1.04012], N(6.07731)),
-        HalfSpace(N[-1.29348, -0.0920708], N(1.89515)),
-        HalfSpace(N[-1.42909, -0.347449], N(1.50577)),
-        HalfSpace(N[0.349446, -0.130477], N(-0.575904)),
-        HalfSpace(N[1.50108, -0.339291], N(-2.18331)),
-        HalfSpace(N[2.17022, -0.130831], N(-2.14411))])
+    p2 = HPolygon([HalfSpace(N[-1.29817, 1.04012], N(6.07731)),
+                   HalfSpace(N[-1.29348, -0.0920708], N(1.89515)),
+                   HalfSpace(N[-1.42909, -0.347449], N(1.50577)),
+                   HalfSpace(N[0.349446, -0.130477], N(-0.575904)),
+                   HalfSpace(N[1.50108, -0.339291], N(-2.18331)),
+                   HalfSpace(N[2.17022, -0.130831], N(-2.14411))])
     addconstraint!(p2, p2.constraints[2])
     @test length(p2.constraints) == 6
 
     # correct sorting of constraints in intersection (#2187)
     h = Hyperrectangle(N[0.98069, 0.85020],
                        N[0.00221, 0.00077])
-    p = overapproximate(Ball2(N[1, 1], N(15//100)), 1e-4)
+    p = overapproximate(Ball2(N[1, 1], N(15 // 100)), 1e-4)
     @test !isempty(intersection(HPolygon(constraints_list(h)), p))
 
     # test that concrete minkowski sum of a singleton and a polygon works
@@ -571,15 +572,15 @@ for N in [Float64, Float32]
 
     # rationalize
     P = VPolygon([N[1, 2], N[3, 4]])
-    @test rationalize(P) == VPolygon([[1//1, 2//1], [3//1, 4//1]])
+    @test rationalize(P) == VPolygon([[1 // 1, 2 // 1], [3 // 1, 4 // 1]])
 
     # test corner case with binary search (#2426)
-    c1 = HalfSpace(N[0.9636463837316949, 0.8950288819001659], N(0.19114554280256102));
-    c2 = HalfSpace(N[0.336341452138065, 0.3367612579000614], N(0.6801677354217885));
-    c3 = HalfSpace(N[0.6052463696308072, 0.606001419182304], N(0.4494286571876329));
+    c1 = HalfSpace(N[0.9636463837316949, 0.8950288819001659], N(0.19114554280256102))
+    c2 = HalfSpace(N[0.336341452138065, 0.3367612579000614], N(0.6801677354217885))
+    c3 = HalfSpace(N[0.6052463696308072, 0.606001419182304], N(0.4494286571876329))
     for ls in [true, false]
         x = [c1, c2]
-        addconstraint!(x, c3, linear_search=ls)
+        addconstraint!(x, c3; linear_search=ls)
         if N == Float64
             @test x == [c1, c3, c2]
         else
@@ -590,7 +591,7 @@ end
 
 for N in [Float64]
     # check boundedness after conversion
-    H = Hyperrectangle(low=N[-1, -1], high=N[1, 1])
+    H = Hyperrectangle(; low=N[-1, -1], high=N[1, 1])
     HPolygon(constraints_list(H); check_boundedness=true)
     HPolygonOpt(constraints_list(H); check_boundedness=true)
 
@@ -609,12 +610,12 @@ for N in [Float64]
     @test isbounded(p, false) && isbounded(po, false)
 
     # is intersection empty
-    p3 = convert(HPolygon, Hyperrectangle(low=N[-1, -1], high=N[1, 1]))
-    I1 = Interval(N(9//10), N(11//10))
-    I2 = Interval(N(1//5), N(3//10))
+    p3 = convert(HPolygon, Hyperrectangle(; low=N[-1, -1], high=N[1, 1]))
+    I1 = Interval(N(9 // 10), N(11 // 10))
+    I2 = Interval(N(1 // 5), N(3 // 10))
     I3 = Interval(N(4), N(5))
-    @test !is_intersection_empty(I1 × I2 , p3)
-    @test is_intersection_empty(I1 × I3 , p3)
+    @test !is_intersection_empty(I1 × I2, p3)
+    @test is_intersection_empty(I1 × I3, p3)
 
     # redundancy with almost-parallel constraints (numeric issues, #2102)
     Hs = [HalfSpace([0.05125918978413134, 0.0], 0.956012965730266),
@@ -625,14 +626,12 @@ for N in [Float64]
     @test length(Hs) == 4
 
     # redundancy with almost-parallel constraints and order issues (#2169)
-    Hs = [
-        HalfSpace([1.3877787807814457e-17, 0.0], -7.27918967693285e-18)
-        HalfSpace([3.642919299551295e-17, 2.7755575615628914e-17], 3.194076233118193e-17)
-        HalfSpace([-6.938893903907228e-17, 0.03196481037863655], 0.1022675780516848)
-        HalfSpace([-0.022382796523655775, -3.469446951953614e-18], 0.05268494728581621)
-        HalfSpace([-8.673617379884035e-19, -0.01331598581298936], 0.020336411343083463)
-        HalfSpace([0.01620615792275367, -2.949029909160572e-17], 0.03845370605895632)
-       ]
+    Hs = [HalfSpace([1.3877787807814457e-17, 0.0], -7.27918967693285e-18)
+          HalfSpace([3.642919299551295e-17, 2.7755575615628914e-17], 3.194076233118193e-17)
+          HalfSpace([-6.938893903907228e-17, 0.03196481037863655], 0.1022675780516848)
+          HalfSpace([-0.022382796523655775, -3.469446951953614e-18], 0.05268494728581621)
+          HalfSpace([-8.673617379884035e-19, -0.01331598581298936], 0.020336411343083463)
+          HalfSpace([0.01620615792275367, -2.949029909160572e-17], 0.03845370605895632)]
     P = HPolygon(copy(Hs))
     @test ispermutation(P.constraints, Hs[3:6])
 
@@ -642,21 +641,20 @@ for N in [Float64]
                   HalfSpace([-1.0, 0.0], 1.0),
                   HalfSpace([0.0, -1.0], 1.0),
                   HalfSpace([0.17178027783046604, -0.342877222169534], -0.3988040749330524),
-                  HalfSpace([0.17228094170254737, -0.3438765582974526], -0.5161575)
-                 ])
+                  HalfSpace([0.17228094170254737, -0.3438765582974526], -0.5161575)])
     @test vertices_list(P) == [[-1.0, 1.0]]
 
     # rationalization
     P = HPolygon([HalfSpace([-1.0, 0.0], 0.0),
-              HalfSpace([0.0, -1.0], 0.0),
-              HalfSpace([1.0, 0.0], 1.0),
-              HalfSpace([0.0, 1.0], 1.0),
-              HalfSpace([-0.2, -0.8], -0.0),
-              HalfSpace([0.6, 0.4], 0.6)])
-    @test area(P) ≈ 2//3
-    @test area(rationalize(P)) == 2//3
-    Pr = rationalize(BigInt, P, 10*eps(Float64));
-    @test isa(Pr, HPolygon{Rational{BigInt}, Vector{Rational{BigInt}}})
+                  HalfSpace([0.0, -1.0], 0.0),
+                  HalfSpace([1.0, 0.0], 1.0),
+                  HalfSpace([0.0, 1.0], 1.0),
+                  HalfSpace([-0.2, -0.8], -0.0),
+                  HalfSpace([0.6, 0.4], 0.6)])
+    @test area(P) ≈ 2 // 3
+    @test area(rationalize(P)) == 2 // 3
+    Pr = rationalize(BigInt, P, 10 * eps(Float64))
+    @test isa(Pr, HPolygon{Rational{BigInt},Vector{Rational{BigInt}}})
 end
 
 # random polygons
@@ -665,6 +663,6 @@ rand(HPolygonOpt)
 rand(VPolygon)
 
 # default Float64 constructors
-@test HPolygon() isa HPolygon{Float64, Vector{Float64}}
-@test HPolygonOpt() isa HPolygonOpt{Float64, Vector{Float64}}
+@test HPolygon() isa HPolygon{Float64,Vector{Float64}}
+@test HPolygonOpt() isa HPolygonOpt{Float64,Vector{Float64}}
 @test VPolygon() isa VPolygon{Float64}

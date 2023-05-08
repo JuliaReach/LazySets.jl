@@ -61,9 +61,8 @@ for N in [Float64, Float32, Rational{Int}]
     hpg = HPolygon(constraints)
     hpgo = HPolygonOpt(constraints)
     hpt = HPolytope(constraints)
-    hpt_empty = HPolytope(
-        [HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(-1)),
-         HalfSpace(N[0, 1], N(0)), HalfSpace(N[0, -1], N(0))])
+    hpt_empty = HPolytope([HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(-1)),
+                           HalfSpace(N[0, 1], N(0)), HalfSpace(N[0, -1], N(0))])
     vertices = vertices_list(bi)
     vpg = VPolygon(vertices)
     vpt = VPolytope(vertices)
@@ -129,5 +128,4 @@ for N in [Float64]
     # test plot with static arrays input
     Z = Zonotope(SA[N(1), N(0)], SA[N(1) N(0); N(0) N(1)])
     plot(Z)
-
 end

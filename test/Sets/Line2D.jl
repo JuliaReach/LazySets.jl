@@ -23,7 +23,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test [1.0, 0.0] ∈ L &&
           [1.0, 2.5] ∈ L &&
           [1.0, 10.0] ∈ L
-          [10.0, 10.0] ∉ L
+    [10.0, 10.0] ∉ L
 
     # corner case: zero normal vector
     @test_throws AssertionError Line2D(N[0, 0], N(1))
@@ -86,13 +86,13 @@ for N in [Float64, Rational{Int}, Float32]
             @test linear_map(N[1 1], L) == Universe{N}(1)
         elseif N == Rational{Int}
             @test lm isa Line2D{Rational{BigInt}}
-            @test lm.a == N[0//1, -1//1] && lm.b == N(0//1)
+            @test lm.a == N[0 // 1, -1 // 1] && lm.b == N(0 // 1)
         end
     end
     M = N[2 2; 0 1] # invertible matrix
     lm = linear_map(M, L)
-    @test lm isa Line2D{N, Vector{N}}
-    @test lm.a ≈ N[1/2, -2] && lm.b ≈ N(0)
+    @test lm isa Line2D{N,Vector{N}}
+    @test lm.a ≈ N[1 / 2, -2] && lm.b ≈ N(0)
 
     # projection
     L = Line2D(N[1, -1], N(0))  # x = y
@@ -108,7 +108,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # projecting a point onto a line
     L = Line2D(N[1, -1], N(0))  # x = y
-    @test project(N[1, 0], L) ≈ N[1//2, 1//2]
+    @test project(N[1, 0], L) ≈ N[1 // 2, 1 // 2]
 end
 
 # tests that only work with Float64 and Float32

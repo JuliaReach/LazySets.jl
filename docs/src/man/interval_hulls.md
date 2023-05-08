@@ -140,16 +140,16 @@ We can get the list of vertices using the `vertices_list` function:
 ```@example example_ih
 vertices_list(S)
 ```
- 
+
 For instance, compute the support vector in the south-east direction:
- 
+
 ```@example example_ih
 σ([1., -1.], S)
 ```
- 
+
 It is also possible to pass a sparse vector as direction, and the result is a
 sparse vector:
- 
+
  ```@example example_ih
 σ(sparsevec([1., -1.]), S)
 ```

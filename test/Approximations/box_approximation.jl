@@ -3,9 +3,9 @@ for N in [Float64, Rational{Int}, Float32]
     # Testing box approximation
     # ==============================
     # Box approximation of a 2D square
-    b = BallInf(N[1, 1], N(1//10))
+    b = BallInf(N[1, 1], N(1 // 10))
     h = box_approximation(b)
-    hexp = Hyperrectangle(N[1, 1], N[1//10, 1//10])
+    hexp = Hyperrectangle(N[1, 1], N[1 // 10, 1 // 10])
     @test h.center ≈ hexp.center
     @test h.radius ≈ hexp.radius
 
@@ -45,31 +45,31 @@ for N in [Float64, Rational{Int}, Float32]
     # Testing box_approximation_symmetric (= symmetric interval hull)
     # ===================================================================
     # Box approximation of a 2D square
-    b = BallInf(N[1, 1], N(1//10))
+    b = BallInf(N[1, 1], N(1 // 10))
     h = box_approximation_symmetric(b)
-    hexp = Hyperrectangle(N[0, 0], N[11//10, 11//10])
+    hexp = Hyperrectangle(N[0, 0], N[11 // 10, 11 // 10])
     @test h.center ≈ hexp.center
     @test h.radius ≈ hexp.radius
 
     # Box approximation of a 2D unit ball in the 1-norm
-    b = Ball1(N[1, -2], N(2//10))
+    b = Ball1(N[1, -2], N(2 // 10))
     h = box_approximation_symmetric(b)
-    hexp = Hyperrectangle(N[0, 0], N[12//10, 22//10])
+    hexp = Hyperrectangle(N[0, 0], N[12 // 10, 22 // 10])
     @test h.center ≈ hexp.center
     @test h.radius ≈ hexp.radius
 
     # Box approximation of a 3D unit ball in the 1-norm
-    b = Ball1(N[1, 2, 0], N(1//10))
+    b = Ball1(N[1, 2, 0], N(1 // 10))
     h = box_approximation_symmetric(b)
-    hexp = Hyperrectangle(N[0, 0, 0], N[11//10, 21//10, 1//10])
+    hexp = Hyperrectangle(N[0, 0, 0], N[11 // 10, 21 // 10, 1 // 10])
     @test h.center ≈ hexp.center
     @test h.radius ≈ hexp.radius
 
     # Box approximation of a 4D hyperrectangle
-    b = Hyperrectangle(N[-15//10, -25//10, 24//10, -4//10],
-                       N[1//10, 2//10, 3//10, 4//10])
+    b = Hyperrectangle(N[-15 // 10, -25 // 10, 24 // 10, -4 // 10],
+                       N[1 // 10, 2 // 10, 3 // 10, 4 // 10])
     h = box_approximation_symmetric(b)
-    hexp = Hyperrectangle(zeros(N, 4), N[16//10, 27//10, 27//10, 8//10])
+    hexp = Hyperrectangle(zeros(N, 4), N[16 // 10, 27 // 10, 27 // 10, 8 // 10])
     @test h.center ≈ hexp.center
     @test h.radius ≈ hexp.radius
 

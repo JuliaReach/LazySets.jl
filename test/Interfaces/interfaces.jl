@@ -28,9 +28,9 @@
 for T in (AbstractCentrallySymmetric, AbstractCentrallySymmetricPolytope)
     # center
     @test check_method_implementation(AbstractCentrallySymmetric, center,
-                                    Function[S -> (S{Float64},)])
+                                      Function[S -> (S{Float64},)])
     @test check_method_implementation(AbstractCentrallySymmetric, center,
-                                    Function[S -> (S{Float64}, Int64)])
+                                      Function[S -> (S{Float64}, Int64)])
 end
 
 # --- AbstractZonotope ---

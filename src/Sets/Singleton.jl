@@ -21,7 +21,7 @@ julia> Singleton(1.0, 2.0)  # convenience constructor from numbers
 Singleton{Float64, Vector{Float64}}([1.0, 2.0])
 ```
 """
-struct Singleton{N, VN<:AbstractVector{N}} <: AbstractSingleton{N}
+struct Singleton{N,VN<:AbstractVector{N}} <: AbstractSingleton{N}
     element::VN
 end
 
@@ -75,7 +75,7 @@ function rand(::Type{Singleton};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     element = randn(rng, N, dim)
     return Singleton(element)

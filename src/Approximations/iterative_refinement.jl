@@ -17,7 +17,7 @@ Type that represents a local approximation in 2D.
 
 The criteria for being refinable are determined in [`new_approx`](@ref).
 """
-struct LocalApproximation{N, VN<:AbstractVector{N}}
+struct LocalApproximation{N,VN<:AbstractVector{N}}
     p1::VN
     d1::VN
     p2::VN
@@ -56,14 +56,14 @@ Type that represents a polygonal overapproximation of a convex set.
 - `constraints`  -- vector of half-spaces that are already finalized
                     (i.e., they satisfy the given error bound)
 """
-struct PolygonalOverapproximation{N, SN<:LazySet{N}, VN<:AbstractVector{N}}
+struct PolygonalOverapproximation{N,SN<:LazySet{N},VN<:AbstractVector{N}}
     S::SN
-    approx_stack::Vector{LocalApproximation{N, VN}}
-    constraints::Vector{HalfSpace{N, VN}}
+    approx_stack::Vector{LocalApproximation{N,VN}}
+    constraints::Vector{HalfSpace{N,VN}}
 end
 
-function PolygonalOverapproximation(S::SN) where {N, SN<:LazySet{N}}
-    empty_local_approx = Vector{LocalApproximation{N, Vector{N}}}()
+function PolygonalOverapproximation(S::SN) where {N,SN<:LazySet{N}}
+    empty_local_approx = Vector{LocalApproximation{N,Vector{N}}}()
     empty_constraints = Vector{HalfSpace{N,Vector{N}}}()
     return PolygonalOverapproximation(S, empty_local_approx, empty_constraints)
 end
@@ -88,18 +88,18 @@ overapproximation.
 A local approximation of `S` in the given directions.
 """
 function new_approx(S::LazySet, p1::VN, d1::VN,
-                    p2::VN, d2::VN) where {N<:AbstractFloat, VN<:AbstractVector{N}}
-    if norm(p1-p2, 2) <= _rtol(N)
+                    p2::VN, d2::VN) where {N<:AbstractFloat,VN<:AbstractVector{N}}
+    if norm(p1 - p2, 2) <= _rtol(N)
         # this approximation cannot be refined and we set q = p1 by convention
         q = p1
         refinable = false
         err = zero(N)
     else
-        ndir = normalize([p2[2]-p1[2], p1[1]-p2[1]])
+        ndir = normalize([p2[2] - p1[2], p1[1] - p2[1]])
         q = element(intersection(Line2D(d1, dot(d1, p1)), Line2D(d2, dot(d2, p2))))
         err = min(norm(q - σ(ndir, S)), dot(ndir, q - p1))
-        refinable = (err > _rtol(N)) && (norm(p1-q, 2) > _rtol(N)) &&
-                    (norm(q-p2, 2) > _rtol(N))
+        refinable = (err > _rtol(N)) && (norm(p1 - q, 2) > _rtol(N)) &&
+                    (norm(q - p2, 2) > _rtol(N))
     end
     return LocalApproximation(p1, d1, p2, d2, q, refinable, err)
 end
@@ -122,7 +122,7 @@ The list of local approximations in `Ω` of the set `Ω.S` is updated in-place a
 the new approximation is returned by this function.
 """
 function addapproximation!(Ω::PolygonalOverapproximation, p1::VN, d1::VN,
-                           p2::VN, d2::VN) where {N, VN<:AbstractVector{N}}
+                           p2::VN, d2::VN) where {N,VN<:AbstractVector{N}}
     approx = new_approx(Ω.S, p1, d1, p2, d2)
     push!(Ω.approx_stack, approx)
     return approx
@@ -145,7 +145,7 @@ The tuple consisting of the refined right and left local approximations.
 """
 function refine(approx::LocalApproximation, S::LazySet)
     @assert approx.refinable
-    ndir = normalize([approx.p2[2]-approx.p1[2], approx.p1[1]-approx.p2[1]])
+    ndir = normalize([approx.p2[2] - approx.p1[2], approx.p1[1] - approx.p2[1]])
     s = σ(ndir, S)
     ap1 = new_approx(S, approx.p1, approx.d1, s, ndir)
     ap2 = new_approx(S, s, ndir, approx.p2, approx.d2)
@@ -173,10 +173,10 @@ Internally, the constraints of `Ω` are already sorted.
 function tohrep(Ω::PolygonalOverapproximation)
     # already finalized
     if isempty(Ω.approx_stack)
-        return HPolygon(Ω.constraints, sort_constraints=false)
+        return HPolygon(Ω.constraints; sort_constraints=false)
     end
     # some constraints not finalized yet
-    P = HPolygon(Ω.constraints, sort_constraints=false)
+    P = HPolygon(Ω.constraints; sort_constraints=false)
     for approx in Ω.approx_stack
         # the remaining constraints need to be sorted
         addconstraint!(P, convert(HalfSpace, approx))
@@ -199,7 +199,7 @@ Hausdorff distance) in the form of a polygon in constraint representation.
 
 A polygon in constraint representation.
 """
-function overapproximate_hausdorff(X::S, ε::Real) where {N<:AbstractFloat, S<:LazySet{N}}
+function overapproximate_hausdorff(X::S, ε::Real) where {N<:AbstractFloat,S<:LazySet{N}}
     if !isconvextype(S)
         error("ε-close overapproximation requires a convex set")
     elseif dim(X) != 2
@@ -242,8 +242,8 @@ function overapproximate_hausdorff(X::S, ε::Real) where {N<:AbstractFloat, S<:L
         else
             # check if the next local approximation became redundant
             next = approx_stack[end]
-            redundant = (norm(la2.p1-next.p1) <= _rtol(N)) &&
-                (norm(la2.q-next.q) <= _rtol(N))
+            redundant = (norm(la2.p1 - next.p1) <= _rtol(N)) &&
+                        (norm(la2.q - next.q) <= _rtol(N))
         end
         if redundant
             # replace redundant old constraint

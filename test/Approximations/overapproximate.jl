@@ -41,7 +41,7 @@ for N in [Float64, Rational{Int}, Float32]
     p1 = overapproximate(b, LazySets.Interval)
     cap = Intersection(b, BallInf(N[1], N(1)))
     p2 = overapproximate(cap, LazySets.Interval)
-    caparray = IntersectionArray([b, BallInf(N[1], N(1)), BallInf(N[1//2], N(1//4))])
+    caparray = IntersectionArray([b, BallInf(N[1], N(1)), BallInf(N[1 // 2], N(1 // 4))])
     p3 = overapproximate(caparray, LazySets.Interval)
     for d in [N[1], N[-1]]
         for (o, p) in [(b, cap, caparray), (p1, p2, p3)]
@@ -56,27 +56,27 @@ for N in [Float64, Rational{Int}, Float32]
     @test Zoa.center ≈ Zba.center && Zoa.radius ≈ Zba.radius
 
     # same but using cartesian product
-    h1 = Hyperrectangle(N[1/2],  N[1/2])
-    h2 = Hyperrectangle(N[2.5, 4.5],  N[1/2, 1/2])
+    h1 = Hyperrectangle(N[1 / 2], N[1 / 2])
+    h2 = Hyperrectangle(N[2.5, 4.5], N[1 / 2, 1 / 2])
     H = overapproximate(h1 × h2, Hyperrectangle) # defaults to convert method
     @test low(H) == N[0, 2, 4] && high(H) == N[1, 3, 5]
 
     # overapproximation of the lazy linear map of a hyperrectangular set
-    H = Hyperrectangle(N[0, 0], N[1/2, 1])
+    H = Hyperrectangle(N[0, 0], N[1 / 2, 1])
     M = Diagonal(N[2, 2])
-    OA = overapproximate(M*H, Hyperrectangle)
+    OA = overapproximate(M * H, Hyperrectangle)
     @test OA isa Hyperrectangle && OA.center == N[0, 0] && OA.radius == N[1, 2]
 
     # overapproximation of Minkowski sum of linear maps for each block in the row block
     i1 = Interval(N[0, 1])
-    h = Hyperrectangle(low=N[3, 4], high=N[5, 7])
+    h = Hyperrectangle(; low=N[3, 4], high=N[5, 7])
     M = N[1 2 3; 4 5 6; 7 8 9]
     cpa = CartesianProductArray([i1, h])
     lm = M * cpa
 
     oa = overapproximate(lm, Hyperrectangle)
     oa_box = overapproximate(lm, Approximations.BoxDirections)
-    d_oa_d_hp = overapproximate(lm, CartesianProductArray{N, Hyperrectangle{N}})
+    d_oa_d_hp = overapproximate(lm, CartesianProductArray{N,Hyperrectangle{N}})
     d_oa_d_box = overapproximate(lm, CartesianProductArray, Approximations.BoxDirections)
     oa_d_hp = overapproximate(d_oa_d_hp)
 
@@ -95,13 +95,13 @@ for N in [Float64, Rational{Int}, Float32]
     cpa = CartesianProductArray([i1, i2, i3])
     M = N[1 2 0; 0 1 0; 0 1 1]
     lm = M * cpa
-    d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
+    d_oa = overapproximate(lm, CartesianProductArray{N,Interval{N}})
     oa = overapproximate(lm)
     @test overapproximate(d_oa) == oa
-    @test typeof(d_oa) == CartesianProductArray{N, Interval{N}}
+    @test typeof(d_oa) == CartesianProductArray{N,Interval{N}}
 
     # interval linear map of zonotope
-    M = IntervalMatrix([(N(0) ± N(1)) (N(0) ± N(0)); (N(0) ± N(0)) (N(0) ± N(1))])
+    M = IntervalMatrix([(N(0)±N(1)) (N(0)±N(0)); (N(0)±N(0)) (N(0)±N(1))])
     Z = Zonotope(N[1, 1], N[1 1; 1 -1])
     lm = LinearMap(M, Z)
     Zo = overapproximate(lm, Zonotope)
@@ -112,20 +112,23 @@ for N in [Float64, Rational{Int}, Float32]
     @test overapproximate(r, Hyperrectangle) isa EmptySet{N}
     r = Rectification(Ball1(N[0, 0], N(1)))
     @test overapproximate(r, Hyperrectangle) ==
-        Hyperrectangle(low=N[0, 0], high=N[1, 1])
+          Hyperrectangle(; low=N[0, 0], high=N[1, 1])
 
     # HPolytope error messages
     @test_throws ArgumentError overapproximate(Singleton(N[0, 0]), HPolytope)
     @test_throws ArgumentError overapproximate(Singleton(N[0]), HPolytope)
 
     # Hyperrectangle of AffineMap
-    A = N[1 2; 1 3; 1 4]; X = Hyperrectangle(N[0, 1], N[0, 1]); b = N[1, 2, 3];
+    A = N[1 2; 1 3; 1 4]
+    X = Hyperrectangle(N[0, 1], N[0, 1])
+    b = N[1, 2, 3]
     am = AffineMap(A, X, b)
     @test overapproximate(am, Hyperrectangle) == Hyperrectangle(N[3, 5, 7], N[2, 3, 4])
 
     # rectification of a zonotope
     Z = Zonotope(N[0, 0], N[1 1 1; 1 1 0])
-    @test overapproximate(Rectification(Z), Zonotope) == Zonotope(N[3/4, 1/2], N[1/2 1/2 1/2 3/4 0; 1/2 1/2 0 0 1/2])
+    @test overapproximate(Rectification(Z), Zonotope) ==
+          Zonotope(N[3 / 4, 1 / 2], N[1/2 1/2 1/2 3/4 0; 1/2 1/2 0 0 1/2])
     Z = Zonotope(N[-2, -2], N[1 1; 1 0])
     @test overapproximate(Rectification(Z), Zonotope) == convert(Zonotope, Singleton(N[0, 0]))
     Z = Zonotope(N[-2, 2], N[1 1; 1 0])
@@ -139,7 +142,7 @@ for N in [Float64, Float32]
     function overapproximate_lmap(n)
         B = BallInf(ones(N, n), N(2))
         π = sparse(N[1, 2], N[1, 2], ones(N, 2), 2, n)
-        return Approximations.overapproximate(π*B)
+        return Approximations.overapproximate(π * B)
     end
     o = overapproximate_lmap(50)
     @test o.center == N[1, 1] && o.radius == N[2, 2]
@@ -162,9 +165,9 @@ for N in [Float64, Float32]
 
     # static vectors
     # temporarily deactivated, see #2954
-#     b = BallInf(SVector{2}(N[1, 0]), N(1))
-#     p = overapproximate(b, ε)
-#     @test isequivalent(b, p)
+    #     b = BallInf(SVector{2}(N[1, 0]), N(1))
+    #     p = overapproximate(b, ε)
+    #     @test isequivalent(b, p)
 
     # Check that there are no redundant constraints for a ballinf
     b = BallInf(N[0.5, 0.5], N(0.1))
@@ -185,27 +188,27 @@ for N in [Float64, Float32]
     addconstraint!(p, LinearConstraint(N[0, 1], N(1)))
     addconstraint!(p, LinearConstraint(N[-1, 0], N(1)))
     addconstraint!(p, LinearConstraint(N[0, -1], N(1)))
-    addconstraint!(p, LinearConstraint(N[sqrt(2)/2, sqrt(2)/2], N(1)))
-    addconstraint!(p, LinearConstraint(N[-sqrt(2)/2, sqrt(2)/2], N(1)))
-    addconstraint!(p, LinearConstraint(N[sqrt(2)/2, -sqrt(2)/2], N(1)))
-    addconstraint!(p, LinearConstraint(N[-sqrt(2)/2, -sqrt(2)/2], N(1)))
-    lcl = overapproximate(p, N(.001)).constraints
+    addconstraint!(p, LinearConstraint(N[sqrt(2) / 2, sqrt(2) / 2], N(1)))
+    addconstraint!(p, LinearConstraint(N[-sqrt(2) / 2, sqrt(2) / 2], N(1)))
+    addconstraint!(p, LinearConstraint(N[sqrt(2) / 2, -sqrt(2) / 2], N(1)))
+    addconstraint!(p, LinearConstraint(N[-sqrt(2) / 2, -sqrt(2) / 2], N(1)))
+    lcl = overapproximate(p, N(0.001)).constraints
     @test length(lcl) == 8
     @test lcl[1].a ≈ N[1, 0]
     @test lcl[1].b ≈ N(1)
-    @test lcl[2].a ≈ N[sqrt(2)/2, sqrt(2)/2]
+    @test lcl[2].a ≈ N[sqrt(2) / 2, sqrt(2) / 2]
     @test lcl[2].b ≈ N(1)
     @test lcl[3].a ≈ N[0, 1]
     @test lcl[3].b ≈ N(1)
-    @test lcl[4].a ≈ N[-sqrt(2)/2, sqrt(2)/2]
+    @test lcl[4].a ≈ N[-sqrt(2) / 2, sqrt(2) / 2]
     @test lcl[4].b ≈ N(1)
     @test lcl[5].a ≈ N[-1, 0]
     @test lcl[5].b ≈ N(1)
-    @test lcl[6].a ≈ N[-sqrt(2)/2, -sqrt(2)/2]
+    @test lcl[6].a ≈ N[-sqrt(2) / 2, -sqrt(2) / 2]
     @test lcl[6].b ≈ N(1)
     @test lcl[7].a ≈ N[0, -1]
     @test lcl[7].b ≈ N(1)
-    @test lcl[8].a ≈ N[sqrt(2)/2, -sqrt(2)/2]
+    @test lcl[8].a ≈ N[sqrt(2) / 2, -sqrt(2) / 2]
     @test lcl[8].b ≈ N(1)
 
     # no redundant constraints (#369)
@@ -277,7 +280,7 @@ for N in [Float64, Float32]
     rm = ResetMap(X, resets)
     Y = overapproximate(rm, CartesianProductArray, Hyperrectangle)
     @test array(Y) == [Hyperrectangle(N[0, 0], N[1, 1]),
-        Hyperrectangle(N[0, 0], N[0, 2]), Hyperrectangle(N[0, 0], N[3, 0])]
+                       Hyperrectangle(N[0, 0], N[0, 2]), Hyperrectangle(N[0, 0], N[3, 0])]
 
     # overapprox with an HParallelotope
     Z = Zonotope(N[0, 0], N[1 0 1; 0 1 1])
@@ -294,11 +297,12 @@ for N in [Float64, Float32]
     # intersection of zonotope with hyperplane
     Z = Zonotope(N[2, 2], N[1 0 1//2; 0 1 1//2])
     H = Hyperplane(N[-1, 1], N(0))
-    Z2 = Zonotope(N[2, 2], hcat(N[3//2; 3//2]))
+    Z2 = Zonotope(N[2, 2], hcat(N[3 // 2; 3 // 2]))
     @test remove_redundant_generators(overapproximate(Z ∩ H, Zonotope)) ≈ Z2
     Z = Zonotope(N[1, 2], N[1 2 3 1//2 0; 3 2 1 0 -1//2])
-    H = Hyperplane(N[-2, 1], N(-1//2))
-    Z2 = Zonotope(N[1.296, 2.092], N[1.592 0.816 0.04 -0.092 -0.296; 3.184 1.632 0.08 -0.184 -0.592])
+    H = Hyperplane(N[-2, 1], N(-1 // 2))
+    Z2 = Zonotope(N[1.296, 2.092],
+                  N[1.592 0.816 0.04 -0.092 -0.296; 3.184 1.632 0.08 -0.184 -0.592])
     @test overapproximate(Z ∩ H, Zonotope) ≈ Z2
 
     # overapproximation with HPolyhedron
@@ -308,7 +312,7 @@ end
 
 for N in [Float64]
     i1 = Interval(N[0, 1])
-    h = Hyperrectangle(low=N[3, 4], high=N[5, 7])
+    h = Hyperrectangle(; low=N[3, 4], high=N[5, 7])
     M = N[1 2 3; 4 5 6; 7 8 9]
     cpa = CartesianProductArray([i1, h])
     lm = M * cpa
@@ -330,13 +334,13 @@ for N in [Float64]
     M = N[1 2; 0 1]
     cpa = CartesianProductArray([i1, i2])
     lm = M * cpa
-    d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
+    d_oa = overapproximate(lm, CartesianProductArray{N,Interval{N}})
     oa = overapproximate(lm, OctDirections)
     @test oa ⊆ d_oa
 
     # decomposed intersection between Cartesian product array and polyhedron
-    h1 = Hyperrectangle(low=N[3, 4], high=N[5, 7])
-    h2 = Hyperrectangle(low=N[5, 5], high=N[6, 8])
+    h1 = Hyperrectangle(; low=N[3, 4], high=N[5, 7])
+    h2 = Hyperrectangle(; low=N[5, 5], high=N[6, 8])
     cpa1 = CartesianProductArray([i1, i2, h1])
     o_cpa1 = overapproximate(cpa1)
     cpa2 = CartesianProductArray([i1, i2, h2])
@@ -366,9 +370,9 @@ for N in [Float64]
     o_bd_int_g_comb = overapproximate(int_g_comb, BoxDirections)
     @test overapproximate(o_d_int_g_comb) ≈ overapproximate(o_bd_int_g_comb)
     projection = project(o_bd_int_g_comb, [1, 2], BoxDirections)
-    @test vertices_list(projection) ≈ [[0.5, 2.5], [0., 2.5], [0., 2], [0.5, 2.]]
+    @test vertices_list(projection) ≈ [[0.5, 2.5], [0.0, 2.5], [0.0, 2], [0.5, 2.0]]
     projection = project(overapproximate(int_g_comb, OctDirections), [1, 2], OctDirections)
-    @test vertices_list(projection) ≈ [[0., 2.5], [0., 2.], [0.5, 2.]]
+    @test vertices_list(projection) ≈ [[0.0, 2.5], [0.0, 2.0], [0.5, 2.0]]
 
     # Zonotope approximation
     Z1 = Zonotope(ones(N, 2), [N[1, 0], N[0, 1], N[1, 1]])
@@ -390,13 +394,13 @@ for N in [Float64]
     B = BallInf(zeros(N, 3), N(1))
     H = convert(HPolytope, B)
     Z = Zonotope(N[0, 0, 0], N[1 0 0; 0 1 0; 0 0 1])
-    @test overapproximate(H, Zonotope, BoxDirections, algorithm="vrep") == Z
-    @test overapproximate(H, Zonotope, BoxDirections(3), algorithm="vrep") == Z
-    @test overapproximate(H, Zonotope, BoxDirections, algorithm="cpa") == Z
-    @test overapproximate(H, Zonotope, BoxDirections(2), algorithm="cpa") == Z
+    @test overapproximate(H, Zonotope, BoxDirections; algorithm="vrep") == Z
+    @test overapproximate(H, Zonotope, BoxDirections(3); algorithm="vrep") == Z
+    @test overapproximate(H, Zonotope, BoxDirections; algorithm="cpa") == Z
+    @test overapproximate(H, Zonotope, BoxDirections(2); algorithm="cpa") == Z
     V = convert(VPolytope, B)
-    @test overapproximate(V, Zonotope, BoxDirections, algorithm="vrep") == Z
-    @test overapproximate(V, Zonotope, BoxDirections, algorithm="cpa") == Z
+    @test overapproximate(V, Zonotope, BoxDirections; algorithm="vrep") == Z
+    @test overapproximate(V, Zonotope, BoxDirections; algorithm="cpa") == Z
     # test invalid direction templates
     @test_throws ErrorException overapproximate(V, Zonotope, SphericalDirections, algorithm="vrep")
     @test_throws ErrorException overapproximate(V, Zonotope, SphericalDirections, algorithm="cpa")
@@ -408,7 +412,7 @@ for N in [Float64]
     H = convert(HPolygon, BallInf(3 * ones(N, 2), N(2)))
     Z2 = overapproximate(Intersection(Z, H), Zonotope, BoxDirections(2))
     @test ispermutation(vertices_list(Z2),
-        vertices_list(BallInf(fill(N(3//2) , 2), N(1//2))))
+                        vertices_list(BallInf(fill(N(3 // 2), 2), N(1 // 2))))
 
     # decomposed linear map approximation
     i1 = Interval(N[0, 1])
@@ -416,14 +420,14 @@ for N in [Float64]
     M = N[1 2; 0 1]
     cpa = CartesianProductArray([i1, i2])
     lm = M * cpa
-    d_oa = overapproximate(lm, CartesianProductArray{N, Interval{N}})
+    d_oa = overapproximate(lm, CartesianProductArray{N,Interval{N}})
     oa = overapproximate(lm, OctDirections)
     @test oa ⊆ d_oa
 
     # =======================================
     # Zonotope overapprox. of a Taylor model
     # =======================================
-    x₁, x₂, x₃ = set_variables(N, ["x₁", "x₂", "x₃"], order=5)
+    x₁, x₂, x₃ = set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
     Dx₁ = IA.Interval(N(1.0), N(3.0))
     Dx₂ = IA.Interval(N(-1.0), N(1.0))
     Dx₃ = IA.Interval(N(-1.0), N(0.0))
@@ -442,16 +446,16 @@ for N in [Float64]
     @test get_linear_coeffs(t) == N[0]
     p = x₁ + 2x₂ - 3x₃
     @test get_linear_coeffs(p) == N[1, 2, -3]
-    y = set_variables("y", numvars=2, order=1)
+    y = set_variables("y"; numvars=2, order=1)
     p = zero(y[1])
     @test get_linear_coeffs(p) == N[0, 0]
 
     # auxiliary function to get nonlinear coefficients of TaylorN
-    x = set_variables("x", numvars=2, order=10)
+    x = set_variables("x"; numvars=2, order=10)
 
     p = (1 + x[1] - 2x[2])^2
     @test get_linear_coeffs(p) == [2.0, -4.0]
-    @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1]*x[2] + 4x[2]^2
+    @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1] * x[2] + 4x[2]^2
 
     p = 1234.5 + 0 * x[1] + 0 * x[2]
     @test get_linear_coeffs(p) == [0.0, 0.0]
@@ -466,9 +470,9 @@ for N in [Float64]
     @test _nonlinear_polynomial(p) == 8 * x[1] * x[2]^3
 
     p = (1 + x[1] - 2x[2])^2
-    @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1]*x[2] + 4x[2]^2
+    @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1] * x[2] + 4x[2]^2
 
-    x = set_variables("x", numvars=2, order=1)
+    x = set_variables("x"; numvars=2, order=1)
 
     p = 1234.5 + 0 * x[1] + 0 * x[2]
     @test get_linear_coeffs(p) == [0.0, 0.0]
@@ -480,7 +484,7 @@ for N in [Float64]
 
     # auxiliary function to get nonlinear coefficients of Taylor1
     t = TaylorModels.Taylor1(6)
-    qq = 1.0 + 2.0*t + 3t^2 + 6t^3
+    qq = 1.0 + 2.0 * t + 3t^2 + 6t^3
     @test _nonlinear_polynomial(qq) == 3t^2 + 6t^3
 
     # Zonotope approximation of convex hull array of zonotopes
@@ -501,17 +505,17 @@ for N in [Float64]
     cap = overapproximate(Z ∩ L, OctDirections)
     @test isequivalent(cap, (L ∩ Z))
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
-    L = Line2D(N[-1, -1], N[1, 1/2])
+    L = Line2D(N[-1, -1], N[1, 1 / 2])
     cap = overapproximate(Z ∩ L, OctDirections)
     @test (L ∩ Z) ⊆ cap
 
     # NOTE: ICP currently leads to unsatisfiable package requirements
     # overapproximate a nonlinear constraint with an HPolyhedron
-#     dom = IntervalBox(IA.Interval(-2, 2), IA.Interval(-2, 2))
-#     C = @constraint x^2 + y^2 <= 1
-#     p = pave(C, dom, 0.01)
-#     dirs = OctDirections(2)
-#     H = overapproximate(p, dirs)
-#     B2 = Ball2(N[0, 0], N(1))
-#     @test B2 ⊆ H
+    #     dom = IntervalBox(IA.Interval(-2, 2), IA.Interval(-2, 2))
+    #     C = @constraint x^2 + y^2 <= 1
+    #     p = pave(C, dom, 0.01)
+    #     dirs = OctDirections(2)
+    #     H = overapproximate(p, dirs)
+    #     B2 = Ball2(N[0, 0], N(1))
+    #     @test B2 ⊆ H
 end

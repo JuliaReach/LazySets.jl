@@ -18,7 +18,7 @@ Type that represents the Cartesian product of a finite number of sets.
 The Cartesian product preserves convexity: if the set arguments are convex, then
 their Cartesian product is convex as well.
 """
-struct CartesianProductArray{N, S<:LazySet{N}} <: LazySet{N}
+struct CartesianProductArray{N,S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
@@ -55,7 +55,7 @@ The function symbol can be typed via `\\times[TAB]`.
 ×(Xs::Vector{<:LazySet}) = *(Xs)
 
 isoperationtype(::Type{<:CartesianProductArray}) = true
-isconvextype(::Type{CartesianProductArray{N, S}}) where {N, S} = isconvextype(S)
+isconvextype(::Type{CartesianProductArray{N,S}}) where {N,S} = isconvextype(S)
 
 # add functions connecting CartesianProduct and CartesianProductArray
 @declare_array_version(CartesianProduct, CartesianProductArray)
@@ -273,7 +273,7 @@ function isbounded(cpa::CartesianProductArray)
     return all(isbounded, cpa.array)
 end
 
-function isboundedtype(::Type{<:CartesianProductArray{N, S}}) where {N, S}
+function isboundedtype(::Type{<:CartesianProductArray{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
@@ -338,7 +338,7 @@ centrally-symmetric sets.
 The center of the Cartesian product of a finite number of sets.
 """
 function center(cpa::CartesianProductArray)
-    reduce(vcat, center(X) for X in array(cpa))
+    return reduce(vcat, center(X) for X in array(cpa))
 end
 
 """
@@ -357,7 +357,7 @@ A list of constraints.
 """
 function constraints_list(cpa::CartesianProductArray)
     N = eltype(cpa)
-    clist = Vector{HalfSpace{N, SparseVector{N, Int}}}()
+    clist = Vector{HalfSpace{N,SparseVector{N,Int}}}()
     n = dim(cpa)
     sizehint!(clist, n)
     prev_step = 1
@@ -368,7 +368,7 @@ function constraints_list(cpa::CartesianProductArray)
             n_low = dim(c_low)
         else
             n_low = dim(c_low_list[1])
-            indices = prev_step:(prev_step+n_low-1)
+            indices = prev_step:(prev_step + n_low - 1)
         end
         for constr in c_low_list
             new_constr = HalfSpace(sparsevec(indices, constr.a, n), constr.b)
@@ -414,7 +414,7 @@ function vertices_list(cpa::CartesianProductArray)
     dim_start_j = 1
     for vl in vlist_low
         v_low = vl[1]
-        v[dim_start_j:dim_start_j+length(v_low)-1] = v_low
+        v[dim_start_j:(dim_start_j + length(v_low) - 1)] = v_low
         dim_start_j += length(v_low)
     end
     i = 1
@@ -437,13 +437,13 @@ function vertices_list(cpa::CartesianProductArray)
         while indices[j] == indices_max[j]
             indices[j] = 1
             v_low = vlist_low[j][1]
-            v[dim_start_j:dim_start_j+length(v_low)-1] = v_low
+            v[dim_start_j:(dim_start_j + length(v_low) - 1)] = v_low
             dim_start_j += length(v_low)
             j += 1
         end
         indices[j] += 1
         v_low = vlist_low[j][indices[j]]
-        v[dim_start_j:dim_start_j+length(v_low)-1] = v_low
+        v[dim_start_j:(dim_start_j + length(v_low) - 1)] = v_low
     end
 
     return vlist
@@ -465,8 +465,8 @@ Check whether two vectors of sets have the same block structure, i.e., the
 
 `true` iff the vectors have the same block structure.
 """
-function same_block_structure(x::AbstractVector{S1}, y::AbstractVector{S2}
-                             ) where {S1<:LazySet, S2<:LazySet}
+function same_block_structure(x::AbstractVector{S1},
+                              y::AbstractVector{S2}) where {S1<:LazySet,S2<:LazySet}
     if length(x) != length(y)
         return false
     end
@@ -588,7 +588,7 @@ end
 
 # method for all variables
 function block_to_dimension_indices(cpa::CartesianProductArray{N}) where {N}
-    ranges = Vector{Tuple{Int, Int}}(undef, length(cpa.array))
+    ranges = Vector{Tuple{Int,Int}}(undef, length(cpa.array))
 
     start_index, end_index = 1, 0
     @inbounds for i in 1:length(cpa.array)
@@ -622,8 +622,7 @@ The merged Cartesian product.
 """
 function substitute_blocks(low_dim_cpa::CartesianProductArray{N},
                            orig_cpa::CartesianProductArray{N},
-                           blocks::Vector{Tuple{Int, Int}}) where {N}
-
+                           blocks::Vector{Tuple{Int,Int}}) where {N}
     array = Vector{LazySet{N}}(undef, length(orig_cpa.array))
     index = 1
     for bi in 1:length(orig_cpa.array)
@@ -673,7 +672,7 @@ function project(cpa::CartesianProductArray, block::AbstractVector{Int};
         if n_sum >= bi
             # found starting point in a set; now find end point
             i_end = m
-            for i in (i_start+1):m
+            for i in (i_start + 1):m
                 if block[i] > n_sum
                     i_end = i - 1
                     break

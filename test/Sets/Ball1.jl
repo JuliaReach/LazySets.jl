@@ -97,10 +97,11 @@ for N in [Float64, Rational{Int}, Float32]
     # list of constraints
     b = Ball1(N[0, 0], N(1))
     clist = constraints_list(b)
-    @test ispermutation(clist, [HalfSpace(N[1, 1], N(1)),  # x + y <= 1
-                                HalfSpace(N[-1, 1], N(1)),  # -x + y <= 1
-                                HalfSpace(N[1, -1], N(1)), # x - y <= 1
-                                HalfSpace(N[-1, -1], N(1))])  # x + y >= -1
+    @test ispermutation(clist,
+                        [HalfSpace(N[1, 1], N(1)),  # x + y <= 1
+                         HalfSpace(N[-1, 1], N(1)),  # -x + y <= 1
+                         HalfSpace(N[1, -1], N(1)), # x - y <= 1
+                         HalfSpace(N[-1, -1], N(1))])  # x + y >= -1
 
     # projection
     b4 = Ball1(N[4, 3, 2, 1], N(2))

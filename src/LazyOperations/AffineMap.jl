@@ -84,25 +84,25 @@ julia> AffineMap(A, EmptySet{Int}(2), b3)
 EmptySet{Int64}(2)
 ```
 """
-struct AffineMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
-                 VN<:AbstractVector{NM}} <: AbstractAffineMap{N, S}
+struct AffineMap{N,S<:LazySet{N},NM,MAT<:AbstractMatrix{NM},
+                 VN<:AbstractVector{NM}} <: AbstractAffineMap{N,S}
     M::MAT
     X::S
     v::VN
 
     # default constructor with dimension-match check
-    function AffineMap(M::MAT, X::S, v::VN) where {N, S<:LazySet{N}, NM,
-                                                   MAT<:AbstractMatrix{NM},
-                                                   VN<:AbstractVector{NM}}
-
+    function AffineMap(M::MAT, X::S,
+                       v::VN) where {N,S<:LazySet{N},NM,
+                                     MAT<:AbstractMatrix{NM},
+                                     VN<:AbstractVector{NM}}
         @assert dim(X) == size(M, 2) "a matrix of size $(size(M)) cannot be " *
-            "applied to a set of dimension $(dim(X))"
+                                     "applied to a set of dimension $(dim(X))"
 
         @assert size(M, 1) == length(v) "a map with output dimension " *
-            "$(size(M, 1)) is incompatible with a translation vector of " *
-            "dimension $(length(v))"
+                                        "$(size(M, 1)) is incompatible with a translation vector of " *
+                                        "dimension $(length(v))"
 
-        return new{N, S, NM, MAT, VN}(M, X, v)
+        return new{N,S,NM,MAT,VN}(M, X, v)
     end
 end
 
@@ -134,11 +134,11 @@ end
 # such that only the translation vector remains
 function AffineMap(M::AbstractMatrix, Z::ZeroSet, v::AbstractVector)
     @assert dim(Z) == size(M, 2) "a matrix of size $(size(M)) cannot be " *
-        "applied to a set of dimension $(dim(Z))"
+                                 "applied to a set of dimension $(dim(Z))"
 
     @assert size(M, 1) == length(v) "a map with output dimension " *
-        "$(size(M, 1)) is incompatible with a translation vector of " *
-        "dimension $(length(v))"
+                                    "$(size(M, 1)) is incompatible with a translation vector of " *
+                                    "dimension $(length(v))"
 
     return Singleton(v)
 end
@@ -164,6 +164,6 @@ function concretize(am::AffineMap)
     return affine_map(am.M, concretize(am.X), am.v)
 end
 
-function isboundedtype(::Type{<:AffineMap{N, S}}) where {N, S}
+function isboundedtype(::Type{<:AffineMap{N,S}}) where {N,S}
     return isboundedtype(S)
 end

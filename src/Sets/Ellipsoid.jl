@@ -93,24 +93,24 @@ julia> σ(ones(3), E)
  0.5773502691896258
 ```
 """
-struct Ellipsoid{N<:AbstractFloat, VN<:AbstractVector{N},
+struct Ellipsoid{N<:AbstractFloat,VN<:AbstractVector{N},
                  MN<:AbstractMatrix{N}} <: AbstractCentrallySymmetric{N}
     center::VN
     shape_matrix::MN
 
     # default constructor with dimension check
-    function Ellipsoid(c::VN, Q::MN; check_posdef::Bool=true) where
-            {N<:AbstractFloat, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
-
+    function Ellipsoid(c::VN, Q::MN;
+                       check_posdef::Bool=true) where
+             {N<:AbstractFloat,VN<:AbstractVector{N},MN<:AbstractMatrix{N}}
         @assert length(c) == checksquare(Q) "the length of the center and " *
-            "the size of the shape matrix do not match; they are " *
-            "$(length(c)) and $(size(Q)) respectively"
+                                            "the size of the shape matrix do not match; they are " *
+                                            "$(length(c)) and $(size(Q)) respectively"
 
         if check_posdef
             isposdef(Q) || throw(ArgumentError("an ellipsoid's shape matrix " *
                                                "must be positive definite"))
         end
-        return new{N, VN, MN}(c, Q)
+        return new{N,VN,MN}(c, Q)
     end
 end
 
@@ -120,9 +120,10 @@ function Ellipsoid(Q::AbstractMatrix{N}; check_posdef::Bool=true) where {N}
     return Ellipsoid(zeros(N, size(Q, 1)), Q; check_posdef=check_posdef)
 end
 
-function ○(c::VN, shape_matrix::MN) where {N<:AbstractFloat,
-                                           VN<:AbstractVector{N},
-                                           MN<:AbstractMatrix{N}}
+function ○(c::VN,
+           shape_matrix::MN) where {N<:AbstractFloat,
+                                    VN<:AbstractVector{N},
+                                    MN<:AbstractMatrix{N}}
     return Ellipsoid(c, shape_matrix)
 end
 
@@ -244,7 +245,7 @@ if and only if
 """
 function ∈(x::AbstractVector, E::Ellipsoid)
     @assert length(x) == dim(E) "cannot check membership of a vector of " *
-        "length $(length(x)) in an ellipsoid of dimension $(dim(E))"
+                                "length $(length(x)) in an ellipsoid of dimension $(dim(E))"
     w = x - E.center
     Q = E.shape_matrix
     return dot(w, Q \ w) ≤ 1
@@ -287,7 +288,7 @@ function rand(::Type{Ellipsoid};
               N::Type{<:AbstractFloat}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     center = randn(rng, N, dim)
     # random entries in [-1, 1]
@@ -304,7 +305,7 @@ function rand(::Type{Ellipsoid};
     end
     # make diagonally dominant
     shape_matrix = N(0.5) * (shape_matrix + shape_matrix') +
-                   Matrix{N}(dim*I, dim, dim)
+                   Matrix{N}(dim * I, dim, dim)
     return Ellipsoid(center, shape_matrix)
 end
 

@@ -2,7 +2,7 @@ for N in [Float64, Rational{Int}, Float32]
     # random zonotope
     rand(Zonotope)
     # Test dimension assertion
-    @test_throws AssertionError Zonotope(N[1, 1], [N[0 0]; N[1//2 0]; N[0 1//2]; N[0 0]])
+    @test_throws AssertionError Zonotope(N[1, 1], [N[0 0]; N[1 // 2 0]; N[0 1 // 2]; N[0 0]])
 
     # 1D Zonotope
     z = Zonotope(N[0], Matrix{N}(I, 1, 1))
@@ -92,7 +92,7 @@ for N in [Float64, Rational{Int}, Float32]
     Z4 = linear_map(A, Z3)
     @test Z4.center == N[2, 1]
     @test Z4.generators == N[-1//2 3//2 1//2 1; 1//2 3//2 1 1//2]
-    Z5 = scale(1//2, Z3)
+    Z5 = scale(1 // 2, Z3)
     @test Z5.center == N[0, 1]
     @test Z5.generators == N[1//2 1//2 1//2 0; -1//2 1//2 0 1//2]
 
@@ -105,7 +105,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # in-place scale
     Z5aux = copy(Z3)
-    scale!(N(1//2), Z5aux)
+    scale!(N(1 // 2), Z5aux)
     @test isequivalent(Z5, Z5aux)
 
     # intersection with a hyperplane
@@ -143,8 +143,8 @@ for N in [Float64, Rational{Int}, Float32]
     end
     # order reduction with static arrays
     for method in [LazySets.COMB03(), LazySets.GIR05()]
-        Zs = Zonotope(SVector{2}(Z.center), SMatrix{2, 6}(Z.generators))
-        @test reduce_order(Zs, 2, method) isa Zonotope{N, SVector{2, N}, SMatrix{2, 4, N, 8}}
+        Zs = Zonotope(SVector{2}(Z.center), SMatrix{2,6}(Z.generators))
+        @test reduce_order(Zs, 2, method) isa Zonotope{N,SVector{2,N},SMatrix{2,4,N,8}}
     end
 
     # conversion from zonotopic sets
@@ -174,8 +174,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test Z.center == N[2, 3] && isempty(Z.generators)
 
     # convert the cartesian product of two hyperrectangles to a zonotope
-    h1 = Hyperrectangle(N[1/2],  N[1/2])
-    h2 = Hyperrectangle(N[5//2, 9//2],  N[1/2, 1/2])
+    h1 = Hyperrectangle(N[1 / 2], N[1 / 2])
+    h2 = Hyperrectangle(N[5 // 2, 9 // 2], N[1 / 2, 1 / 2])
     H = convert(Hyperrectangle, h1 × h2)
     Z = convert(Zonotope, h1 × h2)
     @test Z ⊆ H && H ⊆ Z
@@ -190,15 +190,15 @@ for N in [Float64, Rational{Int}, Float32]
     @test Z1 ⊆ Z && Z2 ⊆ Z
     Z1, Z2, Z3, Z4 = split(Z, [1, 2], [1, 1])
     @test Z1 ⊆ Z && Z2 ⊆ Z && Z3 ⊆ Z && Z4 ⊆ Z
-    Z = Zonotope(SVector{2}(N[0, 0]), SMatrix{2, 2}(N[1 1; -1 1]))
+    Z = Zonotope(SVector{2}(N[0, 0]), SMatrix{2,2}(N[1 1; -1 1]))
     Z1, Z2 = split(Z, 1)
     @test Z1 ⊆ Z && Z2 ⊆ Z
 
     # converts the cartesian product of two zonotopes to a new zonotope
     Z1 = Zonotope(N[0], hcat(N[1]))
-    Z2 = Zonotope(N[1/2], hcat(N[1/2]))
-    Z = convert(Zonotope, Z1×Z2)
-    @test Z isa Zonotope && Z.center == N[0, 1/2] && Matrix(Z.generators) == N[1 0; 0 1/2]
+    Z2 = Zonotope(N[1 / 2], hcat(N[1 / 2]))
+    Z = convert(Zonotope, Z1 × Z2)
+    @test Z isa Zonotope && Z.center == N[0, 1 / 2] && Matrix(Z.generators) == N[1 0; 0 1/2]
 
     # conversion of the lazy linear map of an abstract hyperrectangle to a zonotope
     B = BallInf(N[0], N(1))
@@ -218,7 +218,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test Z2 == Z
 
     # list of constraints
-    Z = Zonotope(zeros(N, 3), Matrix(N(1)*I, 3, 3))
+    Z = Zonotope(zeros(N, 3), Matrix(N(1) * I, 3, 3))
     B = BallInf(zeros(N, 3), N(1))  # equivalent to Z
     clist = constraints_list(Z)
     @test clist isa Vector{<:HalfSpace{N}} && length(clist) == 6
@@ -229,7 +229,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # concrete projection returns a zonotope
     πZ12 = project(Z, 1:2)
-    @test πZ12 == Zonotope(zeros(N, 2), Matrix(N(1)*I, 2, 2))
+    @test πZ12 == Zonotope(zeros(N, 2), Matrix(N(1) * I, 2, 2))
 
     # 1D projection works correctly even with zero generators (#2147)
     Z = convert(Zonotope, BallInf(N[0, 0], N(1)))
@@ -238,9 +238,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # removing zero generators in projection is optional
     Z = Zonotope(zeros(N, 3), N[1 0 3; 4 0 6; 0 0 0])
-    Z2 = project(Z, [1,2])
+    Z2 = project(Z, [1, 2])
     @test Z2 == Zonotope(zeros(N, 2), N[1 3; 4 6])
-    Z2 = project(Z, [1,2]; remove_zero_generators=false)
+    Z2 = project(Z, [1, 2]; remove_zero_generators=false)
     @test Z2 == Zonotope(zeros(N, 2), N[1 0 3; 4 0 6])
 
     # remove redundant generators
@@ -250,13 +250,12 @@ for N in [Float64, Rational{Int}, Float32]
         Z = Zonotope(zeros(N, size(G, 1)), G)
         Z2 = remove_redundant_generators(Z)
         @test ngens(Z2) == nG
-        if N<:AbstractFloat || test_suite_polyhedra
+        if N <: AbstractFloat || test_suite_polyhedra
             @test isequivalent(Z, Z2)
         end
         if !isnothing(G2)
             @test genmat(remove_redundant_generators(Z)) == G2
         end
-
     end
     Z = Zonotope(zeros(N, 3), N[0 0 0; 0 1 0; 0 0 0])
     Z2 = remove_redundant_generators(Z)
@@ -295,7 +294,7 @@ for N in [Float64]
         @test ρ(d, P) == ρ(d, Z)
     end
     # sparse matrix (#1468)
-    constraints_list(Zonotope(N[0, 0], sparse(N[1 0 ; 0 1])))
+    constraints_list(Zonotope(N[0, 0], sparse(N[1 0; 0 1])))
 
     if test_suite_polyhedra
         # constraints_list for generator matrix with a zero row
@@ -320,18 +319,18 @@ for N in [Float64]
     @test vertices_list(Z) == [element(S)]
 
     # test that redundant vertices are removed by default (#1021)
-    Z = Zonotope([0., 0.], [1. 0. 1.; 0. 1. 1.])
+    Z = Zonotope([0.0, 0.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
     vlistZ = vertices_list(Z)
     @test length(vlistZ) == 6
     @test ispermutation(vlistZ, [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
 
     # test 3d zonotope vertex enumeration
-    Z = Zonotope([0., 0., 0.], [1. 0. 1.; 0. 1. 1.; 0.1 1. 1.])
+    Z = Zonotope([0.0, 0.0, 0.0], [1.0 0.0 1.0; 0.0 1.0 1.0; 0.1 1.0 1.0])
     vlistZ = vertices_list(Z)
     @test length(vlistZ) == 8
 
     # test 2d zonotope generators in positive orthant vertex enumeration
-    Z = Zonotope([0., 0.], [1. 0. 1.; 0. 1. 1.])
+    Z = Zonotope([0.0, 0.0], [1.0 0.0 1.0; 0.0 1.0 1.0])
     vlistZ = vertices_list(Z)
     @test length(vlistZ) == 6
     # redundant vertices are removed automatically
@@ -340,14 +339,16 @@ for N in [Float64]
     @test length(vlistZ) == 2
 
     # test 2d zonotope generators in negative orthant vertex enumeration
-    Z = Zonotope([0., 0.], -[1. 0. 1.; 0. 1. 1.])
+    Z = Zonotope([0.0, 0.0], -[1.0 0.0 1.0; 0.0 1.0 1.0])
     vlistZ = vertices_list(Z)
     @test length(vlistZ) == 6
 
     # option to not apply the convex hull operation
-    vlistZ = LazySets._vertices_list_zonotope_iterative(Z.center, Z.generators, apply_convex_hull=false)
+    vlistZ = LazySets._vertices_list_zonotope_iterative(Z.center, Z.generators;
+                                                        apply_convex_hull=false)
     @test length(vlistZ) == 8
-    @test ispermutation(convex_hull(vlistZ), [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
+    @test ispermutation(convex_hull(vlistZ),
+                        [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
 
     # constraints_list correctness check by subset check (requires LP solver)
     B = BallInf(zeros(N, 3), N(1))
@@ -377,8 +378,8 @@ for N in [Float64]
 
     # issubset
     Z = Zonotope(N[0, 0], N[1 1; -1 1])
-    H1 = Hyperrectangle(low=N[-2, -2], high=N[2, 2])
-    H2 = Hyperrectangle(low=N[-2, -2], high=N[2, 0])
+    H1 = Hyperrectangle(; low=N[-2, -2], high=N[2, 2])
+    H2 = Hyperrectangle(; low=N[-2, -2], high=N[2, 0])
     @test issubset(Z, H1)
     @test !issubset(Z, H2)
 
@@ -388,18 +389,18 @@ for N in [Float64]
     Q2 = N[0 1/2; 1/2 0]
     # note that there may be repeated generators (though zero generators are removed)
     @test overapproximate(QuadraticMap([Q1, Q2], Z), Zonotope) ==
-        Zonotope(N[1//2, 0], N[1//4 1//4 0; 0 0 1])
+          Zonotope(N[1 // 2, 0], N[1//4 1//4 0; 0 0 1])
     Z = Zonotope(N[0, 0], N[1 1; 0 1])
     Q1 = N[1 1; 1 1]
     Q2 = N[-1 0; 0 -1]
     @test overapproximate(QuadraticMap([Q1, Q2], Z), Zonotope) ==
-        Zonotope(N[5//2, -3//2], N[1//2 2 4; -1//2 -1 -2])
+          Zonotope(N[5 // 2, -3 // 2], N[1//2 2 4; -1//2 -1 -2])
 
     # intersection with halfspace
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
-    H = HalfSpace(N[1, 0], N(-3//2))
+    H = HalfSpace(N[1, 0], N(-3 // 2))
     @test intersection(H, Z) == EmptySet(2)
-    H = HalfSpace(N[1, 0], N(3//2))
+    H = HalfSpace(N[1, 0], N(3 // 2))
     @test intersection(H, Z) == Z
     H = HalfSpace(N[1, 0], N(0))
     P = HPolytope([HalfSpace(N[1, 0], N(0)),

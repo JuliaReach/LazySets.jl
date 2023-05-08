@@ -39,7 +39,7 @@ This is parsed as
 """
 function read_gen(filename::String)
     Mi = Vector{Vector{Float64}}()
-    P = Vector{VPolygon{Float64, Vector{Float64}}}()
+    P = Vector{VPolygon{Float64,Vector{Float64}}}()
 
     # detect when we finished reading a new polygon; needed because polygons may
     # be separated by more than one end-of-line
@@ -49,11 +49,11 @@ function read_gen(filename::String)
             if !isempty(line)
                 push!(Mi, map(x -> parse(Float64, x), split(line)))
                 new_polygon = true
-             elseif isempty(line) && new_polygon
+            elseif isempty(line) && new_polygon
                 push!(P, VPolygon(Mi))
                 Mi = Vector{Vector{Float64}}()
                 new_polygon = false
-             end
+            end
         end
     end
     return P

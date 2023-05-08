@@ -26,11 +26,11 @@ julia> P.vertices
  [1.0, 1.0]
 ```
 """
-struct Polygon{N, VN<:AbstractVector{N}} <: LazySet{N}
+struct Polygon{N,VN<:AbstractVector{N}} <: LazySet{N}
     vertices::Vector{VN}
 
-    function Polygon(vertices::Vector{VN}) where {N, VN<:AbstractVector{N}}
-        return new{N, VN}(vertices)
+    function Polygon(vertices::Vector{VN}) where {N,VN<:AbstractVector{N}}
+        return new{N,VN}(vertices)
     end
 end
 

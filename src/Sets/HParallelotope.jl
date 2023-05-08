@@ -63,16 +63,17 @@ Hybrid Systems: Computation and Control. ACM, 2016.
 of hybrid systems using a combination of zonotopes and polytopes.* Nonlinear
 analysis: hybrid systems 4.2 (2010): 233-249.
 """
-struct HParallelotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
+struct HParallelotope{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
     directions::MN
     offset::VN
 
     # default constructor with dimension and consistency check
-    function HParallelotope(D::MN, c::VN; check_consistency::Bool=true
-                           ) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
-        @assert length(c) == 2*checksquare(D) "the length of the offset " *
-            "vector should be twice the size of the directions matrix, " *
-            "but they have sizes $(length(c)) and $(size(D)) respectively"
+    function HParallelotope(D::MN, c::VN;
+                            check_consistency::Bool=true) where {N,VN<:AbstractVector{N},
+                                                                 MN<:AbstractMatrix{N}}
+        @assert length(c) == 2 * checksquare(D) "the length of the offset " *
+                                                "vector should be twice the size of the directions matrix, " *
+                                                "but they have sizes $(length(c)) and $(size(D)) respectively"
 
         if check_consistency
             P = HPolyhedron(_constraints_list_hparallelotope(D, c, N, VN))
@@ -83,7 +84,7 @@ struct HParallelotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: Abstra
             end
         end
 
-        return new{N, VN, MN}(D, c)
+        return new{N,VN,MN}(D, c)
     end
 end
 
@@ -173,7 +174,7 @@ polynomial dynamical systems.* Formal Methods in System Design 50.1 (2017): 1-38
 function base_vertex(P::HParallelotope)
     D, c = P.directions, P.offset
     n = dim(P)
-    v = to_negative_vector(view(c, (n+1):2n)) # converts to a dense vector as well
+    v = to_negative_vector(view(c, (n + 1):(2n))) # converts to a dense vector as well
     return D \ v
 end
 
@@ -209,10 +210,10 @@ We refer to [1, Section 3.2.1] for details.
 [1] Tommaso Dreossi, Thao Dang, and Carla Piazza. *Reachability computation for
 polynomial dynamical systems.* Formal Methods in System Design 50.1 (2017): 1-38.
 """
-function extremal_vertices(P::HParallelotope{N, VN}) where {N, VN}
+function extremal_vertices(P::HParallelotope{N,VN}) where {N,VN}
     D, c = P.directions, P.offset
     n = dim(P)
-    v = to_negative_vector(view(c, n+1:2n))
+    v = to_negative_vector(view(c, (n + 1):(2n)))
     vertices = Vector{VN}(undef, n)
     h = copy(v)
     @inbounds for i in 1:n
@@ -252,7 +253,7 @@ function center(P::HParallelotope)
     q = base_vertex(P)
     E = extremal_vertices(P)
     s = sum(E)
-    return q * (1 - n/2) + s/2
+    return q * (1 - n / 2) + s / 2
 end
 
 """
@@ -283,7 +284,7 @@ for ``i = 1, \\ldots, n``.
 function genmat(P::HParallelotope)
     q = base_vertex(P)
     E = extremal_vertices(P)
-    return 1/2 * reduce(hcat, E) .- q/2
+    return 1 / 2 * reduce(hcat, E) .- q / 2
 end
 
 """
@@ -325,19 +326,19 @@ end
 
 function _constraints_list_hparallelotope(D, c, N, VN)
     if isempty(D)
-        return Vector{HalfSpace{N, VN}}(undef, 0)
+        return Vector{HalfSpace{N,VN}}(undef, 0)
     end
     n = size(D, 1)
-    clist = Vector{HalfSpace{N, VN}}(undef, 2n)
+    clist = Vector{HalfSpace{N,VN}}(undef, 2n)
     @inbounds for i in 1:n
         clist[i] = HalfSpace(D[i, :], c[i])
-        clist[i+n] = HalfSpace(-D[i, :], c[i+n])
+        clist[i + n] = HalfSpace(-D[i, :], c[i + n])
     end
     return clist
 end
 
 # reason: `Documenter` cannot annotate `constraints_list` with type parameters
-function _parameters(P::HParallelotope{N, VN}) where {N, VN}
+function _parameters(P::HParallelotope{N,VN}) where {N,VN}
     return (N, VN)
 end
 
@@ -376,7 +377,7 @@ function rand(::Type{HParallelotope};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
 
     while true
@@ -385,8 +386,8 @@ function rand(::Type{HParallelotope};
 
         # make sure that the set is not empty:
         # `offset[i] >= -offset[i-dim]` for all `i ∈ dim+1:2*dim`
-        @inbounds for i in dim+1:2*dim
-            offset[i] = -offset[i-dim] + abs(offset[i])
+        @inbounds for i in (dim + 1):(2 * dim)
+            offset[i] = -offset[i - dim] + abs(offset[i])
         end
 
         # convert to polyhedron to check boundedness

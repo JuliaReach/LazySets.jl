@@ -3,7 +3,7 @@ for N in [Float64, Rational{Int}, Float32]
     # ==================================
     # Constructor and interface methods
     # ==================================
- 
+
     B = BallInf(zeros(N, 3), N(1))
     v = N[1, 0, 0] # translation along dimension 1
     M = Diagonal(N[1, 2, 3])
@@ -59,7 +59,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # an affine map of the form I*X + b where I is the identity matrix is a pure translation
     #v = N[1, 0, 2]
-    #am_tr = AffineMap(I, B, v) # crashes, see #1544 
+    #am_tr = AffineMap(I, B, v) # crashes, see #1544
     #@test am_tr isa Translation && am_tr.v == v
 
     # two-dimensional case

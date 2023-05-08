@@ -15,7 +15,7 @@ Struct that is used as a cache for [`Rectification`](@ref)s.
                           computations for the cached set
 """
 mutable struct RectificationCache{N}
-    set::Union{LazySet{N}, Nothing}
+    set::Union{LazySet{N},Nothing}
     use_support_vector::Bool
 
     # constructor without a set
@@ -89,14 +89,14 @@ containing the origin.
 The rectification of ``X ∩ O_2`` and ``X ∩ O_4`` both result in flat
 ``1``-dimensional line segments on the corresponding hyperplane of ``O_1``.
 """
-struct Rectification{N, S<:LazySet{N}} <: LazySet{N}
+struct Rectification{N,S<:LazySet{N}} <: LazySet{N}
     X::S
     cache::RectificationCache{N}
 
     # default constructor that initializes cache
-    function Rectification(X::S) where {N, S<:LazySet{N}}
+    function Rectification(X::S) where {N,S<:LazySet{N}}
         if X isa AbstractHyperrectangle || X isa CartesianProduct ||
-                X isa CartesianProductArray || X isa EmptySet
+           X isa CartesianProductArray || X isa EmptySet
             # set types with efficient support-vector computations
             set = X
         elseif isconvextype(S) && dim(X) == 1 && isbounded(X)
@@ -107,7 +107,7 @@ struct Rectification{N, S<:LazySet{N}} <: LazySet{N}
             set = nothing
         end
         cache = RectificationCache{N}(set)
-        return new{N, S}(X, cache)
+        return new{N,S}(X, cache)
     end
 end
 
@@ -197,7 +197,7 @@ Let ``R(·)`` be the rectification of a vector respectively a set, and let ``H``
 be a hyperrectangle. Then ``σ_{R(H)}(d) = R(σ_{H}(d))``.
 """
 function σ(d::AbstractVector,
-           R::Rectification{N, <:AbstractHyperrectangle{N}}) where {N}
+           R::Rectification{N,<:AbstractHyperrectangle{N}}) where {N}
     return rectify(σ(d, R.X))
 end
 
@@ -231,10 +231,10 @@ We can just query a support vector for ``R(X)`` and ``R(Y)`` recursively:
 concatenates vectors ``x`` and ``y``.
 """
 function σ(d::AbstractVector,
-           R::Rectification{N, <:CartesianProduct{N}}) where {N}
+           R::Rectification{N,<:CartesianProduct{N}}) where {N}
     X, Y = R.X.X, R.X.Y
     n1 = dim(X)
-    return vcat(σ(d[1:n1], Rectification(X)), σ(d[n1+1:end], Rectification(Y)))
+    return vcat(σ(d[1:n1], Rectification(X)), σ(d[(n1 + 1):end], Rectification(Y)))
 end
 
 """
@@ -269,7 +269,7 @@ We can just query a support vector for each subspace recursively:
 where ``x × y`` concatenates vectors ``x`` and ``y``.
 """
 function σ(d::AbstractVector,
-           R::Rectification{N, <:CartesianProductArray{N}}) where {N}
+           R::Rectification{N,<:CartesianProductArray{N}}) where {N}
     svec = similar(d)
     i = 1
     for X in array(R.X)
@@ -447,7 +447,7 @@ function isbounded(R::Rectification)
     return true
 end
 
-function isboundedtype(::Type{<:Rectification{N, S}}) where {N, S}
+function isboundedtype(::Type{<:Rectification{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
@@ -500,12 +500,11 @@ The result can be one of three cases depending on the wrapped set ``X``, namely
 * a `UnionSetArray` of `LinearMap`s (projections) otherwise.
 """
 function to_union_of_projections(R::Rectification{N},
-                                 concrete_intersection::Bool=false
-                                ) where {N}
+                                 concrete_intersection::Bool=false) where {N}
     n = dim(R.X)
 
-    negative_dimensions, mixed_dimensions, mixed_dimensions_enumeration =
-        compute_negative_and_mixed_dimensions(R.X, n)
+    negative_dimensions, mixed_dimensions, mixed_dimensions_enumeration = compute_negative_and_mixed_dimensions(R.X,
+                                                                                                                n)
 
     if isempty(mixed_dimensions)
         # no mixed dimensions: no intersections needed
@@ -530,7 +529,7 @@ function to_union_of_projections(R::Rectification{N},
                                                mixed_dimensions_enumeration, n,
                                                N)
             cap = concrete_intersection ?
-                intersection(R.X, polyhedron) : R.X ∩ polyhedron
+                  intersection(R.X, polyhedron) : R.X ∩ polyhedron
             projection = construct_projection(cap,
                                               negative_dimensions,
                                               mixed_dimensions,
@@ -545,7 +544,7 @@ function to_union_of_projections(R::Rectification{N},
                     break
                 end
                 mixed_dimensions_enumeration[i] = true
-                mixed_dimensions_enumeration[i+1:m] .= false
+                mixed_dimensions_enumeration[(i + 1):m] .= false
                 i = m
             else
                 mixed_dimensions_enumeration[i] = true
@@ -577,7 +576,7 @@ end
 # construct a polyhedron corresponding to an index vector and a bit vector
 # (see `to_union_of_projections`)
 function construct_constraints(indices, bits, n, ::Type{N}) where {N}
-    P = HPolyhedron{N, SingleEntryVector{N}}()
+    P = HPolyhedron{N,SingleEntryVector{N}}()
     for (i, b) in enumerate(bits)
         a = SingleEntryVector(indices[i], n, (b ? -one(N) : one(N)))
         hs = HalfSpace(a, zero(N))
@@ -588,8 +587,7 @@ end
 
 # project negative dimensions to zero (see `to_union_of_projections`)
 function construct_projection(X::LazySet{N}, negative_dimensions,
-                              mixed_dimensions, mixed_dimensions_enumeration, n
-                             ) where {N}
+                              mixed_dimensions, mixed_dimensions_enumeration, n) where {N}
     # initialize negative indices to zero and all other dimensions to one
     v = ones(N, n)
     v[negative_dimensions] .= zero(N)

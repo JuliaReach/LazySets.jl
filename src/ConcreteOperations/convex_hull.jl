@@ -55,7 +55,7 @@ function _convex_hull_set(vlist; n::Int=(isempty(vlist) ? -1 : length(vlist[1]))
         N = eltype(vlist)
         return EmptySet{N}(n)
     elseif m == 1
-            return Singleton(vlist[1])
+        return Singleton(vlist[1])
     elseif n == 1
         @assert m == 2 "a convex hull in 1D can have at most two vertices"
         # points are sorted
@@ -129,14 +129,13 @@ Vector{Vector{Float64}} (alias for Array{Array{Float64, 1}, 1})
 ```
 """
 function convex_hull(points::Vector{VN}; algorithm=nothing, backend=nothing,
-                     solver=nothing) where {N, VN<:AbstractVector{N}}
-    return convex_hull!(copy(points), algorithm=algorithm, backend=backend,
+                     solver=nothing) where {N,VN<:AbstractVector{N}}
+    return convex_hull!(copy(points); algorithm=algorithm, backend=backend,
                         solver=solver)
 end
 
 function convex_hull!(points::Vector{VN}; algorithm=nothing, backend=nothing,
-                      solver=nothing) where {N, VN<:AbstractVector{N}}
-
+                      solver=nothing) where {N,VN<:AbstractVector{N}}
     m = length(points)
 
     # zero or one point
@@ -151,14 +150,14 @@ function convex_hull!(points::Vector{VN}; algorithm=nothing, backend=nothing,
             # two points case in 1d
             return _two_points_1d!(points)
         else
-             # general case in 1d
+            # general case in 1d
             return _convex_hull_1d!(points)
         end
     elseif n == 2
         return _convex_hull_2d_preprocess!(points, m; algorithm=algorithm)
     else
         # general case in nd
-        return _convex_hull_nd!(points, backend=backend, solver=solver)
+        return _convex_hull_nd!(points; backend=backend, solver=solver)
     end
 end
 
@@ -176,13 +175,13 @@ function _convex_hull_2d_preprocess!(points, m=length(points); algorithm=nothing
         return _four_points_2d!(points)
     else
         # general case in 2d
-        return _convex_hull_2d!(points, algorithm=algorithm)
+        return _convex_hull_2d!(points; algorithm=algorithm)
     end
 end
 
 function _two_points_1d!(points)
     p1, p2 = points[1], points[2]
-    if  _isapprox(p1[1], p2[1]) # check for redundancy
+    if _isapprox(p1[1], p2[1]) # check for redundancy
         pop!(points)
     elseif p1[1] > p2[1]
         tmp = p1[1]
@@ -368,32 +367,30 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N}
     return points
 end
 
-function _convex_hull_1d!(points::Vector{VN}) where {N, VN<:AbstractVector{N}}
+function _convex_hull_1d!(points::Vector{VN}) where {N,VN<:AbstractVector{N}}
     points[1:2] = [minimum(points), maximum(points)]
     return resize!(points, 2)
 end
 
 function _convex_hull_nd!(points::Vector{VN};
                           backend=nothing,
-                          solver=nothing
-                          ) where {N, VN<:AbstractVector{N}}
+                          solver=nothing) where {N,VN<:AbstractVector{N}}
     V = VPolytope(points)
-    Vch = remove_redundant_vertices(V, backend=backend, solver=solver)
+    Vch = remove_redundant_vertices(V; backend=backend, solver=solver)
     m = length(Vch.vertices)
     points[1:m] = Vch.vertices
     return resize!(points, m)
 end
 
 function _convex_hull_2d!(points::Vector{VN};
-                          algorithm="monotone_chain"
-                         ) where {N, VN<:AbstractVector{N}}
+                          algorithm="monotone_chain") where {N,VN<:AbstractVector{N}}
     if isnothing(algorithm)
         algorithm = default_convex_hull_algorithm(points)
     end
     if algorithm == "monotone_chain"
         return monotone_chain!(points)
     elseif algorithm == "monotone_chain_sorted"
-        return monotone_chain!(points, sort=false)
+        return monotone_chain!(points; sort=false)
     else
         error("the convex hull algorithm $algorithm is unknown")
     end
@@ -432,14 +429,13 @@ construct the convex hull of a set of ``n`` points in the plane in
 ``O(n \\log n)`` time. For further details see
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
-function monotone_chain!(points::Vector{VN}; sort::Bool=true
-                        ) where {N, VN<:AbstractVector{N}}
-
+function monotone_chain!(points::Vector{VN}; sort::Bool=true) where {N,VN<:AbstractVector{N}}
     @inline function build_hull!(semihull, iterator, points)
         @inbounds for i in iterator
             while length(semihull) >= 2 &&
-                    (right_turn(semihull[end-1], semihull[end], points[i])
-                         <= zero(N))
+                (right_turn(semihull[end - 1], semihull[end], points[i])
+                 <=
+                 zero(N))
                 pop!(semihull)
             end
             push!(semihull, points[i])
@@ -448,7 +444,7 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true
 
     if sort
         # sort the points lexicographically
-        sort!(points, by=x->(x[1], x[2]))
+        sort!(points; by=x -> (x[1], x[2]))
     end
 
     # build lower hull
@@ -462,8 +458,8 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true
     build_hull!(upper, iterator, points)
 
     # remove the last point of each segment because they are repeated
-    copyto!(points, @view(lower[1:end-1]))
-    copyto!(points, length(lower), @view(upper[1:end-1]))
+    copyto!(points, @view(lower[1:(end - 1)]))
+    copyto!(points, length(lower), @view(upper[1:(end - 1)]))
     m = length(lower) + length(upper) - 2
     if m == 2 && _isapprox(points[1], points[2])
         # upper and lower chain consist of a single, identical point
@@ -496,7 +492,7 @@ function convex_hull(P::VPolygon, Q::VPolygon;
                      algorithm::String="monotone_chain")
     vunion = [P.vertices; Q.vertices]
     convex_hull!(vunion; algorithm=algorithm)
-    return VPolygon(vunion, apply_convex_hull=false)
+    return VPolygon(vunion; apply_convex_hull=false)
 end
 
 """
@@ -568,7 +564,7 @@ end
 
 @commutative function convex_hull(X::LazySet, ::EmptySet)
     @assert isconvextype(typeof(X)) "this implementation requires a convex " *
-        "set as input"
+                                    "set as input"
     return X
 end
 

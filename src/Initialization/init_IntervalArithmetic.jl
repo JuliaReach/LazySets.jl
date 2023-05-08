@@ -2,7 +2,7 @@
 function vertices_list(x::IA.Interval{N}) where {N}
     a = IA.inf(x)
     b = IA.sup(x)
-    ST = IA.SVector{1, N}
+    ST = IA.SVector{1,N}
     return _isapprox(a, b) ? [ST(a)] : [ST(a), ST(b)]
 end
 
@@ -31,17 +31,17 @@ For a rigorous approximation with correct rounding, use `a^n` from
 `IntervalArithmetic.jl`.
 """
 function fast_interval_pow(a::IA.Interval, n::Int)
-# TODO review after IntervalArithmetic.jl#388
+    # TODO review after IntervalArithmetic.jl#388
     if iszero(n)
         return one(a)
     elseif isodd(n)
-        return IA.Interval(a.lo ^ n, a.hi ^ n)
+        return IA.Interval(a.lo^n, a.hi^n)
     else
         if 0 ∈ a
-            return IA.Interval(zero(a.lo), max(abs(a.lo), abs(a.hi)) ^ n)
+            return IA.Interval(zero(a.lo), max(abs(a.lo), abs(a.hi))^n)
         else
-            lon = a.lo ^ n
-            hin = a.hi ^ n
+            lon = a.lo^n
+            hin = a.hi^n
             return IA.Interval(min(lon, hin), max(lon, hin))
         end
     end

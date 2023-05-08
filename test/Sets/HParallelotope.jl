@@ -9,7 +9,7 @@ for N in [Float32, Float64, Rational{Int}]
 
     # illegal input: empty set
     D2 = N[1 1; 0 1]
-    c2 = N[5//2, 2, -4, -1]
+    c2 = N[5 // 2, 2, -4, -1]
     @test_throws ArgumentError HParallelotope(D2, c2)
     P2 = HParallelotope(D2, c2; check_consistency=false)
     @test isempty(convert(HPolyhedron, P2))
@@ -70,11 +70,10 @@ for N in [Float32, Float64]
     # conversion from zonotope
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
     @test convert(HParallelotope, Z) ==
-        HParallelotope(N[0 -1; 1 0], N[1, 1, 1, 1])
+          HParallelotope(N[0 -1; 1 0], N[1, 1, 1, 1])
     Z = Zonotope(N[0, 0], N[1 0 1; 0 1 1])
     @test_throws AssertionError convert(HParallelotope, Z)
 end
-
 
 for N in [Float64]
     P = HParallelotope(N[1 0; 0 1], N[1, 1, 1, 1])

@@ -46,12 +46,12 @@ julia> isbounded(P, false)  # performs a real boundedness check
 false
 ```
 """
-struct HPolytope{N, VN<:AbstractVector{N}} <: AbstractPolytope{N}
-    constraints::Vector{HalfSpace{N, VN}}
+struct HPolytope{N,VN<:AbstractVector{N}} <: AbstractPolytope{N}
+    constraints::Vector{HalfSpace{N,VN}}
 
-    function HPolytope(constraints::Vector{HalfSpace{N, VN}};
-                       check_boundedness::Bool=false) where {N, VN<:AbstractVector{N}}
-        P = new{N, VN}(constraints)
+    function HPolytope(constraints::Vector{HalfSpace{N,VN}};
+                       check_boundedness::Bool=false) where {N,VN<:AbstractVector{N}}
+        P = new{N,VN}(constraints)
         @assert (!check_boundedness ||
                  isbounded(P, false)) "the polytope is not bounded"
         return P
@@ -61,13 +61,13 @@ end
 isoperationtype(::Type{<:HPolytope}) = false
 
 # constructor with no constraints
-function HPolytope{N, VN}() where {N, VN<:AbstractVector{N}}
-    return HPolytope(Vector{HalfSpace{N, VN}}())
+function HPolytope{N,VN}() where {N,VN<:AbstractVector{N}}
+    return HPolytope(Vector{HalfSpace{N,VN}}())
 end
 
 # constructor with no constraints, given only the numeric type
 function HPolytope{N}() where {N}
-    return HPolytope{N, Vector{N}}()
+    return HPolytope{N,Vector{N}}()
 end
 
 # constructor without explicit numeric type, defaults to Float64
@@ -116,12 +116,12 @@ function rand(::Type{HPolytope};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing,
+              seed::Union{Int,Nothing}=nothing,
               num_vertices::Int=-1)
     require(@__MODULE__, :Polyhedra; fun_name="rand")
     rng = reseed(rng, seed)
     vpolytope = rand(VPolytope; N=N, dim=dim, rng=rng, seed=seed,
-                    num_vertices=num_vertices)
+                     num_vertices=num_vertices)
     return convert(HPolytope, vpolytope)
 end
 
@@ -155,43 +155,43 @@ function _linear_map_hrep_helper(M::AbstractMatrix, P::HPolytope,
 end
 
 function load_polyhedra_hpolytope() # function to be loaded by Requires
-return quote
-# see the file init_Polyhedra.jl for the imports
+    return quote
+        # see the file init_Polyhedra.jl for the imports
 
-function convert(::Type{HPolytope}, P::HRep{N}) where {N}
-    VT = Polyhedra.hvectortype(P)
-    constraints = Vector{HalfSpace{N, VT}}()
-    for hi in Polyhedra.allhalfspaces(P)
-        a, b = hi.a, hi.β
-        if isapproxzero(norm(a))
-            @assert b >= zero(N) "the half-space is inconsistent since it " *
-                "has a zero normal direction but the constraint is negative"
-            continue
+        function convert(::Type{HPolytope}, P::HRep{N}) where {N}
+            VT = Polyhedra.hvectortype(P)
+            constraints = Vector{HalfSpace{N,VT}}()
+            for hi in Polyhedra.allhalfspaces(P)
+                a, b = hi.a, hi.β
+                if isapproxzero(norm(a))
+                    @assert b >= zero(N) "the half-space is inconsistent since it " *
+                                         "has a zero normal direction but the constraint is negative"
+                    continue
+                end
+                push!(constraints, HalfSpace(hi.a, hi.β))
+            end
+            return HPolytope(constraints)
         end
-        push!(constraints, HalfSpace(hi.a, hi.β))
+
+        """
+            HPolytope(P::HRep)
+
+        Return a polytope in constraint representation given an `HRep` polyhedron from
+        `Polyhedra.jl`.
+
+        ### Input
+
+        - `P` -- `HRep` polyhedron
+
+        ### Output
+
+        An `HPolytope`.
+        """
+        function HPolytope(P::HRep)
+            return convert(HPolytope, P)
+        end
     end
-    return HPolytope(constraints)
-end
-
-"""
-    HPolytope(P::HRep)
-
-Return a polytope in constraint representation given an `HRep` polyhedron from
-`Polyhedra.jl`.
-
-### Input
-
-- `P` -- `HRep` polyhedron
-
-### Output
-
-An `HPolytope`.
-"""
-function HPolytope(P::HRep)
-    convert(HPolytope, P)
-end
-
-end end  # quote / load_polyhedra_hpolytope()
+end  # quote / load_polyhedra_hpolytope()
 
 """
     vertices_list(P::HPolytope; [backend]=nothing, [prune]::Bool=true)
@@ -232,7 +232,7 @@ function vertices_list(P::HPolytope;
         return Vector{N}(Vector{N}(undef, 0))  # illegal polytope
     elseif dim(P) == 2 && isnothing(backend)
         # use efficient 2D implementation
-        return vertices_list(convert(HPolygon, P, prune=prune))
+        return vertices_list(convert(HPolygon, P; prune=prune))
     else
         require(@__MODULE__, :Polyhedra; fun_name="vertices_list")
         if isnothing(backend)
@@ -251,61 +251,60 @@ function _vertices_list(P::HPolytope, backend)
 end
 
 function load_symbolics_hpolytope()
-return quote
+    return quote
+        """
+            HPolytope(expr::Vector{<:Num}, vars=_get_variables(expr);
+                      [N]::Type{<:Real}=Float64, [check_boundedness]::Bool=false)
 
-"""
-    HPolytope(expr::Vector{<:Num}, vars=_get_variables(expr);
-              [N]::Type{<:Real}=Float64, [check_boundedness]::Bool=false)
+        Return the polytope in constraint representation given by a list of symbolic
+        expressions.
 
-Return the polytope in constraint representation given by a list of symbolic
-expressions.
+        ### Input
 
-### Input
+        - `expr` -- vector of symbolic expressions that describes each constraint
+        - `vars` -- (optional, default: `_get_variables(expr)`) if an array of variables
+                    is given, use those as the ambient variables in the set with respect
+                    to which derivations take place; otherwise, use only the variables
+                    that appear in the given expression (but be careful because the
+                    order may be incorrect; it is advised to always pass `vars`
+                    explicitly)
+        - `N`    -- (optional, default: `Float64`) the numeric type of the returned
+                    polytope
+        - `check_boundedness` -- (optional, default: `false`) flag to check boundedness
 
-- `expr` -- vector of symbolic expressions that describes each constraint
-- `vars` -- (optional, default: `_get_variables(expr)`) if an array of variables
-            is given, use those as the ambient variables in the set with respect
-            to which derivations take place; otherwise, use only the variables
-            that appear in the given expression (but be careful because the
-            order may be incorrect; it is advised to always pass `vars`
-            explicitly)
-- `N`    -- (optional, default: `Float64`) the numeric type of the returned
-            polytope
-- `check_boundedness` -- (optional, default: `false`) flag to check boundedness
+        ### Output
 
-### Output
+        An `HPolytope`.
 
-An `HPolytope`.
+        ### Examples
 
-### Examples
+        ```jldoctest
+        julia> using Symbolics
 
-```jldoctest
-julia> using Symbolics
+        julia> vars = @variables x y
+        2-element Vector{Num}:
+         x
+         y
 
-julia> vars = @variables x y
-2-element Vector{Num}:
- x
- y
+        julia> HPolytope([x <= 1, x >= 0, y <= 1, y >= 0], vars)
+        HPolytope{Float64, Vector{Float64}}(HalfSpace{Float64, Vector{Float64}}[HalfSpace{Float64, Vector{Float64}}([1.0, 0.0], 1.0), HalfSpace{Float64, Vector{Float64}}([-1.0, 0.0], 0.0), HalfSpace{Float64, Vector{Float64}}([0.0, 1.0], 1.0), HalfSpace{Float64, Vector{Float64}}([0.0, -1.0], 0.0)])
+        ```
+        """
+        function HPolytope(expr::Vector{<:Num}, vars::AbstractVector{Num};
+                           N::Type{<:Real}=Float64, check_boundedness::Bool=false)
+            return HPolytope([HalfSpace(ex, vars; N=N) for ex in expr];
+                             check_boundedness=check_boundedness)
+        end
 
-julia> HPolytope([x <= 1, x >= 0, y <= 1, y >= 0], vars)
-HPolytope{Float64, Vector{Float64}}(HalfSpace{Float64, Vector{Float64}}[HalfSpace{Float64, Vector{Float64}}([1.0, 0.0], 1.0), HalfSpace{Float64, Vector{Float64}}([-1.0, 0.0], 0.0), HalfSpace{Float64, Vector{Float64}}([0.0, 1.0], 1.0), HalfSpace{Float64, Vector{Float64}}([0.0, -1.0], 0.0)])
-```
-"""
-function HPolytope(expr::Vector{<:Num}, vars::AbstractVector{Num};
-                   N::Type{<:Real}=Float64, check_boundedness::Bool=false)
-    return HPolytope([HalfSpace(ex, vars; N=N) for ex in expr],
-                     check_boundedness=check_boundedness)
-end
+        function HPolytope(expr::Vector{<:Num}; N::Type{<:Real}=Float64,
+                           check_boundedness::Bool=false)
+            return HPolytope(expr, _get_variables(expr); N=N,
+                             check_boundedness=check_boundedness)
+        end
 
-function HPolytope(expr::Vector{<:Num}; N::Type{<:Real}=Float64,
-                   check_boundedness::Bool=false)
-    return HPolytope(expr, _get_variables(expr); N=N,
-                     check_boundedness=check_boundedness)
-end
-
-function HPolytope(expr::Vector{<:Num}, vars; N::Type{<:Real}=Float64,
-                   check_boundedness::Bool=false)
-    return HPolytope(expr, _vec(vars); N=N, check_boundedness=check_boundedness)
-end
-
-end end  # quote / load_modeling_toolkit_hpolytope()
+        function HPolytope(expr::Vector{<:Num}, vars; N::Type{<:Real}=Float64,
+                           check_boundedness::Bool=false)
+            return HPolytope(expr, _vec(vars); N=N, check_boundedness=check_boundedness)
+        end
+    end
+end  # quote / load_modeling_toolkit_hpolytope()

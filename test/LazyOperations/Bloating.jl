@@ -2,7 +2,7 @@ for N in [Float64, Float32]
     B = BallInf(zeros(N, 2), N(1))
     E = HPolyhedron([HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1))])  # empty
     U = Universe{N}(3)
-    ε = N(1//10)
+    ε = N(1 // 10)
     p = N(2)
 
     # constructors
@@ -10,20 +10,20 @@ for N in [Float64, Float32]
     X⁻ = Bloating(B, -ε, p)
     Y = Bloating(E, ε, p)
     Z = Bloating(U, ε, p)
-    @test_throws AssertionError Bloating(B, ε, N(9//10))
+    @test_throws AssertionError Bloating(B, ε, N(9 // 10))
 
     # dimension
     @test dim(X) == dim(X⁻) == 2 && dim(Y) == 1 && dim(Z) == 3
 
     # isbounded
     @test isbounded(X) && isbounded(X⁻) && isbounded(Y) && !isbounded(Z) &&
-        isboundedtype(typeof(X)) && !isboundedtype(typeof(Z))
+          isboundedtype(typeof(X)) && !isboundedtype(typeof(Z))
 
     # isempty
     @test !isempty(X) && !isempty(X⁻) && isempty(Y) && !isempty(Z)
 
     # an_element
-    for S ∈ [X, X⁻, Z]
+    for S in [X, X⁻, Z]
         v = an_element(S)
         @test v isa AbstractVector{N} && length(v) == dim(S)
     end
@@ -51,7 +51,7 @@ for N in [Float64, Float32]
         end
         @test_throws ErrorException σ(N[1], Y)
         @test_throws ErrorException ρ(N[1], Y)
-        d = N[1, 99//100]
+        d = N[1, 99 // 100]
         @test σ(d, X) == σ(d, B + Bp)
         @test ρ(d, X) == ρ(d, B + Bp)
 
@@ -71,7 +71,7 @@ for N in [Float64, Float32]
 
         # tests for infinity norm
         if p == Inf
-            B_bloated = BallInf(zeros(N, 2), N(11/10))
+            B_bloated = BallInf(zeros(N, 2), N(11 / 10))
             @test constraints_list(X) == constraints_list(B_bloated)
         end
     end

@@ -52,7 +52,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test linear_map(M2, x) == Zonotope(N[0.5, 1.0, 1.5], [N[0.5, 1.0, 1.5]])
 
     # concrete scale of interval
-    @test scale(N(0.5), x) == Interval(N(0.5)*min(x), N(0.5)*max(x))
+    @test scale(N(0.5), x) == Interval(N(0.5) * min(x), N(0.5) * max(x))
 
     # radius_hyperrectangle
     @test radius_hyperrectangle(x) == [N(0.5)]
@@ -131,8 +131,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test diameter(x) == diameter(x, Inf) == diameter(x, 2) == N(2)
 
     # split
-    @test split(x, 4) == [Interval(N(1), N(3//2)), Interval(N(3//2), N(2)),
-                          Interval(N(2), N(5//2)), Interval(N(5//2), N(3))]
+    @test split(x, 4) == [Interval(N(1), N(3 // 2)), Interval(N(3 // 2), N(2)),
+                          Interval(N(2), N(5 // 2)), Interval(N(5 // 2), N(3))]
 
     # concrete intersection
     A = Interval(N(5), N(7))
@@ -176,16 +176,16 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # conversion from a hyperrectangular set to an interval
-    H = Hyperrectangle(N[0], N[1/2])
+    H = Hyperrectangle(N[0], N[1 / 2])
     A = convert(Interval, H)
-    @test A isa Interval && low(A) == [N(-1/2)] && high(A) == [N(1/2)]
+    @test A isa Interval && low(A) == [N(-1 / 2)] && high(A) == [N(1 / 2)]
 
     # conversion from a LazySet to an interval
     M = hcat(N[2])
-    B = convert(Interval, M*H)
+    B = convert(Interval, M * H)
     @test B isa Interval && low(B) == [N(-1)] && high(B) == [N(1)]
     # conversion to an IntervalArithmetic.Interval
-    B2 = convert(IA.Interval, M*H)
+    B2 = convert(IA.Interval, M * H)
     @test B2 == B.dat
 
     # set difference
@@ -204,9 +204,9 @@ for N in [Float64, Float32, Rational{Int}]
     ztol = LazySets._ztol(N) # pick up default absolute zero tolerance value
     @test isflat(Interval(N(0), ztol))
     if N <: AbstractFloat
-        @test !isflat(Interval(N(0), 2*ztol))
+        @test !isflat(Interval(N(0), 2 * ztol))
     elseif N == Rational{Int}
-        @test isflat(Interval(N(0), 2*ztol))
+        @test isflat(Interval(N(0), 2 * ztol))
     end
 
     # rectification
@@ -218,17 +218,18 @@ for N in [Float64, Float32, Rational{Int}]
     @test rectify(x) == x
 
     # list of vertices of IA types
-    b = IA.IntervalBox(IA.Interval(0 , 1), IA.Interval(0, 1))
+    b = IA.IntervalBox(IA.Interval(0, 1), IA.Interval(0, 1))
     vlistIB = vertices_list(b)
-    @test is_cyclic_permutation(vlistIB, [SA[N(1), N(1)], SA[N(0), N(1)], SA[N(1), N(0)], SA[N(0), N(0)]])
+    @test is_cyclic_permutation(vlistIB,
+                                [SA[N(1), N(1)], SA[N(0), N(1)], SA[N(1), N(0)], SA[N(0), N(0)]])
 
     vlistI = vertices_list(b[1])
     @test is_cyclic_permutation(vlistI, [SA[N(0)], SA[N(1)]])
 
     # generators
     @test ngens(x) == 1
-    @test collect(generators(x)) == [N[1/2]]
-    @test genmat(x) == hcat(N[1/2])
+    @test collect(generators(x)) == [N[1 / 2]]
+    @test genmat(x) == hcat(N[1 / 2])
     x_degenerate = Interval(N(1), N(1))
     @test ngens(x_degenerate) == 0
     gens = genmat(x_degenerate)
@@ -238,7 +239,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # Chebyshev center
     c, r = chebyshev_center_radius(x)
-    @test c == center(x) && r == N(1//2)
+    @test c == center(x) && r == N(1 // 2)
 
     # reflect
     @test reflect(Interval(N(1), N(2))) == Interval(N(-2), N(-1))

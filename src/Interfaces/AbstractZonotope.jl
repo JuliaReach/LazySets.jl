@@ -421,27 +421,28 @@ function vertices_list(Z::AbstractZonotope; apply_convex_hull::Bool=true)
 
     elseif n == 2
         if p == 1
-            return _vertices_list_zonotope_2D_order_one_half(c, G, apply_convex_hull=apply_convex_hull)
+            return _vertices_list_zonotope_2D_order_one_half(c, G;
+                                                             apply_convex_hull=apply_convex_hull)
         elseif p == 2
-            return _vertices_list_zonotope_2D_order_one(c, G, apply_convex_hull=apply_convex_hull)
+            return _vertices_list_zonotope_2D_order_one(c, G; apply_convex_hull=apply_convex_hull)
         else
-            return _vertices_list_zonotope_2D(c, G, apply_convex_hull=apply_convex_hull)
+            return _vertices_list_zonotope_2D(c, G; apply_convex_hull=apply_convex_hull)
         end
 
     else
         Gred = remove_zero_columns(G)
-        return _vertices_list_zonotope_iterative(c, Gred, apply_convex_hull=apply_convex_hull)
+        return _vertices_list_zonotope_iterative(c, Gred; apply_convex_hull=apply_convex_hull)
     end
 end
 
 function _vertices_list_zonotope_2D(c::AbstractVector{N}, G::AbstractMatrix{N};
                                     apply_convex_hull::Bool) where {N}
     if same_sign(G)
-        return _vertices_list_zonotope_2D_positive(c, G, apply_convex_hull=apply_convex_hull)
+        return _vertices_list_zonotope_2D_positive(c, G; apply_convex_hull=apply_convex_hull)
     else
         # FIXME generalized 2D vertices list function is not implemented yet
         # See LazySets#2209
-        return _vertices_list_zonotope_iterative(c, G, apply_convex_hull=apply_convex_hull)
+        return _vertices_list_zonotope_iterative(c, G; apply_convex_hull=apply_convex_hull)
     end
 end
 
@@ -451,14 +452,14 @@ function _vertices_list_zonotope_2D_positive(c::AbstractVector{N}, G::AbstractMa
 
     # TODO special case p = 1 or p = 2 ?
 
-    sorted_G = sortslices(G, dims=2, by=x->atan(x[2], x[1]))
-    index = ones(N, p, 2*p)
+    sorted_G = sortslices(G; dims=2, by=x -> atan(x[2], x[1]))
+    index = ones(N, p, 2 * p)
     @inbounds for i in 1:p
-        index[i, i+1:i+p-1] .= -one(N)
+        index[i, (i + 1):(i + p - 1)] .= -one(N)
     end
     index[:, 1] .= -one(N)
     V = sorted_G * index .+ c
-    vlist = [V[:, i] for i in 1:2*p]
+    vlist = [V[:, i] for i in 1:(2 * p)]
 
     if apply_convex_hull
         convex_hull!(vlist)
@@ -466,13 +467,14 @@ function _vertices_list_zonotope_2D_positive(c::AbstractVector{N}, G::AbstractMa
     return vlist
 end
 
-function _vertices_list_zonotope_iterative(c::VN, G::MN; apply_convex_hull::Bool
-                                          ) where {N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}}
+function _vertices_list_zonotope_iterative(c::VN, G::MN;
+                                           apply_convex_hull::Bool) where {N,VN<:AbstractVector{N},
+                                                                           MN<:AbstractMatrix{N}}
     p = size(G, 2)
     vlist = Vector{VN}()
     sizehint!(vlist, 2^p)
 
-    for ξi in Iterators.product([(1, -1) for i = 1:p]...)
+    for ξi in Iterators.product([(1, -1) for i in 1:p]...)
         push!(vlist, c .+ G * collect(ξi))
     end
 
@@ -481,7 +483,9 @@ end
 
 # special case 2D zonotope of order 1/2
 function _vertices_list_zonotope_2D_order_one_half(c::VN, G::MN;
-                                                   apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN}
+                                                   apply_convex_hull::Bool) where {N,
+                                                                                   VN<:AbstractVector{N},
+                                                                                   MN}
     vlist = Vector{VN}(undef, 2)
     g = view(G, :, 1)
     @inbounds begin
@@ -493,7 +497,9 @@ end
 
 # special case 2D zonotope of order 1
 function _vertices_list_zonotope_2D_order_one(c::VN, G::MN;
-                                              apply_convex_hull::Bool) where {N, VN<:AbstractVector{N}, MN}
+                                              apply_convex_hull::Bool) where {N,
+                                                                              VN<:AbstractVector{N},
+                                                                              MN}
     vlist = Vector{VN}(undef, 4)
     a = [one(N), one(N)]
     b = [one(N), -one(N)]
@@ -605,9 +611,9 @@ function _constraints_list_zonotope(Z::AbstractZonotope{N}) where {N<:AbstractFl
     Gᵀ = transpose(G)
     c = center(Z)
     m = binomial(p, n - 1)
-    constraints = Vector{HalfSpace{N, Vector{N}}}()
+    constraints = Vector{HalfSpace{N,Vector{N}}}()
     sizehint!(constraints, 2m)
-    for columns in StrictlyIncreasingIndices(p, n-1)
+    for columns in StrictlyIncreasingIndices(p, n - 1)
         c⁺ = cross_product(view(G, :, columns))
         iszero(c⁺) && continue
         normalize!(c⁺, 2)
@@ -885,7 +891,7 @@ hybrid systems 2010.
 function reduce_order(Z::AbstractZonotope, r::Real,
                       method::AbstractReductionMethod=GIR05())
     r >= 1 || throw(ArgumentError("the target order should be at least 1, " *
-        "but it is $r"))
+                                  "but it is $r"))
     n = dim(Z)
     p = ngens(Z)
 
@@ -909,7 +915,7 @@ function reduce_order(Z::AbstractZonotope, r::Real,
     m = floor(Int, n * (r - 1))
 
     # compute interval hull of L
-    Lred = _approximate_reduce_order(c, G, view(indices, (m+1):p), method)
+    Lred = _approximate_reduce_order(c, G, view(indices, (m + 1):p), method)
 
     # concatenate non-reduced and reduced generators
     Gred = _hcat_KLred(G, view(indices, 1:m), Lred)
@@ -918,7 +924,7 @@ function reduce_order(Z::AbstractZonotope, r::Real,
 end
 
 # approximate with a box
-function _approximate_reduce_order(c, G, indices, method::Union{COMB03, GIR05})
+function _approximate_reduce_order(c, G, indices, method::Union{COMB03,GIR05})
     return _interval_hull(G, indices)
 end
 
@@ -931,14 +937,14 @@ end
 
 # Return the indices of the generators in G (= columns) sorted according to
 # decreasing 2-norm. The generator index with highest score goes first.
-function _weighted_gens!(indices, G::AbstractMatrix{N}, ::Union{ASB10, COMB03}) where {N}
+function _weighted_gens!(indices, G::AbstractMatrix{N}, ::Union{ASB10,COMB03}) where {N}
     p = size(G, 2)
     weights = Vector{N}(undef, p)
     @inbounds for j in 1:p
         v = view(G, :, j)
         weights[j] = norm(v, 2)
     end
-    sortperm!(indices, weights, rev=true, initialized=false)
+    sortperm!(indices, weights; rev=true, initialized=false)
     return indices
 end
 
@@ -959,7 +965,7 @@ function _weighted_gens!(indices, G::AbstractMatrix{N}, ::GIR05) where {N}
         end
         weights[j] = aux_norm_1 - aux_norm_inf
     end
-    sortperm!(indices, weights, rev=true, initialized=false)
+    sortperm!(indices, weights; rev=true, initialized=false)
     return indices
 end
 
@@ -984,28 +990,28 @@ function _hcat_KLred(G::AbstractMatrix, indices, Lred::AbstractMatrix)
 end
 
 function load_reduce_order_static()
-return quote
+    return quote
 
-# implementation for static arrays
-function _interval_hull(G::SMatrix{n, p, N, L}, indices) where {n, p, N, L}
-    Lred = zeros(MMatrix{n, n, N})
-    @inbounds for i in 1:n
-        for j in indices
-            Lred[i, i] += abs(G[i, j])
+        # implementation for static arrays
+        function _interval_hull(G::SMatrix{n,p,N,L}, indices) where {n,p,N,L}
+            Lred = zeros(MMatrix{n,n,N})
+            @inbounds for i in 1:n
+                for j in indices
+                    Lred[i, i] += abs(G[i, j])
+                end
+            end
+            return SMatrix{n,n}(Lred)
+        end
+
+        # implementation for static arrays
+        function _hcat_KLred(G::SMatrix{n,p,N,L1}, indices,
+                             Lred::SMatrix{n,n,N,L2}) where {n,p,N,L1,L2}
+            m = length(indices)
+            K = SMatrix{n,m}(view(G, :, indices))
+            return hcat(K, Lred)
         end
     end
-    return SMatrix{n, n}(Lred)
-end
-
-# implementation for static arrays
-function _hcat_KLred(G::SMatrix{n, p, N, L1}, indices,
-                     Lred::SMatrix{n, n, N, L2}) where {n, p, N, L1, L2}
-    m = length(indices)
-    K = SMatrix{n, m}(view(G, :, indices))
-    return hcat(K, Lred)
-end
-
-end end # quote / load_reduce_order_static
+end # quote / load_reduce_order_static
 
 """
     reflect(Z::AbstractZonotope)

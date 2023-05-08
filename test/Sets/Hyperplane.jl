@@ -81,8 +81,8 @@ for N in [Float64, Rational{Int}, Float32]
             # returned set is universal
             @test linear_map(N[1 1], H) == Universe{N}(1)
         elseif N == Rational{Int}
-            @test lm isa Hyperplane{Rational{BigInt}, Vector{Rational{BigInt}}}
-            @test lm.a == N[0//1, -1//1] && lm.b == N(0//1)
+            @test lm isa Hyperplane{Rational{BigInt},Vector{Rational{BigInt}}}
+            @test lm.a == N[0 // 1, -1 // 1] && lm.b == N(0 // 1)
         end
     end
 
@@ -115,17 +115,15 @@ for N in [Float64, Rational{Int}, Float32]
     @test !is_intersection_empty(hp, u) && !res && v ∈ hp && v ∈ u
 
     # conversion from polyhedron
-    for (P, eq) in [
-            (HPolyhedron([HalfSpace(N[-1], N(0)), HalfSpace(N[1//2], N(0))]), true),
-            (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(-2))]), true),
-            (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[1, 3], N(1)),
-                          HalfSpace(N[-2, -6], N(-2))]), true),
-            (HPolyhedron([HalfSpace(N[1, 3], N(1))]), false),
-            (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[1, 4], N(1)),
-                          HalfSpace(N[-2, -6], N(-2))]), false),
-            (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, 6], N(-2))]), false),
-            (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(2))]), false)
-           ]
+    for (P, eq) in [(HPolyhedron([HalfSpace(N[-1], N(0)), HalfSpace(N[1 // 2], N(0))]), true),
+                    (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(-2))]), true),
+                    (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[1, 3], N(1)),
+                                  HalfSpace(N[-2, -6], N(-2))]), true),
+                    (HPolyhedron([HalfSpace(N[1, 3], N(1))]), false),
+                    (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[1, 4], N(1)),
+                                  HalfSpace(N[-2, -6], N(-2))]), false),
+                    (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, 6], N(-2))]), false),
+                    (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(2))]), false)]
         @test is_hyperplanar(P) == eq
         if eq
             H = convert(Hyperplane, P)
@@ -143,7 +141,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # projecting a point onto a line
     H = Hyperplane(N[1, -1], N(0))  # x = y
-    @test project(N[1, 0], H) ≈ N[1//2, 1//2]
+    @test project(N[1, 0], H) ≈ N[1 // 2, 1 // 2]
 end
 
 # tests that only work with Float64 and Float32
@@ -152,14 +150,14 @@ for N in [Float64, Float32]
     H1 = Hyperplane(N[1e5, 2e5], N(3e5))
     H2 = normalize(H1)
     @test norm(H2.a) ≈ N(1) && H2.b == H1.b / norm(H1.a)
-    @test normalize(H1, N(1)) == Hyperplane(N[1//3, 2//3], N(1))
-    @test normalize(H1, N(Inf)) == Hyperplane(N[1//2, 1], N(3//2))
+    @test normalize(H1, N(1)) == Hyperplane(N[1 // 3, 2 // 3], N(1))
+    @test normalize(H1, N(Inf)) == Hyperplane(N[1 // 2, 1], N(3 // 2))
 
     # distance
     H = Hyperplane(N[1, -1], N(0))  # x <= y
     y = N[1, 1]  # closest point in the half-space
     for x in [N[2, 0], N[1, 1], N[0, 2]]
-        @test distance(x, H) == distance(H, x) ≈ distance(x, y, p=N(2))
+        @test distance(x, H) == distance(H, x) ≈ distance(x, y; p=N(2))
     end
 
     # sampling
@@ -189,14 +187,14 @@ for N in [Float64]
     @static if isdefined(@__MODULE__, :Symbolics)
         vars = @variables x y
         @test Hyperplane(2x + 3y == 5) == Hyperplane([2.0, 3.0], 5.0)
-        @test Hyperplane(2x + 3y == 5, N=Int) == Hyperplane([2, 3], 5)
-        @test Hyperplane(2x + 3y == 5, vars) == Hyperplane([2.0, 3.0,], 5.0)
-        @test Hyperplane(2x == 5y) == Hyperplane([2.0, -5.0,], 0.0)
-        @test Hyperplane(2x == 5y, vars) == Hyperplane([2.0, -5.0,], 0.0)
+        @test Hyperplane(2x + 3y == 5; N=Int) == Hyperplane([2, 3], 5)
+        @test Hyperplane(2x + 3y == 5, vars) == Hyperplane([2.0, 3.0], 5.0)
+        @test Hyperplane(2x == 5y) == Hyperplane([2.0, -5.0], 0.0)
+        @test Hyperplane(2x == 5y, vars) == Hyperplane([2.0, -5.0], 0.0)
 
         # test with sparse variables
         @variables x[1:5]
-        @test Hyperplane(2x[1] + 5x[4] == 10., x) == Hyperplane([2.0, 0.0, 0.0, 5.0, 0.0], 10.0)
+        @test Hyperplane(2x[1] + 5x[4] == 10.0, x) == Hyperplane([2.0, 0.0, 0.0, 5.0, 0.0], 10.0)
 
         # test passing a combination of operations
         vars = @variables x[1:2] t

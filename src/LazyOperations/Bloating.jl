@@ -24,20 +24,20 @@ of `X` and a ball in the `p`-norm of radius `ε` centered in the origin `O`
 Some operations require, or silently assume, that `ε` is positive. Check the
 documentation for further information.
 """
-struct Bloating{N, S<:LazySet{N}} <: LazySet{N}
+struct Bloating{N,S<:LazySet{N}} <: LazySet{N}
     X::S
     ε::N
     p::N
 
-    function Bloating(X::S, ε::N, p::N=N(2)) where {N, S<:LazySet{N}}
+    function Bloating(X::S, ε::N, p::N=N(2)) where {N,S<:LazySet{N}}
         @assert p >= one(N) "bloating requires a norm >= 1, but $p was given"
 
-        return new{N, S}(X, ε, p)
+        return new{N,S}(X, ε, p)
     end
 end
 
 isoperationtype(::Type{<:Bloating}) = true
-isconvextype(::Type{Bloating{N, S}}) where {N, S} = isconvextype(S)
+isconvextype(::Type{Bloating{N,S}}) where {N,S} = isconvextype(S)
 
 """
     dim(B::Bloating)
@@ -83,7 +83,7 @@ The support vector of the bloated set in the given direction.
 function σ(d::AbstractVector, B::Bloating)
     @assert !iszero(d) "the support vector in the zero direction is undefined"
     @assert B.ε >= 0 || B.p > 1 "the support vector for negative bloating " *
-        "in the 1-norm is not implemented"
+                                "in the 1-norm is not implemented"
 
     return σ(d, B.X) +
            sign_cadlag(B.ε) * σ(d, _bloating_ball(abs(B.ε), B.p, dim(B)))
@@ -127,7 +127,7 @@ function isbounded(B::Bloating)
     return isbounded(B.X)
 end
 
-function isboundedtype(::Type{<:Bloating{N, S}}) where {N, S}
+function isboundedtype(::Type{<:Bloating{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
@@ -200,8 +200,8 @@ We call `constraints_list` on the lazy Minkowski sum with the bloating ball.
 """
 function constraints_list(B::Bloating)
     @assert is_polyhedral(B) "the constraints list is only available for " *
-        "polyhedral bloating (which requires a polyhedral base set and the " *
-        "1-norm or the infinity norm)"
+                             "polyhedral bloating (which requires a polyhedral base set and the " *
+                             "1-norm or the infinity norm)"
     if B.ε < 0
         throw(ArgumentError("computing the constraints list of a negatively " *
                             "bloated set is not supported"))
@@ -229,7 +229,7 @@ This implementation disregards negative bloating, which could potentially remove
 the center from the set.
 """
 function center(B::Bloating)
-    center(B.X)
+    return center(B.X)
 end
 
 """

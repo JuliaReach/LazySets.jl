@@ -15,11 +15,11 @@ Type that represents the projection of a sparse matrix exponential, i.e.,
 - `E` -- sparse matrix exponential
 - `R` -- right multiplication matrix
 """
-struct ProjectionSparseMatrixExp{N, MN1<:AbstractSparseMatrix{N},
-                                    MN2<:AbstractSparseMatrix{N},
-                                    MN3<:AbstractSparseMatrix{N}}
+struct ProjectionSparseMatrixExp{N,MN1<:AbstractSparseMatrix{N},
+                                 MN2<:AbstractSparseMatrix{N},
+                                 MN3<:AbstractSparseMatrix{N}}
     L::MN1
-    spmexp::SparseMatrixExp{N, MN2}
+    spmexp::SparseMatrixExp{N,MN2}
     R::MN3
 end
 
@@ -39,15 +39,14 @@ exponential to a set.
 The exponential projection preserves convexity: if `X` is convex, then any
 exponential projection of `X` is convex as well.
 """
-struct ExponentialProjectionMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+struct ExponentialProjectionMap{N,S<:LazySet{N}} <: AbstractAffineMap{N,S}
     projspmexp::ProjectionSparseMatrixExp
     X::S
 end
 
 isoperationtype(::Type{<:ExponentialProjectionMap}) = true
 
-isconvextype(::Type{ExponentialProjectionMap{N, S}}) where {N, S} =
-    isconvextype(S)
+isconvextype(::Type{ExponentialProjectionMap{N,S}}) where {N,S} = isconvextype(S)
 
 """
 ```
@@ -190,7 +189,7 @@ Otherwise, we check boundedness via
 """
 function isbounded(eprojmap::ExponentialProjectionMap)
     if iszero(eprojmap.projspmexp.L) || iszero(eprojmap.projspmexp.R) ||
-            isbounded(eprojmap.X)
+       isbounded(eprojmap.X)
         return true
     end
     return _isbounded_unit_dimensions(eprojmap)

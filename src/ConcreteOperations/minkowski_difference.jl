@@ -43,11 +43,10 @@ of disturbance invariant sets for discrete-time linear systems.*
 317-367.](http://dx.doi.org/10.1155/S1024123X98000866)
 """
 function minkowski_difference(P::LazySet, Q::LazySet)
-
-    @assert is_polyhedral(P)  "this implementation requires that the first" *
-        "argument is polyhedral; try overapproximating with an `HPolyhedron`"
+    @assert is_polyhedral(P) "this implementation requires that the first" *
+                             "argument is polyhedral; try overapproximating with an `HPolyhedron`"
     @assert isbounded(Q) "this implementation requires that the second " *
-        "argument is bounded, but it is not"
+                         "argument is bounded, but it is not"
 
     A, b = tosimplehrep(P)
     g_PminusQ = [b[i] - ρ(A[i, :], Q) for i in eachindex(b)]
@@ -78,8 +77,7 @@ const pontryagin_difference = minkowski_difference
 
 for ST in [:LazySet, :AbstractZonotope, :AbstractHyperrectangle]
     # Minkowski difference with singleton is a translation
-    @eval minkowski_difference(X::($ST), S::AbstractSingleton) =
-        translate(X, -element(S))
+    @eval minkowski_difference(X::($ST), S::AbstractSingleton) = translate(X, -element(S))
 
     # Minkowski difference with ZeroSet is the identity
     @eval minkowski_difference(X::($ST), ::ZeroSet) = X
@@ -166,7 +164,7 @@ For higher-dimensional sets, this method implements Theorem 3 in [1].
 function minkowski_difference(Z1::AbstractZonotope, Z2::AbstractZonotope)
     n = dim(Z1)
     @assert dim(Z2) == n "the Minkowski difference only applies to sets of " *
-        "the same dimension, but the arguments have dimension $n and $(dim(Z2))"
+                         "the same dimension, but the arguments have dimension $n and $(dim(Z2))"
 
     if n == 1
         return _minkowski_difference_1d(Z1, Z2)
@@ -193,7 +191,7 @@ function _minkowski_difference_2d(Zm::AbstractZonotope, Zs::AbstractZonotope)
     N = promote_type(eltype(Zm), eltype(Zs))
     Gm = genmat(Zm)
     n, p = size(Gm)
-    sii = StrictlyIncreasingIndices(p, n-1)
+    sii = StrictlyIncreasingIndices(p, n - 1)
     C⁺ = Matrix{N}(undef, length(sii), n)
     for (i, columns) in enumerate(sii)
         c⁺ = cross_product(view(Gm, :, columns))
@@ -236,8 +234,8 @@ function _minkowski_difference_nd(Z1::AbstractZonotope, Z2::AbstractZonotope)
     cs, Gsᵀ = center(Z2), transpose(genmat(Z2))
     Δc = cm - cs
 
-    constraints = Vector{HalfSpace{N, Vector{N}}}()
-    for columns in StrictlyIncreasingIndices(p, n-1)
+    constraints = Vector{HalfSpace{N,Vector{N}}}()
+    for columns in StrictlyIncreasingIndices(p, n - 1)
         c⁺ = cross_product(view(Gm, :, columns))
         iszero(c⁺) && continue
         normalize!(c⁺, 2)

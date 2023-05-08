@@ -52,16 +52,16 @@ julia> isdisjoint(s, sn, true)
 (false, [0.5, 0.5])
 ```
 """
-struct LineSegment{N, VN<:AbstractVector{N}} <: AbstractZonotope{N}
+struct LineSegment{N,VN<:AbstractVector{N}} <: AbstractZonotope{N}
     p::VN
     q::VN
 
     # default constructor with length constraint
-    function LineSegment(p::VN, q::VN) where {N, VN<:AbstractVector{N}}
+    function LineSegment(p::VN, q::VN) where {N,VN<:AbstractVector{N}}
         @assert length(p) == length(q) == 2 "points for line segments must " *
-            "be two-dimensional, but their lengths are $(length(p)) and " *
-            "$(length(q))"
-        return new{N, VN}(p, q)
+                                            "be two-dimensional, but their lengths are $(length(p)) and " *
+                                            "$(length(q))"
+        return new{N,VN}(p, q)
     end
 end
 
@@ -176,7 +176,7 @@ The algorithm is inspired from [here](https://stackoverflow.com/a/328110).
 """
 function ∈(x::AbstractVector, L::LineSegment)
     @assert length(x) == dim(L) "a vector of length $(length(x)) is " *
-        "incompatible with a $(dim(L))-dimensional set"
+                                "incompatible with a $(dim(L))-dimensional set"
 
     # check if point x is on the line through the line segment (p, q)
     p = L.p
@@ -184,9 +184,9 @@ function ∈(x::AbstractVector, L::LineSegment)
     if isapproxzero(right_turn(p, q, x))
         # check if the point is inside the box approximation of the line segment
         return @inbounds (_leq(min(p[1], q[1]), x[1]) &&
-            _leq(x[1], max(p[1], q[1])) &&
-            _leq(min(p[2], q[2]), x[2]) &&
-            _leq(x[2], max(p[2], q[2])))
+                          _leq(x[1], max(p[1], q[1])) &&
+                          _leq(min(p[2], q[2]), x[2]) &&
+                          _leq(x[2], max(p[2], q[2])))
     else
         return false
     end
@@ -296,7 +296,7 @@ function rand(::Type{LineSegment};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     @assert dim == 2 "cannot create a random LineSegment of dimension $dim"
     rng = reseed(rng, seed)
     p = randn(rng, N, dim)

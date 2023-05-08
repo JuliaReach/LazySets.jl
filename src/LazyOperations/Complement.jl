@@ -41,17 +41,17 @@ julia> Complement(C)
 BallInf{Float64, Vector{Float64}}([0.0, 0.0], 1.0)
 ```
 """
-struct Complement{N, S<:LazySet{N}} <: LazySet{N}
+struct Complement{N,S<:LazySet{N}} <: LazySet{N}
     X::S
 end
 
 isoperationtype(::Type{<:Complement}) = true
 
 # special cases for which the complement is always convex
-isconvextype(::Type{<:Complement{N, <:Union{EmptySet, HalfSpace, Universe}}}) where {N} = true
+isconvextype(::Type{<:Complement{N,<:Union{EmptySet,HalfSpace,Universe}}}) where {N} = true
 
 is_polyhedral(::Complement) = false
-is_polyhedral(::Complement{N, <:Union{EmptySet, HalfSpace}}) where {N} = true
+is_polyhedral(::Complement{N,<:Union{EmptySet,HalfSpace}}) where {N} = true
 
 # the complement of the complement is the original set again
 Complement(C::Complement) = C.X
@@ -95,7 +95,7 @@ Check whether a given point is contained in the complement of a set.
 """
 function ∈(x::AbstractVector, C::Complement)
     @assert length(x) == dim(C) "a vector of length $(length(x)) is " *
-        "incompatible with a set of dimension $(dim(C))"
+                                "incompatible with a set of dimension $(dim(C))"
     return x ∉ C.X
 end
 
@@ -120,7 +120,7 @@ function isempty(C::Complement)
     return isuniversal(C.X)
 end
 
-function isboundedtype(::Type{<:Complement{<:Real, <:Universe}})
+function isboundedtype(::Type{<:Complement{<:Real,<:Universe}})
     return true
 end
 
@@ -149,7 +149,7 @@ vector. The set union of this array corresponds to the concrete set complement.
 """
 function constraints_list(C::Complement)
     @assert isconvextype(typeof(C.X)) "the constraints list of a complement " *
-        "is only available for the complement of a convex polyhedron"
+                                      "is only available for the complement of a convex polyhedron"
 
     clist = constraints_list(C.X)
     out = similar(clist)

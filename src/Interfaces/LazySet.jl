@@ -903,8 +903,8 @@ function ≈(X::LazySet, Y::LazySet)
 end
 
 # hook into random API
-function rand(rng::AbstractRNG, ::SamplerType{T}) where T<:LazySet
-    rand(T, rng=rng)
+function rand(rng::AbstractRNG, ::SamplerType{T}) where {T<:LazySet}
+    return rand(T; rng=rng)
 end
 
 """
@@ -1052,7 +1052,7 @@ Finally, we use the plot recipe for the constructed set (interval or polygon).
 function plot_recipe(X::LazySet, ε)
     @assert dim(X) <= 3 "cannot plot a $(dim(X))-dimensional $(typeof(X))"
     @assert isboundedtype(typeof(X)) || isbounded(X) "cannot plot an " *
-        "unbounded $(typeof(X))"
+                                                     "unbounded $(typeof(X))"
     @assert isconvextype(typeof(X)) "can only plot convex sets"
 
     if dim(X) == 1
@@ -1068,7 +1068,7 @@ end
 function _plot_recipe_3d_polytope(P::LazySet, N=eltype(P))
     require(@__MODULE__, :MiniQhull; fun_name="_plot_recipe_3d_polytope")
     @assert is_polyhedral(P) && isboundedtype(typeof(P)) "3D plotting is " *
-        "only available for polytopes"
+                                                         "only available for polytopes"
 
     vlist, C = delaunay_vlist_connectivity(P; compute_triangles_3d=true)
 
@@ -1136,8 +1136,10 @@ function isoperation(X::LazySet)
 end
 
 # common error
-isoperation(::Type{<:LazySet}) = error("`isoperation` cannot be applied to a " *
-                                      "set type; use `isoperationtype` instead")
+function isoperation(::Type{<:LazySet})
+    return error("`isoperation` cannot be applied to a " *
+                 "set type; use `isoperationtype` instead")
+end
 
 """
     isoperationtype(X::Type{<:LazySet})
@@ -1170,12 +1172,14 @@ true
 ```
 """
 function isoperationtype(X::Type{<:LazySet})
-    error("`isoperationtype` is not implemented for type $X")
+    return error("`isoperationtype` is not implemented for type $X")
 end
 
 # common error
-isoperationtype(::LazySet) = error("`isoperationtype` cannot be applied to a " *
-                                   "set instance; use `isoperation` instead")
+function isoperationtype(::LazySet)
+    return error("`isoperationtype` cannot be applied to a " *
+                 "set instance; use `isoperation` instead")
+end
 
 """
     isequivalent(X::LazySet, Y::LazySet)
@@ -1243,7 +1247,7 @@ function surface(X::LazySet)
         return area(X)
     else
         throw(ArgumentError("the surface function is only implemented for " *
-                    "two-dimensional sets, but the given set is $(dim(X))-dimensional"))
+                            "two-dimensional sets, but the given set is $(dim(X))-dimensional"))
     end
 end
 
@@ -1315,31 +1319,31 @@ function _area_vlist(vlist; apply_convex_hull::Bool=true)
     return res
 end
 
-function _area_triangle(v::Vector{VN}) where {N, VN<:AbstractVector{N}}
+function _area_triangle(v::Vector{VN}) where {N,VN<:AbstractVector{N}}
     A = v[1]
     B = v[2]
     C = v[3]
     res = A[1] * (B[2] - C[2]) + B[1] * (C[2] - A[2]) + C[1] * (A[2] - B[2])
-    return abs(res/2)
+    return abs(res / 2)
 end
 
-function _area_quadrilateral(v::Vector{VN}) where {N, VN<:AbstractVector{N}}
+function _area_quadrilateral(v::Vector{VN}) where {N,VN<:AbstractVector{N}}
     A = v[1]
     B = v[2]
     C = v[3]
     D = v[4]
     res = A[1] * (B[2] - D[2]) + B[1] * (C[2] - A[2]) + C[1] * (D[2] - B[2]) +
           D[1] * (A[2] - C[2])
-    return abs(res/2)
+    return abs(res / 2)
 end
 
-function _area_polygon(v::Vector{VN}) where {N, VN<:AbstractVector{N}}
+function _area_polygon(v::Vector{VN}) where {N,VN<:AbstractVector{N}}
     m = length(v)
     @inbounds res = v[m][1] * v[1][2] - v[1][1] * v[m][2]
-    for i in 1:m-1
-        @inbounds res += v[i][1] * v[i+1][2] - v[i+1][1] * v[i][2]
+    for i in 1:(m - 1)
+        @inbounds res += v[i][1] * v[i + 1][2] - v[i + 1][1] * v[i][2]
     end
-    return abs(res/2)
+    return abs(res / 2)
 end
 
 """
@@ -1429,65 +1433,64 @@ function _vertices_fallback(X::LazySet)
 end
 
 function load_delaunay_MiniQhull()
-return quote
+    return quote
+        import .MiniQhull: delaunay
+        export delaunay
 
-import .MiniQhull: delaunay
-export delaunay
+        """
+            delaunay(X::LazySet)
 
-"""
-    delaunay(X::LazySet)
+        Compute the Delaunay triangulation of the given polytopic set.
 
-Compute the Delaunay triangulation of the given polytopic set.
+        ### Input
 
-### Input
+        - `X`                    -- polytopic set
+        - `compute_triangles_3d` -- (optional; default: `false`) flag to compute the 2D
+                                    triangulation of a 3D set
 
-- `X`                    -- polytopic set
-- `compute_triangles_3d` -- (optional; default: `false`) flag to compute the 2D
-                            triangulation of a 3D set
+        ### Output
 
-### Output
+        A union of polytopes in vertex representation.
 
-A union of polytopes in vertex representation.
+        ### Notes
 
-### Notes
+        This implementation requires the package
+        [MiniQhull.jl](https://github.com/gridap/MiniQhull.jl), which uses the library
+        [Qhull](http://www.qhull.org/).
 
-This implementation requires the package
-[MiniQhull.jl](https://github.com/gridap/MiniQhull.jl), which uses the library
-[Qhull](http://www.qhull.org/).
+        The method works in arbitrary dimension and the requirement is that the list of
+        vertices of `X` can be obtained.
+        """
+        function delaunay(X::LazySet; compute_triangles_3d::Bool=false)
+            vlist, connect_mat = delaunay_vlist_connectivity(X;
+                                                             compute_triangles_3d=compute_triangles_3d)
+            nsimplices = size(connect_mat, 2)
+            if compute_triangles_3d
+                simplices = [VPolytope(vlist[connect_mat[1:3, j]]) for j in 1:nsimplices]
+            else
+                simplices = [VPolytope(vlist[connect_mat[:, j]]) for j in 1:nsimplices]
+            end
+            return UnionSetArray(simplices)
+        end
 
-The method works in arbitrary dimension and the requirement is that the list of
-vertices of `X` can be obtained.
-"""
-function delaunay(X::LazySet; compute_triangles_3d::Bool=false)
-    vlist, connect_mat = delaunay_vlist_connectivity(X;
-        compute_triangles_3d=compute_triangles_3d)
-    nsimplices = size(connect_mat, 2)
-    if compute_triangles_3d
-        simplices = [VPolytope(vlist[connect_mat[1:3, j]]) for j in 1:nsimplices]
-    else
-        simplices = [VPolytope(vlist[connect_mat[:, j]]) for j in 1:nsimplices]
+        # compute the vertices and the connectivity matrix of the Delaunay triangulation
+        #
+        # if the flag `compute_triangles_3d` is set, the resulting matrix still has four
+        # rows, but the last row has no meaning
+        function delaunay_vlist_connectivity(X::LazySet;
+                                             compute_triangles_3d::Bool=false)
+            n = dim(X)
+            @assert !compute_triangles_3d || n == 3 "the `compute_triangles_3d` " *
+                                                    "option requires 3D inputs"
+            vlist = vertices_list(X)
+            m = length(vlist)
+            coordinates = vcat(vlist...)
+            flags = compute_triangles_3d ? "qhull Qt" : nothing
+            connectivity_matrix = delaunay(n, m, coordinates, flags)
+            return vlist, connectivity_matrix
+        end
     end
-    return UnionSetArray(simplices)
-end
-
-# compute the vertices and the connectivity matrix of the Delaunay triangulation
-#
-# if the flag `compute_triangles_3d` is set, the resulting matrix still has four
-# rows, but the last row has no meaning
-function delaunay_vlist_connectivity(X::LazySet;
-                                     compute_triangles_3d::Bool=false)
-    n = dim(X)
-    @assert !compute_triangles_3d || n == 3 "the `compute_triangles_3d` " *
-                                            "option requires 3D inputs"
-    vlist=vertices_list(X)
-    m = length(vlist)
-    coordinates = vcat(vlist...)
-    flags = compute_triangles_3d ? "qhull Qt" : nothing
-    connectivity_matrix = delaunay(n, m, coordinates, flags)
-    return vlist, connectivity_matrix
-end
-
-end end  # load_delaunay_MiniQhull
+end  # load_delaunay_MiniQhull
 
 """
     complement(X::LazySet)
@@ -1610,11 +1613,11 @@ coordinates and zero otherwise.
 2. Overapproximate the projected set with the given error bound `ε`.
 """
 @inline function project(S::LazySet, block::AbstractVector{Int},
-                         set_type_and_precision::Pair{T, N}, n::Int=dim(S);
-                         kwargs...) where {T<:UnionAll, N<:Real}
+                         set_type_and_precision::Pair{T,N}, n::Int=dim(S);
+                         kwargs...) where {T<:UnionAll,N<:Real}
     set_type, ε = set_type_and_precision
     @assert length(block) == 2 && set_type == HPolygon "currently only 2D " *
-        "HPolygon projection is supported"
+                                                       "HPolygon projection is supported"
 
     lm = project(S, block, LinearMap, n)
     return overapproximate(lm, set_type, ε)
@@ -1708,16 +1711,18 @@ function rationalize(::Type{T}, X::LazySet{<:AbstractFloat}, tol::Real) where {T
 end
 
 # no integer type specified
-rationalize(X::LazySet{<:AbstractFloat}; kwargs...) =
-    rationalize(Int, X; kwargs...)
+rationalize(X::LazySet{<:AbstractFloat}; kwargs...) = rationalize(Int, X; kwargs...)
 
 # `tol` as kwarg
-rationalize(::Type{T}, X::LazySet{N}; tol::Real=eps(N)) where {T<:Integer, N<:AbstractFloat} =
-    rationalize(T, X, tol)
+function rationalize(::Type{T}, X::LazySet{N}; tol::Real=eps(N)) where {T<:Integer,N<:AbstractFloat}
+    return rationalize(T, X, tol)
+end
 
 # vectors of sets
-rationalize(::Type{T}, X::AbstractVector{<:LazySet{<:AbstractFloat}}, tol::Real) where {T<:Integer} =
-    rationalize.(Ref(T), X, Ref(tol))
+function rationalize(::Type{T}, X::AbstractVector{<:LazySet{<:AbstractFloat}},
+                     tol::Real) where {T<:Integer}
+    return rationalize.(Ref(T), X, Ref(tol))
+end
 
 """
     permute(X::LazySet, p::AbstractVector{Int})
@@ -1770,8 +1775,7 @@ We call `Polyhedra.chebyshevcenter`.
 """
 function chebyshev_center_radius(P::LazySet{N};
                                  backend=default_polyhedra_backend(P),
-                                 solver=default_lp_solver_polyhedra(N; presolve=true)
-                                ) where {N}
+                                 solver=default_lp_solver_polyhedra(N; presolve=true)) where {N}
     require(@__MODULE__, :Polyhedra; fun_name="chebyshev_center")
     if !is_polyhedral(P) && !isboundedtype(typeof(P))
         error("can only compute a Chebyshev center for polytopes")
@@ -1783,79 +1787,79 @@ function chebyshev_center_radius(P::LazySet{N};
 end
 
 function load_polyhedra_lazyset()  # function to be loaded by Requires
-return quote
-# see the interface file init_Polyhedra.jl for the imports
+    return quote
+        # see the interface file init_Polyhedra.jl for the imports
 
-"""
-    polyhedron(P::LazySet; [backend]=default_polyhedra_backend(P))
+        """
+            polyhedron(P::LazySet; [backend]=default_polyhedra_backend(P))
 
-Compute a set representation from `Polyhedra.jl`.
+        Compute a set representation from `Polyhedra.jl`.
 
-### Input
+        ### Input
 
-- `P`       -- polyhedral set
-- `backend` -- (optional, default: call `default_polyhedra_backend(P)`)
-                the polyhedral computations backend
+        - `P`       -- polyhedral set
+        - `backend` -- (optional, default: call `default_polyhedra_backend(P)`)
+                        the polyhedral computations backend
 
-### Output
+        ### Output
 
-A set representation in the `Polyhedra` library.
+        A set representation in the `Polyhedra` library.
 
-### Notes
+        ### Notes
 
-For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/).
+        For further information on the supported backends see
+        [Polyhedra's documentation](https://juliapolyhedra.github.io/).
 
-### Algorithm
+        ### Algorithm
 
-This default implementation uses `tosimplehrep`, which computes the constraint
-representation of `P`. Set types preferring the vertex representation should
-implement their own method.
-"""
-function polyhedron(P::LazySet; backend=default_polyhedra_backend(P))
-    A, b = tosimplehrep(P)
-    return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
-end
+        This default implementation uses `tosimplehrep`, which computes the constraint
+        representation of `P`. Set types preferring the vertex representation should
+        implement their own method.
+        """
+        function polyhedron(P::LazySet; backend=default_polyhedra_backend(P))
+            A, b = tosimplehrep(P)
+            return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
+        end
 
-"""
-    triangulate(X::LazySet)
+        """
+            triangulate(X::LazySet)
 
-Triangulate a three-dimensional polyhedral set.
+        Triangulate a three-dimensional polyhedral set.
 
-### Input
+        ### Input
 
-- `X` -- three-dimensional polyhedral set
+        - `X` -- three-dimensional polyhedral set
 
-### Output
+        ### Output
 
-A tuple `(p, c)` where `p` is a matrix, with each column containing a point, and
-`c` is a list of 3-tuples containing the indices of the points in each triangle.
-"""
-function triangulate(X::LazySet)
-    dim(X) == 3 || throw(ArgumentError("the dimension of the set should be " *
-        "three, got $(dim(X))"))
-    @assert is_polyhedral(X) "triangulation requires a polyhedral set"
+        A tuple `(p, c)` where `p` is a matrix, with each column containing a point, and
+        `c` is a list of 3-tuples containing the indices of the points in each triangle.
+        """
+        function triangulate(X::LazySet)
+            dim(X) == 3 || throw(ArgumentError("the dimension of the set should be " *
+                                               "three, got $(dim(X))"))
+            @assert is_polyhedral(X) "triangulation requires a polyhedral set"
 
-    P = polyhedron(X)
-    mes = Mesh(P)
-    coords = Polyhedra.GeometryBasics.coordinates(mes)
-    connec = Polyhedra.GeometryBasics.faces(mes)
+            P = polyhedron(X)
+            mes = Mesh(P)
+            coords = Polyhedra.GeometryBasics.coordinates(mes)
+            connec = Polyhedra.GeometryBasics.faces(mes)
 
-    ntriangles = length(connec)
-    npoints = length(coords)
-    @assert npoints == 3 * ntriangles
-    points = Matrix{Float32}(undef, 3, npoints)
+            ntriangles = length(connec)
+            npoints = length(coords)
+            @assert npoints == 3 * ntriangles
+            points = Matrix{Float32}(undef, 3, npoints)
 
-    for i in 1:npoints
-        points[:, i] .= coords[i].data
+            for i in 1:npoints
+                points[:, i] .= coords[i].data
+            end
+
+            connec_tup = getfield.(connec, :data)
+
+            return points, connec_tup
+        end
     end
-
-    connec_tup = getfield.(connec, :data)
-
-    return points, connec_tup
-end
-
-end end  # quote / load_polyhedra_lazyset()
+end  # quote / load_polyhedra_lazyset()
 
 """
     isempty(P::LazySet{N}, witness::Bool=false;

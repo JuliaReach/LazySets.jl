@@ -57,15 +57,15 @@ function _isdisjoint_convex_sufficient(X::LazySet, Y::LazySet)
 end
 
 # conversion for IA types
-isdisjoint(X::LazySet, Y::IA.Interval, witness::Bool=false) =
-    isdisjoint(X, Interval(Y), witness)
-isdisjoint(X::IA.Interval, Y::LazySet, witness::Bool=false) =
-    isdisjoint(Interval(X), Y, witness)
+isdisjoint(X::LazySet, Y::IA.Interval, witness::Bool=false) = isdisjoint(X, Interval(Y), witness)
+isdisjoint(X::IA.Interval, Y::LazySet, witness::Bool=false) = isdisjoint(Interval(X), Y, witness)
 
-isdisjoint(X::LazySet, Y::IA.IntervalBox, witness::Bool=false) =
-    isdisjoint(X, convert(Hyperrectangle, Y), witness)
-isdisjoint(X::IA.IntervalBox, Y::LazySet, witness::Bool=false) =
-    isdisjoint(convert(Hyperrectangle, X), Y, witness)
+function isdisjoint(X::LazySet, Y::IA.IntervalBox, witness::Bool=false)
+    return isdisjoint(X, convert(Hyperrectangle, Y), witness)
+end
+function isdisjoint(X::IA.IntervalBox, Y::LazySet, witness::Bool=false)
+    return isdisjoint(convert(Hyperrectangle, X), Y, witness)
+end
 
 """
     isdisjoint(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
@@ -103,7 +103,7 @@ function isdisjoint(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
     center_diff = center(H2) - center(H1)
     @inbounds for i in eachindex(center_diff)
         if abs(center_diff[i]) >
-                radius_hyperrectangle(H1, i) + radius_hyperrectangle(H2, i)
+           radius_hyperrectangle(H1, i) + radius_hyperrectangle(H2, i)
             empty_intersection = true
             break
         end
@@ -219,9 +219,10 @@ end
 for ST in [:AbstractPolyhedron, :AbstractZonotope, :AbstractHyperrectangle,
            :Hyperplane, :Line2D, :HalfSpace, :CartesianProductArray, :UnionSet,
            :UnionSetArray]
-    @eval @commutative isdisjoint(X::($ST), S::AbstractSingleton,
-                                  witness::Bool=false) =
-        _isdisjoint_singleton(S, X, witness)
+    @eval @commutative function isdisjoint(X::($ST), S::AbstractSingleton,
+                                           witness::Bool=false)
+        return _isdisjoint_singleton(S, X, witness)
+    end
 end
 
 """
@@ -354,7 +355,7 @@ end
 end
 
 function _isdisjoint_zonotope_hyperplane(Z::AbstractZonotope,
-                                         H::Union{Hyperplane, Line2D},
+                                         H::Union{Hyperplane,Line2D},
                                          witness::Bool=false)
     if witness
         return _isdisjoint(Z, H, Val(true))
@@ -363,7 +364,7 @@ function _isdisjoint_zonotope_hyperplane(Z::AbstractZonotope,
     end
 end
 
-function _isdisjoint(Z::AbstractZonotope, H::Union{Hyperplane, Line2D},
+function _isdisjoint(Z::AbstractZonotope, H::Union{Hyperplane,Line2D},
                      ::Val{false})
     c, G = center(Z), genmat(Z)
     v = H.b - dot(H.a, c)
@@ -374,9 +375,9 @@ function _isdisjoint(Z::AbstractZonotope, H::Union{Hyperplane, Line2D},
     return !_geq(v, -asum) || !_leq(v, asum)
 end
 
-function _isdisjoint(Z::AbstractZonotope, H::Union{Hyperplane, Line2D},
+function _isdisjoint(Z::AbstractZonotope, H::Union{Hyperplane,Line2D},
                      ::Val{true})
-    _isdisjoint_hyperplane(H, Z, true)
+    return _isdisjoint_hyperplane(H, Z, true)
 end
 
 """
@@ -521,7 +522,7 @@ function isdisjoint(L1::LineSegment, L2::LineSegment, witness::Bool=false)
     return _witness_result_empty(witness, empty_intersection, L1, L2)
 end
 
-function _isdisjoint_hyperplane(hp::Union{Hyperplane, Line2D}, X::LazySet,
+function _isdisjoint_hyperplane(hp::Union{Hyperplane,Line2D}, X::LazySet,
                                 witness::Bool=false)
     if !isconvextype(typeof(X))
         error("this implementation requires a convex set")
@@ -594,12 +595,14 @@ end
 
 #disambiguations
 for ST in [:AbstractPolyhedron]
-    @eval @commutative isdisjoint(X::($ST), H::Hyperplane,
-                                  witness::Bool=false) =
-        _isdisjoint_hyperplane(H, X, witness)
+    @eval @commutative function isdisjoint(X::($ST), H::Hyperplane,
+                                           witness::Bool=false)
+        return _isdisjoint_hyperplane(H, X, witness)
+    end
 
-    @eval @commutative isdisjoint(X::($ST), L::Line2D, witness::Bool=false) =
-        _isdisjoint_hyperplane(L, X, witness)
+    @eval @commutative function isdisjoint(X::($ST), L::Line2D, witness::Bool=false)
+        return _isdisjoint_hyperplane(L, X, witness)
+    end
 end
 
 function isdisjoint(hp1::Hyperplane, hp2::Hyperplane, witness::Bool=false)
@@ -610,8 +613,8 @@ end
     return _isdisjoint_hyperplane_hyperplane(hp, L, witness)
 end
 
-function _isdisjoint_hyperplane_hyperplane(hp1::Union{Hyperplane, Line2D},
-                                           hp2::Union{Hyperplane, Line2D},
+function _isdisjoint_hyperplane_hyperplane(hp1::Union{Hyperplane,Line2D},
+                                           hp2::Union{Hyperplane,Line2D},
                                            witness::Bool=false)
     if isequivalent(hp1, hp2)
         res = false
@@ -749,8 +752,9 @@ end
 
 # disambiguations
 for ST in [:AbstractPolyhedron, :Hyperplane, :Line2D, :CartesianProductArray]
-    @eval @commutative isdisjoint(X::($ST), H::HalfSpace, witness::Bool=false) =
-        _isdisjoint_halfspace(H, X, witness)
+    @eval @commutative function isdisjoint(X::($ST), H::HalfSpace, witness::Bool=false)
+        return _isdisjoint_halfspace(H, X, witness)
+    end
 end
 
 """
@@ -835,9 +839,10 @@ function _isdisjoint_polyhedron(P::AbstractPolyhedron, X::LazySet,
 end
 
 # disambiguation
-isdisjoint(X::AbstractPolyhedron, P::AbstractPolyhedron, witness::Bool=false;
-           solver=nothing, algorithm="exact") =
-        _isdisjoint_polyhedron(P, X, witness)
+function isdisjoint(X::AbstractPolyhedron, P::AbstractPolyhedron, witness::Bool=false;
+                    solver=nothing, algorithm="exact")
+    return _isdisjoint_polyhedron(P, X, witness)
+end
 
 """
     isdisjoint(U::UnionSet, X::LazySet, [witness]::Bool=false)
@@ -896,11 +901,13 @@ end
 
 # disambiguations
 for ST in [:AbstractPolyhedron, :Hyperplane, :Line2D, :HalfSpace]
-    @eval @commutative isdisjoint(U::UnionSet, X::($ST), witness::Bool=false) =
-        _isdisjoint_union((U.X, U.Y), X, witness)
-    @eval @commutative isdisjoint(U::UnionSetArray, X::($ST),
-                                  witness::Bool=false) =
-        _isdisjoint_union(array(U), X, witness)
+    @eval @commutative function isdisjoint(U::UnionSet, X::($ST), witness::Bool=false)
+        return _isdisjoint_union((U.X, U.Y), X, witness)
+    end
+    @eval @commutative function isdisjoint(U::UnionSetArray, X::($ST),
+                                           witness::Bool=false)
+        return _isdisjoint_union(array(U), X, witness)
+    end
 end
 
 @commutative function isdisjoint(U1::UnionSet, U2::UnionSetArray,
@@ -938,7 +945,7 @@ end
 
 function _isdisjoint_universe(U::Universe, X::LazySet, witness)
     @assert dim(X) == dim(U) "the dimensions of the given sets should match, " *
-                            "but they are $(dim(X)) and $(dim(U)), respectively"
+                             "but they are $(dim(X)) and $(dim(U)), respectively"
     result = isempty(X)
     if result
         return _witness_result_empty(witness, true, U, X)
@@ -951,8 +958,9 @@ end
 for ST in [:AbstractPolyhedron, :AbstractSingleton, :HalfSpace, :Hyperplane,
            :Line2D, :CartesianProductArray, :UnionSet, :UnionSetArray,
            :Complement]
-    @eval @commutative isdisjoint(U::Universe, X::($ST), witness::Bool=false) =
-        _isdisjoint_universe(U, X, witness)
+    @eval @commutative function isdisjoint(U::Universe, X::($ST), witness::Bool=false)
+        return _isdisjoint_universe(U, X, witness)
+    end
 end
 
 function isdisjoint(U::Universe, ::Universe, witness::Bool=false)
@@ -997,8 +1005,9 @@ end
 # disambiguations
 for ST in [:AbstractPolyhedron, :AbstractSingleton, :UnionSet, :UnionSetArray,
            :Hyperplane, :Line2D, :HalfSpace]
-    @eval @commutative isdisjoint(C::Complement, X::($ST), witness::Bool=false) =
-        _isdisjoint_complement(C, X, witness)
+    @eval @commutative function isdisjoint(C::Complement, X::($ST), witness::Bool=false)
+        return _isdisjoint_complement(C, X, witness)
+    end
 end
 
 function isdisjoint(C1::Complement, C2::Complement, witness::Bool=false)
@@ -1049,9 +1058,10 @@ end
 
 # disambiguations
 for ST in [:Hyperplane, :Line2D]
-    @eval @commutative isdisjoint(cpa::CartesianProductArray, X::($ST),
-                                  witness::Bool=false) =
-        _isdisjoint_cpa_polyhedron(cpa, X, witness)
+    @eval @commutative function isdisjoint(cpa::CartesianProductArray, X::($ST),
+                                           witness::Bool=false)
+        return _isdisjoint_cpa_polyhedron(cpa, X, witness)
+    end
 end
 
 """
@@ -1084,7 +1094,7 @@ Witness production is currently not supported.
 function isdisjoint(X::CartesianProductArray, Y::CartesianProductArray,
                     witness::Bool=false)
     @assert same_block_structure(array(X), array(Y)) "block structure has to " *
-        "be identical"
+                                                     "be identical"
 
     for i in 1:length(X.array)
         if isdisjoint(X.array[i], Y.array[i])
@@ -1159,21 +1169,19 @@ end
 
 function _isdisjoint_emptyset(∅::EmptySet, X::LazySet, witness::Bool=false)
     @assert dim(∅) == dim(X) "the dimensions of the given sets should match, " *
-                            "but they are $(dim(∅)) and $(dim(X)), respectively"
+                             "but they are $(dim(∅)) and $(dim(X)), respectively"
     return _witness_result_empty(witness, true, ∅, X)
 end
 
 # disambiguations
 for ST in [:AbstractPolyhedron, :AbstractSingleton, :HalfSpace, :Hyperplane,
            :Line2D, :Universe, :Complement, :UnionSet, :UnionSetArray]
-    @eval @commutative isdisjoint(∅::EmptySet, X::($ST), witness::Bool=false) =
-        _isdisjoint_emptyset(∅, X, witness)
+    @eval @commutative function isdisjoint(∅::EmptySet, X::($ST), witness::Bool=false)
+        return _isdisjoint_emptyset(∅, X, witness)
+    end
 end
 
-isdisjoint(∅1::EmptySet, ∅2::EmptySet, witness::Bool=false) =
-        _isdisjoint_emptyset(∅1, ∅2, witness)
-
-
+isdisjoint(∅1::EmptySet, ∅2::EmptySet, witness::Bool=false) = _isdisjoint_emptyset(∅1, ∅2, witness)
 
 """
     isdisjoint(L1::Line2D, L2::Line2D, [witness]::Bool=false)
@@ -1210,20 +1218,23 @@ function _isdisjoint(L1::Line2D, L2::Line2D)
 end
 
 for ST in [:AbstractZonotope, :AbstractSingleton]
-    @eval @commutative function isdisjoint(C::CartesianProduct{N, <:LazySet, <:Universe}, Z::$(ST)) where N
+    @eval @commutative function isdisjoint(C::CartesianProduct{N,<:LazySet,<:Universe},
+                                           Z::$(ST)) where {N}
         X = C.X
         Zp = project(Z, 1:dim(X))
         return isdisjoint(X, Zp)
     end
 
-    @eval @commutative function isdisjoint(C::CartesianProduct{N, <:Universe, <:LazySet}, Z::$(ST)) where N
+    @eval @commutative function isdisjoint(C::CartesianProduct{N,<:Universe,<:LazySet},
+                                           Z::$(ST)) where {N}
         Y = C.Y
-        Zp = project(Z, dim(C.X)+1:dim(C))
+        Zp = project(Z, (dim(C.X) + 1):dim(C))
         return isdisjoint(Y, Zp)
     end
 
     # disambiguation
-    @eval @commutative function isdisjoint(::CartesianProduct{N, <:Universe, <:Universe}, Z::$(ST)) where N
+    @eval @commutative function isdisjoint(::CartesianProduct{N,<:Universe,<:Universe},
+                                           Z::$(ST)) where {N}
         return false
     end
 end

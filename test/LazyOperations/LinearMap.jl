@@ -1,7 +1,7 @@
 for N in [Float64, Rational{Int}, Float32]
     # π/2 trigonometric rotation
     b = BallInf(N[1, 2], N(1))
-    M = N[0 -1 ; 1 0]
+    M = N[0 -1; 1 0]
     # Test Construction
     lm1 = LinearMap(M, b)
     @test lm1.M == M
@@ -23,7 +23,7 @@ for N in [Float64, Rational{Int}, Float32]
     # 2D -> 1D Projection
     b = BallInf(N[1, 2], N(1))
     M = N[1 0]
-    lm = M*b
+    lm = M * b
     # Test Dimension
     @test dim(lm) == 1
     # Test Support Vector
@@ -81,11 +81,11 @@ for N in [Float64, Rational{Int}, Float32]
     # check linear map between vector and set
     X = BallInf(N[1], N(1.10445))
     a = N[-1, 2]
-    @test a * X isa LinearMap{N,BallInf{N, Vector{N}},N, Matrix{N}}
+    @test a * X isa LinearMap{N,BallInf{N,Vector{N}},N,Matrix{N}}
 
     # absorbing elements
     for neutral in [ZeroSet{N}(2), EmptySet{N}(2)]
-        @test N[0 -1 ; 1 0] * neutral == neutral
+        @test N[0 -1; 1 0] * neutral == neutral
     end
 
     # vertices_list

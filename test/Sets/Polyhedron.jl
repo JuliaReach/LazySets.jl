@@ -13,7 +13,7 @@ for N in [Float64, Rational{Int}, Float32]
     b = [N(1), N(2)]
     p = HPolyhedron(A, b)
     c = p.constraints
-    @test c isa Vector{LinearConstraint{N, Vector{N}}}
+    @test c isa Vector{LinearConstraint{N,Vector{N}}}
     @test c[1].a == N[1, 2] && c[1].b == N(1)
     @test c[2].a == N[-1, 1] && c[2].b == N(2)
 
@@ -56,8 +56,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # constrained dimensions
     @test constrained_dimensions(p) == [1, 2]
-    @test constrained_dimensions(
-        HPolyhedron([LinearConstraint(N[1, 0], N(1))])) == [1]
+    @test constrained_dimensions(HPolyhedron([LinearConstraint(N[1, 0], N(1))])) == [1]
     @test constrained_dimensions(HPolyhedron()) == Int[]
 
     # concrete linear map with invertible matrix
@@ -66,8 +65,8 @@ for N in [Float64, Rational{Int}, Float32]
     # translation
     p2 = translate(p, N[1, 2])
     @test p2 isa HPolyhedron{N} && ispermutation(constraints_list(p2),
-        [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
-         HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
+                                                 [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
+                                                  HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
 
     # constraints iterator
     @test ispermutation(collect(constraints(p)), constraints_list(p))
@@ -111,7 +110,7 @@ for N in [Float64, Rational{Int}, Float32]
         end
 
         if N != Rational{Int} # in floating-point we can use elimination
-            lm = linear_map(N[2 3; 0 0], P, algorithm="elimination")
+            lm = linear_map(N[2 3; 0 0], P; algorithm="elimination")
             @test lm isa HPolyhedron{Float64}
 
             B = N[4e8 2; 0 1]
@@ -133,7 +132,7 @@ for N in [Float64, Rational{Int}, Float32]
 
         elseif N == Rational{Int}
             # can prove emptiness using exact arithmetic
-            @test isempty(P, use_polyhedra_interface=true, backend=CDDLib.Library(:exact)) == true
+            @test isempty(P; use_polyhedra_interface=true, backend=CDDLib.Library(:exact)) == true
         end
     end
 end
@@ -203,8 +202,8 @@ for N in [Float64]
     @test [Inf, Inf] ∉ p
 
     # an_element
-    P = HPolyhedron([HalfSpace(N[3//50, -4//10], N(1)),
-                     HalfSpace(N[-1//50, 1//10], N(-1))])
+    P = HPolyhedron([HalfSpace(N[3 // 50, -4 // 10], N(1)),
+                     HalfSpace(N[-1 // 50, 1 // 10], N(-1))])
     @test an_element(P) ∈ P
 
     # an_element for an unbounded polyhedron
@@ -360,10 +359,10 @@ for N in [Float64]
         @test L isa HPolyhedron{N}
 
         # not invertible matrix times a bounded polyhedron
-        L = linear_map(Mnotinv, Pbdd, algorithm="vrep") # Requires Polyhedra because it works on vertices
+        L = linear_map(Mnotinv, Pbdd; algorithm="vrep") # Requires Polyhedra because it works on vertices
         @test L isa VPolytope
 
-        L = linear_map(Mnotinv, Pbdd, algorithm="elimination")
+        L = linear_map(Mnotinv, Pbdd; algorithm="elimination")
         @test L isa HPolyhedron
 
         # test default
@@ -374,11 +373,11 @@ for N in [Float64]
         @test linear_map(Mnotinv, Punbdd) isa HPolyhedron
 
         # check that we can use sparse matrices as well ; Requires SparseArrays
-        L = linear_map(sparse(Minv), Pbdd, algorithm="inv_right")
+        L = linear_map(sparse(Minv), Pbdd; algorithm="inv_right")
         @test L isa HPolyhedron{N}
-        L = linear_map(sparse(Minv), Punbdd, algorithm="inv_right")
+        L = linear_map(sparse(Minv), Punbdd; algorithm="inv_right")
         @test L isa HPolyhedron{N}
-        L = linear_map(sparse(Mnotinv), Pbdd, algorithm="vrep") # Requires Polyhedra because it works on vertices
+        L = linear_map(sparse(Mnotinv), Pbdd; algorithm="vrep") # Requires Polyhedra because it works on vertices
         @test L isa VPolytope
         # breaks because "inv_right" requires an invertible matrix
         @test_throws ArgumentError linear_map(sparse(Mnotinv), Punbdd, algorithm="inv_right")
@@ -397,7 +396,8 @@ for N in [Float64]
                          HalfSpace(N[0, 0, -1], N(0))])
         πP = project(P, [1, 2])
         @test πP isa HPolyhedron{N}
-        @test ispermutation(constraints_list(πP), [HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
+        @test ispermutation(constraints_list(πP),
+                            [HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
 
         # projection in unconstrained dimensions
         P = HPolyhedron([HalfSpace(N[1, 0], N(1)), HalfSpace(N[-1, 0], N(0))])
@@ -408,12 +408,13 @@ for N in [Float64]
     # tests that require Symbolics
     @static if isdefined(@__MODULE__, :Symbolics)
         vars = @variables x y
-        p1 = HPolyhedron([x + y <= 1, x + y >= -1,  x - y <= 1, x - y >= -1], vars)
+        p1 = HPolyhedron([x + y <= 1, x + y >= -1, x - y <= 1, x - y >= -1], vars)
         b1 = Ball1(zeros(2), 1.0)
         @test isequivalent(p1, b1)
 
         p2 = HPolyhedron([x == 0, y <= 0], vars)
-        h2 = HPolyhedron([HalfSpace([1.0, 0.0], 0.0), HalfSpace([-1.0, 0.0], 0.0), HalfSpace([0.0, 1.0], 0.0)])
+        h2 = HPolyhedron([HalfSpace([1.0, 0.0], 0.0), HalfSpace([-1.0, 0.0], 0.0),
+                          HalfSpace([0.0, 1.0], 0.0)])
         @test p2 ⊆ h2 && h2 ⊆ p2 # isequivalent(p2, h2) see #2370
     end
 end

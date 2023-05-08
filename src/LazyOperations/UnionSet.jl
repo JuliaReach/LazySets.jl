@@ -17,14 +17,14 @@ Type that represents the set union of two sets.
 
 The union of convex sets is typically not convex.
 """
-struct UnionSet{N, S1<:LazySet{N}, S2<:LazySet{N}} <: LazySet{N}
+struct UnionSet{N,S1<:LazySet{N},S2<:LazySet{N}} <: LazySet{N}
     X::S1
     Y::S2
 
     # default constructor with dimension check
     function UnionSet(X::LazySet{N}, Y::LazySet{N}) where {N}
         @assert dim(X) == dim(Y) "sets in a union must have the same dimension"
-        return new{N, typeof(X), typeof(Y)}(X, Y)
+        return new{N,typeof(X),typeof(Y)}(X, Y)
     end
 end
 
@@ -233,7 +233,7 @@ function isbounded(cup::UnionSet)
     return isbounded(cup.X) && isbounded(cup.Y)
 end
 
-function isboundedtype(::Type{<:UnionSet{N, S1, S2}}) where {N, S1, S2}
+function isboundedtype(::Type{<:UnionSet{N,S1,S2}}) where {N,S1,S2}
     return isboundedtype(S1) && isboundedtype(S2)
 end
 
@@ -261,7 +261,7 @@ function vertices_list(cup::UnionSet;
                        backend=nothing)
     vlist = vcat(vertices_list(cup.X), vertices_list(cup.Y))
     if apply_convex_hull
-        convex_hull!(vlist, backend=backend)
+        convex_hull!(vlist; backend=backend)
     end
     return vlist
 end

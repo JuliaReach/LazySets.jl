@@ -97,23 +97,23 @@ julia> M * EmptySet{Int}(2)
 EmptySet{Int64}(3)
 ```
 """
-struct LinearMap{N, S<:LazySet{N}, NM,
-                 MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N, S}
+struct LinearMap{N,S<:LazySet{N},NM,
+                 MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N,S}
     M::MAT
     X::S
 
     # default constructor with dimension check
-    function LinearMap(M::MAT, X::S) where {N, S<:LazySet{N}, NM,
+    function LinearMap(M::MAT, X::S) where {N,S<:LazySet{N},NM,
                                             MAT<:AbstractMatrix{NM}}
         @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
-            "be applied to a set of dimension $(dim(X))"
-        return new{N, S, NM, MAT}(M, X)
+                                     "be applied to a set of dimension $(dim(X))"
+        return new{N,S,NM,MAT}(M, X)
     end
 end
 
 isoperationtype(::Type{<:LinearMap}) = true
 
-isconvextype(::Type{<:LinearMap{N, S}}) where {N, S} = isconvextype(S)
+isconvextype(::Type{<:LinearMap{N,S}}) where {N,S} = isconvextype(S)
 
 """
 ```
@@ -132,7 +132,7 @@ Alias to create a `LinearMap` object.
 
 A lazy linear map, i.e., a `LinearMap` instance.
 """
-function *(M::Union{AbstractMatrix, UniformScaling, AbstractVector, Real},
+function *(M::Union{AbstractMatrix,UniformScaling,AbstractVector,Real},
            X::LazySet)
     return LinearMap(M, X)
 end
@@ -198,7 +198,7 @@ end
 function LinearMap(M::AbstractMatrix, Z::ZeroSet)
     N = promote_type(eltype(M), eltype(Z))
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot " *
-            "be applied to a set of dimension $(dim(Z))"
+                                 "be applied to a set of dimension $(dim(Z))"
     return ZeroSet{N}(size(M, 1))
 end
 
@@ -206,7 +206,7 @@ end
 function LinearMap(M::AbstractMatrix, ∅::EmptySet)
     N = promote_type(eltype(M), eltype(∅))
     @assert dim(∅) == size(M, 2) "a linear map of size $(size(M)) cannot " *
-            "be applied to a set of dimension $(dim(∅))"
+                                 "be applied to a set of dimension $(dim(∅))"
     return EmptySet{N}(size(M, 1))
 end
 
@@ -362,7 +362,7 @@ function an_element(lm::LinearMap)
     return lm.M * an_element(lm.X)
 end
 
-function isboundedtype(::Type{<:LinearMap{N, S}}) where {N, S}
+function isboundedtype(::Type{<:LinearMap{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
@@ -494,7 +494,7 @@ A lazy `LinearMap` representing the projection of the set `S` to block `block`.
 """
 @inline function project(S::LazySet{N}, block::AbstractVector{Int},
                          set_type::Type{LM}, n::Int=dim(S);
-                         kwargs...) where {N, LM<:LinearMap}
+                         kwargs...) where {N,LM<:LinearMap}
     M = projection_matrix(block, n, N)
     return M * S
 end

@@ -54,12 +54,12 @@ macro neutral(SET, NEUT)
 
         # if the array set type has already been defined, create combinations
         if isdefined(@__MODULE__, :array_constructor) &&
-                hasmethod(array_constructor, (Type{$SET},))
+           hasmethod(array_constructor, (Type{$SET},))
             @eval(@array_neutral($(esc(SET)),
                                  $(esc(NEUT)),
                                  array_constructor($(esc(SET)))))
         elseif isdefined(@__MODULE__, :is_array_constructor) &&
-                hasmethod(is_array_constructor, (Type{$SET},))
+               hasmethod(is_array_constructor, (Type{$SET},))
             @eval(@array_neutral($(esc(SET)),
                                  $(esc(NEUT)),
                                  $(esc(SET))))
@@ -124,12 +124,12 @@ macro absorbing(SET, ABS)
 
         # if the array set type has already been defined, create combinations
         if isdefined(@__MODULE__, :array_constructor) &&
-                hasmethod(array_constructor, (Type{$SET},))
+           hasmethod(array_constructor, (Type{$SET},))
             @eval(@array_absorbing($(esc(SET)),
                                    $(esc(ABS)),
                                    array_constructor($(esc(SET)))))
         elseif isdefined(@__MODULE__, :is_array_constructor) &&
-                hasmethod(is_array_constructor, (Type{$SET},))
+               hasmethod(is_array_constructor, (Type{$SET},))
             @eval(@array_absorbing($(esc(SET)),
                                    $(esc(ABS)),
                                    $(esc(SET))))

@@ -24,13 +24,13 @@ julia> Hyperplane([0, 1.], 0.)
 Hyperplane{Float64, Vector{Float64}}([0.0, 1.0], 0.0)
 ```
 """
-struct Hyperplane{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+struct Hyperplane{N,VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     a::VN
     b::N
 
-    function Hyperplane(a::VN, b::N) where {N, VN<:AbstractVector{N}}
+    function Hyperplane(a::VN, b::N) where {N,VN<:AbstractVector{N}}
         @assert !iszero(a) "a hyperplane needs a non-zero normal vector"
-        return new{N, VN}(a, b)
+        return new{N,VN}(a, b)
     end
 end
 
@@ -111,7 +111,7 @@ The support function of the hyperplane.
 If the set is unbounded in the given direction, the result is `Inf`.
 """
 function ρ(d::AbstractVector, H::Hyperplane)
-    v, unbounded = _σ_hyperplane_halfspace(d, H.a, H.b, error_unbounded=false,
+    v, unbounded = _σ_hyperplane_halfspace(d, H.a, H.b; error_unbounded=false,
                                            halfspace=false)
     if unbounded
         N = promote_type(eltype(d), eltype(H))
@@ -140,7 +140,7 @@ In all cases, any point on the hyperplane is a solution.
 Otherwise this function throws an error.
 """
 function σ(d::AbstractVector, H::Hyperplane)
-    v, unbounded = _σ_hyperplane_halfspace(d, H.a, H.b, error_unbounded=true,
+    v, unbounded = _σ_hyperplane_halfspace(d, H.a, H.b; error_unbounded=true,
                                            halfspace=false)
     return v
 end
@@ -257,7 +257,7 @@ function rand(::Type{Hyperplane};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     a = randn(rng, N, dim)
     while iszero(a)
@@ -356,8 +356,9 @@ to ``d``.
                                          error_unbounded::Bool=true,
                                          halfspace::Bool=false)
     @assert length(d) == length(a) "cannot compute the support vector of a " *
-        "$(length(a))-dimensional " * (halfspace ? "halfspace" : "hyperplane") *
-        " along a vector of length $(length(d))"
+                                   "$(length(a))-dimensional " *
+                                   (halfspace ? "halfspace" : "hyperplane") *
+                                   " along a vector of length $(length(d))"
 
     first_nonzero_entry_a = -1
     unbounded = false
@@ -396,8 +397,8 @@ to ``d``.
         end
         if error_unbounded
             error("the support vector for the " *
-                (halfspace ? "halfspace" : "hyperplane") * " with normal " *
-                "direction $a is not defined along a direction $d")
+                  (halfspace ? "halfspace" : "hyperplane") * " with normal " *
+                  "direction $a is not defined along a direction $d")
         end
         # the first return value does not have a meaning here
         return (d, true)
@@ -429,8 +430,7 @@ We compute the point on the hyperplane as follows:
 - We set ``x[j] = 0`` for all ``j ≠ i``.
 """
 @inline function _an_element_helper_hyperplane(a::AbstractVector{N}, b,
-                                               nonzero_entry_a::Int=findfirst(!iszero, a)
-                                              ) where {N}
+                                               nonzero_entry_a::Int=findfirst(!iszero, a)) where {N}
     x = zeros(N, length(a))
     x[nonzero_entry_a] = b / a[nonzero_entry_a]
     return x
@@ -478,7 +478,7 @@ In other words, we add the dot product ``a⋅v`` to ``b``.
 """
 function translate(H::Hyperplane, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(H) "cannot translate a $(dim(H))-dimensional " *
-                                 "set by a $(length(v))-dimensional vector"
+                                "set by a $(length(v))-dimensional vector"
     a = share ? H.a : copy(H.a)
     b = H.b + dot(H.a, v)
     return Hyperplane(a, b)
@@ -526,96 +526,96 @@ end
 # Functionality that requires Symbolics
 # ============================================
 function load_symbolics_hyperplane()
-return quote
+    return quote
 
-# returns `(true, sexpr)` if expr represents a hyperplane,
-# where sexpr is the simplified expression sexpr := LHS - RHS == 0
-# otherwise returns `(false, expr)`
-function _is_hyperplane(expr::Symbolic)
-    got_hyperplane = operation(expr) == ==
-    if got_hyperplane
-        # simplify to the form a*x + b == 0
-        a, b = arguments(expr)
-        sexpr = simplify(a - b)
+        # returns `(true, sexpr)` if expr represents a hyperplane,
+        # where sexpr is the simplified expression sexpr := LHS - RHS == 0
+        # otherwise returns `(false, expr)`
+        function _is_hyperplane(expr::Symbolic)
+            got_hyperplane = operation(expr) == ==
+            if got_hyperplane
+                # simplify to the form a*x + b == 0
+                a, b = arguments(expr)
+                sexpr = simplify(a - b)
+            end
+            return got_hyperplane ? (true, sexpr) : (false, expr)
+        end
+
+        """
+            Hyperplane(expr::Num, vars=_get_variables(expr); [N]::Type{<:Real}=Float64)
+
+        Return the hyperplane given by a symbolic expression.
+
+        ### Input
+
+        - `expr` -- symbolic expression that describes a hyperplane
+        - `vars` -- (optional, default: `_get_variables(expr)`), if a vector of
+                    variables is given, use those as the ambient variables with respect
+                    to which derivations take place; otherwise, use only the variables
+                    that appear in the given expression (but be careful because the
+                    order may be incorrect; it is advised to always specify `vars`
+                    explicitly)
+        - `N`    -- (optional, default: `Float64`) the numeric type of the hyperplane
+
+        ### Output
+
+        A `Hyperplane`.
+
+        ### Examples
+
+        ```jldoctest
+        julia> using Symbolics
+
+        julia> vars = @variables x y
+        2-element Vector{Num}:
+         x
+         y
+
+        julia> Hyperplane(x - y == 2)
+        Hyperplane{Float64, Vector{Float64}}([1.0, -1.0], 2.0)
+
+        julia> Hyperplane(x == y)
+        Hyperplane{Float64, Vector{Float64}}([1.0, -1.0], -0.0)
+
+        julia> vars = @variables x[1:4]
+        1-element Vector{Symbolics.Arr{Num, 1}}:
+         x[1:4]
+
+        julia> Hyperplane(x[1] == x[2], x)
+        Hyperplane{Float64, Vector{Float64}}([1.0, -1.0, 0.0, 0.0], -0.0)
+        ```
+
+        ### Algorithm
+
+        It is assumed that the expression is of the form
+        `α*x1 + ⋯ + α*xn + γ == β*x1 + ⋯ + β*xn + δ`.
+        This expression is transformed, by rearrangement and substitution, into the
+        canonical form `a1 * x1 + ⋯ + an * xn == b`. To identify the coefficients, we
+        take derivatives with respect to the ambient variables `vars`. Therefore, the
+        order in which the variables appear in `vars` affects the final result. Finally,
+        the returned set is the hyperplane with normal vector `[a1, …, an]` and
+        displacement `b`.
+        """
+        function Hyperplane(expr::Num, vars::AbstractVector{Num}=_get_variables(expr);
+                            N::Type{<:Real}=Float64)
+            valid, sexpr = _is_hyperplane(Symbolics.value(expr))
+            if !valid
+                throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
+            end
+
+            # compute the linear coefficients by taking first order derivatives
+            coeffs = [N(α.val) for α in gradient(sexpr, collect(vars))]
+
+            # get the constant term by expression substitution
+            zeroed_vars = Dict(v => zero(N) for v in vars)
+            β = -N(Symbolics.substitute(sexpr, zeroed_vars))
+
+            return Hyperplane(coeffs, β)
+        end
+
+        Hyperplane(expr::Num, vars; N::Type{<:Real}=Float64) = Hyperplane(expr, _vec(vars); N=N)
     end
-    return got_hyperplane ? (true, sexpr) : (false, expr)
-end
-
-"""
-    Hyperplane(expr::Num, vars=_get_variables(expr); [N]::Type{<:Real}=Float64)
-
-Return the hyperplane given by a symbolic expression.
-
-### Input
-
-- `expr` -- symbolic expression that describes a hyperplane
-- `vars` -- (optional, default: `_get_variables(expr)`), if a vector of
-            variables is given, use those as the ambient variables with respect
-            to which derivations take place; otherwise, use only the variables
-            that appear in the given expression (but be careful because the
-            order may be incorrect; it is advised to always specify `vars`
-            explicitly)
-- `N`    -- (optional, default: `Float64`) the numeric type of the hyperplane
-
-### Output
-
-A `Hyperplane`.
-
-### Examples
-
-```jldoctest
-julia> using Symbolics
-
-julia> vars = @variables x y
-2-element Vector{Num}:
- x
- y
-
-julia> Hyperplane(x - y == 2)
-Hyperplane{Float64, Vector{Float64}}([1.0, -1.0], 2.0)
-
-julia> Hyperplane(x == y)
-Hyperplane{Float64, Vector{Float64}}([1.0, -1.0], -0.0)
-
-julia> vars = @variables x[1:4]
-1-element Vector{Symbolics.Arr{Num, 1}}:
- x[1:4]
-
-julia> Hyperplane(x[1] == x[2], x)
-Hyperplane{Float64, Vector{Float64}}([1.0, -1.0, 0.0, 0.0], -0.0)
-```
-
-### Algorithm
-
-It is assumed that the expression is of the form
-`α*x1 + ⋯ + α*xn + γ == β*x1 + ⋯ + β*xn + δ`.
-This expression is transformed, by rearrangement and substitution, into the
-canonical form `a1 * x1 + ⋯ + an * xn == b`. To identify the coefficients, we
-take derivatives with respect to the ambient variables `vars`. Therefore, the
-order in which the variables appear in `vars` affects the final result. Finally,
-the returned set is the hyperplane with normal vector `[a1, …, an]` and
-displacement `b`.
-"""
-function Hyperplane(expr::Num, vars::AbstractVector{Num}=_get_variables(expr);
-                    N::Type{<:Real}=Float64)
-    valid, sexpr = _is_hyperplane(Symbolics.value(expr))
-    if !valid
-        throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
-    end
-
-    # compute the linear coefficients by taking first order derivatives
-    coeffs = [N(α.val) for α in gradient(sexpr, collect(vars))]
-
-    # get the constant term by expression substitution
-    zeroed_vars = Dict(v => zero(N) for v in vars)
-    β = -N(Symbolics.substitute(sexpr, zeroed_vars))
-
-    return Hyperplane(coeffs, β)
-end
-
-Hyperplane(expr::Num, vars; N::Type{<:Real}=Float64) = Hyperplane(expr, _vec(vars), N=N)
-
-end end  # quote / load_symbolics_hyperplane()
+end  # quote / load_symbolics_hyperplane()
 
 """
     distance(x::AbstractVector, H::Hyperplane{N}) where {N}

@@ -29,7 +29,7 @@ Optionally, subtypes may implement:
 - `isnormalized` -- (defaults to `false`) is `true` if each direction vector has
                     norm one w.r.t. the usual vector 2-norm
 """
-abstract type AbstractDirections{N, VN} end
+abstract type AbstractDirections{N,VN} end
 
 """
     dim(ad::AbstractDirections)
@@ -139,8 +139,7 @@ directions.
                          block::AbstractVector{Int},
                          directions::Type{<:AbstractDirections},
                          n::Int=dim(S);
-                         kwargs...
-                        )
+                         kwargs...)
     lm = project(S, block, LinearMap, n; kwargs...)
     return overapproximate(lm, directions(length(block)))
 end
@@ -205,17 +204,17 @@ julia> length(ans)
 20
 ```
 """
-struct BoxDirections{N, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
+struct BoxDirections{N,VN<:AbstractVector{N}} <: AbstractDirections{N,VN}
     n::Int
 end
 
 # constructor where only N is specified
-BoxDirections{N}(n::Int) where {N} = BoxDirections{N, SingleEntryVector{N}}(n)
+BoxDirections{N}(n::Int) where {N} = BoxDirections{N,SingleEntryVector{N}}(n)
 
 # convenience constructor for type Float64
 BoxDirections(n::Int) = BoxDirections{Float64}(n)
 
-Base.eltype(::Type{BoxDirections{N, VN}}) where {N, VN} = VN
+Base.eltype(::Type{BoxDirections{N,VN}}) where {N,VN} = VN
 Base.length(bd::BoxDirections) = 2 * bd.n
 
 # interface functions
@@ -229,7 +228,7 @@ isnormalized(::Type{<:BoxDirections}) = true
 # (0, 1)   state = 2
 # (0, -1)  state = -2
 # (-1, 0)  state = -1
-function Base.iterate(bd::BoxDirections{N, SingleEntryVector{N}}, state::Int=1) where {N}
+function Base.iterate(bd::BoxDirections{N,SingleEntryVector{N}}, state::Int=1) where {N}
     if state == 0
         return nothing
     end
@@ -238,7 +237,7 @@ function Base.iterate(bd::BoxDirections{N, SingleEntryVector{N}}, state::Int=1) 
     return (vec, state)
 end
 
-function Base.iterate(bd::BoxDirections{N, Vector{N}}, state::Int=1) where {N}
+function Base.iterate(bd::BoxDirections{N,Vector{N}}, state::Int=1) where {N}
     if state == 0
         return nothing
     end
@@ -248,7 +247,7 @@ function Base.iterate(bd::BoxDirections{N, Vector{N}}, state::Int=1) where {N}
     return (vec, state)
 end
 
-function Base.iterate(bd::BoxDirections{N, SparseVector{N, Int}}, state::Int=1) where {N}
+function Base.iterate(bd::BoxDirections{N,SparseVector{N,Int}}, state::Int=1) where {N}
     if state == 0
         return nothing
     end
@@ -320,17 +319,17 @@ julia> length(ans)
 200
 ```
 """
-struct OctDirections{N, VN} <: AbstractDirections{N, VN}
+struct OctDirections{N,VN} <: AbstractDirections{N,VN}
     n::Int
 end
 
 # constructor where only N is specified
-OctDirections{N}(n::Int) where {N} = OctDirections{N, SparseVector{N, Int}}(n)
+OctDirections{N}(n::Int) where {N} = OctDirections{N,SparseVector{N,Int}}(n)
 
 # constructor for type Float64
 OctDirections(n::Int) = OctDirections{Float64}(n)
 
-Base.eltype(::Type{OctDirections{N, VN}}) where {N, VN} = VN
+Base.eltype(::Type{OctDirections{N,VN}}) where {N,VN} = VN
 Base.length(od::OctDirections) = 2 * od.n^2
 
 # interface functions
@@ -342,7 +341,7 @@ function _zeros_oct(n, ::Type{<:SparseVector{N}}) where {N}
     return spzeros(N, n)
 end
 
-function Base.iterate(od::OctDirections{N, VN}) where {N, VN}
+function Base.iterate(od::OctDirections{N,VN}) where {N,VN}
     if od.n == 1
         # fall back to box directions in 1D case
         return iterate(od, 1)
@@ -393,12 +392,12 @@ function _iterate_state(od::OctDirections{N}, state) where {N}
 end
 
 function Base.iterate(od::OctDirections, state::Tuple)
-    _iterate_state(od, state)
+    return _iterate_state(od, state)
 end
 
-function Base.iterate(od::OctDirections{N, VN}, state::Int) where {N, VN}
+function Base.iterate(od::OctDirections{N,VN}, state::Int) where {N,VN}
     # continue with box directions
-    return iterate(BoxDirections{N, VN}(od.n), state)
+    return iterate(BoxDirections{N,VN}(od.n), state)
 end
 
 # implementation with regular Vector
@@ -460,17 +459,17 @@ julia> length(ans)
 1024
 ```
 """
-struct DiagDirections{N, VN} <: AbstractDirections{N, VN}
+struct DiagDirections{N,VN} <: AbstractDirections{N,VN}
     n::Int
 end
 
 # constructor where only N is specified
-DiagDirections{N}(n::Int) where {N} = DiagDirections{N, Vector{N}}(n)
+DiagDirections{N}(n::Int) where {N} = DiagDirections{N,Vector{N}}(n)
 
 # constructor for type Float64
 DiagDirections(n::Int) = DiagDirections{Float64}(n)
 
-Base.eltype(::Type{DiagDirections{N, VN}}) where {N, VN} = VN
+Base.eltype(::Type{DiagDirections{N,VN}}) where {N,VN} = VN
 Base.length(dd::DiagDirections) = 2^dd.n
 
 # interface function
@@ -478,7 +477,7 @@ dim(dd::DiagDirections) = dd.n
 isbounding(::Type{<:DiagDirections}) = true
 isnormalized(::Type{<:DiagDirections}) = false
 
-function Base.iterate(dd::DiagDirections{N, Vector{N}}) where {N}
+function Base.iterate(dd::DiagDirections{N,Vector{N}}) where {N}
     return (ones(N, dd.n), ones(N, dd.n))
 end
 
@@ -486,7 +485,7 @@ function Base.iterate(dd::DiagDirections{N}, state::Vector{N}) where {N}
     i = 1
     while i <= dd.n && state[i] < 0
         state[i] = -state[i]
-        i = i+1
+        i = i + 1
     end
     if i > dd.n
         if dd.n == 1
@@ -559,17 +558,17 @@ julia> length(ans)
 1044
 ```
 """
-struct BoxDiagDirections{N, VN} <: AbstractDirections{N, VN}
+struct BoxDiagDirections{N,VN} <: AbstractDirections{N,VN}
     n::Int
 end
 
 # constructor where only N is specified
-BoxDiagDirections{N}(n::Int) where {N} = BoxDiagDirections{N, Vector{N}}(n)
+BoxDiagDirections{N}(n::Int) where {N} = BoxDiagDirections{N,Vector{N}}(n)
 
 # constructor for type Float64
 BoxDiagDirections(n::Int) = BoxDiagDirections{Float64}(n)
 
-Base.eltype(::Type{BoxDiagDirections{N, VN}}) where {N, VN} = VN
+Base.eltype(::Type{BoxDiagDirections{N,VN}}) where {N,VN} = VN
 Base.length(bdd::BoxDiagDirections) = bdd.n == 1 ? 2 : 2^bdd.n + 2 * bdd.n
 
 # interface function
@@ -577,7 +576,7 @@ dim(bdd::BoxDiagDirections) = bdd.n
 isbounding(::Type{<:BoxDiagDirections}) = true
 isnormalized(::Type{<:BoxDiagDirections}) = false
 
-function Base.iterate(bdd::BoxDiagDirections{N, Vector{N}}) where {N}
+function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}) where {N}
     return (ones(N, bdd.n), ones(N, bdd.n))
 end
 
@@ -586,7 +585,7 @@ function Base.iterate(bdd::BoxDiagDirections{N}, state::Vector{N}) where {N}
     i = 1
     while i <= bdd.n && state[i] < 0
         state[i] = -state[i]
-        i = i+1
+        i = i + 1
     end
     if i > bdd.n
         if bdd.n == 1
@@ -602,9 +601,9 @@ function Base.iterate(bdd::BoxDiagDirections{N}, state::Vector{N}) where {N}
     end
 end
 
-function Base.iterate(bdd::BoxDiagDirections{N, Vector{N}}, state::Int) where {N}
+function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}, state::Int) where {N}
     # continue with box directions
-    return iterate(BoxDirections{N, Vector{N}}(bdd.n), state)
+    return iterate(BoxDirections{N,Vector{N}}(bdd.n), state)
 end
 
 """
@@ -648,31 +647,31 @@ julia> length(pd)
 2
 ```
 """
-struct PolarDirections{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
+struct PolarDirections{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractDirections{N,VN}
     Nφ::Int
     stack::Vector{VN} # stores the polar directions
 end
 
 # constructor where only N is specified
-PolarDirections{N}(Nφ::Int) where {N} = PolarDirections{N, Vector{N}}(Nφ)
+PolarDirections{N}(Nφ::Int) where {N} = PolarDirections{N,Vector{N}}(Nφ)
 
 # constructor for type Float64
 PolarDirections(Nφ::Int) = PolarDirections{Float64}(Nφ)
 
-function PolarDirections{N, Vector{N}}(Nφ::Int) where {N}
+function PolarDirections{N,Vector{N}}(Nφ::Int) where {N}
     if Nφ <= 0
         throw(ArgumentError("Nφ = $Nφ is invalid; it should be at least 1"))
     end
     stack = Vector{Vector{N}}(undef, Nφ)
-    φ = range(N(0), stop=N(2*π), length=Nφ+1)  # discretization of the polar angle
+    φ = range(N(0); stop=N(2 * π), length=Nφ + 1)  # discretization of the polar angle
 
     @inbounds for i in 1:Nφ  # skip last (repeated) angle
         stack[i] = N[cos(φ[i]), sin(φ[i])]
     end
-    return PolarDirections{N, Vector{N}}(Nφ, stack)
+    return PolarDirections{N,Vector{N}}(Nφ, stack)
 end
 
-Base.eltype(::Type{PolarDirections{N, VN}}) where {N, VN} = VN
+Base.eltype(::Type{PolarDirections{N,VN}}) where {N,VN} = VN
 Base.length(pd::PolarDirections) = pd.Nφ
 
 # interface functions
@@ -680,7 +679,7 @@ dim(pd::PolarDirections) = 2
 isbounding(pd::PolarDirections) = pd.Nφ > 2
 isnormalized(::Type{<:PolarDirections}) = true
 
-function Base.iterate(pd::PolarDirections{N, Vector{N}}, state::Int=1) where {N}
+function Base.iterate(pd::PolarDirections{N,Vector{N}}, state::Int=1) where {N}
     state == pd.Nφ + 1 && return nothing
     return (pd.stack[state], state + 1)
 end
@@ -746,14 +745,16 @@ julia> length(sd)
 16
 ```
 """
-struct SphericalDirections{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
+struct SphericalDirections{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractDirections{N,VN}
     Nθ::Int
     Nφ::Int
     stack::Vector{VN} # stores the spherical directions
 end
 
 # constructor where only N is specified
-SphericalDirections{N}(Nθ::Int, Nφ::Int) where {N} = SphericalDirections{N, Vector{N}}(Nθ::Int, Nφ::Int)
+function SphericalDirections{N}(Nθ::Int, Nφ::Int) where {N}
+    return SphericalDirections{N,Vector{N}}(Nθ::Int, Nφ::Int)
+end
 
 # constructor for type Float64
 SphericalDirections(Nθ::Int, Nφ::Int) = SphericalDirections{Float64}(Nθ::Int, Nφ::Int)
@@ -761,14 +762,14 @@ SphericalDirections(Nθ::Int, Nφ::Int) = SphericalDirections{Float64}(Nθ::Int,
 # constructor with just one length, interpreted as identical lengths
 SphericalDirections(Nθ::Int) = SphericalDirections(Nθ, Nθ)
 
-function SphericalDirections{N, Vector{N}}(Nθ::Int, Nφ::Int) where {N}
+function SphericalDirections{N,Vector{N}}(Nθ::Int, Nφ::Int) where {N}
     if Nθ <= 1 || Nφ <= 1
         throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both should " *
                             "be at least 2"))
     end
     stack = Vector{Vector{N}}()
-    θ = range(N(0), stop=N(π), length=Nθ)    # discretization of the azimuthal angle
-    φ = range(N(0), stop=N(2*π), length=Nφ)  # discretization of the polar angle
+    θ = range(N(0); stop=N(π), length=Nθ)    # discretization of the azimuthal angle
+    φ = range(N(0); stop=N(2 * π), length=Nφ)  # discretization of the polar angle
 
     # add north pole (θ = 0)
     push!(stack, N[0, 0, 1])
@@ -776,16 +777,16 @@ function SphericalDirections{N, Vector{N}}(Nθ::Int, Nφ::Int) where {N}
     # add south pole (θ = π)
     push!(stack, N[0, 0, -1])
 
-    for φᵢ in φ[1:Nφ-1]  # skip repeated angle
-        for θⱼ in θ[2:Nθ-1]  # skip north and south poles
-            d = N[sin(θⱼ)*cos(φᵢ), sin(θⱼ)*sin(φᵢ), cos(θⱼ)]
+    for φᵢ in φ[1:(Nφ - 1)]  # skip repeated angle
+        for θⱼ in θ[2:(Nθ - 1)]  # skip north and south poles
+            d = N[sin(θⱼ) * cos(φᵢ), sin(θⱼ) * sin(φᵢ), cos(θⱼ)]
             push!(stack, d)
         end
     end
-    return SphericalDirections{N, Vector{N}}(Nθ, Nφ, stack)
+    return SphericalDirections{N,Vector{N}}(Nθ, Nφ, stack)
 end
 
-Base.eltype(::Type{SphericalDirections{N, VN}}) where {N, VN} = VN
+Base.eltype(::Type{SphericalDirections{N,VN}}) where {N,VN} = VN
 Base.length(sd::SphericalDirections) = length(sd.stack)
 
 # interface functions
@@ -848,7 +849,7 @@ julia> LazySets.Approximations.isnormalized(dirs)
 true
 ```
 """
-struct CustomDirections{N, VN<:AbstractVector{N}} <: AbstractDirections{N, VN}
+struct CustomDirections{N,VN<:AbstractVector{N}} <: AbstractDirections{N,VN}
     directions::Vector{VN}
     n::Int
     bounded::Bool
@@ -858,7 +859,7 @@ end
 function CustomDirections(directions::Vector{VN},
                           n::Int=_determine_dimension(directions);
                           check_boundedness::Bool=true,
-                          check_normalization::Bool=true) where {N, VN<:AbstractVector{N}}
+                          check_normalization::Bool=true) where {N,VN<:AbstractVector{N}}
     bounded = check_boundedness ? _isbounding(directions) : false
     normalized = check_normalization ? _isnormalized(directions) : false
     return CustomDirections(directions, n, bounded, normalized)
@@ -870,7 +871,7 @@ function _determine_dimension(directions)
     @inbounds return length(directions[1])
 end
 
-function _isbounding(directions::Vector{VN}) where {N, VN<:AbstractVector{N}}
+function _isbounding(directions::Vector{VN}) where {N,VN<:AbstractVector{N}}
     isempty(directions) && return false
 
     # check boundedness of the polyhedron `⋂_d d·x <= 1` for directions `d`
@@ -878,11 +879,11 @@ function _isbounding(directions::Vector{VN}) where {N, VN<:AbstractVector{N}}
     return isbounded(P)
 end
 
-function _isnormalized(directions::Vector{VN}) where {N, VN<:AbstractVector{N}}
+function _isnormalized(directions::Vector{VN}) where {N,VN<:AbstractVector{N}}
     return all(x -> _isapprox(norm(x, 2), one(N)), directions)
 end
 
-Base.eltype(::Type{CustomDirections{N, VN}}) where {N, VN} = VN
+Base.eltype(::Type{CustomDirections{N,VN}}) where {N,VN} = VN
 Base.length(cd::CustomDirections) = length(cd.directions)
 
 # interface functions
@@ -902,12 +903,12 @@ function Base.iterate(cd::CustomDirections{N}, state::Int=1) where {N}
 end
 
 # instantiation of template for dimension `n` (not possible for all types)
-function _get_directions(dir::Type{<:Union{BoxDirections, OctDirections,
-                                        DiagDirections, BoxDiagDirections}},
+function _get_directions(dir::Type{<:Union{BoxDirections,OctDirections,
+                                           DiagDirections,BoxDiagDirections}},
                          n::Int)
     return dir(n)
 end
 
 function _get_directions(dir::Type{<:AbstractDirections}, n::Int)
-    error("no automatic choice of directions of type $dir possible")
+    return error("no automatic choice of directions of type $dir possible")
 end

@@ -66,25 +66,24 @@ julia> P.vertices
  [0.0, 1.0]
 ```
 """
-struct VPolygon{N, VN<:AbstractVector{N}} <: AbstractPolygon{N}
+struct VPolygon{N,VN<:AbstractVector{N}} <: AbstractPolygon{N}
     vertices::Vector{VN}
 
     # default constructor that applies a convex hull algorithm
     function VPolygon(vertices::Vector{VN};
                       apply_convex_hull::Bool=true,
-                      algorithm::String="monotone_chain"
-                     ) where {N, VN<:AbstractVector{N}}
+                      algorithm::String="monotone_chain") where {N,VN<:AbstractVector{N}}
         if apply_convex_hull
-            vertices = convex_hull(vertices, algorithm=algorithm)
+            vertices = convex_hull(vertices; algorithm=algorithm)
         end
-        return new{N, VN}(vertices)
+        return new{N,VN}(vertices)
     end
 end
 
 isoperationtype(::Type{<:VPolygon}) = false
 
 # constructor with empty vertices list
-VPolygon{N}() where {N} = VPolygon(Vector{Vector{N}}(), apply_convex_hull=false)
+VPolygon{N}() where {N} = VPolygon(Vector{Vector{N}}(); apply_convex_hull=false)
 
 # constructor with no vertices of type Float64
 VPolygon() = VPolygon{Float64}()
@@ -93,11 +92,11 @@ VPolygon() = VPolygon{Float64}()
 function VPolygon(vertices_matrix::MT; apply_convex_hull::Bool=true,
                   algorithm::String="monotone_chain") where {MT<:AbstractMatrix}
     @assert size(vertices_matrix, 1) == 2 "the number of rows of the matrix " *
-        "of vertices should be 2, but it is $(size(vertices_matrix, 1))"
+                                          "of vertices should be 2, but it is $(size(vertices_matrix, 1))"
 
     vertices = [vertices_matrix[:, j] for j in 1:size(vertices_matrix, 2)]
     return VPolygon(vertices; apply_convex_hull=apply_convex_hull,
-                              algorithm=algorithm)
+                    algorithm=algorithm)
 end
 
 """
@@ -151,7 +150,7 @@ See [`remove_redundant_vertices!(::VPolygon)`](@ref).
 """
 function remove_redundant_vertices(P::VPolygon;
                                    algorithm::String="monotone_chain")
-    return remove_redundant_vertices!(copy(P), algorithm=algorithm)
+    return remove_redundant_vertices!(copy(P); algorithm=algorithm)
 end
 
 """
@@ -179,8 +178,8 @@ This implementation uses the internal `_linear_map_vrep` method.
 function linear_map(M::AbstractMatrix, P::VPolygon;
                     apply_convex_hull::Bool=false)
     @assert size(M, 2) == 2 "a linear map of size $(size(M)) cannot be " *
-        "applied to a set of dimension 2"
-    return _linear_map_vrep(M, P, apply_convex_hull=apply_convex_hull)
+                            "applied to a set of dimension 2"
+    return _linear_map_vrep(M, P; apply_convex_hull=apply_convex_hull)
 end
 
 """
@@ -221,8 +220,7 @@ The algorithm adds an edge for each consecutive pair of vertices.
 Since the vertices are already ordered in counter-clockwise fashion (CCW), the
 constraints will be sorted automatically (CCW).
 """
-function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
-               ) where {N, HPOLYGON<:AbstractHPolygon}
+function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon) where {N,HPOLYGON<:AbstractHPolygon}
     vl = P.vertices
     n = length(vl)
     if n == 0
@@ -238,21 +236,21 @@ function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon
         # find right-most vertex
         i = div(n, 2)
         x = vl[i][1]
-        while i > 1 && vl[i-1][1] > x
+        while i > 1 && vl[i - 1][1] > x
             # search forward in list
             i = i - 1
             x = vl[i][1]
         end
-        while i < n && vl[i+1][1] > x
+        while i < n && vl[i + 1][1] > x
             # search backward in list
             i = i + 1
             x = vl[i][1]
         end
 
         # create constraints ordered in CCW starting at the right-most index
-        upper_hull = [halfspace_left(vl[j], vl[j+1]) for j in i:length(vl)-1]
+        upper_hull = [halfspace_left(vl[j], vl[j + 1]) for j in i:(length(vl) - 1)]
         mid_hull = [halfspace_left(vl[end], vl[1])]
-        lower_hull = [halfspace_left(vl[j], vl[j+1]) for j in 1:i-1]
+        lower_hull = [halfspace_left(vl[j], vl[j + 1]) for j in 1:(i - 1)]
         constraints_list = vcat(upper_hull, mid_hull, lower_hull)
     end
     return HPOLYGON(constraints_list)
@@ -314,7 +312,7 @@ function _σ_helper(d::AbstractVector, P::VPolygon)
     return _σ_helper(d, vlist)
 end
 
-function _σ_helper(d::AbstractVector, vlist::Vector{VN}) where {N, VN<:AbstractVector{N}}
+function _σ_helper(d::AbstractVector, vlist::Vector{VN}) where {N,VN<:AbstractVector{N}}
     if length(vlist) > BINARY_OR_BRUTE_FORCE
         return _binary_support_vector(d, vlist)
     else
@@ -326,7 +324,8 @@ function _brute_force_support_vector(d::AbstractVector, P::VPolygon)
     return _brute_force_support_vector(d, P.vertices)
 end
 
-function _brute_force_support_vector(d::AbstractVector{M}, vlist::Vector{VT}) where {M, T, VT<:AbstractVector{T}}
+function _brute_force_support_vector(d::AbstractVector{M},
+                                     vlist::Vector{VT}) where {M,T,VT<:AbstractVector{T}}
     max_idx = 1
     @inbounds max_ρ = dot(d, vlist[1])
     @inbounds for i in 2:length(vlist)
@@ -345,10 +344,11 @@ end
 
 # checks if the given vector is pointing toward the given direction
 @inline function _similar_direction(u::AbstractVector, v::AbstractVector)
-    dot(u, v) > 0
+    return dot(u, v) > 0
 end
 
-function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, VT<:AbstractVector{T}}
+function _binary_support_vector(d::AbstractVector,
+                                vlist::Vector{VT}) where {T,VT<:AbstractVector{T}}
     m = length(vlist)
     @assert m > 2 "the number of vertices in the binary-search approach " *
                   "should be at least three, but it is $m"
@@ -381,7 +381,7 @@ function _binary_support_vector(d::AbstractVector, vlist::Vector{VT}) where {T, 
             # no max yet, so continue with the binary search
             # pick one of the two subchains [a,c] or [c,b]
             if (upA && upC && !isabove(d, vlist[a], vlist[c])) ||
-            (!upA && (upC || (!upC && isabove(d, vlist[a], vlist[c]))))
+               (!upA && (upC || (!upC && isabove(d, vlist[a], vlist[c]))))
                 a = c
                 A = C
                 upA = upC
@@ -450,7 +450,7 @@ true
 """
 function ∈(x::AbstractVector, P::VPolygon)
     @assert length(x) == 2 "a $(length(x))-dimensional vector is " *
-        "incompatible with an $(dim(P))-dimensional set"
+                           "incompatible with an $(dim(P))-dimensional set"
 
     # special cases: 0 or 1 vertex
     @inbounds begin
@@ -464,7 +464,7 @@ function ∈(x::AbstractVector, P::VPolygon)
             return false
         end
         for i in 2:length(P.vertices)
-            if !is_right_turn(P.vertices[i], x, P.vertices[i-1])
+            if !is_right_turn(P.vertices[i], x, P.vertices[i - 1])
                 return false
             end
         end
@@ -511,7 +511,7 @@ function rand(::Type{VPolygon};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing,
+              seed::Union{Int,Nothing}=nothing,
               num_vertices::Int=-1)
     @assert dim == 2 "cannot create a random VPolygon of dimension $dim"
     rng = reseed(rng, seed)
@@ -529,8 +529,8 @@ function rand(::Type{VPolygon};
     # general case, >= 2 vertices
 
     # get random horizontal and vertical vectors
-    horiz = rand_pos_neg_zerosum_vector(num_vertices, N=N, rng=rng)
-    vert = rand_pos_neg_zerosum_vector(num_vertices, N=N, rng=rng)
+    horiz = rand_pos_neg_zerosum_vector(num_vertices; N=N, rng=rng)
+    vert = rand_pos_neg_zerosum_vector(num_vertices; N=N, rng=rng)
 
     # randomly combine horizontal and vertical vectors
     m = num_vertices
@@ -541,15 +541,15 @@ function rand(::Type{VPolygon};
         directions[i] = [x, y]
         m -= 1
     end
-    sort!(directions, lt=<=) # sort by angle
+    sort!(directions; lt=<=) # sort by angle
 
     # connect directions
     vertices = Vector{Vector{N}}(undef, num_vertices)
     # random starting point
     @inbounds begin
         vertices[1] = randn(rng, N, 2)
-        for i in 1:length(directions)-1
-            vertices[i+1] = vertices[i] + directions[i]
+        for i in 1:(length(directions) - 1)
+            vertices[i + 1] = vertices[i] + directions[i]
         end
         @assert isapprox(vertices[end] + directions[end], vertices[1], atol=1e-6)
     end

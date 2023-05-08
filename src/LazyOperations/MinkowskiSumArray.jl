@@ -20,8 +20,8 @@ for `MinkowskiSumArray`.
 The Minkowski sum preserves convexity: if the set arguments are convex, then
 their Minkowski sum is convex as well.
 """
-struct MinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
-   array::Vector{S}
+struct MinkowskiSumArray{N,S<:LazySet{N}} <: LazySet{N}
+    array::Vector{S}
 end
 
 """
@@ -48,13 +48,13 @@ The function symbol can be typed via `\\oplus[TAB]`.
 ⊕(Xs::Vector{<:LazySet}) = +(Xs)
 
 isoperationtype(::Type{<:MinkowskiSumArray}) = true
-isconvextype(::Type{MinkowskiSumArray{N, S}}) where {N, S} = isconvextype(S)
+isconvextype(::Type{MinkowskiSumArray{N,S}}) where {N,S} = isconvextype(S)
 
 # constructor for an empty sum with optional size hint and numeric type
 function MinkowskiSumArray(n::Int=0, N::Type=Float64)
-   arr = Vector{LazySet{N}}()
-   sizehint!(arr, n)
-   return MinkowskiSumArray(arr)
+    arr = Vector{LazySet{N}}()
+    sizehint!(arr, n)
+    return MinkowskiSumArray(arr)
 end
 
 # ZeroSet is the neutral element for MinkowskiSumArray
@@ -81,7 +81,7 @@ Return the array of a Minkowski sum of a finite number of sets.
 The array of a Minkowski sum of a finite number of sets.
 """
 function array(msa::MinkowskiSumArray)
-   return msa.array
+    return msa.array
 end
 
 """
@@ -99,7 +99,7 @@ The ambient dimension of the Minkowski sum of a finite number of sets, or `0` if
 there is no set in the array.
 """
 function dim(msa::MinkowskiSumArray)
-   return length(msa.array) == 0 ? 0 : dim(msa.array[1])
+    return length(msa.array) == 0 ? 0 : dim(msa.array[1])
 end
 
 """
@@ -119,7 +119,7 @@ A support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 """
 function σ(d::AbstractVector, msa::MinkowskiSumArray)
-   return _σ_msum_array(d, msa.array)
+    return _σ_msum_array(d, msa.array)
 end
 
 @inline function _σ_msum_array(d::AbstractVector{N},
@@ -148,7 +148,7 @@ The support function of the Minkowski sum of multiple sets evaluations to the
 sum of the support-function evaluations of each set.
 """
 function ρ(d::AbstractVector, msa::MinkowskiSumArray)
-   return sum(ρ(d, Xi) for Xi in msa.array)
+    return sum(ρ(d, Xi) for Xi in msa.array)
 end
 
 """
@@ -165,10 +165,10 @@ Check whether a Minkowski sum of a finite number of sets is bounded.
 `true` iff all wrapped sets are bounded.
 """
 function isbounded(msa::MinkowskiSumArray)
-   return all(isbounded, msa.array)
+    return all(isbounded, msa.array)
 end
 
-function isboundedtype(::Type{<:MinkowskiSumArray{N, S}}) where {N, S}
+function isboundedtype(::Type{<:MinkowskiSumArray{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
@@ -186,7 +186,7 @@ Check whether a Minkowski sum of a finite number of sets is empty.
 `true` iff any of the wrapped sets is empty.
 """
 function isempty(msa::MinkowskiSumArray)
-   return any(isempty, array(msa))
+    return any(isempty, array(msa))
 end
 
 """
@@ -204,7 +204,7 @@ sets.
 The center of the set.
 """
 function center(msa::MinkowskiSumArray)
-    sum(center(X) for X in array(msa))
+    return sum(center(X) for X in array(msa))
 end
 
 function concretize(msa::MinkowskiSumArray)

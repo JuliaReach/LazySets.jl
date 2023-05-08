@@ -74,9 +74,12 @@ set `X`.
 end
 
 # disambiguation
-distance(S1::AbstractSingleton, S2::AbstractSingleton; p::Real=2.0) =
-    distance(element(S1), element(S2); p=p)
-distance(S::AbstractSingleton, H::AbstractHyperrectangle; p::Real=2.0) =
-    distance(element(S), H; p=p)
-distance(H::AbstractHyperrectangle, S::AbstractSingleton; p::Real=2.0) =
-    distance(element(S), H; p=p)
+function distance(S1::AbstractSingleton, S2::AbstractSingleton; p::Real=2.0)
+    return distance(element(S1), element(S2); p=p)
+end
+function distance(S::AbstractSingleton, H::AbstractHyperrectangle; p::Real=2.0)
+    return distance(element(S), H; p=p)
+end
+function distance(H::AbstractHyperrectangle, S::AbstractSingleton; p::Real=2.0)
+    return distance(element(S), H; p=p)
+end

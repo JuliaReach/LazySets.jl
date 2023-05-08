@@ -22,12 +22,12 @@ a strict underapproximation even if the set can be exactly approximated using
 the given template.
 """
 function underapproximate(X::S, dirs::AbstractDirections;
-                          apply_convex_hull::Bool=false) where {N, S<:LazySet{N}}
+                          apply_convex_hull::Bool=false) where {N,S<:LazySet{N}}
     if !isconvextype(S)
         error("this underapproximation is only available for convex sets")
     end
     @assert dim(X) == dim(dirs) "the dimension of the set, $(dim(X)), does " *
-              "not match the dimension of the template directions, $(dim(dirs))"
+                                "not match the dimension of the template directions, $(dim(dirs))"
 
     vlist = Vector{Vector{N}}(undef, length(dirs))
     j = 0
@@ -162,55 +162,51 @@ An algorithm is described
 """
 function underapproximate(P::AbstractPolyhedron{N}, ::Type{Ellipsoid};
                           backend=default_sdp_solver(N),
-                          interior_point::AbstractVector{N}=chebyshev_center_radius(P)[1]
-                         ) where {N}
+                          interior_point::AbstractVector{N}=chebyshev_center_radius(P)[1]) where {N}
     require(@__MODULE__, :SetProg; fun_name="underapproximate")
     return _underapproximate_ellipsoid(P, Ellipsoid; backend=backend,
                                        interior_point=interior_point)
 end
 
 function load_setprog_underapproximate()
-return quote
+    return quote
+        function _underapproximate_ellipsoid(P::AbstractPolyhedron{N}, ::Type{Ellipsoid};
+                                             backend=default_sdp_solver(N),
+                                             interior_point::AbstractVector{N}=chebyshev_center_radius(P)[1]) where {N}
+            # create SDP model
+            model = Model(backend)
 
-function _underapproximate_ellipsoid(P::AbstractPolyhedron{N}, ::Type{Ellipsoid};
-                                     backend=default_sdp_solver(N),
-                                     interior_point::AbstractVector{N}=chebyshev_center_radius(P)[1]
-                                    ) where {N}
-    # create SDP model
-    model = Model(backend)
+            # create symbolic ellipsoid S
+            point = SetProg.InteriorPoint(interior_point)
+            @variable(model, S, SetProg.Ellipsoid(point=point))
 
-    # create symbolic ellipsoid S
-    point = SetProg.InteriorPoint(interior_point)
-    @variable(model, S, SetProg.Ellipsoid(point=point))
+            # add subset constraint
+            Q = polyhedron(P)  # convert P to a Polyhedra.polyhedron
+            @constraint(model, S ⊆ Q)
 
-    # add subset constraint
-    Q = polyhedron(P)  # convert P to a Polyhedra.polyhedron
-    @constraint(model, S ⊆ Q)
+            # add maximum-volume objective
+            @objective(model, Max, SetProg.nth_root(SetProg.volume(S)))
 
-    # add maximum-volume objective
-    @objective(model, Max, SetProg.nth_root(SetProg.volume(S)))
+            # solve SDP
+            optimize!(model)
 
-    # solve SDP
-    optimize!(model)
+            # obtain solution
+            set = SetProg.value(S)
 
-    # obtain solution
-    set = SetProg.value(S)
+            # convert to SetProg representation
+            E = SetProg.Sets.ellipsoid(set)
 
-    # convert to SetProg representation
-    E = SetProg.Sets.ellipsoid(set)
+            # convert result to a LazySets.Ellipsoid
+            return convert(Ellipsoid, E)
+        end
 
-    # convert result to a LazySets.Ellipsoid
-    return convert(Ellipsoid, E)
-end
+        function convert(::Type{<:Ellipsoid},
+                         TE::SetProg.Sets.Translation{<:SetProg.Sets.Ellipsoid})
+            return Ellipsoid(TE.c, inv(TE.set.Q))
+        end
 
-function convert(::Type{<:Ellipsoid},
-                 TE::SetProg.Sets.Translation{<:SetProg.Sets.Ellipsoid})
-    return Ellipsoid(TE.c, inv(TE.set.Q))
-end
-
-function convert(::Type{<:Ellipsoid}, E::SetProg.Sets.Ellipsoid)
-    return Ellipsoid(inv(E.Q))
-end
-
-end # quote
+        function convert(::Type{<:Ellipsoid}, E::SetProg.Sets.Ellipsoid)
+            return Ellipsoid(inv(E.Q))
+        end
+    end # quote
 end # load_setprog_underapproximate

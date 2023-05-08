@@ -36,8 +36,8 @@ function minkowski_sum(P::LazySet, Q::LazySet;
                         "but they are $n and $(dim(Q)) respectively"
 
     @assert is_polyhedral(P) && is_polyhedral(Q) "this function requires " *
-        "polyhedral sets; try overapproximating with an `HPolytope` or " *
-        "`HPolyhedron` first"
+                                                 "polyhedral sets; try overapproximating with an `HPolytope` or " *
+                                                 "`HPolyhedron` first"
 
     if n == 2 && isboundedtype(typeof(P)) && isboundedtype(typeof(Q))
         # use vertex representation
@@ -150,7 +150,7 @@ function _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
 
     A, b = tosimplehrep(P)
     C, d = tosimplehrep(Q)
-    return _minkowski_sum_hrep(A, b, C, d, backend=backend, algorithm=algorithm,
+    return _minkowski_sum_hrep(A, b, C, d; backend=backend, algorithm=algorithm,
                                prune=prune)
 end
 
@@ -160,7 +160,6 @@ end
 function _minkowski_sum_hrep(A::AbstractMatrix, b::AbstractVector,
                              C::AbstractMatrix, d::AbstractVector;
                              backend=nothing, algorithm=nothing, prune=true)
-
     if isnothing(backend)
         N = promote_type(eltype(A), eltype(b), eltype(C), eltype(d))
         backend = default_cddlib_backend(N)
@@ -178,8 +177,8 @@ function _minkowski_sum_hrep(A::AbstractMatrix, b::AbstractVector,
     E = [zeros(N, mP, nQ) A; C -C]
     f = [b; d]
     PQ = HPolyhedron(E, f)
-    PQ_cdd = polyhedron(PQ, backend=backend)
-    W_cdd = Polyhedra.eliminate(PQ_cdd, nP+1:2nP, algorithm)
+    PQ_cdd = polyhedron(PQ; backend=backend)
+    W_cdd = Polyhedra.eliminate(PQ_cdd, (nP + 1):(2nP), algorithm)
     W = convert(HPolyhedron, W_cdd)
     if prune
         success = remove_redundant_constraints!(W)
@@ -260,7 +259,7 @@ The singleton obtained by summing the elements in `X` and `Y`.
 """
 function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
     @assert dim(X) == dim(Y) "expected that the singletons have the same " *
-                  "dimension, but they are $(dim(X)) and $(dim(Y)) respectively"
+                             "dimension, but they are $(dim(X)) and $(dim(Y)) respectively"
     return Singleton(element(X) + element(Y))
 end
 
@@ -320,7 +319,7 @@ function _minkowski_sum_vpolygon(P::LazySet, Q::LazySet)
 end
 
 function _minkowski_sum_vrep_2d(vlistP::Vector{VT},
-                                vlistQ::Vector{VT}) where {N, VT<:AbstractVector{N}}
+                                vlistQ::Vector{VT}) where {N,VT<:AbstractVector{N}}
     mP = length(vlistP)
     mQ = length(vlistQ)
     if mP == 1 || mQ == 1
@@ -331,14 +330,14 @@ function _minkowski_sum_vrep_2d(vlistP::Vector{VT},
     ORIGIN = N[0, 0]
     k = _σ_helper(EAST, vlistP)
     j = _σ_helper(EAST, vlistQ)
-    R = Vector{VT}(undef, mP+mQ)
+    R = Vector{VT}(undef, mP + mQ)
     fill!(R, ORIGIN)
 
     i = 1
     while i <= size(R, 1)
-        P₁, P₂ = vlistP[(k-1)%mP + 1], vlistP[(k%mP + 1)]
+        P₁, P₂ = vlistP[(k - 1) % mP + 1], vlistP[(k % mP + 1)]
         P₁P₂ = P₂ - P₁
-        Q₁, Q₂ = vlistQ[(j-1)%mQ + 1], vlistQ[(j%mQ + 1)]
+        Q₁, Q₂ = vlistQ[(j - 1) % mQ + 1], vlistQ[(j % mQ + 1)]
         Q₁Q₂ = Q₂ - Q₁
         R[i] = P₁ + Q₁
         turn = right_turn(P₁P₂, Q₁Q₂, ORIGIN)
@@ -358,7 +357,7 @@ end
 
 # assume that at least one of the arguments has length 1
 function _minkowski_sum_vrep_2d_singleton(vlistP::Vector{VT},
-                                          vlistQ::Vector{VT}) where {N, VT<:AbstractVector{N}}
+                                          vlistQ::Vector{VT}) where {N,VT<:AbstractVector{N}}
     mP = length(vlistP)
     mQ = length(vlistQ)
 
@@ -409,13 +408,12 @@ the sum of all possible sums of vertices of `P1` and `P2`.
 function minkowski_sum(P1::VPolytope, P2::VPolytope;
                        apply_convex_hull::Bool=true, backend=nothing,
                        solver=nothing)
-
     @assert dim(P1) == dim(P2) "cannot compute the Minkowski sum of two " *
-        "polytopes of dimension $(dim(P1)) and $(dim(P2)), respectively"
+                               "polytopes of dimension $(dim(P1)) and $(dim(P2)), respectively"
 
     vlist1 = _vertices_list(P1, backend)
     vlist2 = _vertices_list(P2, backend)
-    Vout = _minkowski_sum_vrep_nd(vlist1, vlist2,
+    Vout = _minkowski_sum_vrep_nd(vlist1, vlist2;
                                   apply_convex_hull=apply_convex_hull,
                                   backend=backend, solver=solver)
     return VPolytope(Vout)
@@ -423,7 +421,7 @@ end
 
 function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
                                 apply_convex_hull::Bool=true, backend=nothing,
-                                solver=nothing) where {N, VT<:AbstractVector{N}}
+                                solver=nothing) where {N,VT<:AbstractVector{N}}
     n, m = length(vlist1), length(vlist2)
     Vout = Vector{VT}()
     sizehint!(Vout, n * m)
@@ -438,7 +436,7 @@ function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
             backend = default_polyhedra_backend_nd(N)
             solver = default_lp_solver_polyhedra(N)
         end
-        convex_hull!(Vout, backend=backend, solver=solver)
+        convex_hull!(Vout; backend=backend, solver=solver)
     end
     return Vout
 end
@@ -494,7 +492,7 @@ function minkowski_sum(P1::SimpleSparsePolynomialZonotope,
                        P2::SimpleSparsePolynomialZonotope)
     c = center(P1) + center(P2)
     G = hcat(genmat(P1), genmat(P2))
-    E = cat(expmat(P1), expmat(P2), dims=(1, 2))
+    E = cat(expmat(P1), expmat(P2); dims=(1, 2))
     return SimpleSparsePolynomialZonotope(c, G, E)
 end
 

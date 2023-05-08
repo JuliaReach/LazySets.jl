@@ -25,15 +25,15 @@ julia> Line2D([1., 1.], 1.)
 Line2D{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
 ```
 """
-struct Line2D{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+struct Line2D{N,VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     a::VN
     b::N
 
     # default constructor with length constraint
-    function Line2D(a::VN, b::N) where {N, VN<:AbstractVector{N}}
+    function Line2D(a::VN, b::N) where {N,VN<:AbstractVector{N}}
         @assert length(a) == 2 "a Line2D must be two-dimensional"
         @assert !iszero(a) "a line needs a non-zero normal vector"
-        return new{N, VN}(a, b)
+        return new{N,VN}(a, b)
     end
 end
 
@@ -81,7 +81,7 @@ function Line2D(p::AbstractVector, q::AbstractVector)
         return LazySets.Line2D(a, b)
     end
 
-    k = (y₁ - y₂)/(x₂ - x₁)
+    k = (y₁ - y₂) / (x₂ - x₁)
     a = [k, one(N)]
     b = y₁ + k * x₁
     return Line2D(a, b)
@@ -137,7 +137,7 @@ The support vector in the given direction, which is defined the same way as for
 the more general `Hyperplane`.
 """
 function σ(d::AbstractVector, L::Line2D)
-    v, unbounded = _σ_hyperplane_halfspace(d, L.a, L.b, error_unbounded=true,
+    v, unbounded = _σ_hyperplane_halfspace(d, L.a, L.b; error_unbounded=true,
                                            halfspace=false)
     return v
 end
@@ -217,7 +217,7 @@ function an_element(L::Line2D)
     i = @inbounds iszero(L.a[1]) ? 2 : 1
     x = Vector{N}(undef, 2)
     @inbounds x[i] = L.b / L.a[i]
-    @inbounds x[3-i] = zero(N)
+    @inbounds x[3 - i] = zero(N)
     return x
 end
 
@@ -241,7 +241,7 @@ The point ``x`` belongs to the line if and only if ``a⋅x = b`` holds.
 """
 function ∈(x::AbstractVector, L::Line2D)
     @assert length(x) == 2 "a $(length(x))-dimensional vector is " *
-        "incompatible with a 2-dimensional line"
+                           "incompatible with a 2-dimensional line"
     return _isapprox(dot(L.a, x), L.b)
 end
 
@@ -272,7 +272,7 @@ function rand(::Type{Line2D};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     @assert dim == 2 "cannot create a random Line2D of dimension $dim"
     rng = reseed(rng, seed)
     a = randn(rng, N, dim)

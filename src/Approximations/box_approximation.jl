@@ -13,19 +13,18 @@ dir_west(N, ::AbstractVector) = DIR_WEST(N)
 dir_south(N, ::AbstractVector) = DIR_SOUTH(N)
 
 function load_staticarrays_directions()
-return quote
+    return quote
+        const DIR_EAST_STATIC(N) = SVector{2}([one(N), zero(N)])
+        const DIR_NORTH_STATIC(N) = SVector{2}([zero(N), one(N)])
+        const DIR_WEST_STATIC(N) = SVector{2}([-one(N), zero(N)])
+        const DIR_SOUTH_STATIC(N) = SVector{2}([zero(N), -one(N)])
 
-const DIR_EAST_STATIC(N) = SVector{2}([one(N), zero(N)])
-const DIR_NORTH_STATIC(N) = SVector{2}([zero(N), one(N)])
-const DIR_WEST_STATIC(N) = SVector{2}([-one(N), zero(N)])
-const DIR_SOUTH_STATIC(N) = SVector{2}([zero(N), -one(N)])
-
-dir_east(N, ::SVector) = DIR_EAST_STATIC(N)
-dir_north(N, ::SVector) = DIR_NORTH_STATIC(N)
-dir_west(N, ::SVector) = DIR_WEST_STATIC(N)
-dir_south(N, ::SVector) = DIR_SOUTH_STATIC(N)
-
-end end  # quote / load_staticarrays_directions
+        dir_east(N, ::SVector) = DIR_EAST_STATIC(N)
+        dir_north(N, ::SVector) = DIR_NORTH_STATIC(N)
+        dir_west(N, ::SVector) = DIR_WEST_STATIC(N)
+        dir_south(N, ::SVector) = DIR_SOUTH_STATIC(N)
+    end
+end  # quote / load_staticarrays_directions
 
 """
     box_approximation(S::LazySet{N}) where {N}
@@ -113,7 +112,7 @@ This method falls back to the `convert` method. Since the sets wrapped by the
 Cartesian product array are hyperrectangles, this can be done without
 overapproximation.
 """
-function box_approximation(S::CartesianProductArray{N, <:AbstractHyperrectangle}) where {N}
+function box_approximation(S::CartesianProductArray{N,<:AbstractHyperrectangle}) where {N}
     return convert(Hyperrectangle, S)
 end
 
@@ -137,7 +136,7 @@ This method falls back to the `convert` method. Since the sets wrapped by the
 Cartesian product array are hyperrectangles, this can be done without
 overapproximation.
 """
-function box_approximation(S::CartesianProduct{N, <:AbstractHyperrectangle, <:AbstractHyperrectangle}) where {N}
+function box_approximation(S::CartesianProduct{N,<:AbstractHyperrectangle,<:AbstractHyperrectangle}) where {N}
     return convert(Hyperrectangle, S)
 end
 
@@ -162,7 +161,7 @@ a tight hyperrectangular overapproximation of `M * H` is obtained by
 transforming `c ↦ M*c` and `r ↦ abs.(M) * r`, where `abs.(⋅)` denotes the
 element-wise absolute-value operator.
 """
-function box_approximation(lm::LinearMap{N, <:AbstractHyperrectangle}) where {N}
+function box_approximation(lm::LinearMap{N,<:AbstractHyperrectangle}) where {N}
     M, X = lm.M, lm.X
     c = M * center(X)
     r = abs.(M) * radius_hyperrectangle(X)
@@ -222,7 +221,7 @@ hybrid systems using a combination of zonotopes and polytopes.* Nonlinear
 analysis: hybrid systems, 4(2), 233-249.
 """
 function box_approximation(Z::AbstractZonotope)
-    r = sum(abs, genmat(Z), dims=2)[:]
+    r = sum(abs, genmat(Z); dims=2)[:]
     return Hyperrectangle(center(Z), r)
 end
 
@@ -247,14 +246,14 @@ and `v` is the translation vector, a tight hyperrectangular overapproximation of
 `M * H + v` is obtained by transforming `c ↦ M*c+v` and `r ↦ abs.(M) * r`, where
 `abs.(⋅)` denotes the element-wise absolute-value operator.
 """
-function box_approximation(am::AbstractAffineMap{N, <:AbstractHyperrectangle}) where {N}
+function box_approximation(am::AbstractAffineMap{N,<:AbstractHyperrectangle}) where {N}
     M, X, v = matrix(am), set(am), vector(am)
     c = M * center(X) + v
     r = abs.(M) * radius_hyperrectangle(X)
     return Hyperrectangle(c, r)
 end
 
-function box_approximation(P::Union{VPolytope, VPolygon})
+function box_approximation(P::Union{VPolytope,VPolygon})
     n = dim(P)
     vlist = vertices_list(P)
     @assert !isempty(vlist) "cannot overapproximate an empty polytope"
@@ -292,7 +291,7 @@ function box_approximation(X::AbstractCentrallySymmetric{N}) where {N}
 end
 
 # balls result in a hypercube with the same radius
-function box_approximation(B::Union{Ball1, Ball2, BallInf, Ballp})
+function box_approximation(B::Union{Ball1,Ball2,BallInf,Ballp})
     return Hyperrectangle(center(B), fill(B.radius, dim(B)))
 end
 

@@ -102,6 +102,8 @@ returns the points ordered in counter-clockwise fashion.
 
 ```julia
 julia> Singleton(v[1]) ∈ VPolygon(hull)
+```
+```
 ERROR: cannot make a point-in-set check if the left-hand side is a set; either
 check for set inclusion, as in `S ⊆ X`, or check for membership, as in
 `element(S) ∈ X` (the results are equivalent but the implementations may differ)

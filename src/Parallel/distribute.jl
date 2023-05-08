@@ -85,6 +85,6 @@ function _prange(v::SharedVector)
         return 1:0
     end
     nchunks = length(procs(v))
-    splits = [round(Int, s) for s in range(0, stop=length(v), length=nchunks+1)]
-    return splits[idx]+1:splits[idx+1]
+    splits = [round(Int, s) for s in range(0; stop=length(v), length=nchunks + 1)]
+    return (splits[idx] + 1):splits[idx + 1]
 end

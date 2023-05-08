@@ -72,7 +72,7 @@ for N in [Float64, Rational{Int}, Float32]
     # conversion
     @test convert(Interval, RI1) == Interval(N(0), N(1))
     @test convert(Hyperrectangle, RB1) ==
-                  Hyperrectangle(low=N[0, 0], high=N[3, 3])
+          Hyperrectangle(; low=N[0, 0], high=N[3, 3])
 
     # support function
     # upper right quadrant
@@ -120,7 +120,7 @@ for N in [Float64]
     for d in [N[1, 0], N[-1, 0], N[0, 1]]
         @test ρ(d, RB) ≈ ρ(d, B)
     end
-#     @test ρ(N[0, -1], RB) ≈ N(0)
+    #     @test ρ(N[0, -1], RB) ≈ N(0)
     @test N(0) ≤ ρ(N[0, -1], RB) ≤ N(1e-9)
     # all four quadrants
     P = VPolygon([N[-1, 1], N[-1.5, 0.5], N[1.5, 0.5], N[1, -0.5]])
@@ -128,11 +128,11 @@ for N in [Float64]
     @test ρ(N[1, 0], RP) ≈ N(1.5)
     @test ρ(N[0, 1], RP) ≈ N(1)
     @test ρ(N[1, 1], RP) ≈ ρ(N[1, 1], P) == N(2)
-#     @test ρ(N[-1, 0], RP) ≈ N(0)
+    #     @test ρ(N[-1, 0], RP) ≈ N(0)
     @test N(0) ≤ ρ(N[-1, 0], RP) ≤ N(1e-8)
-#     @test ρ(N[0, -1], RP) ≈ N(0)
+    #     @test ρ(N[0, -1], RP) ≈ N(0)
     @test N(0) ≤ ρ(N[0, -1], RP) ≤ N(1e-8)
-#     @test ρ(N[-1, -1], RP) ≈ N(0)
+    #     @test ρ(N[-1, -1], RP) ≈ N(0)
     @test N(0) ≤ ρ(N[-1, -1], RP) ≤ N(1.1e-1)
 
     @test σ(N[1, 1], Rectification(Ball1(N[0, 0], N(1)))) == N[0, 1]

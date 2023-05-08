@@ -2,7 +2,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # π/2 trigonometric rotation
     b = BallInf(N[1, 2], N(1))
-    M = N[0 -1 ; 1 0]
+    M = N[0 -1; 1 0]
 
     # construction
     lm1 = InverseLinearMap(M, b)
@@ -31,7 +31,8 @@ for N in [Float64, Rational{Int}, Float32]
     ilm1 = InverseLinearMap(N(5), b)
     ilm2 = InverseLinearMap(Matrix(ilm1.M), b)
     @test ilm1 == ilm2
-    @test overapproximate(concretize(ilm2.M*ilm2), Hyperrectangle) == overapproximate(b, Hyperrectangle)
+    @test overapproximate(concretize(ilm2.M * ilm2), Hyperrectangle) ==
+          overapproximate(b, Hyperrectangle)
 
     # emptiness check
     @test !isempty(ilm1)

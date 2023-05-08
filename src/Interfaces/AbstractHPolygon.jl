@@ -157,8 +157,8 @@ function vertices_list(P::AbstractHPolygon{N};
     if n == 0
         return points
     end
-    @inbounds for i in 1:n-1
-        cap = intersection(Line2D(P.constraints[i]), Line2D(P.constraints[i+1]))
+    @inbounds for i in 1:(n - 1)
+        cap = intersection(Line2D(P.constraints[i]), Line2D(P.constraints[i + 1]))
         if cap isa EmptySet
             return Vector{Vector{N}}()
         else
@@ -285,11 +285,11 @@ function rand(::Type{HPOLYGON};
               N::Type=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing,
+              seed::Union{Int,Nothing}=nothing,
               num_constraints::Int=-1) where {HPOLYGON<:AbstractHPolygon}
     @assert dim == 2 "cannot create a random $HPOLYGON of dimension $dim"
     @assert num_constraints < 0 || num_constraints >= 3 "cannot construct a " *
-        "random $HPOLYGON with only $num_constraints constraints"
+                                                        "random $HPOLYGON with only $num_constraints constraints"
     rng = reseed(rng, seed)
     vpolygon = rand(VPolygon; N=N, dim=dim, rng=rng, seed=seed,
                     num_vertices=num_constraints)
@@ -335,8 +335,8 @@ function isredundant(cmid::HalfSpace, cright::HalfSpace, cleft::HalfSpace)
             if samedir(cright.a, cmid.a)[1] && samedir(cleft.a, cmid.a)[1]
                 # all three constraints have the same direction
                 # constraint is redundant unless it is tighter than the others
-                return !is_tighter_same_dir_2D(cmid, cright, strict=true) &&
-                       !is_tighter_same_dir_2D(cmid, cleft, strict=true)
+                return !is_tighter_same_dir_2D(cmid, cright; strict=true) &&
+                       !is_tighter_same_dir_2D(cmid, cleft; strict=true)
             else
                 # surrounding constraints have the same direction but the
                 # central constraint does not => corner case with just three
@@ -351,9 +351,9 @@ function isredundant(cmid::HalfSpace, cright::HalfSpace, cleft::HalfSpace)
     end
     # check if the constraint has the same direction as one of the two
     if samedir(cright.a, cmid.a)[1]
-        return !is_tighter_same_dir_2D(cmid, cright, strict=true)
+        return !is_tighter_same_dir_2D(cmid, cright; strict=true)
     elseif samedir(cleft.a, cmid.a)[1]
-        return !is_tighter_same_dir_2D(cmid, cleft, strict=true)
+        return !is_tighter_same_dir_2D(cmid, cleft; strict=true)
     elseif samedir_check
         # not the same direction => constraint is not redundant
         return false
@@ -397,7 +397,7 @@ function remove_redundant_constraints!(P::AbstractHPolygon)
     while length(C) >= 3 && go_on
         cmid = C[i]
         if i < length(C)
-            cleft = C[i+1]
+            cleft = C[i + 1]
         elseif i == length(C)
             cleft = C[1]
             go_on = false
@@ -406,7 +406,7 @@ function remove_redundant_constraints!(P::AbstractHPolygon)
             deleteat!(C, i)
         else
             i += 1
-            cright = C[i-1] # update cright (updates less often than cmid/cleft)
+            cright = C[i - 1] # update cright (updates less often than cmid/cleft)
         end
     end
     return P
@@ -433,7 +433,7 @@ constraints sorted by their normal directions.
 function addconstraint!(P::AbstractHPolygon, constraint::HalfSpace;
                         linear_search::Bool=length(P.constraints) < BINARY_SEARCH_THRESHOLD,
                         prune::Bool=true)
-    return addconstraint!(P.constraints, constraint,
+    return addconstraint!(P.constraints, constraint;
                           linear_search=linear_search, prune=prune)
 end
 
@@ -477,7 +477,7 @@ function addconstraint!(constraints::Vector{LC}, new_constraint::HalfSpace;
             end
         else
             # binary search
-            k = binary_search_constraints(d, constraints, choose_lower=true)
+            k = binary_search_constraints(d, constraints; choose_lower=true)
         end
     end
 
@@ -513,7 +513,7 @@ function addconstraint!(constraints::Vector{LC}, new_constraint::HalfSpace;
             center = k == m ? 1 : k + 1
             above = center == m ? 1 : center + 1
             if isredundant(constraints[center], new_constraint,
-                            constraints[above])
+                           constraints[above])
                 deleteat!(constraints, center)
                 if center < k
                     k -= 1
@@ -524,7 +524,7 @@ function addconstraint!(constraints::Vector{LC}, new_constraint::HalfSpace;
             end
         end
     else
-        insert!(constraints, k+1, new_constraint)
+        insert!(constraints, k + 1, new_constraint)
     end
     return nothing
 end
@@ -556,7 +556,7 @@ setting.
 """
 function binary_search_constraints(d::AbstractVector{N},
                                    constraints::Vector{<:HalfSpace{N}};
-                                   start_index::Int=div(length(constraints)+1, 2),
+                                   start_index::Int=div(length(constraints) + 1, 2),
                                    choose_lower::Bool=false) where {N}
     lower = 1
     n = length(constraints)

@@ -19,8 +19,8 @@ The `EmptySet` is the absorbing element for `IntersectionArray`.
 The intersection preserves convexity: if the set arguments are convex, then
 their intersection is convex as well.
 """
-struct IntersectionArray{N, S<:LazySet{N}} <: LazySet{N}
-   array::Vector{S}
+struct IntersectionArray{N,S<:LazySet{N}} <: LazySet{N}
+    array::Vector{S}
 end
 
 """
@@ -34,13 +34,13 @@ Alias for the n-ary lazy intersection.
 ∩(Xs::Vector{<:LazySet}) = IntersectionArray(Xs)
 
 isoperationtype(::Type{<:IntersectionArray}) = true
-isconvextype(::Type{IntersectionArray{N, S}}) where {N, S} = isconvextype(S)
+isconvextype(::Type{IntersectionArray{N,S}}) where {N,S} = isconvextype(S)
 
 # constructor for an empty sum with optional size hint and numeric type
 function IntersectionArray(n::Int=0, N::Type=Float64)
-   arr = Vector{LazySet{N}}()
-   sizehint!(arr, n)
-   return IntersectionArray(arr)
+    arr = Vector{LazySet{N}}()
+    sizehint!(arr, n)
+    return IntersectionArray(arr)
 end
 
 # Universe is the neutral element for IntersectionArray
@@ -66,7 +66,7 @@ Return the array of an intersection of a finite number of sets.
 The array of an intersection of a finite number of sets.
 """
 function array(ia::IntersectionArray)
-   return ia.array
+    return ia.array
 end
 
 """
@@ -84,7 +84,7 @@ The ambient dimension of the intersection of a finite number of sets, or `0` if
 there is no set in the array.
 """
 function dim(ia::IntersectionArray)
-   return length(ia.array) == 0 ? 0 : dim(ia.array[1])
+    return length(ia.array) == 0 ? 0 : dim(ia.array[1])
 end
 
 """
@@ -138,7 +138,7 @@ function isbounded(ia::IntersectionArray)
     return _isbounded_unit_dimensions(ia)
 end
 
-function isboundedtype(::Type{<:IntersectionArray{N, S}}) where {N, S}
+function isboundedtype(::Type{<:IntersectionArray{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
@@ -200,7 +200,7 @@ redundant constraints.
 """
 function constraints_list(ia::IntersectionArray)
     N = eltype(ia)
-    constraints = Vector{HalfSpace{N, Vector{N}}}() # TODO: use vector type of ia
+    constraints = Vector{HalfSpace{N,Vector{N}}}() # TODO: use vector type of ia
     for X in array(ia)
         clist_X = _normal_Vector(X)
         append!(constraints, clist_X)

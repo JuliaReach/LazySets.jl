@@ -1,34 +1,32 @@
 export plot3d, plot3d!
 
 function load_polyhedra_mesh()
-return quote
-
-using .Polyhedra: Mesh
-
-end end  # quote / function load_polyhedra_mesh()
+    return quote
+        using .Polyhedra: Mesh
+    end
+end  # quote / function load_polyhedra_mesh()
 
 function load_makie()
-return quote
-
-using .Makie: mesh, mesh!
-using .Makie: Automatic
-
-end end  # quote / function load_makie()
+    return quote
+        using .Makie: mesh, mesh!
+        using .Makie: Automatic
+    end
+end  # quote / function load_makie()
 
 # helper function for 3D plotting; converts S to a polytope in H-representation
 function _plot3d_helper(S::LazySet, backend)
     @assert dim(S) <= 3 "plot3d can only be used to plot sets of dimension 3 " *
-        "(or lower), but the given set is $(dim(S))-dimensional"
+                        "(or lower), but the given set is $(dim(S))-dimensional"
 
     @assert applicable(constraints_list, S) "plot3d requires that the list " *
-        "of constraints of `S`, `constraints_list(S)` is applicable; try " *
-        "overapproximating with an `HPolytope` first"
+                                            "of constraints of `S`, `constraints_list(S)` is applicable; try " *
+                                            "overapproximating with an `HPolytope` first"
 
     @assert isbounded(S) "plot3d requires a bounded set"
 
     P = HPolytope(constraints_list(S))
     remove_redundant_constraints!(P)
-    P_poly = polyhedron(P, backend=backend)
+    P_poly = polyhedron(P; backend=backend)
     P_poly_mesh = Mesh(P_poly)
     return P_poly_mesh
 end
@@ -123,7 +121,7 @@ function plot3d(S::LazySet; backend=default_polyhedra_backend(S), alpha=1.0,
         colorrange = Automatic()
     end
     P_poly_mesh = _plot3d_helper(S, backend)
-    return mesh(P_poly_mesh, alpha=alpha, color=color, colormap=colormap,
+    return mesh(P_poly_mesh; alpha=alpha, color=color, colormap=colormap,
                 colorrange=colorrange, interpolate=interpolate,
                 linewidth=linewidth, transparency=transparency, visible=visible)
 end
@@ -156,7 +154,7 @@ function plot3d!(S::LazySet; backend=default_polyhedra_backend(S), alpha=1.0,
         colorrange = Automatic()
     end
     P_poly_mesh = _plot3d_helper(S, backend)
-    return mesh!(P_poly_mesh, alpha=alpha, color=color, colormap=colormap,
+    return mesh!(P_poly_mesh; alpha=alpha, color=color, colormap=colormap,
                  colorrange=colorrange, interpolate=interpolate,
                  linewidth=linewidth, transparency=transparency,
                  visible=visible)

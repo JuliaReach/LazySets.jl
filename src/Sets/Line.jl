@@ -33,16 +33,16 @@ julia> Line([-1, 2, 3.], [3, 0, -1.])
 Line{Float64, Vector{Float64}}([-1.0, 2.0, 3.0], [3.0, 0.0, -1.0])
 ```
 """
-struct Line{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+struct Line{N,VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     p::VN
     d::VN
 
     # default constructor with length constraint
-    function Line(p::VN, d::VN; check_direction::Bool=true) where {N, VN<:AbstractVector{N}}
+    function Line(p::VN, d::VN; check_direction::Bool=true) where {N,VN<:AbstractVector{N}}
         if check_direction
             @assert !iszero(d) "a line needs a non-zero direction vector"
         end
-        return new{N, VN}(p, d)
+        return new{N,VN}(p, d)
     end
 end
 
@@ -95,7 +95,7 @@ A `Line` that satisfies ``a ⋅ x = b``.
 """
 function Line(a::AbstractVector{N}, b::N; normalize=false) where {N}
     @assert length(a) == 2 "expected a normal vector of length two, but it " *
-        "is $(length(a))-dimensional"
+                           "is $(length(a))-dimensional"
 
     got_horizontal = iszero(a[1])
     got_vertical = iszero(a[2])
@@ -118,7 +118,7 @@ function Line(a::AbstractVector{N}, b::N; normalize=false) where {N}
         p = [zero(N), α]
         q = [one(N), α - μ]
     end
-    return Line(from=p, to=q, normalize=normalize)
+    return Line(; from=p, to=q, normalize=normalize)
 end
 
 """
@@ -179,7 +179,7 @@ A line whose direction has unit norm w.r.t. the given `p`-norm.
 See also [`normalize!(::Line, ::Real)`](@ref) for the in-place version.
 """
 function normalize(L::Line{N}, p::Real=N(2)) where {N}
-    normalize!(copy(L), p)
+    return normalize!(copy(L), p)
 end
 
 """
@@ -205,19 +205,19 @@ function constraints_list(L::Line)
     @assert m == n - 1 "expected $(n - 1) normal half-spaces, got $m"
 
     N, VN = _parameters(L)
-    out = Vector{HalfSpace{N, VN}}(undef, 2m)
+    out = Vector{HalfSpace{N,VN}}(undef, 2m)
     idx = 1
     @inbounds for j in 1:m
         Kj = K[:, j]
         b = dot(Kj, p)
         out[idx] = HalfSpace(Kj, b)
-        out[idx+1] = HalfSpace(-Kj, -b)
+        out[idx + 1] = HalfSpace(-Kj, -b)
         idx += 2
     end
     return out
 end
 
-function _parameters(L::Line{N, VN}) where {N, VN}
+function _parameters(L::Line{N,VN}) where {N,VN}
     return (N, VN)
 end
 
@@ -278,7 +278,7 @@ function σ(d::AbstractVector, L::Line)
         return L.p
     else
         throw(ArgumentError("the support vector is undefined because the " *
-            "line is unbounded in the given direction"))
+                            "line is unbounded in the given direction"))
     end
 end
 
@@ -356,7 +356,7 @@ proportional to the direction ``d``.
 """
 function ∈(x::AbstractVector, L::Line)
     @assert length(x) == dim(L) "expected the point and the line to have the " *
-        "same dimension, but they are $(length(x)) and $(dim(L)) respectively"
+                                "same dimension, but they are $(length(x)) and $(dim(L)) respectively"
 
     # the following check is necessary because the zero vector is a special case
     _isapprox(x, L.p) && return true
@@ -390,8 +390,7 @@ function rand(::Type{Line};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
-
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     d = randn(rng, N, dim)
     while iszero(d)
@@ -480,7 +479,7 @@ A scalar representing the distance between `x` and the line `L`.
 @commutative function distance(x::AbstractVector, L::Line; p::Real=2.0)
     d = L.d  # direction of the line
     t = dot(x - L.p, d) / dot(d, d)
-    return distance(x, L.p + t*d; p=p)
+    return distance(x, L.p + t * d; p=p)
 end
 
 """

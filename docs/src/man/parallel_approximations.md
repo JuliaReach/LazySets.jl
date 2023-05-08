@@ -20,12 +20,12 @@ sequential version or `LazySets.Parallel.box_approximation` for the parallel ver
 The parallelization strategy that is available uses processes. To set the number
 of processes `N`, use the flag `-p N` at julia startup. For example, do
 
-```julia
+```bash
 $ julia -p 4
 ```
 to launch `4` additional local worker julia processes. Use the keyword `auto`,
 as in
-```julia
+```bash
 $ julia -p auto
 ```
 to launch as many workers as the number of local CPU cores.
@@ -87,7 +87,8 @@ using BenchmarkTools
 for n in [50, 100, 500, 1000]
     @btime res = Approximations.symmetric_interval_hull(Y($n));
 end
-
+```
+```
   59.103 ms (11554 allocations: 25.89 MiB)
   129.453 ms (23118 allocations: 54.16 MiB)
   1.943 s (115530 allocations: 381.26 MiB)
@@ -103,7 +104,8 @@ import LazySets.Parallel
 for n in [50, 100, 500, 1000]
     @btime LazySets.Parallel.symmetric_interval_hull($Y($n));
 end
-
+```
+```
   6.846 ms (2550 allocations: 160.59 KiB)
   13.544 ms (3528 allocations: 271.94 KiB)
   387.556 ms (11155 allocations: 2.51 MiB)
@@ -124,6 +126,8 @@ with the following specifications:
 
 ```julia
 julia> versioninfo()
+```
+```
 Julia Version 1.0.2
 Commit d789231e99 (2018-11-08 20:11 UTC)
 Platform Info:

@@ -17,16 +17,18 @@ The matrix `M` is typically a rotation matrix and hence invertible, but this
 type does not require that and any matrix that is compatible with the dimension
 of `box` is allowed.
 """
-struct RotatedHyperrectangle{N, MN<:AbstractMatrix{N},
+struct RotatedHyperrectangle{N,MN<:AbstractMatrix{N},
                              HT<:AbstractHyperrectangle{N}} <: AbstractZonotope{N}
     M::MN
     box::HT
 
-    function RotatedHyperrectangle(M::MN, box::HT) where {N,
-            MN<:AbstractMatrix{N}, HT<:AbstractHyperrectangle{N}}
+    function RotatedHyperrectangle(M::MN,
+                                   box::HT) where {N,
+                                                   MN<:AbstractMatrix{N},
+                                                   HT<:AbstractHyperrectangle{N}}
         @assert size(M, 2) == dim(box) "a hyperrectangle of dimension " *
-            "$(dim(box)) is incompatible with a matrix of dimension $(size(M))"
-        return new{N, MN, HT}(M, box)
+                                       "$(dim(box)) is incompatible with a matrix of dimension $(size(M))"
+        return new{N,MN,HT}(M, box)
     end
 end
 
@@ -159,7 +161,7 @@ square linear maps to it.
 """
 function linear_map(M::AbstractMatrix, R::RotatedHyperrectangle)
     @assert size(M, 2) == dim(R) "a linear map of size $(size(M)) is " *
-        "incompatible with a set of dimension $(dim(R))"
+                                 "incompatible with a set of dimension $(dim(R))"
 
     return RotatedHyperrectangle(M * R.M, R.box)
 end

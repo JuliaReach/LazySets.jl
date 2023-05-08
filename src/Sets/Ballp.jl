@@ -54,13 +54,13 @@ julia> σ([1.0, 2, 3, 4, 5], B)
  0.33790011086518895
 ```
 """
-struct Ballp{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
+struct Ballp{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
     p::N
     center::VN
     radius::N
 
     # default constructor with domain constraint for radius and p
-    function Ballp(p::N, center::VN, radius::N) where {N, VN<:AbstractVector{N}}
+    function Ballp(p::N, center::VN, radius::N) where {N,VN<:AbstractVector{N}}
         @assert radius >= zero(N) "the radius must not be negative"
         @assert p >= one(N) "p must not be less than 1"
         if p == N(Inf)
@@ -70,7 +70,7 @@ struct Ballp{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractCentrallySymmet
         elseif p == one(N)
             return Ball1(center, radius)
         else
-            return new{N, VN}(p, center, radius)
+            return new{N,VN}(p, center, radius)
         end
     end
 end
@@ -130,11 +130,11 @@ otherwise, for all ``i = 1, …, n``.
 """
 function σ(d::AbstractVector, B::Ballp)
     p = B.p
-    q = p / ( p - 1)
+    q = p / (p - 1)
     v = similar(d)
     N = promote_type(eltype(d), eltype(B))
     @inbounds for (i, di) in enumerate(d)
-        v[i] = di == zero(N) ? di : abs.(di).^q / di
+        v[i] = di == zero(N) ? di : abs.(di) .^ q / di
     end
     vnorm = norm(v, p)
     if isapproxzero(vnorm)
@@ -216,13 +216,13 @@ true
 """
 function ∈(x::AbstractVector, B::Ballp)
     @assert length(x) == dim(B) "a vector of length $(length(x)) is " *
-        "incompatible with a set of dimension $(dim(B))"
+                                "incompatible with a set of dimension $(dim(B))"
     N = promote_type(eltype(x), eltype(B))
     sum = zero(N)
     for i in eachindex(x)
         sum += abs(B.center[i] - x[i])^B.p
     end
-    return _leq(sum^(one(N)/B.p), B.radius)
+    return _leq(sum^(one(N) / B.p), B.radius)
 end
 
 """
@@ -255,7 +255,7 @@ function rand(::Type{Ballp};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     p = one(N) + abs(randn(rng, N))
     center = randn(rng, N, dim)

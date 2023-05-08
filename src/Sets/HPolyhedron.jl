@@ -30,34 +30,34 @@ bounded (see also [`HPolytope`](@ref), which assumes boundedness).
 
 - `constraints` -- vector of linear constraints
 """
-struct HPolyhedron{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
-    constraints::Vector{HalfSpace{N, VN}}
+struct HPolyhedron{N,VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    constraints::Vector{HalfSpace{N,VN}}
 
-    function HPolyhedron(constraints::Vector{HalfSpace{N, VN}}) where {N, VN<:AbstractVector{N}}
-        return new{N, VN}(constraints)
+    function HPolyhedron(constraints::Vector{HalfSpace{N,VN}}) where {N,VN<:AbstractVector{N}}
+        return new{N,VN}(constraints)
     end
 end
 
 isoperationtype(::Type{<:HPolyhedron}) = false
 
 # constructor with no constraints
-function HPolyhedron{N, VN}() where {N, VN<:AbstractVector{N}}
-    HPolyhedron(Vector{HalfSpace{N, VN}}())
+function HPolyhedron{N,VN}() where {N,VN<:AbstractVector{N}}
+    return HPolyhedron(Vector{HalfSpace{N,VN}}())
 end
 
 # constructor with no constraints, given only the numeric type
 function HPolyhedron{N}() where {N}
-    HPolyhedron(Vector{HalfSpace{N, Vector{N}}}())
+    return HPolyhedron(Vector{HalfSpace{N,Vector{N}}}())
 end
 
 # constructor without explicit numeric type, defaults to Float64
 function HPolyhedron()
-    HPolyhedron{Float64}()
+    return HPolyhedron{Float64}()
 end
 
 # constructor with constraints of mixed type
 function HPolyhedron(constraints::Vector{<:HalfSpace})
-    HPolyhedron(_normal_Vector(constraints))
+    return HPolyhedron(_normal_Vector(constraints))
 end
 
 # constructor from a simple constraint representation
@@ -66,7 +66,7 @@ function HPolyhedron(A::AbstractMatrix, b::AbstractVector)
 end
 
 # convenience union type
-const HPoly{N} = Union{HPolytope{N}, HPolyhedron{N}}
+const HPoly{N} = Union{HPolytope{N},HPolyhedron{N}}
 
 """
     dim(P::HPoly)
@@ -107,7 +107,7 @@ If a polytope is unbounded in the given direction, we throw an error.
 If a polyhedron is unbounded in the given direction, the result is `Inf`.
 """
 function ρ(d::AbstractVector{M}, P::HPoly{N};
-           solver=default_lp_solver(M, N)) where {M, N}
+           solver=default_lp_solver(M, N)) where {M,N}
     lp, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope
@@ -141,7 +141,7 @@ If a polyhedron is unbounded in the given direction, the result contains `±Inf`
 entries.
 """
 function σ(d::AbstractVector{M}, P::HPoly{N};
-           solver=default_lp_solver(M, N)) where {M, N}
+           solver=default_lp_solver(M, N)) where {M,N}
     lp, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope
@@ -192,7 +192,7 @@ function σ_helper(d::AbstractVector, P::HPoly, solver)
         l = -Inf
         u = Inf
         lp = linprog(c, A, sense, b, l, u, solver)
-        if is_lp_infeasible(lp.status, strict=true)
+        if is_lp_infeasible(lp.status; strict=true)
             error("the support vector is undefined because the polyhedron is " *
                   "empty")
         elseif is_lp_unbounded(lp.status)
@@ -233,7 +233,7 @@ function rand(::Type{HPolyhedron};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     P = rand(HPolytope; N=N, dim=dim, rng=rng)
     constraints_P = constraints_list(P)
@@ -350,7 +350,7 @@ See `remove_redundant_constraints!(::AbstractVector{<:HalfSpace})` for details.
 """
 function remove_redundant_constraints(P::HPoly; backend=nothing)
     Pred = copy(P)
-    if remove_redundant_constraints!(Pred, backend=backend)
+    if remove_redundant_constraints!(Pred; backend=backend)
         return Pred
     else # the polyhedron P is empty
         N = eltype(P)
@@ -385,7 +385,7 @@ If `backend` is `nothing`, it defaults to `default_lp_solver(N)`.
 See `remove_redundant_constraints!(::AbstractVector{<:HalfSpace})` for details.
 """
 function remove_redundant_constraints!(P::HPoly; backend=nothing)
-    remove_redundant_constraints!(P.constraints, backend=backend)
+    return remove_redundant_constraints!(P.constraints; backend=backend)
 end
 
 """
@@ -470,43 +470,43 @@ function isempty(P::HPoly,
 end
 
 function load_polyhedra_hpolyhedron() # function to be loaded by Requires
-return quote
-# see the interface file init_Polyhedra.jl for the imports
+    return quote
+        # see the interface file init_Polyhedra.jl for the imports
 
-"""
-     convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
+        """
+             convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
 
-Convert an `HRep` polyhedron from `Polyhedra.jl` to a polyhedron in constraint
-representation .
+        Convert an `HRep` polyhedron from `Polyhedra.jl` to a polyhedron in constraint
+        representation .
 
-### Input
+        ### Input
 
-- `HPolyhedron` -- target type
-- `P`           -- `HRep` polyhedron
+        - `HPolyhedron` -- target type
+        - `P`           -- `HRep` polyhedron
 
-### Output
+        ### Output
 
-An `HPolyhedron`.
-"""
-function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
-    VN = Polyhedra.hvectortype(P)
-    constraints = Vector{HalfSpace{N, VN}}()
-    for hi in Polyhedra.allhalfspaces(P)
-        a, b = hi.a, hi.β
-        if isapproxzero(norm(a))
-            continue
+        An `HPolyhedron`.
+        """
+        function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
+            VN = Polyhedra.hvectortype(P)
+            constraints = Vector{HalfSpace{N,VN}}()
+            for hi in Polyhedra.allhalfspaces(P)
+                a, b = hi.a, hi.β
+                if isapproxzero(norm(a))
+                    continue
+                end
+                push!(constraints, HalfSpace(a, b))
+            end
+            return HPolyhedron(constraints)
         end
-        push!(constraints, HalfSpace(a, b))
+
+        # convenience conversion method
+        function HPolyhedron(P::HRep{N}) where {N}
+            return convert(HPolyhedron, P)
+        end
     end
-    return HPolyhedron(constraints)
-end
-
-# convenience conversion method
-function HPolyhedron(P::HRep{N}) where {N}
-    convert(HPolyhedron, P)
-end
-
-end end  # quote / load_polyhedra_hpolyhedron()
+end  # quote / load_polyhedra_hpolyhedron()
 
 function is_hyperplanar(P::HPolyhedron)
     clist = P.constraints
@@ -527,79 +527,81 @@ function is_hyperplanar(P::HPolyhedron)
 end
 
 function load_symbolics_hpolyhedron()
-return quote
+    return quote
+        """
+            HPolyhedron(expr::Vector{<:Num}, vars=_get_variables(expr);
+                        N::Type{<:Real}=Float64)
 
-"""
-    HPolyhedron(expr::Vector{<:Num}, vars=_get_variables(expr);
-                N::Type{<:Real}=Float64)
+        Return a polyhedron in constraint representation given by a list of symbolic
+        expressions.
 
-Return a polyhedron in constraint representation given by a list of symbolic
-expressions.
+        ### Input
 
-### Input
+        - `expr` -- vector of symbolic expressions that describes each half-space
+        - `vars` -- (optional, default: `_get_variables(expr)`), if an array of
+                    variables is given, use those as the ambient variables in the set
+                    with respect to which derivations take place; otherwise, use only
+                    the variables that appear in the given expression (but be careful
+                    because the order may be incorrect; it is advised to always pass
+                    `vars` explicitly)
+        - `N`    -- (optional, default: `Float64`) the numeric type of the returned set
 
-- `expr` -- vector of symbolic expressions that describes each half-space
-- `vars` -- (optional, default: `_get_variables(expr)`), if an array of
-            variables is given, use those as the ambient variables in the set
-            with respect to which derivations take place; otherwise, use only
-            the variables that appear in the given expression (but be careful
-            because the order may be incorrect; it is advised to always pass
-            `vars` explicitly)
-- `N`    -- (optional, default: `Float64`) the numeric type of the returned set
+        ### Output
 
-### Output
+        An `HPolyhedron`.
 
-An `HPolyhedron`.
+        ### Examples
 
-### Examples
+        ```jldoctest
+        julia> using Symbolics
 
-```jldoctest
-julia> using Symbolics
+        julia> vars = @variables x y
+        2-element Vector{Num}:
+         x
+         y
 
-julia> vars = @variables x y
-2-element Vector{Num}:
- x
- y
+        julia> HPolyhedron([x + y <= 1, x + y >= -1], vars)
+        HPolyhedron{Float64, Vector{Float64}}(HalfSpace{Float64, Vector{Float64}}[HalfSpace{Float64, Vector{Float64}}([1.0, 1.0], 1.0), HalfSpace{Float64, Vector{Float64}}([-1.0, -1.0], 1.0)])
 
-julia> HPolyhedron([x + y <= 1, x + y >= -1], vars)
-HPolyhedron{Float64, Vector{Float64}}(HalfSpace{Float64, Vector{Float64}}[HalfSpace{Float64, Vector{Float64}}([1.0, 1.0], 1.0), HalfSpace{Float64, Vector{Float64}}([-1.0, -1.0], 1.0)])
+        julia> X = HPolyhedron([x == 0, y <= 0], vars)
+        HPolyhedron{Float64, Vector{Float64}}(HalfSpace{Float64, Vector{Float64}}[HalfSpace{Float64, Vector{Float64}}([1.0, 0.0], -0.0), HalfSpace{Float64, Vector{Float64}}([-1.0, -0.0], 0.0), HalfSpace{Float64, Vector{Float64}}([0.0, 1.0], -0.0)])
+        ```
+        """
+        function HPolyhedron(expr::Vector{<:Num}, vars::AbstractVector{Num};
+                             N::Type{<:Real}=Float64)
+            clist = Vector{HalfSpace{N,Vector{N}}}()
+            sizehint!(clist, length(expr))
+            got_hyperplane = false
+            got_halfspace = false
+            zeroed_vars = Dict(v => zero(N) for v in vars)
+            vars_list = collect(vars)
+            for ex in expr
+                exval = Symbolics.value(ex)
+                got_hyperplane, sexpr = _is_hyperplane(exval)
+                if !got_hyperplane
+                    got_halfspace, sexpr = _is_halfspace(exval)
+                    if !got_halfspace
+                        throw(ArgumentError("expected an expression describing either " *
+                                            "a half-space of a hyperplane, got $expr"))
+                    end
+                end
 
-julia> X = HPolyhedron([x == 0, y <= 0], vars)
-HPolyhedron{Float64, Vector{Float64}}(HalfSpace{Float64, Vector{Float64}}[HalfSpace{Float64, Vector{Float64}}([1.0, 0.0], -0.0), HalfSpace{Float64, Vector{Float64}}([-1.0, -0.0], 0.0), HalfSpace{Float64, Vector{Float64}}([0.0, 1.0], -0.0)])
-```
-"""
-function HPolyhedron(expr::Vector{<:Num}, vars::AbstractVector{Num}; N::Type{<:Real}=Float64)
-    clist = Vector{HalfSpace{N, Vector{N}}}()
-    sizehint!(clist, length(expr))
-    got_hyperplane = false
-    got_halfspace = false
-    zeroed_vars = Dict(v => zero(N) for v in vars)
-    vars_list = collect(vars)
-    for ex in expr
-        exval = Symbolics.value(ex)
-        got_hyperplane, sexpr = _is_hyperplane(exval)
-        if !got_hyperplane
-            got_halfspace, sexpr = _is_halfspace(exval)
-            if !got_halfspace
-                throw(ArgumentError("expected an expression describing either " *
-                    "a half-space of a hyperplane, got $expr"))
+                coeffs = [N(α.val) for α in gradient(sexpr, vars_list)]
+                β = -N(Symbolics.substitute(sexpr, zeroed_vars))
+
+                push!(clist, HalfSpace(coeffs, β))
+                if got_hyperplane
+                    push!(clist, HalfSpace(-coeffs, -β))
+                end
             end
+            return HPolyhedron(clist)
         end
 
-        coeffs = [N(α.val) for α in gradient(sexpr, vars_list)]
-        β = -N(Symbolics.substitute(sexpr, zeroed_vars))
-
-        push!(clist, HalfSpace(coeffs, β))
-        if got_hyperplane
-            push!(clist, HalfSpace(-coeffs, -β))
+        function HPolyhedron(expr::Vector{<:Num}; N::Type{<:Real}=Float64)
+            return HPolyhedron(expr, _get_variables(expr); N=N)
+        end
+        function HPolyhedron(expr::Vector{<:Num}, vars; N::Type{<:Real}=Float64)
+            return HPolyhedron(expr, _vec(vars); N=N)
         end
     end
-    return HPolyhedron(clist)
-end
-
-HPolyhedron(expr::Vector{<:Num}; N::Type{<:Real}=Float64) =
-    HPolyhedron(expr, _get_variables(expr); N=N)
-HPolyhedron(expr::Vector{<:Num}, vars; N::Type{<:Real}=Float64) =
-    HPolyhedron(expr, _vec(vars); N=N)
-
-end end  # quote / load_symbolics_hpolyhedron()
+end  # quote / load_symbolics_hpolyhedron()
