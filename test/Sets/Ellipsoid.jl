@@ -88,6 +88,15 @@ for N in [Float64, Float32]
     EE = copy(E)
     @test translate!(EE, N[1, 1]) == Ellipsoid(N[2, 3], M) == EE
 
+    # linear_map
+    M = N[2 0; 3 4]
+    E = Ellipsoid(N[1, 2], Diagonal(N[0.5, 2]))
+    @test linear_map(M, E) == Ellipsoid(N[2, 11], N[2 3; 3 73//2])
+
+    # affine_map
+    v = N[3, 2]
+    @test affine_map(M, E, v) == Ellipsoid(N[5, 13], N[2 3; 3 73//2])
+
     # check_posdef optional constructor flag
     @test_throws ArgumentError Ellipsoid(N[1 1; 1 1])
     E = Ellipsoid(N[1 1; 1 1]; check_posdef=false)

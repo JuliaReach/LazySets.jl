@@ -14,6 +14,7 @@ shape_matrix(::Ellipsoid)
 rand(::Type{Ellipsoid})
 translate(::Ellipsoid, ::AbstractVector)
 translate!(::Ellipsoid, ::AbstractVector)
+linear_map(::AbstractMatrix, ::Ellipsoid)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
