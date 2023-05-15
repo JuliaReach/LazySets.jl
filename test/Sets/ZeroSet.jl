@@ -81,4 +81,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # reflect
     @test reflect(Z) == Z
+
+    # scale/scale!
+    Z2 = copy(Z)
+    scale!(N(2), Z2)
+    @test scale(N(-2), Z) == Z2 == ZeroSet{N}(dim(Z))
 end

@@ -12,7 +12,7 @@ ngens_indep(::DensePolynomialZonotope)
 polynomial_order(::DensePolynomialZonotope)
 order(::DensePolynomialZonotope)
 linear_map(::AbstractMatrix, ::DensePolynomialZonotope)
-scale(::Number, ::DensePolynomialZonotope)
+scale!(::Real, ::DensePolynomialZonotope)
 ```
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))

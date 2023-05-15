@@ -643,3 +643,8 @@ The `VPolytope` representing `-P`.
 function reflect(P::VPolytope)
     return VPolytope(-P.vertices)
 end
+
+function scale!(α::Real, P::VPolytope)
+    P.vertices .*= α
+    return P
+end

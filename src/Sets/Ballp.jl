@@ -343,3 +343,7 @@ radius ``r``. The norm remains the same.
 function reflect(B::Ballp)
     return Ballp(B.p, -center(B), B.radius)
 end
+
+function scale(α::Real, B::Ballp)
+    return Ballp(B.p, B.center .* α, B.radius * abs(α))
+end

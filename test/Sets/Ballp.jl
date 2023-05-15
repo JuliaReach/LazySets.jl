@@ -64,4 +64,9 @@ for N in [Float64, Float32]
 
     # reflection
     @test reflect(b4) == Ballp(N(3), N[-4, -3, -2, -1], N(2))
+
+    # scale
+    B = Ballp(N(3), N[-2, 3], N(1))
+    @test scale(N(2), B) == Ballp(N(3), N[-4, 6], N(2))
+    @test scale(N(-2), B) == Ballp(N(3), N[4, -6], N(2))
 end

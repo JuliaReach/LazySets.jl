@@ -109,4 +109,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # reflect
     @test reflect(b4) == Ball1(N[-4, -3, -2, -1], N(2))
+
+    # scale
+    B = Ball1(N[-2, 3], N(1))
+    @test scale(N(2), B) == Ball1(N[-4, 6], N(2))
+    @test scale(N(-2), B) == Ball1(N[4, -6], N(2))
 end

@@ -107,6 +107,7 @@ constraints(::LazySet)
 vertices(::LazySet)
 delaunay
 chebyshev_center_radius(::LazySet{N}) where {N}
+scale(::Real, ::LazySet)
 plot_recipe(::LazySet, ::Any)
 ```
 

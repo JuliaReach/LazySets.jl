@@ -561,3 +561,11 @@ The same empty set.
 function reflect(∅::EmptySet)
     return ∅
 end
+
+function scale(::Real, ∅::EmptySet)
+    return ∅
+end
+
+function scale!(::Real, ∅::EmptySet)
+    return ∅
+end

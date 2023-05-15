@@ -226,3 +226,8 @@ function linear_map(M::AbstractMatrix, S::Singleton)
 
     return Singleton(M * S.element)
 end
+
+function scale!(α::Real, S::Singleton)
+    S.element .*= α
+    return S
+end

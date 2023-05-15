@@ -295,6 +295,14 @@ for N in [Float64, Rational{Int}, Float32]
 
     # reflect
     @test reflect(H) == Hyperrectangle(N[-1, -2, -3], N[4, 5, 6])
+
+    # scale/scale!
+    H2 = copy(H)
+    scale!(N(2), H2)
+    @test scale(N(2), H) == H2 == Hyperrectangle(N[2, 4, 6], N[8, 10, 12])
+    H2 = copy(H)
+    scale!(N(-2), H2)
+    @test scale(N(-2), H) == H2 == Hyperrectangle(N[-2, -4, -6], N[8, 10, 12])
 end
 
 # tests that only work with Float64 and Float32

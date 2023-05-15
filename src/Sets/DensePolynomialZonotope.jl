@@ -201,9 +201,9 @@ function linear_map(M::AbstractMatrix, P::DensePolynomialZonotope)
 end
 
 """
-    scale(α::Number, P::DensePolynomialZonotope)
+    scale!(α::Real, P::DensePolynomialZonotope)
 
-Return a polynomial zonotope modified by a scale factor.
+Scale a polynomial zonotope modified by a scale factor in-place.
 
 ### Input
 
@@ -212,17 +212,16 @@ Return a polynomial zonotope modified by a scale factor.
 
 ## Output
 
-A polynomial zonotope.
+The modified polynomial zonotope.
 
 ### Algorithm
 
-The result's center and generators are multiples of those of `P` by a factor
-``α``.
+The center and generators are scaled by ``α``.
 """
-function scale(α::Number, P::DensePolynomialZonotope)
-    c = α * P.c
-    E = [α * Ei for Ei in P.E]
-    F = [α * Fi for Fi in P.F]
-    G = α * P.G
-    return DensePolynomialZonotope(c, E, F, G)
+function scale!(α::Real, P::DensePolynomialZonotope)
+    P.c .*= α
+    P.E .*= α
+    P.F .*= α
+    P.G .*= α
+    return P
 end
