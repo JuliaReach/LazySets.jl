@@ -132,26 +132,30 @@ For a polytope, the support function is always maximized in some vertex.
 Hence it is sufficient to check all vertices.
 """
 function σ(d::AbstractVector, P::VPolytope)
+    return _σ_vertices(d, P.vertices)
+end
+
+function _σ_vertices(d, vlist)
     # base cases
-    m = length(P.vertices)
+    m = length(vlist)
     if m == 0
         error("the support vector of an empty polytope is undefined")
     elseif m == 1
-        @inbounds return P.vertices[1]
+        @inbounds return vlist[1]
     end
 
     # evaluate support function in every vertex
-    N = promote_type(eltype(d), eltype(P))
+    N = promote_type(eltype(d), eltype(@inbounds vlist[1]))
     max_ρ = N(-Inf)
     max_idx = 0
-    for (i, vi) in enumerate(P.vertices)
+    for (i, vi) in enumerate(vlist)
         ρ_i = dot(d, vi)
         if ρ_i > max_ρ
             max_ρ = ρ_i
             max_idx = i
         end
     end
-    @inbounds return P.vertices[max_idx]
+    @inbounds return vlist[max_idx]
 end
 
 """
@@ -170,11 +174,15 @@ direction.
 Evaluation of the support function in the given direction.
 """
 function ρ(d::AbstractVector, P::VPolytope)
-    if isempty(P.vertices)
+    return _ρ_vertices(d, P.vertices)
+end
+
+function _ρ_vertices(d, vlist)
+    if isempty(vlist)
         error("the support function of an empty polytope is undefined")
     end
     # evaluate support function in every vertex
-    return maximum(v -> dot(d, v), P.vertices)
+    return maximum(v -> dot(d, v), vlist)
 end
 
 """
