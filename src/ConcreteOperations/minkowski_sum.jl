@@ -41,17 +41,7 @@ function minkowski_sum(P::LazySet, Q::LazySet;
 
     if n == 2 && isboundedtype(typeof(P)) && isboundedtype(typeof(Q))
         # use vertex representation
-        Pv = vertices_list(P)
-        if prune
-            Pv = _convex_hull_2d_preprocess!(copy(Pv))
-        end
-        Qv = vertices_list(Q)
-        if prune
-            Qv = _convex_hull_2d_preprocess!(copy(Qv))
-        end
-        R = _minkowski_sum_vrep_2d(Pv, Qv)
-        return VPolygon(R)
-        # return _minkowski_sum_vpolygon(P, Q) # crashes, see JuliaLang#41561
+        return _minkowski_sum_vpolygon(P, Q)
     end
 
     # use constraint representation
