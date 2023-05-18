@@ -41,17 +41,7 @@ function minkowski_sum(P::LazySet, Q::LazySet;
 
     if n == 2 && isboundedtype(typeof(P)) && isboundedtype(typeof(Q))
         # use vertex representation
-        Pv = vertices_list(P)
-        if prune
-            Pv = _convex_hull_2d_preprocess!(copy(Pv))
-        end
-        Qv = vertices_list(Q)
-        if prune
-            Qv = _convex_hull_2d_preprocess!(copy(Qv))
-        end
-        R = _minkowski_sum_vrep_2d(Pv, Qv)
-        return VPolygon(R)
-        # return _minkowski_sum_vpolygon(P, Q) # crashes, see JuliaLang#41561
+        return _minkowski_sum_vpolygon(P, Q)
     end
 
     # use constraint representation
@@ -318,8 +308,8 @@ function _minkowski_sum_vpolygon(P::LazySet, Q::LazySet)
     return minkowski_sum(convert(VPolygon, P), convert(VPolygon, Q))
 end
 
-function _minkowski_sum_vrep_2d(vlistP::Vector{VT},
-                                vlistQ::Vector{VT}) where {N,VT<:AbstractVector{N}}
+function _minkowski_sum_vrep_2d(vlistP::AbstractVector{<:AbstractVector{N}},
+                                vlistQ::AbstractVector{<:AbstractVector{N}}) where {N}
     mP = length(vlistP)
     mQ = length(vlistQ)
     if mP == 1 || mQ == 1
@@ -328,10 +318,9 @@ function _minkowski_sum_vrep_2d(vlistP::Vector{VT},
 
     EAST = N[1, 0]
     ORIGIN = N[0, 0]
+    R = fill(ORIGIN, mP + mQ)
     k = _σ_helper(EAST, vlistP)
     j = _σ_helper(EAST, vlistQ)
-    R = Vector{VT}(undef, mP + mQ)
-    fill!(R, ORIGIN)
 
     i = 1
     while i <= size(R, 1)
