@@ -17,7 +17,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test order(P) == 3 // 1
 
     # type-specific concrete methods
-    scale(N(0.5), P)
+    # TODO these commands do not test anything
+    P2 = copy(P)
+    scale!(N(2), P2)
+    @test P2 == scale(N(2), P)
     linear_map(N[1.0 2.0; 2.0 5.0], P)
     z = Zonotope(N[1.0, 2.0], Matrix(N(1)I, 2, 2))
     minkowski_sum(P, z)

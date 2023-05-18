@@ -455,3 +455,7 @@ radius ``r``.
 function reflect(B::BallInf)
     return BallInf(-center(B), B.radius)
 end
+
+function scale(α::Real, B::BallInf)
+    return BallInf(B.center .* α, B.radius * abs(α))
+end

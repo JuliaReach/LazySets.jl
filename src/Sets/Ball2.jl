@@ -413,3 +413,7 @@ radius ``r``.
 function reflect(B::Ball2)
     return Ball2(-center(B), B.radius)
 end
+
+function scale(α::Real, B::Ball2)
+    return Ball2(B.center .* α, B.radius * abs(α))
+end

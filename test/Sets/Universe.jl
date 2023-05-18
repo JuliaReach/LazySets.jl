@@ -106,7 +106,17 @@ for N in [Float64, Rational{Int}, Float32]
     # permutation
     @test permute(U, [1, 2]) == permute(U, [2, 1]) == U
 
+    # reflect
     @test reflect(U) == U
+
+    # scale/scale!
+    @test scale(N(1), U) == scale(N(-1), U) == U
+    Z = scale(N(0), U)
+    @test Z isa ZeroSet{N} && Z == ZeroSet{N}(dim(U))
+    U2 = copy(U)
+    scale!(N(1), U2)
+    @test U2 == U
+    @test_throws ArgumentError scale!(N(0), U2)
 end
 
 # default Float64 constructor

@@ -410,3 +410,9 @@ degenerated line segment of length zero.
 function ngens(L::LineSegment)
     return _isapprox(L.p, L.q) ? 0 : 1
 end
+
+function scale!(α::Real, L::LineSegment)
+    L.p .*= α
+    L.q .*= α
+    return L
+end

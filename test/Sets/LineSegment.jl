@@ -186,4 +186,9 @@ for N in [Float64, Rational{Int}, Float32]
     L = LineSegment(N[0, 0], N[1, 1])
     @test sample(L) ∈ L
     @test all(x -> x ∈ L, sample(L, 10))
+
+    # scale/scale!
+    L2 = copy(L)
+    scale!(N(2), L2)
+    @test scale(N(2), L) == L2 == LineSegment(N[0, 0], N[2, 2])
 end

@@ -162,4 +162,9 @@ for N in [Float64, Rational{Int}, Float32]
     # reflect
     S = Singleton(N[0, -1, 2])
     @test reflect(S) == Singleton(N[0, 1, -2])
+
+    # scale/scale!
+    S2 = copy(S)
+    scale!(N(2), S2)
+    @test scale(N(2), S) == S2 == Singleton(N[0, -2, 4])
 end

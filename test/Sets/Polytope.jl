@@ -243,6 +243,11 @@ for N in [Float64, Rational{Int}, Float32]
     Q = reflect(P)
     vlist = [N[-1, -2, -3], N[-4, -5, -6]]
     @test Q isa VPolytope{N} && ispermutation(vertices_list(Q), vlist)
+
+    # scale/scale!
+    P2 = copy(P)
+    scale!(N(2), P2)
+    @test scale(N(2), P) == P2 == VPolytope([N[2, 4, 6], N[8, 10, 12]])
 end
 
 # default Float64 constructors

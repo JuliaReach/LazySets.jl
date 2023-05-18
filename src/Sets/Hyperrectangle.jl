@@ -290,3 +290,9 @@ function permute(H::Hyperrectangle, p::AbstractVector{Int})
     r = H.radius[p]
     return Hyperrectangle(c, r)
 end
+
+function scale!(α::Real, H::Hyperrectangle)
+    H.center .*= α
+    H.radius .*= abs(α)
+    return H
+end

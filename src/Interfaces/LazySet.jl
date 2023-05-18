@@ -1990,3 +1990,27 @@ end
 function _linear_map_center(M::AbstractMatrix, X::LazySet)
     return M * center(X)
 end
+
+"""
+    scale(α::Real, X::LazySet)
+
+Concrete scaling of a set.
+
+### Input
+
+- `α` -- scalar
+- `X` -- set
+
+### Output
+
+A new set of the same type (if possible).
+
+### Notes
+
+This fallback method calls `scale!` on a copy of `X`.
+"""
+function scale(α::Real, X::LazySet)
+    Y = copy(X)
+    scale!(α, Y)
+    return Y
+end

@@ -70,6 +70,11 @@ for N in [Float64, Rational{Int}, Float32]
 
     # reflect
     @test reflect(E) == E
+
+    # scale/scale!
+    E2 = copy(E)
+    scale!(N(2), E2)
+    @test scale(N(2), E) == E2 == EmptySet{N}(dim(E))
 end
 
 # tests that only work with Float64 and Float32
