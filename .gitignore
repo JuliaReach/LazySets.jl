@@ -3,6 +3,7 @@
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
+coverage/
 
 deps/deps.jl
 deps/build.log
