@@ -49,4 +49,15 @@ for N in [Float64, Float32, Rational{Int}]
                      HalfSpace(N[0, 1], N(1)), HalfSpace(N[0, -1], N(0))])
     @test !(Pnc ⊆ P)
     @test_throws ArgumentError issubset(Pnc, P, true)  # not implemented
+
+    # zonotope in polyhedron
+    Z = Zonotope(N[1, 1], N[1 0; 0 1])
+    P = HPolyhedron([HalfSpace(N[1, 0], N(3)), HalfSpace(N[-1, 0], N(0)),
+                     HalfSpace(N[0, 1], N(3)), HalfSpace(N[0, -1], N(0))])
+    res, w = ⊆(Z, P, true)
+    @test Z ⊆ P && res && w == N[]
+    P = HPolyhedron([HalfSpace(N[1, 0], N(1)), HalfSpace(N[-1, 0], N(0)),
+                     HalfSpace(N[0, 1], N(3)), HalfSpace(N[0, -1], N(0))])
+    @test !(Z ⊆ P)
+    @test_throws ArgumentError issubset(Z, P, true)  # not implemented
 end

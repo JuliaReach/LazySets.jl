@@ -288,6 +288,9 @@ function ⊆(X::LazySet, P::AbstractPolyhedron, witness::Bool=false)
 end
 
 # S ⊆ P where P = ⟨Cx ≤ d⟩  iff  y ≤ d where y is the upper corner of box(C*S)
+#
+# see Proposition 7 in Wetzlinger, Kochdumper, Bak, Althoff: * Fully-automated verification
+# of linear systems using inner- and outer-approximations of reachable sets*. 2022.
 function _issubset_in_polyhedron_high(S::LazySet, P::LazySet, witness::Bool=false)
     @assert dim(S) == dim(P)
 
@@ -297,6 +300,29 @@ function _issubset_in_polyhedron_high(S::LazySet, P::LazySet, witness::Bool=fals
 
     if result
         return _witness_result_empty(witness, true, S, P)
+    elseif !witness
+        return false
+    end
+    throw(ArgumentError("witness production is not supported yet"))
+end
+
+function ⊆(Z::AbstractZonotope, P::AbstractPolyhedron, witness::Bool=false)
+    return _issubset_zonotope_in_polyhedron(Z, P, witness)
+end
+
+# implements Proposition 7 in Wetzlinger, Kochdumper, Bak, Althoff: * Fully-automated verification
+# of linear systems using inner- and outer-approximations of reachable sets*. 2022.
+function _issubset_zonotope_in_polyhedron(Z::AbstractZonotope, P::LazySet,
+                                          witness::Bool=false)
+    @assert dim(Z) == dim(P)
+
+    C, d = tosimplehrep(P)
+    c = center(Z)
+    G = genmat(Z)
+    result = all(sum(abs.(C * gj) for gj in eachcol(G)) .≤ d - C * c)
+
+    if result
+        return _witness_result_empty(witness, true, Z, P)
     elseif !witness
         return false
     end
@@ -938,8 +964,8 @@ function _issubset_universe(X::LazySet, U::Universe, witness::Bool=false)
 end
 
 # disambiguations
-for ST in [:AbstractPolytope, :AbstractHyperrectangle, :AbstractSingleton,
-           :LineSegment, :EmptySet, :UnionSet, :UnionSetArray]
+for ST in [:AbstractPolytope, :AbstractZonotope, :AbstractHyperrectangle,
+           :AbstractSingleton, :LineSegment, :EmptySet, :UnionSet, :UnionSetArray]
     @eval ⊆(X::($ST), U::Universe, witness::Bool=false) = _issubset_universe(X, U, witness)
 end
 
