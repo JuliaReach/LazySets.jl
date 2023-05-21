@@ -1,5 +1,4 @@
 for N in [Float64, Float32, Rational{Int}]
-
     # interval in union of intervals
     X = Interval(N(0), N(1))
 
@@ -39,4 +38,26 @@ for N in [Float64, Float32, Rational{Int}]
     U = UnionSetArray([Hyperrectangle(N[0, 1], N[3, 1]), Hyperrectangle(N[3, -1], N[3, 1])])
     res, w = ⊆(B, U, true)
     @test !(B ⊆ U) && !res && w ∈ B && w ∉ U
+
+    # nonconvex set in polyhedron
+    Pnc = Polygon([N[0, 0], N[0, 2], N[2, 2], N[2, 0], N[1, 1]])
+    P = HPolyhedron([HalfSpace(N[1, 0], N(3)), HalfSpace(N[-1, 0], N(0)),
+                     HalfSpace(N[0, 1], N(3)), HalfSpace(N[0, -1], N(0))])
+    res, w = ⊆(Pnc, P, true)
+    @test Pnc ⊆ P && res && w == N[]
+    P = HPolyhedron([HalfSpace(N[1, 0], N(1)), HalfSpace(N[-1, 0], N(0)),
+                     HalfSpace(N[0, 1], N(1)), HalfSpace(N[0, -1], N(0))])
+    @test !(Pnc ⊆ P)
+    @test_throws ArgumentError issubset(Pnc, P, true)  # not implemented
+
+    # zonotope in polyhedron
+    Z = Zonotope(N[1, 1], N[1 0; 0 1])
+    P = HPolyhedron([HalfSpace(N[1, 0], N(3)), HalfSpace(N[-1, 0], N(0)),
+                     HalfSpace(N[0, 1], N(3)), HalfSpace(N[0, -1], N(0))])
+    res, w = ⊆(Z, P, true)
+    @test Z ⊆ P && res && w == N[]
+    P = HPolyhedron([HalfSpace(N[1, 0], N(1)), HalfSpace(N[-1, 0], N(0)),
+                     HalfSpace(N[0, 1], N(3)), HalfSpace(N[0, -1], N(0))])
+    @test !(Z ⊆ P)
+    @test_throws ArgumentError issubset(Z, P, true)  # not implemented
 end
