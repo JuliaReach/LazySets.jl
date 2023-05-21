@@ -1194,7 +1194,7 @@ function ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, witness::Bool=false
         lbound = c[i] - aux
         if !_leq(ubound, high(H, i)) || !_geq(lbound, low(H, i))
             if witness
-                raise(ArgumentError("witness production is not supported yet"))
+                throw(ArgumentError("witness production is not supported yet"))
             end
             return false
         end
