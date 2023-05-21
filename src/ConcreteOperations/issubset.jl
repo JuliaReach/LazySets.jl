@@ -282,10 +282,25 @@ above check fails.
 """
 function ⊆(X::LazySet, P::AbstractPolyhedron, witness::Bool=false)
     if !isconvextype(typeof(X))
-        error("an inclusion check for the given combination of set types is " *
-              "not available")
+        return _issubset_in_polyhedron_high(X, P, witness)
     end
     return _issubset_constraints_list(X, P, witness)
+end
+
+# S ⊆ P where P = ⟨Cx ≤ d⟩  iff  y ≤ d where y is the upper corner of box(C*S)
+function _issubset_in_polyhedron_high(S::LazySet, P::LazySet, witness::Bool=false)
+    @assert dim(S) == dim(P)
+
+    C, d = tosimplehrep(P)
+    x = high(C * S)
+    result = all(x .≤ d)
+
+    if result
+        return _witness_result_empty(witness, true, S, P)
+    elseif !witness
+        return false
+    end
+    throw(ArgumentError("witness production is not supported yet"))
 end
 
 # for documentation see
