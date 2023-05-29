@@ -38,22 +38,16 @@ In the binary case, the lists contain pairs of set types.
 
 ### Examples
 
-`tovrep` is only available for polytopic set types in vertex or constraint
-representation (and `HPolyhedron`).
+`shape_matrix` is only available for ellipsoids.
 
 ```jldoctests implementing_sets
 julia> using LazySets: implementing_sets
 
-julia> dict = implementing_sets(tovrep);
+julia> dict = implementing_sets(shape_matrix);
 
 julia> dict["available"]
-6-element Vector{Type}:
- HPolygon
- HPolygonOpt
- HPolyhedron
- HPolytope
- VPolygon
- VPolytope
+1-element Vector{Type}:
+ Ellipsoid
 ```
 
 Every convex set type implements the function `σ`.
