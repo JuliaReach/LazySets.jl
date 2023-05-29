@@ -13,49 +13,49 @@ CurrentModule = LazySets
 ```
 
 ```@docs
-convert(::Type{HPOLYGON1}, ::HPOLYGON2) where {HPOLYGON1<:AbstractHPolygon, HPOLYGON2<:AbstractHPolygon}
-convert(::Type{HPOLYGON}, ::VPolygon) where {HPOLYGON<:AbstractHPolygon}
+convert(::Type{Interval}, ::LazySet)
+convert(::Type{Interval}, ::Rectification{N, IN}) where {N, IN<:Interval}
+convert(::Type{Interval}, ::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval}
+convert(::Type{Interval}, ::IA.Interval)
+convert(::Type{IA.Interval}, ::LazySet)
+convert(::Type{IA.IntervalBox}, ::AbstractHyperrectangle)
+convert(::Type{Hyperrectangle}, ::IA.IntervalBox)
 convert(::Type{Hyperrectangle}, ::AbstractHyperrectangle)
-convert(::Type{Interval}, ::AbstractHyperrectangle)
-convert(::Type{Interval}, ::LazySet{N}) where {N<:Real}
-convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
-convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, Interval{N}}) where {N<:Real}
-convert(::Type{HPOLYGON}, ::AbstractHyperrectangle) where {HPOLYGON<:AbstractHPolygon}
-convert(::Type{HPOLYGON}, ::HPolytope{N, VN}) where {N<:Real, VN<:AbstractVector{N}, HPOLYGON<:AbstractHPolygon}
-convert(::Type{HPOLYGON}, ::AbstractSingleton{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
-convert(::Type{HPOLYGON}, ::LineSegment{N}) where {N<:Real, HPOLYGON<:AbstractHPolygon}
-convert(::Type{HPolyhedron}, ::AbstractPolytope)
-convert(::Type{HPolytope}, ::AbstractHPolygon)
-convert(::Type{HPolytope}, ::AbstractHyperrectangle)
-convert(::Type{HPolytope}, ::AbstractPolytope)
-convert(::Type{HPolytope}, ::VPolytope)
-convert(::Type{VPolygon}, ::AbstractHPolygon)
-convert(::Type{VPolygon}, ::AbstractPolytope)
-convert(::Type{VPolytope}, ::AbstractPolytope)
-convert(::Type{VPolytope}, ::HPolytope)
-convert(::Type{Zonotope}, ::AbstractHyperrectangle{N}) where {N}
-convert(::Type{Zonotope}, ::AbstractZonotope)
-convert(::Type{IntervalArithmetic.IntervalBox}, ::AbstractHyperrectangle)
-convert(::Type{Hyperrectangle}, ::IntervalArithmetic.IntervalBox)
-convert(::Type{Zonotope}, ::CartesianProduct{N, ZN1, ZN2}) where {N<:Real, ZN1<:AbstractZonotope{N}, ZN2<:AbstractZonotope{N}}
-convert(::Type{Hyperrectangle}, ::CartesianProduct{N, HN1, HN2}) where {N<:Real, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
-convert(::Type{Zonotope}, ::CartesianProduct{N, HN1, HN2}) where {N<:Real, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
-convert(::Type{Zonotope}, ::CartesianProductArray{N, HN}) where {N<:Real, HN<:AbstractHyperrectangle{N}}
-convert(::Type{Zonotope}, ::LinearMap{N, ZN}) where {N, ZN<:AbstractZonotope{N}}
-convert(::Type{Zonotope}, ::LinearMap{N, CartesianProduct{N, HN1, HN2}}) where {N, HN1<:AbstractHyperrectangle{N}, HN2<:AbstractHyperrectangle{N}}
-convert(::Type{Zonotope}, ::LinearMap{N, CartesianProductArray{N, HN}}) where {N, HN<:AbstractHyperrectangle{N}}
-convert(::Type{CartesianProduct{N, Interval{N}, Interval{N}}}, ::AbstractHyperrectangle{N}) where {N<:Real}
-convert(::Type{CartesianProductArray{N, Interval{N}}}, ::AbstractHyperrectangle{N}) where {N<:Real}
-convert(::Type{Hyperrectangle}, ::Rectification{N, AH}) where {N<:Real, AH<:AbstractHyperrectangle{N}}
-convert(::Type{Interval}, ::Rectification{N, IN}) where {N<:Real, IN<:Interval{N}}
-convert(::Type{IntervalArithmetic.Interval}, ::Interval)
-convert(::Type{Interval}, ::IntervalArithmetic.Interval)
-convert(::Type{VPolytope}, ::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
-convert(::Type{VPolygon}, ::ConvexHullArray{N, Singleton{N, VT}}) where {N, VT}
+convert(::Type{Hyperrectangle}, ::CartesianProduct{N, HN1, HN2}) where {N, HN1<:AbstractHyperrectangle, HN2<:AbstractHyperrectangle}
+convert(::Type{Hyperrectangle}, ::CartesianProductArray{N, HN}) where {N, HN<:AbstractHyperrectangle}
+convert(::Type{Hyperrectangle}, ::CartesianProductArray{N, IN}) where {N, IN<:Interval}
+convert(::Type{Hyperrectangle}, ::Rectification{N, AH}) where {N, AH<:AbstractHyperrectangle}
+convert(::Type{HPolygon}, ::LazySet)
+convert(::Type{HPolygon}, ::VPolygon)
+convert(::Type{HPolygon}, ::LineSegment{N}) where {N}
+convert(::Type{HPolygon}, ::AbstractSingleton{N}) where {N}
+convert(::Type{HPolygonOpt}, ::LazySet)
+convert(::Type{HPolygonOpt}, ::VPolygon)
+convert(::Type{HPolygonOpt}, ::LineSegment{N}) where {N}
+convert(::Type{HPolygonOpt}, ::AbstractSingleton{N}) where {N}
+convert(::Type{HPolyhedron}, ::LazySet)
+convert(::Type{HPolyhedron}, ::HRep{N}) where {N}
+convert(::Type{HPolytope}, ::LazySet)
 convert(::Type{VPolygon}, ::LazySet)
+convert(::Type{VPolygon}, ::AbstractHPolygon)
+convert(::Type{VPolytope}, ::LazySet)
+convert(::Type{Zonotope}, ::AbstractZonotope)
+convert(::Type{Zonotope}, ::LinearMap{N, ZN}) where {N, ZN<:AbstractZonotope}
+convert(::Type{Zonotope}, ::LinearMap{N, CartesianProduct{N, HN1, HN2}}) where {N, HN1<:AbstractHyperrectangle, HN2<:AbstractHyperrectangle}
+convert(::Type{Zonotope}, ::LinearMap{N, CartesianProductArray{N, HN}}) where {N, HN<:AbstractHyperrectangle}
+convert(::Type{Zonotope}, ::CartesianProduct{N, ZN1, ZN2}) where {N, ZN1<:AbstractZonotope, ZN2<:AbstractZonotope}
+convert(::Type{Zonotope}, ::CartesianProduct{N, HN1, HN2}) where {N, HN1<:AbstractHyperrectangle, HN2<:AbstractHyperrectangle}
+convert(::Type{Zonotope}, ::CartesianProductArray{N, AZ}) where {N, AZ<:AbstractZonotope}
+convert(::Type{Zonotope}, ::CartesianProductArray{N, HN}) where {N, HN<:AbstractHyperrectangle}
+convert(::Type{CartesianProduct{N, Interval{N}, Interval{N}}}, ::AbstractHyperrectangle{N}) where {N}
+convert(::Type{CartesianProductArray{N, Interval{N}}}, ::AbstractHyperrectangle{N}) where {N}
 convert(::Type{MinkowskiSumArray}, ::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST}}) where {N, ST}
-convert(::Type{Interval}, ::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval{N}}
 convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
-convert(::Type{Zonotope}, ::CartesianProduct{N, AZ1, AZ2}) where {N, AZ1<:AbstractZonotope{N}, AZ2<:AbstractZonotope{N}}
-convert(::Type{Zonotope}, ::CartesianProductArray{N, AZ}) where {N, AZ<:AbstractZonotope{N}}
+convert(::Type{STAR}, ::AbstractPolyhedron{N}) where {N}
+convert(::Type{STAR}, ::Star)
+convert(::Type{Star}, ::AbstractPolyhedron{N}) where {N}
+convert(::Type{SimpleSparsePolynomialZonotope}, ::AbstractZonotope)
+convert(::Type{SimpleSparsePolynomialZonotope}, ::SparsePolynomialZonotope)
+convert(::Type{SparsePolynomialZonotope}, ::AbstractZonotope{N}) where {N}
+convert(::Type{SparsePolynomialZonotope}, ::SimpleSparsePolynomialZonotope{N}) where {N}
 ```

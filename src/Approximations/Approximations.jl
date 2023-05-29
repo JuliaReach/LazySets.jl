@@ -1,22 +1,28 @@
 __precompile__(true)
 
 """
-Module `Approximations.jl` -- polygonal approximation of convex sets through
-support vectors.
+Module `Approximations.jl` -- polygonal approximation of sets.
 """
 module Approximations
 
-using LazySets, LazySets.Arrays, Requires, LinearAlgebra, SparseArrays,
-      MathProgBase
-using LazySets: _isapprox, _leq, _rtol, _normal_Vector, isapproxzero,
-                default_lp_solver
-import LazySets: distance
-using ..Assertions: @assert, activate_assertions
+using LazySets, ReachabilityBase.Arrays, Requires, LinearAlgebra, SparseArrays
+import IntervalArithmetic as IA
+
+using ReachabilityBase.Comparison: _isapprox, _leq, _geq, _rtol, isapproxzero
+using LazySets: default_lp_solver, _isbounded_stiemke, require, dim, linprog,
+                is_lp_optimal, _normal_Vector, default_sdp_solver,
+                get_exponential_backend, _expmv
+using LazySets.JuMP: Model, set_silent, @variable, @constraint, optimize!,
+                     value, @NLobjective, @objective
+
+import Base: convert
+import LazySets: project, □
+
+using ..LazySets: @assert, activate_assertions
 # activate assertions by default
 activate_assertions(Approximations)
 
 export approximate,
-       project,
        ballinf_approximation,
        box_approximation, interval_hull,
        decompose,
@@ -24,6 +30,7 @@ export approximate,
        underapproximate,
        box_approximation_symmetric, symmetric_interval_hull,
        BoxDirections,
+       DiagDirections,
        BoxDiagDirections,
        OctDirections,
        PolarDirections,
@@ -31,19 +38,18 @@ export approximate,
        CustomDirections,
        isbounding
 
-const DIR_EAST(N) = [one(N), zero(N)]
-const DIR_NORTH(N) = [zero(N), one(N)]
-const DIR_WEST(N) = [-one(N), zero(N)]
-const DIR_SOUTH(N) = [zero(N), -one(N)]
-
+include("box_approximation.jl")
 include("iterative_refinement.jl")
-include("box_approximations.jl")
+include("symmetric_interval_hull.jl")
+include("ballinf_approximation.jl")
 include("template_directions.jl")
 include("overapproximate.jl")
+include("overapproximate_interval.jl")
+include("overapproximate_zonotope.jl")
+include("overapproximate_cartesianproductarray.jl")
 include("underapproximate.jl")
 include("approximate.jl")
 include("decompositions.jl")
-include("distance.jl")
 include("hausdorff_distance.jl")
 include("init.jl")
 

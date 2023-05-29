@@ -8,27 +8,33 @@ CurrentModule = LazySets
 EmptySet
 ∅
 dim(::EmptySet)
-σ(::AbstractVector{N}, ::EmptySet{N}) where {N<:Real}
-ρ(::AbstractVector{N}, ::EmptySet{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::EmptySet{N}) where {N<:Real}
+σ(::AbstractVector, ::EmptySet)
+ρ(::AbstractVector, ::EmptySet)
+∈(::AbstractVector, ::EmptySet)
 an_element(::EmptySet)
 rand(::Type{EmptySet})
 isbounded(::EmptySet)
 isempty(::EmptySet)
-isuniversal(::EmptySet{N}, ::Bool=false) where {N<:Real}
-vertices(::EmptySet{N}) where {N}
-vertices_list(::EmptySet{N}) where {N}
+isuniversal(::EmptySet{N}, ::Bool=false) where {N}
+vertices(::EmptySet)
+vertices_list(::EmptySet)
 norm(::EmptySet, ::Real=Inf)
 radius(::EmptySet, ::Real=Inf)
 diameter(::EmptySet, ::Real=Inf)
-linear_map(::AbstractMatrix{N}, ::EmptySet{N}) where {N}
-translate(::EmptySet{N}, ::AbstractVector{N}) where {N<:Real}
-plot_recipe(::EmptySet{N}, ::N=zero(N)) where {N<:Real}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::EmptySet{N}, ::N=zero(N)) where {N<:Real}
-area(::EmptySet{N}) where {N}
+linear_map(::AbstractMatrix, ::EmptySet)
+translate(::EmptySet, ::AbstractVector)
+plot_recipe(::EmptySet{N}, ::Any=zero(N)) where {N}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::EmptySet{N}, ::Real=zero(N)) where {N}
+area(::EmptySet)
+volume(::EmptySet{N}) where {N}
+chebyshev_center_radius(::EmptySet; kwargs...)
+low(::EmptySet)
+high(::EmptySet)
+low(::EmptySet, ::Int)
+high(::EmptySet, ::Int)
+complement(::EmptySet{N}) where {N}
+rectify(::EmptySet)
+reflect(::EmptySet)
 ```
 Inherited from [`LazySet`](@ref):
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))

@@ -7,35 +7,41 @@ CurrentModule = LazySets
 ```@docs
 LineSegment
 dim(::LineSegment)
-σ(::AbstractVector{N}, ::LineSegment{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::LineSegment{N}) where {N<:Real}
-center(::LineSegment{N}) where {N<:Real}
-an_element(::LineSegment{N}) where {N<:Real}
+σ(::AbstractVector, ::LineSegment)
+ρ(::AbstractVector, ::LineSegment)
+∈(::AbstractVector, ::LineSegment)
+center(::LineSegment)
+an_element(::LineSegment)
 rand(::Type{LineSegment})
 halfspace_left(::LineSegment)
 halfspace_right(::LineSegment)
-vertices_list(::LineSegment{N}) where {N<:Real}
-constraints_list(::LineSegment{N}) where {N<:Real}
-translate(::LineSegment{N}, ::AbstractVector{N}) where {N<:Real}
-generators(::LineSegment{N}) where {N<:Real}
+vertices_list(::LineSegment)
+constraints_list(::LineSegment)
+translate(::LineSegment, ::AbstractVector)
+generators(::LineSegment)
+ngens(::LineSegment)
 genmat(::LineSegment)
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::Union{LineSegment{N}, Interval{N}}, ::N=zero(N)) where {N<:Real}
 ```
 Inherited from [`LazySet`](@ref):
+* [`high`](@ref high(::LazySet))
+* [`low`](@ref low(::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
+* [`high`](@ref high(::LazySet, ::Int))
+* [`low`](@ref low(::LazySet, ::Int))
+* [`reflect`](@ref reflect(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
+* [`volume`](@ref volume(::AbstractPolytope))
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractZonotope`](@ref):
-* [`ngens`](@ref ngens(::AbstractZonotope))
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real})
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))

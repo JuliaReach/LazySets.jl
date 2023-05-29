@@ -3,25 +3,28 @@ import Base.<=
 export HPolygon
 
 """
-    HPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
+    HPolygon{N, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
 
 Type that represents a convex polygon in constraint representation whose edges
 are sorted in counter-clockwise fashion with respect to their normal directions.
 
 ### Fields
 
-- `constraints`       -- list of linear constraints, sorted by the normal
-                         direction in counter-clockwise fashion
+- `constraints` -- list of linear constraints, sorted by the normal direction in
+                   counter-clockwise fashion
+
+### Notes
+
+Further constructor arguments:
+
 - `sort_constraints`  -- (optional, default: `true`) flag for sorting the
-                         constraints (sortedness is a running assumption of this
-                         type)
+                         constraints (being sorted is a running assumption of
+                         this type)
 - `check_boundedness` -- (optional, default: `false`) flag for checking if the
                          constraints make the polygon bounded; (boundedness is a
                          running assumption of this type)
 - `prune`             -- (optional, default: `true`) flag for removing redundant
                          constraints
-
-### Notes
 
 The option `sort_constraints` can be used to deactivate automatic sorting of
 constraints in counter-clockwise fashion, which is an invariant of this type.
@@ -38,26 +41,25 @@ iterative addition of the constraints, and hence one has to initially construct
 an empty list of constraints (which represents an unbounded set).
 The user has to make sure that the `HPolygon` is not used before the constraints
 actually describe a bounded set.
-The function `isbounded` can be used to manually assert boundedness.
 """
-struct HPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
-    constraints::Vector{LinearConstraint{N, VN}}
+struct HPolygon{N,VN<:AbstractVector{N}} <: AbstractHPolygon{N}
+    constraints::Vector{HalfSpace{N,VN}}
 
     # default constructor that applies sorting of the given constraints and
     # (checks for and) removes redundant constraints
-    function HPolygon(constraints::Vector{LinearConstraint{N, VN}};
+    function HPolygon(constraints::Vector{HalfSpace{N,VN}};
                       sort_constraints::Bool=true,
                       check_boundedness::Bool=false,
-                      prune::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
+                      prune::Bool=true) where {N,VN<:AbstractVector{N}}
         if sort_constraints
-            sorted_constraints = Vector{LinearConstraint{N, VN}}()
+            sorted_constraints = Vector{HalfSpace{N,VN}}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci; prune=prune)
             end
-            P = new{N, VN}(sorted_constraints)
+            P = new{N,VN}(sorted_constraints)
         else
-            P = new{N, VN}(constraints)
+            P = new{N,VN}(constraints)
         end
         @assert (!check_boundedness ||
                  isbounded(P, false)) "the polygon is not bounded"
@@ -66,42 +68,39 @@ struct HPolygon{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
 end
 
 isoperationtype(::Type{<:HPolygon}) = false
-isconvextype(::Type{<:HPolygon}) = true
 
-# constructor for an HPolygon with no constraints
-function HPolygon{N, VN}() where {N<:Real, VN<:AbstractVector{N}}
-    HPolygon(Vector{LinearConstraint{N, VN}}())
+# constructor with no constraints
+function HPolygon{N,VN}() where {N,VN<:AbstractVector{N}}
+    return HPolygon(Vector{HalfSpace{N,VN}}())
 end
 
-# constructor for an HPolygon with no constraints and given numeric type
-function HPolygon{N}() where {N<:Real}
-    HPolygon(Vector{LinearConstraint{N, Vector{N}}}())
+# constructor with no constraints and given numeric type
+function HPolygon{N}() where {N}
+    return HPolygon(Vector{HalfSpace{N,Vector{N}}}())
 end
 
-# constructor for an HPolygon without explicit numeric type, defaults to Float64
+# constructor without explicit numeric type, defaults to Float64
 function HPolygon()
-    HPolygon{Float64}()
+    return HPolygon{Float64}()
 end
 
-# constructor from a simple H-representation
-HPolygon(A::AbstractMatrix{N},
-         b::AbstractVector{N};
-         sort_constraints::Bool=true,
-         check_boundedness::Bool=false,
-         prune::Bool=true) where {N<:Real} =
-    HPolygon(constraints_list(A, b); sort_constraints=sort_constraints,
-             check_boundedness=check_boundedness, prune=prune)
+# constructor with constraints of mixed type
+function HPolygon(constraints::Vector{<:HalfSpace})
+    return HPolygon(_normal_Vector(constraints))
+end
 
-
-# --- LazySet interface functions ---
-
+# constructor from a simple constraint representation
+function HPolygon(A::AbstractMatrix, b::AbstractVector; sort_constraints::Bool=true,
+                  check_boundedness::Bool=false, prune::Bool=true)
+    return HPolygon(constraints_list(A, b); sort_constraints=sort_constraints,
+                    check_boundedness=check_boundedness, prune=prune)
+end
 
 """
-    σ(d::AbstractVector{N}, P::HPolygon{N};
-      [linear_search]::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
-     ) where {N<:Real}
+    σ(d::AbstractVector, P::HPolygon;
+      [linear_search]::Bool=(length(P.constraints) < $BINARY_SEARCH_THRESHOLD))
 
-Return the support vector of a polygon in a given direction.
+Return a support vector of a polygon in a given direction.
 
 ### Input
 
@@ -121,12 +120,11 @@ norm zero, any vertex is returned.
 Comparison of directions is performed using polar angles; see the overload of
 `<=` for two-dimensional vectors.
 
-For polygons with `BINARY_SEARCH_THRESHOLD = 10` or more constraints we use a
-binary search by default.
+For polygons with $BINARY_SEARCH_THRESHOLD or more constraints we use a binary
+search by default.
 """
-function σ(d::AbstractVector{N}, P::HPolygon{N};
-           linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
-          ) where {N<:Real}
+function σ(d::AbstractVector, P::HPolygon;
+           linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD))
     n = length(P.constraints)
     @assert n > 0 "the polygon has no constraints"
 
@@ -138,22 +136,21 @@ function σ(d::AbstractVector{N}, P::HPolygon{N};
         end
     else
         # binary search
-        k = binary_search_constraints(d, P.constraints, n, 1 + div(n, 2))
+        k = binary_search_constraints(d, P.constraints)
     end
 
-    if k == 1 || k == n+1
+    if k == 1 || k == n + 1
         # corner cases: wrap-around in constraints list
         return element(intersection(Line2D(P.constraints[1]),
                                     Line2D(P.constraints[n])))
     else
         return element(intersection(Line2D(P.constraints[k]),
-                                    Line2D(P.constraints[k-1])))
+                                    Line2D(P.constraints[k - 1])))
     end
 end
 
 """
-    translate(v::AbstractVector{N}, P::HPolygon{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(v::AbstractVector, P::HPolygon; [share]::Bool=false)
 
 Translate (i.e., shift) a polygon in constraint representation by a given
 vector.
@@ -178,12 +175,10 @@ the original constraints if `share == true`.
 
 We translate every constraint.
 """
-function translate(P::HPolygon{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
+function translate(P::HPolygon, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     constraints = [translate(c, v; share=share) for c in constraints_list(P)]
-    return HPolygon(constraints;
-                    sort_constraints=false, check_boundedness=false,
-                    prune=false)
+    return HPolygon(constraints; sort_constraints=false,
+                    check_boundedness=false, prune=false)
 end

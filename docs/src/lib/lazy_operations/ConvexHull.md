@@ -11,8 +11,8 @@ ConvexHull
 CH
 swap(::ConvexHull)
 dim(::ConvexHull)
-ρ(::AbstractVector{N}, ::ConvexHull{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::ConvexHull{N}) where {N<:Real}
+ρ(::AbstractVector, ::ConvexHull)
+σ(::AbstractVector, ::ConvexHull)
 isbounded(::ConvexHull)
 isempty(::ConvexHull)
 vertices_list(::ConvexHull)
@@ -21,8 +21,9 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
+* [`an_element`](@ref an_element(::LazySet)
 * [`singleton_list`](@ref singleton_list(::LazySet))
+* [`reflect`](@ref reflect(::LazySet))
 
 ## [``n``-ary convex hull (ConvexHullArray)](@id def_ConvexHullArray)
 
@@ -30,10 +31,10 @@ Inherited from [`LazySet`](@ref):
 ConvexHullArray
 CHArray
 dim(::ConvexHullArray)
-ρ(::AbstractVector{N}, ::ConvexHullArray{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::ConvexHullArray{N}) where {N<:Real}
+ρ(::AbstractVector, ::ConvexHullArray)
+σ(::AbstractVector, ::ConvexHullArray)
 isbounded(::ConvexHullArray)
-array(::ConvexHullArray{N, S}) where {N<:Real, S<:LazySet{N}}
+array(::ConvexHullArray)
 isempty(::ConvexHullArray)
 vertices_list(::ConvexHullArray)
 ```
@@ -41,5 +42,6 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
+* [`an_element`](@ref an_element(::LazySet)
 * [`singleton_list`](@ref singleton_list(::LazySet))
+* [`reflect`](@ref reflect(::LazySet))

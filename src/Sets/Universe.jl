@@ -5,25 +5,25 @@ import Base: rand,
 export Universe
 
 """
-    Universe{N<:Real} <: AbstractPolyhedron{N}
+    Universe{N} <: AbstractPolyhedron{N}
 
 Type that represents the universal set, i.e., the set of all elements.
+
+### Fields
+
+- `dim` -- the ambient dimension of the set
 """
-struct Universe{N<:Real} <: AbstractPolyhedron{N}
+struct Universe{N} <: AbstractPolyhedron{N}
     dim::Int
 end
 
 isoperationtype(::Type{<:Universe}) = false
-isconvextype(::Type{<:Universe}) = true
 
 # default constructor of type Float64
 Universe(dim::Int) = Universe{Float64}(dim)
 
-
-# --- AbstractPolyhedron interface functions ---
-
 """
-    constraints_list(U::Universe{N}) where {N}
+    constraints(U::Universe{N}) where {N}
 
 Construct an iterator over the constraints of a universe.
 
@@ -40,7 +40,7 @@ function constraints(U::Universe{N}) where {N}
 end
 
 """
-    constraints_list(U::Universe{N}) where {N<:Real}
+    constraints_list(U::Universe{N}) where {N}
 
 Return the list of constraints defining a universe.
 
@@ -52,8 +52,8 @@ Return the list of constraints defining a universe.
 
 The empty list of constraints, as the universe is unconstrained.
 """
-function constraints_list(U::Universe{N}) where {N<:Real}
-    return LinearConstraint{N, Vector{N}}[]
+function constraints_list(U::Universe{N}) where {N}
+    return HalfSpace{N,Vector{N}}[]
 end
 
 """
@@ -73,10 +73,6 @@ function constrained_dimensions(U::Universe)
     return Int[]
 end
 
-
-# --- LazySet interface functions ---
-
-
 """
     dim(U::Universe)
 
@@ -88,14 +84,14 @@ Return the dimension of a universe.
 
 ### Output
 
-The dimension of a universe.
+The ambient dimension of a universe.
 """
 function dim(U::Universe)
     return U.dim
 end
 
 """
-    ρ(d::AbstractVector{N}, U::Universe{N}) where {N<:Real}
+    ρ(d::AbstractVector, U::Universe)
 
 Return the support function of a universe.
 
@@ -113,12 +109,13 @@ The support function in the given direction.
 If the direction is all zero, the result is zero.
 Otherwise, the result is `Inf`.
 """
-function ρ(d::AbstractVector{N}, U::Universe{N}) where {N<:Real}
+function ρ(d::AbstractVector, U::Universe)
+    N = promote_type(eltype(d), eltype(U))
     return iszero(d) ? zero(N) : N(Inf)
 end
 
 """
-    σ(d::AbstractVector{N}, U::Universe{N}) where {N<:Real}
+    σ(d::AbstractVector, U::Universe)
 
 Return the support vector of a universe.
 
@@ -131,12 +128,13 @@ Return the support vector of a universe.
 
 A vector with infinity values, except in dimensions where the direction is zero.
 """
-function σ(d::AbstractVector{N}, U::Universe{N}) where {N<:Real}
-    return [v == zero(N) ? v : v > zero(N) ? N(Inf) : N(-Inf) for v in d]
+function σ(d::AbstractVector, U::Universe)
+    N = promote_type(eltype(d), eltype(U))
+    return [iszero(v) ? v : v > zero(N) ? N(Inf) : N(-Inf) for v in d]
 end
 
 """
-    ∈(x::AbstractVector{N}, U::Universe{N}) where {N<:Real}
+    ∈(x::AbstractVector, U::Universe)
 
 Check whether a given point is contained in a universe.
 
@@ -147,7 +145,7 @@ Check whether a given point is contained in a universe.
 
 ### Output
 
-The output is always `true`.
+`true`.
 
 ### Examples
 
@@ -156,13 +154,14 @@ julia> [1.0, 0.0] ∈ Universe(2)
 true
 ```
 """
-function ∈(x::AbstractVector{N}, U::Universe{N}) where {N<:Real}
-    @assert length(x) == dim(U)
+function ∈(x::AbstractVector, U::Universe)
+    @assert length(x) == dim(U) "a $(length(x))-dimensional vector is " *
+                                "incompatible with a $(dim(U))-dimensional set"
     return true
 end
 
 """
-    an_element(U::Universe{N}) where {N<:Real}
+    an_element(U::Universe{N}) where {N}
 
 Return some element of a universe.
 
@@ -174,7 +173,7 @@ Return some element of a universe.
 
 The origin.
 """
-function an_element(U::Universe{N}) where {N<:Real}
+function an_element(U::Universe{N}) where {N}
     return zeros(N, dim(U))
 end
 
@@ -200,7 +199,7 @@ function rand(::Type{Universe};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     return Universe{N}(dim)
 end
@@ -208,7 +207,7 @@ end
 """
     isempty(U::Universe)
 
-Return if a universe is empty or not.
+Check whether a universe is empty.
 
 ### Input
 
@@ -225,7 +224,7 @@ end
 """
     isbounded(U::Universe)
 
-Determine whether a universe is bounded.
+Check whether a universe is bounded.
 
 ### Input
 
@@ -233,14 +232,18 @@ Determine whether a universe is bounded.
 
 ### Output
 
-`false` as the universe is unbounded.
+`false`.
 """
 function isbounded(U::Universe)
     return false
 end
 
+function isboundedtype(::Type{<:Universe})
+    return false
+end
+
 """
-    isuniversal(U::Universe{N}, [witness]::Bool=false) where {N<:Real}
+    isuniversal(U::Universe{N}, [witness]::Bool=false) where {N}
 
 Check whether a universe is universal.
 
@@ -254,7 +257,7 @@ Check whether a universe is universal.
 * If `witness` option is deactivated: `true`
 * If `witness` option is activated: `(true, [])`
 """
-function isuniversal(U::Universe{N}, witness::Bool=false) where {N<:Real}
+function isuniversal(U::Universe{N}, witness::Bool=false) where {N}
     return witness ? (true, N[]) : true
 end
 
@@ -275,7 +278,7 @@ that is centered in the origin.
 An error.
 """
 function norm(U::Universe, p::Real=Inf)
-    error("a universe does not have a norm")
+    return error("a universe does not have a norm")
 end
 
 """
@@ -283,7 +286,7 @@ end
 
 Return the radius of a universe.
 It is the radius of the enclosing ball (of the given ``p``-norm) of minimal
-volume with the same center.
+volume.
 
 ### Input
 
@@ -295,16 +298,15 @@ volume with the same center.
 An error.
 """
 function radius(U::Universe, p::Real=Inf)
-    error("a universe does not have a radius")
+    return error("a universe does not have a radius")
 end
 
 """
     diameter(U::Universe, [p]::Real=Inf)
 
 Return the diameter of a universe.
-It is the maximum distance between any two elements of the set, or,
-equivalently, the diameter of the enclosing ball (of the given ``p``-norm) of
-minimal volume with the same center.
+It is the diameter of the enclosing ball (of the given ``p``-norm) of minimal
+volume .
 
 ### Input
 
@@ -316,11 +318,11 @@ minimal volume with the same center.
 An error.
 """
 function diameter(U::Universe, p::Real=Inf)
-    error("a universe does not have a diameter")
+    return error("a universe does not have a diameter")
 end
 
 """
-    translate(U::Universe{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(U::Universe, v::AbstractVector)
 
 Translate (i.e., shift) a universe by a given vector.
 
@@ -333,8 +335,138 @@ Translate (i.e., shift) a universe by a given vector.
 
 The universe.
 """
-function translate(U::Universe{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(U::Universe, v::AbstractVector)
+    return translate!(U, v)  # no need to copy
+end
+
+"""
+    translate!(U::Universe, v::AbstractVector)
+
+Translate (i.e., shift) a universe by a given vector, in-place.
+
+### Input
+
+- `U` -- universe
+- `v` -- translation vector
+
+### Output
+
+The universe.
+"""
+function translate!(U::Universe, v::AbstractVector)
     @assert length(v) == dim(U) "cannot translate a $(dim(U))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
+    return U
+end
+
+function linear_map_inverse(Minv::AbstractMatrix{N}, U::Universe{N}) where {N}
+    @assert size(Minv, 1) == dim(U) "a linear map of size $(size(Minv)) " *
+                                    "cannot be applied to a universe of dimension $(dim(U))"
+    n = size(Minv, 2)
+    return Universe{N}(n)
+end
+
+function project(U::Universe{N}, block::AbstractVector{Int}; kwargs...) where {N}
+    return Universe{N}(length(block))
+end
+
+"""
+    permute(U::Universe, p::AbstractVector{Int})
+
+Permute the dimensions according to a permutation vector.
+
+### Input
+
+- `U` -- universe
+- `p` -- permutation vector
+
+### Output
+
+The same universe.
+"""
+function permute(U::Universe, p::AbstractVector{Int})
+    return U
+end
+
+function tosimplehrep(U::Universe)
+    return tosimplehrep(constraints_list(U); n=dim(U))
+end
+
+"""
+    complement(U::Universe{N}) where {N}
+
+Return the complement of an universe.
+
+### Input
+
+- `∅` -- universe
+
+### Output
+
+The empty set of the same dimension.
+"""
+function complement(U::Universe{N}) where {N}
+    return EmptySet{N}(dim(U))
+end
+
+function load_polyhedra_universe() # function to be loaded by Requires
+    return quote
+        # see the interface file init_Polyhedra.jl for the imports
+
+        """
+            polyhedron(U::Universe; [backend]=default_polyhedra_backend(P))
+
+        Return an `HRep` polyhedron from `Polyhedra.jl` given a universe.
+
+        ### Input
+
+        - `U`       -- universe
+        - `backend` -- (optional, default: call `default_polyhedra_backend(P)`)
+                       the backend for polyhedral computations
+
+        ### Output
+
+        An `HRep` polyhedron.
+
+        ### Notes
+
+        For further information on the supported backends see
+        [Polyhedra's documentation](https://juliapolyhedra.github.io/).
+        """
+        function polyhedron(U::Universe; backend=default_polyhedra_backend(U))
+            A, b = tosimplehrep(U)
+            return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
+        end
+    end
+end  # quote / load_polyhedra_universe()
+
+"""
+    reflect(U::Universe)
+
+Concrete reflection of a universe `U`, resulting in the reflected set `-U`.
+
+### Input
+
+- `U` -- universe
+
+### Output
+
+The same universe.
+"""
+function reflect(U::Universe)
+    return U
+end
+
+function scale(α::Real, U::Universe{N}) where {N}
+    if iszero(α)
+        return ZeroSet{N}(dim(U))
+    end
+    return U
+end
+
+function scale!(α::Real, U::Universe)
+    if iszero(α)
+        throw(ArgumentError("cannot 0-scale a universe in-place"))
+    end
     return U
 end

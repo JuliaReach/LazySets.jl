@@ -4,12 +4,13 @@ CurrentModule = LazySets
 
 # [Complement](@id def_Complement)
 
-Note that the complement of a convex set is generally not convex.
-Hence this set type is not part of the convex-set family `LazySet`.
+The concrete complement can be computed with the function `complement` (with a
+lower-case "c").
 
 ```@docs
 Complement
 dim(::Complement)
-∈(::AbstractVector{N}, ::Complement{N}) where {N<:Real}
+∈(::AbstractVector, ::Complement)
 isempty(::Complement)
+constraints_list(::Complement)
 ```

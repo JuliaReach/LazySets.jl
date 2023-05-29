@@ -5,46 +5,44 @@ export AbstractPolygon,
        tovrep
 
 """
-    AbstractPolygon{N<:Real} <: AbstractPolytope{N}
+    AbstractPolygon{N} <: AbstractPolytope{N}
 
-Abstract type for polygons (i.e., 2D polytopes).
+Abstract type for convex polygons (i.e., two-dimensional polytopes).
 
 ### Notes
 
 Every concrete `AbstractPolygon` must define the following functions:
-- `tovrep(::AbstractPolygon{N})`         -- transform into
-    V-representation
-- `tohrep(::AbstractPolygon{N}) where {S<:AbstractHPolygon{N}}` -- transform
-    into H-representation
+
+- `tovrep(::AbstractPolygon{N})` -- transform into vertex representation
+- `tohrep(::AbstractPolygon{N})` -- transform into constraint representation
+
+The subtypes of `AbstractPolygon` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolygon)
-2-element Array{Any,1}:
+2-element Vector{Any}:
  AbstractHPolygon
  VPolygon
 ```
 """
-abstract type AbstractPolygon{N<:Real} <: AbstractPolytope{N} end
+abstract type AbstractPolygon{N} <: AbstractPolytope{N} end
 
 isconvextype(::Type{<:AbstractPolygon}) = true
-
-# --- LazySet interface functions ---
-
 
 """
     dim(P::AbstractPolygon)
 
-Return the ambient dimension of a polygon.
+Return the ambient dimension of a convex polygon.
 
 ### Input
 
-- `P` -- polygon
+- `P` -- convex polygon
 
 ### Output
 
 The ambient dimension of the polygon, which is 2.
 """
-@inline function dim(P::AbstractPolygon)
+@inline function dim(::AbstractPolygon)
     return 2
 end
 
@@ -77,11 +75,11 @@ julia> jump2pi(0.5)
 ```
 """
 @inline function jump2pi(x::N) where {N<:AbstractFloat}
-    x < zero(N) ? 2 * pi + x : x
+    return x < zero(N) ? 2 * pi + x : x
 end
 
 """
-    quadrant(w::AbstractVector{N}) where {N<:Real}
+    quadrant(w::AbstractVector{N}) where {N}
 
 Compute the quadrant where the direction `w` belongs.
 
@@ -103,19 +101,19 @@ An integer from 0 to 3, with the following convention:
 ### Algorithm
 
 The idea is to encode the following logic function:
-``11 ↦ 0, 01 ↦ 1, 00 ↦ 2, 10 ↦ 3``, according to the convention of above.
+``11 ↦ 0, 01 ↦ 1, 00 ↦ 2, 10 ↦ 3``, according to the convention above.
 
 This function is inspired from AGPX's answer in:
 [Sort points in clockwise order?](https://stackoverflow.com/a/46635372)
 """
-@inline function quadrant(w::AbstractVector{N}) where {N<:Real}
+@inline function quadrant(w::AbstractVector{N}) where {N}
     dwx = w[1] >= zero(N) ? 1 : 0
     dwy = w[2] >= zero(N) ? 1 : 0
     return (1 - dwx) + (1 - dwy) + ((dwx & (1 - dwy)) << 1)
 end
 
 """
-    <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
+    <=(u::AbstractVector, v::AbstractVector)
 
 Compare two 2D vectors by their direction.
 
@@ -136,18 +134,18 @@ direction (1, 0).
 ### Algorithm
 
 The implementation checks the quadrant of each direction, and compares
-directions using the right-hand rule (see [`is_right_turn`](@ref)).
+directions using the right-hand rule.
 In particular, this method does not use the arctangent.
 """
-function <=(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
+function <=(u::AbstractVector, v::AbstractVector)
     @assert length(u) == length(v) == 2 "comparison of vectors `u` and `v` " *
-           "by their direction requires they are of length 2, " *
-           "but their lengths are $(length(u)) and $(length(v)) respectively"
+                                        "by their direction requires that they are of length 2, " *
+                                        "but their lengths are $(length(u)) and $(length(v)), respectively"
 
     return _leq_quadrant(u, v)
 end
 
-function _leq_quadrant(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Real}
+function _leq_quadrant(u::AbstractVector, v::AbstractVector)
     qu, qv = quadrant(u), quadrant(v)
     if qu == qv
         # same quadrant, check right-turn with center 0
@@ -160,7 +158,7 @@ end
 """
     _leq_trig(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
 
-Compares two 2D vectors by their direction.
+Compare two 2D vectors by their direction.
 
 ### Input
 
@@ -183,4 +181,25 @@ arguments implements the [`atan2` function](https://en.wikipedia.org/wiki/Atan2)
 """
 function _leq_trig(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:AbstractFloat}
     return jump2pi(atan(u[2], u[1])) <= jump2pi(atan(v[2], v[1]))
+end
+
+"""
+    volume(P::AbstractPolygon)
+
+Compute the volume of a convex polygon.
+
+### Input
+
+- `P` -- convex polygon
+
+### Output
+
+A number representing the volume of `P`.
+
+### Notes
+
+In 2D the volume is equivalent to the area.
+"""
+function volume(P::AbstractPolygon)
+    return area(P)
 end

@@ -7,12 +7,16 @@ CurrentModule = LazySets
 ```@docs
 Bloating
 dim(::Bloating)
-σ(::AbstractVector{N}, ::Bloating{N}) where {N<:AbstractFloat}
-ρ(::AbstractVector{N}, ::Bloating{N}) where {N<:AbstractFloat}
+σ(::AbstractVector, ::Bloating)
+ρ(::AbstractVector, ::Bloating)
 isbounded(::Bloating)
 isempty(::Bloating)
 an_element(::Bloating)
+constraints_list(::Bloating)
+center(::Bloating)
+is_polyhedral(::Bloating)
 ```
-
 Inherited from [`LazySet`](@ref):
-* [`singleton_list`](@ref singleton_list(::LazySet))
+* [`high`](@ref high(::LazySet))
+* [`low`](@ref low(::LazySet))
+* [`reflect`](@ref reflect(::LazySet))

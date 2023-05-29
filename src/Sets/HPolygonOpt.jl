@@ -3,33 +3,36 @@ import Base.<=
 export HPolygonOpt
 
 """
-    HPolygonOpt{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
+    HPolygonOpt{N, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
 
 Type that represents a convex polygon in constraint representation whose edges
 are sorted in counter-clockwise fashion with respect to their normal directions.
-This is a refined version of [`HPolygon`](@ref).
+This implementation is a refined version of [`HPolygon`](@ref).
 
 ### Fields
 
-- `constraints`       -- list of linear constraints, sorted by the normal
-                         direction in counter-clockwise fashion
-- `ind`               -- index in the list of constraints to begin the search
-                         to evaluate the support function
+- `constraints` -- list of linear constraints, sorted by the normal direction in
+                   counter-clockwise fashion
+- `ind`         -- index in the list of constraints to begin the search to
+                   evaluate the support vector/function
+
+### Notes
+
+Further constructor arguments:
+
 - `sort_constraints`  -- (optional, default: `true`) flag for sorting the
-                         constraints (sortedness is a running assumption of this
-                         type)
+                         constraints (being sorted is a running assumption of
+                         this type)
 - `check_boundedness` -- (optional, default: `false`) flag for checking if the
                          constraints make the polygon bounded; (boundedness is a
                          running assumption of this type)
 - `prune`             -- (optional, default: `true`) flag for removing redundant
                          constraints
 
-### Notes
-
-This structure is optimized to evaluate the support function/vector with a large
+This structure is optimized to evaluate the support vector/function with a large
 sequence of directions that are close to each other. The strategy is to have an
 index that can be used to warm-start the search for optimal values in the
-support vector computation.
+support-vector computation.
 
 The option `sort_constraints` can be used to deactivate automatic sorting of
 constraints in counter-clockwise fashion, which is an invariant of this type.
@@ -46,27 +49,27 @@ iterative addition of the constraints, and hence one has to initially construct
 an empty list of constraints (which represents an unbounded set).
 The user has to make sure that the `HPolygonOpt` is not used before the
 constraints actually describe a bounded set.
-The function `isbounded` can be used to manually assert boundedness.
 """
-mutable struct HPolygonOpt{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
-    constraints::Vector{LinearConstraint{N, VN}}
+mutable struct HPolygonOpt{N,VN<:AbstractVector{N}} <: AbstractHPolygon{N}
+    constraints::Vector{HalfSpace{N,VN}}
     ind::Int
 
-    # default constructor that applies sorting of the given constraints
-    function HPolygonOpt(constraints::Vector{LinearConstraint{N, VN}},
+    # default constructor that applies sorting of the given constraints and
+    # (checks for and) removes redundant constraints
+    function HPolygonOpt(constraints::Vector{HalfSpace{N,VN}},
                          ind::Int=1;
                          sort_constraints::Bool=true,
                          check_boundedness::Bool=false,
-                         prune::Bool=true) where {N<:Real, VN<:AbstractVector{N}}
+                         prune::Bool=true) where {N,VN<:AbstractVector{N}}
         if sort_constraints
-            sorted_constraints = Vector{LinearConstraint{N, VN}}()
+            sorted_constraints = Vector{HalfSpace{N,VN}}()
             sizehint!(sorted_constraints, length(constraints))
             for ci in constraints
                 addconstraint!(sorted_constraints, ci; prune=prune)
             end
-            P = new{N, VN}(sorted_constraints, ind)
+            P = new{N,VN}(sorted_constraints, ind)
         else
-            P = new{N, VN}(constraints, ind)
+            P = new{N,VN}(constraints, ind)
         end
         @assert (!check_boundedness ||
                  isbounded(P, false)) "the polygon is not bounded"
@@ -75,42 +78,39 @@ mutable struct HPolygonOpt{N<:Real, VN<:AbstractVector{N}} <: AbstractHPolygon{N
 end
 
 isoperationtype(::Type{<:HPolygonOpt}) = false
-isconvextype(::Type{<:HPolygonOpt}) = true
 
-# constructor for an HPolygon with no constraints
-function HPolygonOpt{N, VN}() where {N<:Real, VN<:AbstractVector{N}}
-    HPolygonOpt(Vector{LinearConstraint{N, VN}}())
+# constructor with no constraints
+function HPolygonOpt{N,VN}() where {N,VN<:AbstractVector{N}}
+    return HPolygonOpt(Vector{HalfSpace{N,VN}}())
 end
 
-# constructor for an HPolygonOpt with no constraints and given numeric type
-function HPolygonOpt{N}() where {N<:Real}
-    HPolygonOpt(Vector{LinearConstraint{N, Vector{N}}}())
+# constructor with no constraints and given numeric type
+function HPolygonOpt{N}() where {N}
+    return HPolygonOpt(Vector{HalfSpace{N,Vector{N}}}())
 end
 
-# constructor for an HPolygonOpt without explicit numeric type, defaults to Float64
+# constructor without explicit numeric type, defaults to Float64
 function HPolygonOpt()
-    HPolygonOpt{Float64}()
+    return HPolygonOpt{Float64}()
 end
 
-# constructor from a simple H-representation
-HPolygonOpt(A::AbstractMatrix{N},
-            b::AbstractVector{N};
-            sort_constraints::Bool=true,
-            check_boundedness::Bool=false,
-            prune::Bool=true) where {N<:Real} =
-    HPolygonOpt(constraints_list(A, b); sort_constraints=sort_constraints,
-                check_boundedness=check_boundedness, prune=prune)
+# constructor with constraints of mixed type
+function HPolygonOpt(constraints::Vector{<:HalfSpace})
+    return HPolygonOpt(_normal_Vector(constraints))
+end
 
-
-# --- LazySet interface functions ---
-
+# constructor from a simple constraint representation
+function HPolygonOpt(A::AbstractMatrix, b::AbstractVector; sort_constraints::Bool=true,
+                     check_boundedness::Bool=false, prune::Bool=true)
+    return HPolygonOpt(constraints_list(A, b); sort_constraints=sort_constraints,
+                       check_boundedness=check_boundedness, prune=prune)
+end
 
 """
-    σ(d::AbstractVector{N}, P::HPolygonOpt{N};
-      [linear_search]::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
-     ) where {N<:Real}
+    σ(d::AbstractVector, P::HPolygonOpt;
+      [linear_search]::Bool=(length(P.constraints) < $BINARY_SEARCH_THRESHOLD))
 
-Return the support vector of an optimized polygon in a given direction.
+Return a support vector of an optimized polygon in a given direction.
 
 ### Input
 
@@ -130,19 +130,18 @@ norm zero, any vertex is returned.
 Comparison of directions is performed using polar angles; see the overload of
 `<=` for two-dimensional vectors.
 
-For polygons with `BINARY_SEARCH_THRESHOLD = 10` or more constraints we use a
-binary search by default.
+For polygons with $BINARY_SEARCH_THRESHOLD or more constraints we use a binary
+search by default.
 """
-function σ(d::AbstractVector{N}, P::HPolygonOpt{N};
-           linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD)
-          ) where {N<:Real}
+function σ(d::AbstractVector, P::HPolygonOpt;
+           linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD))
     n = length(P.constraints)
     @assert n > 0 "the polygon has no constraints"
     if linear_search
         # linear search
         if (d <= P.constraints[P.ind].a)
             # search backward
-            k = P.ind-1
+            k = P.ind - 1
             while (k >= 1 && d <= P.constraints[k].a)
                 k -= 1
             end
@@ -156,40 +155,39 @@ function σ(d::AbstractVector{N}, P::HPolygonOpt{N};
             end
         else
             # search forward
-            k = P.ind+1
+            k = P.ind + 1
             while (k <= n && P.constraints[k].a <= d)
                 k += 1
             end
-            if (k == n+1)
+            if (k == n + 1)
                 P.ind = n
                 # corner case: wrap-around in constraints list
                 return element(intersection(Line2D(P.constraints[n]),
                                             Line2D(P.constraints[1])))
             else
-                P.ind = k-1
+                P.ind = k - 1
             end
         end
         return element(intersection(Line2D(P.constraints[P.ind]),
                                     Line2D(P.constraints[P.ind + 1])))
     else
         # binary search
-        k = binary_search_constraints(d, P.constraints, n, P.ind)
-        if k == 1 || k == n+1
+        k = binary_search_constraints(d, P.constraints; start_index=P.ind)
+        if k == 1 || k == n + 1
             P.ind = 1
             # corner cases: wrap-around in constraints list
             return element(intersection(Line2D(P.constraints[n]),
                                         Line2D(P.constraints[1])))
         else
             P.ind = k
-            return element(intersection(Line2D(P.constraints[k-1]),
+            return element(intersection(Line2D(P.constraints[k - 1]),
                                         Line2D(P.constraints[k])))
         end
     end
 end
 
 """
-    translate(P::HPolygonOpt{N}, v::AbstractVector{N}; share::Bool=false
-             ) where {N<:Real}
+    translate(P::HPolygonOpt, v::AbstractVector; share::Bool=false)
 
 Translate (i.e., shift) an optimized polygon in constraint representation by a
 given vector.
@@ -214,12 +212,10 @@ the original constraints if `share == true`.
 
 We translate every constraint.
 """
-function translate(P::HPolygonOpt{N}, v::AbstractVector{N}; share::Bool=false
-                  ) where {N<:Real}
+function translate(P::HPolygonOpt, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     constraints = [translate(c, v; share=share) for c in constraints_list(P)]
-    return HPolygonOpt(constraints, P.ind;
-                       sort_constraints=false, check_boundedness=false,
-                       prune=false)
+    return HPolygonOpt(constraints, P.ind; sort_constraints=false,
+                       check_boundedness=false, prune=false)
 end

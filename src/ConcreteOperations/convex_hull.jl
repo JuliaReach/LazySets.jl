@@ -1,3 +1,5 @@
+export convex_hull
+
 function default_convex_hull_algorithm(points)
     if length(points) != 0 && length(first(points)) == 2
         return "monotone_chain"
@@ -7,15 +9,15 @@ function default_convex_hull_algorithm(points)
 end
 
 """
-    convex_hull(X::LazySet{N}, Y::LazySet{N}; [algorithm]=nothing,
-                [backend]=nothing, [solver]=nothing) where {N<:Real}
+    convex_hull(X::LazySet, Y::LazySet; [algorithm]=nothing,
+                [backend]=nothing, [solver]=nothing)
 
-Compute the convex hull of the given convex sets.
+Compute the convex hull of two polytopic sets.
 
 ### Input
 
-- `X`         -- convex set
-- `Y`         -- convex set
+- `X`         -- polytopic set
+- `Y`         -- polytopic set
 - `algorithm` -- (optional, default: `nothing`) the convex-hull algorithm
 - `backend`   -- (optional, default: `nothing`) backend for polyhedral
                  computations (used for higher-dimensional sets)
@@ -24,61 +26,56 @@ Compute the convex hull of the given convex sets.
 
 ### Output
 
+If the sets are empty, the result is an `EmptySet`.
+If the convex hull consists of a single point, the result is a `Singleton`.
 If the input sets are one-dimensional, the result is an `Interval`.
 If the input sets are two-dimensional, the result is a `VPolygon`.
 Otherwise the result is a `VPolytope`.
 
 ### Algorithm
 
-One-dimensional sets are resolved by using `overapproximate` with an `Interval`
-(which is exact).
-For higher-dimensional sets, we compute the vertices of both `X` and `Y` using
-`vertices_list` and then compute the convex hull of the union of those vertices.
+We compute the vertices of both `X` and `Y` using `vertices_list` and then
+compute the convex hull of the union of those vertices.
 """
-function convex_hull(X::LazySet{N}, Y::LazySet{N};
-                     algorithm=nothing,
-                     backend=nothing,
-                     solver=nothing
-                    ) where {N<:Real}
+function convex_hull(X::LazySet, Y::LazySet; algorithm=nothing,
+                     backend=nothing, solver=nothing)
     n = dim(X)
     @assert n == dim(Y) "the convex hull requires two sets of the same " *
-                        "dimension, but the sets had dimension $n and $(dim(Y))"
+                        "dimension, but they have dimension $n and $(dim(Y))"
 
-    chull = convex_hull!([vertices_list(X); vertices_list(Y)];
+    vlist = convex_hull!([vertices_list(X); vertices_list(Y)];
                          algorithm=algorithm, backend=backend, solver=solver)
-    m = length(chull)
+    return _convex_hull_set(vlist; n=n)
+end
+
+# turn a list of points describing the convex hull into an appropriate set
+function _convex_hull_set(vlist; n::Int=(isempty(vlist) ? -1 : length(vlist[1])))
+    m = length(vlist)
     if m == 0
+        N = eltype(vlist)
         return EmptySet{N}(n)
     elseif m == 1
-            return Singleton(chull[1])
+        return Singleton(vlist[1])
     elseif n == 1
-        @assert m == 2
-        low = chull[1][1]
-        high = chull[2][1]
-        if low > high
-            tmp = low
-            low = high
-            high = tmp
-        end
-        return Interval(low, high)
+        @assert m == 2 "a convex hull in 1D can have at most two vertices"
+        # points are sorted
+        return Interval(vlist[1][1], vlist[end][1])
     elseif n == 2
-        return VPolygon(chull)
+        # points are sorted
+        return VPolygon(vlist)
     end
-    return VPolytope(chull)
+    return VPolytope(vlist)
 end
 
 """
-    convex_hull(points::Vector{VN};
-                [algorithm]=nothing,
-                [backend]=nothing,
-                [solver]=nothing
-                ) where {N<:Real, VN<:AbstractVector{N}}
+    convex_hull(points::Vector{VN}; [algorithm]=nothing, [backend]=nothing,
+                [solver]=nothing) where {N, VN<:AbstractVector{N}}
 
-Compute the convex hull of the given points.
+Compute the convex hull of a list of points.
 
 ### Input
 
-- `points`    -- list of vectors
+- `points`    -- list of points
 - `algorithm` -- (optional, default: `nothing`) the convex-hull algorithm; see
                  below for valid options
 - `backend`   -- (optional, default: `nothing`) polyhedral computation backend
@@ -88,7 +85,7 @@ Compute the convex hull of the given points.
 
 ### Output
 
-The convex hull as a list of vectors with the coordinates of the points.
+The convex hull as a list of points.
 
 ### Algorithm
 
@@ -96,22 +93,23 @@ A pre-processing step treats the cases with up to two points for one dimension
 and up to four points for two dimensions.
 For more points in one resp. two dimensions, we use more general algorithms.
 
-For the one-dimensional case we return the minimum and maximum points, in that order.
+For the one-dimensional case, we return the minimum and maximum points, in that
+order.
 
-The two-dimensional case is handled with a planar convex hull algorithm. The
+The two-dimensional case is handled with a planar convex-hull algorithm. The
 following algorithms are available:
 
 * `"monotone_chain"`        -- compute the convex hull of points in the plane
-                               using Andrew's monotone chain method
+                               using Andrew's monotone-chain method
 * `"monotone_chain_sorted"` -- the same as `"monotone_chain"` but assuming that
-                               the points are already sorted in counter-clockwise
-                               fashion
+                               the points are already sorted in
+                               counter-clockwise fashion
 
 See the reference docstring of each of those algorithms for details.
 
-The higher dimensional case is treated using the concrete polyhedra library
-`Polyhedra`, that gives access to libraries such as `CDDLib` and `ConvexHull.jl`.
-These libraries can be chosen from the `backend` argument.
+The higher-dimensional case is treated using the concrete polyhedra library
+`Polyhedra`, which gives access to libraries such as `CDDLib` and
+`ConvexHull.jl`. These libraries can be chosen via the `backend` argument.
 
 ### Notes
 
@@ -127,37 +125,18 @@ julia> points = [randn(2) for i in 1:30]; # 30 random points in 2D
 julia> hull = convex_hull(points);
 
 julia> typeof(hull)
-Array{Array{Float64,1},1}
-```
-
-Plot both the random points and the computed convex hull polygon:
-
-```jldoctest ch_label
-julia> using Plots;
-
-julia> plot([Tuple(pi) for pi in points], seriestype=:scatter);
-
-julia> plot!(VPolygon(hull), alpha=0.2);
+Vector{Vector{Float64}} (alias for Array{Array{Float64, 1}, 1})
 ```
 """
-function convex_hull(points::Vector{VN};
-                     algorithm=nothing,
-                     backend=nothing,
-                     solver=nothing
-                     ) where {N<:Real, VN<:AbstractVector{N}}
-    return convex_hull!(copy(points), algorithm=algorithm, backend=backend, solver=solver)
+function convex_hull(points::Vector{VN}; algorithm=nothing, backend=nothing,
+                     solver=nothing) where {N,VN<:AbstractVector{N}}
+    return convex_hull!(copy(points); algorithm=algorithm, backend=backend,
+                        solver=solver)
 end
 
-function convex_hull!(points::Vector{VN};
-                      algorithm=nothing,
-                      backend=nothing,
-                      solver=nothing) where {N<:Real, VN<:AbstractVector{N}}
-
+function convex_hull!(points::Vector{VN}; algorithm=nothing, backend=nothing,
+                      solver=nothing) where {N,VN<:AbstractVector{N}}
     m = length(points)
-
-    # =====================
-    # Treat special cases
-    # =====================
 
     # zero or one point
     if m == 0 || m == 1
@@ -171,33 +150,43 @@ function convex_hull!(points::Vector{VN};
             # two points case in 1d
             return _two_points_1d!(points)
         else
-             # general case in 1d
+            # general case in 1d
             return _convex_hull_1d!(points)
         end
     elseif n == 2
-        if m == 2
-            # two points case in 2d
-            return _two_points_2d!(points)
-        elseif m == 3
-            # three points case in 2d
-            return _three_points_2d!(points)
-        elseif m == 4
-            # four points case in 2d
-            return _four_points_2d!(points)
-        else
-            # general case in 2d
-            return _convex_hull_2d!(points, algorithm=algorithm)
-        end
+        return _convex_hull_2d_preprocess!(points, m; algorithm=algorithm)
     else
         # general case in nd
-        return _convex_hull_nd!(points, backend=backend, solver=solver)
+        return _convex_hull_nd!(points; backend=backend, solver=solver)
+    end
+end
+
+function _convex_hull_2d_preprocess!(points, m=length(points); algorithm=nothing)
+    if m == 1
+        return points
+    elseif m == 2
+        # two points case in 2d
+        return _two_points_2d!(points)
+    elseif m == 3
+        # three points case in 2d
+        return _three_points_2d!(points)
+    elseif m == 4
+        # four points case in 2d
+        return _four_points_2d!(points)
+    else
+        # general case in 2d
+        return _convex_hull_2d!(points; algorithm=algorithm)
     end
 end
 
 function _two_points_1d!(points)
     p1, p2 = points[1], points[2]
-    if  _isapprox(p1[1], p2[1]) # check for redundancy
+    if _isapprox(p1[1], p2[1]) # check for redundancy
         pop!(points)
+    elseif p1[1] > p2[1]
+        tmp = p1[1]
+        p1[1] = p2[1]
+        p2[1] = tmp
     end
     return points
 end
@@ -210,14 +199,15 @@ function _two_points_2d!(points)
     return points
 end
 
-function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<:Real}
-    # Algorithm: the function takes three points and uses the formula
-    #            from here: https://stackoverflow.com/questions/2122305/convex-hull-of-4-points/2122620#2122620
-    #            to decide if the points are ordered in a counter-clockwise fashion or not, the result is saved
-    #            in the 'turn' boolean, then returns the points in ccw fashion acting according to 'turn'. For the
-    #            cases where the points are collinear we pass the points with the minimum and maximum first
-    #            component to the function for two points in 2d(_two_points_2d), if those are equal, we do the same
-    #            but with the second component.
+function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N}
+    # Algorithm: the function takes three points and uses the formula from here:
+    # https://stackoverflow.com/questions/2122305/convex-hull-of-4-points/2122620#2122620
+    # to decide if the points are ordered in counter-clockwise order. The result
+    # is saved in the 'turn' flag and returned in ccw fashion acting according
+    # to 'turn'. For the cases where the points are collinear, we pass the
+    # points with the minimum and maximum first component to the function for
+    # two points in 2d(_two_points_2d). If those are equal, we do the same but
+    # with the second component.
     A, B, C = points[1], points[2], points[3]
     turn = right_turn(A, B, C)
 
@@ -231,10 +221,12 @@ function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N
                 pop!(points)
                 return points
             else
-                points[1], points[2] = points[argmin([A[2], B[2], C[2]])], points[argmax([A[2], B[2], C[2]])]
+                points[1] = points[argmin([A[2], B[2], C[2]])]
+                points[2] = points[argmax([A[2], B[2], C[2]])]
             end
         else
-            points[1], points[2] = points[argmin([A[1], B[1], C[1]])], points[argmax([A[1], B[1], C[1]])]
+            points[1] = points[argmin([A[1], B[1], C[1]])]
+            points[2] = points[argmax([A[1], B[1], C[1]])]
         end
         pop!(points)
         _two_points_2d!(points)
@@ -246,7 +238,8 @@ function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N
     return points
 end
 
-# given an index i in {1, 2, 3} return the element among (A, B, C) in the i-th position
+# given an index i in {1, 2, 3}, return the element among (A, B, C) in the i-th
+# position
 @inline function _get_i(i, A, B, C)
     return i == 1 ? A : i == 2 ? B : C
 end
@@ -262,8 +255,9 @@ function _collinear_case!(points, A, B, C, D)
             pop!(points)
             return _two_points_2d!(points)
         else
-            # assign the points with max and min value in their second component to the
-            # firsts points and the extra point to the third place, then pop the point that was in the middle
+            # assign the points with max and min value in their second component
+            # to the firsts points and the extra point to the third place, then
+            # pop the point that was in the middle
             min_y, max_y = arg_minmax(A[2], B[2], C[2])
             points[1] = _get_i(min_y, A, B, C)
             points[2] = _get_i(max_y, A, B, C)
@@ -271,8 +265,9 @@ function _collinear_case!(points, A, B, C, D)
             pop!(points)
         end
     else
-        # assign the points with max and min value in their first component to the
-        # firsts points and the extra point to the third place, then pop the point that was in the middle
+        # assign the points with max and min value in their first component to
+        # the firsts points and the extra point to the third place, then pop the
+        # point that was in the middle
         min_x, max_x = arg_minmax(A[1], B[1], C[1])
         points[1] = _get_i(min_x, A, B, C)
         points[2] = _get_i(max_x, A, B, C)
@@ -282,7 +277,7 @@ function _collinear_case!(points, A, B, C, D)
     return _three_points_2d!(points)
 end
 
-function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<:Real}
+function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N}
     A, B, C, D = points[1], points[2], points[3], points[4]
     tri_ABC = right_turn(A, B, C)
     tri_ABD = right_turn(A, B, D)
@@ -331,73 +326,71 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N<
     #  -    -    -    +   ADCB
     #  -    -    -    -   ACB
     if key == 1111
-        points[1], points[2], points[3] = A, B, C # +    +    +    +   ABC
+        points[1], points[2], points[3] = A, B, C #  +    +    +    +   ABC
         pop!(points)
     elseif key == 1110
-        points[1], points[2], points[3], points[4] = A, B, C, D # +    +    +    -   ABCD
+        points[1], points[2], points[3], points[4] = A, B, C, D #  +    +    +    -   ABCD
     elseif key == 1101
         points[1], points[2], points[3], points[4] = A, B, D, C #  +    +    -    +   ABDC
     elseif key == 1100
-        points[1], points[2], points[3] = A, B, D #  +    +    -    -   ABD
+        points[1], points[2], points[3] = A, B, D               #  +    +    -    -   ABD
         pop!(points)
     elseif key == 1011
         points[1], points[2], points[3], points[4] = A, D, B, C #  +    -    +    +   ADBC
     elseif key == 1010
-        points[1], points[2], points[3] = B, C, D #  +    -    +    -   BCD
+        points[1], points[2], points[3] = B, C, D               #  +    -    +    -   BCD
         pop!(points)
     elseif key == 1001
-        points[1], points[2], points[3] = C, A, D #  +    -    -    +    CAD
+        points[1], points[2], points[3] = C, A, D               #  +    -    -    +    CAD
         pop!(points)
     elseif key == 0110
-        points[1], points[2], points[3] = A, C, D #  -    +    +    -   ACD
+        points[1], points[2], points[3] = A, C, D               #  -    +    +    -   ACD
         pop!(points)
     elseif key == 0101
-        points[1], points[2], points[3] = D, C, B #  -    +    -    +   DCB
+        points[1], points[2], points[3] = D, C, B               #  -    +    -    +   DCB
         pop!(points)
     elseif key == 0100
         points[1], points[2], points[3], points[4] = D, A, C, B #  -    +    -    -   DACB
     elseif key == 0011
-        points[1], points[2], points[3] = A, D, B #  -    -    +    +   ADB
+        points[1], points[2], points[3] = A, D, B               #  -    -    +    +   ADB
         pop!(points)
     elseif key == 0010
         points[1], points[2], points[3], points[4] = A, C, D, B #  -    -    +    -   ACDB
     elseif key == 0001
         points[1], points[2], points[3], points[4] = A, D, C, B #  -    -    -    +   ADCB
     elseif key == 0000
-        points[1], points[2], points[3] = A, C, B #  -    -    -    -   ACB
+        points[1], points[2], points[3] = A, C, B               #  -    -    -    -   ACB
         pop!(points)
     else
-        @assert false "unexpected case in convex_hull"
+        error("unexpected case in convex-hull algorithm")
     end
     return points
 end
 
-function _convex_hull_1d!(points::Vector{VN}) where {N<:Real, VN<:AbstractVector{N}}
+function _convex_hull_1d!(points::Vector{VN}) where {N,VN<:AbstractVector{N}}
     points[1:2] = [minimum(points), maximum(points)]
     return resize!(points, 2)
 end
 
 function _convex_hull_nd!(points::Vector{VN};
                           backend=nothing,
-                          solver=nothing
-                          ) where {N<:Real, VN<:AbstractVector{N}}
+                          solver=nothing) where {N,VN<:AbstractVector{N}}
     V = VPolytope(points)
-    Vch = remove_redundant_vertices(V, backend=backend, solver=solver)
+    Vch = remove_redundant_vertices(V; backend=backend, solver=solver)
     m = length(Vch.vertices)
     points[1:m] = Vch.vertices
     return resize!(points, m)
 end
 
 function _convex_hull_2d!(points::Vector{VN};
-                          algorithm="monotone_chain"
-                         ) where {N<:Real, VN<:AbstractVector{N}}
-    if algorithm == nothing
+                          algorithm="monotone_chain") where {N,VN<:AbstractVector{N}}
+    if isnothing(algorithm)
         algorithm = default_convex_hull_algorithm(points)
     end
     if algorithm == "monotone_chain"
         return monotone_chain!(points)
     elseif algorithm == "monotone_chain_sorted"
-        return monotone_chain!(points, sort=false)
+        return monotone_chain!(points; sort=false)
     else
         error("the convex hull algorithm $algorithm is unknown")
     end
@@ -405,14 +398,14 @@ end
 
 """
     monotone_chain!(points::Vector{VN}; sort::Bool=true
-                   ) where {N<:Real, VN<:AbstractVector{N}}
+                   ) where {N, VN<:AbstractVector{N}}
 
-Compute the convex hull of points in the plane using Andrew's monotone chain
-method.
+Compute the convex hull of a list of points in the plane using Andrew's
+monotone-chain method.
 
 ### Input
 
-- `points` -- list of 2D vectors; is sorted in-place inside this function
+- `points` -- list of 2D vectors; will be sorted in-place inside this method
 - `sort`   -- (optional, default: `true`) flag for sorting the vertices
               lexicographically; sortedness is required for correctness
 
@@ -423,28 +416,26 @@ convex hull.
 
 ### Notes
 
-For large sets of points, it is convenient to use static vectors to get
-maximum performance. For information on how to convert usual vectors
-into static vectors, see the type `SVector` provided by the
+For large sets of points, it is convenient to use static vectors to get maximum
+performance. For information on how to convert usual vectors into static
+vectors, see the type `SVector` provided by the
 [StaticArrays](http://juliaarrays.github.io/StaticArrays.jl/stable/)
 package.
 
 ### Algorithm
 
-This function implements Andrew's monotone chain convex hull algorithm to
+This method implements Andrew's monotone-chain convex hull algorithm to
 construct the convex hull of a set of ``n`` points in the plane in
-``O(n \\log n)`` time.
-For further details see
+``O(n \\log n)`` time. For further details see
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
-function monotone_chain!(points::Vector{VN}; sort::Bool=true
-                        ) where {N<:Real, VN<:AbstractVector{N}}
-
+function monotone_chain!(points::Vector{VN}; sort::Bool=true) where {N,VN<:AbstractVector{N}}
     @inline function build_hull!(semihull, iterator, points)
         @inbounds for i in iterator
             while length(semihull) >= 2 &&
-                    (right_turn(semihull[end-1], semihull[end], points[i])
-                         <= zero(N))
+                (right_turn(semihull[end - 1], semihull[end], points[i])
+                 <=
+                 zero(N))
                 pop!(semihull)
             end
             push!(semihull, points[i])
@@ -453,7 +444,7 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true
 
     if sort
         # sort the points lexicographically
-        sort!(points, by=x->(x[1], x[2]))
+        sort!(points; by=x -> (x[1], x[2]))
     end
 
     # build lower hull
@@ -467,8 +458,8 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true
     build_hull!(upper, iterator, points)
 
     # remove the last point of each segment because they are repeated
-    copyto!(points, @view(lower[1:end-1]))
-    copyto!(points, length(lower), @view(upper[1:end-1]))
+    copyto!(points, @view(lower[1:(end - 1)]))
+    copyto!(points, length(lower), @view(upper[1:(end - 1)]))
     m = length(lower) + length(upper) - 2
     if m == 2 && _isapprox(points[1], points[2])
         # upper and lower chain consist of a single, identical point
@@ -478,19 +469,122 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true
 end
 
 """
-    convex_hull(U::UnionSetArray{N, PT}; kwargs...) where {N, PT<:AbstractPolytope{N}}
+    convex_hull(P::VPolygon, Q::VPolygon; [algorithm]::String="monotone_chain")
 
-Compute the convex hull of a union of a finite number of polytopes.
+Return the convex hull of two polygons in vertex representation.
 
 ### Input
 
-- `U` -- UnionSetArray of polytopes
+- `P`         -- polygon in vertex representation
+- `Q`         -- polygon in vertex representation
+- `algorithm` -- (optional, default: "monotone_chain") the algorithm used to
+                 compute the convex hull
 
 ### Output
 
-A list of the vertices of the convex hull.
+A new polygon such that its vertices are the convex hull of the two polygons.
+
+### Notes
+
+The vertices of the output polygon are sorted in counter-clockwise fashion.
 """
-function convex_hull(U::UnionSetArray{N, PT}; kwargs...) where {N, PT<:AbstractPolytope{N}}
-    vlist = mapreduce(vertices_list, vcat, U.array)
-    return convex_hull(vlist; kwargs...)
+function convex_hull(P::VPolygon, Q::VPolygon;
+                     algorithm::String="monotone_chain")
+    vunion = [P.vertices; Q.vertices]
+    convex_hull!(vunion; algorithm=algorithm)
+    return VPolygon(vunion; apply_convex_hull=false)
+end
+
+"""
+    convex_hull(P1::VPolytope, P2::VPolytope; [backend]=nothing)
+
+Compute the convex hull of two polytopes in vertex representation.
+
+### Input
+
+- `P1`      -- polytope in vertex representation
+- `P2`      -- polytope in vertex representation
+- `backend` -- (optional, default: `nothing`) the polyhedral computation backend
+
+### Output
+
+The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
+
+### Notes
+
+This function takes the union of the vertices of each polytope and then relies
+on a concrete convex-hull algorithm.
+For low dimensions, a specialized implementation for polygons is used.
+For higher dimensions, `convex_hull` relies on the polyhedral backend that can
+be specified using the `backend` keyword argument.
+
+For performance reasons, it is suggested to use the `CDDLib.Library()` backend.
+"""
+function convex_hull(P1::VPolytope, P2::VPolytope; backend=nothing)
+    vunion = [P1.vertices; P2.vertices]
+    convex_hull!(vunion; backend=backend)
+    return VPolytope(vunion)
+end
+
+"""
+    convex_hull(P1::HPoly, P2::HPoly;
+               [backend]=default_polyhedra_backend(P1))
+
+Compute the convex hull of the set union of two polyhedra in constraint
+representation.
+
+### Input
+
+- `P1`      -- polyhedron
+- `P2`      -- polyhedron
+- `backend` -- (optional, default: `default_polyhedra_backend(P1)`) the
+               backend for polyhedral computations
+
+### Output
+
+The `HPolyhedron` (resp. `HPolytope`) obtained by the concrete convex hull of
+`P1` and `P2`.
+
+### Notes
+
+For performance reasons, it is suggested to use the `CDDLib.Library()` backend
+for the `convex_hull`.
+
+For further information on the supported backends see
+[Polyhedra's documentation](https://juliapolyhedra.github.io/).
+"""
+function convex_hull(P1::HPoly, P2::HPoly;
+                     backend=default_polyhedra_backend(P1))
+    require(@__MODULE__, :Polyhedra; fun_name="convex_hull")
+    Pch = Polyhedra.convexhull(polyhedron(P1; backend=backend),
+                               polyhedron(P2; backend=backend))
+    removehredundancy!(Pch)
+    return convert(basetype(P1), Pch)
+end
+
+@commutative function convex_hull(X::LazySet, ::EmptySet)
+    @assert isconvextype(typeof(X)) "this implementation requires a convex " *
+                                    "set as input"
+    return X
+end
+
+convex_hull(∅::EmptySet, ::EmptySet) = ∅
+
+"""
+    convex_hull(P1::SimpleSparsePolynomialZonotope,
+                P2::SimpleSparsePolynomialZonotope)
+
+Compute the convex hull of two simple sparse polynomial zonotopes.
+
+### Input
+
+- `P1` : simple sparse polynomial zonotopes
+- `P2` : simple sparse polynomial zonotopes
+
+### Output
+
+Tightest convex simple sparse polynomial zonotope containing `P1` and `P2`.
+"""
+function convex_hull(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
+    return linear_combination(linear_combination(P1, P1), linear_combination(P2, P2))
 end

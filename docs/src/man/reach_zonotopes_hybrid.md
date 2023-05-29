@@ -40,7 +40,7 @@ using Plots, LazySets, LinearAlgebra
 
 function reach_hybrid(As, Ts, init, δ, μ, T, max_order, instant_transitions)
     # initialize queue with initial mode and states at time t=0
-    queue = Vector{Tuple{Zonotope, Integer, Float64}}(undef, 1)
+    queue = Vector{Tuple{LazySet, Integer, Float64}}(undef, 1)
     queue[1] = (init[1], init[2], 0.0)
 
     res = Tuple{LazySet, Int}[]
@@ -53,7 +53,7 @@ function reach_hybrid(As, Ts, init, δ, μ, T, max_order, instant_transitions)
             S = R[i]
             push!(res, (S, loc))
             for (guard, tgt_loc) in Ts[loc]
-                if !is_intersection_empty(S, guard)
+                if !isdisjoint(S, guard)
                     new_t = t + δ * i
                     push!(queue, (S, tgt_loc, new_t))
                     found_transition = true
@@ -92,7 +92,7 @@ function reach_continuous(A, X0, δ, μ, T, max_order)
     N = floor(Int, T/δ)
 
     # preallocate array
-    R = Vector{LazySet}(undef, N)
+    R = Vector{Zonotope}(undef, N)
     if N == 0
         return R
     end
@@ -166,7 +166,7 @@ hyperplane guard ``g_i``:
 
 `LazySets` offers an order reduction function for zonotopes, which we used here
 with an upper bound of 10 generators. We plot the reachable states for the time
-interval ``[0, 4]`` and time step ``δ = 0.001``.
+interval ``[0, 4]`` and time step ``δ = 0.01``.
 
 ```@example example_reach_zonotopes_hybrid
     # dynamics
@@ -188,7 +188,7 @@ interval ``[0, 4]`` and time step ``δ = 0.001``.
     μ = 0.001
 
     # discretization step
-    δ = 0.001
+    δ = 0.01
 
     # time bound
     T = 4.

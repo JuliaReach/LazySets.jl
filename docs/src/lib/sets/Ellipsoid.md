@@ -6,22 +6,29 @@ CurrentModule = LazySets
 
 ```@docs
 Ellipsoid
-ρ(::AbstractVector{N}, ::Ellipsoid{N}) where {N<:AbstractFloat}
-σ(::AbstractVector{N}, ::Ellipsoid{N}) where {N<:AbstractFloat}
-∈(::AbstractVector{N}, ::Ellipsoid{N}) where {N<:AbstractFloat}
+center(::Ellipsoid)
+shape_matrix(::Ellipsoid)
+ρ(::AbstractVector, ::Ellipsoid)
+σ(::AbstractVector, ::Ellipsoid)
+∈(::AbstractVector, ::Ellipsoid)
 rand(::Type{Ellipsoid})
-center(::Ellipsoid{N}) where {N<:AbstractFloat}
-shape_matrix(::Ellipsoid{N}) where {N<:AbstractFloat}
-translate(::Ellipsoid{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
+translate(::Ellipsoid, ::AbstractVector)
+translate!(::Ellipsoid, ::AbstractVector)
+linear_map(::AbstractMatrix, ::Ellipsoid)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`rectify`](@ref rectify(::LazySet))
+* [`low`](@ref low(::LazySet))
+* [`high`](@ref high(::LazySet))
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))
 * [`isbounded`](@ref isbounded(::AbstractCentrallySymmetric))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
-* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N<:Real})
-* [`an_element`](@ref an_element(::AbstractCentrallySymmetric{N}) where {N<:Real})
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N})
+* [`an_element`](@ref an_element(::AbstractCentrallySymmetric))
+* [`extrema`](@ref extrema(::AbstractCentrallySymmetric))
+* [`extrema`](@ref extrema(::AbstractCentrallySymmetric, ::Int))

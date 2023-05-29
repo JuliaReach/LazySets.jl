@@ -14,31 +14,36 @@ extremal_vertices(::HParallelotope{N, VN}) where {N, VN}
 center(::HParallelotope)
 genmat(::HParallelotope)
 generators(::HParallelotope)
-constraints_list(::HParallelotope{N, VN}) where {N, VN}
+constraints_list(::HParallelotope)
+rand(::Type{HParallelotope})
+volume(::HParallelotope)
 ```
 
 Inherited from [`LazySet`](@ref):
+* [`low`](@ref low(::LazySet))
+* [`high`](@ref high(::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`singleton_list`](@ref singleton_list(::LazySet))
+* [`rectify`](@ref rectify(::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N<:Real})
-* [`singleton_list`](@ref singleton_list(::AbstractPolytope{N}) where {N<:Real})
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
-* [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
-* [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
-* [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real})
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N})
+* [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
+* [`extrema`](@ref extrema(::AbstractCentrallySymmetricPolytope))
+* [`extrema`](@ref extrema(::AbstractCentrallySymmetricPolytope, ::Int))
 
 Inherited from [`AbstractZonotope`](@ref):
-* [`ρ`](@ref ρ(::AbstractVector{N}, ::AbstractZonotope{N}) where {N<:Real})
-* [`σ`](@ref σ(::AbstractVector{N}, ::AbstractZonotope{N}) where {N<:Real})
-* [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractZonotope{N}) where {N<:Real})
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real})
-* [`translate`](@ref translate(::AbstractZonotope{N}, ::AbstractVector{N}) where {N<:Real})
-* [`constraints_list`](@ref constraints_list(::AbstractZonotope{N}) where {N<:Real})
-* [`constraints_list`](@ref constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat})
-* [`vertices_list`](@ref vertices_list(::AbstractZonotope{N}) where {N<:Real})
+* [`ρ`](@ref ρ(::AbstractVector, ::AbstractZonotope))
+* [`σ`](@ref σ(::AbstractVector, ::AbstractZonotope))
+* [`∈`](@ref ∈(::AbstractVector, ::AbstractZonotope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
+* [`translate`](@ref translate(::AbstractZonotope, ::AbstractVector))
+* [`vertices_list`](@ref vertices_list(::AbstractZonotope))
+* [`isempty`](@ref isempty(::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
+* [`reflect`](@ref reflect(::AbstractZonotope))

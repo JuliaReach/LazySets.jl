@@ -1,0 +1,38 @@
+name: Documentation
+
+on:
+  push:
+    paths-ignore:
+      - 'LICENSE'
+      - 'README.md'
+    branches:
+      - master
+    tags: '*'
+  pull_request:
+    paths-ignore:
+      - 'LICENSE'
+      - 'README.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      JULIA_PKG_SERVER: ''
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@latest
+        with:
+          version: '1'
+      - name: Install dependencies
+        run: |
+          julia --project=docs/ -e 'using Pkg;
+              Pkg.develop(PackageSpec(path=pwd()));
+              Pkg.instantiate()'
+      - name: Build and deploy
+        env:
+          GKSwstype: nul  # fix for Plots with GR backend
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # authentication with GitHub Actions token
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}  # authentication with SSH deploy key
+        run: julia --project=docs/ docs/make.jl

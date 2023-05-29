@@ -6,12 +6,13 @@ CurrentModule = LazySets
 
 ```@docs
 SymmetricIntervalHull
+⊡
 dim(::SymmetricIntervalHull)
-σ(::AbstractVector{N}, ::SymmetricIntervalHull{N}) where {N<:Real}
-center(::SymmetricIntervalHull{N}, ::Int) where {N<:Real}
-center(::SymmetricIntervalHull{N}) where {N<:Real}
-radius_hyperrectangle(::SymmetricIntervalHull{N}) where {N<:Real}
-radius_hyperrectangle(::SymmetricIntervalHull{N}, ::Int) where {N<:Real}
+σ(::AbstractVector, ::SymmetricIntervalHull)
+center(::SymmetricIntervalHull{N}, ::Int) where {N}
+center(::SymmetricIntervalHull{N}) where {N}
+radius_hyperrectangle(::SymmetricIntervalHull)
+radius_hyperrectangle(::SymmetricIntervalHull, ::Int)
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -22,24 +23,25 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
-* [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope{N}) where {N<:Real})
+* [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`ngens`](@ref ngens(::AbstractZonotope))
-* [`linear_map`](@ref linear_map(::AbstractMatrix{N}, ::AbstractZonotope{N}) where {N<:Real})
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))
-* [`translate`](@ref translate(::AbstractZonotope{N}, ::AbstractVector{N}) where {N<:Real})
+* [`translate`](@ref translate(::AbstractZonotope, ::AbstractVector))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`ρ`](@ref ρ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
-* [`σ`](@ref σ(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
-* [`∈`](@ref ∈(::AbstractVector{N}, ::AbstractHyperrectangle{N}) where {N<:Real})
+* [`ρ`](@ref ρ(::AbstractVector, ::AbstractHyperrectangle))
+* [`σ`](@ref σ(::AbstractVector, ::AbstractHyperrectangle))
+* [`∈`](@ref ∈(::AbstractVector, ::AbstractHyperrectangle))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
-* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N<:Real})
-* [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle{N}) where {N<:Real})
-* [`high`](@ref high(::AbstractHyperrectangle{N}) where {N<:Real})
-* [`low`](@ref low(::AbstractHyperrectangle{N}) where {N<:Real})
+* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle))
+* [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle))
+* [`high`](@ref high(::AbstractHyperrectangle))
+* [`low`](@ref low(::AbstractHyperrectangle))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
+* [`reflect`](@ref reflect(::AbstractHyperrectangle))

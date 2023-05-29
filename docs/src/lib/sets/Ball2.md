@@ -6,23 +6,31 @@ CurrentModule = LazySets
 
 ```@docs
 Ball2
-σ(::AbstractVector{N}, ::Ball2{N}) where {N<:AbstractFloat}
-∈(::AbstractVector{N}, ::Ball2{N}) where {N<:AbstractFloat}
-center(::Ball2{N}) where {N<:AbstractFloat}
+ρ(::AbstractVector, ::Ball2)
+σ(::AbstractVector, ::Ball2)
+∈(::AbstractVector, ::Ball2)
+center(::Ball2)
 rand(::Type{Ball2})
-sample(::Ball2{N}, ::Int) where {N<:AbstractFloat}
-translate(::Ball2{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
-chebyshev_center(::Ball2{N}) where {N<:AbstractFloat}
-volume(::Ball2{N}) where {N<:AbstractFloat}
+sample(::Ball2{N}, ::Int) where {N}
+translate(::Ball2, ::AbstractVector)
+translate!(::Ball2, ::AbstractVector)
+chebyshev_center_radius(::Ball2)
+volume(::Ball2)
+reflect(::Ball2)
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`rectify`](@ref rectify(::LazySet))
+* [`low`](@ref low(::LazySet))
+* [`high`](@ref high(::LazySet))
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))
 * [`isbounded`](@ref isbounded(::AbstractCentrallySymmetric))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
-* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N<:Real})
-* [`an_element`](@ref an_element(::AbstractCentrallySymmetric{N}) where {N<:Real})
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N})
+* [`an_element`](@ref an_element(::AbstractCentrallySymmetric))
+* [`extrema`](@ref extrema(::AbstractCentrallySymmetric))
+* [`extrema`](@ref extrema(::AbstractCentrallySymmetric, ::Int))

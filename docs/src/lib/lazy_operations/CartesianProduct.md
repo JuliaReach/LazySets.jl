@@ -12,44 +12,54 @@ CartesianProduct
 *(::LazySet, ::LazySet)
 swap(::CartesianProduct)
 dim(::CartesianProduct)
-ρ(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
+ρ(::AbstractVector, ::CartesianProduct)
+σ(::AbstractVector, ::CartesianProduct)
 isbounded(::CartesianProduct)
-∈(::AbstractVector{N}, ::CartesianProduct{N}) where {N<:Real}
+∈(::AbstractVector, ::CartesianProduct)
 isempty(::CartesianProduct)
-constraints_list(::CartesianProduct{N}) where {N<:Real}
-vertices_list(::CartesianProduct{N}) where {N<:Real}
-linear_map(M::AbstractMatrix{N}, cp::CartesianProduct{N}) where {N<:Real}
+center(::CartesianProduct)
+constraints_list(::CartesianProduct)
+vertices_list(::CartesianProduct)
+linear_map(::AbstractMatrix, ::CartesianProduct)
+volume(::CartesianProduct)
+project(::CartesianProduct{N, IT, HT}, ::AbstractVector{Int}) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
+project(::CartesianProduct{N, IT, ZT}, ::AbstractVector{Int}) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
+project(::CartesianProduct{N, IT, Union{VP1, VP2}}, ::AbstractVector{Int}) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
+* [`an_element`](@ref an_element(::LazySet)
 * [`singleton_list`](@ref singleton_list(::LazySet))
+* [`reflect`](@ref reflect(::LazySet))
 
 ## [``n``-ary Cartesian product (CartesianProductArray)](@id def_CartesianProductArray)
 
 ```@docs
 CartesianProductArray
+×(::LazySet, ::LazySet...)
+*(::LazySet, ::LazySet...)
 dim(::CartesianProductArray)
-ρ(::AbstractVector{N}, ::CartesianProductArray{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::CartesianProductArray{N}) where {N<:Real}
+ρ(::AbstractVector, ::CartesianProductArray)
+σ(::AbstractVector, ::CartesianProductArray)
 isbounded(::CartesianProductArray)
-∈(::AbstractVector{N}, ::CartesianProductArray{N}) where {N<:Real}
+∈(::AbstractVector, ::CartesianProductArray)
 isempty(::CartesianProductArray)
-constraints_list(::CartesianProductArray{N}) where {N<:Real}
-vertices_list(::CartesianProductArray{N}) where {N<:Real}
-linear_map(M::AbstractMatrix{N}, cpa::CartesianProductArray{N}) where {N<:Real}
-array(::CartesianProductArray{N, S}) where {N<:Real, S<:LazySet{N}}
-block_structure(cpa::CartesianProductArray{N}) where {N}
-block_to_dimension_indices(cpa::CartesianProductArray{N}, vars::Vector{Int}) where {N}
-substitute_blocks(low_dim_cpa::CartesianProductArray{N}, orig_cpa::CartesianProductArray{N},
-blocks::Vector{Tuple{Int,Int}}) where {N}
+center(::CartesianProductArray)
+constraints_list(::CartesianProductArray)
+vertices_list(::CartesianProductArray)
+linear_map(M::AbstractMatrix, ::CartesianProductArray)
+array(::CartesianProductArray)
+volume(::CartesianProductArray)
+block_structure(::CartesianProductArray)
+block_to_dimension_indices(::CartesianProductArray, vars::Vector{Int})
+substitute_blocks(::CartesianProductArray{N}, ::CartesianProductArray{N}, ::Vector{Tuple{Int,Int}}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`an_element`](@ref an_element(::LazySet{N}) where {N<:Real})
+* [`an_element`](@ref an_element(::LazySet)
 * [`singleton_list`](@ref singleton_list(::LazySet))
+* [`reflect`](@ref reflect(::LazySet))

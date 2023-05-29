@@ -32,24 +32,17 @@ name of the issue for easier lookup, e.g., `mforets/7`.
 
 ### Unit testing and continuous integration (CI)
 
-This project is synchronized with Travis CI such that each PR gets tested before
-merging (and the build is automatically triggered after each new commit).
-For the maintainability of this project, it is important to understand and fix
-the failing doctests if they exist.
-
-When you modify code in this package, you should make sure that all unit tests
+This project is synchronized with GitHub Actions such that each PR gets tested
+before merging (and the build is automatically triggered after each new commit).
+For the maintainability of this project, it is important to make all unit tests
 pass.
-To run the unit tests locally, you should do:
 
-```
-$ julia --color=yes test/runtests.jl
-```
-
-Alternatively, you can achieve the same from inside the REPL using the following
-command:
+To run the unit tests locally, you can do:
 
 ```julia
-julia> Pkg.test("LazySets")
+julia> using Pkg
+
+julia> Pkg.test("MathematicalPredicates")
 ```
 
 We also advise adding new unit tests when adding new features to ensure
@@ -60,12 +53,12 @@ long-term support of your contributions.
 New functions and types should be documented according to the
 [JuliaReach Developer's Documentation](https://juliareach.github.io/JuliaReachDevDocs/latest/guidelines/#Writing-docstrings-1).
 
-You can view the source code documentation from inside the REPL by typing `?`
+You can view the source-code documentation from inside the REPL by typing `?`
 followed by the name of the type or function.
 For example, the following command will print the documentation of the `LazySet`
 type:
 
-```julia
+```
 julia> ?LazySet
 ```
 
@@ -102,11 +95,13 @@ Here we list the names of the maintainers of the `LazySets.jl` library, as well 
 ### Core developers
 
 - [Marcelo Forets](http://github.com/mforets), Universidad de la República
-- [Christian Schilling](https://schillic.github.io/), IST Austria
+- [Christian Schilling](https://www.christianschilling.net/), Aalborg University
 
 ### Contributors
 
 - [Tomer Arnon](https://github.com/tomerarnon), Stanford University
+- [Luca Ferranti](http://www.lucaferranti.com/), University of Vaasa
+- [Daniel Freire Caporale](https://github.com/dfcaporale), Universidad de la República
 - [Sebastián Guadalupe](https://github.com/SebastianGuadalupe), Universidad de la República
 - [Kostiantyn Potomkin](https://github.com/kpotomkin), Australian National University
 - [Frédéric Viry](https://github.com/viryfrederic), CERFACS, France
@@ -114,7 +109,7 @@ Here we list the names of the maintainers of the `LazySets.jl` library, as well 
 
 ### Acknowledgements
 
-We are grateful to the following persons for enlightening discussions: 
+We are grateful to the following persons for enlightening discussions:
 
 - [Sergiy Bogomolov](https://www.sergiybogomolov.com/)
-- [Goran Frehse](https://sites.google.com/site/frehseg/) 
+- [Goran Frehse](https://sites.google.com/site/frehseg/)

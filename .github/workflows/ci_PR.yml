@@ -1,0 +1,49 @@
+name: CI-PR
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'LICENSE'
+      - 'README.md'
+
+jobs:
+  test:
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
+    runs-on: ${{ matrix.os }}
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '1'
+        os:
+          - ubuntu-latest
+          - windows-latest
+        arch:
+          - x64
+        include:
+          - version: '1.6'  # test on oldest supported version
+            arch: x64
+            os: ubuntu-latest
+    env:
+      JULIA_PKG_SERVER: ''
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v1
+        with:
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.arch }}
+      - name: Cache artifacts
+        uses: julia-actions/cache@v1
+      - name: Build package
+        uses: julia-actions/julia-buildpkg@v1
+      - name: Run tests
+        uses: julia-actions/julia-runtest@v1
+      - name: Process coverage
+        uses: julia-actions/julia-processcoverage@v1
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: lcov.info

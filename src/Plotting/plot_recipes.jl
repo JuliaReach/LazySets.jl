@@ -1,8 +1,3 @@
-using RecipesBase
-import RecipesBase.apply_recipe
-
-using LazySets.Approximations: overapproximate, PolarDirections
-
 # global values
 DEFAULT_COLOR = :auto
 DEFAULT_ALPHA = 0.5
@@ -13,17 +8,27 @@ PLOT_PRECISION = 1e-3
 PLOT_POLAR_DIRECTIONS = 40
 DEFAULT_PLOT_LIMIT = 1000
 
-function _extract_limits(p::RecipesBase.AbstractPlot)
+function _extract_limits(p::RecipesBase.AbstractPlot,
+                         plotattributes::AbstractDict)
     lims = Dict()
     if length(p) > 0
         subplot = p[1]
         for symbol in [:x, :y]
-            lims[symbol] = subplot[Symbol(symbol,:axis)][:lims]
+            lims[symbol] = subplot[Symbol(symbol, :axis)][:lims]
         end
     else
         lims[:x] = :auto
         lims[:y] = :auto
     end
+
+    # check whether the current call to `plot`/`plot!` passed new bounds
+    if haskey(plotattributes, :xlims)
+        lims[:x] = plotattributes[:xlims]
+    end
+    if haskey(plotattributes, :ylims)
+        lims[:y] = plotattributes[:ylims]
+    end
+
     return lims
 end
 
@@ -32,8 +37,9 @@ function _extract_extrema(p::RecipesBase.AbstractPlot)
     if length(p) > 0
         subplot = p[1]
         for symbol in [:x, :y]
-            emin = subplot[Symbol(symbol,:axis)][:extrema].emin
-            emax = subplot[Symbol(symbol,:axis)][:extrema].emax
+            bounds = subplot[Symbol(symbol, :axis)][:extrema]
+            emin = bounds.emin
+            emax = bounds.emax
             extrema[symbol] = (emin, emax)
         end
     else
@@ -45,9 +51,11 @@ end
 
 function _update_plot_limits!(lims, X::LazySet)
     box = box_approximation(X)
+    isempty(box) && return nothing  # can happen if X is empty or flat
+
     box_min = low(box)
     box_max = high(box)
-    for (idx,symbol) in enumerate([:x, :y])
+    for (idx, symbol) in enumerate([:x, :y])
         if lims[symbol] != :auto
             # width of the plotting window including the new set in the `symbol` direction
             width = max(lims[symbol][2], box_max[idx]) -
@@ -55,14 +63,14 @@ function _update_plot_limits!(lims, X::LazySet)
 
             # scaling factor for beautification
             ϵ = 0.05
-            offset = width*ϵ
+            offset = width * ϵ
 
             # extend the current plot limits if the new set (plus a small offset) falls outside
             lims[symbol] = (min(lims[symbol][1], box_min[idx] - offset),
                             max(lims[symbol][2], box_max[idx] + offset))
         end
     end
-    nothing
+    return nothing
 end
 
 function _set_auto_limits_to_extrema!(lims, extr)
@@ -78,38 +86,38 @@ function _set_auto_limits_to_extrema!(lims, extr)
         end
     end
     # otherwise keep the old limits
-    nothing
+    return nothing
 end
 
 function _bounding_hyperrectangle(lims, N)
     low_lim = [lims[:x][1] - DEFAULT_PLOT_LIMIT, lims[:y][1] - DEFAULT_PLOT_LIMIT]
     high_lim = [lims[:x][2] + DEFAULT_PLOT_LIMIT, lims[:y][2] + DEFAULT_PLOT_LIMIT]
-    return Hyperrectangle(low=convert.(N,low_lim), high=convert.(N,high_lim))
+    return Hyperrectangle(; low=convert.(N, low_lim), high=convert.(N, high_lim))
 end
 
 """
-    plot_list(list::AbstractVector{VN}, [ε]::N=N(PLOT_PRECISION),
-              [Nφ]::Int=PLOT_POLAR_DIRECTIONS, [fast]::Bool=false; ...)
-        where {N<:Real, VN<:LazySet{N}}
+    plot_list(list::AbstractVector{VN}, [ε]::Real=N(PLOT_PRECISION),
+              [Nφ]::Int=PLOT_POLAR_DIRECTIONS; [same_recipe]=false; ...)
+        where {N, VN<:LazySet{N}}
 
-Plot a list of convex sets.
+Plot a list of sets.
 
 ### Input
 
-- `list` -- list of convex sets (1D or 2D)
+- `list` -- list of sets (1D or 2D)
 - `ε`    -- (optional, default: `PLOT_PRECISION`) approximation error bound
 - `Nφ`   -- (optional, default: `PLOT_POLAR_DIRECTIONS`) number of polar
             directions (used to plot lazy intersections)
-- `fast` -- (optional, default: `false`) switch for faster plotting but without
-            individual plot recipes (see notes below)
+- `same_recipe` -- (optional, default: `false`) switch for faster plotting but
+            without individual plot recipes (see notes below)
 
 ### Notes
 
 For each set in the list we apply an individual plot recipe.
 
-The option `fast` provides access to a faster plotting scheme where all sets in
-the list are first converted to polytopes and then plotted in one single run.
-This, however, is not suitable when plotting flat sets (line segments,
+The option `same_recipe` provides access to a faster plotting scheme where all
+sets in the list are first converted to polytopes and then plotted in one single
+run. This, however, is not suitable when plotting flat sets (line segments,
 singletons) because then the polytope plot recipe does not deliver good results.
 Hence by default we do not use this option.
 For plotting a large number of (non-flat) polytopes, we highly advise activating
@@ -137,10 +145,10 @@ julia> plot(Bs, 1e-3)  # default accuracy value (explicitly given for clarity)
 julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 ```
 """
-@recipe function plot_list(list::AbstractVector{VN}, ε::N=N(PLOT_PRECISION),
-                           Nφ::Int=PLOT_POLAR_DIRECTIONS, fast::Bool=false
-                          ) where {N<:Real, VN<:LazySet{N}}
-    if fast
+@recipe function plot_list(list::AbstractVector{VN}, ε::Real=N(PLOT_PRECISION),
+                           Nφ::Int=PLOT_POLAR_DIRECTIONS;
+                           same_recipe=false) where {N,VN<:LazySet{N}}
+    if same_recipe
         label --> DEFAULT_LABEL
         grid --> DEFAULT_GRID
         if DEFAULT_ASPECT_RATIO != :none
@@ -149,44 +157,7 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
         seriesalpha --> DEFAULT_ALPHA
         seriescolor --> DEFAULT_COLOR
         seriestype --> :shape
-
-        first = true
-        x = Vector{N}()
-        y = Vector{N}()
-        for Xi in list
-            if Xi isa Intersection
-                res = plot_recipe(Xi, ε, Nφ)
-            else
-                # hard-code overapproximation here to avoid individual
-                # compilations for mixed sets
-                Pi = overapproximate(Xi, ε)
-                vlist = transpose(hcat(convex_hull(vertices_list(Pi))...))
-                if isempty(vlist)
-                    @warn "overapproximation during plotting was empty"
-                    continue
-                end
-                res = vlist[:, 1], vlist[:, 2]
-                if length(res[1]) > 2
-                    # add first vertex to "close" the polygon
-                    push!(res[1], vlist[1, 1])
-                    push!(res[2], vlist[1, 2])
-                end
-            end
-            if isempty(res)
-                continue
-            else
-                x_new, y_new = res
-            end
-            if first
-                first = false
-            else
-                push!(x, N(NaN))
-                push!(y, N(NaN))
-            end
-            append!(x, x_new)
-            append!(y, y_new)
-        end
-        x, y
+        return _plot_list_same_recipe(list, ε, Nφ)
     else
         for Xi in list
             if Xi isa Intersection
@@ -198,57 +169,169 @@ julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
     end
 end
 
-"""
-    plot_lazyset(X::LazySet{N}, [ε]::N=N(PLOT_PRECISION); ...) where {N<:Real}
+function _plot_list_same_recipe(list::AbstractVector{VN}, ε::Real=N(PLOT_PRECISION),
+                                Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N,VN<:LazySet{N}}
+    first = true
+    x = Vector{N}()
+    y = Vector{N}()
+    for Xi in list
+        if Xi isa Intersection
+            res = plot_recipe(Xi, ε, Nφ)
+        else
+            # hard-code overapproximation here to avoid individual
+            # compilations for mixed sets
+            vlist = plot_vlist(Xi, ε)
+            if isempty(vlist)
+                @warn "overapproximation during plotting was empty"
+                continue
+            end
+            vlist = transpose(hcat(vlist...))  # transpose vertices
+            res = vlist[:, 1], vlist[:, 2]
+            if length(res[1]) > 2
+                # add first vertex to "close" the polygon
+                push!(res[1], vlist[1, 1])
+                push!(res[2], vlist[1, 2])
+            end
+        end
+        if isempty(res)
+            continue
+        else
+            x_new, y_new = res
+        end
+        if first
+            first = false
+        else
+            push!(x, N(NaN))
+            push!(y, N(NaN))
+        end
+        append!(x, x_new)
+        append!(y, y_new)
+    end
+    return x, y
+end
 
-Plot a convex set.
+# recipe for vector of singletons
+@recipe function plot_list(list::AbstractVector{SN}) where {N,SN<:AbstractSingleton{N}}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype --> :scatter
+
+    return _plot_singleton_list(list)
+end
+
+# plot recipe for the union of singletons
+@recipe function plot_list(X::UnionSetArray{N,SN}) where {N,SN<:AbstractSingleton{N}}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype --> :scatter
+
+    list = array(X)
+    return _plot_singleton_list(list)
+end
+
+function _plot_singleton_list(list)
+    n = dim(first(list))
+    if n == 1
+        _plot_singleton_list_1D(list)
+    elseif n == 2
+        _plot_singleton_list_2D(list)
+    else
+        throw(ArgumentError("plotting singletons is only available for " *
+                            "dimensions one or two, but got dimension $n"))
+    end
+end
+
+function _plot_singleton_list_1D(list::AbstractVector{SN}) where {N,SN<:AbstractSingleton{N}}
+    m = length(list)
+
+    x = Vector{N}(undef, m)
+    y = zeros(N, m)
+
+    @inbounds for (i, Xi) in enumerate(list)
+        p = element(Xi)
+        x[i] = p[1]
+    end
+    return x, y
+end
+
+function _plot_singleton_list_2D(list::AbstractVector{SN}) where {N,SN<:AbstractSingleton{N}}
+    m = length(list)
+    x = Vector{N}(undef, m)
+    y = Vector{N}(undef, m)
+
+    @inbounds for (i, Xi) in enumerate(list)
+        p = element(Xi)
+        x[i] = p[1]
+        y[i] = p[2]
+    end
+    return x, y
+end
+
+"""
+    plot_lazyset(X::LazySet{N}, [ε]::Real=N(PLOT_PRECISION); ...) where {N}
+
+Plot a set.
 
 ### Input
 
-- `X` -- convex set
+- `X` -- set
 - `ε` -- (optional, default: `PLOT_PRECISION`) approximation error bound
 
 ### Notes
 
-See [`plot_recipe(::LazySet{<:Real})`](@ref).
+This recipe just defines the default plotting options and then calls the
+function `plot_recipe`, which then implements the set-specific plotting.
 
-For polyhedral set types (subtypes of `AbstractPolyhedron`), the argument `ε` is
-ignored.
+The argument `ε` is ignored by some set types, e.g., for polyhedra (subtypes of
+`AbstractPolyhedron`).
 
 ### Examples
 
 ```julia
 julia> B = Ball2(ones(2), 0.1);
 
-julia> plot(B, 1e-3)  # default accuracy value (explicitly given for clarity)
+julia> plot(B, 1e-3)  # default accuracy value (explicitly given for clarity here)
 
 julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 ```
 """
-@recipe function plot_lazyset(X::LazySet{N}, ε::N=N(PLOT_PRECISION)
-                             ) where {N<:Real}
-    if dim(X) == 1
-        plot_recipe(X, ε)
-    else
-        label --> DEFAULT_LABEL
-        grid --> DEFAULT_GRID
-        if DEFAULT_ASPECT_RATIO != :none
-            aspect_ratio --> DEFAULT_ASPECT_RATIO
-        end
-        seriesalpha --> DEFAULT_ALPHA
-        seriescolor --> DEFAULT_COLOR
+@recipe function plot_lazyset(X::LazySet{N}, ε::Real=N(PLOT_PRECISION)) where {N}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
 
+    if dim(X) == 1
+        x, y = plot_recipe(X, ε)
+        if length(x) == 1
+            seriestype := :scatter
+        end
+        x, y
+    elseif dim(X) == 2
         # extract limits and extrema of already plotted sets
         p = plotattributes[:plot_object]
-        lims = _extract_limits(p)
+        lims = _extract_limits(p, plotattributes)
         extr = _extract_extrema(p)
 
         if !isbounded(X)
             _set_auto_limits_to_extrema!(lims, extr)
             X = intersection(X, _bounding_hyperrectangle(lims, eltype(X)))
 
-        # if there is already a plotted set and the limits are fixed,
-        # automatically adjust the axis limits (e.g. after plotting a unbounded set)
+            # if there is already a plotted set and the limits are fixed,
+            # automatically adjust the axis limits (e.g. after plotting a unbounded set)
         elseif length(p) > 0
             _update_plot_limits!(lims, X)
         end
@@ -262,12 +345,12 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
         else
             x, y = res
             if length(x) == 1 ||
-                    (length(x) == 2 && norm([x[1], y[1]] - [x[2], y[2]]) ≈ 0)
+               (length(x) == 2 && norm([x[1], y[1]] - [x[2], y[2]]) ≈ 0)
                 # single point
                 seriestype := :scatter
             elseif length(x) == 2
                 # flat line segment
-                linecolor   --> DEFAULT_COLOR
+                linecolor --> DEFAULT_COLOR
                 markercolor --> DEFAULT_COLOR
                 markershape --> :circle
                 seriestype := :path
@@ -276,11 +359,23 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
             end
             x, y
         end
+    elseif dim(X) == 3
+        res = plot_recipe(X, ε)
+        if isempty(res)
+            res
+        else
+            x, y, z, i, j, k = res
+            seriestype := :mesh3d
+            connections := (i, j, k)
+            x, y, z
+        end
+    else
+        throw(ArgumentError("cannot plot a $(dim(X))-dimensional set"))
     end
 end
 
 """
-    plot_singleton(S::AbstractSingleton{N}, [ε]::N=zero(N); ...) where {N<:Real}
+    plot_singleton(S::AbstractSingleton{N}, [ε]::Real=zero(N); ...) where {N}
 
 Plot a singleton.
 
@@ -295,8 +390,7 @@ Plot a singleton.
 julia> plot(Singleton([0.5, 1.0]))
 ```
 """
-@recipe function plot_singleton(S::AbstractSingleton{N}, ε::N=zero(N)
-                               ) where {N<:Real}
+@recipe function plot_singleton(S::AbstractSingleton{N}, ε::Real=zero(N)) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -309,17 +403,17 @@ julia> plot(Singleton([0.5, 1.0]))
     # update manually set plot limits if necessary
     p = plotattributes[:plot_object]
     if length(p) > 0
-        lims = _extract_limits(p)
+        lims = _extract_limits(p, plotattributes)
         _update_plot_limits!(lims, S)
         xlims --> lims[:x]
         ylims --> lims[:y]
     end
 
-    plot_recipe(S, ε)
+    return plot_recipe(S, ε)
 end
 
 """
-    plot_emptyset(∅::EmptySet, [ε]::N=zero(N); ...)
+    plot_emptyset(∅::EmptySet, [ε]::Real=zero(N); ...)
 
 Plot an empty set.
 
@@ -328,19 +422,19 @@ Plot an empty set.
 - `∅` -- empty set
 - `ε` -- (optional, default: `0`) ignored, used for dispatch
 """
-@recipe function plot_emptyset(∅::EmptySet{N}, ε::N=zero(N)) where {N<:Real}
+@recipe function plot_emptyset(∅::EmptySet{N}, ε::Real=zero(N)) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
         aspect_ratio --> DEFAULT_ASPECT_RATIO
     end
 
-    plot_recipe(∅)
+    return plot_recipe(∅)
 end
 
 """
-    plot_intersection(cap::Intersection{N}, [ε]::N=zero(N),
-                      [Nφ]::Int=PLOT_POLAR_DIRECTIONS) where {N<:Real}
+    plot_intersection(cap::Intersection{N}, [ε]::Real=zero(N),
+                      [Nφ]::Int=PLOT_POLAR_DIRECTIONS) where {N}
 
 Plot a lazy intersection.
 
@@ -359,34 +453,30 @@ vector (but see
 [#1187](https://github.com/JuliaReach/LazySets.jl/issues/1187))).
 
 Also note that if the set is a *nested* intersection, you may have to manually
-overapproximate this set before plotting (see
-`LazySets.Approximations.overapproximate` for details).
+overapproximate this set before plotting (see `overapproximate` for details).
 
 ### Examples
 
 ```julia
-julia> using LazySets.Approximations
-
 julia> X = Ball2(zeros(2), 1.) ∩ Ball2(ones(2), 1.5);  # lazy intersection
 
 julia> plot(X)
 ```
 
 You can specify the accuracy of the overapproximation of the lazy intersection
-by passing a higher value for `Nφ`, which stands for the number of polar
+by passing an explicit value for `Nφ`, which stands for the number of polar
 directions used in the overapproximation.
 This number can also be passed to the `plot` function directly.
 
 ```julia
 julia> plot(overapproximate(X, PolarDirections(100)))
 
-julia> plot(X, -1., 100)  # equivalent to the above line
+julia> plot(X, 0.0, 100)  # equivalent to the above line
 ```
 """
 @recipe function plot_intersection(cap::Intersection{N},
-                                   ε::N=zero(N),
-                                   Nφ::Int=PLOT_POLAR_DIRECTIONS
-                                  ) where {N<:Real}
+                                   ε::Real=zero(N),
+                                   Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -398,7 +488,7 @@ julia> plot(X, -1., 100)  # equivalent to the above line
 
     # extract limits and extrema of already plotted sets
     p = plotattributes[:plot_object]
-    lims = _extract_limits(p)
+    lims = _extract_limits(p, plotattributes)
     extr = _extract_extrema(p)
 
     if !isbounded(cap)
@@ -411,8 +501,8 @@ julia> plot(X, -1., 100)  # equivalent to the above line
             cap = Intersection(bounding_box, cap.Y)
         end
 
-    # if there is already a plotted set and the limits are fixed,
-    # automatically adjust the axis limits (e.g. after plotting a unbounded set)
+        # if there is already a plotted set and the limits are fixed,
+        # automatically adjust the axis limits (e.g. after plotting a unbounded set)
     elseif length(p) > 0
         _update_plot_limits!(lims, cap)
     end
@@ -420,15 +510,48 @@ julia> plot(X, -1., 100)  # equivalent to the above line
     xlims --> lims[:x]
     ylims --> lims[:y]
 
-    plot_recipe(cap, ε)
+    return plot_recipe(cap, ε)
 end
 
 # non-convex sets
 
-@recipe function plot_union(cup::UnionSet{N}, ε::N=zero(N)) where {N<:Real}
-    @series [cup.X, cup.Y], ε
+@recipe function plot_union(cup::UnionSet{N}, ε::Real=N(PLOT_PRECISION)) where {N}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype --> :shape
+
+    return _plot_list_same_recipe([cup.X, cup.Y], ε)
 end
 
-@recipe function plot_union(cup::UnionSetArray{N}, ε::N=zero(N)) where {N<:Real}
-    @series array(cup), ε
+@recipe function plot_union(cup::UnionSetArray{N}, ε::Real=N(PLOT_PRECISION)) where {N}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype --> :shape
+
+    return _plot_list_same_recipe(array(cup), ε)
+end
+
+@recipe function plot_polyzono(P::AbstractPolynomialZonotope{N},
+                               ε::Real=N(PLOT_PRECISION); nsdiv=10,
+                               partition=nothing) where {N}
+    label --> DEFAULT_LABEL
+    grid --> DEFAULT_GRID
+    if DEFAULT_ASPECT_RATIO != :none
+        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    end
+    seriesalpha --> DEFAULT_ALPHA
+    seriescolor --> DEFAULT_COLOR
+    seriestype --> :shape
+    Poa = overapproximate(P, UnionSetArray{Zonotope}; nsdiv, partition)
+    return _plot_list_same_recipe(array(Poa), ε)
 end

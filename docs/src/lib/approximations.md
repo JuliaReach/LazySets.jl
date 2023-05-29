@@ -20,13 +20,6 @@ Approximations
 
 ```@docs
 decompose
-project
-```
-
-### Convenience functions
-
-```@docs
-uniform_partition
 ```
 
 ## Overapproximations
@@ -52,26 +45,25 @@ approximate
 ## Box Approximations
 
 ```@docs
-ballinf_approximation
 box_approximation
 interval_hull
-box_approximation_symmetric
+□(::LazySet)
 symmetric_interval_hull
-box_approximation_helper
+box_approximation_symmetric
+ballinf_approximation
 ```
 
 ## Iterative refinement
 
 ```@docs
+overapproximate_hausdorff
 LocalApproximation
 PolygonalOverapproximation
-new_approx(S::LazySet, p1::VN, d1::VN,
-           p2::VN, d2::VN) where {N<:AbstractFloat, VN<:AbstractVector{N}}
-addapproximation!(Ω::PolygonalOverapproximation, p1::VN, d1::VN, p2::VN, d2::VN) where {N<:Real, VN<:AbstractVector{N}}
+new_approx
+addapproximation!
 refine(::LocalApproximation, ::LazySet)
 tohrep(::PolygonalOverapproximation)
-_approximate(S::LazySet{N}, ε::N) where {N<:AbstractFloat}
-constraint(::LocalApproximation)
+convert(::Type{HalfSpace}, ::LocalApproximation)
 ```
 
 ## Template directions
@@ -80,7 +72,9 @@ constraint(::LocalApproximation)
 AbstractDirections
 isbounding
 isnormalized
+project(::LazySet, ::AbstractVector{Int}, ::Type{<:AbstractDirections})
 BoxDirections
+DiagDirections
 OctDirections
 BoxDiagDirections
 PolarDirections
@@ -88,17 +82,9 @@ SphericalDirections
 CustomDirections
 ```
 
-See also `overapproximate(X::LazySet, dir::AbstractDirections)::HPolytope`.
+See also [`overapproximate(X::LazySet, dir::AbstractDirections)`](@ref).
 
-## Distances
-
-### Infimum distance
-
-```@docs
-distance
-```
-
-### Hausdorff distance
+## Hausdorff distance
 
 ```@docs
 hausdorff_distance

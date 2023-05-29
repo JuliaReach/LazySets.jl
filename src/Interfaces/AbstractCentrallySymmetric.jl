@@ -5,29 +5,31 @@ export AbstractCentrallySymmetric,
        an_element
 
 """
-    AbstractCentrallySymmetric{N<:Real} <: LazySet{N}
+    AbstractCentrallySymmetric{N} <: ConvexSet{N}
 
-Abstract type for centrally symmetric sets.
+Abstract type for centrally symmetric compact convex sets.
 
 ### Notes
 
 Every concrete `AbstractCentrallySymmetric` must define the following functions:
 
-- `center(::AbstractCentrallySymmetric{N})` -- return the center
-    point
-- `center(::AbstractCentrallySymmetric{N}, i::Int)` -- return the center point at index `i`
+- `center(::AbstractCentrallySymmetric)` -- return the center point
+- `center(::AbstractCentrallySymmetric, i::Int)` -- return the center point at
+                                                    index `i`
+
+The subtypes of `AbstractCentrallySymmetric`:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractCentrallySymmetric)
-3-element Array{Any,1}:
+3-element Vector{Any}:
  Ball2
  Ballp
  Ellipsoid
 ```
 """
-abstract type AbstractCentrallySymmetric{N<:Real} <: LazySet{N} end
+abstract type AbstractCentrallySymmetric{N} <: ConvexSet{N} end
 
-isconvextype(::Type{<:AbstractCentrallySymmetric}) = false
+isconvextype(::Type{<:AbstractCentrallySymmetric}) = true
 
 """
     dim(S::AbstractCentrallySymmetric)
@@ -36,7 +38,7 @@ Return the ambient dimension of a centrally symmetric set.
 
 ### Input
 
-- `S` -- set
+- `S` -- centrally symmetric set
 
 ### Output
 
@@ -46,10 +48,14 @@ The ambient dimension of the set.
     return length(center(S))
 end
 
+function isboundedtype(::Type{<:AbstractCentrallySymmetric})
+    return true
+end
+
 """
     isbounded(S::AbstractCentrallySymmetric)
 
-Determine whether a centrally symmetric set is bounded.
+Check whether a centrally symmetric set is bounded.
 
 ### Input
 
@@ -64,7 +70,7 @@ function isbounded(::AbstractCentrallySymmetric)
 end
 
 """
-    an_element(S::AbstractCentrallySymmetric{N}) where {N<:Real}
+    an_element(S::AbstractCentrallySymmetric)
 
 Return some element of a centrally symmetric set.
 
@@ -76,14 +82,14 @@ Return some element of a centrally symmetric set.
 
 The center of the centrally symmetric set.
 """
-function an_element(S::AbstractCentrallySymmetric{N}) where {N<:Real}
+function an_element(S::AbstractCentrallySymmetric)
     return center(S)
 end
 
 """
     isempty(S::AbstractCentrallySymmetric)
 
-Return if a centrally symmetric set is empty or not.
+Check whether a centrally symmetric set is empty.
 
 ### Input
 
@@ -98,8 +104,8 @@ function isempty(::AbstractCentrallySymmetric)
 end
 
 """
-    isuniversal(S::AbstractCentrallySymmetric{N}, [witness]::Bool=false
-               ) where {N<:Real}
+    isuniversal(S::AbstractCentrallySymmetric{N},
+                [witness]::Bool=false) where {N}
 
 Check whether a centrally symmetric set is universal.
 
@@ -115,11 +121,12 @@ Check whether a centrally symmetric set is universal.
 
 ### Algorithm
 
+Centrally symmetric sets are bounded.
 A witness is obtained by computing the support vector in direction
 `d = [1, 0, …, 0]` and adding `d` on top.
 """
-function isuniversal(S::AbstractCentrallySymmetric{N}, witness::Bool=false
-                    ) where {N<:Real}
+function isuniversal(S::AbstractCentrallySymmetric{N},
+                     witness::Bool=false) where {N}
     if witness
         d = SingleEntryVector{N}(1, dim(S))
         w = σ(d, S) + d
@@ -130,9 +137,9 @@ function isuniversal(S::AbstractCentrallySymmetric{N}, witness::Bool=false
 end
 
 """
-    center(H::AbstractCentrallySymmetric{N}, i::Int) where {N<:Real}
+    center(H::AbstractCentrallySymmetric, i::Int)
 
-Return the center along a given dimension of a centrally symmetric set.
+Return the center of a centrally symmetric set along a given dimension.
 
 ### Input
 
@@ -141,8 +148,72 @@ Return the center along a given dimension of a centrally symmetric set.
 
 ### Output
 
-The center along a given dimension of the centrally symmetric set.
+The center along the given dimension.
 """
-@inline function center(S::AbstractCentrallySymmetric{N}, i::Int) where {N<:Real}
+@inline function center(S::AbstractCentrallySymmetric, i::Int)
     return center(S)[i]
+end
+
+"""
+    extrema(S::AbstractCentrallySymmetric)
+
+Return two vectors with the lowest and highest coordinate of a centrally
+symmetric set.
+
+### Input
+
+- `S` -- centrally symmetric set
+
+### Output
+
+Two vectors with the lowest and highest coordinates of `S`.
+
+### Notes
+
+The result is equivalent to `(low(S), high(S))`.
+
+### Algorithm
+
+We compute `high(S)` and then compute the lowest coordinates with the help of
+`center(S)` (which is assumed to be cheaper to obtain).
+"""
+function extrema(S::AbstractCentrallySymmetric)
+    # h = c + r
+    h = high(S)
+    # l = c - r = -c - r + 2 * c = 2 * c - h
+    l = 2 .* center(S) .- h
+    return (l, h)
+end
+
+"""
+    extrema(S::AbstractCentrallySymmetric, i::Int)
+
+Return the lower and higher coordinate of a centrally symmetric set in a given
+dimension.
+
+### Input
+
+- `S` -- centrally symmetric set
+- `i` -- dimension of interest
+
+### Output
+
+The lower and higher coordinate of the centrally symmetric set in the given
+dimension.
+
+### Notes
+
+The result is equivalent to `(low(S, i), high(S, i))`.
+
+### Algorithm
+
+We compute `high(S, i)` and then compute the lowest coordinates with the help of
+`center(S, i)` (which is assumed to be cheaper to obtain).
+"""
+function extrema(S::AbstractCentrallySymmetric, i::Int)
+    # h = c + r
+    h = high(S, i)
+    # l = c - r = -c - r + 2 * c = 2 * c - h
+    l = 2 * center(S, i) - h
+    return (l, h)
 end

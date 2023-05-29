@@ -1,19 +1,20 @@
-ENV["GKSwstype"] = "100"  # set 'GR environment' to 'no output' (for Travis CI)
 using Documenter, LazySets
-import Polyhedra, Optim, Expokit, TaylorModels, Distributions, MiniQhull
+import Polyhedra, Optim, ExponentialUtilities, TaylorModels, Distributions,
+       MiniQhull, Symbolics
 
 include("init.jl")
 
 makedocs(
     sitename = "LazySets.jl",
-    modules = [LazySets, Approximations, Arrays, LazySets.Parallel],
-    format = Documenter.HTML(
-        prettyurls = get(ENV, "CI", nothing) == "true",
-        assets = ["assets/juliareach.css"]),
+    modules = [LazySets, Approximations, LazySets.Parallel],
+    format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true",
+                             assets = ["assets/aligned.css"]),
     pages = [
         "Home" => "index.md",
         "Manual" => Any[
             "Getting Started" => "man/getting_started.md",
+            "Optional Features" => "man/optional_dependencies.md",
+            "A Tour of LazySets" => "man/tour.md",
             "Introduction to Convex Sets" => "man/convex_sets.md",
             "Polyhedral Approximations" => "man/polyhedral_approximations.md",
             "Decomposing an Affine Map" => "man/decompose_example.md",
@@ -35,9 +36,11 @@ makedocs(
                 "Ball2" => "lib/sets/Ball2.md",
                 "BallInf" => "lib/sets/BallInf.md",
                 "Ballp" => "lib/sets/Ballp.md",
+                "DensePolynomialZonotope" => "lib/sets/DensePolynomialZonotope.md",
                 "Ellipsoid" => "lib/sets/Ellipsoid.md",
                 "EmptySet" => "lib/sets/EmptySet.md",
                 "HalfSpace" => "lib/sets/HalfSpace.md",
+                "HParallelotope" => "lib/sets/HParallelotope.md",
                 "HPolygon" => "lib/sets/HPolygon.md",
                 "HPolygonOpt" => "lib/sets/HPolygonOpt.md",
                 "HPolyhedron" => "lib/sets/HPolyhedron.md",
@@ -48,8 +51,13 @@ makedocs(
                 "Line2D" => "lib/sets/Line2D.md",
                 "Line" => "lib/sets/Line.md",
                 "LineSegment" => "lib/sets/LineSegment.md",
-                "PolynomialZonotope" => "lib/sets/PolynomialZonotope.md",
+                "Polygon" => "lib/sets/Polygon.md",
+                "RotatedHyperrectangle" => "lib/sets/RotatedHyperrectangle.md",
+                "SimpleSparsePolynomialZonotope" => "lib/sets/SimpleSparsePolynomialZonotope.md",
+                "SparsePolynomialZonotope" => "lib/sets/SparsePolynomialZonotope.md",
                 "Singleton" => "lib/sets/Singleton.md",
+                "Star" => "lib/sets/Star.md",
+                "Tetrahedron" => "lib/sets/Tetrahedron.md",
                 "Universe" => "lib/sets/Universe.md",
                 "VPolygon" => "lib/sets/VPolygon.md",
                 "VPolytope" => "lib/sets/VPolytope.md",
@@ -65,7 +73,9 @@ makedocs(
                 "ExponentialMap" => "lib/lazy_operations/ExponentialMap.md",
                 "Intersection" => "lib/lazy_operations/Intersection.md",
                 "LinearMap" => "lib/lazy_operations/LinearMap.md",
+                "InverseLinearMap" => "lib/lazy_operations/InverseLinearMap.md",
                 "MinkowskiSum" => "lib/lazy_operations/MinkowskiSum.md",
+                "QuadraticMap" => "lib/lazy_operations/QuadraticMap.md",
                 "Rectification" => "lib/lazy_operations/Rectification.md",
                 "ResetMap" => "lib/lazy_operations/ResetMap.md",
                 "SymmetricIntervalHull" => "lib/lazy_operations/SymmetricIntervalHull.md",
@@ -74,9 +84,8 @@ makedocs(
             ],
             "Concrete Operations" => "lib/binary_functions.md",
             "Conversions between set representations" => "lib/conversion.md",
-            "Comparisons" => "lib/comparisons.md",
             "Approximations" => "lib/approximations.md",
-            "Utility Functions" => "lib/utils.md",
+            "Utilities" => "lib/utils.md",
             "Parallel" => "lib/parallel.md",
         ],
         "About" => "about.md"
@@ -86,5 +95,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/JuliaReach/LazySets.jl.git"
+    repo = "github.com/JuliaReach/LazySets.jl.git",
+    push_preview=true
 )

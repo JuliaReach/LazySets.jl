@@ -5,75 +5,66 @@ export ZeroSet,
        linear_map
 
 """
-    ZeroSet{N<:Real} <: AbstractSingleton{N}
+    ZeroSet{N} <: AbstractSingleton{N}
 
 Type that represents the zero set, i.e., the set that only contains the origin.
 
 ### Fields
 
-- `dim` -- the ambient dimension of this zero set
+- `dim` -- the ambient dimension of the set
 """
-struct ZeroSet{N<:Real} <: AbstractSingleton{N}
+struct ZeroSet{N} <: AbstractSingleton{N}
     dim::Int
 end
 
 isoperationtype(::Type{<:ZeroSet}) = false
-isconvextype(::Type{<:ZeroSet}) = true
 
 # default constructor of type Float64
 ZeroSet(dim::Int) = ZeroSet{Float64}(dim)
 
-
-# --- AbstractSingleton interface functions ---
-
-
 """
-    element(S::ZeroSet{N}) where {N<:Real}
+    element(Z::ZeroSet{N}) where {N}
 
 Return the element of a zero set.
 
 ### Input
 
-- `S` -- zero set
+- `Z` -- zero set
 
 ### Output
 
 The element of the zero set, i.e., a zero vector.
 """
-function element(S::ZeroSet{N}) where {N<:Real}
-    return zeros(N, S.dim)
+function element(Z::ZeroSet{N}) where {N}
+    return zeros(N, Z.dim)
 end
 
 """
-    element(S::ZeroSet{N}, ::Int) where {N<:Real}
+    element(Z::ZeroSet{N}, ::Int) where {N}
 
 Return the i-th entry of the element of a zero set.
 
 ### Input
 
-- `S` -- zero set
+- `Z` -- zero set
 - `i` -- dimension
 
 ### Output
 
 The i-th entry of the element of the zero set, i.e., 0.
 """
-function element(S::ZeroSet{N}, ::Int) where {N<:Real}
+function element(Z::ZeroSet{N}, ::Int) where {N}
     return zero(N)
 end
-
-
-# --- LazySet interface functions ---
-
 
 """
     dim(Z::ZeroSet)
 
-Return the ambient dimension of this zero set.
+Return the ambient dimension of a zero set.
 
 ### Input
 
-- `Z` -- a zero set, i.e., a set that only contains the origin
+- `Z` -- zero set
 
 ### Output
 
@@ -84,46 +75,28 @@ function dim(Z::ZeroSet)
 end
 
 """
-    σ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
-
-Return the support vector of a zero set.
-
-### Input
-
-- `d` -- direction
-- `Z` -- a zero set, i.e., a set that only contains the origin
-
-### Output
-
-The returned value is the origin since it is the only point that belongs to this
-set.
-"""
-function σ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
-    @assert length(d) == dim(Z) "the direction has the wrong dimension"
-    return element(Z)
-end
-
-"""
-    ρ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
+    ρ(d::AbstractVector, Z::ZeroSet)
 
 Evaluate the support function of a zero set in a given direction.
 
 ### Input
 
 - `d` -- direction
-- `Z` -- a zero set, i.e., a set that only contains the origin
+- `Z` -- zero set
 
 ### Output
 
 `0`.
 """
-function ρ(d::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
-    @assert length(d) == dim(Z) "the direction has the wrong dimension"
+function ρ(d::AbstractVector, Z::ZeroSet)
+    @assert length(d) == dim(Z) "a $(length(d))-dimensional vector is " *
+                                "incompatible with a $(dim(Z))-dimensional set"
+    N = promote_type(eltype(d), eltype(Z))
     return zero(N)
 end
 
 """
-    ∈(x::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
+    ∈(x::AbstractVector, Z::ZeroSet)
 
 Check whether a given point is contained in a zero set.
 
@@ -147,11 +120,10 @@ julia> [0.0, 0.0] ∈ Z
 true
 ```
 """
-function ∈(x::AbstractVector{N}, Z::ZeroSet{N}) where {N<:Real}
-    @assert length(x) == dim(Z)
-
-    zero_N = zero(N)
-    return all(i -> x[i] == zero_N, eachindex(x))
+function ∈(x::AbstractVector, Z::ZeroSet)
+    @assert length(x) == dim(Z) "a $(length(x))-dimensional vector is " *
+                                "incompatible with a $(dim(Z))-dimensional set"
+    return iszero(x)
 end
 
 """
@@ -176,13 +148,13 @@ function rand(::Type{ZeroSet};
               N::Type{<:Real}=Float64,
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
-              seed::Union{Int, Nothing}=nothing)
+              seed::Union{Int,Nothing}=nothing)
     rng = reseed(rng, seed)
     return ZeroSet{N}(dim)
 end
 
 """
-    linear_map(M::AbstractMatrix{N}, Z::ZeroSet{N}) where {N<:Real}
+    linear_map(M::AbstractMatrix, Z::ZeroSet)
 
 Concrete linear map of a zero set.
 
@@ -195,15 +167,16 @@ Concrete linear map of a zero set.
 
 The zero set whose dimension matches the output dimension of the given matrix.
 """
-function linear_map(M::AbstractMatrix{N}, Z::ZeroSet{N}) where {N<:Real}
+function linear_map(M::AbstractMatrix, Z::ZeroSet)
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
                                  "applied to a set of dimension $(dim(Z))"
 
-    return ZeroSet(size(M, 1))
+    N = promote_type(eltype(M), eltype(Z))
+    return ZeroSet{N}(size(M, 1))
 end
 
 """
-    translate(Z::ZeroSet{N}, v::AbstractVector{N}) where {N<:Real}
+    translate(Z::ZeroSet, v::AbstractVector)
 
 Translate (i.e., shift) a zero set by a given vector.
 
@@ -216,33 +189,10 @@ Translate (i.e., shift) a zero set by a given vector.
 
 A singleton containing the vector `v`.
 """
-function translate(Z::ZeroSet{N}, v::AbstractVector{N}) where {N<:Real}
+function translate(Z::ZeroSet, v::AbstractVector)
     @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
     return Singleton(v)
-end
-
-
-# --- AbstractCentrallySymmetric interface functions ---
-
-
-"""
-    center(Z::ZeroSet{N}, i::Int) where {N<:Real}
-
-Return the center along a given dimension of a zero set.
-
-### Input
-
-- `Z` -- zero set
-- `i` -- dimension of interest
-
-### Output
-
-The center along a given dimension of the zero set.
-"""
-@inline function center(Z::ZeroSet{N}, i::Int) where {N<:Real}
-    @boundscheck _check_bounds(Z, i)
-    return zero(N)
 end
 
 """
@@ -259,5 +209,30 @@ Concrete rectification of a zero set.
 The same set.
 """
 function rectify(Z::ZeroSet)
+    return Z
+end
+
+"""
+    reflect(Z::ZeroSet)
+
+Concrete reflection of a zero set `Z`, resulting in the reflected set `-Z`.
+
+### Input
+
+- `Z` -- zero set
+
+### Output
+
+The same zero set.
+"""
+function reflect(Z::ZeroSet)
+    return Z
+end
+
+function scale(::Real, Z::ZeroSet)
+    return Z
+end
+
+function scale!(::Real, Z::ZeroSet)
     return Z
 end

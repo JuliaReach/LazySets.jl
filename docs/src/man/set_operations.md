@@ -51,8 +51,8 @@ plot1
 
 ## Unary operations
 
-The following table lists all operations that take one convex set as argument in
-the columns.
+The following table lists all operations that take one set as argument in the
+columns.
 In the rows we list all set types, both the interfaces (where we abbreviate the
 `Abstract` prefix), the basic set types, and the lazy set operations, each
 sorted alphabetically.
@@ -215,8 +215,8 @@ diameter(B1), diameter(B2), diameter(BI), diameter(H)
 
 ## Binary operations
 
-The following table lists all operations that take two convex set as argument in
-the entries.
+The following table lists all operations that take two set as argument in the
+entries.
 In the rows we list all set types, both the interfaces (where we abbreviate the
 `Abstract` prefix), the basic set types, and the lazy set operations, each
 sorted alphabetically.
@@ -327,25 +327,22 @@ plot_points(witnesses, "w")
 plot1
 ```
 
-### `is_intersection_empty`
+### `isdisjoint`
 
 This function checks whether the intersection of two sets is empty.
 It can optionally produce a witness if the intersection is nonempty.
+Disjointness checks with `Ball2` are not supported yet.
 
 ```@example set_operations
-println(is_intersection_empty(BI, H))
-w1 = is_intersection_empty(BI, H, true)[2]
-# none of the other combinations are supported yet
-# is_intersection_empty(B1, B2)
-# is_intersection_empty(B1, BI)
-# is_intersection_empty(B1, H)
-# w2 = is_intersection_empty(B1, H, true)[2]
-# is_intersection_empty(B2, BI)
-# is_intersection_empty(B2, H)
+println(isdisjoint(BI, H))
+w1 = isdisjoint(BI, H, true)[2]
+println(isdisjoint(B1, BI))
+w2 = isdisjoint(B1, BI, true)[2]
+println(isdisjoint(B1, H))
 ```
 
 ```@example set_operations
-witnesses = [w1]
+witnesses = [w1, w2]
 
 plot1 = plot()
 plot_sets(sets)

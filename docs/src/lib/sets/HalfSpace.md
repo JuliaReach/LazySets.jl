@@ -8,26 +8,32 @@ CurrentModule = LazySets
 HalfSpace
 LinearConstraint
 dim(::HalfSpace)
-ρ(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
-σ(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
-∈(::AbstractVector{N}, ::HalfSpace{N}) where {N<:Real}
-an_element(::HalfSpace{N}) where {N<:Real}
+ρ(::AbstractVector, ::HalfSpace)
+σ(::AbstractVector, ::HalfSpace)
+∈(::AbstractVector, ::HalfSpace)
+an_element(::HalfSpace)
 rand(::Type{HalfSpace})
-normalize(::HalfSpace{N}, p=N(2)) where {N<:Real}
+normalize(::HalfSpace{N}, p::Real=N(2)) where {N}
 isbounded(::HalfSpace)
-isuniversal(::HalfSpace{N}, ::Bool=false) where {N<:Real}
+isuniversal(::HalfSpace, ::Bool=false)
 isempty(::HalfSpace)
-constraints_list(::HalfSpace{N}) where {N<:Real}
-constraints_list(::AbstractMatrix{N}, ::AbstractVector{N}) where {N<:Real}
-constrained_dimensions(::HalfSpace{N}) where {N<:Real}
-translate(::HalfSpace{N}, ::AbstractVector{N}) where {N<:Real}
-halfspace_left(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
-halfspace_right(::AbstractVector{N}, ::AbstractVector{N}) where {N<:Real}
-tosimplehrep(::AbstractVector{LC}) where {N<:Real, LC<:LinearConstraint{N}}
-remove_redundant_constraints
-remove_redundant_constraints!
+constraints_list(::HalfSpace)
+constrained_dimensions(::HalfSpace)
+translate(::HalfSpace, ::AbstractVector)
+halfspace_left(::AbstractVector, ::AbstractVector)
+halfspace_right(::AbstractVector, ::AbstractVector)
+complement(::HalfSpace)
+iscomplement(::HalfSpace{N}, ::HalfSpace) where {N}
+project(::HalfSpace{N}, ::AbstractVector{Int}) where {N}
+distance(::AbstractVector, ::HalfSpace{N}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
+* [`high`](@ref high(::LazySet))
+* [`low`](@ref low(::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`reflect`](@ref reflect(::LazySet))
+
+Inherited from [`AbstractPolyhedron`](@ref):
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolyhedron))

@@ -3,8 +3,6 @@ export difference
 # alias for set difference
 import Base: \
 
-const IA = IntervalArithmetic
-
 """
     \\(X::LazySet, Y::LazySet)
 
@@ -12,8 +10,8 @@ Convenience alias for set difference.
 
 ### Input
 
-- `X` -- a set
-- `Y` -- another set
+- `X` -- first set
+- `Y` -- second set
 
 ### Output
 
@@ -25,11 +23,11 @@ If `X` and `Y` are intervals, `X \\ Y` is used in some libraries to denote
 the left division, as the example below shows. However, it should not be
 confused with the *set difference*. For example,
 
-```julia
+```jldoctest
 julia> X = Interval(0, 2); Y = Interval(1, 4);
 
-julia> X \\ Y   # computing the set difference
-LazySets.Interval{Float64,IntervalArithmetic.Interval{Float64}}([0, 1])
+julia> X \\ Y  # computing the set difference
+Interval{Float64, IntervalArithmetic.Interval{Float64}}([0, 1])
 
 julia> X.dat \\ Y.dat  # computing the left division
 [0.5, ∞]
@@ -37,27 +35,23 @@ julia> X.dat \\ Y.dat  # computing the left division
 """
 \(X::LazySet, Y::LazySet) = difference(X, Y)
 
-# =================================
-# Set difference between intervals
-# =================================
-
 """
-    difference(I1::IN, I2::IN) where {N, IN<:Interval{N}}
+    difference(X::Interval{N}, Y::Interval) where {N}
 
-Return the set difference between the given intervals.
+Compute the set difference between two intervals.
 
 The set difference is defined as:
 
 ```math
-    I₁ \\setminus I₂ = \\{x: x ∈ I₁ \\text{ and } x ∉ I₂ \\}
+    X \\setminus Y = \\{x: x ∈ X \\text{ and } x ∉ Y \\}
 ```
 
 The backslash symbol, `\\`, can be used as an alias.
 
 ### Input
 
-- `I1` -- first interval
-- `I2` -- second interval
+- `X` -- first interval
+- `Y` -- second interval
 
 ### Output
 
@@ -69,59 +63,54 @@ Depending on the position of the intervals, the output is one of the following:
 
 ### Algorithm
 
-Let ``I₁ = [a, b]`` and ``I₂ = [c, d]`` be intervals. Their set difference is
-``I₁ \\setminus I₂ = \\{x: x ∈ I₁ \\text{ and } x ∉ I₂ \\}`` and depending on their
-position three different results may occur:
+Let ``X = [a, b]`` and ``Y = [c, d]`` be intervals. Their set difference is
+``X \\setminus Y = \\{x: x ∈ X \\text{ and } x ∉ Y \\}`` and, depending on their
+position, three different results may occur:
 
-- If ``I₁`` and ``I₂`` do not overlap, i.e. if their intersection is empty, then the
-  set difference is just ``I₁``.
-- Otherwise, let `I₁₂ = I₁ ∩ I₂` and assume that it is not empty, then either
-  ``I₁₂`` splits `I₁` into one interval or into two intervals. The latter case
-  happens when the inclusion is strict on both ends of ``I₂``.
+- If ``X`` and ``Y`` do not overlap, i.e., if their intersection is empty, then
+  the set difference is just ``X``.
+- Otherwise, let ``Z = X ∩ Y ≠ ∅``, then ``Z`` splits ``X`` into either one or
+  two intervals. The latter case happens when the bounds of ``Y`` are strictly
+  contained in ``X``.
 
 To check for strict inclusion, we assume that the inclusion is strict and then
-check if the resulting intervals that cover `I₁` (one to its left and one to its
-right, let them be `Ileft` and `Iright`), obtained by intersection with `I₂`,
-are flat or not. Three cases may arise:
+check if the resulting intervals that cover ``X`` (one to its left and one to
+its right, let them be `L` and `R`), obtained by intersection with ``Y``, are
+flat or not. Three cases may arise:
 
-- If both `Ileft` and `Iright` are flat then it means that `I₁ = I₂`, then the
-  set difference is the empty set.
-- If only `Ileft` is flat, then the remaining interval not covered by `I₂` is
-  `Iright`. In a similar manner, if only `Iright` is flat, then `Ileft` is returned.
-- Finally, if none of the intervals is flat, then `I₂` is strictly contained in
-  `I₁` and the set union of `Ileft` and `Iright` is returned.
+- If both `L` and `R` are flat then ``X = Y`` and the result is the empty set.
+- If only `L` is flat, then the result is `R`, the remaining interval not
+  covered by ``Y``. Similarly, if only `R` is flat, then the result is `L`.
+- Finally, if none of the intervals is flat, then ``Y`` is strictly contained
+  in ``X`` and the set union of `L` and `R` is returned.
 """
-function difference(I1::IN, I2::IN) where {N, IN<:Interval{N}}
-    I12 = intersection(I1, I2)
-    if isempty(I12)
-        return I1
+function difference(X::Interval{N}, Y::Interval) where {N}
+    Z = intersection(X, Y)
+    if isempty(Z)
+        return X
     else
-        Ileft = Interval(min(I1), min(I12))
-        Iright = Interval(max(I12), max(I1))
+        L = Interval(min(X), min(Z))
+        R = Interval(max(Z), max(X))
 
-        flat_left = isflat(Ileft)
-        flat_right = isflat(Iright)
+        flat_left = isflat(L)
+        flat_right = isflat(R)
 
         if flat_left && flat_right
             return EmptySet{N}(1)
         elseif flat_left && !flat_right
-            return Iright
+            return R
         elseif !flat_left && flat_right
-            return Ileft
+            return L
         else
-            return UnionSet(Ileft, Iright)
+            return UnionSet(L, R)
         end
     end
 end
 
-# ============================================
-# Set difference between hyperrectangular sets
-# ============================================
-
 """
-    difference(X::AbstractHyperrectangle{N}, Y::AbstractHyperrectangle{N}) where {N}
+    difference(X::AbstractHyperrectangle{N}, Y::AbstractHyperrectangle) where {N}
 
-Return the set difference between the given hyperrectangular sets.
+Compute the set difference between two hyperrectangular sets.
 
 ### Input
 
@@ -141,13 +130,9 @@ union is in general not convex.
 
 ### Algorithm
 
-This function calls the implementation in `IntervalArithmetic.setdiff`.
-
-### Notes
-
-The backslash symbol, `\\`, can be used as an alias.
+This implementation uses `IntervalArithmetic.setdiff`.
 """
-function difference(X::AbstractHyperrectangle{N}, Y::AbstractHyperrectangle{N}) where {N}
+function difference(X::AbstractHyperrectangle{N}, Y::AbstractHyperrectangle) where {N}
     Xib = convert(IA.IntervalBox, X)
     Yib = convert(IA.IntervalBox, Y)
     return UnionSetArray(convert.(Hyperrectangle, IA.setdiff(Xib, Yib)))
