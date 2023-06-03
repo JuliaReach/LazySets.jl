@@ -225,8 +225,7 @@ backend; for the default backend used in `LazySets` see
 backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/Polyhedra.jl/).
 """
-function vertices_list(P::HPolytope;
-                       backend=nothing, prune::Bool=true)
+function vertices_list(P::HPolytope; backend=nothing, prune::Bool=true)
     N = eltype(P)
     if isempty(P.constraints)
         return Vector{N}(Vector{N}(undef, 0))  # illegal polytope
