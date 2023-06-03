@@ -1238,3 +1238,55 @@ for ST in [:AbstractZonotope, :AbstractSingleton]
         return false
     end
 end
+
+# see Proposition 8 in Wetzlinger, Kochdumper, Bak, Althoff: * Fully-automated
+# verification of linear systems using inner- and outer-approximations of
+# reachable sets*. 2022.
+@commutative function isdisjoint(Z::AbstractZonotope, P::AbstractPolyhedron,
+                                 witness::Bool=false; solver=nothing)
+    n = dim(Z)
+    @assert n == dim(P) "incompatible dimensions $(dim(Z)) and $(dim(P))"
+
+    if n <= 2
+        # this implementation is slower for low-dimensional sets
+        return _isdisjoint_polyhedron(Z, P, witness; solver=solver)
+    end
+
+    N = promote_type(eltype(Z), eltype(P))
+    c = center(Z)
+    G = genmat(Z)
+    C, d = tosimplehrep(P)
+    p = size(G, 2)
+    m = length(d)
+
+    A = [C zeros(N, m, p);
+         I(n) -G]
+    b = vcat(d, c)
+    obj = zeros(N, size(A, 2))
+
+    lbounds = vcat(fill(-Inf, n), fill(-one(N), p))
+    ubounds = vcat(fill(Inf, n), fill(one(N), p))
+    sense = vcat(fill('<', m), fill('=', n))
+    if isnothing(solver)
+        solver = default_lp_solver(N)
+    end
+
+    lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
+
+    if is_lp_optimal(lp.status)
+        disjoint = false
+    elseif is_lp_infeasible(lp.status)
+        disjoint = true
+    else
+        return error("LP returned status $(lp.status) unexpectedly")
+    end
+
+    if disjoint
+        return _witness_result_empty(witness, true, Z, P)
+    elseif witness
+        w = lp.sol[1:n]
+        return (false, w)
+    else
+        return false
+    end
+end
