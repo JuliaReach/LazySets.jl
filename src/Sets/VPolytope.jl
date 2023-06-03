@@ -477,7 +477,8 @@ function remove_redundant_vertices(P::VPolytope{N};
     Q = polyhedron(P; backend=backend)
     if Polyhedra.supportssolver(typeof(Q))
         if isnothing(solver)
-            solver = default_lp_solver_polyhedra(N)
+            # presolver prints warnings about infeasible solutions (#3226)
+            solver = default_lp_solver_polyhedra(N; presolve=false)
         end
         vQ = Polyhedra.vrep(Q)
         Polyhedra.setvrep!(Q, Polyhedra.removevredundancy(vQ, solver))
