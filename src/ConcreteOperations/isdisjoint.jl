@@ -382,7 +382,7 @@ end
 
 """
     isdisjoint(Z1::AbstractZonotope, Z2::AbstractZonotope,
-               [witness]::Bool=false)
+               [witness]::Bool=false; [solver]=nothing)
 
 Check whether two zonotopic sets do not intersect, and otherwise optionally
 compute a witness.
@@ -392,6 +392,8 @@ compute a witness.
 - `Z1`      -- zonotopic set
 - `Z2`      -- zonotopic set
 - `witness` -- (optional, default: `false`) compute a witness if activated
+- `solver`  -- (optional, default: `nothing`) the backend used to solve the
+               linear program
 
 ### Output
 
@@ -412,7 +414,7 @@ zonotope with center ``c`` and generators ``g``.
 2003.
 """
 function isdisjoint(Z1::AbstractZonotope, Z2::AbstractZonotope,
-                    witness::Bool=false)
+                    witness::Bool=false; solver=nothing)
     if _isdisjoint_convex_sufficient(Z1, Z2)
         return _witness_result_empty(witness, true, Z1, Z2)
     end
@@ -421,7 +423,7 @@ function isdisjoint(Z1::AbstractZonotope, Z2::AbstractZonotope,
     @assert n == dim(Z2) "the zonotopes need to have the same dimensions"
     N = promote_type(eltype(Z1), eltype(Z2))
     Z = Zonotope(zeros(N, n), hcat(genmat(Z1), genmat(Z2)))
-    result = (center(Z1) - center(Z2)) ∉ Z
+    result = !∈(center(Z1) - center(Z2), Z; solver=solver)
     if result
         return _witness_result_empty(witness, true, N)
     elseif witness
@@ -751,7 +753,8 @@ function isdisjoint(H1::HalfSpace, H2::HalfSpace, witness::Bool=false)
 end
 
 # disambiguations
-for ST in [:AbstractPolyhedron, :Hyperplane, :Line2D, :CartesianProductArray]
+for ST in [:AbstractPolyhedron, :AbstractZonotope, :Hyperplane, :Line2D,
+           :CartesianProductArray]
     @eval @commutative function isdisjoint(X::($ST), H::HalfSpace, witness::Bool=false)
         return _isdisjoint_halfspace(H, X, witness)
     end
@@ -955,9 +958,9 @@ function _isdisjoint_universe(U::Universe, X::LazySet, witness)
 end
 
 # disambiguations
-for ST in [:AbstractPolyhedron, :AbstractSingleton, :HalfSpace, :Hyperplane,
-           :Line2D, :CartesianProductArray, :UnionSet, :UnionSetArray,
-           :Complement]
+for ST in [:AbstractPolyhedron, :AbstractZonotope, :AbstractSingleton,
+           :HalfSpace, :Hyperplane, :Line2D, :CartesianProductArray, :UnionSet,
+           :UnionSetArray, :Complement]
     @eval @commutative function isdisjoint(U::Universe, X::($ST), witness::Bool=false)
         return _isdisjoint_universe(U, X, witness)
     end
