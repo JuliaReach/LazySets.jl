@@ -746,13 +746,13 @@ function intersection(P1::Union{VPolygon,VPolytope},
     Q2 = polyhedron(P2; backend=backend)
     Pint = Polyhedra.intersect(Q1, Q2)
 
+    N = promote_type(eltype(P1), eltype(P2))
     if isnothing(prunefunc)
-        prunefunc = (X -> removevredundancy!(X; ztol=_ztol(eltype(P1))))
+        prunefunc = (X -> removevredundancy!(X; ztol=_ztol(N)))
     end
     prunefunc(Pint)
 
     if isempty(Pint)
-        N = promote_type(eltype(P1), eltype(P2))
         return EmptySet{N}(n)
     end
     return VPolytope(Pint)
