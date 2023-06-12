@@ -24,6 +24,26 @@ function overapproximate(X::S, ::Type{S}, args...; kwargs...) where {S<:LazySet}
 end
 
 """
+    overapproximate(S::LazySet, T::Type{<:LazySet}, [args]...; [kwargs]...)
+
+Default overapproximation method that falls back to `convert`.
+
+### Input
+
+- `X`       -- set
+- `Type{S}` -- target set type
+- `args`    -- further arguments
+- `kwargs`  -- further keyword arguments
+
+### Output
+
+The result of `convert`, or a `MethodError` if no such method exists.
+"""
+function overapproximate(X::T1, T2::Type{<:LazySet}, args...; kwargs...) where {T1<:LazySet}
+    return convert(T2, X, args...; kwargs...)
+end
+
+"""
     overapproximate(S::LazySet)
 
 Alias for `overapproximate(S, Hyperrectangle)` resp. `box_approximation(S)`.
@@ -130,9 +150,9 @@ for ST in LazySets.subtypes(LazySet, true)
     end
     @eval overapproximate(∅::EmptySet, ::Type{<:$ST}) = ∅
 end
+overapproximate(∅::EmptySet, ::Type{<:LazySet}, args...; kwargs...) = ∅
 overapproximate(∅::EmptySet, ::Real) = ∅
 overapproximate(∅::EmptySet, ::Type{<:HPolygon}, ::Real=Inf; kwargs...) = ∅
-overapproximate(∅::EmptySet, ::Type{<:EmptySet}, args...; kwargs...) = ∅
 function overapproximate(∅::EmptySet, ::Type{<:Zonotope},
                          ::Union{AbstractDirections,Type{<:AbstractDirections}};
                          kwargs...)
