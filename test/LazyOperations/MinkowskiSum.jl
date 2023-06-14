@@ -118,7 +118,7 @@ for N in [Float64, Rational{Int}, Float32]
     Y = Singleton(N[2, 3])
     Z = tohrep(X + Y)
     @test Z isa HPolyhedron{N} &&
-        ispermutation(constraints_list(Z), constraints_list(X + Y))
+          ispermutation(constraints_list(Z), constraints_list(X + Y))
     @test tovrep(X + Y) == VPolytope([N[3, 4]])
 
     # =================

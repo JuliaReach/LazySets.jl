@@ -441,27 +441,28 @@ end
 # ====================================
 # Zonotope vertex enumeration methods
 # ====================================
-    
-@inline function _angles(point::AbstractVector{N})  where{N}
-    (atand(point[2], point[1]) + 360) % 360
+
+@inline function _angles(point::AbstractVector{N}) where {N}
+    return (atand(point[2], point[1]) + 360) % 360
 end
 
-function _single_quadrant_vertices_enum(G::AbstractMatrix{N}, sorted::Bool=false) where{N}
+function _single_quadrant_vertices_enum(G::AbstractMatrix{N}, sorted::Bool=false) where {N}
     if !sorted
-        G = sortslices(G, dims=2, by=_angles)
+        G = sortslices(G; dims=2, by=_angles)
     end
-    return VPolygon(2*cumsum(hcat(G, -G), dims=2) .- sum(G, dims=2))
+    return VPolygon(2 * cumsum(hcat(G, -G); dims=2) .- sum(G; dims=2))
 end
 
-function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N}; apply_convex_hull::Bool) where {N}
+function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N};
+                           apply_convex_hull::Bool) where {N}
     if apply_convex_hull
-        return _vertices_list_iterative(c, G, apply_convex_hull=apply_convex_hull)
+        return _vertices_list_iterative(c, G; apply_convex_hull=apply_convex_hull)
     end
-    angles = mapslices(_angles, G, dims=1)[1, :]
+    angles = mapslices(_angles, G; dims=1)[1, :]
     perm = sortperm(angles)
     sorted_angles = angles[perm]
     sorted_G = G[:, perm]
-    polygons  = Vector{VPolygon{N}}()
+    polygons = Vector{VPolygon{N}}()
     sizehint!(polygons, 4)
 
     @inbounds for i in zip(0:90:360, 90:90:360)

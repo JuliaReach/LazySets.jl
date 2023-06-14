@@ -2017,14 +2017,14 @@ end
 
 function tohrep(X::LazySet)
     @assert is_polyhedral(X) "cannot compute the constraint representation " *
-        "of non-polyhedral sets"
+                             "of non-polyhedral sets"
 
     return HPolyhedron(constraints_list(X))
 end
 
 function tovrep(X::LazySet)
     @assert is_polyhedral(X) "cannot compute the vertex representation of " *
-        "non-polyhedral sets"
+                             "non-polyhedral sets"
 
     return VPolytope(vertices_list(X))
 end
