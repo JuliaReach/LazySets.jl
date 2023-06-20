@@ -209,26 +209,6 @@ function _overapproximate_convex_hull_zonotope_GGP09(X::ConvexHull{N}) where {N}
     return Zonotope(c, G)
 end
 
-"""
-    overapproximate(lm::LinearMap{N, <:AbstractZonotope},
-                    ::Type{<:Zonotope}) where {N}
-
-Overapproximate a lazy linear map of a zonotopic set with a zonotope.
-
-### Input
-
-- `lm`       -- lazy linear map of a zonotopic set
-- `Zonotope` -- target set type
-
-### Output
-
-The tight zonotope corresponding to `lm`.
-"""
-function overapproximate(lm::LinearMap{N,<:AbstractZonotope},
-                         ::Type{<:Zonotope}) where {N}
-    return convert(Zonotope, lm)
-end
-
 # Given center, (dependent) generator matrix and exponent matrix of a (simple)
 # sparse polynomial zonotope, compute thew new center and generator matrix of
 # its zonotope overapproximation.

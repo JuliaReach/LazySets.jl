@@ -16,6 +16,10 @@ for N in [Float64, Rational{Int}, Float32]
     oa = overapproximate(b, Ball1, Hyperrectangle)
     @test oa isa Ball1
 
+    # default fallback to `convert`
+    B = BallInf(c, N(1))
+    overapproximate(B, Zonotope) == Zonotope(c, N[1 0; 0 1])
+
     # HPolygon approximation with box directions
     p = overapproximate(b, HPolygon)
     for d in [N[1, 0], N[-1, 0]]
