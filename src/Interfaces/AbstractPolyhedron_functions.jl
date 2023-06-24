@@ -6,7 +6,8 @@ export constrained_dimensions,
        remove_redundant_constraints!,
        linear_map,
        an_element,
-       vertices_list
+       vertices_list,
+       isfeasible
 
 isconvextype(::Type{<:AbstractPolyhedron}) = true
 
@@ -1208,4 +1209,34 @@ function _isempty_polyhedron_lp(A::AbstractMatrix{N}, b::AbstractVector{N},
         return witness ? (true, N[]) : true
     end
     return error("LP returned status $(lp.status) unexpectedly")
+end
+
+"""
+    isfeasible(constraints::AbstractVector{<:HalfSpace}, [witness]::Bool=false;
+               [solver]=nothing)
+
+Check for feasibility of a list of linear constraints.
+
+### Input
+
+- `constraints` -- list of linear constraints
+- `witness`     -- (optional; default: `false`) flag for witness production
+- `solver`      -- (optional; default: `nothing`) LP solver
+
+### Output
+
+`true` if the linear constraints are feasible, and `false` otherwise.
+
+### Algorithm
+
+This implementation solves the corresponding feasibility linear program.
+"""
+function isfeasible(constraints::AbstractVector{<:HalfSpace},
+                    witness::Bool=false; solver=nothing)
+    if witness
+        result, w = _isempty_polyhedron_lp(constraints, witness; solver=solver)
+        return !result, w
+    else
+        return !_isempty_polyhedron_lp(constraints, witness; solver=solver)
+    end
 end
