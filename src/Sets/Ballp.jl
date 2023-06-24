@@ -67,7 +67,7 @@ struct Ballp{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractCentrallySymmetr
             return BallInf(center, radius)
         elseif p == N(2)
             return Ball2(center, radius)
-        elseif p == one(N)
+        elseif isone(p)
             return Ball1(center, radius)
         else
             return new{N,VN}(p, center, radius)
