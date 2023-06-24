@@ -34,6 +34,11 @@ struct Hyperplane{N,VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     end
 end
 
+function Hyperplane(points::AbstractVector{<:AbstractVector})
+    a, b = _hyperplane_from_points(points)
+    return Hyperplane(a, b)
+end
+
 isoperationtype(::Type{<:Hyperplane}) = false
 
 """
@@ -667,4 +672,22 @@ end
 
 function _reflect_point_hyperplane(x, a, b)
     return x - 2 * (dot(x, a) - b) / dot(a, a) * a
+end
+
+# algorithm based on https://math.stackexchange.com/a/3398303
+function _hyperplane_from_points(points::AbstractVector)
+    n = length(points)
+    @assert n > 0 && n == length(points[1]) "one point per dimension required"
+
+    N = eltype(points[1])
+    A = Matrix{N}(undef, n, n)
+    @inbounds for j in 1:n
+        for i in 1:n
+            A[i, j] = points[i][j]
+        end
+    end
+
+    a = A \ ones(N, n)
+    b = one(N)
+    return a, b
 end
