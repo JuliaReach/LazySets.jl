@@ -691,3 +691,27 @@ function _hyperplane_from_points(points::AbstractVector)
     b = one(N)
     return a, b
 end
+
+function _distinct_points(H::Hyperplane{N}) where {N}
+    return _distinct_points_hyperplane(H.a, H.b)
+end
+
+# algorithm based on https://math.stackexchange.com/a/2439695
+function _distinct_points_hyperplane(a::AbstractVector{N}, b::N) where {N}
+    n = length(a)
+    points = Vector{Vector{N}}(undef, n)
+    idx = findfirst(!iszero, a)  # index with non-zero normal entry
+    a_idx⁻¹ = one(N) / (@inbounds a[idx])
+
+    @inbounds for i in 1:n
+        p = zeros(N, n)
+        if i == idx
+            p[idx] = b * a_idx⁻¹
+        else
+            p[i] = one(N)
+            p[idx] = (b - a[i]) * a_idx⁻¹
+        end
+        points[i] = p
+    end
+    return points
+end

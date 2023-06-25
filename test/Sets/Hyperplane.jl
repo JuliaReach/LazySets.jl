@@ -148,6 +148,12 @@ for N in [Float64, Rational{Int}, Float32]
     points = [N[4, 0, -1, 0], N[1, 2, 3, -1], N[0, -1, 2, 0], N[-1, 1, -1, 1]]
     H = Hyperplane(N[13, 8, 20, 57], N(32))
     @test normalize(Hyperplane(points)) ≈ normalize(H)
+
+    # _distinct_points
+    points = LazySets._distinct_points(H)
+    @test length(points) == 4 &&
+          all(i == j || points[i] != points[j] for i in 1:4 for j in 1:4) &&
+          all(p ∈ H for p in points)
 end
 
 # tests that only work with Float64 and Float32
