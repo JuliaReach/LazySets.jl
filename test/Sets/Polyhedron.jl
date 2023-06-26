@@ -89,9 +89,11 @@ for N in [Float64, Rational{Int}, Float32]
         P = convert(HPolyhedron, H)
         @test length(vertices_list(P)) == 4
 
-        # checking for emptiness
+        # checking for emptiness/feasibility
         P = HPolyhedron([LinearConstraint(N[1, 0], N(0))])    # x <= 0
         @test !isempty(P)
+        result, w = isfeasible(P.constraints, true)
+        @test isfeasible(P.constraints) && result && w ∈ P
 
         # concrete linear map with non-invertible matrix
         if N == Float64
