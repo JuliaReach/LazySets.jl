@@ -267,9 +267,8 @@ function constraints_list(H::AbstractHyperrectangle{N}) where {N}
     n = dim(H)
     constraints = Vector{HalfSpace{N,SingleEntryVector{N}}}(undef, 2 * n)
     b, c = high(H), -low(H)
-    one_N = one(N)
     @inbounds for i in 1:n
-        ei = SingleEntryVector(i, n, one_N)
+        ei = SingleEntryVector(i, n, one(N))
         constraints[i] = HalfSpace(ei, b[i])
         constraints[i + n] = HalfSpace(-ei, c[i])
     end
@@ -648,7 +647,7 @@ function split(H::AbstractHyperrectangle{N},
     @inbounds for (i, m) in enumerate(num_blocks)
         if m <= 0
             throw(ArgumentError("each dimension needs at least one block, got $m"))
-        elseif m == one(N)
+        elseif isone(m)
             centers[i] = range(lo[i] + radius[i]; length=1)
         else
             radius[i] /= m

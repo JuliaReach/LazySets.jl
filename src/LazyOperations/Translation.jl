@@ -206,7 +206,7 @@ Unicode alias constructor ⊕ (`oplus`) for the lazy translation operator.
 ⊕(v::AbstractVector, X::LazySet) = Translation(X, v)
 
 function matrix(tr::Translation{N}) where {N}
-    return Diagonal(fill(one(N), dim(tr)))
+    return Diagonal(ones(N, dim(tr)))
 end
 
 function vector(tr::Translation)

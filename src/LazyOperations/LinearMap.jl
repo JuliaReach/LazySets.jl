@@ -159,8 +159,8 @@ function _LinearMap_vector(v, X)
 end
 
 # convenience constructor from a UniformScaling
-function LinearMap(M::UniformScaling{N}, X::LazySet) where {N}
-    if M.λ == one(N)
+function LinearMap(M::UniformScaling, X::LazySet)
+    if isone(M.λ)
         return X
     end
     return LinearMap(Diagonal(fill(M.λ, dim(X))), X)
@@ -183,8 +183,8 @@ function LinearMap(v::AbstractVector, lm::LinearMap)
 end
 
 # more efficient versions when combining `LinearMap`s
-function LinearMap(M::UniformScaling{N}, lm::LinearMap) where {N}
-    if M.λ == one(N)
+function LinearMap(M::UniformScaling, lm::LinearMap)
+    if isone(M.λ)
         return lm
     end
     return LinearMap(M.λ * lm.M, lm.X)
