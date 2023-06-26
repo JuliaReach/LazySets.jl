@@ -31,10 +31,10 @@ function has_lp_infeasibility_ray(model)
 end
 
 # solve a linear program (in the old MathProgBase interface)
-function linprog(c, A, sense::Char, b, l::Number, u::Number, solver)
+function linprog(c, A, sense::Char, b, l::Number, u::Number, solver_or_model)
     n = length(c)
     m = length(b)
-    return linprog(c, A, fill(sense, m), b, fill(l, n), fill(u, n), solver)
+    return linprog(c, A, fill(sense, m), b, fill(l, n), fill(u, n), solver_or_model)
 end
 
 function linprog(c, A, sense, b, l, u, solver_or_model)
