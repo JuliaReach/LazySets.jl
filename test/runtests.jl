@@ -1,5 +1,6 @@
 using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays,
-      StaticArrays
+      StaticArrays, GLPK
+using JuMP: optimizer_with_attributes
 
 # fix random number generator seed
 using Random
@@ -285,6 +286,13 @@ if test_suite_basic
     end
     @time @testset "LazySets.Approximations.hausdorff_distance" begin
         include("Approximations/hausdorff_distance.jl")
+    end
+
+    # ================================
+    # Testing shared utility functions
+    # ================================
+    @time @testset "LazySets.lp_solvers" begin
+        include("Utils/lp_solvers.jl")
     end
 
     # ========================

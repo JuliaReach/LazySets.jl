@@ -37,9 +37,9 @@ function linprog(c, A, sense::Char, b, l::Number, u::Number, solver)
     return linprog(c, A, fill(sense, m), b, fill(l, n), fill(u, n), solver)
 end
 
-function linprog(c, A, sense, b, l, u, solver)
+function linprog(c, A, sense, b, l, u, solver_or_model)
     n = length(c)
-    model = Model(solver)
+    model = linprog_model(solver_or_model)
     @variable(model, l[i] <= x[i=1:n] <= u[i])
     @objective(model, Min, c' * x)
     eq_rows, ge_rows, le_rows = sense .== '=', sense .== '>', sense .== '<'
@@ -52,3 +52,9 @@ function linprog(c, A, sense, b, l, u, solver)
             sol    = value.(x),
             model  = model)
 end
+
+@inline function linprog_model(model::JuMP.Model)
+    Base.empty!(model)
+    return model
+end
+@inline linprog_model(solver) = Model(solver)
