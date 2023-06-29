@@ -441,18 +441,26 @@ We compute the point on the hyperplane as follows:
     return x
 end
 
-function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Hyperplane{N},
-                                 algo::AbstractLinearMapAlgorithm) where {N}
+function _linear_map_hrep_helper(M::AbstractMatrix, P::Hyperplane,
+                                 algo::AbstractLinearMapAlgorithm)
     constraints = _linear_map_hrep(M, P, algo)
     if length(constraints) == 2
         # assuming these constraints define a hyperplane
         c = first(constraints)
         return Hyperplane(c.a, c.b)
     elseif isempty(constraints)
+        N = promote_type(eltype(M), eltype(P))
         return Universe{N}(size(M, 1))
     else
         error("unexpected number of $(length(constraints)) constraints")
     end
+end
+
+function _linear_map_hrep_helper(M::AbstractMatrix, H::Hyperplane,
+                                 algo::LinearMapPoints)
+    xs = _distinct_points_hyperplane(H.a, H.b)
+    ys = [M * x for x in xs]
+    return Hyperplane(ys)
 end
 
 """

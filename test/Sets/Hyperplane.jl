@@ -91,11 +91,15 @@ for N in [Float64, Rational{Int}, Float32]
     @test project(H, [1]) == project(H, [2]) == Universe{N}(1)
     @test project(H, [1, 2]) == H
 
-    @test_throws ArgumentError linear_map(M, H, algorithm="inv")
+    for algorithm in ("inv", "points")
+        @test_throws ArgumentError linear_map(M, H, algorithm=algorithm)
+    end
     M = N[2 2; 0 1] # invertible matrix
 
     if test_suite_polyhedra
-        @test linear_map(M, H) == Hyperplane(N[0.5, -2.0], N(0.0))
+        H2 = Hyperplane(N[0.5, -2.0], N(0.0))
+        @test linear_map(M, H) == H2
+        @test linear_map(M, H; algorithm="points") == H2
     end
 
     # translation

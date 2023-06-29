@@ -500,6 +500,14 @@ function _linear_map_hrep_helper(M::AbstractMatrix, hs::HalfSpace,
     end
 end
 
+function _linear_map_hrep(M::AbstractMatrix, H::HalfSpace,
+                          algo::LinearMapPoints)
+    xs = _distinct_points_hyperplane(H.a, H.b)
+    ys = [M * x for x in xs]
+    a, b = _hyperplane_from_points(ys)
+    return HalfSpace(a, b)
+end
+
 # TODO: after #2032, #2041 remove use of this function
 _normal_Vector(c::HalfSpace) = HalfSpace(convert(Vector, c.a), c.b)
 _normal_Vector(C::Vector{<:HalfSpace}) = [_normal_Vector(c) for c in C]

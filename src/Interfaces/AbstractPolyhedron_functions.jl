@@ -379,6 +379,22 @@ function _check_algorithm_applies(M::AbstractMatrix, P::LazySet,
     return true
 end
 
+function _check_algorithm_applies(M::AbstractMatrix, P::LazySet,
+                                  ::Type{LinearMapPoints};
+                                  throw_error=false)
+    if size(M, 1) != size(M, 2)
+        throw_error && throw(ArgumentError("algorithm \"points\" requires a square " *
+                                           "matrix, but the dimensions are $(size(M))"))
+        return false
+    end
+    if any(iszero(r) for r in eachrow(M))
+        throw_error && throw(ArgumentError("algorithm \"points\" requires " *
+                                           "nonzero rows in the matrix"))
+        return false
+    end
+    return true
+end
+
 function _get_elimination_instance(N, backend, elimination_method)
     require(@__MODULE__, :Polyhedra; fun_name="linear_map with elimination")
     if isnothing(backend)
@@ -641,6 +657,11 @@ function _linear_map_polyhedron(M::AbstractMatrix{NM},
         algo = _default_linear_map_algorithm(M, P; cond_tol=cond_tol)
         return _linear_map_hrep_helper(M, P, algo)
 
+    elseif algorithm == "points" && _check_algorithm_applies(M, P, LinearMapPoints;
+                                                             throw_error=true)
+        algo = LinearMapPoints()
+        return _linear_map_hrep_helper(M, P, algo)
+
     elseif algorithm == "vrep"
         algo = LinearMapVRep(backend)
         return _linear_map_vrep(M, P, algo; apply_convex_hull=false)
@@ -668,10 +689,16 @@ function _linear_map_polyhedron(M::AbstractMatrix{NM},
         return _linear_map_hrep_helper(M, P, LinearMapLift())
 
     else
-        throw(ArgumentError("got unknown algorithm \"$algorithm\"; available" *
+        throw(ArgumentError("got unknown algorithm \"$algorithm\"; available " *
                             "choices: \"inverse\", \"inverse_right\", \"lift\", " *
-                            "\"elimination\", \"vrep\""))
+                            "\"elimination\", \"vrep\", \"points\""))
     end
+end
+
+function _linear_map_hrep_helper(M::AbstractMatrix, P::AbstractPolyhedron,
+                                 algo::LinearMapPoints)
+    constraints = [_linear_map_hrep_helper(M, H, algo) for H in constraints_list(P)]
+    return HPolyhedron(constraints)
 end
 
 # TODO: merge the preconditions into _check_algorithm_applies ?

@@ -37,5 +37,7 @@ abstract type AbstractPolyhedron{N} <: ConvexSet{N} end
 # supertype for all linear map algorithms
 abstract type AbstractLinearMapAlgorithm end
 
+struct LinearMapPoints <: AbstractLinearMapAlgorithm end
+
 # To account for the compilation order, functions are defined in the file
 # AbstractPolyhedron_functions.jl
