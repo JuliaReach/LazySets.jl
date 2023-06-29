@@ -1,17 +1,45 @@
+const THREAD_FLOAT_LP_SOLVERs = JuMP.Model[]
+const THREAD_EXACT_LP_SOLVERs = JuMP.Model[]
+
+@inline default_lp_solver(::Type{T}) where {T} = default_lp_solver(T, Threads.threadid())
+@noinline function default_lp_solver(::Type{T}, tid::Int) where {T}
+    THREAD_LP_SOLVERs = thread_specific_lp_solvers(T)
+
+    0 < tid <= length(THREAD_LP_SOLVERs) || _rng_length_assert()
+    if @inbounds isassigned(THREAD_LP_SOLVERs, tid)
+        @inbounds LP = THREAD_LP_SOLVERs[tid]
+    else
+        LP = Model(default_lp_solver_factory(T))
+        @inbounds THREAD_LP_SOLVERs[tid] = LP
+    end
+    return LP
+end
+@noinline _rng_length_assert() =  @assert false "0 < tid <= length(THREAD_RNGs)"
+
+function init_lp_solvers()
+    # Code is heavily inspired by the global state of RNGs in Random.
+    # That code contains the following comment, although it is unclear
+    # what this pertains to (most likely empty!).
+    # "it ensures that we didn't save a bad object"
+    resize!(empty!(THREAD_FLOAT_LP_SOLVERs), Threads.nthreads())
+    resize!(empty!(THREAD_EXACT_LP_SOLVERs), Threads.nthreads())
+end
+
 # default LP solver for floating-point numbers
-function default_lp_solver(::Type{<:AbstractFloat})
+@inline function default_lp_solver_factory(::Type{<:AbstractFloat})
     return JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(; method=GLPK.SIMPLEX))
 end
 
 # default LP solver for rational numbers
-function default_lp_solver(::Type{<:Rational})
+@inline function default_lp_solver_factory(::Type{<:Rational})
     return JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(; method=GLPK.EXACT))
 end
 
+@inline thread_specific_lp_solvers(::Type{<:AbstractFloat}) = THREAD_FLOAT_LP_SOLVERs
+@inline thread_specific_lp_solvers(::Type{<:Rational}) = THREAD_EXACT_LP_SOLVERs
+
 # default LP solver given two possibly different numeric types
-function default_lp_solver(M::Type{<:Number}, N::Type{<:Number})
-    return default_lp_solver(promote_type(M, N))
-end
+@inline default_lp_solver(M::Type{<:Number}, N::Type{<:Number}) = default_lp_solver(promote_type(M, N))
 
 # check for Polyhedra backend (fallback method)
 function _is_polyhedra_backend(backend)
