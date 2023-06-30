@@ -7,7 +7,7 @@ function is_lp_optimal(status)
 end
 
 function is_lp_infeasible(status; strict::Bool=false)
-    if status == JuMP.INFEASIBLE
+    if status ∈ (JuMP.INFEASIBLE, JuMP.LOCALLY_INFEASIBLE, JuMP.ALMOST_INFEASIBLE)
         return true
     end
     if strict
@@ -17,7 +17,7 @@ function is_lp_infeasible(status; strict::Bool=false)
 end
 
 function is_lp_unbounded(status; strict::Bool=false)
-    if status == JuMP.DUAL_INFEASIBLE
+    if status ∈ (JuMP.DUAL_INFEASIBLE, JuMP.ALMOST_DUAL_INFEASIBLE)
         return true
     end
     if strict
@@ -60,7 +60,7 @@ function lin_prog_variable!(model, n, l::Number, u::Number)
         return @variable(model, x[1:n], lower_bound=l)
     elseif isfinite(u)
         return @variable(model, x[1:n], upper_bound=u)
-    else 
+    else
         return @variable(model, x[1:n])
     end
 end
