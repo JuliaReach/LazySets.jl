@@ -5,7 +5,7 @@ const THREAD_EXACT_LP_SOLVERs = JuMP.Model[]
 @noinline function default_lp_solver(::Type{T}, tid::Int) where {T}
     THREAD_LP_SOLVERs = thread_specific_lp_solvers(T)
 
-    0 < tid <= length(THREAD_LP_SOLVERs) || _rng_length_assert()
+    @assert 0 < tid <= length(THREAD_LP_SOLVERs)
     if @inbounds isassigned(THREAD_LP_SOLVERs, tid)
         @inbounds LP = THREAD_LP_SOLVERs[tid]
     else
@@ -14,7 +14,6 @@ const THREAD_EXACT_LP_SOLVERs = JuMP.Model[]
     end
     return LP
 end
-@noinline _rng_length_assert() =  @assert false "0 < tid <= length(THREAD_RNGs)"
 
 function init_lp_solvers()
     # Code is heavily inspired by the global state of RNGs in Random.
@@ -23,6 +22,7 @@ function init_lp_solvers()
     # "it ensures that we didn't save a bad object"
     resize!(empty!(THREAD_FLOAT_LP_SOLVERs), Threads.nthreads())
     resize!(empty!(THREAD_EXACT_LP_SOLVERs), Threads.nthreads())
+    return nothing
 end
 
 # default LP solver for floating-point numbers
@@ -39,7 +39,9 @@ end
 @inline thread_specific_lp_solvers(::Type{<:Rational}) = THREAD_EXACT_LP_SOLVERs
 
 # default LP solver given two possibly different numeric types
-@inline default_lp_solver(M::Type{<:Number}, N::Type{<:Number}) = default_lp_solver(promote_type(M, N))
+@inline function default_lp_solver(M::Type{<:Number}, N::Type{<:Number})
+    return default_lp_solver(promote_type(M, N))
+end
 
 # check for Polyhedra backend (fallback method)
 function _is_polyhedra_backend(backend)
