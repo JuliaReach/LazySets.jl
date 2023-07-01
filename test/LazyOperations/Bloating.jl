@@ -49,8 +49,8 @@ for N in [Float64, Float32]
         if p != N(1)
             @test ρ(d, X⁻) == dot(d, σ(d, X⁻))
         end
-        @test_throws ErrorException σ(N[1], Y)
-        @test_throws ErrorException ρ(N[1], Y)
+        @test_throws ArgumentError σ(N[1], Y)
+        @test_throws ArgumentError ρ(N[1], Y)
         d = N[1, 99 // 100]
         @test σ(d, X) == σ(d, B + Bp)
         @test ρ(d, X) == ρ(d, B + Bp)

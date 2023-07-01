@@ -193,8 +193,8 @@ function σ_helper(d::AbstractVector, P::HPoly, solver)
         u = Inf
         lp = linprog(c, A, sense, b, l, u, solver)
         if is_lp_infeasible(lp.status; strict=true)
-            error("the support vector is undefined because the polyhedron is " *
-                  "empty")
+            throw(ArgumentError("the support vector is undefined because " *
+                                "the polyhedron is empty"))
         elseif is_lp_unbounded(lp.status)
             unbounded = true
         elseif is_lp_optimal(lp.status)

@@ -101,6 +101,10 @@ for N in [Float64, Rational{Int}, Float32]
         end
     end
 
+    # empty polyhedron with solver status `LOCALLY_INFEASIBLE`
+    P = HPolyhedron(HalfSpace[HalfSpace(N[2, 2], N(-2)), HalfSpace(N[-2, -2], N(-34))])
+    @test_throws ArgumentError ρ(N[0, 1], P)
+
     if !test_suite_polyhedra
         # concrete linear map of a bounded polyhedron by a non-invertible matrix
         # throws an assertion error, since tovrep(HPolytope(...)) is required
@@ -228,7 +232,7 @@ for N in [Float64]
         d = N[1, 0]
         @test σ(d, p_unbounded)[1] == N(Inf)
         @test ρ(d, p_unbounded) == N(Inf)
-        @test_throws ErrorException σ(N[1], p_infeasible)
+        @test_throws ArgumentError σ(N[1], p_infeasible)
         d = N[-1, 1]  # unbounded in y direction, but x value matters
         @test σ(d, p_unbounded) == N[1, Inf]
         @test ρ(d, p_unbounded) == N(Inf)
