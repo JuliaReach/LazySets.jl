@@ -16,6 +16,8 @@ function __init__()
     @require WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192" include("Initialization/init_WriteVTK.jl")
 
     init_lp_solvers()
+
+    return nothing
 end
 
 # there is a conflict with `Revise` and `StaticArrays(Core)`, so it is loaded without `Requires`

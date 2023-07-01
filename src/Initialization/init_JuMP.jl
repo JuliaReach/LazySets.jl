@@ -55,11 +55,11 @@ end
 
 function lin_prog_variable!(model, n, l::Number, u::Number)
     if isfinite(l) && isfinite(u)
-        return @variable(model, x[1:n], lower_bound=l, upper_bound=u)
+        return @variable(model, x[1:n], lower_bound = l, upper_bound = u)
     elseif isfinite(l)
-        return @variable(model, x[1:n], lower_bound=l)
+        return @variable(model, x[1:n], lower_bound = l)
     elseif isfinite(u)
-        return @variable(model, x[1:n], upper_bound=u)
+        return @variable(model, x[1:n], upper_bound = u)
     else
         return @variable(model, x[1:n])
     end
