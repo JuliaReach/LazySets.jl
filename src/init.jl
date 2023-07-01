@@ -15,7 +15,7 @@ function __init__()
     @require Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7" include("Initialization/init_Symbolics.jl")
     @require WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192" include("Initialization/init_WriteVTK.jl")
 
-    init_lp_solvers()
+    return init_lp_solvers()
 end
 
 # there is a conflict with `Revise` and `StaticArrays(Core)`, so it is loaded without `Requires`
