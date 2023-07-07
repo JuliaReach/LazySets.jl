@@ -719,9 +719,31 @@ end
 function _linear_map_inverse_hrep(Minv::AbstractMatrix, P::LazySet)
     constraints_P = constraints_list(P)
     constraints_MP = _preallocate_constraints(constraints_P)
+    has_undefs = false
     @inbounds for (i, c) in enumerate(constraints_P)
         cinv = vec(At_mul_B(c.a, Minv))
-        constraints_MP[i] = HalfSpace(cinv, c.b)
+        if iszero(cinv)
+            N = eltype(cinv)
+            if zero(N) <= c.b
+                # constraint is redundant
+                has_undefs = true
+            else
+                # constraint is infeasible
+                # return constraints representing empty set
+                a1 = zeros(N, length(cinv))
+                a1[1] = one(N)
+                a2 = zeros(N, length(cinv))
+                a2[1] = -one(N)
+                return [HalfSpace(a1, zero(N)), HalfSpace(a2, -one(N))]
+            end
+        else
+            constraints_MP[i] = HalfSpace(cinv, c.b)
+        end
+    end
+    if has_undefs  # there were redundant constraints, so remove them
+        constraints_MP = [constraints_MP[i]
+                          for i in 1:length(constraints_MP)
+                          if isassigned(constraints_MP, i)]
     end
     return constraints_MP
 end
