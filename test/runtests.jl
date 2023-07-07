@@ -229,6 +229,9 @@ if test_suite_basic
     @time @testset "LazySets.convex_hull" begin
         include("ConcreteOperations/convex_hull.jl")
     end
+    @time @testset "LazySets.difference" begin
+        include("ConcreteOperations/difference.jl")
+    end
     @time @testset "LazySets.distance" begin
         include("ConcreteOperations/distance.jl")
     end
