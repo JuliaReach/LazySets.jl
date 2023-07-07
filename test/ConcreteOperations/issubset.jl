@@ -31,6 +31,20 @@ for N in [Float64, Float32, Rational{Int}]
     @test X ⊆ Y
     @test !(Y ⊆ X)
 
+    # interval with union of unbounded sets
+    X = Interval(N(1), N(3))
+    for H in (HalfSpace(N[1], N(2)), HalfSpace(N[-1], N(-2)))
+        U = UnionSetArray([H])
+        res, w = ⊆(X, U, true)
+        @test !(X ⊆ U) && !res && w ∈ X && w ∉ U
+    end
+    X = Interval(N(1), N(2))
+    for H in (HalfSpace(N[1], N(2)), HalfSpace(N[-1], N(-1)))
+        U = UnionSetArray([H])
+        res, w = ⊆(X, U, true)
+        @test X ⊆ U && res && w == N[]
+    end
+
     B = Hyperrectangle(N[0, 0], N[1, 1])
     U = UnionSetArray([Hyperrectangle(N[0, 1], N[3, 1]), Hyperrectangle(N[0, -1], N[3, 1])])
     res, w = ⊆(B, U, true)
