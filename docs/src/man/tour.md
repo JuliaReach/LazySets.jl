@@ -547,15 +547,4 @@ documentation.
 
 ## How to cite
 
-When citing `LazySets.jl`, please cite [JuliaReach: a toolbox for set-based
-reachability](https://dl.acm.org/doi/10.1145/3302504.3311804).
-
-```
-@inproceedings{bogomolov2019juliareach,
-  title={JuliaReach: a toolbox for set-based reachability},
-  author={Bogomolov, Sergiy and Forets, Marcelo and Frehse, Goran and Potomkin, Kostiantyn and Schilling, Christian},
-  booktitle={Proceedings of the 22nd ACM International Conference on Hybrid Systems: Computation and Control},
-  pages={39--44},
-  year={2019}
-}
-```
+When citing `LazySets.jl`, please use the entry in [CITATION.bib](https://github.com/JuliaReach/LazySets.jl/blob/master/CITATION.bib).
