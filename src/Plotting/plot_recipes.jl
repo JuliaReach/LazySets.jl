@@ -193,6 +193,8 @@ function _plot_list_same_recipe(list::AbstractVector{VN}, ε::Real=N(PLOT_PRECIS
     for Xi in list
         if Xi isa Intersection
             res = plot_recipe(Xi, ε, Nφ)
+        elseif dim(Xi) == 1
+            res = plot_recipe(Xi, ε)
         else
             # hard-code overapproximation here to avoid individual
             # compilations for mixed sets
