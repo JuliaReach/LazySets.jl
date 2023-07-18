@@ -137,7 +137,11 @@ end
 Alias for `overapproximate(S, HPolygon, ε)`.
 """
 function overapproximate(S::LazySet, ε::Real)
-    return overapproximate(S, HPolygon, ε)
+    if dim(S) == 1
+        return overapproximate(S, Interval)
+    else
+        return overapproximate(S, HPolygon, ε)
+    end
 end
 
 # special case: overapproximation of empty set
