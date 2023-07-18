@@ -711,7 +711,7 @@ function plot_recipe(cap::Intersection{N}, ε::N=zero(N),
     if isempty(cap)
         return plot_recipe(EmptySet{N}(dim(cap)), ε)
     elseif dim(cap) == 1
-        if !isconvextype(cap)
+        if !isconvextype(typeof(cap))
             throw(ArgumentError("cannot plot a one-dimensional $(typeof(cap))"))
         end
         return plot_recipe(convert(Interval, cap), ε)
