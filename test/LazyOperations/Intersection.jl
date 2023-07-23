@@ -12,6 +12,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test ∩(B, H, B) == ∩([B, H, B]) == cap
     @test ∩(B) == B
 
+    # array interface
+    @test array(I) == [B, H] && array(cap) == [B, H, B]
+    @test I[1] == cap[1] == B
+    @test length(I) == 2 && length(cap) == 3
+    v = Vector{LazySet{N}}()
+    @test array(IntersectionArray(v)) ≡ v
+
     # swap
     I2 = swap(I)
     @test I.X == I2.Y && I.Y == I2.X
@@ -80,6 +87,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # relation to base type (internal helper functions)
     @test LazySets.array_constructor(Intersection) == IntersectionArray
+    @test LazySets.binary_constructor(IntersectionArray) == Intersection
+    @test !LazySets.is_array_constructor(Intersection)
     @test LazySets.is_array_constructor(IntersectionArray)
 
     # intersection of an array of sets
@@ -114,10 +123,6 @@ for N in [Float64, Rational{Int}, Float32]
 
     # membership
     @test ones(N, 2) ∈ IArr && N[5, 5] ∉ IArr
-
-    # array getter
-    v = Vector{LazySet{N}}()
-    @test array(IntersectionArray(v)) ≡ v
 
     # constructor with size hint and type
     IntersectionArray(10, N)

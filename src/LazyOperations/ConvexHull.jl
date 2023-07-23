@@ -61,6 +61,11 @@ is_polyhedral(ch::ConvexHull) = is_polyhedral(ch.X) && is_polyhedral(ch.Y)
 # Universe is the absorbing element for ConvexHull
 @absorbing(ConvexHull, Universe)
 
+# interface for binary set operations
+Base.first(ch::ConvexHull) = ch.X
+second(ch::ConvexHull) = ch.Y
+@declare_binary_operation(ConvexHull)
+
 """
     CH
 

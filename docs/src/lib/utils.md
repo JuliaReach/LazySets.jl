@@ -10,6 +10,7 @@ CurrentModule = LazySets
 @neutral
 @absorbing
 @neutral_absorbing
+@declare_binary_operation
 @declare_array_version
 @array_neutral
 @array_absorbing

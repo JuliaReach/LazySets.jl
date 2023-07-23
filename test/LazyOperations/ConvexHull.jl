@@ -46,10 +46,20 @@ for N in [Float64, Rational{Int}, Float32]
 
     # relation to base type (internal helper functions)
     @test LazySets.array_constructor(ConvexHull) == ConvexHullArray
+    @test LazySets.binary_constructor(ConvexHullArray) == ConvexHull
+    @test !LazySets.is_array_constructor(ConvexHull)
     @test LazySets.is_array_constructor(ConvexHullArray)
 
     # convex hull array of 2 sets
     cha = ConvexHullArray([b1, b2])
+
+    # array interface
+    @test array(ch) == array(cha) == [b1, b2]
+    @test ch[1] == cha[1] == b1
+    @test length(ch) == length(cha) == 2
+    v = Vector{LazySet{N}}()
+    @test array(ConvexHullArray(v)) ≡ v
+
     # constructor with size hint and type
     ConvexHullArray(10, N)
     # test alias
@@ -82,10 +92,6 @@ for N in [Float64, Rational{Int}, Float32]
     ConvexHullArray([Singleton(N[10, 1 // 2]), Singleton(N[11 // 10, 1 // 5]),
                      Singleton(N[7 // 5, 3 // 10]), Singleton(N[17 // 10, 1 // 2]),
                      Singleton(N[7 // 5, 4 // 5])])
-
-    # array getter
-    v = Vector{LazySet{N}}()
-    @test array(ConvexHullArray(v)) ≡ v
 
     # in-place modification
     cha = ConvexHullArray(LazySet{N}[])

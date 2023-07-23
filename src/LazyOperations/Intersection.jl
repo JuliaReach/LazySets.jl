@@ -137,6 +137,11 @@ is_polyhedral(cap::Intersection) = is_polyhedral(cap.X) && is_polyhedral(cap.Y)
 # EmptySet is the absorbing element for Intersection
 @absorbing(Intersection, EmptySet)
 
+# interface for binary set operations
+Base.first(cap::Intersection) = cap.X
+second(cap::Intersection) = cap.Y
+@declare_binary_operation(Intersection)
+
 """
     isempty_known(cap::Intersection)
 

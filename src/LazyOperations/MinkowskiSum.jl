@@ -68,6 +68,11 @@ is_polyhedral(ms::MinkowskiSum) = is_polyhedral(ms.X) && is_polyhedral(ms.Y)
 @absorbing(MinkowskiSum, EmptySet)
 # @absorbing(MinkowskiSum, Universe)  # TODO problematic
 
+# interface for binary set operations
+Base.first(ms::MinkowskiSum) = ms.X
+second(ms::MinkowskiSum) = ms.Y
+@declare_binary_operation(MinkowskiSum)
+
 """
     swap(ms::MinkowskiSum)
 

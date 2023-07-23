@@ -17,6 +17,13 @@ for N in [Float64, Float32, Rational{Int}]
           cpa
     @test *(b1) == ×(b1) == b1
 
+    # array interface
+    @test array(cp) == [b1, b2] && array(cpa) == [b1, b2, b1]
+    @test cp[1] == cpa[1] == b1
+    @test length(cp) == 2 && length(cpa) == 3
+    v = Vector{LazySet{N}}()
+    @test array(CartesianProductArray(v)) ≡ v
+
     # swap
     cp2 = swap(cp)
     @test cp.X == cp2.Y && cp.Y == cp2.X
@@ -222,6 +229,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # relation to base type (internal helper functions)
     @test LazySets.array_constructor(CartesianProduct) == CartesianProductArray
+    @test LazySets.binary_constructor(CartesianProductArray) == CartesianProduct
+    @test !LazySets.is_array_constructor(CartesianProduct)
     @test LazySets.is_array_constructor(CartesianProductArray)
 
     # standard constructor
@@ -234,9 +243,6 @@ for N in [Float64, Float32, Rational{Int}]
 
     # constructor with size hint and type
     CartesianProductArray(10, N)
-
-    # array getter
-    @test array(cpa) ≡ v
 
     # getindex & length
     @test cpa[1] == S1 && cpa[2] == S2

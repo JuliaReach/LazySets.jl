@@ -18,6 +18,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test Uarr[1] == B1 && Uarr[2] == B2
     @test length(Uarr) == 2
 
+    # array interface
+    @test array(UXY) == array(Uarr) == [B1, B2]
+    @test UXY[1] == Uarr[1] == B1
+    @test length(UXY) == length(Uarr) == 2
+    v = Vector{LazySet{N}}()
+    @test array(UnionSetArray(v)) ≡ v
+
     # swap
     U2 = swap(UXY)
     @test UXY.X == U2.Y && UXY.Y == U2.X
@@ -29,6 +36,12 @@ for N in [Float64, Rational{Int}, Float32]
     U = Universe{N}(2)
     @test absorbing(UnionSet) == absorbing(UnionSetArray) == Universe
     @test UnionSet(B1, U) == UnionSet(U, B1) == U
+
+    # relation to base type (internal helper functions)
+    @test LazySets.array_constructor(UnionSet) == UnionSetArray
+    @test LazySets.binary_constructor(UnionSetArray) == UnionSet
+    @test !LazySets.is_array_constructor(UnionSet)
+    @test LazySets.is_array_constructor(UnionSetArray)
 
     for U in [UXY, Uarr]
         # dimension

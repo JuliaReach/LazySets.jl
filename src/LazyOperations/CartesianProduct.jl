@@ -87,6 +87,11 @@ function CartesianProduct(∅1::EmptySet, ∅2::EmptySet)
     return EmptySet{N}(dim(∅1) + dim(∅2))
 end
 
+# interface for binary set operations
+Base.first(cp::CartesianProduct) = cp.X
+second(cp::CartesianProduct) = cp.Y
+@declare_binary_operation(CartesianProduct)
+
 """
 ```
     *(X::LazySet, Y::LazySet)

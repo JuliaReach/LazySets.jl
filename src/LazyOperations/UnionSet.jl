@@ -40,6 +40,11 @@ is_polyhedral(U::UnionSet) = is_polyhedral(U.X) && is_polyhedral(U.Y)
 # Universe is the absorbing element for UnionSet
 @absorbing(UnionSet, Universe)
 
+# interface for binary set operations
+Base.first(U::UnionSet) = U.X
+second(U::UnionSet) = U.Y
+@declare_binary_operation(UnionSet)
+
 """
     ∪
 
