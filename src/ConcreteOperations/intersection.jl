@@ -842,7 +842,7 @@ The union of the pairwise intersections, expressed as a `UnionSetArray`.
 end
 
 function _intersection_usa(cup::UnionSetArray, X::LazySet)
-    return UnionSetArray([intersection(Y, X) for Y in array(cup)])
+    return UnionSetArray([intersection(Y, X) for Y in cup])
 end
 
 # disambiguation

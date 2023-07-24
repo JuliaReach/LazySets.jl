@@ -439,7 +439,7 @@ function convert(::Type{Hyperrectangle},
     c = Vector{N}(undef, n)
     r = Vector{N}(undef, n)
     i = 1
-    @inbounds for block_set in array(cpa)
+    @inbounds for block_set in cpa
         j = i + dim(block_set) - 1
         c[i:j] = center(block_set)
         r[i:j] = radius_hyperrectangle(block_set)

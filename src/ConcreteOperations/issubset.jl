@@ -639,7 +639,7 @@ function ⊆(x::Interval, U::UnionSetArray{N,<:AbstractHyperrectangle},
 end
 
 function _get_interval_array_copy(U::UnionSetArray)
-    return [convert(Interval, X) for X in array(U)]
+    return [convert(Interval, X) for X in U]
 end
 
 function _get_interval_array_copy(U::UnionSetArray{N,<:AbstractVector{<:Interval}}) where {N}
@@ -705,7 +705,7 @@ end
 function _issubset_unionsetarray(X, U, witness::Bool=false;
                                  filter_redundant_sets::Bool=true)
     # heuristics (necessary check): is X contained in any set in U?
-    for rhs in array(U)
+    for rhs in U
         if X ⊆ rhs
             return _witness_result_empty(witness, true, X, U)
         end
@@ -714,7 +714,7 @@ function _issubset_unionsetarray(X, U, witness::Bool=false;
     if filter_redundant_sets
         # filter out those sets in U that do not intersect with X
         sets = Vector{eltype(array(U))}()
-        for rhs in array(U)
+        for rhs in U
             if !isdisjoint(X, rhs)
                 push!(sets, rhs)
             end

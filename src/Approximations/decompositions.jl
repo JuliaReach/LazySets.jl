@@ -62,7 +62,7 @@ We can decompose using polygons in constraint representation:
 ```jldoctest decompose_examples
 julia> Y = decompose(S, P2d, HPolygon);
 
-julia> all(ai isa HPolygon for ai in array(Y))
+julia> all(ai isa HPolygon for ai in Y)
 true
 ```
 
@@ -71,7 +71,7 @@ For decomposition into 1D subspaces, we can use `Interval`:
 ```jldoctest decompose_examples
 julia> Y = decompose(S, P1d, Interval);
 
-julia> all(ai isa Interval for ai in array(Y))
+julia> all(ai isa Interval for ai in Y)
 true
 ```
 

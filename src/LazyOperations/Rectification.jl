@@ -272,7 +272,7 @@ function σ(d::AbstractVector,
            R::Rectification{N,<:CartesianProductArray{N}}) where {N}
     svec = similar(d)
     i = 1
-    for X in array(R.X)
+    for X in R.X
         nX = dim(X)
         j = i + nX - 1
         svec[i:j] = σ(d[i:j], Rectification(X))

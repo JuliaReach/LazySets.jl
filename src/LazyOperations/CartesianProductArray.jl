@@ -338,7 +338,7 @@ centrally-symmetric sets.
 The center of the Cartesian product of a finite number of sets.
 """
 function center(cpa::CartesianProductArray)
-    return reduce(vcat, center(X) for X in array(cpa))
+    return reduce(vcat, center(X) for X in cpa)
 end
 
 """
@@ -362,7 +362,7 @@ function constraints_list(cpa::CartesianProductArray)
     sizehint!(clist, n)
     prev_step = 1
     # create high-dimensional constraints list
-    for c_low in array(cpa)
+    for c_low in cpa
         c_low_list = constraints_list(c_low)
         if isempty(c_low_list)
             n_low = dim(c_low)
@@ -402,7 +402,7 @@ low-dimensional sets of vertices.
 """
 function vertices_list(cpa::CartesianProductArray)
     # collect low-dimensional vertices lists
-    vlist_low = [vertices_list(X) for X in array(cpa)]
+    vlist_low = [vertices_list(X) for X in cpa]
 
     # create high-dimensional vertices list
     indices_max = [length(vl) for vl in vlist_low]

@@ -181,7 +181,7 @@ An element in the union of a finite number of sets.
 We use `an_element` on the first non-empty wrapped set.
 """
 function an_element(cup::UnionSetArray)
-    for Xi in array(cup)
+    for Xi in cup
         if !isempty(Xi)
             return an_element(Xi)
         end
@@ -267,7 +267,7 @@ A list of vertices, possibly reduced to the list of vertices of the convex hull.
 function vertices_list(cup::UnionSetArray;
                        apply_convex_hull::Bool=false,
                        backend=nothing)
-    vlist = vcat([vertices_list(Xi) for Xi in array(cup)]...)
+    vlist = vcat([vertices_list(Xi) for Xi in cup]...)
     if apply_convex_hull
         convex_hull!(vlist; backend=backend)
     end
@@ -275,13 +275,13 @@ function vertices_list(cup::UnionSetArray;
 end
 
 function linear_map(M::AbstractMatrix, cup::UnionSetArray)
-    return UnionSetArray([linear_map(M, X) for X in array(cup)])
+    return UnionSetArray([linear_map(M, X) for X in cup])
 end
 
 function project(cup::UnionSetArray, block::AbstractVector{Int}; kwargs...)
-    return UnionSetArray([project(X, block; kwargs...) for X in array(cup)])
+    return UnionSetArray([project(X, block; kwargs...) for X in cup])
 end
 
 function translate(cup::UnionSetArray, v::AbstractVector)
-    return UnionSetArray([translate(X, v) for X in array(cup)])
+    return UnionSetArray([translate(X, v) for X in cup])
 end

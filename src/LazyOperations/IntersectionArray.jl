@@ -201,7 +201,7 @@ redundant constraints.
 function constraints_list(ia::IntersectionArray)
     N = eltype(ia)
     constraints = Vector{HalfSpace{N,Vector{N}}}() # TODO: use vector type of ia
-    for X in array(ia)
+    for X in ia
         clist_X = _normal_Vector(X)
         append!(constraints, clist_X)
     end

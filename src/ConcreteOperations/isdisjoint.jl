@@ -1147,7 +1147,7 @@ We perform these checks sequentially.
     end
     n = dim(H)
     block_start = 1
-    for bi in array(cpa)
+    for bi in cpa
         ni = dim(bi)
         block = block_start:(block_start + ni - 1)
         Hi = project(H, block, Hyperrectangle, n)
