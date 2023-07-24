@@ -126,6 +126,7 @@ The function symbol can be typed via `\\cap[TAB]`.
 ∩(X::LazySet, Y::LazySet) = Intersection(X, Y)
 
 isoperationtype(::Type{<:Intersection}) = true
+concrete_function(::Type{<:Intersection}) = intersection
 
 isconvextype(::Type{Intersection{N,S1,S2}}) where {N,S1,S2} = isconvextype(S1) && isconvextype(S2)
 
@@ -743,10 +744,6 @@ This method computes the concrete intersection.
 """
 function linear_map(M::AbstractMatrix, cap::Intersection)
     return linear_map(M, intersection(cap.X, cap.Y))
-end
-
-function concretize(cap::Intersection)
-    return intersection(concretize(cap.X), concretize(cap.Y))
 end
 
 """

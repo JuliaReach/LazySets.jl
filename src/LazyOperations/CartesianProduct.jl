@@ -69,6 +69,7 @@ struct CartesianProduct{N,S1<:LazySet{N},S2<:LazySet{N}} <: LazySet{N}
 end
 
 isoperationtype(::Type{<:CartesianProduct}) = true
+concrete_function(::Type{<:CartesianProduct}) = cartesian_product
 
 function isconvextype(::Type{CartesianProduct{N,S1,S2}}) where {N,S1,S2}
     return isconvextype(S1) && isconvextype(S2)
@@ -376,10 +377,6 @@ function _linear_map_cartesian_product(M, cp)
     T = isbounded(cp) ? HPolytope : HPolyhedron
     P = T(constraints_list(cp))
     return linear_map(M, P)
-end
-
-function concretize(cp::CartesianProduct)
-    return cartesian_product(concretize(cp.X), concretize(cp.Y))
 end
 
 function project(cp::CartesianProduct, block::AbstractVector{Int}; kwargs...)

@@ -196,6 +196,13 @@ macro declare_binary_operation(SET)
         function is_array_constructor(::Type{$SET})
             return false
         end
+
+        if hasmethod(concrete_function, (Type{<:$SET},))
+            function concretize(X::$SET)
+                f = concrete_function($SET)
+                return f(concretize(first(X)), concretize(second(X)))
+            end
+        end
     end
     return nothing
 end

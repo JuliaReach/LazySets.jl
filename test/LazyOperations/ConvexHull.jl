@@ -38,6 +38,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isempty(ch)
 
     # concretize
+    @test LazySets.concrete_function(ConvexHull) == convex_hull
     @test concretize(ch) == convex_hull(ch.X, ch.Y)
 
     # ===============

@@ -113,6 +113,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test ispermutation(vertices_list(X + Y), [N[2, 1], N[0, 1], N[-2, -1], N[0, -1]])
 
     # concretize
+    @test LazySets.concrete_function(MinkowskiSum) == minkowski_sum
     @test concretize(ms) == minkowski_sum(B, B)
 
     # linear_map

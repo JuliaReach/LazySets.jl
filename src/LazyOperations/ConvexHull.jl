@@ -52,7 +52,10 @@ struct ConvexHull{N,S1<:LazySet{N},S2<:LazySet{N}} <: ConvexSet{N}
 end
 
 isoperationtype(::Type{<:ConvexHull}) = true
+concrete_function(::Type{<:ConvexHull}) = convex_hull
+
 isconvextype(::Type{<:ConvexHull}) = true
+
 is_polyhedral(ch::ConvexHull) = is_polyhedral(ch.X) && is_polyhedral(ch.Y)
 
 # EmptySet is the neutral element for ConvexHull
@@ -213,10 +216,4 @@ function vertices_list(ch::ConvexHull;
         convex_hull!(vlist; backend=backend)
     end
     return vlist
-end
-
-# concretization of a convex hull computes the (concrete) convex hull of the
-# concretization of each wrapped set
-function concretize(ch::ConvexHull)
-    return convex_hull(concretize(ch.X), concretize(ch.Y))
 end

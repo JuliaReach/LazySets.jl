@@ -152,9 +152,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
     @test box_approximation(lm) == Hyperrectangle(N[7 // 2, 0], N[3 // 2, 0])
 
+    # concretize
+    @test LazySets.concrete_function(CartesianProduct) == cartesian_product
     cp = CartesianProduct(VPolytope([N[1]]), VPolytope([N[2]]))
     if test_suite_polyhedra
-        # concretize
         @test concretize(cp) == VPolytope([N[1, 2]])
     else
         @test concretize(cp) === cp
@@ -332,9 +333,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
     @test box_approximation(lm) == Hyperrectangle(N[7 // 2, 0], N[3 // 2, 0])
 
+    # concretize
     cpa = CartesianProductArray([VPolytope([N[1]]), VPolytope([N[2]])])
     if test_suite_polyhedra
-        # concretize
         @test concretize(cpa) == VPolytope([N[1, 2]])
     else
         @test concretize(cpa) === cpa

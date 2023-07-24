@@ -57,6 +57,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isempty(I)
 
     # concretize
+    @test LazySets.concrete_function(Intersection) == intersection
     @test concretize(I) == intersection(B, H)
 
     # volume
