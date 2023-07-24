@@ -257,6 +257,18 @@ macro declare_array_version(SET, SETARR)
             return true
         end
 
+        # create function to flatten a lazy set operation
+        function flatten(X::Union{<:$SET,<:$SETARR})
+            arr = flatten!([], X, $SET)
+            @inbounds if length(arr) == 1
+                return arr[1]
+            elseif length(arr) == 2
+                return $SET(2)
+            else
+                return $SETARR([Xi for Xi in arr])
+            end
+        end
+
         # create in-place modification functions for array version
         function $_SET!(X::LazySet{N}, Y::LazySet{N}) where {N}
             # no array type: just use the lazy operation

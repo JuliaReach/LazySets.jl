@@ -25,6 +25,14 @@ for N in [Float64, Rational{Int}, Float32]
     ms2 = swap(ms)
     @test ms.X == ms2.Y && ms.Y == ms2.X
 
+    # flatten
+    b3 = Ball1(N[1, 1], N(1))
+    for M3 in (MinkowskiSum(MinkowskiSum(b1, MinkowskiSumArray([b2])), b3),
+               MinkowskiSumArray([MinkowskiSum(b1, MinkowskiSumArray([b2])), b3]))
+        M3f = flatten(M3)
+        @test M3f isa MinkowskiSumArray && array(M3f) == [b1, b2, b3]
+    end
+
     # Test Dimension
     @test dim(ms) == 2
     # Test Support Vector

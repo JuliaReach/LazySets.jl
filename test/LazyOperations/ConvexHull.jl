@@ -10,6 +10,14 @@ for N in [Float64, Rational{Int}, Float32]
     ch2 = swap(ch)
     @test ch.X == ch2.Y && ch.Y == ch2.X
 
+    # flatten
+    b3 = BallInf(N[0, 0], N(1))
+    for M3 in (ConvexHull(ConvexHull(b1, ConvexHullArray([b2])), b3),
+               ConvexHullArray([ConvexHull(b1, ConvexHullArray([b2])), b3]))
+        M3f = flatten(M3)
+        @test M3f isa ConvexHullArray && array(M3f) == [b1, b2, b3]
+    end
+
     # Test Dimension
     @test dim(ch) == 2
     # Test Support Vector

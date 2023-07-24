@@ -43,6 +43,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test !LazySets.is_array_constructor(UnionSet)
     @test LazySets.is_array_constructor(UnionSetArray)
 
+    # flatten
+    for U3 in (UnionSet(UnionSet(B1, UnionSetArray([B2])), B3),
+               UnionSetArray([UnionSet(B1, UnionSetArray([B2])), B3]))
+        U3f = flatten(U3)
+        @test U3f isa UnionSetArray && array(U3f) == [B1, B2, B3]
+    end
+
     for U in [UXY, Uarr]
         # dimension
         @test dim(U) == dim(B1)

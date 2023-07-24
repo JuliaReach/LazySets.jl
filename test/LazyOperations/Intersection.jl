@@ -23,6 +23,14 @@ for N in [Float64, Rational{Int}, Float32]
     I2 = swap(I)
     @test I.X == I2.Y && I.Y == I2.X
 
+    # flatten
+    B2 = Ball1(N[0, 0], N(1))
+    for M3 in (Intersection(Intersection(B, IntersectionArray([H])), B2),
+               IntersectionArray([Intersection(B, IntersectionArray([H])), B2]))
+        M3f = flatten(M3)
+        @test M3f isa IntersectionArray && array(M3f) == [B, H, B2]
+    end
+
     # dim
     @test dim(I) == 2
 

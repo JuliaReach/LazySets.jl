@@ -28,6 +28,14 @@ for N in [Float64, Float32, Rational{Int}]
     cp2 = swap(cp)
     @test cp.X == cp2.Y && cp.Y == cp2.X
 
+    # flatten
+    b3 = Ball1(N[0, 0], N(1))
+    for M3 in (CartesianProduct(CartesianProduct(b1, CartesianProductArray([b2])), b3),
+               CartesianProductArray([CartesianProduct(b1, CartesianProductArray([b2])), b3]))
+        M3f = flatten(M3)
+        @test M3f isa CartesianProductArray && array(M3f) == [b1, b2, b3]
+    end
+
     # Test Dimension
     @test dim(cp) == 3
     # Test Support Vector

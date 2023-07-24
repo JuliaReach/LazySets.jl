@@ -41,7 +41,8 @@ export LazySet,
        rectify,
        permute,
        chebyshev_center_radius,
-       ○
+       ○,
+       flatten
 
 """
     LazySet{N}
