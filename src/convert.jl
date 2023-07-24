@@ -227,7 +227,7 @@ _convert_zonotope_fallback(Z) = Zonotope(center(Z), genmat(Z))
 function convert(::Type{Singleton},
                  cp::CartesianProduct{N,S1,S2}) where {N,S1<:AbstractSingleton,
                                                        S2<:AbstractSingleton}
-    return Singleton(vcat(element(cp.X), element(cp.Y)))
+    return Singleton(vcat(element(first(cp)), element(second(cp))))
 end
 
 """
@@ -473,7 +473,7 @@ hyperrectangle. This implementation uses the `center` and
 function convert(::Type{Hyperrectangle},
                  cp::CartesianProduct{N,HN1,HN2}) where {N,HN1<:AbstractHyperrectangle,
                                                          HN2<:AbstractHyperrectangle}
-    X, Y = cp.X, cp.Y
+    X, Y = first(cp), second(cp)
     c = vcat(center(X), center(Y))
     r = vcat(radius_hyperrectangle(X), radius_hyperrectangle(Y))
     return Hyperrectangle(c, r)
@@ -588,7 +588,7 @@ The Cartesian product is obtained by:
 function convert(::Type{Zonotope},
                  cp::CartesianProduct{N,ZN1,ZN2}) where {N,ZN1<:AbstractZonotope,
                                                          ZN2<:AbstractZonotope}
-    Z1, Z2 = cp.X, cp.Y
+    Z1, Z2 = first(cp), second(cp)
     c = vcat(center(Z1), center(Z2))
     G = blockdiag(sparse(genmat(Z1)), sparse(genmat(Z2)))
     return Zonotope(c, G)
@@ -739,25 +739,25 @@ A Minkowski sum array.
 """
 function convert(::Type{MinkowskiSumArray},
                  X::MinkowskiSum{N,ST,MinkowskiSumArray{N,ST}}) where {N,ST}
-    return MinkowskiSumArray(vcat(X.X, X.Y.array))
+    return MinkowskiSumArray(vcat(first(X), array(second(X))))
 end
 
 """
-    convert(::Type{Interval}, x::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval}
+    convert(::Type{Interval}, ms::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval}
 
 Convert the Minkowski sum of two intervals to an interval.
 
 ### Input
 
 - `Interval` -- target type
-- `x`        -- Minkowski sum of two intervals
+- `ms`       -- Minkowski sum of two intervals
 
 ### Output
 
 An interval.
 """
-function convert(::Type{Interval}, x::MinkowskiSum{N,IT,IT}) where {N,IT<:Interval}
-    return minkowski_sum(x.X, x.Y)
+function convert(::Type{Interval}, ms::MinkowskiSum{N,IT,IT}) where {N,IT<:Interval}
+    return concretize(ms)
 end
 
 # convert to concrete Vector representation
@@ -842,7 +842,7 @@ convert(::Type{HPolyhedron}, P::HPolytope) = HPolyhedron(copy(constraints_list(P
 for T in [HPolygon, HPolygonOpt, HPolytope, HPolyhedron]
     @eval begin
         function convert(::Type{$T}, P::Intersection)
-            clist = vcat(constraints_list(P.X), constraints_list(P.Y))
+            clist = vcat(constraints_list(first(P)), constraints_list(second(P)))
             return ($T)(clist)
         end
 

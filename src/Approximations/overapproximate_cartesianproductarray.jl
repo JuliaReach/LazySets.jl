@@ -173,7 +173,7 @@ function overapproximate(cap::Intersection{N,
                                            <:CartesianProductArray,
                                            <:AbstractPolyhedron},
                          ::Type{<:CartesianProductArray}, oa) where {N}
-    cpa, P = cap.X, cap.Y
+    cpa, P = first(cap), second(cap)
 
     cpa_low_dim, vars, block_structure, blocks = get_constrained_lowdimset(cpa, P)
 
@@ -194,5 +194,5 @@ function overapproximate(cap::Intersection{N,
                                            <:AbstractPolyhedron,
                                            <:CartesianProductArray},
                          ::Type{<:CartesianProductArray}, oa) where {N}
-    return overapproximate(Intersection(cap.Y, cap.X), oa)
+    return overapproximate(swap(cap), oa)
 end

@@ -864,7 +864,7 @@ otherwise optionally compute a witness.
 `true` iff ``\\text{U} ∩ X = ∅``.
 """
 @commutative function isdisjoint(U::UnionSet, X::LazySet, witness::Bool=false)
-    return _isdisjoint_union((U.X, U.Y), X, witness)
+    return _isdisjoint_union(U, X, witness)
 end
 
 """
@@ -885,11 +885,12 @@ intersect, and otherwise optionally compute a witness.
 """
 @commutative function isdisjoint(U::UnionSetArray, X::LazySet,
                                  witness::Bool=false)
-    return _isdisjoint_union(array(U), X, witness)
+    return _isdisjoint_union(U, X, witness)
 end
 
-function _isdisjoint_union(sets, X::LazySet{N}, witness::Bool=false) where {N}
-    for Y in sets
+function _isdisjoint_union(cup::Union{UnionSet,UnionSetArray}, X::LazySet{N},
+                           witness::Bool=false) where {N}
+    for Y in cup
         if witness
             result, w = isdisjoint(Y, X, witness)
         else
@@ -905,25 +906,25 @@ end
 # disambiguations
 for ST in [:AbstractPolyhedron, :Hyperplane, :Line2D, :HalfSpace]
     @eval @commutative function isdisjoint(U::UnionSet, X::($ST), witness::Bool=false)
-        return _isdisjoint_union((U.X, U.Y), X, witness)
+        return _isdisjoint_union(U, X, witness)
     end
     @eval @commutative function isdisjoint(U::UnionSetArray, X::($ST),
                                            witness::Bool=false)
-        return _isdisjoint_union(array(U), X, witness)
+        return _isdisjoint_union(U, X, witness)
     end
 end
 
 @commutative function isdisjoint(U1::UnionSet, U2::UnionSetArray,
                                  witness::Bool=false)
-    return _isdisjoint_union((U1.X, U1.Y), U2, witness)
+    return _isdisjoint_union(U1, U2, witness)
 end
 
 function isdisjoint(U1::UnionSet, U2::UnionSet, witness::Bool=false)
-    return _isdisjoint_union((U1.X, U1.Y), U2, witness)
+    return _isdisjoint_union(U1, U2, witness)
 end
 
 function isdisjoint(U1::UnionSetArray, U2::UnionSetArray, witness::Bool=false)
-    return _isdisjoint_union(array(U1), U2, witness)
+    return _isdisjoint_union(U1, U2, witness)
 end
 
 """
@@ -1223,15 +1224,15 @@ end
 for ST in [:AbstractZonotope, :AbstractSingleton]
     @eval @commutative function isdisjoint(C::CartesianProduct{N,<:LazySet,<:Universe},
                                            Z::$(ST)) where {N}
-        X = C.X
+        X = first(C)
         Zp = project(Z, 1:dim(X))
         return isdisjoint(X, Zp)
     end
 
     @eval @commutative function isdisjoint(C::CartesianProduct{N,<:Universe,<:LazySet},
                                            Z::$(ST)) where {N}
-        Y = C.Y
-        Zp = project(Z, (dim(C.X) + 1):dim(C))
+        Y = second(C)
+        Zp = project(Z, (dim(first(C)) + 1):dim(C))
         return isdisjoint(Y, Zp)
     end
 

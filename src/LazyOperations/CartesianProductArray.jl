@@ -356,13 +356,17 @@ number of sets.
 A list of constraints.
 """
 function constraints_list(cpa::CartesianProductArray)
-    N = eltype(cpa)
+    return _constraints_list_cartesian_product(cpa)
+end
+
+function _constraints_list_cartesian_product(cp::Union{CartesianProduct,CartesianProductArray})
+    N = eltype(cp)
     clist = Vector{HalfSpace{N,SparseVector{N,Int}}}()
-    n = dim(cpa)
+    n = dim(cp)
     sizehint!(clist, n)
     prev_step = 1
     # create high-dimensional constraints list
-    for c_low in cpa
+    for c_low in cp
         c_low_list = constraints_list(c_low)
         if isempty(c_low_list)
             n_low = dim(c_low)

@@ -302,7 +302,7 @@ Return the list of constraints of a (polyhedral) Cartesian product.
 A list of constraints.
 """
 function constraints_list(cp::CartesianProduct)
-    return constraints_list(CartesianProductArray([cp.X, cp.Y]))
+    return _constraints_list_cartesian_product(cp)
 end
 
 """

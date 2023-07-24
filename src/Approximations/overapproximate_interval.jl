@@ -50,8 +50,8 @@ function overapproximate(cap::Intersection, ::Type{<:Interval})
                           "intersection with an `Interval`"
     # TODO this does not work for unbounded sets; better define extrema and
     # then copy the default implementation except if result is empty
-    X = overapproximate(cap.X, Interval)
-    Y = overapproximate(cap.Y, Interval)
+    X = overapproximate(first(cap), Interval)
+    Y = overapproximate(second(cap), Interval)
     return intersection(X, Y)
 end
 

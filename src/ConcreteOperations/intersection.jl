@@ -814,7 +814,7 @@ If one of those sets is empty, only the other set is returned.
 end
 
 function _intersection_us(cup::UnionSet, X::LazySet)
-    return intersection(cup.X, X) ∪ intersection(cup.Y, X)
+    return intersection(first(cup), X) ∪ intersection(second(cup), X)
 end
 
 # disambiguation
