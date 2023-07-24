@@ -11,3 +11,7 @@ end
 function Base.length(X::AbstractArraySet)
     return length(array(X))
 end
+
+function Base.iterate(X::AbstractArraySet, state=1)
+    return iterate(array(X), state)
+end
