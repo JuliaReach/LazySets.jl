@@ -1,4 +1,4 @@
-import Base: isempty, extrema, ==, ≈, copy, eltype, rationalize
+import Base: isempty, extrema, ==, ≈, copy, eltype, rationalize, ∈
 import Random.rand
 
 export LazySet,
@@ -2027,6 +2027,10 @@ function tovrep(X::LazySet)
                              "non-polyhedral sets"
 
     return VPolytope(vertices_list(X))
+end
+
+function ∈(::AbstractVector, X::LazySet)
+    throw(ArgumentError("membership check for set type $(basetype(X)) not implemented"))
 end
 
 function linear_map_inverse(A::AbstractMatrix, P::LazySet)
