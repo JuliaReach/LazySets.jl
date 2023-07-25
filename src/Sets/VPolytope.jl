@@ -433,7 +433,14 @@ A list of constraints of the polytope.
 We use `tohrep` to compute the constraint representation of `P`.
 """
 function constraints_list(P::VPolytope)
-    return constraints_list(tohrep(P))
+    n = dim(P)
+    if n == 1
+        return constraints_list(convert(Interval, P))
+    elseif n == 2
+        return constraints_list(convert(VPolygon, P))
+    else
+        return constraints_list(tohrep(P))
+    end
 end
 
 """
