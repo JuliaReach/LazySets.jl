@@ -1,28 +1,8 @@
-const THREAD_FLOAT_LP_SOLVERs = JuMP.Model[]
-const THREAD_EXACT_LP_SOLVERs = JuMP.Model[]
+function default_lp_solver(::Type{T}) where {T}
+    key = task_local_lp_solver_key(T)
+    LP = get!(() -> JuMP.Model(default_lp_solver_factory(T)), task_local_storage(), key)
 
-@inline default_lp_solver(::Type{T}) where {T} = default_lp_solver(T, Threads.threadid())
-@noinline function default_lp_solver(::Type{T}, tid::Int) where {T}
-    THREAD_LP_SOLVERs = thread_specific_lp_solvers(T)
-
-    @assert 0 < tid <= length(THREAD_LP_SOLVERs)
-    if @inbounds isassigned(THREAD_LP_SOLVERs, tid)
-        @inbounds LP = THREAD_LP_SOLVERs[tid]
-    else
-        LP = Model(default_lp_solver_factory(T))
-        @inbounds THREAD_LP_SOLVERs[tid] = LP
-    end
     return LP
-end
-
-function init_lp_solvers()
-    # Code is heavily inspired by the global state of RNGs in Random.
-    # That code contains the following comment, although it is unclear
-    # what this pertains to (most likely empty!).
-    # "it ensures that we didn't save a bad object"
-    resize!(empty!(THREAD_FLOAT_LP_SOLVERs), Threads.nthreads())
-    resize!(empty!(THREAD_EXACT_LP_SOLVERs), Threads.nthreads())
-    return nothing
 end
 
 # default LP solver for floating-point numbers
@@ -35,8 +15,8 @@ end
     return JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(; method=GLPK.EXACT))
 end
 
-@inline thread_specific_lp_solvers(::Type{<:AbstractFloat}) = THREAD_FLOAT_LP_SOLVERs
-@inline thread_specific_lp_solvers(::Type{<:Rational}) = THREAD_EXACT_LP_SOLVERs
+@inline task_local_lp_solver_key(::Type{<:AbstractFloat}) = "LAZYSETS_FLOAT_LP_SOLVER"
+@inline task_local_lp_solver_key(::Type{<:Rational}) = "LAZYSETS_EXACT_LP_SOLVER"
 
 # default LP solver given two possibly different numeric types
 @inline function default_lp_solver(M::Type{<:Number}, N::Type{<:Number})
