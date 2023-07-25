@@ -20,6 +20,8 @@ function _extract_limits(p::RecipesBase.AbstractPlot,
         lims[:x] = :auto
         lims[:y] = :auto
     end
+    lims[:x_explicit] = RecipesBase.is_explicit(plotattributes, :xlims)
+    lims[:y_explicit] = RecipesBase.is_explicit(plotattributes, :ylims)
 
     # check whether the current call to `plot`/`plot!` passed new bounds
     if haskey(plotattributes, :xlims)
@@ -55,19 +57,26 @@ function _update_plot_limits!(lims, X::LazySet)
 
     box_min = low(box)
     box_max = high(box)
-    for (idx, symbol) in enumerate([:x, :y])
-        if lims[symbol] != :auto
-            # width of the plotting window including the new set in the `symbol` direction
-            width = max(lims[symbol][2], box_max[idx]) -
-                    min(lims[symbol][1], box_min[idx])
+    for (idx, symbols) in enumerate(((:x, :x_explicit), (:y, :y_explicit)))
+        symbol, symbol_explicit = symbols
+        if lims[symbol] != :auto || !lims[symbol_explicit]
+            if lims[symbol] == :auto
+                Δmax = box_max[idx]
+                Δmin = box_min[idx]
+            else
+                # width of the plotting window including the new set in the `symbol` direction
+                Δmax = max(lims[symbol][2], box_max[idx])
+                Δmin = min(lims[symbol][1], box_min[idx])
+            end
+            width = Δmax - Δmin
 
             # scaling factor for beautification
             ϵ = 0.05
             offset = width * ϵ
 
             # extend the current plot limits if the new set (plus a small offset) falls outside
-            lims[symbol] = (min(lims[symbol][1], box_min[idx] - offset),
-                            max(lims[symbol][2], box_max[idx] + offset))
+            lims[symbol] = (min(Δmin, box_min[idx] - offset),
+                            max(Δmax, box_max[idx] + offset))
         end
     end
     return nothing
@@ -331,8 +340,9 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
             X = intersection(X, _bounding_hyperrectangle(lims, eltype(X)))
 
             # if there is already a plotted set and the limits are fixed,
-            # automatically adjust the axis limits (e.g. after plotting a unbounded set)
-        elseif length(p) > 0
+            # automatically adjust the axis limits (e.g. after plotting an
+            # unbounded set)
+        elseif !isempty(X)
             _update_plot_limits!(lims, X)
         end
 
@@ -515,31 +525,50 @@ end
 
 # non-convex sets
 
-@recipe function plot_union(cup::UnionSet{N}, ε::Real=N(PLOT_PRECISION)) where {N}
-    label --> DEFAULT_LABEL
-    grid --> DEFAULT_GRID
-    if DEFAULT_ASPECT_RATIO != :none
-        aspect_ratio --> DEFAULT_ASPECT_RATIO
+@recipe function plot_union(cup::Union{UnionSet{N}, UnionSetArray{N}},
+                            ε::Real=N(PLOT_PRECISION); same_recipe=false,
+                            Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N}
+    # extract limits and extrema of already plotted sets
+    p = plotattributes[:plot_object]
+    lims = _extract_limits(p, plotattributes)
+    extr = _extract_extrema(p)
+    if isbounded(cup)
+        B = box_approximation(cup)
+        extr[:x] = (max(extr[:x][1], low(B, 1)), min(extr[:x][2], high(B, 1)))
+        extr[:y] = (max(extr[:y][1], low(B, 2)), min(extr[:y][2], high(B, 2)))
     end
-    seriesalpha --> DEFAULT_ALPHA
-    seriescolor --> DEFAULT_COLOR
-    seriestype --> :shape
+    # if there is already a plotted set and the limits are fixed,
+    # automatically adjust the axis limits (e.g. after plotting an
+    # unbounded set)
+    _set_auto_limits_to_extrema!(lims, extr)
+    cup = intersection(cup, _bounding_hyperrectangle(lims, eltype(cup)))
+    _update_plot_limits!(lims, cup)
+    xlims --> lims[:x]
+    ylims --> lims[:y]
 
-    return _plot_list_same_recipe([cup.X, cup.Y], ε)
+    if same_recipe
+        label --> DEFAULT_LABEL
+        grid --> DEFAULT_GRID
+        if DEFAULT_ASPECT_RATIO != :none
+            aspect_ratio --> DEFAULT_ASPECT_RATIO
+        end
+        seriesalpha --> DEFAULT_ALPHA
+        seriescolor --> DEFAULT_COLOR
+        seriestype --> :shape
+        return _plot_list_same_recipe(_union_sets(cup), ε, Nφ)
+    else
+        for Xi in _union_sets(cup)
+            if Xi isa Intersection
+                @series Xi, ε, Nφ
+            else
+                @series Xi, ε
+            end
+        end
+    end
 end
 
-@recipe function plot_union(cup::UnionSetArray{N}, ε::Real=N(PLOT_PRECISION)) where {N}
-    label --> DEFAULT_LABEL
-    grid --> DEFAULT_GRID
-    if DEFAULT_ASPECT_RATIO != :none
-        aspect_ratio --> DEFAULT_ASPECT_RATIO
-    end
-    seriesalpha --> DEFAULT_ALPHA
-    seriescolor --> DEFAULT_COLOR
-    seriestype --> :shape
-
-    return _plot_list_same_recipe(array(cup), ε)
-end
+_union_sets(cup::UnionSet) = [cup.X, cup.Y]
+_union_sets(cup::UnionSetArray) = array(cup)
 
 @recipe function plot_polyzono(P::AbstractPolynomialZonotope{N},
                                ε::Real=N(PLOT_PRECISION); nsdiv=10,
