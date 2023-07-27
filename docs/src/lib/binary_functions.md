@@ -86,7 +86,7 @@ intersection(::Universe, ::LazySet)
 intersection(::AbstractPolyhedron, ::ResetMap)
 intersection(::CartesianProductArray, ::CartesianProductArray)
 intersection(::LinearMap, ::LazySet)
-intersection(::CartesianProductArray, ::AbstractPolyhedron)
+intersection(::Union{CartesianProduct,CartesianProductArray}, ::AbstractPolyhedron)
 intersection(::LineSegment, ::Line2D)
 intersection(::LineSegment, ::LineSegment)
 intersection(::AbstractZonotope{N}, ::HalfSpace{N}) where {N}
