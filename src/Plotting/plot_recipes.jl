@@ -20,8 +20,6 @@ function _extract_limits(p::RecipesBase.AbstractPlot,
         lims[:x] = :auto
         lims[:y] = :auto
     end
-    lims[:x_explicit] = RecipesBase.is_explicit(plotattributes, :xlims)
-    lims[:y_explicit] = RecipesBase.is_explicit(plotattributes, :ylims)
 
     # check whether the current call to `plot`/`plot!` passed new bounds
     if haskey(plotattributes, :xlims)
@@ -57,26 +55,24 @@ function _update_plot_limits!(lims, X::LazySet)
 
     box_min = low(box)
     box_max = high(box)
-    for (idx, symbols) in enumerate(((:x, :x_explicit), (:y, :y_explicit)))
-        symbol, symbol_explicit = symbols
-        if lims[symbol] != :auto || !lims[symbol_explicit]
-            if lims[symbol] == :auto
-                Δmax = box_max[idx]
-                Δmin = box_min[idx]
-            else
-                # width of the plotting window including the new set in the `symbol` direction
-                Δmax = max(lims[symbol][2], box_max[idx])
-                Δmin = min(lims[symbol][1], box_min[idx])
-            end
-            width = Δmax - Δmin
+    n = dim(box)
+    for (idx, symbol) in enumerate((:x, :y, :z))
+        if idx > n
+            break
+        end
+        if lims[symbol] != :auto
+            # width of the plotting window including the new set in the `symbol` direction
+            dmin = min(lims[symbol][1], box_min[idx])
+            dmax = max(lims[symbol][2], box_max[idx])
+            width = dmax - dmin
 
             # scaling factor for beautification
-            ϵ = 0.05
+            ϵ = 0.03
             offset = width * ϵ
 
             # extend the current plot limits if the new set (plus a small offset) falls outside
-            lims[symbol] = (min(Δmin, box_min[idx] - offset),
-                            max(Δmax, box_max[idx] + offset))
+            lims[symbol] = (min(lims[symbol][1], box_min[idx] - offset),
+                            max(lims[symbol][2], box_max[idx] + offset))
         end
     end
     return nothing
@@ -98,10 +94,21 @@ function _set_auto_limits_to_extrema!(lims, extr)
     return nothing
 end
 
-function _bounding_hyperrectangle(lims, N)
-    low_lim = [lims[:x][1] - DEFAULT_PLOT_LIMIT, lims[:y][1] - DEFAULT_PLOT_LIMIT]
-    high_lim = [lims[:x][2] + DEFAULT_PLOT_LIMIT, lims[:y][2] + DEFAULT_PLOT_LIMIT]
-    return Hyperrectangle(; low=convert.(N, low_lim), high=convert.(N, high_lim))
+function _bounding_hyperrectangle(lims, n, N)
+    if n < 1 || n > 3
+        throw(ArgumentError("cannot plot a $n-dimensional set"))
+    end
+
+    low_lim = Vector{N}(undef, n)
+    high_lim = Vector{N}(undef, n)
+    @inbounds for (i, s) in enumerate((:x, :y, :z))
+        if i > n
+            break
+        end
+        low_lim[i] = lims[s][1] - DEFAULT_PLOT_LIMIT
+        high_lim[i] = lims[s][2] + DEFAULT_PLOT_LIMIT
+    end
+    return Hyperrectangle(; low=low_lim, high=high_lim)
 end
 
 """
@@ -323,13 +330,22 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
     seriesalpha --> DEFAULT_ALPHA
     seriescolor --> DEFAULT_COLOR
 
-    if dim(X) == 1
+    n = dim(X)
+    if n == 1
+        if !isbounded(X)
+            # extract limits and extrema of already plotted sets
+            p = plotattributes[:plot_object]
+            lims = _extract_limits(p, plotattributes)
+            extr = _extract_extrema(p)
+            _set_auto_limits_to_extrema!(lims, extr)
+            X = intersection(X, _bounding_hyperrectangle(lims, n, eltype(X)))
+        end
         x, y = plot_recipe(X, ε)
         if length(x) == 1
             seriestype := :scatter
         end
         x, y
-    elseif dim(X) == 2
+    elseif n == 2
         # extract limits and extrema of already plotted sets
         p = plotattributes[:plot_object]
         lims = _extract_limits(p, plotattributes)
@@ -337,7 +353,7 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 
         if !isbounded(X)
             _set_auto_limits_to_extrema!(lims, extr)
-            X = intersection(X, _bounding_hyperrectangle(lims, eltype(X)))
+            X = intersection(X, _bounding_hyperrectangle(lims, n, eltype(X)))
 
             # if there is already a plotted set and the limits are fixed,
             # automatically adjust the axis limits (e.g. after plotting an
@@ -369,7 +385,7 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
             end
             x, y
         end
-    elseif dim(X) == 3
+    elseif n == 3
         res = plot_recipe(X, ε)
         if isempty(res)
             res
@@ -380,7 +396,7 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
             x, y, z
         end
     else
-        throw(ArgumentError("cannot plot a $(dim(X))-dimensional set"))
+        throw(ArgumentError("cannot plot a $n-dimensional set"))
     end
 end
 
@@ -501,9 +517,10 @@ julia> plot(X, 0.0, 100)  # equivalent to the above line
     lims = _extract_limits(p, plotattributes)
     extr = _extract_extrema(p)
 
+    n = dim(cap)
     if !isbounded(cap)
         _set_auto_limits_to_extrema!(lims, extr)
-        bounding_box = _bounding_hyperrectangle(lims, eltype(cap))
+        bounding_box = _bounding_hyperrectangle(lims, n, eltype(cap))
         if !isbounded(cap.X)
             bounded_X = Intersection(bounding_box, cap.X)
             cap = Intersection(bounded_X, cap.Y)
@@ -518,7 +535,9 @@ julia> plot(X, 0.0, 100)  # equivalent to the above line
     end
 
     xlims --> lims[:x]
-    ylims --> lims[:y]
+    if n > 1
+        ylims --> lims[:y]
+    end
 
     return plot_recipe(cap, ε)
 end
@@ -527,24 +546,31 @@ end
 
 @recipe function plot_union(cup::Union{UnionSet{N}, UnionSetArray{N}},
                             ε::Real=N(PLOT_PRECISION); same_recipe=false,
-                            Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N}
+                            Nφ=PLOT_POLAR_DIRECTIONS) where {N}
+    n = dim(cup)
     # extract limits and extrema of already plotted sets
     p = plotattributes[:plot_object]
     lims = _extract_limits(p, plotattributes)
     extr = _extract_extrema(p)
+    cup_bounds = cup
     if isbounded(cup)
         B = box_approximation(cup)
-        extr[:x] = (max(extr[:x][1], low(B, 1)), min(extr[:x][2], high(B, 1)))
-        extr[:y] = (max(extr[:y][1], low(B, 2)), min(extr[:y][2], high(B, 2)))
+        cup_bounds = B
+        extr[:x] = (min(extr[:x][1], low(B, 1)), max(extr[:x][2], high(B, 1)))
+        if n > 1
+            extr[:y] = (min(extr[:y][1], low(B, 2)), max(extr[:y][2], high(B, 2)))
+        end
     end
     # if there is already a plotted set and the limits are fixed,
     # automatically adjust the axis limits (e.g. after plotting an
     # unbounded set)
     _set_auto_limits_to_extrema!(lims, extr)
-    cup = intersection(cup, _bounding_hyperrectangle(lims, eltype(cup)))
-    _update_plot_limits!(lims, cup)
+    cup_bounds = intersection(cup_bounds, _bounding_hyperrectangle(lims, n, eltype(cup_bounds)))
+    _update_plot_limits!(lims, cup_bounds)
     xlims --> lims[:x]
-    ylims --> lims[:y]
+    if n > 1
+        ylims --> lims[:y]
+    end
 
     if same_recipe
         label --> DEFAULT_LABEL
