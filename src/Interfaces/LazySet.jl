@@ -2028,3 +2028,32 @@ function tovrep(X::LazySet)
 
     return VPolytope(vertices_list(X))
 end
+
+function linear_map_inverse(A::AbstractMatrix, P::LazySet)
+    @assert size(A, 1) == dim(P) "an inverse linear map of size $(size(A)) " *
+                                 "cannot be applied to a set of dimension $(dim(P))"
+    @assert is_polyhedral(P) "cannot compute the inverse linear map of " *
+                             "non-polyhedral sets"
+    constraints = _affine_map_inverse_hrep(A, P)
+    if isempty(constraints)
+        return Universe{eltype(P)}(size(A, 2))
+    elseif length(constraints) == 2 && isempty(constraints)
+        return EmptySet{eltype(P)}(size(A, 2))
+    end
+    return HPolyhedron(constraints)
+end
+
+function affine_map_inverse(A::AbstractMatrix, P::LazySet, b::AbstractVector)
+    @assert size(A, 1) == dim(P) == length(b) "an inverse affine map of size $(size(A)) " *
+                                              "and $(length(b)) cannot be applied to a " *
+                                              "set of dimension $(dim(P))"
+    @assert is_polyhedral(P) "cannot compute the inverse affine map of " *
+                             "non-polyhedral sets"
+    constraints = _affine_map_inverse_hrep(A, P, b)
+    if isempty(constraints)
+        return Universe{eltype(P)}(size(A, 2))
+    elseif length(constraints) == 2 && isempty(constraints)
+        return EmptySet{eltype(P)}(size(A, 2))
+    end
+    return HPolyhedron(constraints)
+end
