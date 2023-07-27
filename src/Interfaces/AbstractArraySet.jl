@@ -4,8 +4,12 @@ const AbstractArraySet = Union{CartesianProductArray,
                                MinkowskiSumArray,
                                UnionSetArray}
 
-function Base.getindex(X::AbstractArraySet, i)
+function Base.getindex(X::AbstractArraySet, i::Int)
     return getindex(array(X), i)
+end
+
+function Base.getindex(X::AbstractArraySet, indices::AbstractVector{Int})
+    return [X[i] for i in indices]
 end
 
 function Base.length(X::AbstractArraySet)

@@ -21,6 +21,7 @@ for N in [Float64, Rational{Int}, Float32]
     # array interface
     @test array(UXY) == array(Uarr) == [B1, B2]
     @test UXY[1] == Uarr[1] == B1
+    @test UXY[1:2] == Uarr[1:2] == [B1, B2]
     @test length(UXY) == length(Uarr) == 2
     v = Vector{LazySet{N}}()
     @test array(UnionSetArray(v)) ≡ v

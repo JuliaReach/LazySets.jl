@@ -180,13 +180,17 @@ macro declare_binary_operation(SET)
             return 2
         end
 
-        function Base.getindex(X::$SET, i)
+        function Base.getindex(X::$SET, i::Int)
             if i == 1
                 return first(X)
             elseif i == 2
                 return second(X)
             end
             throw(ArgumentError("invalid index $i for binary set operation"))
+        end
+
+        function Base.getindex(X::$SET, indices::AbstractVector{Int})
+            return [X[i] for i in indices]
         end
 
         function array(X::$SET)

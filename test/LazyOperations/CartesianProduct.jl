@@ -20,6 +20,7 @@ for N in [Float64, Float32, Rational{Int}]
     # array interface
     @test array(cp) == [b1, b2] && array(cpa) == [b1, b2, b1]
     @test cp[1] == cpa[1] == b1
+    @test cp[1:2] == cpa[1:2] == [b1, b2]
     @test length(cp) == 2 && length(cpa) == 3
     v = Vector{LazySet{N}}()
     @test array(CartesianProductArray(v)) ≡ v
