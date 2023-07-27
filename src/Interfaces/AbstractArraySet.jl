@@ -12,6 +12,10 @@ function Base.getindex(X::AbstractArraySet, indices::AbstractVector{Int})
     return [X[i] for i in indices]
 end
 
+function Base.lastindex(X::AbstractArraySet)
+    return length(array(X))
+end
+
 function Base.length(X::AbstractArraySet)
     return length(array(X))
 end

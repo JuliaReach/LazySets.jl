@@ -66,6 +66,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test array(ch) == array(cha) == [b1, b2]
     @test ch[1] == cha[1] == b1
     @test ch[1:2] == cha[1:2] == [b1, b2]
+    @test ch[end] == cha[end] == b2
     @test length(ch) == length(cha) == 2
     v = Vector{LazySet{N}}()
     @test array(ConvexHullArray(v)) ≡ v

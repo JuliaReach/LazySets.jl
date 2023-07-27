@@ -153,14 +153,16 @@ Nothing.
 
 ### Notes
 
-This macro generates five methods. See the example below.
+This macro generates seven methods. See the example below.
 
 ### Examples
 
 `@declare_binary_operation(MinkowskiSum)` creates the following methods:
 * `iterate(::MinkowskiSum)`
 * `length(::MinkowskiSum)`
-* `getindex(::Minkowski, ::Int)`
+* `getindex(::MinkowskiSum, ::Int)`
+* `getindex(::MinkowskiSum, ::AbstractVector{Int})`
+* `lastindex(::MinkowskiSum)`
 * `array(::MinkowskiSum)`
 * `is_array_constructor(::Type{MinkowskiSum})`
 """
@@ -177,6 +179,10 @@ macro declare_binary_operation(SET)
         end
 
         function Base.length(::$SET)
+            return 2
+        end
+
+        function Base.lastindex(X::$SET)
             return 2
         end
 

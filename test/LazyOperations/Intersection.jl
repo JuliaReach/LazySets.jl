@@ -16,6 +16,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test array(I) == [B, H] && array(cap) == [B, H, B]
     @test I[1] == cap[1] == B
     @test I[1:2] == cap[1:2] == [B, H]
+    @test I[end] == H && cap[end] == B
     @test length(I) == 2 && length(cap) == 3
     v = Vector{LazySet{N}}()
     @test array(IntersectionArray(v)) ≡ v

@@ -18,6 +18,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test array(ms) == [b1, b2] && array(msa) == [b1, b2, b1]
     @test ms[1] == msa[1] == b1
     @test ms[1:2] == msa[1:2] == [b1, b2]
+    @test ms[end] == b2 && msa[end] == b1
     @test length(ms) == 2 && length(msa) == 3
     v = Vector{LazySet{N}}()
     @test array(MinkowskiSumArray(v)) ≡ v
