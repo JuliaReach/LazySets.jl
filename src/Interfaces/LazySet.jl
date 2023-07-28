@@ -1,5 +1,6 @@
 import Base: isempty, extrema, ==, ≈, copy, eltype, rationalize
 import Random.rand
+using ReachabilityBase.Expm: expm
 
 export LazySet,
        low,
@@ -764,7 +765,7 @@ A set representing the exponential map of `M` and `X`.
 The implementation applies the functions `exp` and `linear_map`.
 """
 function exponential_map(M::AbstractMatrix, X::LazySet)
-    return linear_map(exp(M), X)
+    return linear_map(expm(M), X)
 end
 
 """
