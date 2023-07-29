@@ -146,11 +146,12 @@ for N in [Float64, Rational{Int}, Float32]
     amv = affine_map(M, B, v; algorithm="vrep") # pass a custom algorithm
     @test amv isa VPolygon && isequivalent(am, amv)
 
-    # volume
+    # area/volume
     B = BallInf(N[0, 0], N(1))
-    @test volume(B) ≈ N(4)
+    @test area(B) == volume(B) ≈ N(4)
     if N <: AbstractFloat
         B = BallInf(zeros(N, 100), N(1 / 2 + 1e-5))
+        @test_throws AssertionError area(B)
         @test volume(B) ≈ N(1.0020019812942185)
     end
 
