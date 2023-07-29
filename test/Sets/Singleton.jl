@@ -85,6 +85,14 @@ for N in [Float64, Rational{Int}, Float32]
     @test high(S) == element(S)
     @test low(S) == element(S)
 
+    # constraints_list
+    clist4 = constraints_list(S)
+    @test ispermutation(clist4,
+                        [HalfSpace(N[1, 0], N(1)), HalfSpace(N[0, 1], N(1)),
+                         HalfSpace(N[-1, 0], N(-1)), HalfSpace(N[0, -1], N(-1))])
+    clist3 = constraints_list(S; min_constraints=true)
+    @test length(clist3) == 3 && isequivalent(HPolygon(clist4), HPolygon(clist3))
+
     # concrete linear map
     M = N[0 1; -1 0]
     @test element(linear_map(M, S)) == an_element(M * S)
