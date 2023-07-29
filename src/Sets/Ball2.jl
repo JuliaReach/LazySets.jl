@@ -376,13 +376,14 @@ ball using factorials. For details see the Wikipedia article
 [Volume of an n-ball](https://en.wikipedia.org/wiki/Volume_of_an_n-ball).
 """
 function volume(B::Ball2)
+    N = eltype(B)
     n = dim(B)
     k = div(n, 2)
     R = B.radius
     if iseven(n)
-        vol = Base.pi^k * R^n / factorial(k)
+        vol = N(Base.pi)^k * R^n / factorial(k)
     else
-        vol = 2 * factorial(k) * (4 * Base.pi)^k * R^n / factorial(n)
+        vol = 2 * factorial(k) * (4 * N(Base.pi))^k * R^n / factorial(n)
     end
     return vol
 end
