@@ -79,9 +79,6 @@ end
 
 isoperationtype(::Type{<:Line2D}) = false
 
-# constructor from a HalfSpace
-Line2D(c::HalfSpace) = Line2D(c.a, c.b)
-
 """
     constraints_list(L::Line2D)
 

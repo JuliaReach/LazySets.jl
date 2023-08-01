@@ -88,10 +88,15 @@ Line2D{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
 ```
 """
 function intersection(L1::Line2D, L2::Line2D)
+    _intersection_line2d(L1, L2)
+end
+
+# this method can also be called with `HalfSpace` arguments
+function _intersection_line2d(L1, L2)
     det = right_turn(L1.a, L2.a)
     if isapproxzero(det)
         if isapprox(L1.b, L2.b) # lines are identical
-            return L1
+            return _to_Line2D(L1)
         else
             N = promote_type(eltype(L1), eltype(L2))
             return EmptySet{N}(dim(L1)) # lines are disjoint
@@ -104,6 +109,9 @@ function intersection(L1::Line2D, L2::Line2D)
         return Singleton([x, y])
     end
 end
+
+_to_Line2D(L::Line2D) = L
+_to_Line2D(H::HalfSpace) = Line2D(H.a, H.b)
 
 """
     intersection(LS::LineSegment, L2::Line2D)
