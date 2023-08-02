@@ -61,6 +61,12 @@ for N in [Float64, Float32]
     # unicode constructor
     @test ○(center(b), radius(b)) == b
 
+    # center
+    @test center(b) == N[0, 0]
+
+    # radius_ball
+    @test LazySets.radius_ball(b) == N(2)
+
     # boundedness
     @test isbounded(b) && isboundedtype(typeof(b))
 

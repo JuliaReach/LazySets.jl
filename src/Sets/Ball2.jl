@@ -87,6 +87,23 @@ function center(B::Ball2)
 end
 
 """
+    radius_ball(B::Ball2)
+
+Return the ball radius of a ball in the 2-norm.
+
+### Input
+
+- `B` -- ball in the 2-norm
+
+### Output
+
+The ball radius.
+"""
+function radius_ball(B::Ball2)
+    return B.radius
+end
+
+"""
     ρ(d::AbstractVector, B::Ball2)
 
 Return the support function of a 2-norm ball in the given direction.

@@ -95,6 +95,23 @@ function center(B::Ballp)
 end
 
 """
+    radius_ball(B::Ballp)
+
+Return the ball radius of a ball in the p-norm.
+
+### Input
+
+- `B` -- ball in the p-norm
+
+### Output
+
+The ball radius.
+"""
+function radius_ball(B::Ballp)
+    return B.radius
+end
+
+"""
     σ(d::AbstractVector, B::Ballp)
 
 Return the support vector of a ball in the p-norm in a given direction.

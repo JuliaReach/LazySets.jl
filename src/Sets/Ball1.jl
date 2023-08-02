@@ -75,6 +75,23 @@ function center(B::Ball1)
 end
 
 """
+    radius_ball(B::Ball1)
+
+Return the ball radius of a ball in the 1-norm.
+
+### Input
+
+- `B` -- ball in the 1-norm
+
+### Output
+
+The ball radius.
+"""
+function radius_ball(B::Ball1)
+    return B.radius
+end
+
+"""
     vertices_list(B::Ball1)
 
 Return the list of vertices of a ball in the 1-norm.

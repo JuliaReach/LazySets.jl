@@ -62,6 +62,9 @@ for N in [Float64, Rational{Int}, Float32]
     b = BallInf(c, N(2))
     @test center(b) == c && center(b, 1) == N(1) && center(b, 2) == N(2)
 
+    # radius_ball
+    @test LazySets.radius_ball(b) == N(2)
+
     # support vector for single entry vector
     svec = σ(SingleEntryVector(2, 3, N(2)), BallInf(zeros(N, 3), N(2)))
     @test svec[1] ∈ Interval(N[-2, 2]) && svec[2] == N(2) && svec[3] ∈ Interval(N[-2, 2])

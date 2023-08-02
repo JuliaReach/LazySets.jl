@@ -59,6 +59,9 @@ for N in [Float64, Rational{Int}, Float32]
     # center
     @test center(b) == N[0, 0]
 
+    # radius_ball
+    @test LazySets.radius_ball(b) == N(2)
+
     # boundedness
     @test isbounded(b)
 

@@ -7,6 +7,7 @@ CurrentModule = LazySets
 ```@docs
 BallInf
 center(::BallInf)
+radius_ball(::BallInf)
 radius(::BallInf, ::Real=Inf)
 radius_hyperrectangle(::BallInf)
 radius_hyperrectangle(::BallInf, ::Int)

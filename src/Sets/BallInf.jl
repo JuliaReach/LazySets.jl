@@ -157,6 +157,23 @@ function center(B::BallInf)
 end
 
 """
+    radius_ball(B::BallInf)
+
+Return the ball radius of a ball in the infinity norm.
+
+### Input
+
+- `B` -- ball in the infinity norm
+
+### Output
+
+The ball radius.
+"""
+function radius_ball(B::BallInf)
+    return B.radius
+end
+
+"""
     σ(d::AbstractVector, B::BallInf)
 
 Return the support vector of a ball in the infinity norm in the given direction.

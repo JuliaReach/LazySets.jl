@@ -11,6 +11,7 @@ Ball1
 ∈(::AbstractVector, ::Ball1, ::Bool=false)
 vertices_list(::Ball1)
 center(::Ball1)
+radius_ball(::Ball1)
 rand(::Type{Ball1})
 constraints_list(::Ball1)
 translate(::Ball1, ::AbstractVector)
