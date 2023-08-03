@@ -6,11 +6,12 @@ CurrentModule = LazySets
 
 ```@docs
 Ball2
+center(::Ball2)
+radius_ball(::Ball2)
+ball_norm(::Ball2)
 ρ(::AbstractVector, ::Ball2)
 σ(::AbstractVector, ::Ball2)
 ∈(::AbstractVector, ::Ball2)
-center(::Ball2)
-radius_ball(::Ball2)
 rand(::Type{Ball2})
 sample(::Ball2{N}, ::Int) where {N}
 translate(::Ball2, ::AbstractVector)

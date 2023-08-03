@@ -112,6 +112,23 @@ function radius_ball(B::Ballp)
 end
 
 """
+    ball_norm(B::Ballp)
+
+Return the characteristic norm of a ball in the p-norm.
+
+### Input
+
+- `B` -- ball in the p-norm
+
+### Output
+
+The characteristic norm, which is `p`.
+"""
+function ball_norm(B::Ballp)
+    return B.p
+end
+
+"""
     σ(d::AbstractVector, B::Ballp)
 
 Return the support vector of a ball in the p-norm in a given direction.

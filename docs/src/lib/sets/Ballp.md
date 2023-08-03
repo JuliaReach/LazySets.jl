@@ -6,11 +6,12 @@ CurrentModule = LazySets
 
 ```@docs
 Ballp
+center(::Ballp)
+radius_ball(::Ballp)
+ball_norm(::Ballp)
 σ(::AbstractVector, ::Ballp)
 ρ(::AbstractVector, ::Ballp)
 ∈(::AbstractVector, ::Ballp)
-center(::Ballp)
-radius_ball(::Ballp)
 rand(::Type{Ballp})
 translate(::Ballp, ::AbstractVector)
 translate!(::Ballp, ::AbstractVector)

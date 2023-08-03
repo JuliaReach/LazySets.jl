@@ -92,6 +92,24 @@ function radius_ball(B::Ball1)
 end
 
 """
+    ball_norm(B::Ball1)
+
+Return the characteristic norm of a ball in the 1-norm.
+
+### Input
+
+- `B` -- ball in the 1-norm
+
+### Output
+
+The characteristic norm, which is `1`.
+"""
+function ball_norm(B::Ball1)
+    N = eltype(B)
+    return one(N)
+end
+
+"""
     vertices_list(B::Ball1)
 
 Return the list of vertices of a ball in the 1-norm.

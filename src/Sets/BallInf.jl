@@ -174,6 +174,24 @@ function radius_ball(B::BallInf)
 end
 
 """
+    ball_norm(B::BallInf)
+
+Return the characteristic norm of a ball in the infinity norm.
+
+### Input
+
+- `B` -- ball in the infinity norm
+
+### Output
+
+The characteristic norm, which is `Inf`.
+"""
+function ball_norm(B::BallInf)
+    N = eltype(B)
+    return N(Inf)
+end
+
+"""
     σ(d::AbstractVector, B::BallInf)
 
 Return the support vector of a ball in the infinity norm in the given direction.

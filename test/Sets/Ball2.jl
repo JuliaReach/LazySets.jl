@@ -67,6 +67,9 @@ for N in [Float64, Float32]
     # radius_ball
     @test LazySets.radius_ball(b) == N(2)
 
+    # ball_norm
+    @test LazySets.ball_norm(b) == N(2)
+
     # boundedness
     @test isbounded(b) && isboundedtype(typeof(b))
 
