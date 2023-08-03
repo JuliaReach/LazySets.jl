@@ -562,6 +562,14 @@ A ball is a centrally-symmetric set with a characteristic p-norm.
 AbstractBallp
 ```
 
+This interface defines the following functions:
+
+```@docs
+σ(::AbstractVector, ::AbstractBallp)
+ρ(::AbstractVector, ::AbstractBallp)
+∈(::AbstractVector, ::AbstractBallp)
+```
+
 ### Implementations
 
 * [Ball1](@ref def_Ball1)
