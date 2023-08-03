@@ -153,16 +153,18 @@ for N in [Float64, Float32]
     b4 = Ball2(N[4, 3, 2, 1], N(2))
     @test project(b4, [2, 4]) == Ball2(N[3, 1], N(2))
 
-    # low/high
+    # low/high/extrema
     B = Ball2(N[1, 2], N(2))
     l1 = low(B, 1)
     l2 = low(B, 2)
     h1 = high(B, 1)
     h2 = high(B, 2)
+    @test extrema(B, 1) == (l1, h1)
     @test l1 == N(-1) && l2 == N(0) && h1 == N(3) && h2 == N(4)
     @test box_approximation(B) ≈ Hyperrectangle(; low=[l1, l2], high=[h1, h2])
     @test low(B) == [N(-1), N(0)]
     @test high(B) == [N(3), N(4)]
+    @test extrema(B) == (low(B), high(B))
 
     # reflect
     @test reflect(b4) == Ball2(N[-4, -3, -2, -1], N(2))

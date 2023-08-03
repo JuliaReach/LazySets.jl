@@ -29,3 +29,35 @@ they also implement other interfaces and hence cannot be subtypes: `Ball1` and
 `BallInf`.
 """
 abstract type AbstractBallp{N} <: AbstractCentrallySymmetric{N} end
+
+function low(B::AbstractBallp)
+    return _low_AbstractBallp(B)
+end
+
+function _low_AbstractBallp(B::LazySet)
+    return center(B) .- radius_ball(B)
+end
+
+function low(B::AbstractBallp, i::Int)
+    return _low_AbstractBallp(B, i)
+end
+
+function _low_AbstractBallp(B::LazySet, i::Int)
+    return center(B, i) - radius_ball(B)
+end
+
+function high(B::AbstractBallp)
+    return _high_AbstractBallp(B)
+end
+
+function _high_AbstractBallp(B::LazySet)
+    return center(B) .+ radius_ball(B)
+end
+
+function high(B::AbstractBallp, i::Int)
+    return _high_AbstractBallp(B, i)
+end
+
+function _high_AbstractBallp(B::LazySet, i::Int)
+    return center(B, i) + radius_ball(B)
+end
