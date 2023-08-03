@@ -4,7 +4,7 @@ import Base: rand,
 export Ballp
 
 """
-    Ballp{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
+    Ballp{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractBallp{N}
 
 Type that represents a ball in the p-norm, for ``1 ≤ p ≤ ∞``.
 
@@ -54,7 +54,7 @@ julia> σ([1.0, 2, 3, 4, 5], B)
  0.33790011086518895
 ```
 """
-struct Ballp{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
+struct Ballp{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractBallp{N}
     p::N
     center::VN
     radius::N

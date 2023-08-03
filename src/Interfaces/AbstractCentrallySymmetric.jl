@@ -21,9 +21,8 @@ The subtypes of `AbstractCentrallySymmetric`:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractCentrallySymmetric)
-3-element Vector{Any}:
- Ball2
- Ballp
+2-element Vector{Any}:
+ AbstractBallp
  Ellipsoid
 ```
 """

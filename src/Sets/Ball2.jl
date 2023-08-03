@@ -6,7 +6,7 @@ export Ball2,
        volume
 
 """
-    Ball2{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
+    Ball2{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractBallp{N}
 
 Type that represents a ball in the 2-norm.
 
@@ -52,7 +52,7 @@ julia> σ([1.0, 2, 3, 4, 5], B)
  0.3370999312316211
 ```
 """
-struct Ball2{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
+struct Ball2{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractBallp{N}
     center::VN
     radius::N
 
