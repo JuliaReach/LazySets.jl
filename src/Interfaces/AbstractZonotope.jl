@@ -118,7 +118,7 @@ Fallback definition of `generators` for zonotopic sets.
 An iterator over the generators of `Z`.
 """
 function generators_fallback(Z::AbstractZonotope)
-    return ColumnIterator(genmat(Z))
+    return eachcol(genmat(Z))
 end
 
 """
