@@ -525,7 +525,7 @@ end
 
 # non-convex sets
 
-@recipe function plot_union(cup::Union{UnionSet{N}, UnionSetArray{N}},
+@recipe function plot_union(cup::Union{UnionSet{N},UnionSetArray{N}},
                             ε::Real=N(PLOT_PRECISION); same_recipe=false,
                             Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N}
     # extract limits and extrema of already plotted sets
