@@ -190,7 +190,7 @@ function rand(::Type{EmptySet};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing)
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     return EmptySet{N}(dim)
 end
 

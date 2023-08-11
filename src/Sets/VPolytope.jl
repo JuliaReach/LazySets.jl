@@ -292,7 +292,7 @@ function rand(::Type{VPolytope};
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing,
               num_vertices::Int=-1)
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     if num_vertices < 0
         num_vertices = (dim == 1) ? rand(rng, 1:2) : rand(rng, dim:(5 * dim))
     end

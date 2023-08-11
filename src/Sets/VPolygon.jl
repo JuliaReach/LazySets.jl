@@ -514,7 +514,7 @@ function rand(::Type{VPolygon};
               seed::Union{Int,Nothing}=nothing,
               num_vertices::Int=-1)
     @assert dim == 2 "cannot create a random VPolygon of dimension $dim"
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     if num_vertices < 0
         num_vertices = rand(rng, DEFAULT_RAND_VERTEX_RANGE)
     end

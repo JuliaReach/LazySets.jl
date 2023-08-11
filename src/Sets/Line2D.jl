@@ -274,7 +274,7 @@ function rand(::Type{Line2D};
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing)
     @assert dim == 2 "cannot create a random Line2D of dimension $dim"
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     a = randn(rng, N, dim)
     while iszero(a)
         a = randn(rng, N, dim)

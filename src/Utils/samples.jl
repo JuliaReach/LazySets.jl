@@ -157,7 +157,7 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     U = sampler.distribution
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     @inbounds for i in eachindex(D)
         w = rand(rng, U)
 
@@ -180,7 +180,7 @@ function sample!(D::Vector{VN}, L::LineSegment,
                  sampler::RejectionSampler{<:DefaultUniform};
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     U = sampler.distribution
     @assert U.a >= zero(N) && U.b <= one(N)
     p = L.p
@@ -243,7 +243,7 @@ RandomWalkSampler() = RandomWalkSampler(true)
 function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     U = DefaultUniform(zero(N), one(N))
     vlist = vertices_list(X)
     m = length(vlist)
@@ -368,7 +368,7 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::FaceSampler;
     0 <= k < n || throw(ArgumentError("cannot sample from " *
                                       "$(sampler.dim)-dimensional faces for a set of dimension $n"))
 
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     return _sample_faces!(D, X, rng, k)
 end
 
@@ -429,7 +429,7 @@ end
 function sample!(D::Vector{VN}, H::HalfSpace, sampler::HalfSpaceSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     U = sampler.distribution
     if isnothing(U)
         U = DefaultUniform(zero(N), one(N))
@@ -473,7 +473,7 @@ end
 function sample!(D::Vector{VN}, hp::Union{Hyperplane,Line2D},
                  sampler::HyperplaneSampler; rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     U = sampler.distribution
     if isnothing(U)
         U = DefaultUniform(zero(N), one(N))
@@ -533,7 +533,7 @@ function sample!(D::Vector{VN}, P::AbstractPolynomialZonotope,
                  sampler::PolynomialZonotopeSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     U = sampler.distribution
     if isnothing(U)
         U = DefaultUniform(-one(N), one(N))
@@ -682,7 +682,7 @@ function load_distributions_samples()
                                                             n::Int, p::Int;
                                                             rng::AbstractRNG=GLOBAL_RNG,
                                                             seed::Union{Int,Nothing}=nothing) where {N}
-            rng = reseed(rng, seed)
+            rng = reseed!(rng, seed)
             Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
             v = Vector{N}(undef, n) # sample direction
             @inbounds for j in 1:p
@@ -700,7 +700,7 @@ function load_distributions_samples()
                                                           p::Int;
                                                           rng::AbstractRNG=GLOBAL_RNG,
                                                           seed::Union{Int,Nothing}=nothing) where {N}
-            rng = reseed(rng, seed)
+            rng = reseed!(rng, seed)
             Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
             Zrad = Uniform() # distribution to pick random radius
             one_over_n = one(N) / n

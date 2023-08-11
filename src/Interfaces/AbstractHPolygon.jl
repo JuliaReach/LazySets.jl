@@ -290,7 +290,7 @@ function rand(::Type{HPOLYGON};
     @assert dim == 2 "cannot create a random $HPOLYGON of dimension $dim"
     @assert num_constraints < 0 || num_constraints >= 3 "cannot construct a " *
                                                         "random $HPOLYGON with only $num_constraints constraints"
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     vpolygon = rand(VPolygon; N=N, dim=dim, rng=rng, seed=seed,
                     num_vertices=num_constraints)
     return convert(HPOLYGON, vpolygon)

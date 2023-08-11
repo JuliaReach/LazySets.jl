@@ -119,7 +119,7 @@ function rand(::Type{HPolytope};
               seed::Union{Int,Nothing}=nothing,
               num_vertices::Int=-1)
     require(@__MODULE__, :Polyhedra; fun_name="rand")
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     vpolytope = rand(VPolytope; N=N, dim=dim, rng=rng, seed=seed,
                      num_vertices=num_vertices)
     return convert(HPolytope, vpolytope)

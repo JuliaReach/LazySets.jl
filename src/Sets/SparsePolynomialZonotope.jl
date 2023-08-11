@@ -314,7 +314,7 @@ function rand(::Type{SparsePolynomialZonotope};
               num_independent_generators::Int=-1,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing)
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
 
     if num_independent_generators < 0
         num_independent_generators = (dim == 1) ? 1 : rand(rng, dim:(2 * dim))

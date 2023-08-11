@@ -391,7 +391,7 @@ function rand(::Type{Line};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing)
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     d = randn(rng, N, dim)
     while iszero(d)
         d = randn(rng, N, dim)

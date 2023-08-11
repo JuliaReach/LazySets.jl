@@ -149,7 +149,7 @@ function rand(::Type{ZeroSet};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing)
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     return ZeroSet{N}(dim)
 end
 
