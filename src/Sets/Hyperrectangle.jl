@@ -225,7 +225,7 @@ function rand(::Type{Hyperrectangle};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing)
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     center = randn(rng, N, dim)
     radius = abs.(randn(rng, N, dim))
     return Hyperrectangle(center, radius)

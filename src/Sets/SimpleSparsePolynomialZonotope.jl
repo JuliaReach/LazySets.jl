@@ -432,7 +432,7 @@ function rand(::Type{SimpleSparsePolynomialZonotope};
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing,
               num_generators::Int=-1)
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     center = randn(rng, N, dim)
     if num_generators < 0
         num_generators = (dim == 1) ? 1 : rand(rng, dim:(2 * dim))

@@ -289,7 +289,7 @@ function rand(::Type{Ellipsoid};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing)
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     center = randn(rng, N, dim)
     # random entries in [-1, 1]
     # this needs a bit of code because 'rand' only samples from [0, 1]

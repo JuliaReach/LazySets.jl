@@ -258,7 +258,7 @@ function rand(::Type{Hyperplane};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing)
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     a = randn(rng, N, dim)
     while iszero(a)
         a = randn(rng, N, dim)

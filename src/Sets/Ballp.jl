@@ -256,7 +256,7 @@ function rand(::Type{Ballp};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing)
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
     p = one(N) + abs(randn(rng, N))
     center = randn(rng, N, dim)
     radius = abs(randn(rng, N))

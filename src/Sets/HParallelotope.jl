@@ -378,7 +378,7 @@ function rand(::Type{HParallelotope};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing)
-    rng = reseed(rng, seed)
+    rng = reseed!(rng, seed)
 
     while true
         D = randn(rng, N, dim, dim)
