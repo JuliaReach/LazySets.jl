@@ -333,9 +333,9 @@ it does not need to allocate the intermediate hyperrectangles.
 """
 function box_approximation(ch::ConvexHull; algorithm::String="box")
     if algorithm == "extrema"
-        return _box_approximation_chull_extrema(ch.X, ch.Y)
+        return _box_approximation_chull_extrema(first(ch), second(ch))
     elseif algorithm == "box"
-        return _box_approximation_chull_box(ch.X, ch.Y)
+        return _box_approximation_chull_box(first(ch), second(ch))
     else
         throw(ArgumentError("unknown algorithm $algorithm"))
     end
@@ -398,7 +398,7 @@ It suffices to compute the box approximation of each summand and then take the
 concrete Minkowski sum for hyperrectangles.
 """
 function box_approximation(ms::MinkowskiSum)
-    H1 = box_approximation(ms.X)
-    H2 = box_approximation(ms.Y)
+    H1 = box_approximation(first(ms))
+    H2 = box_approximation(second(ms))
     return minkowski_sum(H1, H2)
 end

@@ -586,17 +586,17 @@ Otherwise we compute the set difference ``y = x \\ a`` and check whether
 function ⊆(x::Interval, U::UnionSet, witness::Bool=false)
     @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
                         "$(dim(U))"
-    if !isconvextype(typeof(U.X)) || !isconvextype(typeof(U.Y))
+    if !isconvextype(typeof(first(U))) || !isconvextype(typeof(second(U)))
         error("an inclusion check for the given combination of set types is " *
               "not available")
     end
-    return _issubset_interval(x, convert(Interval, U.X), convert(Interval, U.Y),
-                              witness)
+    return _issubset_interval(x, convert(Interval, first(U)),
+                              convert(Interval, second(U)), witness)
 end
 
 function ⊆(x::Interval, U::UnionSet{N,<:Interval,<:Interval},
            witness::Bool=false) where {N}
-    return _issubset_interval(x, U.X, U.Y, witness)
+    return _issubset_interval(x, first(U), second(U), witness)
 end
 
 function _issubset_interval(x::Interval{N}, a::Interval, b::Interval,
@@ -639,7 +639,7 @@ function ⊆(x::Interval, U::UnionSetArray{N,<:AbstractHyperrectangle},
 end
 
 function _get_interval_array_copy(U::UnionSetArray)
-    return [convert(Interval, X) for X in array(U)]
+    return [convert(Interval, X) for X in U]
 end
 
 function _get_interval_array_copy(U::UnionSetArray{N,<:AbstractVector{<:Interval}}) where {N}
@@ -705,7 +705,7 @@ end
 function _issubset_unionsetarray(X, U, witness::Bool=false;
                                  filter_redundant_sets::Bool=true)
     # heuristics (necessary check): is X contained in any set in U?
-    for rhs in array(U)
+    for rhs in U
         if X ⊆ rhs
             return _witness_result_empty(witness, true, X, U)
         end
@@ -714,7 +714,7 @@ function _issubset_unionsetarray(X, U, witness::Bool=false;
     if filter_redundant_sets
         # filter out those sets in U that do not intersect with X
         sets = Vector{eltype(array(U))}()
-        for rhs in array(U)
+        for rhs in U
             if !isdisjoint(X, rhs)
                 push!(sets, rhs)
             end
@@ -883,7 +883,7 @@ Check whether a union of two convex sets is contained in another set.
     ``v ∈ \\text{U} \\setminus X``
 """
 function ⊆(U::UnionSet, X::LazySet, witness::Bool=false)
-    return _issubset_union_in_set((U.X, U.Y), X, witness)
+    return _issubset_union_in_set(U, X, witness)
 end
 
 """
@@ -907,14 +907,15 @@ set.
     ``v ∈ \\text{U} \\setminus X``
 """
 function ⊆(U::UnionSetArray, X::LazySet, witness::Bool=false)
-    return _issubset_union_in_set(array(U), X, witness)
+    return _issubset_union_in_set(U, X, witness)
 end
 
 # check for each set in `sets` that they are included in X
-function _issubset_union_in_set(sets, X::LazySet{N}, witness::Bool=false) where {N}
+function _issubset_union_in_set(cup::Union{UnionSet,UnionSetArray}, X::LazySet{N},
+                                witness::Bool=false) where {N}
     result = true
     v = N[]
-    for Y in sets
+    for Y in cup
         if witness
             result, v = ⊆(Y, X, witness)
         else
@@ -931,11 +932,11 @@ end
 for ST in [:AbstractHyperrectangle, :AbstractPolyhedron, :UnionSet,
            :UnionSetArray]
     @eval function ⊆(U::UnionSet, X::($ST), witness::Bool=false)
-        return _issubset_union_in_set((U.X, U.Y), X, witness)
+        return _issubset_union_in_set(U, X, witness)
     end
 
     @eval function ⊆(U::UnionSetArray, X::($ST), witness::Bool=false)
-        return _issubset_union_in_set(array(U), X, witness)
+        return _issubset_union_in_set(U, X, witness)
     end
 end
 
@@ -1086,29 +1087,29 @@ blocks (using `an_element`) and concatenating these (lower-dimensional) points.
 """
 function ⊆(X::CartesianProduct, Y::CartesianProduct, witness::Bool=false;
            check_block_equality::Bool=true)
-    n1 = dim(X.X)
-    n2 = dim(X.Y)
-    if check_block_equality && (n1 != dim(Y.X) || n2 != dim(Y.Y))
+    n1 = dim(first(X))
+    n2 = dim(second(X))
+    if check_block_equality && (n1 != dim(first(Y)) || n2 != dim(second(Y)))
         return _issubset_constraints_list(X, Y, witness)
     end
 
     # check first block
-    result = ⊆(X.X, Y.X, witness)
+    result = ⊆(first(X), first(Y), witness)
     if !witness && !result
         return false
     elseif witness && !result[1]
         # construct a witness
-        w = vcat(result[2], an_element(X.Y))
+        w = vcat(result[2], an_element(second(X)))
         return (false, w)
     end
 
     # check second block
-    result = ⊆(X.Y, Y.Y, witness)
+    result = ⊆(second(X), second(Y), witness)
     if !witness && !result
         return false
     elseif witness && !result[1]
         # construct a witness
-        w = vcat(an_element(X.X), result[2])
+        w = vcat(an_element(first(X)), result[2])
         return (false, w)
     end
     return _witness_result_empty(witness, true, X, Y)
@@ -1230,14 +1231,14 @@ end
 
 for ST in (AbstractZonotope, AbstractSingleton, LineSegment)
     @eval function ⊆(Z::$(ST), C::CartesianProduct{N,<:LazySet,<:Universe}) where {N}
-        X = C.X
+        X = first(C)
         Zp = project(Z, 1:dim(X))
         return ⊆(Zp, X)
     end
 
     @eval function ⊆(Z::$(ST), C::CartesianProduct{N,<:Universe,<:LazySet}) where {N}
-        Y = C.Y
-        Zp = project(Z, (dim(C.X) + 1):dim(C))
+        Y = second(C)
+        Zp = project(Z, (dim(first(C)) + 1):dim(C))
         return ⊆(Zp, Y)
     end
 

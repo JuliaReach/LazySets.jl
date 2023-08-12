@@ -17,9 +17,26 @@ for N in [Float64, Float32, Rational{Int}]
           cpa
     @test *(b1) == ×(b1) == b1
 
+    # array interface
+    @test array(cp) == [b1, b2] && array(cpa) == [b1, b2, b1]
+    @test cp[1] == cpa[1] == b1
+    @test cp[1:2] == cpa[1:2] == [b1, b2]
+    @test cp[end] == b2 && cpa[end] == b1
+    @test length(cp) == 2 && length(cpa) == 3
+    v = Vector{LazySet{N}}()
+    @test array(CartesianProductArray(v)) ≡ v
+
     # swap
     cp2 = swap(cp)
     @test cp.X == cp2.Y && cp.Y == cp2.X
+
+    # flatten
+    b3 = Ball1(N[0, 0], N(1))
+    for M3 in (CartesianProduct(CartesianProduct(b1, CartesianProductArray([b2])), b3),
+               CartesianProductArray([CartesianProduct(b1, CartesianProductArray([b2])), b3]))
+        M3f = flatten(M3)
+        @test M3f isa CartesianProductArray && array(M3f) == [b1, b2, b3]
+    end
 
     # Test Dimension
     @test dim(cp) == 3
@@ -145,9 +162,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
     @test box_approximation(lm) == Hyperrectangle(N[7 // 2, 0], N[3 // 2, 0])
 
+    # concretize
+    @test LazySets.concrete_function(CartesianProduct) == cartesian_product
     cp = CartesianProduct(VPolytope([N[1]]), VPolytope([N[2]]))
     if test_suite_polyhedra
-        # concretize
         @test concretize(cp) == VPolytope([N[1, 2]])
     else
         @test concretize(cp) === cp
@@ -222,6 +240,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # relation to base type (internal helper functions)
     @test LazySets.array_constructor(CartesianProduct) == CartesianProductArray
+    @test LazySets.binary_constructor(CartesianProductArray) == CartesianProduct
+    @test !LazySets.is_array_constructor(CartesianProduct)
     @test LazySets.is_array_constructor(CartesianProductArray)
 
     # standard constructor
@@ -234,9 +254,6 @@ for N in [Float64, Float32, Rational{Int}]
 
     # constructor with size hint and type
     CartesianProductArray(10, N)
-
-    # array getter
-    @test array(cpa) ≡ v
 
     # getindex & length
     @test cpa[1] == S1 && cpa[2] == S2
@@ -326,9 +343,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
     @test box_approximation(lm) == Hyperrectangle(N[7 // 2, 0], N[3 // 2, 0])
 
+    # concretize
     cpa = CartesianProductArray([VPolytope([N[1]]), VPolytope([N[2]])])
     if test_suite_polyhedra
-        # concretize
         @test concretize(cpa) == VPolytope([N[1, 2]])
     else
         @test concretize(cpa) === cpa

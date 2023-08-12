@@ -12,9 +12,26 @@ for N in [Float64, Rational{Int}, Float32]
     @test ∩(B, H, B) == ∩([B, H, B]) == cap
     @test ∩(B) == B
 
+    # array interface
+    @test array(I) == [B, H] && array(cap) == [B, H, B]
+    @test I[1] == cap[1] == B
+    @test I[1:2] == cap[1:2] == [B, H]
+    @test I[end] == H && cap[end] == B
+    @test length(I) == 2 && length(cap) == 3
+    v = Vector{LazySet{N}}()
+    @test array(IntersectionArray(v)) ≡ v
+
     # swap
     I2 = swap(I)
     @test I.X == I2.Y && I.Y == I2.X
+
+    # flatten
+    B2 = Ball1(N[0, 0], N(1))
+    for M3 in (Intersection(Intersection(B, IntersectionArray([H])), B2),
+               IntersectionArray([Intersection(B, IntersectionArray([H])), B2]))
+        M3f = flatten(M3)
+        @test M3f isa IntersectionArray && array(M3f) == [B, H, B2]
+    end
 
     # dim
     @test dim(I) == 2
@@ -50,6 +67,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isempty(I)
 
     # concretize
+    @test LazySets.concrete_function(Intersection) == intersection
     @test concretize(I) == intersection(B, H)
 
     # volume
@@ -80,6 +98,8 @@ for N in [Float64, Rational{Int}, Float32]
 
     # relation to base type (internal helper functions)
     @test LazySets.array_constructor(Intersection) == IntersectionArray
+    @test LazySets.binary_constructor(IntersectionArray) == Intersection
+    @test !LazySets.is_array_constructor(Intersection)
     @test LazySets.is_array_constructor(IntersectionArray)
 
     # intersection of an array of sets
@@ -114,10 +134,6 @@ for N in [Float64, Rational{Int}, Float32]
 
     # membership
     @test ones(N, 2) ∈ IArr && N[5, 5] ∉ IArr
-
-    # array getter
-    v = Vector{LazySet{N}}()
-    @test array(IntersectionArray(v)) ≡ v
 
     # constructor with size hint and type
     IntersectionArray(10, N)

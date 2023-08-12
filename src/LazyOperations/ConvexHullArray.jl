@@ -135,7 +135,7 @@ This algorithm calculates the maximum over all ``ρ(d, X_i)``, where the
 ``X_1, …, X_k`` are the sets in the array of `cha`.
 """
 function ρ(d::AbstractVector, cha::ConvexHullArray)
-    return maximum(ρ(d, Xi) for Xi in array(cha))
+    return maximum(ρ(d, Xi) for Xi in cha)
 end
 
 """
@@ -200,7 +200,7 @@ function vertices_list(cha::ConvexHullArray;
                        apply_convex_hull::Bool=true,
                        backend=nothing,
                        prune::Bool=apply_convex_hull)
-    vlist = vcat([vertices_list(Xi) for Xi in array(cha)]...)
+    vlist = vcat([vertices_list(Xi) for Xi in cha]...)
     if apply_convex_hull || prune
         convex_hull!(vlist; backend=backend)
     end

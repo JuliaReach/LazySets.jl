@@ -204,7 +204,7 @@ sets.
 The center of the set.
 """
 function center(msa::MinkowskiSumArray)
-    return sum(center(X) for X in array(msa))
+    return sum(center(X) for X in msa)
 end
 
 function concretize(msa::MinkowskiSumArray)

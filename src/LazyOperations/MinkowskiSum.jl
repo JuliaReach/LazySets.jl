@@ -56,6 +56,7 @@ The function symbol can be typed via `\\oplus[TAB]`.
 ⊕(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
 
 isoperationtype(::Type{<:MinkowskiSum}) = true
+concrete_function(::Type{<:MinkowskiSum}) = minkowski_sum
 
 isconvextype(::Type{MinkowskiSum{N,S1,S2}}) where {N,S1,S2} = isconvextype(S1) && isconvextype(S2)
 
@@ -67,6 +68,11 @@ is_polyhedral(ms::MinkowskiSum) = is_polyhedral(ms.X) && is_polyhedral(ms.Y)
 # EmptySet and Universe are the absorbing elements for MinkowskiSum
 @absorbing(MinkowskiSum, EmptySet)
 # @absorbing(MinkowskiSum, Universe)  # TODO problematic
+
+# interface for binary set operations
+Base.first(ms::MinkowskiSum) = ms.X
+second(ms::MinkowskiSum) = ms.Y
+@declare_binary_operation(MinkowskiSum)
 
 """
     swap(ms::MinkowskiSum)
@@ -267,10 +273,6 @@ function ∈(x::AbstractVector,
 end
 
 @inline _in_singleton_msum(x, X, Y) = (x - element(X)) ∈ Y
-
-function concretize(ms::MinkowskiSum)
-    return minkowski_sum(concretize(ms.X), concretize(ms.Y))
-end
 
 """
     vertices_list(ms::MinkowskiSum)

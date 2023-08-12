@@ -332,7 +332,7 @@ function overapproximate(cap::Intersection{N,  # TODO use better mechanism to de
                                            <:AbstractPolyhedron},
                          dirs::AbstractDirections;
                          kwargs...) where {N}
-    return overapproximate_cap_helper(cap.X, cap.Y, dirs; kwargs...)
+    return overapproximate_cap_helper(first(cap), second(cap), dirs; kwargs...)
 end
 
 # symmetric method
@@ -341,7 +341,7 @@ function overapproximate(cap::Intersection{N,
                                            <:LazySet},
                          dirs::AbstractDirections;
                          kwargs...) where {N}
-    return overapproximate_cap_helper(cap.Y, cap.X, dirs; kwargs...)
+    return overapproximate_cap_helper(second(cap), first(cap), dirs; kwargs...)
 end
 
 # disambiguation
@@ -351,7 +351,7 @@ function overapproximate(cap::Intersection{N,
                          dirs::AbstractDirections;
                          kwargs...) where {N}
     # important: the result may not be a polytope!
-    return overapproximate_cap_helper(cap.X, cap.Y, dirs; kwargs...)
+    return overapproximate_cap_helper(first(cap), second(cap), dirs; kwargs...)
 end
 
 # disambiguation
@@ -360,7 +360,7 @@ function overapproximate(cap::Intersection{N,
                                            <:AbstractPolyhedron},
                          dirs::AbstractDirections;
                          kwargs...) where {N}
-    return overapproximate_cap_helper(cap.X, cap.Y, dirs; kwargs...)
+    return overapproximate_cap_helper(first(cap), second(cap), dirs; kwargs...)
 end
 
 # symmetric method
@@ -369,7 +369,7 @@ function overapproximate(cap::Intersection{N,
                                            <:AbstractPolytope},
                          dirs::AbstractDirections;
                          kwargs...) where {N}
-    return overapproximate_cap_helper(cap.Y, cap.X, dirs; kwargs...)
+    return overapproximate_cap_helper(second(cap), first(cap), dirs; kwargs...)
 end
 
 # disambiguation
@@ -378,7 +378,7 @@ function overapproximate(cap::Intersection{N,
                                            <:AbstractPolytope},
                          dirs::AbstractDirections;
                          kwargs...) where {N}
-    return overapproximate_cap_helper(cap.X, cap.Y, dirs; kwargs...)
+    return overapproximate_cap_helper(first(cap), second(cap), dirs; kwargs...)
 end
 
 """
@@ -409,8 +409,8 @@ function overapproximate(cap::Intersection{N,
                          kwargs...) where {N}
     H = HPolytope{N,Vector{N}}()
     c = H.constraints
-    push!(c, _normal_Vector(cap.X))
-    append!(c, _normal_Vector(cap.Y))
+    push!(c, _normal_Vector(first(cap)))
+    append!(c, _normal_Vector(second(cap)))
     return overapproximate(H, dirs; kwargs...)
 end
 
@@ -511,7 +511,7 @@ function overapproximate(X::Intersection{N,<:AbstractZonotope,<:Hyperplane},
                          dirs::AbstractDirections) where {N}
     dim(X) == dim(dirs) || throw(ArgumentError("the dimension of the set " *
                                                "$(dim(X)) does not match the dimension of the directions $(dim(dirs))"))
-    Z, G = X.X, X.Y
+    Z, G = first(X), second(X)
 
     if isdisjoint(Z, G)
         return EmptySet{N}(dim(Z))
@@ -537,7 +537,7 @@ end
 # symmetric method
 function overapproximate(X::Intersection{N,<:Hyperplane,<:AbstractZonotope},
                          dirs::AbstractDirections) where {N}
-    return overapproximate(X.Y ∩ X.X, dirs)
+    return overapproximate(second(X) ∩ first(X), dirs)
 end
 
 # overload on direction type
@@ -549,7 +549,7 @@ end
 # symmetric method
 function overapproximate(X::Intersection{N,<:Hyperplane,<:AbstractZonotope},
                          dirs::Type{<:AbstractDirections}) where {N}
-    return overapproximate(X.Y ∩ X.X, dirs(dim(X)))
+    return overapproximate(second(X) ∩ first(X), dirs(dim(X)))
 end
 
 """

@@ -139,6 +139,85 @@ macro absorbing(SET, ABS)
 end
 
 """
+    @declare_binary_operation(SET)
+
+Create common methods for binary set operations.
+
+### Input
+
+- `SET` -- set type of the lazy operation
+
+### Output
+
+Nothing.
+
+### Notes
+
+This macro generates seven methods. See the example below.
+
+### Examples
+
+`@declare_binary_operation(MinkowskiSum)` creates the following methods:
+* `iterate(::MinkowskiSum)`
+* `length(::MinkowskiSum)`
+* `getindex(::MinkowskiSum, ::Int)`
+* `getindex(::MinkowskiSum, ::AbstractVector{Int})`
+* `lastindex(::MinkowskiSum)`
+* `array(::MinkowskiSum)`
+* `is_array_constructor(::Type{MinkowskiSum})`
+"""
+macro declare_binary_operation(SET)
+    @eval begin
+        function Base.iterate(X::$SET, state=1)
+            if state == 1
+                return (first(X), 2)
+            elseif state == 2
+                return (second(X), 3)
+            else
+                return nothing
+            end
+        end
+
+        function Base.length(::$SET)
+            return 2
+        end
+
+        function Base.lastindex(X::$SET)
+            return 2
+        end
+
+        function Base.getindex(X::$SET, i::Int)
+            if i == 1
+                return first(X)
+            elseif i == 2
+                return second(X)
+            end
+            throw(ArgumentError("invalid index $i for binary set operation"))
+        end
+
+        function Base.getindex(X::$SET, indices::AbstractVector{Int})
+            return [X[i] for i in indices]
+        end
+
+        function array(X::$SET)
+            return [first(X), second(X)]
+        end
+
+        function is_array_constructor(::Type{$SET})
+            return false
+        end
+
+        if hasmethod(concrete_function, (Type{<:$SET},))
+            function concretize(X::$SET)
+                f = concrete_function($SET)
+                return f(concretize(first(X)), concretize(second(X)))
+            end
+        end
+    end
+    return nothing
+end
+
+"""
     @declare_array_version(SET, SETARR)
 
 Create methods to connect a lazy set operation with its array set type.
@@ -154,16 +233,17 @@ Nothing.
 
 ### Notes
 
-This macro generates six functions (and possibly up to eight more if
+This macro generates six methods (and possibly up to eight more if
 `@neutral`/`@absorbing` has been used in advance for the base and/or array set
-type).
+type). See the example below.
 
 ### Examples
 
 `@declare_array_version(MinkowskiSum, MinkowskiSumArray)` creates at least the
 following methods:
-* `array_constructor(::MinkowskiSum) = MinkowskiSumArray`
-* `is_array_constructor(::MinkowskiSumArray) = true`
+* `array_constructor(::Type{MinkowskiSum}) = MinkowskiSumArray`
+* `binary_constructor(::Type{MinkowskiSumArray}) = MinkowskiSum`
+* `is_array_constructor(::Type{MinkowskiSumArray}) = true`
 * `MinkowskiSum!(X, Y)`
 * `MinkowskiSum!(X, arr)`
 * `MinkowskiSum!(arr, X)`
@@ -177,9 +257,26 @@ macro declare_array_version(SET, SETARR)
             return $SETARR
         end
 
-        # create function to check that this is an array version
+        # create function to obtain the binary version
+        function binary_constructor(::Type{$SETARR})
+            return $SET
+        end
+
+        # create function to check whether an operation is the array version
         function is_array_constructor(::Type{$SETARR})
             return true
+        end
+
+        # create function to flatten a lazy set operation
+        function flatten(X::Union{<:$SET,<:$SETARR})
+            arr = flatten!([], X, $SET)
+            @inbounds if length(arr) == 1
+                return arr[1]
+            elseif length(arr) == 2
+                return $SET(2)
+            else
+                return $SETARR([Xi for Xi in arr])
+            end
         end
 
         # create in-place modification functions for array version

@@ -3,35 +3,52 @@ for N in [Float64, Rational{Int}, Float32]
     b1 = BallInf(N[0, 0], N(2))
     b2 = Ball1(N[0, 0], N(1))
     # Test Construction
-    X = MinkowskiSum(b1, b2)
-    @test X.X == b1
-    @test X.Y == b2
+    ms = MinkowskiSum(b1, b2)
+    @test ms.X == b1
+    @test ms.Y == b2
 
     # convenience constructors
-    @test b1 + b2 == b1 ⊕ b2 == X
+    @test b1 + b2 == b1 ⊕ b2 == ms
     msa = MinkowskiSumArray([b1, b2, b1])
     @test b1 + b2 + b1 == +(b1, b2, b1) == ⊕(b1, b2, b1) == +([b1, b2, b1]) == ⊕([b1, b2, b1]) ==
           msa
     @test +(b1) == ⊕(b1) == b1
 
+    # array interface
+    @test array(ms) == [b1, b2] && array(msa) == [b1, b2, b1]
+    @test ms[1] == msa[1] == b1
+    @test ms[1:2] == msa[1:2] == [b1, b2]
+    @test ms[end] == b2 && msa[end] == b1
+    @test length(ms) == 2 && length(msa) == 3
+    v = Vector{LazySet{N}}()
+    @test array(MinkowskiSumArray(v)) ≡ v
+
     # swap
-    ms2 = swap(X)
-    @test X.X == ms2.Y && X.Y == ms2.X
+    ms2 = swap(ms)
+    @test ms.X == ms2.Y && ms.Y == ms2.X
+
+    # flatten
+    b3 = Ball1(N[1, 1], N(1))
+    for M3 in (MinkowskiSum(MinkowskiSum(b1, MinkowskiSumArray([b2])), b3),
+               MinkowskiSumArray([MinkowskiSum(b1, MinkowskiSumArray([b2])), b3]))
+        M3f = flatten(M3)
+        @test M3f isa MinkowskiSumArray && array(M3f) == [b1, b2, b3]
+    end
 
     # Test Dimension
-    @test dim(X) == 2
+    @test dim(ms) == 2
     # Test Support Vector
     d = N[1, 0]
-    v = σ(d, X)
+    v = σ(d, ms)
     @test v[1] == N(3)
     d = N[-1, 0]
-    v = σ(d, X)
+    v = σ(d, ms)
     @test v[1] == N(-3)
     d = N[0, 1]
-    v = σ(d, X)
+    v = σ(d, ms)
     @test v[2] == N(3)
     d = N[0, -1]
-    v = σ(d, X)
+    v = σ(d, ms)
     @test v[2] == N(-3)
 
     # Sum of not-centered 2D balls in norm 1 and infinity
@@ -106,6 +123,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test ispermutation(vertices_list(X + Y), [N[2, 1], N[0, 1], N[-2, -1], N[0, -1]])
 
     # concretize
+    @test LazySets.concrete_function(MinkowskiSum) == minkowski_sum
     @test concretize(ms) == minkowski_sum(B, B)
 
     # linear_map
@@ -127,11 +145,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # relation to base type (internal helper functions)
     @test LazySets.array_constructor(MinkowskiSum) == MinkowskiSumArray
+    @test LazySets.binary_constructor(MinkowskiSumArray) == MinkowskiSum
+    @test !LazySets.is_array_constructor(MinkowskiSum)
     @test LazySets.is_array_constructor(MinkowskiSumArray)
-
-    # array getter
-    v = Vector{LazySet{N}}()
-    @test array(MinkowskiSumArray(v)) ≡ v
 
     # constructor with size hint and type
     MinkowskiSumArray(10, N)

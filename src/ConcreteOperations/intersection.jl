@@ -814,7 +814,7 @@ If one of those sets is empty, only the other set is returned.
 end
 
 function _intersection_us(cup::UnionSet, X::LazySet)
-    return intersection(cup.X, X) ∪ intersection(cup.Y, X)
+    return intersection(first(cup), X) ∪ intersection(second(cup), X)
 end
 
 # disambiguation
@@ -842,7 +842,7 @@ The union of the pairwise intersections, expressed as a `UnionSetArray`.
 end
 
 function _intersection_usa(cup::UnionSetArray, X::LazySet)
-    return UnionSetArray([intersection(Y, X) for Y in array(cup)])
+    return UnionSetArray([intersection(Y, X) for Y in cup])
 end
 
 # disambiguation

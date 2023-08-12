@@ -124,18 +124,19 @@ function overapproximate(X::ConvexHull{N,<:AbstractZonotope,<:AbstractZonotope},
     end
 end
 
-function _overapproximate_convex_hull_zonotope_G05(X::ConvexHull{N}) where {N}
+function _overapproximate_convex_hull_zonotope_G05(ch::ConvexHull{N}) where {N}
     # reduce to the same order if possible
-    m1, m2 = ngens(X.X), ngens(X.Y)
+    X, Y = first(ch), second(ch)
+    m1, m2 = ngens(X), ngens(Y)
     if m1 < m2
-        Z1 = X.X
-        Z2 = reduce_order(X.Y, max(1, m1))
+        Z1 = X
+        Z2 = reduce_order(Y, max(1, m1))
     elseif m1 > m2
-        Z1 = reduce_order(X.X, max(1, m2))
-        Z2 = X.Y
+        Z1 = reduce_order(X, max(1, m2))
+        Z2 = Y
     else
-        Z1 = X.X
-        Z2 = X.Y
+        Z1 = X
+        Z2 = Y
     end
 
     if order(Z2) > order(Z1)
@@ -164,12 +165,12 @@ function _overapproximate_convex_hull_zonotope_G05(X::ConvexHull{N}) where {N}
     return remove_zero_generators(Z)
 end
 
-function _overapproximate_convex_hull_zonotope_GGP09(X::ConvexHull{N}) where {N}
-    Z1, Z2 = X.X, X.Y
+function _overapproximate_convex_hull_zonotope_GGP09(ch::ConvexHull{N}) where {N}
+    Z1, Z2 = first(ch), second(ch)
     m = min(ngens(Z1), ngens(Z2))
     G1, G2 = genmat(Z1), genmat(Z2)
     n = dim(Z1)
-    box = box_approximation(X)
+    box = box_approximation(ch)
 
     # new center: mid point of box approximation
     c = center(box)
@@ -1174,13 +1175,13 @@ nonlinear hybrid reachability*. Mathematics in Computer Science (8) 2014.
 """
 function overapproximate(X::Intersection{N,<:AbstractZonotope,<:Hyperplane},
                          ::Type{<:Zonotope}) where {N}
-    return _overapproximate_zonotope_hyperplane(X.X, X.Y)
+    return _overapproximate_zonotope_hyperplane(first(X), second(X))
 end
 
 # symmetric method
 function overapproximate(X::Intersection{N,<:Hyperplane,<:AbstractZonotope},
                          ::Type{<:Zonotope}) where {N}
-    return _overapproximate_zonotope_hyperplane(X.Y, X.X)
+    return _overapproximate_zonotope_hyperplane(second(X), first(X))
 end
 
 function _overapproximate_zonotope_hyperplane(Z::AbstractZonotope, H::Hyperplane)

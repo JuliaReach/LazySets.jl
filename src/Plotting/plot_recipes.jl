@@ -521,11 +521,11 @@ julia> plot(X, 0.0, 100)  # equivalent to the above line
     if !isbounded(cap)
         _set_auto_limits_to_extrema!(lims, extr)
         bounding_box = _bounding_hyperrectangle(lims, n, eltype(cap))
-        if !isbounded(cap.X)
-            bounded_X = Intersection(bounding_box, cap.X)
-            cap = Intersection(bounded_X, cap.Y)
+        if !isbounded(first(cap))
+            bounded_X = Intersection(bounding_box, first(cap))
+            cap = Intersection(bounded_X, second(cap))
         else
-            cap = Intersection(bounding_box, cap.Y)
+            cap = Intersection(bounding_box, second(cap))
         end
 
         # if there is already a plotted set and the limits are fixed,
@@ -581,9 +581,9 @@ end
         seriesalpha --> DEFAULT_ALPHA
         seriescolor --> DEFAULT_COLOR
         seriestype --> :shape
-        return _plot_list_same_recipe(_union_sets(cup), ε, Nφ)
+        return _plot_list_same_recipe(array(cup), ε, Nφ)
     else
-        for Xi in _union_sets(cup)
+        for Xi in array(cup)
             if Xi isa Intersection
                 @series Xi, ε, Nφ
             else
@@ -592,9 +592,6 @@ end
         end
     end
 end
-
-_union_sets(cup::UnionSet) = [cup.X, cup.Y]
-_union_sets(cup::UnionSetArray) = array(cup)
 
 @recipe function plot_polyzono(P::AbstractPolynomialZonotope{N},
                                ε::Real=N(PLOT_PRECISION); nsdiv=10,

@@ -232,7 +232,7 @@ concatenates vectors ``x`` and ``y``.
 """
 function σ(d::AbstractVector,
            R::Rectification{N,<:CartesianProduct{N}}) where {N}
-    X, Y = R.X.X, R.X.Y
+    X, Y = first(R.X), second(R.X)
     n1 = dim(X)
     return vcat(σ(d[1:n1], Rectification(X)), σ(d[(n1 + 1):end], Rectification(Y)))
 end
@@ -272,7 +272,7 @@ function σ(d::AbstractVector,
            R::Rectification{N,<:CartesianProductArray{N}}) where {N}
     svec = similar(d)
     i = 1
-    for X in array(R.X)
+    for X in R.X
         nX = dim(X)
         j = i + nX - 1
         svec[i:j] = σ(d[i:j], Rectification(X))

@@ -69,6 +69,7 @@ struct CartesianProduct{N,S1<:LazySet{N},S2<:LazySet{N}} <: LazySet{N}
 end
 
 isoperationtype(::Type{<:CartesianProduct}) = true
+concrete_function(::Type{<:CartesianProduct}) = cartesian_product
 
 function isconvextype(::Type{CartesianProduct{N,S1,S2}}) where {N,S1,S2}
     return isconvextype(S1) && isconvextype(S2)
@@ -86,6 +87,11 @@ function CartesianProduct(∅1::EmptySet, ∅2::EmptySet)
     N = promote_type(eltype(∅1), eltype(∅2))
     return EmptySet{N}(dim(∅1) + dim(∅2))
 end
+
+# interface for binary set operations
+Base.first(cp::CartesianProduct) = cp.X
+second(cp::CartesianProduct) = cp.Y
+@declare_binary_operation(CartesianProduct)
 
 """
 ```
@@ -296,7 +302,7 @@ Return the list of constraints of a (polyhedral) Cartesian product.
 A list of constraints.
 """
 function constraints_list(cp::CartesianProduct)
-    return constraints_list(CartesianProductArray([cp.X, cp.Y]))
+    return _constraints_list_cartesian_product(cp)
 end
 
 """
@@ -371,10 +377,6 @@ function _linear_map_cartesian_product(M, cp)
     T = isbounded(cp) ? HPolytope : HPolyhedron
     P = T(constraints_list(cp))
     return linear_map(M, P)
-end
-
-function concretize(cp::CartesianProduct)
-    return cartesian_product(concretize(cp.X), concretize(cp.Y))
 end
 
 function project(cp::CartesianProduct, block::AbstractVector{Int}; kwargs...)

@@ -90,7 +90,7 @@ end
 
 function symmetric_interval_hull(X::MinkowskiSum{N,<:AbstractSingleton,<:AbstractSingleton}) where {N}
     n = dim(X)
-    r = abs.(element(X.X) + element(X.Y))
+    r = abs.(element(first(X)) + element(second(X)))
     return Hyperrectangle(zeros(N, n), r)
 end
 
