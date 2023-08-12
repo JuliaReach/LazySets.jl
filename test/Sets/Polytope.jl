@@ -1,4 +1,4 @@
-using LazySets: linear_map_inverse
+using LazySets: linear_map_inverse, affine_map_inverse
 
 global test_suite_polyhedra
 
@@ -147,18 +147,24 @@ for N in [Float64, Rational{Int}, Float32]
         end
     end
 
-    # linear_map_inverse
+    # linear_map_inverse / affine_map_inverse
     M = N[1 0; 0 0]
     # redundant constraint
     P = HPolytope(HalfSpace[HalfSpace(N[1, 1], N(2)), HalfSpace(N[-1, 0], N(0)),
                             HalfSpace(N[0, -1], N(0))])
     X = linear_map_inverse(M, P)
     @test isequivalent(X, HPolyhedron([HalfSpace(N[1, 0], N(2)), HalfSpace(N[-1, 0], N(0))]))
+    Y = affine_map_inverse(M, P, zeros(N, 2))
+    @test X == Y
+    Y = affine_map_inverse(M, P, ones(N, 2))
+    @test isequivalent(Y, HPolyhedron([HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(1))]))
     # infeasible constraint
     P = HPolytope(HalfSpace[HalfSpace(N[-1, -1], N(3)), HalfSpace(N[1, 0], N(-1)),
                             HalfSpace(N[0, 1], N(-1))])
     X = linear_map_inverse(M, P)
     @test isempty(X)
+    Y = affine_map_inverse(M, P, zeros(N, 2))
+    @test X == Y
 
     # -----
     # V-rep

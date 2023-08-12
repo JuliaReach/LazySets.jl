@@ -706,25 +706,22 @@ end
 
 # preconditions should have been checked in the caller function
 function _linear_map_hrep(M::AbstractMatrix, P::LazySet, algo::LinearMapInverse)
-    return _linear_map_inverse_hrep(algo.inverse, P)
+    return _affine_map_inverse_hrep(algo.inverse, P)
 end
 
-function linear_map_inverse(Minv::AbstractMatrix, P::AbstractPolyhedron)
-    @assert size(Minv, 1) == dim(P) "a linear map of size $(size(Minv)) " *
-                                    "cannot be applied to a set of dimension $(dim(P))"
-    constraints = _linear_map_inverse_hrep(Minv, P)
-    return HPolyhedron(constraints)
-end
-
-function _linear_map_inverse_hrep(Minv::AbstractMatrix, P::LazySet)
-    constraints_P = constraints_list(P)
-    constraints_MP = _preallocate_constraints(constraints_P)
+# P = {y : Cy <= d}
+# C(Ax + b) <= d  <=> CAx <= d - Cb
+function _affine_map_inverse_hrep(A::AbstractMatrix, P::LazySet,
+                                  b::Union{AbstractVector,Nothing}=nothing)
+    C_leq_d = constraints_list(P)
+    constraints_res = _preallocate_constraints(C_leq_d)
     has_undefs = false
-    @inbounds for (i, c) in enumerate(constraints_P)
-        cinv = vec(At_mul_B(c.a, Minv))
+    @inbounds for (i, c_leq_di) in enumerate(C_leq_d)
+        cinv = vec(At_mul_B(c_leq_di.a, A))
+        rhs = isnothing(b) ? c_leq_di.b : c_leq_di.b - first(At_mul_B(c_leq_di.a, b))
         if iszero(cinv)
             N = eltype(cinv)
-            if zero(N) <= c.b
+            if zero(N) <= rhs
                 # constraint is redundant
                 has_undefs = true
             else
@@ -737,15 +734,15 @@ function _linear_map_inverse_hrep(Minv::AbstractMatrix, P::LazySet)
                 return [HalfSpace(a1, zero(N)), HalfSpace(a2, -one(N))]
             end
         else
-            constraints_MP[i] = HalfSpace(cinv, c.b)
+            constraints_res[i] = HalfSpace(cinv, rhs)
         end
     end
     if has_undefs  # there were redundant constraints, so remove them
-        constraints_MP = [constraints_MP[i]
-                          for i in 1:length(constraints_MP)
-                          if isassigned(constraints_MP, i)]
+        constraints_res = [constraints_res[i]
+                           for i in 1:length(constraints_res)
+                           if isassigned(constraints_res, i)]
     end
-    return constraints_MP
+    return constraints_res
 end
 
 # preconditions should have been checked in the caller function
