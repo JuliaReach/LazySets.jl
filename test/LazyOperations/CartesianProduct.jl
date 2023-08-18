@@ -234,6 +234,14 @@ for N in [Float64, Float32, Rational{Int}]
     S2 = Singleton(N[4, 5, 6])
     @test convert(Singleton, S1 × S2) == Singleton(N[1, 2, 3, 4, 5, 6])
 
+    # concrete intersection
+    S1 = BallInf(zeros(N, 2), N(1))
+    S2 = BallInf(ones(N, 2), N(1))
+    P = BallInf(fill(N(1/2), 2), N(3/2))
+    cp = S1 × S2
+    cpa = intersection(cp, P)
+    @test isequivalent(concretize(cpa), cp)
+
     # =====================
     # CartesianProductArray
     # =====================

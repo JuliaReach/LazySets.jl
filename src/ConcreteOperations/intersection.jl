@@ -905,7 +905,7 @@ intersection(U::Universe, ::Universe) = U
 @commutative intersection(U::Universe, S::AbstractSingleton) = S
 @commutative intersection(U::Universe, X::Interval) = X
 @commutative intersection(U::Universe, L::LinearMap) = L
-@commutative intersection(U::Universe, X::CartesianProductArray) = X
+@commutative intersection(U::Universe, X::Union{CartesianProduct,CartesianProductArray}) = X
 @commutative intersection(U::Universe, cup::UnionSet) = cup
 @commutative intersection(U::Universe, cup::UnionSetArray) = cup
 
@@ -979,7 +979,8 @@ function intersection(X::CartesianProductArray, Y::CartesianProductArray)
 end
 
 """
-    intersection(cpa::CartesianProductArray, P::AbstractPolyhedron)
+    intersection(cpa::Union{CartesianProduct,CartesianProductArray},
+                 P::AbstractPolyhedron)
 
 Compute the intersection of a Cartesian product of a finite number of polyhedral
 sets with a polyhedron.
@@ -1036,7 +1037,7 @@ minimal dimension.
 Finally, we convert ``Y`` to a polyhedron and intersect it with a suitable
 projection of `P`.
 """
-@commutative function intersection(cpa::CartesianProductArray,
+@commutative function intersection(cpa::Union{CartesianProduct,CartesianProductArray},
                                    P::AbstractPolyhedron)
     # search for the indices of the block trisection into
     # "unconstrained | constrained | unconstrained" (the first and third section
@@ -1048,12 +1049,11 @@ projection of `P`.
     minimal = minimum(constrained_dims)
     maximal = maximum(constrained_dims)
     lower_bound = 1
-    blocks = array(cpa)
     cb_start = 0
-    cb_end = length(blocks)
+    cb_end = length(cpa)
     dim_start = 0
     dim_end = dim(P)
-    for (i, block) in enumerate(blocks)
+    for (i, block) in enumerate(cpa)
         dim_block = dim(block)
         upper_bound = lower_bound + dim_block - 1
         interval = lower_bound:upper_bound
@@ -1069,13 +1069,13 @@ projection of `P`.
         lower_bound = upper_bound + 1
     end
     # compute intersection with constrained blocks
-    cap = _intersection_polyhedron_constrained(CartesianProductArray(blocks[cb_start:cb_end]), P,
+    cap = _intersection_polyhedron_constrained(CartesianProductArray(cpa[cb_start:cb_end]), P,
                                                dim_start:dim_end)
 
     # construct result
-    result_array = vcat(blocks[1:(cb_start - 1)],  # unconstrained
+    result_array = vcat(cpa[1:(cb_start - 1)],  # unconstrained
                         [cap],  # constrained, intersected
-                        blocks[(cb_end + 1):length(blocks)])  # unconstrained
+                        cpa[(cb_end + 1):end])  # unconstrained
     return CartesianProductArray(result_array)
 end
 
@@ -1087,10 +1087,10 @@ function _intersection_polyhedron_constrained(X::LazySet, P::AbstractPolyhedron,
 end
 
 # disambiguation
-@commutative function intersection(S::AbstractSingleton, cpa::CartesianProductArray)
+@commutative function intersection(cpa::Union{CartesianProduct,CartesianProductArray}, S::AbstractSingleton)
     return _intersection_singleton(S, cpa)
 end
-@commutative intersection(cpa::CartesianProductArray, X::Interval) = _intersection_interval(X, cpa)
+@commutative intersection(cpa::Union{CartesianProduct,CartesianProductArray}, X::Interval) = _intersection_interval(X, cpa)
 
 """
     intersection(Z::AbstractZonotope{N}, H::HalfSpace{N};
