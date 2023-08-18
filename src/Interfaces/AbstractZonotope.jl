@@ -306,6 +306,27 @@ function linear_map(M::AbstractMatrix, Z::AbstractZonotope)
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
                                  "applied to a set of dimension $(dim(Z))"
 
+    if size(M, 1) == 1
+        # yields only one generator
+        return _linear_map_zonotope_1D(M, Z)
+    else
+        return _linear_map_zonotope_nD(M, Z)
+    end
+end
+
+function _linear_map_zonotope_1D(M::AbstractMatrix, Z::LazySet)
+    N = promote_type(eltype(M), eltype(Z))
+    c = M * center(Z)
+    gi = zero(N)
+    @inbounds for g in generators(Z)
+        for i in eachindex(g)
+            gi += M[1, i] * g[i]
+        end
+    end
+    return Zonotope(c, hcat(gi))
+end
+
+function _linear_map_zonotope_nD(M::AbstractMatrix, Z::LazySet)
     c = M * center(Z)
     gi = M * genmat(Z)
     return Zonotope(c, gi)
