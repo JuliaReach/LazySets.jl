@@ -148,8 +148,7 @@ function σ(d::AbstractVector, P::HPolygonOpt;
             if (k == 0)
                 P.ind = n
                 # corner case: wrap-around in constraints list
-                return element(intersection(Line2D(P.constraints[n]),
-                                            Line2D(P.constraints[1])))
+                return element(_intersection_line2d(P.constraints[n], P.constraints[1]))
             else
                 P.ind = k
             end
@@ -162,26 +161,22 @@ function σ(d::AbstractVector, P::HPolygonOpt;
             if (k == n + 1)
                 P.ind = n
                 # corner case: wrap-around in constraints list
-                return element(intersection(Line2D(P.constraints[n]),
-                                            Line2D(P.constraints[1])))
+                return element(_intersection_line2d(P.constraints[n], P.constraints[1]))
             else
                 P.ind = k - 1
             end
         end
-        return element(intersection(Line2D(P.constraints[P.ind]),
-                                    Line2D(P.constraints[P.ind + 1])))
+        return element(_intersection_line2d(P.constraints[P.ind], P.constraints[P.ind + 1]))
     else
         # binary search
         k = binary_search_constraints(d, P.constraints; start_index=P.ind)
         if k == 1 || k == n + 1
             P.ind = 1
             # corner cases: wrap-around in constraints list
-            return element(intersection(Line2D(P.constraints[n]),
-                                        Line2D(P.constraints[1])))
+            return element(_intersection_line2d(P.constraints[n], P.constraints[1]))
         else
             P.ind = k
-            return element(intersection(Line2D(P.constraints[k - 1]),
-                                        Line2D(P.constraints[k])))
+            return element(_intersection_line2d(P.constraints[k - 1], P.constraints[k]))
         end
     end
 end

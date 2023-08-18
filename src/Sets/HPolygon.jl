@@ -141,11 +141,9 @@ function σ(d::AbstractVector, P::HPolygon;
 
     if k == 1 || k == n + 1
         # corner cases: wrap-around in constraints list
-        return element(intersection(Line2D(P.constraints[1]),
-                                    Line2D(P.constraints[n])))
+        return element(_intersection_line2d(P.constraints[1], P.constraints[n]))
     else
-        return element(intersection(Line2D(P.constraints[k]),
-                                    Line2D(P.constraints[k - 1])))
+        return element(_intersection_line2d(P.constraints[k], P.constraints[k - 1]))
     end
 end
 

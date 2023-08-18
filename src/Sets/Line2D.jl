@@ -24,6 +24,26 @@ The line ``y = -x + 1``:
 julia> Line2D([1., 1.], 1.)
 Line2D{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
 ```
+
+The alternative constructor takes two 2D points (`AbstractVector`s) `p` and `q`
+and creates a canonical line from `p` to `q`. See the algorithm section below
+for details.
+
+```jldoctest
+julia> Line2D([1., 1.], [2., 2])
+Line2D{Float64, Vector{Float64}}([-1.0, 1.0], 0.0)
+```
+
+### Algorithm
+
+Given two points ``p = (x₁, y₁)`` and ``q = (x₂, y₂)``, the line that passes
+through these points is
+
+```math
+ℓ:~~y - y₁ = \\dfrac{(y₂ - y₁)}{(x₂ - x₁)} ⋅ (x-x₁).
+```
+The particular case ``x₂ = x₁`` defines a line parallel to the ``y``-axis
+(vertical line).
 """
 struct Line2D{N,VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     a::VN
@@ -37,36 +57,6 @@ struct Line2D{N,VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     end
 end
 
-isoperationtype(::Type{<:Line2D}) = false
-
-# constructor from a HalfSpace
-Line2D(c::HalfSpace) = Line2D(c.a, c.b)
-
-"""
-    Line2D(p::AbstractVector, q::AbstractVector)
-
-Constructor of a 2D line from two points.
-
-### Input
-
-- `p` -- point in 2D
-- `q` -- another point in 2D
-
-### Output
-
-The line which passes through `p` and `q`.
-
-### Algorithm
-
-Given two points ``p = (x₁, y₁)`` and ``q = (x₂, y₂)``, the line that passes
-through these points is
-
-```math
-ℓ:~~y - y₁ = \\dfrac{(y₂ - y₁)}{(x₂ - x₁)} ⋅ (x-x₁).
-```
-The particular case ``x₂ = x₁`` defines a line parallel to the ``y``-axis
-(vertical line).
-"""
 function Line2D(p::AbstractVector, q::AbstractVector)
     @assert length(p) == length(q) == 2 "a Line2D must be two-dimensional"
 
@@ -78,7 +68,7 @@ function Line2D(p::AbstractVector, q::AbstractVector)
         @assert y₁ != y₂ "a line needs two distinct points"
         a = [one(N), zero(N)]
         b = x₁
-        return LazySets.Line2D(a, b)
+        return Line2D(a, b)
     end
 
     k = (y₁ - y₂) / (x₂ - x₁)
@@ -86,6 +76,8 @@ function Line2D(p::AbstractVector, q::AbstractVector)
     b = y₁ + k * x₁
     return Line2D(a, b)
 end
+
+isoperationtype(::Type{<:Line2D}) = false
 
 """
     constraints_list(L::Line2D)
