@@ -264,13 +264,16 @@ Return the list of constraints of a hyperrectangular set.
 A list of ``2n`` linear constraints, where ``n`` is the dimension of `H`.
 """
 function constraints_list(H::AbstractHyperrectangle{N}) where {N}
+    return _constraints_list_hyperrectangle(H)
+end
+
+function _constraints_list_hyperrectangle(H::LazySet{N}) where {N}
     n = dim(H)
     constraints = Vector{HalfSpace{N,SingleEntryVector{N}}}(undef, 2 * n)
-    b, c = high(H), -low(H)
     @inbounds for i in 1:n
         ei = SingleEntryVector(i, n, one(N))
-        constraints[i] = HalfSpace(ei, b[i])
-        constraints[i + n] = HalfSpace(-ei, c[i])
+        constraints[i] = HalfSpace(ei, high(H, i))
+        constraints[i + n] = HalfSpace(-ei, -low(H, i))
     end
     return constraints
 end

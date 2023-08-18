@@ -394,3 +394,29 @@ A `Singleton` representing `-S`.
 function reflect(S::AbstractSingleton)
     return Singleton(-element(S))
 end
+
+function constraints_list(S::AbstractSingleton; min_constraints::Bool=false)
+    if min_constraints
+        # fewest constraints (n+1) but more expensive to represent (`Vector`)
+        return _constraints_list_singleton(S)
+    else
+        # more constraints (2n) but cheaper to represent (`SingleEntryVector`)
+        return _constraints_list_hyperrectangle(S)
+    end
+end
+
+# fewest constraints (n+1)
+function _constraints_list_singleton(S::AbstractSingleton{N}) where {N}
+    n = dim(S)
+    constraints = Vector{HalfSpace{N,Vector{N}}}(undef, n + 1)
+    e = element(S)
+    @inbounds for i in 1:n
+        # x_i >= e
+        ai = zeros(N, n)
+        ai[i] = -one(N)
+        constraints[i] = HalfSpace(ai, -e[i])
+    end
+    # (∑_i x_i) <= ∑_i e_i
+    @inbounds constraints[end] = HalfSpace(ones(N, n), sum(e))
+    return constraints
+end
