@@ -396,6 +396,12 @@ function volume(B::BallInf)
     return _pow_loop(B.radius, dim(B))
 end
 
+function area(B::BallInf)
+    @assert dim(B) == 2 "this function only applies to two-dimensional sets, " *
+                        "but the given set is $(dim(B))-dimensional"
+    return (2 * B.radius)^2
+end
+
 # method for floating-point input
 function volume(B::BallInf{N}) where {N<:AbstractFloat}
     n = dim(B)

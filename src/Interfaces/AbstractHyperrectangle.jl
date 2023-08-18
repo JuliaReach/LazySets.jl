@@ -706,7 +706,17 @@ The volume of the ``n``-dimensional hyperrectangle ``H`` with radius vector
 ``r`` is ``2ⁿ ∏ᵢ rᵢ`` where ``rᵢ`` denotes the ``i``-th component of ``r``.
 """
 function volume(H::AbstractHyperrectangle)
+    return _volume_hyperrectangle(H)
+end
+
+function _volume_hyperrectangle(H::LazySet)
     return mapreduce(x -> 2x, *, radius_hyperrectangle(H))
+end
+
+function area(H::AbstractHyperrectangle)
+    @assert dim(H) == 2 "this function only applies to two-dimensional sets, " *
+                        "but the given set is $(dim(H))-dimensional"
+    return _volume_hyperrectangle(H)
 end
 
 function project(H::AbstractHyperrectangle, block::AbstractVector{Int};

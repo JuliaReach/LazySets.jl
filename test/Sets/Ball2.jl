@@ -133,13 +133,12 @@ for N in [Float64, Float32]
     c, r = chebyshev_center_radius(B)
     @test c == center(B) && r == B.radius
 
-    # volume in dimension 2
+    # area/volume
     B = Ball2(zeros(N, 2), N(2))
-    @test volume(B) ≈ pi * radius(B)^2
-
-    # volume in dimension 3
+    @test area(B) == volume(B) == N(pi) * radius(B)^2
     B = Ball2(zeros(N, 3), N(2))
-    @test volume(B) ≈ 4 / 3 * pi * radius(B)^3
+    @test_throws AssertionError area(B)
+    @test volume(B) == 4 / 3 * N(pi) * radius(B)^3
 
     # projection
     b4 = Ball2(N[4, 3, 2, 1], N(2))

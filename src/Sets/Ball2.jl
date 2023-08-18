@@ -372,19 +372,26 @@ The volume of ``B``.
 ### Algorithm
 
 This function implements the well-known formula for the volume of an n-dimensional
-ball using factorials. For details see the wikipedia article
+ball using factorials. For details see the Wikipedia article
 [Volume of an n-ball](https://en.wikipedia.org/wiki/Volume_of_an_n-ball).
 """
 function volume(B::Ball2)
+    N = eltype(B)
     n = dim(B)
     k = div(n, 2)
     R = B.radius
     if iseven(n)
-        vol = Base.pi^k * R^n / factorial(k)
+        vol = N(Base.pi)^k * R^n / factorial(k)
     else
-        vol = 2 * factorial(k) * (4 * Base.pi)^k * R^n / factorial(n)
+        vol = 2 * factorial(k) * (4 * N(Base.pi))^k * R^n / factorial(n)
     end
     return vol
+end
+
+function area(B::Ball2)
+    @assert dim(B) == 2 "this function only applies to two-dimensional sets, " *
+                        "but the given set is $(dim(B))-dimensional"
+    return Base.pi * B.radius^2
 end
 
 function project(B::Ball2, block::AbstractVector{Int}; kwargs...)

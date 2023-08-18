@@ -95,6 +95,12 @@ for N in [Float64, Rational{Int}, Float32]
     # diameter
     @test diameter(h) == norm(N[5, 3] - N[1, 1], Inf)
 
+    # area/volume
+    @test area(h) == volume(h) == N(8)
+    h1 = Hyperrectangle(N[0], N[1])
+    @test_throws AssertionError area(h1)
+    @test volume(h1) == N(2)
+
     # unicode constructor
     @test □(center(h), radius_hyperrectangle(h)) == h
 
