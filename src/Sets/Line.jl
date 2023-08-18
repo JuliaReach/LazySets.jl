@@ -25,44 +25,40 @@ necessarily normalized).
 
 ### Examples
 
+There are three constructors. The optional keyword argument `normalize`
+(default: `false`) can be used to normalize the direction of the resulting line
+to have norm 1 (w.r.t. the Euclidean norm).
+
+1) The default constructor takes the fields `p` and `d`:
+
 The line passing through the point ``[-1, 2, 3]`` and parallel to the vector
 ``[3, 0, -1]``:
 
 ```jldoctest
-julia> Line([-1, 2, 3.], [3, 0, -1.])
+julia> Line([-1.0, 2, 3], [3.0, 0, -1])
+Line{Float64, Vector{Float64}}([-1.0, 2.0, 3.0], [3.0, 0.0, -1.0])
+
+julia> Line([-1.0, 2, 3], [3.0, 0, -1]; normalize=true)
+Line{Float64, Vector{Float64}}([-1.0, 2.0, 3.0], [0.9486832980505138, 0.0, -0.31622776601683794])
+```
+
+2) The second constructor takes two points, `from` and `to`, as keyword
+arguments, and returns the line through them. See the algorithm section for
+details.
+
+```jldoctest
+julia> Line(from=[-1.0, 2, 3], to=[-4.0, 2, 4])
 Line{Float64, Vector{Float64}}([-1.0, 2.0, 3.0], [3.0, 0.0, -1.0])
 ```
-"""
-struct Line{N,VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
-    p::VN
-    d::VN
 
-    # default constructor with length constraint
-    function Line(p::VN, d::VN; check_direction::Bool=true) where {N,VN<:AbstractVector{N}}
-        if check_direction
-            @assert !iszero(d) "a line needs a non-zero direction vector"
-        end
-        return new{N,VN}(p, d)
-    end
-end
+3) The third constructor resembles `Line2D` and only works for two-dimensional
+lines. It takes two inputs, `a` and `b`, and constructs the line such that
+``a ⋅ x = b``.
 
-isoperationtype(::Type{<:Line}) = false
-
-"""
-    Line(; from::AbstractVector, to::AbstractVector, [normalize]=false)
-
-Constructor of a line given two points.
-
-### Input
-
-- `from`      -- point
-- `to`        -- another point
-- `normalize` -- (optional, default: `false`) if `true`, the direction of the
-                 resulting line will have norm 1 (w.r.t. the Euclidean norm)
-
-### Output
-
-The line which passes through `from` and `to`.
+```jldoctest
+julia> Line([2.0, 0], 1.)
+Line{Float64, Vector{Float64}}([0.5, 0.0], [0.0, -1.0])
+```
 
 ### Algorithm
 
@@ -70,29 +66,27 @@ Given two points ``p ∈ \\mathbb{R}^n`` and ``q ∈ \\mathbb{R}^n``, the line t
 passes through these two points is
 `L: `\\{y ∈ \\mathbb{R}^n: y = p + λ(q - p), λ ∈ \\mathbb{R}\\}``.
 """
+struct Line{N,VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
+    p::VN
+    d::VN
+
+    # default constructor with length constraint
+    function Line(p::VN, d::VN; check_direction::Bool=true,
+                  normalize=false) where {N,VN<:AbstractVector{N}}
+        if check_direction
+            @assert !iszero(d) "a line needs a non-zero direction vector"
+        end
+        d_n = normalize ? LinearAlgebra.normalize(d) : d
+        return new{N,VN}(p, d_n)
+    end
+end
+
 function Line(; from::AbstractVector, to::AbstractVector, normalize=false)
     d = from - to
     @assert !iszero(d) "points `$from` and `$to` should be distinct"
-    d_n = normalize ? LinearAlgebra.normalize(d) : d
-    return Line(from, d_n)
+    return Line(from, d; normalize=normalize)
 end
 
-"""
-    Line(a::AbstractVector{N}, b::N; [normalize]=false) where {N}
-
-Constructor of a two-dimensional line given ``a ⋅ x = b``.
-
-### Input
-
-- `a`         -- two-dimensional vector
-- `b`         -- scalar
-- `normalize` -- (optional, default: `false`) if `true`, the direction of the
-                 resulting line will have norm 1 (w.r.t. the Euclidean norm)
-
-### Output
-
-A `Line` that satisfies ``a ⋅ x = b``.
-"""
 function Line(a::AbstractVector{N}, b::N; normalize=false) where {N}
     @assert length(a) == 2 "expected a normal vector of length two, but it " *
                            "is $(length(a))-dimensional"
@@ -120,6 +114,8 @@ function Line(a::AbstractVector{N}, b::N; normalize=false) where {N}
     end
     return Line(; from=p, to=q, normalize=normalize)
 end
+
+isoperationtype(::Type{<:Line}) = false
 
 """
     direction(L::Line)

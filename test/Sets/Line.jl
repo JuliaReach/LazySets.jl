@@ -82,11 +82,11 @@ for N in [Float64, Float32]
     rot = N[0 -1; 1 0] # π/2 ccw rotation
     @test isequivalent(linear_map(rot, l), Line(N[-1, 0], N[0, 1]))
 
-    # construction from two points on the line with and without normalization
-    from = N[0, 1]
-    to = N[2, 3]
-    L = Line(; from=from, to=to, normalize=true)
+    # construction with normalization
+    L = Line(N[0, 1], N[2, 0]; normalize=true)
+    @test L == Line(N[0, 1], N[1, 0]) && norm(L.d) ≈ N(1)
+    L = Line(; from=N[0, 1], to=N[2, 3], normalize=true)
     @test isequivalent(L, Line(N[0, 1], N[1, 1])) && norm(L.d) ≈ N(1)
-    L = Line(; from=from, to=to, normalize=false)
-    @test isequivalent(L, Line(N[0, 1], N[1, 1]))
+    L = Line(N[0, 1], N(1); normalize=true)
+    @test isequivalent(L, Line(N[0, 1], N[-1, 0]))
 end
