@@ -157,6 +157,57 @@ function center(B::BallInf)
 end
 
 """
+    radius_ball(B::BallInf)
+
+Return the ball radius of a ball in the infinity norm.
+
+### Input
+
+- `B` -- ball in the infinity norm
+
+### Output
+
+The ball radius.
+"""
+function radius_ball(B::BallInf)
+    return B.radius
+end
+
+"""
+    ball_norm(B::BallInf)
+
+Return the characteristic norm of a ball in the infinity norm.
+
+### Input
+
+- `B` -- ball in the infinity norm
+
+### Output
+
+The characteristic norm, which is `Inf`.
+"""
+function ball_norm(B::BallInf)
+    N = eltype(B)
+    return N(Inf)
+end
+
+function low(B::BallInf)
+    return _low_AbstractBallp(B)
+end
+
+function low(B::BallInf, i::Int)
+    return _low_AbstractBallp(B, i)
+end
+
+function high(B::BallInf)
+    return _high_AbstractBallp(B)
+end
+
+function high(B::BallInf, i::Int)
+    return _high_AbstractBallp(B, i)
+end
+
+"""
     σ(d::AbstractVector, B::BallInf)
 
 Return the support vector of a ball in the infinity norm in the given direction.

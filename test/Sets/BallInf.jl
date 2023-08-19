@@ -62,6 +62,12 @@ for N in [Float64, Rational{Int}, Float32]
     b = BallInf(c, N(2))
     @test center(b) == c && center(b, 1) == N(1) && center(b, 2) == N(2)
 
+    # radius_ball
+    @test LazySets.radius_ball(b) == N(2)
+
+    # ball_norm
+    @test LazySets.ball_norm(b) == N(Inf)
+
     # support vector for single entry vector
     svec = σ(SingleEntryVector(2, 3, N(2)), BallInf(zeros(N, 3), N(2)))
     @test svec[1] ∈ Interval(N[-2, 2]) && svec[2] == N(2) && svec[3] ∈ Interval(N[-2, 2])
@@ -102,10 +108,10 @@ for N in [Float64, Rational{Int}, Float32]
     vl = vertices_list(b)
     @test vl == [center(b)]
 
-    # high and low
+    # low/high/extrema
     b = BallInf(N[1, 2], N(1))
-    @test high(b) == N[2, 3]
-    @test low(b) == N[0, 1]
+    @test extrema(b) == (low(b), high(b)) == (N[0, 1], N[2, 3])
+    @test extrema(b, 1) == (low(b, 1), high(b, 1)) == (N(0), N(2))
 
     # isflat
     @test !isflat(BallInf(N[1, 1], N(1))) && isflat(BallInf(N[1, 1], N(0)))

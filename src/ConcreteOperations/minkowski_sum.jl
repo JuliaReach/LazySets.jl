@@ -507,3 +507,36 @@ function minkowski_sum(P1::SparsePolynomialZonotope,
     E = cat(expmat(P1), expmat(P2); dims=(1, 2))
     return SparsePolynomialZonotope(c, G, GI, E)
 end
+
+# Given two balls of the same p-norm, their Minkowski sum is again a p-norm ball,
+# which can be seen as follows:
+#
+# σ_Bp(d) = c + r \\frac{d}{‖d‖_p}
+#
+#   ρ_Bp(d)
+# = ⟨c + r \\frac{d}{‖d‖_p}, d⟩
+# = ⟨c, d⟩ + \\frac{r}{‖d‖_p} * ⟨d, d⟩
+#
+#   ρ_Bp¹⊕Bp²(d)
+# = ρ_Bp¹(d) + ρ_Bp²(d)
+# = ⟨c¹, d⟩ + \\frac{r¹}{‖d‖_p} * ⟨d, d⟩ + ⟨c², d⟩ + \\frac{r²}{‖d‖_p} * ⟨d, d⟩
+# = ⟨c¹ + c², d⟩ + \\frac{r¹ + r²}{‖d‖_p} * ⟨d, d⟩
+# = ρ_Bp³(d)
+#
+# where Bp³ = Ball(center(Bp¹) + center(Bp²), radius(Bp¹) + radius(Bp²))
+function minkowski_sum(B1::BT1, B2::BT2) where {BT<:AbstractBallp,BT1<:BT,BT2<:BT}
+    p = ball_norm(B1)
+    if ball_norm(B2) != p
+        throw(ArgumentError("this method only applies to balls of the same norm"))
+    end
+    return Ballp(p, center(B1) + center(B2), radius_ball(B1) + radius_ball(B2))
+end
+
+for B in (:Ball1, :BallInf)
+    @eval begin
+        # see AbstractBallp method
+        function minkowski_sum(B1::$B, B2::$B)
+            return $B(center(B1) + center(B2), radius_ball(B1) + radius_ball(B2))
+        end
+    end
+end

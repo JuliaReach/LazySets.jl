@@ -6,7 +6,7 @@ export Ball2,
        volume
 
 """
-    Ball2{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
+    Ball2{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractBallp{N}
 
 Type that represents a ball in the 2-norm.
 
@@ -52,7 +52,7 @@ julia> σ([1.0, 2, 3, 4, 5], B)
  0.3370999312316211
 ```
 """
-struct Ball2{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractCentrallySymmetric{N}
+struct Ball2{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractBallp{N}
     center::VN
     radius::N
 
@@ -84,6 +84,41 @@ The center of the ball in the 2-norm.
 """
 function center(B::Ball2)
     return B.center
+end
+
+"""
+    radius_ball(B::Ball2)
+
+Return the ball radius of a ball in the 2-norm.
+
+### Input
+
+- `B` -- ball in the 2-norm
+
+### Output
+
+The ball radius.
+"""
+function radius_ball(B::Ball2)
+    return B.radius
+end
+
+"""
+    ball_norm(B::Ball2)
+
+Return the characteristic norm of a ball in the 2-norm.
+
+### Input
+
+- `B` -- ball in the 2-norm
+
+### Output
+
+The characteristic norm, which is `2`.
+"""
+function ball_norm(B::Ball2)
+    N = eltype(B)
+    return N(2)
 end
 
 """

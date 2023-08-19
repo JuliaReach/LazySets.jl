@@ -34,7 +34,19 @@ for N in [Float64, Float32]
     @test Ballp(N(Inf), N[3], N(4)) isa BallInf
 
     # center
-    @test center(b) == b.center
+    @test center(b) == N[0, 0]
+
+    # radius_ball
+    @test LazySets.radius_ball(b) == N(2)
+
+    # ball_norm
+    @test LazySets.ball_norm(b) == N(3)
+
+    # low/high/extrema
+    @test extrema(b) == (low(b), high(b)) == (N[-2, -2], N[2, 2])
+    @test extrema(b, 1) == (low(b, 1), high(b, 1)) == (N(-2), N(2))
+
+    # an_element
     @test an_element(b) isa AbstractVector{N}
 
     # boundedness

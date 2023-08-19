@@ -6,10 +6,9 @@ CurrentModule = LazySets
 
 ```@docs
 Ballp
-σ(::AbstractVector, ::Ballp)
-ρ(::AbstractVector, ::Ballp)
-∈(::AbstractVector, ::Ballp)
 center(::Ballp)
+radius_ball(::Ballp)
+ball_norm(::Ballp)
 rand(::Type{Ballp})
 translate(::Ballp, ::AbstractVector)
 translate!(::Ballp, ::AbstractVector)
@@ -31,3 +30,8 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetric))
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetric))
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetric, ::Int))
+
+Inherited from [`AbstractBallp`](@ref):
+* [`σ`](@ref σ(::AbstractVector, ::AbstractBallp))
+* [`ρ`](@ref ρ(::AbstractVector, ::AbstractBallp))
+* [`∈`](@ref ∈(::AbstractVector, ::AbstractBallp))
