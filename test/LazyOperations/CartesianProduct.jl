@@ -237,7 +237,7 @@ for N in [Float64, Float32, Rational{Int}]
     # concrete intersection
     S1 = BallInf(zeros(N, 2), N(1))
     S2 = BallInf(ones(N, 2), N(1))
-    P = BallInf(fill(N(1/2), 2), N(3/2))
+    P = BallInf(fill(N(1 / 2), 2), N(3 / 2))
     cp = S1 × S2
     cpa = intersection(cp, P)
     @test isequivalent(concretize(cpa), cp)
