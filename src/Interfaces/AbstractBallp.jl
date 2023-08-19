@@ -62,7 +62,6 @@ function _high_AbstractBallp(B::LazySet, i::Int)
     return center(B, i) + radius_ball(B)
 end
 
-
 """
     σ(d::AbstractVector, B::AbstractBallp)
 

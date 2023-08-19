@@ -88,7 +88,7 @@ Line2D{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
 ```
 """
 function intersection(L1::Line2D, L2::Line2D)
-    _intersection_line2d(L1, L2)
+    return _intersection_line2d(L1, L2)
 end
 
 # this method can also be called with `HalfSpace` arguments
@@ -1108,10 +1108,13 @@ function _intersection_polyhedron_constrained(X::LazySet, P::AbstractPolyhedron,
 end
 
 # disambiguation
-@commutative function intersection(cpa::Union{CartesianProduct,CartesianProductArray}, S::AbstractSingleton)
+@commutative function intersection(cpa::Union{CartesianProduct,CartesianProductArray},
+                                   S::AbstractSingleton)
     return _intersection_singleton(S, cpa)
 end
-@commutative intersection(cpa::Union{CartesianProduct,CartesianProductArray}, X::Interval) = _intersection_interval(X, cpa)
+@commutative function intersection(cpa::Union{CartesianProduct,CartesianProductArray}, X::Interval)
+    return _intersection_interval(X, cpa)
+end
 
 """
     intersection(Z::AbstractZonotope{N}, H::HalfSpace{N};
