@@ -638,23 +638,58 @@ function ⊆(x::Interval, U::UnionSetArray{N,<:AbstractHyperrectangle},
     return _issubset_interval!(x, V, witness)
 end
 
-function _get_interval_array_copy(U::UnionSetArray)
+function _get_interval_array_copy(U::UnionSetArray{N}) where {N}
+    out = Vector{LazySet{N}}(undef, length(array(U)))
+    for (i, Xi) in enumerate(array(U))
+        Yi = _to_unbounded_interval(Xi)
+        if Yi isa Universe
+            return Yi
+        end
+        out[i] = Yi
+    end
+    return out
+end
+
+_to_unbounded_interval(X::Interval) = X
+_to_unbounded_interval(H::HalfSpace) = H
+_to_unbounded_interval(U::Universe) = U
+
+function _to_unbounded_interval(X::LazySet{N}) where {N}
+    if !isconvextype(typeof(X))
+        throw(ArgumentError("unions with non-convex sets are not supported"))
+    end
+    l, h = extrema(X, 1)
+    if isinf(l)
+        if isinf(h)
+            return [Universe{N}(1)]
+        else
+            return HalfSpace([one(N)], h)
+        end
+    elseif isinf(h)
+        return HalfSpace([-one(N)], -l)
+    else
+        return Interval(l, h)
+    end
+end
+
+function _get_interval_array_copy(U::UnionSetArray{N,<:AbstractHyperrectangle}) where {N}
     return [convert(Interval, X) for X in U]
 end
 
-function _get_interval_array_copy(U::UnionSetArray{N,<:AbstractVector{<:Interval}}) where {N}
+function _get_interval_array_copy(U::UnionSetArray{N,<:Interval}) where {N}
     return copy(array(U))
 end
 
 function _issubset_interval!(x::Interval{N}, intervals, witness) where {N}
     # sort intervals by lower bound
-    sort!(intervals; lt=(x, y) -> min(x) <= min(y))
+    sort!(intervals; lt=(x, y) -> low(x, 1) <= low(y, 1))
 
     # subtract intervals from x
     for y in intervals
-        if min(y) > min(x)
+        if low(y, 1) > low(x, 1)
             # lowest point of x is not contained
-            return witness ? (false, center(Interval(min(x), min(y)))) : false
+            # witness is the point in the middle
+            return witness ? (false, [(low(x, 1) + low(y, 1)) / 2]) : false
         end
         x = difference(x, y)
         if isempty(x)
@@ -662,7 +697,7 @@ function _issubset_interval!(x::Interval{N}, intervals, witness) where {N}
         end
     end
 
-    return witness ? (false, low(x)) : false
+    return witness ? (false, center(x)) : false
 end
 
 """
