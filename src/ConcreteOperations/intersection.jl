@@ -850,7 +850,20 @@ The union of the pairwise intersections, expressed as a `UnionSetArray`.
 end
 
 function _intersection_usa(cup::UnionSetArray, X::LazySet)
-    return UnionSetArray([intersection(Y, X) for Y in cup])
+    sets = [intersection(Y, X) for Y in cup]
+    l = length(sets)
+    filter!(!isempty, sets)
+    if length(sets) > 1
+        if length(sets) < l
+            sets = [X for X in sets]  # re-allocate set-specific array
+        end
+        return UnionSetArray(sets)
+    elseif length(sets) == 1
+        return sets[1]
+    else
+        N = promote_type(eltype(cup), eltype(X))
+        return EmptySet{N}(dim(X))
+    end
 end
 
 # disambiguation
