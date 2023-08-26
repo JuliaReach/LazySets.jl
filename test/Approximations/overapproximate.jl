@@ -432,12 +432,12 @@ for N in [Float64]
     # Zonotope overapprox. of a Taylor model
     # =======================================
     x₁, x₂, x₃ = set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
-    Dx₁ = IA.Interval(N(1.0), N(3.0))
-    Dx₂ = IA.Interval(N(-1.0), N(1.0))
-    Dx₃ = IA.Interval(N(-1.0), N(0.0))
+    Dx₁ = interval(N(1.0), N(3.0))
+    Dx₂ = interval(N(-1.0), N(1.0))
+    Dx₃ = interval(N(-1.0), N(0.0))
     D = Dx₁ × Dx₂ × Dx₃   # domain
     x0 = IntervalBox(IA.mid.(D)...)
-    I = IA.Interval(N(0.0), N(0.0)) # interval remainder
+    I = interval(N(0.0), N(0.0)) # interval remainder
     p₁ = 1 + x₁ - x₂
     p₂ = x₃ - x₁
     vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
@@ -515,7 +515,7 @@ for N in [Float64]
 
     # NOTE: ICP currently leads to unsatisfiable package requirements
     # overapproximate a nonlinear constraint with an HPolyhedron
-    #     dom = IntervalBox(IA.Interval(-2, 2), IA.Interval(-2, 2))
+    #     dom = IntervalBox(interval(-2, 2), interval(-2, 2))
     #     C = @constraint x^2 + y^2 <= 1
     #     p = pave(C, dom, 0.01)
     #     dirs = OctDirections(2)

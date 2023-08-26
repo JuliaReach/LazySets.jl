@@ -7,7 +7,7 @@ using LinearAlgebra, RecipesBase, Reexport, Requires, SparseArrays
 import GLPK, JuMP, Random, ReachabilityBase
 import IntervalArithmetic as IA
 
-using IntervalArithmetic: AbstractInterval, mince
+using IntervalArithmetic: mince
 import IntervalArithmetic: radius, ⊂
 using LinearAlgebra: checksquare
 import LinearAlgebra: norm, ×, normalize, normalize!

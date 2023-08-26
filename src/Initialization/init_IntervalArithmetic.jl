@@ -35,14 +35,14 @@ function fast_interval_pow(a::IA.Interval, n::Int)
     if iszero(n)
         return one(a)
     elseif isodd(n)
-        return IA.Interval(a.lo^n, a.hi^n)
+        return IA.interval(a.lo^n, a.hi^n)
     else
         if 0 ∈ a
-            return IA.Interval(zero(a.lo), max(abs(a.lo), abs(a.hi))^n)
+            return IA.interval(zero(a.lo), max(abs(a.lo), abs(a.hi))^n)
         else
             lon = a.lo^n
             hin = a.hi^n
-            return IA.Interval(min(lon, hin), max(lon, hin))
+            return IA.interval(min(lon, hin), max(lon, hin))
         end
     end
 end

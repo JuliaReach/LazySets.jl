@@ -12,7 +12,7 @@ Random.seed!(1234)
 import Distributions, ExponentialUtilities, Expokit, IntervalMatrices, Ipopt,
        MiniQhull, Optim, PkgVersion, RangeEnclosures, SCS, SetProg, TaylorModels
 import IntervalArithmetic as IA
-using IntervalArithmetic: IntervalBox
+using IntervalArithmetic: IntervalBox, interval
 using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
 # ICP currently leads to unsatisfiable package requirements

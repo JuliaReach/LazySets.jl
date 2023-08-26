@@ -49,7 +49,7 @@ julia> I2 = Interval(2, 4);
 julia> I12 = I1 × I2;
 
 julia> typeof(I12)
-CartesianProduct{Float64, Interval{Float64, IntervalArithmetic.Interval{Float64}}, Interval{Float64, IntervalArithmetic.Interval{Float64}}}
+CartesianProduct{Float64, Interval{Float64}, Interval{Float64}}
 ```
 A hyperrectangle is the Cartesian product of intervals, so we can convert `I12`
 to a `Hyperrectangle` type:

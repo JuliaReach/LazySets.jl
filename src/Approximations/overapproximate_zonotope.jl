@@ -266,7 +266,7 @@ A zonotope.
 """
 function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope},
                          dom::IA.IntervalBox)
-    @assert dom ⊆ IA.IntervalBox(IA.Interval(-1, 1), nparams(P)) "dom should " *
+    @assert dom ⊆ IA.IntervalBox(IA.interval(-1, 1), nparams(P)) "dom should " *
                                                                  "be a subset of [-1, 1]^q"
 
     G = genmat(P)
@@ -276,7 +276,7 @@ function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope},
     @inbounds for (j, g) in enumerate(eachcol(G))
         # monomial value over the domain
         # α = mapreduce(x -> _fast_interval_pow(x[1],  x[2]), *, zip(dom, E[:, i]))
-        α = IA.Interval(1, 1)
+        α = IA.interval(1, 1)
         for (i, vi) in enumerate(dom)
             α *= fast_interval_pow(vi, E[i, j])
         end
@@ -409,13 +409,13 @@ function load_taylormodels_overapproximation()
 
         julia> const IA = IntervalArithmetic;
 
-        julia> I = IA.Interval(-0.5, 0.5) # interval remainder
+        julia> I = IA.interval(-0.5, 0.5) # interval remainder
         [-0.5, 0.5]
 
-        julia> x₀ = IA.Interval(0.0) # expansion point
+        julia> x₀ = IA.interval(0.0) # expansion point
         [0, 0]
 
-        julia> D = IA.Interval(-3.0, 1.0)
+        julia> D = IA.interval(-3.0, 1.0)
         [-3, 1]
 
         julia> p1 = Taylor1([2.0, 1.0], 2) # define a linear polynomial
@@ -570,19 +570,19 @@ function load_taylormodels_overapproximation()
           1.0 x₁ + 𝒪(‖x‖⁹)
           1.0 x₂ + 𝒪(‖x‖⁹)
 
-        julia> x₀ = IntervalBox(0..0, 2) # expansion point
+        julia> x₀ = IA.IntervalBox(0..0, 2) # expansion point
         [0, 0]²
 
-        julia> Dx₁ = IA.Interval(0.0, 3.0) # domain for x₁
+        julia> Dx₁ = IA.interval(0.0, 3.0) # domain for x₁
         [0, 3]
 
-        julia> Dx₂ = IA.Interval(-1.0, 1.0) # domain for x₂
+        julia> Dx₂ = IA.interval(-1.0, 1.0) # domain for x₂
         [-1, 1]
 
         julia> D = Dx₁ × Dx₂ # take the Cartesian product of the domain on each variable
         [0, 3] × [-1, 1]
 
-        julia> r = IA.Interval(-0.5, 0.5) # interval remainder
+        julia> r = IA.interval(-0.5, 0.5) # interval remainder
         [-0.5, 0.5]
 
         julia> p1 = 1 + x₁^2 - x₂
