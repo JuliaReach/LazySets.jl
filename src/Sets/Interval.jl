@@ -8,7 +8,7 @@ export Interval,
 constraints_list
 
 """
-    Interval{N, IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
+    Interval{N} <: AbstractHyperrectangle{N}
 
 Type representing an interval on the real line.
 Mathematically, it is of the form
@@ -36,13 +36,13 @@ of numbers:
 
 ```jldoctest interval_constructor
 julia> x = Interval(0.0, 1.0)
-Interval{Float64, IntervalArithmetic.Interval{Float64}}([0, 1])
+Interval{Float64}([0, 1])
 ```
 A 2-vector is also possible:
 
 ```jldoctest interval_constructor
 julia> x = Interval([0.0, 1.0])
-Interval{Float64, IntervalArithmetic.Interval{Float64}}([0, 1])
+Interval{Float64}([0, 1])
 ```
 
 An interval can also be constructed from an `IntervalArithmetic.Interval`.
@@ -55,7 +55,7 @@ julia> using IntervalArithmetic
 WARNING: using IntervalArithmetic.Interval in module Main conflicts with an existing identifier.
 
 julia> x = LazySets.Interval(IntervalArithmetic.Interval(0.0, 1.0))
-Interval{Float64, IntervalArithmetic.Interval{Float64}}([0, 1])
+Interval{Float64}([0, 1])
 
 julia> dim(x)
 1
@@ -74,23 +74,23 @@ interval:
 
 ```jldoctest interval_constructor
 julia> Interval(0//1, 2//1)
-Interval{Rational{Int64}, IntervalArithmetic.Interval{Rational{Int64}}}([0//1, 2//1])
+Interval{Rational{Int64}}([0//1, 2//1])
 ```
 """
-struct Interval{N,IN<:AbstractInterval{N}} <: AbstractHyperrectangle{N}
-    dat::IN
+struct Interval{N} <: AbstractHyperrectangle{N}
+    dat::IA.Interval{N}
 
-    function Interval(dat::IN) where {N,IN<:AbstractInterval{N}}
+    function Interval(dat::IA.Interval{N}) where {N}
         @assert isfinite(dat.lo) && isfinite(dat.hi) "intervals must be bounded"
 
-        return new{N,IN}(dat)
+        return new{N}(dat)
     end
 end
 
 # constructor from two numbers with type promotion
 function Interval(lo::N1, hi::N2) where {N1,N2}
     N = promote_type(N1, N2)
-    return Interval(IA.Interval(N(lo), N(hi)))
+    return Interval(IA.interval(N(lo), N(hi)))
 end
 
 # constructor from a vector
@@ -102,7 +102,7 @@ end
 
 # constructor from a single number
 function Interval(x::Real)
-    return Interval(IA.Interval(x))
+    return Interval(IA.interval(x))
 end
 
 isoperationtype(::Type{<:Interval}) = false

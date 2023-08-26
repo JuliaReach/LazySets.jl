@@ -493,8 +493,8 @@ function _load_rho_range_enclosures()
 
             f(x) = sum(d' * gi * prod(x .^ ei) for (gi, ei) in zip(eachcol(G), eachcol(E)))
 
-            dom = IA.IntervalBox(IA.Interval(-1, 1), n)
-            res += sup(enclose(f, dom, method))
+            dom = IA.IntervalBox(IA.interval(-1, 1), n)
+            res += IA.sup(enclose(f, dom, method))
             return res
         end
     end

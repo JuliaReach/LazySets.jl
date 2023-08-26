@@ -27,7 +27,7 @@ confused with the *set difference*. For example,
 julia> X = Interval(0, 2); Y = Interval(1, 4);
 
 julia> X \\ Y  # computing the set difference
-Interval{Float64, IntervalArithmetic.Interval{Float64}}([0, 1])
+Interval{Float64}([0, 1])
 
 julia> X.dat \\ Y.dat  # computing the left division
 [0.5, ∞]

@@ -427,7 +427,7 @@ function overapproximate(P::SimpleSparsePolynomialZonotope,
                          ::Type{<:UnionSetArray{Zonotope}};
                          nsdiv=10, partition=nothing)
     q = nparams(P)
-    dom = IA.IntervalBox(IA.Interval(-1, 1), q)
+    dom = IA.IntervalBox(IA.interval(-1, 1), q)
     cells = IA.mince(dom, isnothing(partition) ? nsdiv : partition)
     return UnionSetArray([overapproximate(P, Zonotope, c) for c in cells])
 end

@@ -19,7 +19,7 @@ StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
 
 [compat]
 GLPK = "0.11 - 0.15, 1"
-IntervalArithmetic = "0.15 - 0.20"
+IntervalArithmetic = "0.15 - 0.21"
 JuMP = "0.21 - 0.23, 1"
 ReachabilityBase = "0.2"
 RecipesBase = "0.6 - 0.8, 1"
