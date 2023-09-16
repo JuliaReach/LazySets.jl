@@ -16,3 +16,6 @@ RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
 TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
+
+[compat]
+Documenter = "1"

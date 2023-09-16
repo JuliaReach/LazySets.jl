@@ -80,7 +80,7 @@ makedocs(; sitename="LazySets.jl",
                                  "Parallel" => "lib/parallel.md"],
                 "About" => "about.md"],
          doctest=false,
-         strict=true)
+         pagesonly=true)
 
 deploydocs(; repo="github.com/JuliaReach/LazySets.jl.git",
            push_preview=true)
