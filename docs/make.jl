@@ -7,7 +7,8 @@ include("init.jl")
 makedocs(; sitename="LazySets.jl",
          modules=[LazySets, Approximations, LazySets.Parallel],
          format=Documenter.HTML(; prettyurls=get(ENV, "CI", nothing) == "true",
-                                assets=["assets/aligned.css"]),
+                                assets=["assets/aligned.css"],
+                                size_threshold = nothing),
          pages=["Home" => "index.md",
                 "Manual" => Any["Getting Started" => "man/getting_started.md",
                                 "Optional Features" => "man/optional_dependencies.md",
@@ -80,8 +81,7 @@ makedocs(; sitename="LazySets.jl",
                                  "Parallel" => "lib/parallel.md"],
                 "About" => "about.md"],
          doctest=false,
-         pagesonly=true,
-         size_threshold = nothing)
+         pagesonly=true)
 
 deploydocs(; repo="github.com/JuliaReach/LazySets.jl.git",
            push_preview=true)
