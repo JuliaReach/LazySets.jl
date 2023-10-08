@@ -156,36 +156,10 @@ function center(B::BallInf)
     return B.center
 end
 
-"""
-    radius_ball(B::BallInf)
-
-Return the ball radius of a ball in the infinity norm.
-
-### Input
-
-- `B` -- ball in the infinity norm
-
-### Output
-
-The ball radius.
-"""
 function radius_ball(B::BallInf)
     return B.radius
 end
 
-"""
-    ball_norm(B::BallInf)
-
-Return the characteristic norm of a ball in the infinity norm.
-
-### Input
-
-- `B` -- ball in the infinity norm
-
-### Output
-
-The characteristic norm, which is `Inf`.
-"""
 function ball_norm(B::BallInf)
     N = eltype(B)
     return N(Inf)
