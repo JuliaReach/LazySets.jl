@@ -3,7 +3,7 @@
 
 | **Introduction & Documentation** |**Status** |**Community** |**Version-specific Citation** | **License** |
 |:-----------------:|:---------------:|:------------:|:----------------------------:|:-----------:|
-| [![paper][paper-img]][paper-url] [![docs-dev][dev-img]][dev-url] | [![CI][ci-img]][ci-url] [![codecov][cov-img]][cov-url] | [![gitter][chat-img]][chat-url] | [![zenodo][doi-img]][doi-url] | [![license][lic-img]][lic-url] |
+| [![paper][paper-img]][paper-url] [![docs-dev][dev-img]][dev-url] | [![CI][ci-img]][ci-url] [![codecov][cov-img]][cov-url] | [![zulip][chat-img]][chat-url] | [![zenodo][doi-img]][doi-url] | [![license][lic-img]][lic-url] |
 
 [paper-img]: https://proceedings.juliacon.org/papers/10.21105/jcon.00097/status.svg
 [paper-url]: https://doi.org/10.21105/jcon.00097
