@@ -74,36 +74,10 @@ function center(B::Ball1)
     return B.center
 end
 
-"""
-    radius_ball(B::Ball1)
-
-Return the ball radius of a ball in the 1-norm.
-
-### Input
-
-- `B` -- ball in the 1-norm
-
-### Output
-
-The ball radius.
-"""
 function radius_ball(B::Ball1)
     return B.radius
 end
 
-"""
-    ball_norm(B::Ball1)
-
-Return the characteristic norm of a ball in the 1-norm.
-
-### Input
-
-- `B` -- ball in the 1-norm
-
-### Output
-
-The characteristic norm, which is `1`.
-"""
 function ball_norm(B::Ball1)
     N = eltype(B)
     return one(N)

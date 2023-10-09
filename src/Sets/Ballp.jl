@@ -94,36 +94,10 @@ function center(B::Ballp)
     return B.center
 end
 
-"""
-    radius_ball(B::Ballp)
-
-Return the ball radius of a ball in the p-norm.
-
-### Input
-
-- `B` -- ball in the p-norm
-
-### Output
-
-The ball radius.
-"""
 function radius_ball(B::Ballp)
     return B.radius
 end
 
-"""
-    ball_norm(B::Ballp)
-
-Return the characteristic norm of a ball in the p-norm.
-
-### Input
-
-- `B` -- ball in the p-norm
-
-### Output
-
-The characteristic norm, which is `p`.
-"""
 function ball_norm(B::Ballp)
     return B.p
 end
