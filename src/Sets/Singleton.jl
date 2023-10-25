@@ -30,6 +30,7 @@ function Singleton(args::Real...)
 end
 
 isoperationtype(::Type{<:Singleton}) = false
+Base.length(::Singleton) = 1
 
 """
     element(S::Singleton)

@@ -45,6 +45,8 @@ function dim(∅::EmptySet)
     return ∅.dim
 end
 
+Base.length(::EmptySet) = 0
+
 """
     σ(d::AbstractVector, ∅::EmptySet)
 
