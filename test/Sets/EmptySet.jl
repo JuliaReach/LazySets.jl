@@ -8,6 +8,9 @@ for N in [Float64, Rational{Int}, Float32]
     # dim
     @test dim(E) == 2
 
+    # length
+    @test length(E) == 0
+
     # support vector
     @test_throws ErrorException σ(N[0], E)
 

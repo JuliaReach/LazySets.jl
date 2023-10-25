@@ -6,6 +6,7 @@ for N in [Float64, Rational{Int}, Float32]
     c = N[0, 0]
     r = N[0, 0]
     s = Singleton(c)
+    @test length(s) == 1
     @test center(s) == c
     @test radius_hyperrectangle(s) == r
     @test high(s) == r
