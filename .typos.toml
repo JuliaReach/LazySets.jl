@@ -1,0 +1,6 @@
+[default.extend-words]
+# do not correct the following strings:
+Enew = "Enew"
+GIR = "GIR"
+nd = "nd"
+Singl = "Singl"
