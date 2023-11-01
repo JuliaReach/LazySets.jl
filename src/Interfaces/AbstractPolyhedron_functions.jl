@@ -535,7 +535,7 @@ The algorithm is described next. Assuming that the matrix ``M`` is invertible
 ``x = \\text{inv}(M) y`` and we can transform the polyhedron
 ``A x ≤ b`` to the polyhedron ``A \\text{inv}(M) y ≤ b``.
 
-If the dense condition on `M` is not fullfilled, there are two suggested
+If the dense condition on `M` is not satisfied, there are two suggested
 workarounds: either transform to a dense matrix, i.e., calling `linear_map` with
 `Matrix(M)`, or use the `"inverse_right"` algorithm, which does not compute the
 inverse matrix explicitly, but uses a polyalgorithm; see the documentation

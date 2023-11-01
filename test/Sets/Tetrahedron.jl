@@ -10,7 +10,7 @@ for N in [Float64, Float32, Rational{Int}]
     Tmat = Tetrahedron(vmat)
     @test Tmat == T
 
-    # suport vector
+    # support vector
     @test σ(ones(3), T) == N[0, 1, 1 / sqrt(2)]
 
     # membership

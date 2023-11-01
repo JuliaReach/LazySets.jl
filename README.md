@@ -49,7 +49,7 @@ See the [Getting started](https://juliareach.github.io/LazySets.jl/dev/man/getti
 
 ## 📘 Publications
 
-This library has been applied in a number of scientic works.
+This library has been applied in a number of scientific works.
 
 <details>
 <summary>Click to see the full list of publications that use LazySets.</summary>
