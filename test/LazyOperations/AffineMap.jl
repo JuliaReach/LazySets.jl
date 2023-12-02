@@ -53,6 +53,27 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isempty(am)
     @test isempty(AffineMap(M, EmptySet{N}(2), v))
 
+    # containment
+    L = LineSegment(N[1, 0], N[2, 0])
+    b2 = N[1, 0]
+    b3 = N[1, 0, 0]
+    # well-conditioned square matrix
+    M = N[1 2; 3 4]
+    @test N[2, 3] ∈ M * L + b2
+    @test N[0, 0] ∉ M * L + b2
+    # well-conditioned rectangular matrix
+    M = N[1 2; 3 4; 5 6]
+    @test N[2, 3, 5] ∈ M * L + b3
+    @test N[0, 0, 0] ∉ M * L + b3
+    # ill-conditioned square matrix
+    M = N[-1 -2; 1 2]
+    @test N[0, 1] ∈ M * L + b2
+    @test N[0, 0] ∉ M * L + b2
+    # ill-conditioned rectangular matrix
+    M = N[-1 -2; 1 2; 5 6]
+    @test N[0, 1, 5] ∈ M * L + b3
+    @test N[0, 0, 0] ∉ M * L + b3
+
     # ==================================
     # Type-specific methods
     # ==================================

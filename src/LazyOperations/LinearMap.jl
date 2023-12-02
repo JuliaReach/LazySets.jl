@@ -341,7 +341,11 @@ true
 ```
 """
 function ∈(x::AbstractVector, lm::LinearMap)
-    return lm.M \ x ∈ lm.X
+    if !iswellconditioned(matrix(lm))
+        # ill-conditioned matrix; use concrete set representation
+        return x ∈ linear_map(matrix(lm), set(lm))
+    end
+    return matrix(lm) \ x ∈ set(lm)
 end
 
 """

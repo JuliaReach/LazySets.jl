@@ -111,6 +111,25 @@ for N in [Float64, Rational{Int}, Float32]
     # concretize
     @test concretize(L) == linear_map(M, b)
 
+    # containment
+    L = LineSegment(N[1, 0], N[2, 0])
+    # well-conditioned square matrix
+    M = N[1 2; 3 4]
+    @test N[1, 3] ∈ M * L
+    @test N[0, 0] ∉ M * L
+    # well-conditioned rectangular matrix
+    M = N[1 2; 3 4; 5 6]
+    @test N[1, 3, 5] ∈ M * L
+    @test N[0, 0, 0] ∉ M * L
+    # ill-conditioned square matrix
+    M = N[-1 -2; 1 2]
+    @test N[-1, 1] ∈ M * L
+    @test N[0, 0] ∉ M * L
+    # ill-conditioned rectangular matrix
+    M = N[-1 -2; 1 2; 5 6]
+    @test N[-1, 1, 5] ∈ M * L
+    @test N[0, 0, 0] ∉ M * L
+
     # conversion to polygon in constraint representation
     if N <: AbstractFloat
         Lp = convert(HPolygon, L)

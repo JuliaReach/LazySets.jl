@@ -208,6 +208,10 @@ true
 ```
 """
 function ∈(x::AbstractVector, am::AbstractAffineMap)
+    if !iswellconditioned(matrix(am))
+        # ill-conditioned matrix; use concrete set representation
+        return x ∈ affine_map(matrix(am), set(am), vector(am))
+    end
     return matrix(am) \ (x - vector(am)) ∈ set(am)
 end
 
