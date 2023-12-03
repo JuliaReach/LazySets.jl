@@ -74,4 +74,10 @@ for N in [Float64, Float32, Rational{Int}]
                      HalfSpace(N[0, 1], N(3)), HalfSpace(N[0, -1], N(0))])
     @test !(Z ⊆ P)
     @test_throws ArgumentError issubset(Z, P, true)  # not implemented
+    # rounding error
+    Z = Zonotope([-8.0, 8.0],
+                 [-1.0000000000000002 0.7000000000000002;
+                  1.0000000000000002 -0.7000000000000002])
+    L = LineSegment([-9.7, 9.7], [-6.3, 6.3])
+    @test Z ⊆ L
 end
