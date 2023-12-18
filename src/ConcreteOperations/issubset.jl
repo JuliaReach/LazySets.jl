@@ -319,7 +319,9 @@ function _issubset_zonotope_in_polyhedron(Z::AbstractZonotope, P::LazySet,
     C, d = tosimplehrep(P)
     c = center(Z)
     G = genmat(Z)
-    result = all(sum(abs.(C * gj) for gj in eachcol(G)) .≤ d - C * c)
+    A = sum(abs.(C * gj) for gj in eachcol(G))
+    b = d - C * c
+    result = all(_leq.(A, b))
 
     if result
         return _witness_result_empty(witness, true, Z, P)
