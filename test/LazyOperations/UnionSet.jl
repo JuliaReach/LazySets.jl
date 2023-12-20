@@ -52,6 +52,12 @@ for N in [Float64, Rational{Int}, Float32]
         @test U3f isa UnionSetArray && array(U3f) == [B1, B2, B3]
     end
 
+    # concretize
+    X = B1 + B2
+    Xc = concretize(X)
+    @test concretize(UnionSet(X, X)) == UnionSet(Xc, Xc)
+    @test concretize(UnionSetArray([X, X])) == UnionSetArray([Xc, Xc])
+
     for U in [UXY, Uarr]
         # dimension
         @test dim(U) == dim(B1)

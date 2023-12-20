@@ -69,6 +69,8 @@ function swap(cup::UnionSet)
     return UnionSet(cup.Y, cup.X)
 end
 
+concretize(cup::UnionSet) = UnionSet(concretize(first(cup)), concretize(second(cup)))
+
 """
     dim(cup::UnionSet)
 

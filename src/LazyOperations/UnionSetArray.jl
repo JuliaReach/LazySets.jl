@@ -37,6 +37,8 @@ end
 # add functions connecting UnionSet and UnionSetArray
 @declare_array_version(UnionSet, UnionSetArray)
 
+concretize(cup::UnionSetArray) = UnionSetArray([concretize(X) for X in array(cup)])
+
 """
    dim(cup::UnionSetArray)
 
