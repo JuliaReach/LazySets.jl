@@ -25,7 +25,7 @@ Distributions = "0.25"
 Documenter = "1"
 ExponentialUtilities = "1"
 GR = "0"
-IntervalArithmetic = "0.20 - 0.21, =0.21.2"  # v0.22 removed IntervalBox
+IntervalArithmetic = "0.20 - 0.21, =0.21.2, 0.22"
 LaTeXStrings = "1"
 MiniQhull = "0.4"
 Optim = "1"
