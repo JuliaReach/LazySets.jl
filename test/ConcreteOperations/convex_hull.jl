@@ -163,7 +163,9 @@ for N in [Float64, Rational{Int}]
     # UnionSetArray
     V1 = VPolytope([N[0, 0], N[1, 0], N[0, 1]])
     V2 = VPolytope([N[1, 1], N[1, 0], N[0, 1]])
+    P = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
     U = UnionSetArray([V1, V2])
-    chull = convex_hull(U)
-    @test isequivalent(chull, VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]]))
+    @test isequivalent(convex_hull(U), P)
+    U = UnionSetArray([convert(HPolytope, V1), convert(HPolytope, V2)])
+    @test isequivalent(convex_hull(U), P)
 end
