@@ -8,6 +8,8 @@ for N in [Float64, Rational{Int}]
     @test convex_hull([[N(0)]]) == [[N(0)]]
     @test ispermutation(convex_hull([N[2], N[1]]), [N[2], N[1]])
     @test convex_hull([[N(2)], [N(2)]]) == [[N(2)]]
+    @test convex_hull([SVector{1}([N(2)]), SVector{1}([N(1)])]) ==
+          [SVector{1}([N(1)]), SVector{1}([N(2)])]
 
     # corner cases in dimension 2
     @test convex_hull([[N(0), N(0)]]) == [[N(0), N(0)]]

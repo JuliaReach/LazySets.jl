@@ -184,9 +184,8 @@ function _two_points_1d!(points)
     if _isapprox(p1[1], p2[1]) # check for redundancy
         pop!(points)
     elseif p1[1] > p2[1]
-        tmp = p1[1]
-        p1[1] = p2[1]
-        p2[1] = tmp
+        points[1] = p2
+        points[2] = p1
     end
     return points
 end
