@@ -117,7 +117,7 @@ end
 
 """
     underapproximate(P::AbstractPolyhedron{N}, ::Type{Ellipsoid};
-                     backend=default_sdp_solver(N),
+                     backend=default_sdp_solver(),
                      interior_point::AbstractVector{N}=chebyshev_center_radius(P)[1]
                     ) where {N<:Real}
 
@@ -127,7 +127,7 @@ Underapproximate a polyhedral set by the maximum-volume ellipsoid.
 
 - `P`         -- polyhedral set
 - `Ellipsoid` -- type for dispatch
-- `backend`   -- (optional, default: `default_sdp_solver(N)`) backend to solve
+- `backend`   -- (optional, default: `default_sdp_solver()`) backend to solve
                  the semi-definite program
 - `interior_point` -- (optional, default: `chebyshev_center_radius(P)[1]`) an
                       interior point of the ellipsoid (needed for the algorithm:
@@ -161,7 +161,7 @@ An algorithm is described
 [here](https://systemanalysisdpt-cmc-msu.github.io/ellipsoids/doc/chap_ellcalc.html#maximum-volume-ellipsoids).
 """
 function underapproximate(P::AbstractPolyhedron{N}, ::Type{Ellipsoid};
-                          backend=default_sdp_solver(N),
+                          backend=default_sdp_solver(),
                           interior_point::AbstractVector{N}=chebyshev_center_radius(P)[1]) where {N}
     require(@__MODULE__, :SetProg; fun_name="underapproximate")
     return _underapproximate_ellipsoid(P, Ellipsoid; backend=backend,
@@ -171,7 +171,7 @@ end
 function load_setprog_underapproximate()
     return quote
         function _underapproximate_ellipsoid(P::AbstractPolyhedron{N}, ::Type{Ellipsoid};
-                                             backend=default_sdp_solver(N),
+                                             backend=default_sdp_solver(),
                                              interior_point::AbstractVector{N}=chebyshev_center_radius(P)[1]) where {N}
             # create SDP model
             model = Model(backend)
