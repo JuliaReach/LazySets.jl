@@ -2063,3 +2063,8 @@ function affine_map_inverse(A::AbstractMatrix, P::LazySet, b::AbstractVector)
     end
     return HPolyhedron(constraints)
 end
+
+function vertices_list_1d(X::LazySet)
+    l, h = extrema(X, 1)
+    return _isapprox(l, h) ? [[l]] : [[l], [h]]
+end

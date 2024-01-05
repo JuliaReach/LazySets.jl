@@ -8,6 +8,8 @@ for N in [Float64, Rational{Int}]
     @test convex_hull([[N(0)]]) == [[N(0)]]
     @test ispermutation(convex_hull([N[2], N[1]]), [N[2], N[1]])
     @test convex_hull([[N(2)], [N(2)]]) == [[N(2)]]
+    @test convex_hull([SVector{1}([N(2)]), SVector{1}([N(1)])]) ==
+          [SVector{1}([N(1)]), SVector{1}([N(2)])]
 
     # corner cases in dimension 2
     @test convex_hull([[N(0), N(0)]]) == [[N(0), N(0)]]
@@ -161,7 +163,9 @@ for N in [Float64, Rational{Int}]
     # UnionSetArray
     V1 = VPolytope([N[0, 0], N[1, 0], N[0, 1]])
     V2 = VPolytope([N[1, 1], N[1, 0], N[0, 1]])
+    P = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
     U = UnionSetArray([V1, V2])
-    chull = convex_hull(U)
-    @test isequivalent(chull, VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]]))
+    @test isequivalent(convex_hull(U), P)
+    U = UnionSetArray([convert(HPolytope, V1), convert(HPolytope, V2)])
+    @test isequivalent(convex_hull(U), P)
 end

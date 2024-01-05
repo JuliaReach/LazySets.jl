@@ -72,16 +72,25 @@ for N in [Float64, Rational{Int}, Float32]
     # vertices_list of "universal polytope" (strictly speaking: illegal input)
     @test vertices_list(HPolytope{N}()) == Vector{Vector{N}}()
 
-    if test_suite_polyhedra
-        # convert hyperrectangle to a HPolytope
-        H = Hyperrectangle(N[1, 1], N[2, 2])
-        P = convert(HPolytope, H)
-        vlist = vertices_list(P)
-        @test ispermutation(vlist, [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]])
+    # 1D vertices_list
+    P = convert(HPolytope, Interval(1, 2))
+    @test vertices_list(P) == [N[1], N[2]]
 
-        # isempty
-        @test !isempty(HPolytope{N}())  # note: this object is illegal
+    # 2D vertices_list
+    P = convert(HPolytope, Hyperrectangle(N[1, 1], N[2, 2]))
+    @test vertices_list(P) == [N[3, 3], N[-1, 3], N[-1, -1], N[3, -1]]
+
+    if test_suite_polyhedra
+        # nD (n > 2) vertices_list
+        P = convert(HPolytope, Hyperrectangle(N[1, 1, 1], N[2, 2, 2]))
+        vlist = vertices_list(P)
+        @test ispermutation(vlist,
+                            [N[3, 3, -1], N[3, -1, -1], N[-1, -1, -1], N[-1, 3, -1],
+                             N[3, 3, 3], N[3, -1, 3], N[-1, -1, 3], N[-1, 3, 3]])
     end
+
+    # isempty
+    @test !isempty(HPolytope{N}())  # note: this object is illegal
 
     # translation
     P = HPolytope([HalfSpace(N[1, 0], N(1)),

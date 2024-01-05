@@ -211,12 +211,12 @@ A list of the vertices.
 
 ### Algorithm
 
-If the polytope is two-dimensional, the polytope is converted to a polygon in
-constraint representation and then its `vertices_list` implementation is used.
-This ensures that, by default, the optimized two-dimensional methods are used.
+If the polytope is one-dimensional (resp. two-dimensional), it is converted to
+an interval (resp. polygon in constraint representation) and then the respective
+optimized `vertices_list` implementation is used.
 
-It is possible to use the `Polyhedra` backend in two-dimensions as well
-by passing a `backend`.
+It is possible to use the `Polyhedra` backend in the one- and two-dimensional
+case as well by passing a `backend`.
 
 If the polytope is not two-dimensional, the concrete polyhedra-manipulation
 library `Polyhedra` is used. The actual computation is performed by a given
@@ -229,20 +229,25 @@ function vertices_list(P::HPolytope; backend=nothing, prune::Bool=true)
     N = eltype(P)
     if isempty(P.constraints)
         return Vector{N}(Vector{N}(undef, 0))  # illegal polytope
-    elseif dim(P) == 2 && isnothing(backend)
-        # use efficient 2D implementation
-        return vertices_list(convert(HPolygon, P; prune=prune))
-    else
-        require(@__MODULE__, :Polyhedra; fun_name="vertices_list")
-        if isnothing(backend)
-            backend = default_polyhedra_backend(P)
+    elseif isnothing(backend)
+        # use efficient implementations in 1D and 2D
+        n = dim(P)
+        if n == 1
+            return vertices_list_1d(P)
+        elseif n == 2
+            return vertices_list(convert(HPolygon, P; prune=prune))
         end
-        Q = polyhedron(P; backend=backend)
-        if prune
-            removevredundancy!(Q; ztol=_ztol(N))
-        end
-        return collect(Polyhedra.points(Q))
     end
+
+    require(@__MODULE__, :Polyhedra; fun_name="vertices_list")
+    if isnothing(backend)
+        backend = default_polyhedra_backend(P)
+    end
+    Q = polyhedron(P; backend=backend)
+    if prune
+        removevredundancy!(Q; ztol=_ztol(N))
+    end
+    return collect(Polyhedra.points(Q))
 end
 
 function _vertices_list(P::HPolytope, backend)
