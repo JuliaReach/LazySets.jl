@@ -289,7 +289,7 @@ end
 
 # S ⊆ P where P = ⟨Cx ≤ d⟩  iff  y ≤ d where y is the upper corner of box(C*S)
 #
-# see Proposition 7 in Wetzlinger, Kochdumper, Bak, Althoff: * Fully-automated verification
+# see Proposition 7 in Wetzlinger, Kochdumper, Bak, Althoff: *Fully-automated verification
 # of linear systems using inner- and outer-approximations of reachable sets*. 2022.
 function _issubset_in_polyhedron_high(S::LazySet, P::LazySet, witness::Bool=false)
     @assert dim(S) == dim(P)
@@ -310,11 +310,18 @@ function ⊆(Z::AbstractZonotope, P::AbstractPolyhedron, witness::Bool=false)
     return _issubset_zonotope_in_polyhedron(Z, P, witness)
 end
 
-# implements Proposition 7 in Wetzlinger, Kochdumper, Bak, Althoff: * Fully-automated verification
+# implements Proposition 7 in Wetzlinger, Kochdumper, Bak, Althoff: *Fully-automated verification
 # of linear systems using inner- and outer-approximations of reachable sets*. 2022.
 function _issubset_zonotope_in_polyhedron(Z::AbstractZonotope, P::LazySet,
                                           witness::Bool=false)
     @assert dim(Z) == dim(P)
+
+    # corner case: no generator
+    if ngens(Z) == 0
+        c = center(Z)
+        result = c ∈ P
+        return _witness_result_empty(witness, result, Z, P, c)
+    end
 
     C, d = tosimplehrep(P)
     c = center(Z)
