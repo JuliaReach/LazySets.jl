@@ -75,8 +75,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test !(Z ⊆ P)
     @test_throws ArgumentError issubset(Z, P, true)  # not implemented
     # corner case: no generator
-    Z = Zonotope(N[2], zeros(N, 1, 0));
-    P = convert(HPolytope, Interval(N(1), N(3)));
+    Z = Zonotope(N[2], zeros(N, 1, 0))
+    P = convert(HPolytope, Interval(N(1), N(3)))
     @test Z ⊆ P
     # rounding error
     Z = Zonotope([-8.0, 8.0],
