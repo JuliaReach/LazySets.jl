@@ -6,6 +6,7 @@ on:
     paths-ignore:
       - 'LICENSE'
       - 'README.md'
+  workflow_dispatch:
 
 concurrency:
   # Skip intermediate builds: always.
