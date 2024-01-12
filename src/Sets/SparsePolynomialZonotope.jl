@@ -481,7 +481,7 @@ function _load_rho_range_enclosures()
                                      method::Union{RangeEnclosures.AbstractEnclosureAlgorithm,
                                                    Nothing})
             # default method: BranchAndBoundEnclosure
-            isnothing(method) && (method = BranchAndBoundEnclosure())
+            isnothing(method) && (method = RangeEnclosures.BranchAndBoundEnclosure())
 
             c = center(P)
             G = genmat_dep(P)
