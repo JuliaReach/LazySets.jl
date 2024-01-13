@@ -27,13 +27,13 @@ julia> using Symbolics
 
 julia> vars = @variables x[1:2] y
 2-element Vector{Any}:
-x[1:2]
-y
+  x[1:2]
+ y
 
 julia> LazySets._vec(vars)
 3-element Vector{Num}:
-x[1]
-x[2]
+ x[1]
+ x[2]
     y
 ```
 """
