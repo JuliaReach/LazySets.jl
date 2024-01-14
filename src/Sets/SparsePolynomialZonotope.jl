@@ -18,12 +18,14 @@ A sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is represented 
 where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center),
 ``Gᵢ ∈ \\mathbb{R}^{n}`` are the dependent generators,
 ``GIⱼ ∈ \\mathbb{R}^{n}`` are the independent generators, and
-``E ∈ \\mathbb{N}^{p×h}_{≥0}`` is the exponent matrix with matrix elements  ``E_{k, i}``.
+``E ∈ \\mathbb{N}^{p×h}_{≥0}`` is the exponent matrix with matrix elements ``E_{k, i}``.
 
-In the implementation, ``Gᵢ ∈ \\mathbb{R}^n`` are arranged as columns of the dependent generator matrix ``G ∈ \\mathbb{R}^{n \\times h}``,
-and similarly ``GIⱼ ∈ \\mathbb{R}^{n}`` are arranged as columns of the independent generator matrix ``GI ∈ \\mathbb{R}^{n×q}``.
+In the implementation, ``Gᵢ ∈ \\mathbb{R}^n`` are arranged as columns of the dependent generator
+matrix ``G ∈ \\mathbb{R}^{n \\times h}``, and similarly ``GIⱼ ∈ \\mathbb{R}^{n}`` are arranged as
+columns of the independent generator matrix ``GI ∈ \\mathbb{R}^{n×q}``.
 
-The shorthand notation ``\\mathcal{PZ} = \\langle c, G, GI, E, idx \\rangle`` is often used, where ``idx \\mathbb{N}^p`` is a list of non-repeated natural numbers
+The shorthand notation ``\\mathcal{PZ} = \\langle c, G, GI, E, idx \\rangle`` is often used, where
+``idx ∈ \\mathbb{N}^p`` is a list of non-repeated natural numbers
 storing a unique identifier for each dependent factor ``αₖ``.
 
 ### Fields
