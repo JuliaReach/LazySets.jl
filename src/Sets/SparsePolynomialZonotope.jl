@@ -11,16 +11,22 @@ export SparsePolynomialZonotope, expmat, nparams, ngens_dep, ngens_indep,
 
 Type that represents a sparse polynomial zonotope.
 
-A sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is represented by
-the set
+A sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is represented by the set
 ```math
-\\mathcal{PZ} = \\left\\{x \\in \\mathbb{R}^n : x = c + ∑ᵢ₌₁ʰ\\left(∏ₖ₌₁ᵖ α_k^{E_{k, i}} \\right)Gᵢ+∑ⱼ₌₁^qβⱼGIⱼ,~~ α_k ∈ [-1, 1]~~ ∀ i = 1,…,p, j=1,…,q \\right\\},
+\\mathcal{PZ} = \\left\\{x \\in \\mathbb{R}^n : x = c + ∑ᵢ₌₁ʰ\\left(∏ₖ₌₁ᵖ α_k^{E_{k, i}} \\right)Gᵢ+∑ⱼ₌₁^qβⱼGIⱼ,~~ α_k, βⱼ ∈ [-1, 1],~~ ∀ k = 1,…,p, j=1,…,q \\right\\},
 ```
 where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center),
-``G ∈ \\mathbb{R}^{n \\times h}`` is the dependent generator matrix with columns
-``Gᵢ``, ``GI ∈ \\mathbb{R}^{n×q}`` is the independent generator matrix, and
-``E ∈ \\mathbb{N}^{p×h}_{≥0}`` is the exponent matrix with matrix elements
-``E_{k, i}``.
+``Gᵢ ∈ \\mathbb{R}^{n}`` are the dependent generators,
+``GIⱼ ∈ \\mathbb{R}^{n}`` are the independent generators, and
+``E ∈ \\mathbb{N}^{p×h}_{≥0}`` is the exponent matrix with matrix elements ``E_{k, i}``.
+
+In the implementation, ``Gᵢ ∈ \\mathbb{R}^n`` are arranged as columns of the dependent generator
+matrix ``G ∈ \\mathbb{R}^{n \\times h}``, and similarly ``GIⱼ ∈ \\mathbb{R}^{n}`` are arranged as
+columns of the independent generator matrix ``GI ∈ \\mathbb{R}^{n×q}``.
+
+The shorthand notation ``\\mathcal{PZ} = \\langle c, G, GI, E, idx \\rangle`` is often used, where
+``idx ∈ \\mathbb{N}^p`` is a list of non-repeated natural numbers
+storing a unique identifier for each dependent factor ``αₖ``.
 
 ### Fields
 
@@ -34,9 +40,8 @@ where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center),
 
 Sparse polynomial zonotopes were introduced in [1].
 
-- [1] N. Kochdumper and M. Althoff. *Sparse Polynomial Zonotopes: A Novel Set
-Representation for Reachability Analysis*. Transactions on Automatic Control,
-2021.
+- [1] N. Kochdumper and M. Althoff. *Sparse Polynomial Zonotopes: A Novel Set Representation for Reachability Analysis*.
+      Transactions on Automatic Control, 2021.
 """
 struct SparsePolynomialZonotope{N,
                                 VN<:AbstractVector{N},
@@ -204,7 +209,7 @@ The matrix of exponents, where each column is a multidegree.
 
 ### Notes
 
-In the exponent matrix, each row corresponds to a parameter (``\alpha_k`` in the
+In the exponent matrix, each row corresponds to a parameter (``αₖ`` in the
 definition) and each column to a monomial.
 """
 expmat(P::SPZ) = P.E
@@ -403,8 +408,8 @@ A sparse polynomial zonotope with order at most `r`.
 
 This method implements the algorithm described in Proposition 3.1.39 of [1].
 
-[1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
-verification of cyber-physical systems*. 2021.
+[1] Kochdumper, Niklas. *Extensions of polynomial zonotopes and their application to verification of cyber-physical systems.*
+    PhD diss., Technische Universität München, 2022.
 """
 function reduce_order(P::SparsePolynomialZonotope, r::Real,
                       method::AbstractReductionMethod=GIR05())
@@ -455,7 +460,7 @@ Bound the support function of ``P`` in the direction ``d``.
 - `P`                -- sparse polynomial zonotope
 - `enclosure_method` -- (optional; default: `nothing`) method to use for
                         enclosure; an `AbstractEnclosureAlgorithm` from the
-                        [`Rangeenclosures`](https://github.com/JuliaReach/RangeEnclosures.jl)
+                        [`Rangeenclosures.jl`](https://github.com/JuliaReach/RangeEnclosures.jl)
                         package
 
 ### Output
@@ -466,8 +471,8 @@ An overapproximation of the support function in the given direction.
 
 This method implements Proposition 3.1.16 in [1].
 
-[1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
-verification of cyber-physical systems*. 2021.
+[1] Kochdumper, Niklas. *Extensions of polynomial zonotopes and their application to verification of cyber-physical systems.*
+    PhD diss., Technische Universität München, 2022.
 """
 function ρ(d::AbstractVector, P::SparsePolynomialZonotope;
            enclosure_method=nothing)
