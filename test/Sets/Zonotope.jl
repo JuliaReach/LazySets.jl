@@ -96,7 +96,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test Z5.center == N[0, 1]
     @test Z5.generators == N[1//2 1//2 1//2 0; -1//2 1//2 0 1//2]
     # 1D simplifies to 1 generator
-    M = N[1 1;]
+    M = N[-1 1;]
     Z6 = linear_map(M, Z3)
     @test ngens(Z6) == 1 && genmat(Z6) == hcat(N[4])
 
