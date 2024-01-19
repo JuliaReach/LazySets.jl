@@ -319,9 +319,7 @@ function _linear_map_zonotope_1D(M::AbstractMatrix, Z::LazySet)
     c = M * center(Z)
     gi = zero(N)
     @inbounds for g in generators(Z)
-        for i in eachindex(g)
-            gi += M[1, i] * g[i]
-        end
+        gi += abs(sum(M[1, i] * g[i] for i in eachindex(g)))
     end
     return Zonotope(c, hcat(gi))
 end
