@@ -432,6 +432,13 @@ function overapproximate(P::SimpleSparsePolynomialZonotope,
     return UnionSetArray([overapproximate(P, Zonotope, c) for c in cells])
 end
 
+function overapproximate(P::SparsePolynomialZonotope,
+                         T::Type{<:UnionSetArray{Zonotope}};
+                         nsdiv=10, partition=nothing)
+    SSPZ = convert(SimpleSparsePolynomialZonotope, P)
+    return overapproximate(SSPZ, T; nsdiv=nsdiv, partition=partition)
+end
+
 """
     overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope},
                     [indices]=1:dim(Z))
