@@ -1,10 +1,10 @@
 using .Symbolics: gradient,
-                simplify,
-                Num,  # variable like, e.g. x[1]
-                Term, # term like, eg. x[1] + x[2] == 1
-                Symbolic,
-                operation,
-                arguments
+                  simplify,
+                  Num,  # variable like, e.g. x[1]
+                  Term, # term like, eg. x[1] + x[2] == 1
+                  Symbolic,
+                  operation,
+                  arguments
 
 """
     _vec(vars)

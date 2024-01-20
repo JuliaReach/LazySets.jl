@@ -1,32 +1,32 @@
 import .Polyhedra: polyhedron
 export polyhedron, triangulate
 using .Polyhedra: HRep, VRep,
-                removehredundancy!, removevredundancy!
+                  removehredundancy!, removevredundancy!
 
 function default_polyhedra_backend_1d(N::Type{<:Number}, solver=nothing)
     return Polyhedra.IntervalLibrary{N}()
 end
 
 function default_polyhedra_backend_nd(N::Type{<:Number},
-                                    solver=default_lp_solver_polyhedra(N))
+                                      solver=default_lp_solver_polyhedra(N))
     return Polyhedra.DefaultLibrary{N}(solver)
 end
 
 function default_lp_solver_polyhedra(N::Type{<:AbstractFloat};
-                                    presolve::Bool=true)
+                                     presolve::Bool=true)
     if presolve
         return JuMP.optimizer_with_attributes(GLPK.Optimizer,
-                                            "presolve" => GLPK_ON)
+                                              "presolve" => GLPK_ON)
     else
         return JuMP.optimizer_with_attributes(GLPK.Optimizer)
     end
 end
 
 function default_lp_solver_polyhedra(N::Type{<:Rational};
-                                    presolve::Bool=false)
+                                     presolve::Bool=false)
     if presolve
         return JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(; method=GLPK.EXACT),
-                                            "presolve" => GLPK_ON)
+                                              "presolve" => GLPK_ON)
     else
         return JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(; method=GLPK.EXACT))
     end

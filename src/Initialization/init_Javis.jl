@@ -1,8 +1,8 @@
 using .Javis: Luxor, background, sethue, Video, Background, Object, render
 
 export ground,
-    luxify,
-    nfolds
+       luxify,
+       nfolds
 
 # default canvas background
 function ground(args...)
