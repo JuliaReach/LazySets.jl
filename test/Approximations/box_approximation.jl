@@ -85,4 +85,27 @@ for N in [Float64]
     # slightly contradicting bounds are interpreted as a flat set
     X = HalfSpace(N[-1], N(0)) ∩ HalfSpace(N[1], N(-1e-15))
     @test box_approximation(X) == Hyperrectangle(N[-5.0e-16], N[0])
+
+    # box approximation of Taylor model
+    # (currently gives different result for non-Float64:
+    #  https://github.com/JuliaIntervals/TaylorModels.jl/issues/158)
+    I = interval(N(0), N(0))  # interval remainder
+    # TaylorModel1
+    t = TaylorModels.Taylor1(3)
+    q₁ = 1 + 2 * t + 2 * t^2
+    D = interval(N(-1), N(1))
+    x0 = IA.mid(D)
+    vTM = [TaylorModels.TaylorModel1(q₁, I, x0, D)]
+    @test box_approximation(vTM) == Hyperrectangle(N[2], N[3])
+    # TaylorModelN
+    x₁, x₂, x₃ = set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
+    p₁ = 1 + x₁ - x₂
+    p₂ = x₃ - x₁
+    Dx₁ = interval(N(-1), N(1))
+    Dx₂ = interval(N(-1), N(1))
+    Dx₃ = interval(N(-1), N(1))
+    D = Dx₁ × Dx₂ × Dx₃
+    x0 = IntervalBox(IA.mid.(D)...)
+    vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
+    @test box_approximation(vTM) == Hyperrectangle(N[1, 0], N[2, 2])
 end
