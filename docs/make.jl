@@ -108,7 +108,19 @@ makedocs(; sitename="LazySets.jl",
                                                                   #
                                                                   ],
                                  "Conversions between set representations" => "lib/conversion.md",
-                                 "Approximations" => "lib/approximations.md",
+                                 "Approximations" => [
+                                                      #
+                                                      "lib/approximations/overview.md",
+                                                      "lib/approximations/overapproximate.md",
+                                                      "lib/approximations/box_approximation.md",
+                                                      "lib/approximations/iterative_refinement.md",
+                                                      "lib/approximations/template_directions.md",
+                                                      "lib/approximations/underapproximate.md",
+                                                      "lib/approximations/approximate.md",
+                                                      "lib/approximations/decompose.md",
+                                                      "lib/approximations/hausdorff_distance.md"
+                                                      #
+                                                      ],
                                  "Utilities" => "lib/utils.md",
                                  "Parallel" => "lib/parallel.md"],
                 "About" => "about.md"],
