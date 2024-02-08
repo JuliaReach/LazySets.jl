@@ -92,7 +92,21 @@ makedocs(; sitename="LazySets.jl",
                                                        "SymmetricIntervalHull" => "lib/lazy_operations/SymmetricIntervalHull.md",
                                                        "Translation" => "lib/lazy_operations/Translation.md",
                                                        "UnionSet" => "lib/lazy_operations/UnionSet.md"],
-                                 "Concrete Operations" => "lib/binary_functions.md",
+                                 "Concrete Binary Operations" => [
+                                                                  #
+                                                                  "lib/concrete_binary_operations/cartesian_product.md",
+                                                                  "lib/concrete_binary_operations/convex_hull.md",
+                                                                  "lib/concrete_binary_operations/difference.md",
+                                                                  "lib/concrete_binary_operations/distance.md",
+                                                                  "lib/concrete_binary_operations/exact_sum.md",
+                                                                  "lib/concrete_binary_operations/intersection.md",
+                                                                  "lib/concrete_binary_operations/linear_combination.md",
+                                                                  "lib/concrete_binary_operations/minkowski_sum.md",
+                                                                  "lib/concrete_binary_operations/minkowski_difference.md",
+                                                                  "lib/concrete_binary_operations/isdisjoint.md",
+                                                                  "lib/concrete_binary_operations/issubset.md"
+                                                                  #
+                                                                  ],
                                  "Conversions between set representations" => "lib/conversion.md",
                                  "Approximations" => "lib/approximations.md",
                                  "Utilities" => "lib/utils.md",
