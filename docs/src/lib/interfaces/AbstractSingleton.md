@@ -1,0 +1,46 @@
+```@contents
+Pages = ["AbstractSingleton.md"]
+Depth = 3
+```
+
+```@meta
+CurrentModule = LazySets
+```
+
+# [Singletons (AbstractSingleton)](@id def_AbstractSingleton)
+
+A singleton is a special hyperrectangle consisting of only one point.
+
+```@docs
+AbstractSingleton
+```
+
+This interface defines the following functions:
+
+```@docs
+σ(::AbstractVector, ::AbstractSingleton)
+ρ(::AbstractVector, ::AbstractSingleton)
+∈(::AbstractVector, ::AbstractSingleton)
+center(::AbstractSingleton)
+center(::AbstractSingleton, ::Int)
+element(::AbstractSingleton, ::Int)
+vertices(::AbstractSingleton{N}) where {N}
+vertices_list(::AbstractSingleton)
+radius_hyperrectangle(::AbstractSingleton{N}) where {N}
+radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N}
+high(::AbstractSingleton)
+high(::AbstractSingleton, ::Int)
+low(::AbstractSingleton)
+low(::AbstractSingleton, ::Int)
+generators(::AbstractSingleton{N}) where {N}
+genmat(::AbstractSingleton{N}) where {N}
+ngens(::AbstractSingleton)
+reflect(::AbstractSingleton)
+plot_recipe(::AbstractSingleton{N}, ::Any=zero(N)) where {N}
+RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::Real=zero(N)) where {N}
+```
+
+## Implementations
+
+* [Singleton](@ref def_Singleton)
+* [Origin (ZeroSet)](@ref def_ZeroSet)
