@@ -9,8 +9,14 @@ makedocs(; sitename="LazySets.jl",
          format=Documenter.HTML(; prettyurls=get(ENV, "CI", nothing) == "true",
                                 assets=["assets/aligned.css"],
                                 size_threshold_warn=150 * 2^10),
-         pages=["Home" => "index.md",
-                "Manual" => Any["Getting Started" => "man/getting_started.md",
+         doctest=false,
+         pagesonly=true,
+         pages=[
+                #
+                "Home" => "index.md",
+                "Manual" => Any[
+                                #
+                                "Getting Started" => "man/getting_started.md",
                                 "Optional Features" => "man/optional_dependencies.md",
                                 "A Tour of LazySets" => "man/tour.md",
                                 "Introduction to Convex Sets" => "man/convex_sets.md",
@@ -25,7 +31,9 @@ makedocs(; sitename="LazySets.jl",
                                 "A Hybrid Reachability Algorithm" => "man/reach_zonotopes_hybrid.md",
                                 "Concrete Polyhedra" => "man/concrete_polyhedra.md",
                                 "Parallel Approximations" => "man/parallel_approximations.md",
-                                "Lazy Intersections" => "man/lazy_intersections.md"],
+                                "Lazy Intersections" => "man/lazy_intersections.md"
+                                #
+                                ],
                 "Library" => Any["Set Interfaces" => [
                                                       #
                                                       "lib/interfaces/overview.md",
@@ -45,7 +53,9 @@ makedocs(; sitename="LazySets.jl",
                                                       "lib/interfaces/AbstractBallp.md"
                                                       #
                                                       ],
-                                 "Sets" => ["Ball1" => "lib/sets/Ball1.md",
+                                 "Sets" => [
+                                            #
+                                            "Ball1" => "lib/sets/Ball1.md",
                                             "Ball2" => "lib/sets/Ball2.md",
                                             "BallInf" => "lib/sets/BallInf.md",
                                             "Ballp" => "lib/sets/Ballp.md",
@@ -75,8 +85,12 @@ makedocs(; sitename="LazySets.jl",
                                             "VPolygon" => "lib/sets/VPolygon.md",
                                             "VPolytope" => "lib/sets/VPolytope.md",
                                             "ZeroSet" => "lib/sets/ZeroSet.md",
-                                            "Zonotope" => "lib/sets/Zonotope.md"],
-                                 "Lazy Operations" => ["AffineMap" => "lib/lazy_operations/AffineMap.md",
+                                            "Zonotope" => "lib/sets/Zonotope.md"
+                                            #
+                                            ],
+                                 "Lazy Operations" => [
+                                                       #
+                                                       "AffineMap" => "lib/lazy_operations/AffineMap.md",
                                                        "Bloating" => "lib/lazy_operations/Bloating.md",
                                                        "CartesianProduct" => "lib/lazy_operations/CartesianProduct.md",
                                                        "Complement" => "lib/lazy_operations/Complement.md",
@@ -91,7 +105,9 @@ makedocs(; sitename="LazySets.jl",
                                                        "ResetMap" => "lib/lazy_operations/ResetMap.md",
                                                        "SymmetricIntervalHull" => "lib/lazy_operations/SymmetricIntervalHull.md",
                                                        "Translation" => "lib/lazy_operations/Translation.md",
-                                                       "UnionSet" => "lib/lazy_operations/UnionSet.md"],
+                                                       "UnionSet" => "lib/lazy_operations/UnionSet.md"
+                                                       #
+                                                       ],
                                  "Concrete Binary Operations" => [
                                                                   #
                                                                   "lib/concrete_binary_operations/overview.md",
@@ -123,10 +139,12 @@ makedocs(; sitename="LazySets.jl",
                                                       #
                                                       ],
                                  "Utilities" => "lib/utils.md",
-                                 "Parallel" => "lib/parallel.md"],
-                "About" => "about.md"],
-         doctest=false,
-         pagesonly=true)
+                                 "Parallel" => "lib/parallel.md"
+                                 #
+                                 ],
+                "About" => "about.md"
+                #
+                ])
 
 deploydocs(; repo="github.com/JuliaReach/LazySets.jl.git",
            push_preview=true)
