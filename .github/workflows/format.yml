@@ -1,22 +1,22 @@
-name: Format
+# https://github.com/julia-actions/julia-format
+name: Format code
 on:
   schedule:
     - cron: '0 0 * * 6'  # every Saturday at 0:00
+  workflow_dispatch:
 jobs:
-  build:
+  format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Cache artifacts
+        uses: julia-actions/cache@v1
       - name: Install JuliaFormatter and format
-        run: |
-          julia  -e 'import Pkg; Pkg.add("JuliaFormatter")'
-          julia  -e 'using JuliaFormatter; format(".")'
-
-      # https://github.com/marketplace/actions/create-pull-request
-      # https://github.com/peter-evans/create-pull-request#reference-example
-      - name: Create Pull Request
+        run: julia -e 'import Pkg; Pkg.add("JuliaFormatter"); using JuliaFormatter; format(".")'
+      - name: Create pull request
         id: cpr
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Format .jl files
