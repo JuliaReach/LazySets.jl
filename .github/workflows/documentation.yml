@@ -1,5 +1,5 @@
+# https://documenter.juliadocs.org/stable/man/hosting/#GitHub-Actions
 name: Documentation
-
 on:
   push:
     paths-ignore:
@@ -7,33 +7,38 @@ on:
       - 'README.md'
     branches:
       - master
-    tags: '*'
   pull_request:
     paths-ignore:
       - 'LICENSE'
       - 'README.md'
   workflow_dispatch:
-
+concurrency:
+  # cancel intermediate builds
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     env:
       JULIA_PKG_SERVER: ''
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
       - name: Set up Julia
-        uses: julia-actions/setup-julia@latest
+        uses: julia-actions/setup-julia@v1
         with:
           version: '1'
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Cache artifacts
+        uses: julia-actions/cache@v1
       - name: Install dependencies
         run: |
           julia --project=docs/ -e 'using Pkg;
-              Pkg.develop(PackageSpec(path=pwd()));
-              Pkg.instantiate()'
+            Pkg.develop(PackageSpec(path=pwd()));
+            Pkg.instantiate()'
       - name: Build and deploy
+        run: julia --project=docs/ docs/make.jl
         env:
           GKSwstype: nul  # fix for Plots with GR backend
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # authentication with GitHub Actions token
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}  # authentication with SSH deploy key
-        run: julia --project=docs/ docs/make.jl
