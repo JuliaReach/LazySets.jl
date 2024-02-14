@@ -50,6 +50,31 @@ for N in [Float64, Float32, Rational{Int}]
     @test genmat_indep(TPZ) == genmat_indep(TPZ)
     @test expmat(TPZ) == expmat(TPZ)
 
+    CPPZ = cartesian_product(PZ, PZ2)
+    @test center(CPPZ) == N[4, 4, 0, 0]
+    @test genmat_dep(CPPZ) == N[2 1 2 0 0 0;
+                                0 2 2 0 0 0;
+                                0 0 0 2 0 1;
+                                0 0 0 1 2 1]
+    @test genmat_indep(CPPZ) == hcat(N[1, 0, 0, 0])
+    @test expmat(CPPZ) == [1 0 3 0 0 0;
+                           0 1 1 0 0 0;
+                           0 0 0 1 0 1;
+                           0 0 0 0 1 3]
+    Z = overapproximate(PZ2, Zonotope)
+    CPPZ = cartesian_product(PZ, Z)
+    @test center(CPPZ) == N[4, 4, 0, 0]
+    @test genmat_dep(CPPZ) == N[2 1 2;
+                                0 2 2;
+                                0 0 0;
+                                0 0 0]
+    @test genmat_indep(CPPZ) == N[1 0 0 0;
+                                  0 0 0 0;
+                                  0 2 0 1;
+                                  0 1 2 1]
+    @test expmat(CPPZ) == [1 0 3;
+                           0 1 1]
+
     MSPZ = minkowski_sum(PZ, PZ2)
     @test center(MSPZ) == [4, 4]
     @test genmat_dep(MSPZ) == [2 1 2 2 0 1; 0 2 2 1 2 1]

@@ -13,4 +13,6 @@ CurrentModule = LazySets
 cartesian_product(::VPolytope, ::VPolytope)
 cartesian_product(::LazySet, ::LazySet)
 cartesian_product(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
+cartesian_product(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
+cartesian_product(::SparsePolynomialZonotope, ::AbstractZonotope)
 ```
