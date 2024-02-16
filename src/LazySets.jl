@@ -186,6 +186,11 @@ include("Plotting/mesh.jl")
 # ==========================
 include("Parallel/Parallel.jl")
 
+# ==========================
+# Parallel-algorithms module
+# ==========================
+include("MatrixSets/MatrixSets.jl")
+
 # ===================================================
 # Load external packages on-demand (using 'Requires')
 # ===================================================
