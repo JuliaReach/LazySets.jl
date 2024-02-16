@@ -203,6 +203,11 @@ include("Plotting/mesh.jl")
 # ==========================
 include("Parallel/Parallel.jl")
 
+# ==========================
+# Parallel-algorithms module
+# ==========================
+include("MatrixSets/MatrixSets.jl")
+
 # ==============================
 # Activate assertions by default
 # ==============================
