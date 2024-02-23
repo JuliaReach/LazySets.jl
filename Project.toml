@@ -18,12 +18,17 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
 
 [compat]
+Distributed = "<0.0.1, 1.6"
 GLPK = "0.11 - 0.15, 1"
 IntervalArithmetic = "0.15 - 0.21, =0.21.2"  # v0.22 removed IntervalBox
 JuMP = "0.21 - 0.23, 1"
+LinearAlgebra = "<0.0.1, 1.6"
+Random = "<0.0.1, 1.6"
 ReachabilityBase = "0.2.1"
 RecipesBase = "0.6 - 0.8, 1"
 Reexport = "0.2, 1"
 Requires = "0.5, 1"
+SharedArrays = "<0.0.1, 1.6"
+SparseArrays = "<0.0.1, 1.6"
 StaticArraysCore = "1"
 julia = "1.6"
