@@ -6,7 +6,6 @@ module LazySets
 using LinearAlgebra, RecipesBase, Reexport, Requires, SparseArrays
 import GLPK, JuMP, Random, ReachabilityBase
 import IntervalArithmetic as IA
-
 using IntervalArithmetic: mince
 import IntervalArithmetic: radius, ⊂
 using LinearAlgebra: checksquare
@@ -15,13 +14,17 @@ using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle, randperm
 import RecipesBase: apply_recipe
 import SparseArrays: permute
 
+@static if VERSION < v"1.9"
+    stack(vecs) = hcat(vecs...)
+end
+
 export Arrays
 export ×, normalize, ⊂,
        subtypes
 
-# ==============
+# ================
 # ReachabilityBase
-# ==============
+# ================
 
 using ReachabilityBase.Assertions: @assert
 import ReachabilityBase.Assertions: activate_assertions, deactivate_assertions
