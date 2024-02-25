@@ -1,3 +1,6 @@
+import Base.Threads
+@show Base.Threads.nthreads()
+
 using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays,
       StaticArrays, GLPK
 using JuMP: optimizer_with_attributes
