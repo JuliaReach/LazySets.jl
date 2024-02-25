@@ -40,7 +40,7 @@ using Plots, LazySets, LinearAlgebra
 
 function reach_hybrid(As, Ts, init, δ, μ, T, max_order, instant_transitions)
     # initialize queue with initial mode and states at time t=0
-    queue = Vector{Tuple{LazySet, Integer, Float64}}(undef, 1)
+    queue = Vector{Tuple{LazySet,Int,Float64}}(undef, 1)
     queue[1] = (init[1], init[2], 0.0)
 
     res = Tuple{LazySet, Int}[]
