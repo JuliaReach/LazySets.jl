@@ -136,6 +136,10 @@ for N in [Float64]
     Zt = overapproximate(vTM, Zonotope)
     Zp = overapproximate(PZ, Zonotope)
     @test isequivalent(Zt, Zp)
+
+    # conversion back to Taylor model
+    vTM2 = convert(Vector{<:TaylorModelN}, PZ)
+    @test vTM == vTM2
 end
 
 for Z in [rand(Zonotope), rand(Hyperrectangle)]
