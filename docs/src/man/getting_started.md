@@ -52,7 +52,7 @@ julia> var = @variables x[1:10]
 julia> Hyperplane(x[1] + x[2] == 1/2, var)
 Hyperplane{Float64,Array{Float64,1}}([1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 0.5)
 ```
-defines the hyperplane $H : \{ x \in \mathbb{R}^{10} : x_1 + x_2 = 1/2\}$. The `Hyperplane` constructor
+defines the hyperplane ``H : \{ x \in \mathbb{R}^{10} : x_1 + x_2 = 1/2\}``. The `Hyperplane` constructor
 (and other constructors) automatically work with Symbolics's variables once `using Symbolics` is ran
 in your session.
 

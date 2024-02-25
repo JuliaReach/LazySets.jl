@@ -29,9 +29,9 @@ This way we provide an exact but abstract representation, in principle for any
 common convex set class or operation between sets.
 Concrete information is obtained through evaluating the set in specific
 directions.
-More precisely, each concrete subtype $\mathcal{X}$ of the abstract type
+More precisely, each concrete subtype ``\mathcal{X}`` of the abstract type
 `LazySet` exports a method to calculate its support vector
-$σ(d, \mathcal{X})$ in a given (arbitrary) direction $d \in \mathbb{R}^n$.
+``σ(d, \mathcal{X})`` in a given (arbitrary) direction ``d \in \mathbb{R}^n``.
 Representing sets exactly but lazily has the advantage of being able to perform
 only the required operations on-demand.
 
@@ -46,24 +46,24 @@ refinement method.
 
 ## Example
 
-Let $\mathcal{X}_0 \subset \mathbb{R}^{1000}$ be the Euclidean ball of center
-$(1, \ldots, 1)$ and radius $0.1$ in dimension $n=1000$.
-Given a real matrix $A \in \mathbb{R}^{1000 \times 1000}$, suppose that we are
+Let ``\mathcal{X}_0 \subset \mathbb{R}^{1000}`` be the Euclidean ball of center
+``(1, \ldots, 1)`` and radius ``0.1`` in dimension ``n=1000``.
+Given a real matrix ``A \in \mathbb{R}^{1000 \times 1000}``, suppose that we are
 interested in the equation
 
-$\mathcal{Y} = CH(e^{A δ} \mathcal{X}_0 ⊕ δ B\mathcal{U}, \mathcal{X}_0),$
+``\mathcal{Y} = CH(e^{A δ} \mathcal{X}_0 ⊕ δ B\mathcal{U}, \mathcal{X}_0),``
 
-where $CH$ is the convex hull operator, $⊕$ denotes Minkowski sum, $\mathcal{U}$
-is a ball in the infinity norm centered at zero and radius $1.2$, and $B$ is a
+where ``CH`` is the convex hull operator, ``⊕`` denotes Minkowski sum, ``\mathcal{U}``
+is a ball in the infinity norm centered at zero and radius ``1.2``, and ``B`` is a
 linear map of the appropriate dimensions.
 This equation typically arises in the study of discrete approximation models for
 reachability of continuous systems, see for example
 [SpaceEx: Scalable verification of hybrid systems](https://github.com/JuliaReach/Reachability.jl/wiki/References#frehse2011spaceex).
 
-For concreteness, we take $A$ to be a random matrix with probability $1\%$ of
+For concreteness, we take ``A`` to be a random matrix with probability ``1\%`` of
 any entry being nonzero.
-Suppose that the input set $\mathcal{U}$ is two-dimensional, and that the linear
-map $B$ is random.
+Suppose that the input set ``\mathcal{U}`` is two-dimensional, and that the linear
+map ``B`` is random.
 Finally, let δ = 0.1.
 Using `LazySets`, we can define this problem as follows:
 
@@ -81,7 +81,7 @@ julia> B = randn(1000, 2);
 julia> U = BallInf(zeros(2), 1.2);
 ```
 
-The `@time` macro shows that building $\mathcal{Y}$ with `LazySets` is
+The `@time` macro shows that building ``\mathcal{Y}`` with `LazySets` is
 instantaneous.
 
 ```jldoctest index_label
@@ -97,9 +97,9 @@ julia> basetype(Y)
 ConvexHull
 ```
 
-Now suppose that we are interested in observing the projection of $\mathcal{Y}$
+Now suppose that we are interested in observing the projection of ``\mathcal{Y}``
 onto the variables number 1 and 500.
-First we define the $2×1000$ projection matrix and apply it to $\mathcal{Y}$ as
+First we define the ``2×1000`` projection matrix and apply it to ``\mathcal{Y}`` as
 a linear map (i.e., from the left).
 Second, we use the `overapproximate` method:
 
@@ -110,14 +110,14 @@ julia> res = Approximations.overapproximate(proj_mat * Y);
 ```
 
 We have calculated a box overapproximation of the exact projection onto the
-$(x_1, x_{500})$ plane.
+``(x_1, x_{500})`` plane.
 Notice that it takes about 0.064 seconds for the whole operation, allocating
 less than 10MB of RAM.
 Let us note that if the set operations were done explicitly, this would be much
 (!) slower.
 For instance, already the explicit computation of the matrix exponential would
 have cost 10x more, and allocated around 300MB.
-For even higher $n$, an evaluation will probably run out of RAM.
+For even higher ``n``, an evaluation will probably run out of RAM.
 But this is doable with `LazySets` because the *action* of the matrix
 exponential on the set is only evaluated along the directions of interest.
 Similar comments apply to the Minkowski sum above.

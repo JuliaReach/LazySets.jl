@@ -21,7 +21,7 @@ Let ``\mathcal{X} \subset \mathbb{R}^n`` be a compact convex set.
 The *support function* of ``\mathcal{X}`` is the function
 ``\rho_\mathcal{X} : \mathbb{R}^n\to \mathbb{R}``, defined as
 
-$\rho_\mathcal{X}(\ell) := \max\limits_{x \in \mathcal{X}} \ell^\mathrm{T} x.$
+``\rho_\mathcal{X}(\ell) := \max\limits_{x \in \mathcal{X}} \ell^\mathrm{T} x.``
 
 We recall the following elementary properties of the support function.
 Let ``(\ell_1, \ell_2)`` denote the concatenation of vectors ``\ell_1`` and ``\ell_2``.
@@ -53,7 +53,7 @@ The farthest points of ``\mathcal{X}`` in the direction ``\ell`` are the
 *support vectors* denoted ``\sigma_\mathcal{X}(\ell)``.
 These points correspond to the optimal points for the support function, i.e.,
 
-$\sigma_\mathcal{X}(\ell) := \{ x \in \mathcal{X} : \ell^\mathrm{T} x  = \rho_{\mathcal{X}}(\ell)  \}.$
+``\sigma_\mathcal{X}(\ell) := \{ x \in \mathcal{X} : \ell^\mathrm{T} x  = \rho_{\mathcal{X}}(\ell)  \}.``
 
 Since all support vectors in a given direction evaluate to the same value of the
 support function, we often speak of *the support vector*, where the choice of
@@ -104,14 +104,14 @@ For instance, a bounding box involves evaluating the support function in ``2n``
 directions.
 To quantify this, we use the following distance measure.
 
-A set ``\mathcal{\hat{X}}`` is within Hausdorff distance ``\varepsilon`` of
+A set ``\mathcal{\hat{X}}`` is within Hausdorff distance ``ε`` of
 ``\mathcal{X}`` if and only if
 
-$\mathcal{\hat{X}} \subseteq \mathcal{X} \oplus \varepsilon\mathcal{B}_p^n
+``\mathcal{\hat{X}} \subseteq \mathcal{X} \oplus ε\mathcal{B}_p^n
 \text{ and } \mathcal{X} \subseteq \mathcal{\hat{X}} \oplus
-\varepsilon\mathcal{B}_p^n.$
+ε\mathcal{B}_p^n.``
 
-The infimum ``\varepsilon \geq 0`` that satisfies the above equation is called
+The infimum ``ε \geq 0`` that satisfies the above equation is called
 the Hausdorff distance between ``\mathcal{X}`` and ``\mathcal{\hat{X}}`` with
 respect to the ``p``-norm, and is denoted
 ``d_H^p\bigl(\mathcal{X},\mathcal{\hat{X}}\bigr)``.
@@ -120,20 +120,20 @@ Another useful characterization of the Hausdorff distance is the following.
 Let ``\mathcal{X}, \mathcal{Y} \subset \mathbb{R}^n`` be polytopes.
 Then
 
-$d^p_H(\mathcal{X}, \mathcal{Y}) = \max_{\ell \in \mathcal{B}_p^n}
-\left|\rho_{\mathcal{Y}}(\ell) - \rho_{\mathcal{X}}(\ell)\right|.$
+``d^p_H(\mathcal{X}, \mathcal{Y}) = \max_{\ell \in \mathcal{B}_p^n}
+\left|\rho_{\mathcal{Y}}(\ell) - \rho_{\mathcal{X}}(\ell)\right|.``
 
 In the special case ``\mathcal{X} \subseteq \mathcal{Y}``, the absolute value
 can be removed.
 
 By adding directions using Kamenev's algorithm (s. below), the outer polyhedron
-in (3) is within Hausdorff distance ``\varepsilon \Vert{X}\Vert_p`` for
-``\mathcal{O}\left(\frac{1}{\varepsilon^{n-1}}\right)`` directions, and this
+in (3) is within Hausdorff distance ``ε \Vert{X}\Vert_p`` for
+``\mathcal{O}\left(\frac{1}{ε^{n-1}}\right)`` directions, and this
 bound is optimal.
 It follows that accurate outer polyhedral approximations are possible only in
 low dimensions.
 For ``n=2``, the bound can be lowered to
-``\mathcal{O}\left(\frac{1}{\sqrt{\varepsilon}}\right)`` directions, which is
+``\mathcal{O}\left(\frac{1}{\sqrt{ε}}\right)`` directions, which is
 particularly efficient and the reason why we chose to decompose the system into
 subsystems of dimension 2.
 
