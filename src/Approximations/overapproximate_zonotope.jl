@@ -303,7 +303,9 @@ A zonotope.
 """
 function overapproximate(P::SparsePolynomialZonotope, ::Type{<:Zonotope})
     cnew, Gnew = _zonotope_overapprox(center(P), genmat_dep(P), expmat(P))
-    return Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
+    Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
+    Zred = remove_redundant_generators(Z)
+    return Zred
 end
 
 """
