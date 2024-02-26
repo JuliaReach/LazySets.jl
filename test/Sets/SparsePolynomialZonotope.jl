@@ -87,9 +87,7 @@ for N in [Float64, Float32, Rational{Int}]
     S = SparsePolynomialZonotope(N[-0.5, -0.5], N[1.0 1 1 1; 1 0 -1 1], zeros(N, 2, 0),
                                  [1 0 1 2; 0 1 1 0])
     Z = overapproximate(S, Zonotope)
-
-    @test center(Z) == N[0, 0]
-    @test genmat(Z) == N[1 1 1 0.5; 1 0 -1 0.5]
+    @test isequivalent(Z, Zonotope(N[0, 0], N[1.5 1 1; 1.5 0 -1]))
 
     PZ = SparsePolynomialZonotope(N[-1, 2], N[1 2 0 2; 0 1 2 -1], N[1 0; 2 0], [1 0 1 2; 0 0 0 1])
     PZreduced = remove_redundant_generators(PZ)
