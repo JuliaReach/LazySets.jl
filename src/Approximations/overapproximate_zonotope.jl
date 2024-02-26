@@ -606,9 +606,9 @@ function load_taylormodels_overapproximation()
          124.0
 
         julia> Matrix(genmat(Z))
-        2×4 Matrix{Float64}:
-         0.0  -1.0  5.0    0.0
-         1.5   0.0  0.0  123.0
+        2×2 Matrix{Float64}:
+           0.0  -6.0
+         124.5   0.0
         ```
 
         ### Algorithm
