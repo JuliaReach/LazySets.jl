@@ -339,3 +339,5 @@ if test_suite_doctests
         doctest(LazySets)
     end
 end
+
+include("Aqua.jl")
