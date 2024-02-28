@@ -39,7 +39,7 @@ To build the project's documentation locally you need to install [Documenter.jl]
 
 ## Exponential backends
 
-Exponential backends are used to compute the action of matrix exponentials over sets lazily, e.g. $\rho(d, e^{A \delta} X)$ for $A$ large and sparse.
+Exponential backends are used to compute the action of matrix exponentials over sets lazily, e.g. ``\rho(d, e^{A \delta} X)`` for ``A`` large and sparse.
 
 |Dependency|Features|
 |----------|-------|

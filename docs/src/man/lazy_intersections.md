@@ -83,7 +83,7 @@ pεbigger = plot!(pell, convert(HPolygon, Hint(0.05)), alpha=.4)
 plot(pεsmaller, pεbigger, layout=(1, 2))
 ```
 
-Note how dividing the $\varepsilon$ threshold by 10 makes the polygonal
+Note how dividing the ``ε`` threshold by 10 makes the polygonal
 overapproximation of the intersection tighter.
 
 Yet another approach is to directly query the directions of the *lazy* intersection
