@@ -69,232 +69,232 @@ if test_suite_basic
     # =======================================
     # Testing interfaces to external packages
     # =======================================
-    @time @testset "LazySets.CDDLib" begin
+    @testset "LazySets.CDDLib" begin
         include("Interfaces/CDDLib.jl")
     end
 
     # =======================
     # Testing basic set types
     # =======================
-    @time @testset "LazySets.Singleton" begin
+    @testset "LazySets.Singleton" begin
         include("Sets/Singleton.jl")
     end
-    @time @testset "LazySets.Ball1" begin
+    @testset "LazySets.Ball1" begin
         include("Sets/Ball1.jl")
     end
-    @time @testset "LazySets.Ball2" begin
+    @testset "LazySets.Ball2" begin
         include("Sets/Ball2.jl")
     end
-    @time @testset "LazySets.Ballp" begin
+    @testset "LazySets.Ballp" begin
         include("Sets/Ballp.jl")
     end
-    @time @testset "LazySets.BallInf" begin
+    @testset "LazySets.BallInf" begin
         include("Sets/BallInf.jl")
     end
-    @time @testset "LazySets.Hyperrectangle" begin
+    @testset "LazySets.Hyperrectangle" begin
         include("Sets/Hyperrectangle.jl")
     end
-    @time @testset "LazySets.PolygonConvex" begin
+    @testset "LazySets.PolygonConvex" begin
         include("Sets/Polygon.jl")
     end
-    @time @testset "LazySets.PolygonNonconvex" begin
+    @testset "LazySets.PolygonNonconvex" begin
         include("Sets/PolygonNC.jl")
     end
-    @time @testset "LazySets.Polytope" begin
+    @testset "LazySets.Polytope" begin
         include("Sets/Polytope.jl")
     end
-    @time @testset "LazySets.Tetrahedron" begin
+    @testset "LazySets.Tetrahedron" begin
         include("Sets/Tetrahedron.jl")
     end
-    @time @testset "LazySets.Polyhedron" begin
+    @testset "LazySets.Polyhedron" begin
         include("Sets/Polyhedron.jl")
     end
-    @time @testset "LazySets.Zonotope" begin
+    @testset "LazySets.Zonotope" begin
         include("Sets/Zonotope.jl")
     end
-    @time @testset "LazySets.ZeroSet" begin
+    @testset "LazySets.ZeroSet" begin
         include("Sets/ZeroSet.jl")
     end
-    @time @testset "LazySets.EmptySet" begin
+    @testset "LazySets.EmptySet" begin
         include("Sets/EmptySet.jl")
     end
-    @time @testset "LazySets.Ellipsoid" begin
+    @testset "LazySets.Ellipsoid" begin
         include("Sets/Ellipsoid.jl")
     end
-    @time @testset "LazySets.Hyperplane" begin
+    @testset "LazySets.Hyperplane" begin
         include("Sets/Hyperplane.jl")
     end
-    @time @testset "LazySets.HalfSpace" begin
+    @testset "LazySets.HalfSpace" begin
         include("Sets/HalfSpace.jl")
     end
-    @time @testset "LazySets.Interval" begin
+    @testset "LazySets.Interval" begin
         include("Sets/Interval.jl")
     end
-    @time @testset "LazySets.LineSegment" begin
+    @testset "LazySets.LineSegment" begin
         include("Sets/LineSegment.jl")
     end
-    @time @testset "LazySets.Line2D" begin
+    @testset "LazySets.Line2D" begin
         include("Sets/Line2D.jl")
     end
-    @time @testset "LazySets.Line" begin
+    @testset "LazySets.Line" begin
         include("Sets/Line.jl")
     end
-    @time @testset "LazySets.Universe" begin
+    @testset "LazySets.Universe" begin
         include("Sets/Universe.jl")
     end
-    @time @testset "LazySets.HParallelotope" begin
+    @testset "LazySets.HParallelotope" begin
         include("Sets/HParallelotope.jl")
     end
-    @time @testset "LazySets.RotatedHyperrectangle" begin
+    @testset "LazySets.RotatedHyperrectangle" begin
         include("Sets/RotatedHyperrectangle.jl")
     end
-    @time @testset "LazySets.Star" begin
+    @testset "LazySets.Star" begin
         include("Sets/Star.jl")
     end
-    @time @testset "LazySets.DensePolynomialZonotope" begin
+    @testset "LazySets.DensePolynomialZonotope" begin
         include("Sets/DensePolynomialZonotope.jl")
     end
-    @time @testset "LazySets.SimpleSparsePolynomialZonotope" begin
+    @testset "LazySets.SimpleSparsePolynomialZonotope" begin
         include("Sets/SimpleSparsePolynomialZonotope.jl")
     end
-    @time @testset "LazySets.SparsePolynomialZonotope" begin
+    @testset "LazySets.SparsePolynomialZonotope" begin
         include("Sets/SparsePolynomialZonotope.jl")
     end
 
     # =========================================
     # Testing types representing set operations
     # =========================================
-    @time @testset "LazySets.Bloating" begin
+    @testset "LazySets.Bloating" begin
         include("LazyOperations/Bloating.jl")
     end
-    @time @testset "LazySets.Intersection" begin
+    @testset "LazySets.Intersection" begin
         include("LazyOperations/Intersection.jl")
     end
-    @time @testset "LazySets.ConvexHull" begin
+    @testset "LazySets.ConvexHull" begin
         include("LazyOperations/ConvexHull.jl")
     end
-    @time @testset "LazySets.ExponentialMap" begin
+    @testset "LazySets.ExponentialMap" begin
         include("LazyOperations/ExponentialMap.jl")
     end
-    @time @testset "LazySets.LinearMap" begin
+    @testset "LazySets.LinearMap" begin
         include("LazyOperations/LinearMap.jl")
     end
-    @time @testset "LazySets.InverseLinearMap" begin
+    @testset "LazySets.InverseLinearMap" begin
         include("LazyOperations/InverseLinearMap.jl")
     end
-    @time @testset "LazySets.MinkowskiSum" begin
+    @testset "LazySets.MinkowskiSum" begin
         include("LazyOperations/MinkowskiSum.jl")
     end
-    @time @testset "LazySets.CartesianProduct" begin
+    @testset "LazySets.CartesianProduct" begin
         include("LazyOperations/CartesianProduct.jl")
     end
-    @time @testset "LazySets.ResetMap" begin
+    @testset "LazySets.ResetMap" begin
         include("LazyOperations/ResetMap.jl")
     end
-    @time @testset "LazySets.SymmetricIntervalHull" begin
+    @testset "LazySets.SymmetricIntervalHull" begin
         include("LazyOperations/SymmetricIntervalHull.jl")
     end
-    @time @testset "LazySets.Translation" begin
+    @testset "LazySets.Translation" begin
         include("LazyOperations/Translation.jl")
     end
-    @time @testset "LazySets.AffineMap" begin
+    @testset "LazySets.AffineMap" begin
         include("LazyOperations/AffineMap.jl")
     end
-    @time @testset "LazySets.Complement" begin
+    @testset "LazySets.Complement" begin
         include("LazyOperations/Complement.jl")
     end
-    @time @testset "LazySets.Rectification" begin
+    @testset "LazySets.Rectification" begin
         include("LazyOperations/Rectification.jl")
     end
-    @time @testset "LazySets.UnionSet" begin
+    @testset "LazySets.UnionSet" begin
         include("LazyOperations/UnionSet.jl")
     end
 
     # ======================
     # Testing set interfaces
     # ======================
-    @time @testset "LazySets.CompactSet" begin
+    @testset "LazySets.CompactSet" begin
         include("Interfaces/CompactSet.jl")
     end
 
     # =======================
     # Concrete set operations
     # =======================
-    @time @testset "LazySets.area" begin
+    @testset "LazySets.area" begin
         include("ConcreteOperations/area.jl")
     end
-    @time @testset "LazySets.cartesian_product" begin
+    @testset "LazySets.cartesian_product" begin
         include("ConcreteOperations/cartesian_product.jl")
     end
-    @time @testset "LazySets.convex_hull" begin
+    @testset "LazySets.convex_hull" begin
         include("ConcreteOperations/convex_hull.jl")
     end
-    @time @testset "LazySets.difference" begin
+    @testset "LazySets.difference" begin
         include("ConcreteOperations/difference.jl")
     end
-    @time @testset "LazySets.distance" begin
+    @testset "LazySets.distance" begin
         include("ConcreteOperations/distance.jl")
     end
-    @time @testset "LazySets.Interior" begin
+    @testset "LazySets.Interior" begin
         include("ConcreteOperations/interior.jl")
     end
-    @time @testset "LazySets.intersection" begin
+    @testset "LazySets.intersection" begin
         include("ConcreteOperations/isstrictsubset.jl")
     end
-    @time @testset "LazySets.isdisjoint" begin
+    @testset "LazySets.isdisjoint" begin
         include("ConcreteOperations/isdisjoint.jl")
     end
-    @time @testset "LazySets.isstrictsubset" begin
+    @testset "LazySets.isstrictsubset" begin
         include("ConcreteOperations/isstrictsubset.jl")
     end
-    @time @testset "LazySets.issubset" begin
+    @testset "LazySets.issubset" begin
         include("ConcreteOperations/issubset.jl")
     end
-    @time @testset "LazySets.minkowski_difference" begin
+    @testset "LazySets.minkowski_difference" begin
         include("ConcreteOperations/minkowski_difference.jl")
     end
-    @time @testset "LazySets.minkowski_sum" begin
+    @testset "LazySets.minkowski_sum" begin
         include("ConcreteOperations/minkowski_sum.jl")
     end
-    @time @testset "LazySets.samples" begin
+    @testset "LazySets.samples" begin
         include("ConcreteOperations/samples.jl")
     end
 
     # ====================================
     # Algorithms for approximation of sets
     # ====================================
-    @time @testset "LazySets.Approximations.overapproximation" begin
+    @testset "LazySets.Approximations.overapproximation" begin
         include("Approximations/overapproximate.jl")
     end
-    @time @testset "LazySets.Approximations.underapproximation" begin
+    @testset "LazySets.Approximations.underapproximation" begin
         include("Approximations/underapproximate.jl")
     end
-    @time @testset "LazySets.Approximations.template_directions" begin
+    @testset "LazySets.Approximations.template_directions" begin
         include("Approximations/template_directions.jl")
     end
-    @time @testset "LazySets.Approximations.box_approximation" begin
+    @testset "LazySets.Approximations.box_approximation" begin
         include("Approximations/box_approximation.jl")
     end
-    @time @testset "LazySets.Approximations.ballinf_approximation" begin
+    @testset "LazySets.Approximations.ballinf_approximation" begin
         include("Approximations/ballinf_approximation.jl")
     end
-    @time @testset "LazySets.Approximations.symmetric_interval_hull" begin
+    @testset "LazySets.Approximations.symmetric_interval_hull" begin
         include("Approximations/symmetric_interval_hull.jl")
     end
-    @time @testset "LazySets.Approximations.radiusdiameter" begin
+    @testset "LazySets.Approximations.radiusdiameter" begin
         include("Approximations/radiusdiameter.jl")
     end
-    @time @testset "LazySets.Approximations.decompose" begin
+    @testset "LazySets.Approximations.decompose" begin
         include("Approximations/decompose.jl")
     end
-    @time @testset "LazySets.Approximations.hausdorff_distance" begin
+    @testset "LazySets.Approximations.hausdorff_distance" begin
         include("Approximations/hausdorff_distance.jl")
     end
 
     # ================================
     # Testing shared utility functions
     # ================================
-    @time @testset "LazySets.lp_solvers" begin
+    @testset "LazySets.lp_solvers" begin
         include("Utils/lp_solvers.jl")
     end
 
@@ -303,7 +303,7 @@ if test_suite_basic
     # (must be the last test because it loads Polyhedra.jl)
     # =====================================================
     include("Utils/check_method_implementation.jl")
-    @time @testset "LazySets.interfaces" begin
+    @testset "LazySets.interfaces" begin
         include("Interfaces/interfaces.jl")
     end
 end
@@ -317,7 +317,7 @@ if test_suite_plotting
     dict = Dict{Symbol,Any}(:plot_object => DummyPlot())
     plot(args...; kwargs...) = RecipesBase.apply_recipe(dict, args...; kwargs...)
 
-    @time @testset "LazySets.plotting" begin
+    @testset "LazySets.plotting" begin
         include("Utils/plot.jl")
     end
 end
@@ -325,7 +325,7 @@ end
 if test_suite_doctests
     using Documenter
     include("../docs/init.jl")
-    @time @testset "LazySets.doctests" begin
+    @testset "LazySets.doctests" begin
         doctest(LazySets)
     end
 end
