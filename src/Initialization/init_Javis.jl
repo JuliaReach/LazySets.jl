@@ -59,7 +59,7 @@ function Javis.animate(X::AbstractVector{ST}; kwargs...) where {N,ST<:LazySet{N}
     Xlux = luxify.(X)
 
     # pick scaling factor
-    α = get(kwargs, :scale, 50.0) # FIXME what is a good default? use radius of box_approximation(X[1]) ?
+    α = get(kwargs, :scale, 50.0) # TODO what is a good default? use radius of box_approximation(X[1]) ?
 
     # create empty video
     vid = Video(sz...)
