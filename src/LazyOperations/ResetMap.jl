@@ -65,7 +65,7 @@ automatically.
 
 ```jldoctest resetmap
 julia> ResetMap(ZeroSet(3), r)
-Singleton{Float64, SparseArrays.SparseVector{Float64, Int64}}(  [1]  =  4.0)
+Singleton{Float64, SparseArrays.SparseVector{Float64, Int64}}(sparsevec([1], [4.0], 3))
 
 julia> ResetMap(EmptySet(3), r)
 ∅(3)
