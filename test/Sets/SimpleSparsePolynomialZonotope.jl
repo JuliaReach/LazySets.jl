@@ -17,7 +17,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     @test overapproximate(S, Zonotope) == Zonotope(N[3.0, 1], N[1 1; 2 1.0])
     @test length(overapproximate(S, UnionSetArray{Zonotope}; nsdiv=3)) == 9
-    @test length(overapproximate(S, UnionSetArray{Zonotope}; partition=(2, 3))) == 6
+    if vIA >= v"0.19.0"  # `mince` with non-uniform partition was introduced in IA v0.19.0
+        @test length(overapproximate(S, UnionSetArray{Zonotope}; partition=(2, 3))) == 6
+    end
 
     LMS = linear_map(N[1 2; 3 4], S)
     @test center(LMS) == N[2, 6]
