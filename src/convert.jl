@@ -74,6 +74,13 @@ function convert(::Type{HPolytope}, X::LazySet)
     return HPolytope(constraints_list(X))
 end
 
+function convert(::Type{HPolytope{N,VT}}, X::LazySet) where {N,VT}
+    if !isboundedtype(typeof(X)) || !is_polyhedral(X)
+        error("conversion to `HPolytope` requires a polytopic set")
+    end
+    return HPolytope([HalfSpace(VT(c.a), N(c.b)) for c in constraints_list(X)])
+end
+
 """
     convert(::Type{HPolyhedron}, X::LazySet)
 
@@ -99,12 +106,11 @@ function convert(::Type{HPolyhedron}, X::LazySet)
     return HPolyhedron(constraints_list(X))
 end
 
-# conversion of a lazyset to a polyhedron with dense normal vectors
-function convert(::Type{HPolyhedron{N,Vector{N}}}, X::LazySet) where {N}
+function convert(::Type{HPolyhedron{N,VT}}, X::LazySet) where {N,VT}
     if !is_polyhedral(X)
         error("conversion to `HPolyhedron` requires a polyhedral set")
     end
-    return HPolyhedron([HalfSpace(Vector(c.a), c.b) for c in constraints(X)])
+    return HPolyhedron([HalfSpace(VT(c.a), N(c.b)) for c in constraints(X)])
 end
 
 """
