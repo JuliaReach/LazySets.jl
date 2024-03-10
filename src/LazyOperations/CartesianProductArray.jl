@@ -478,7 +478,7 @@ function same_block_structure(x::AbstractVector{S1},
     if length(x) != length(y)
         return false
     end
-    for i in 1:length(x)
+    for i in eachindex(x)
         if dim(x[i]) != dim(y[i])
             return false
         end
@@ -577,7 +577,7 @@ function block_to_dimension_indices(cpa::CartesianProductArray{N},
     constrained_blocks = 0
     start_index, end_index = 1, 0
     v_i = 1
-    @inbounds for i in 1:length(cpa.array)
+    @inbounds for i in eachindex(cpa.array)
         end_index += dim(cpa.array[i])
         if v_i <= length(vars) && vars[v_i] <= end_index
             ranges[i] = (start_index, end_index)
@@ -599,7 +599,7 @@ function block_to_dimension_indices(cpa::CartesianProductArray{N}) where {N}
     ranges = Vector{Tuple{Int,Int}}(undef, length(cpa.array))
 
     start_index, end_index = 1, 0
-    @inbounds for i in 1:length(cpa.array)
+    @inbounds for i in eachindex(cpa.array)
         end_index += dim(cpa.array[i])
         ranges[i] = (start_index, end_index)
         start_index = end_index + 1
@@ -633,8 +633,8 @@ function substitute_blocks(low_dim_cpa::CartesianProductArray{N},
                            blocks::Vector{Tuple{Int,Int}}) where {N}
     array = Vector{LazySet{N}}(undef, length(orig_cpa.array))
     index = 1
-    for bi in 1:length(orig_cpa.array)
-        start_ind, end_index = blocks[bi]
+    for bi in eachindex(orig_cpa.array)
+        start_ind, _ = blocks[bi]
         if start_ind == -1
             array[bi] = orig_cpa.array[bi]
         else

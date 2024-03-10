@@ -742,7 +742,7 @@ function isdisjoint(H1::HalfSpace, H2::HalfSpace, witness::Bool=false)
     end
     # compute witness
     v = zeros(N, length(a1))
-    for i in 1:length(a1)
+    for i in eachindex(a1)
         a_sum_i = a1[i] + a2[i]
         if a_sum[i] != 0
             v[i] = (H1.b + H2.b) / a_sum_i
@@ -1100,7 +1100,7 @@ function isdisjoint(X::CartesianProductArray, Y::CartesianProductArray,
     @assert same_block_structure(array(X), array(Y)) "block structure has to " *
                                                      "be identical"
 
-    for i in 1:length(X.array)
+    for i in eachindex(X.array)
         if isdisjoint(X.array[i], Y.array[i])
             return _witness_result_empty(witness, true, X, Y)
         end

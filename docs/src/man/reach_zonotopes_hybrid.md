@@ -49,7 +49,7 @@ function reach_hybrid(As, Ts, init, δ, μ, T, max_order, instant_transitions)
         println("currently in location $loc at time $t")
         R = reach_continuous(As[loc], init, δ, μ, T-t, max_order)
         found_transition = false
-        for i in 1:length(R)-1
+        for i in 1:(length(R)-1)
             S = R[i]
             push!(res, (S, loc))
             for (guard, tgt_loc) in Ts[loc]
@@ -130,7 +130,7 @@ The following function does that for 2-mode models.
 ```@example example_reach_zonotopes_hybrid
 function plot_res(res)
     p = plot()
-    for i in 1:length(res)
+    for i in eachindex(res)
         if res[i][2] == 1
             c = "blue"
         elseif res[i][2] == 2

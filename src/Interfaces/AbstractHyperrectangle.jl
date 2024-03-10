@@ -235,7 +235,7 @@ function vertices_list(H::AbstractHyperrectangle; kwargs...)
     vlist = Vector{typeof(c)}(undef, m)
     vlist[1] = copy(v)
     @inbounds for i in 2:m
-        for j in 1:length(v)
+        for j in eachindex(v)
             if trivector[j] == Int8(-1)
                 trivector[j] = Int8(1)
                 v[j] = c[j] + radius_hyperrectangle(H, j)
@@ -750,7 +750,7 @@ A scalar representing the distance between point `x` and hyperrectangle `H`.
     # compute closest point
     y = similar(x)
     outside = false
-    @inbounds for i in 1:length(x)
+    @inbounds for i in eachindex(x)
         ci = center(H, i)
         ri = radius_hyperrectangle(H, i)
         d = x[i] - ci

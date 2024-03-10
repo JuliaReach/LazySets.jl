@@ -739,7 +739,7 @@ function _affine_map_inverse_hrep(A::AbstractMatrix, P::LazySet,
     end
     if has_undefs  # there were redundant constraints, so remove them
         constraints_res = [constraints_res[i]
-                           for i in 1:length(constraints_res)
+                           for i in eachindex(constraints_res)
                            if isassigned(constraints_res, i)]
     end
     return constraints_res

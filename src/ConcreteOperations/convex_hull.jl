@@ -448,7 +448,7 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true) where {N,VN<:Abstr
 
     # build lower hull
     lower = Vector{VN}()
-    iterator = 1:length(points)
+    iterator = eachindex(points)
     build_hull!(lower, iterator, points)
 
     # build upper hull

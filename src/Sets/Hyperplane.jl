@@ -369,7 +369,7 @@ to ``d``.
         # not the zero vector, check if it is a normal vector
         N = promote_type(eltype(d), eltype(a))
         factor = zero(N)
-        for i in 1:length(a)
+        for i in eachindex(a)
             if a[i] == 0
                 if d[i] != 0
                     unbounded = true

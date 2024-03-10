@@ -115,7 +115,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test isequivalent(Y.X, linear_map(A, UXY.X))
     @test isequivalent(Y.Y, linear_map(A, UXY.Y))
     Y = linear_map(A, Uarr)
-    for k in 1:length(array(Uarr))
+    for k in eachindex(array(Uarr))
         @test isequivalent(array(Y)[k], linear_map(A, array(Uarr)[k]))
     end
 
