@@ -40,7 +40,7 @@ Depth = 3
 
 As an illustration of the symmetric interval hull approximation of a nested
 lazy set computed in parallel, consider the following calculation.
-It arises in the discretization of set-based ODEs, and is defined below for an artificial
+It arises in the discretization of set-based ODEs, and is defined below for an artificial
 example of a tridiagonal matrix of order `n`, where `n` is a positive integer.
 
 ```julia
