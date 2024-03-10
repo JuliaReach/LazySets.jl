@@ -467,11 +467,11 @@ function addconstraint!(constraints::Vector{LC}, new_constraint::HalfSpace;
     k = m
     if k > 0
         d = new_constraint.a
-        if d <= constraints[1].a
+        if d ⪯ constraints[1].a
             k = 0
         elseif linear_search
             # linear search
-            while d <= constraints[k].a
+            while d ⪯ constraints[k].a
                 k -= 1
             end
         else
@@ -480,7 +480,7 @@ function addconstraint!(constraints::Vector{LC}, new_constraint::HalfSpace;
         end
     end
 
-    # here constraints[k].a <= new_constraint.a <= constraints[(k%m)+1].a
+    # here constraints[k].a ⪯ new_constraint.a ⪯ constraints[(k%m)+1].a
     if prune && m >= 2
         # check if new constraint is redundant
         k += 1
@@ -548,7 +548,7 @@ Perform a binary search in the constraints.
 ### Output
 
 In the default setting, the result is the smallest index `k` such that
-`d <= constraints[k].a`, or `length(constraints)+1` if no such `k` exists.
+`d ⪯ constraints[k].a`, or `length(constraints)+1` if no such `k` exists.
 If the `choose_lower` flag is set, the result is the largest index `k` such
 that `constraints[k].a < d`, which is equivalent to being `k-1` in the normal
 setting.
@@ -563,7 +563,7 @@ function binary_search_constraints(d::AbstractVector{N},
     @assert 1 <= start_index <= n "invalid start index $start_index"
     m = start_index
     while lower + 1 < upper
-        if constraints[m].a <= d
+        if constraints[m].a ⪯ d
             lower = m
         else
             upper = m
@@ -571,9 +571,9 @@ function binary_search_constraints(d::AbstractVector{N},
         m = div(lower + upper, 2)
     end
 
-    # since `<=` is approximate, it can happen that x <= y and y <= x
+    # since `⪯` is approximate, it can happen that x ⪯ y and y ⪯ x
     # we want to return the smallest index, so (linearly) search to the left
-    while lower > 1 && d <= constraints[lower].a && constraints[lower].a <= d
+    while lower > 1 && d ⪯ constraints[lower].a && constraints[lower].a ⪯ d
         lower -= 1
         upper -= 1
     end
@@ -581,7 +581,7 @@ function binary_search_constraints(d::AbstractVector{N},
     if choose_lower
         return lower
     else
-        if lower == 1 && !(constraints[1].a <= d)
+        if lower == 1 && !(constraints[1].a ⪯ d)
             # special case: smaller than all elements in the vector
             return 1
         end

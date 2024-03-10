@@ -6,7 +6,7 @@ import Aqua
                   # the unbound args should be resolved in the future
                   unbound_args=(broken=true,),
                   # known piracies
-                  piracies=(treat_as_own=[<=, rand, LazySets.activate_assertions,
+                  piracies=(treat_as_own=[rand, LazySets.activate_assertions,
                                           LazySets.deactivate_assertions],))
 
     # do not warn about ambiguities in dependencies

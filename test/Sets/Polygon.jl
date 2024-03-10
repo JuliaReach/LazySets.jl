@@ -1,3 +1,5 @@
+using LazySets: ⪯
+
 for N in [Float64, Float32, Rational{Int}]
     # Empty polygon
     p = HPolygon{N}()
@@ -372,7 +374,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     for (i, vi) in enumerate(v)
         for j in i:8
-            @test vi <= v[j]
+            @test vi ⪯ v[j]
         end
     end
 
