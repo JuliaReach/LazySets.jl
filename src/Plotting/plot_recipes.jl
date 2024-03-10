@@ -161,7 +161,7 @@ julia> plot(Bs, 1e-3)  # default accuracy value (explicitly given for clarity)
 julia> plot(Bs, 1e-2)  # faster but less accurate than the previous call
 ```
 """
-@recipe function plot_list(list::AbstractVector{VN}, ε::Real=N(PLOT_PRECISION),
+@recipe function plot_list(list::AbstractVector{VN}, ε::Real=N(PLOT_PRECISION),  # COV_EXCL_LINE
                            Nφ::Int=PLOT_POLAR_DIRECTIONS;
                            same_recipe=false) where {N,VN<:LazySet{N}}
     if same_recipe
@@ -227,7 +227,7 @@ function _plot_list_same_recipe(list::AbstractVector{VN}, ε::Real=N(PLOT_PRECIS
 end
 
 # recipe for vector of singletons
-@recipe function plot_list(list::AbstractVector{SN}) where {N,SN<:AbstractSingleton{N}}
+@recipe function plot_list(list::AbstractVector{SN}) where {N,SN<:AbstractSingleton{N}}  # COV_EXCL_LINE
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -241,7 +241,7 @@ end
 end
 
 # plot recipe for the union of singletons
-@recipe function plot_list(X::UnionSetArray{N,SN}) where {N,SN<:AbstractSingleton{N}}
+@recipe function plot_list(X::UnionSetArray{N,SN}) where {N,SN<:AbstractSingleton{N}}  # COV_EXCL_LINE
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -321,7 +321,7 @@ julia> plot(B, 1e-3)  # default accuracy value (explicitly given for clarity her
 julia> plot(B, 1e-2)  # faster but less accurate than the previous call
 ```
 """
-@recipe function plot_lazyset(X::LazySet{N}, ε::Real=N(PLOT_PRECISION)) where {N}
+@recipe function plot_lazyset(X::LazySet{N}, ε::Real=N(PLOT_PRECISION)) where {N}  # COV_EXCL_LINE
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -416,7 +416,7 @@ Plot a singleton.
 julia> plot(Singleton([0.5, 1.0]))
 ```
 """
-@recipe function plot_singleton(S::AbstractSingleton{N}, ε::Real=zero(N)) where {N}
+@recipe function plot_singleton(S::AbstractSingleton{N}, ε::Real=zero(N)) where {N}  # COV_EXCL_LINE
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -448,7 +448,7 @@ Plot an empty set.
 - `∅` -- empty set
 - `ε` -- (optional, default: `0`) ignored, used for dispatch
 """
-@recipe function plot_emptyset(∅::EmptySet{N}, ε::Real=zero(N)) where {N}
+@recipe function plot_emptyset(∅::EmptySet{N}, ::Real=zero(N)) where {N}  # COV_EXCL_LINE
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -500,9 +500,8 @@ julia> plot(overapproximate(X, PolarDirections(100)))
 julia> plot(X, 0.0, 100)  # equivalent to the above line
 ```
 """
-@recipe function plot_intersection(cap::Intersection{N},
-                                   ε::Real=zero(N),
-                                   Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N}
+@recipe function plot_intersection(cap::Intersection{N}, ε::Real=zero(N),  # COV_EXCL_LINE
+                                   ::Int=PLOT_POLAR_DIRECTIONS) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
@@ -544,9 +543,8 @@ end
 
 # non-convex sets
 
-@recipe function plot_union(cup::Union{UnionSet{N},UnionSetArray{N}},
-                            ε::Real=N(PLOT_PRECISION); same_recipe=false,
-                            Nφ=PLOT_POLAR_DIRECTIONS) where {N}
+@recipe function plot_union(cup::Union{UnionSet{N},UnionSetArray{N}}, ε::Real=N(PLOT_PRECISION);  # COV_EXCL_LINE
+                            same_recipe=false, Nφ=PLOT_POLAR_DIRECTIONS) where {N}
     n = dim(cup)
     # extract limits and extrema of already plotted sets
     p = plotattributes[:plot_object]
@@ -593,9 +591,8 @@ end
     end
 end
 
-@recipe function plot_polyzono(P::AbstractPolynomialZonotope{N},
-                               ε::Real=N(PLOT_PRECISION); nsdiv=10,
-                               partition=nothing) where {N}
+@recipe function plot_polyzono(P::AbstractPolynomialZonotope{N}, ε::Real=N(PLOT_PRECISION);  # COV_EXCL_LINE
+                               nsdiv=10, partition=nothing) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
     if DEFAULT_ASPECT_RATIO != :none
