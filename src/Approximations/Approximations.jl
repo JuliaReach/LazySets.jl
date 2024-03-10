@@ -18,9 +18,7 @@ using LazySets.JuMP: Model, set_silent, @variable, @constraint, optimize!,
 import Base: convert
 import LazySets: project, □
 
-using ..LazySets: @assert, activate_assertions
-# activate assertions by default
-activate_assertions(Approximations)
+using ..LazySets: @assert
 
 export approximate,
        ballinf_approximation,

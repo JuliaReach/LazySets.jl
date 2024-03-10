@@ -23,9 +23,8 @@ export ×, normalize, ⊂,
 # ReachabilityBase
 # ==============
 
+import ReachabilityBase.Assertions
 using ReachabilityBase.Assertions: @assert
-import ReachabilityBase.Assertions: activate_assertions, deactivate_assertions
-activate_assertions(LazySets)  # activate assertions by default
 include("Utils/assertions.jl")
 
 using ReachabilityBase.Require
@@ -185,6 +184,11 @@ include("Plotting/mesh.jl")
 # Parallel-algorithms module
 # ==========================
 include("Parallel/Parallel.jl")
+
+# ==============================
+# Activate assertions by default
+# ==============================
+activate_assertions()
 
 # ===================================================
 # Load external packages on-demand (using 'Requires')
