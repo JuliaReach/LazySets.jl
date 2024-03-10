@@ -940,12 +940,12 @@ function reduce_order(Z::AbstractZonotope, r::Real,
 end
 
 # approximate with a box
-function _approximate_reduce_order(c, G, indices, method::Union{COMB03,GIR05})
+function _approximate_reduce_order(c, G, indices, ::Union{COMB03,GIR05})
     return _interval_hull(G, indices)
 end
 
 # approximate with a parallelotope
-function _approximate_reduce_order(c, G, indices, method::ASB10)
+function _approximate_reduce_order(c, G, indices, ::ASB10)
     Ztilde = Zonotope(c, view(G, :, indices))
     Ψ = Approximations._overapproximate_hparallelotope(Ztilde)
     return genmat(Ψ)
