@@ -461,9 +461,9 @@ function project(cp::CartesianProduct{N,IT,ZT}, block::AbstractVector{Int};
 end
 
 """
-    project(cp::CartesianProduct{N, IT, Union{VP1, VP2}},
+    project(cp::CartesianProduct{N,<:Interval,<:Union{VPolygon,VPolytope}
             block::AbstractVector{Int};
-            [kwargs...]) where {N, IT<:Interval, VP1<:VPolygon{N}, VP2<:VPolytope{N}}
+            [kwargs...]) where {N}
 
 Concrete projection of the Cartesian product of an interval and a set in vertex
 representation.
@@ -478,9 +478,9 @@ representation.
 A `VPolytope` representing the projection of the Cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N,IT,Union{VP1,VP2}},
+function project(cp::CartesianProduct{N,<:Interval,<:Union{VPolygon,VPolytope}},
                  block::AbstractVector{Int};
-                 kwargs...) where {N,IT<:Interval,VP1<:VPolygon{N},VP2<:VPolytope{N}}
+                 kwargs...) where {N}
     I = cp.X
     P = cp.Y
     block_vec = collect(block)
