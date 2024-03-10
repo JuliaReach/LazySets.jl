@@ -164,7 +164,7 @@ end
 # convenience method with uniform block options
 function decompose(S::LazySet{N},
                    partition::AbstractVector{<:AbstractVector{Int}},
-                   block_options::Union{Type{<:LazySet},
+                   block_options::Union{Type{<:LazySet},  # set type is not concrete
                                         Pair{<:UnionAll,<:Real},
                                         Real,
                                         Type{<:AbstractDirections},
@@ -199,4 +199,17 @@ projections.
 function decompose(S::LazySet, block_options; block_size::Int=1)
     partition = uniform_partition(dim(S), block_size)
     return decompose(S, partition, block_options)
+end
+
+# overapproximation of the projection to a fixed target type
+function decompose(S::LazySet{N},
+                   partition::AbstractVector{<:AbstractVector{Int}},
+                   ::Type{ST}) where {N,ST<:LazySet{N}}
+    result = Vector{ST}(undef, length(partition))
+
+    @inbounds for (i, block) in enumerate(partition)
+        πX = Projection(S, block)
+        result[i] = overapproximate(πX, ST)
+    end
+    return CartesianProductArray(result)
 end
