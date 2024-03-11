@@ -522,7 +522,6 @@ function to_union_of_projections(R::Rectification{N},
         m = length(mixed_dimensions)
         i = m
         projections = Vector{LinearMap{N}}()
-        sizehint!(projections, 2^m)
         while true
             # compute next projection
             polyhedron = construct_constraints(mixed_dimensions,
