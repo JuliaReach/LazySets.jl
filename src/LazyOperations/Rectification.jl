@@ -462,6 +462,8 @@ Compute an equivalent union of projections from a rectification.
 - `R`                     -- rectification
 - `concrete_intersection` -- (optional, default: `false`) option to compute
                              all intersections concretely or lazily
+- `filter_empty_sets`     -- (optional, default: `true`) option to filter out
+                             empty sets in the union
 
 ### Algorithm
 
@@ -500,7 +502,8 @@ The result can be one of three cases depending on the wrapped set ``X``, namely
 * a `UnionSetArray` of `LinearMap`s (projections) otherwise.
 """
 function to_union_of_projections(R::Rectification{N},
-                                 concrete_intersection::Bool=false) where {N}
+                                 concrete_intersection::Bool=false;
+                                 filter_empty_sets::Bool=true) where {N}
     n = dim(R.X)
 
     negative_dimensions, mixed_dimensions, mixed_dimensions_enumeration = compute_negative_and_mixed_dimensions(R.X,
@@ -527,13 +530,19 @@ function to_union_of_projections(R::Rectification{N},
             polyhedron = construct_constraints(mixed_dimensions,
                                                mixed_dimensions_enumeration, n,
                                                N)
-            cap = concrete_intersection ?
-                  intersection(R.X, polyhedron) : R.X ∩ polyhedron
-            projection = construct_projection(cap,
-                                              negative_dimensions,
-                                              mixed_dimensions,
-                                              mixed_dimensions_enumeration, n)
-            push!(projections, projection)
+            if !filter_empty_sets || !isdisjoint(R.X, polyhedron)
+                if concrete_intersection
+                    cap = intersection(R.X, polyhedron)
+                else
+                    cap = Intersection(R.X, polyhedron)
+                    set_isempty!(cap, false)  # intersection is known to not be empty
+                end
+                projection = construct_projection(cap,
+                                                  negative_dimensions,
+                                                  mixed_dimensions,
+                                                  mixed_dimensions_enumeration, n)
+                push!(projections, projection)
+            end
 
             if mixed_dimensions_enumeration[i]
                 @inbounds while i > 0 && mixed_dimensions_enumeration[i]
