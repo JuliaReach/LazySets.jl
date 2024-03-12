@@ -1,6 +1,3 @@
-__precompile__(true)
-
-# main module for `LazySets.jl`
 module LazySets
 
 using LinearAlgebra, RecipesBase, Reexport, Requires, SparseArrays
