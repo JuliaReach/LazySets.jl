@@ -1,5 +1,3 @@
-import Base.<=
-
 export AbstractPolygon,
        tohrep,
        tovrep
@@ -113,7 +111,7 @@ This function is inspired from AGPX's answer in:
 end
 
 """
-    <=(u::AbstractVector, v::AbstractVector)
+    ⪯(u::AbstractVector, v::AbstractVector)
 
 Compare two 2D vectors by their direction.
 
@@ -137,7 +135,7 @@ The implementation checks the quadrant of each direction, and compares
 directions using the right-hand rule.
 In particular, this method does not use the arctangent.
 """
-function <=(u::AbstractVector, v::AbstractVector)
+function ⪯(u::AbstractVector, v::AbstractVector)
     @assert length(u) == length(v) == 2 "comparison of vectors `u` and `v` " *
                                         "by their direction requires that they are of length 2, " *
                                         "but their lengths are $(length(u)) and $(length(v)), respectively"

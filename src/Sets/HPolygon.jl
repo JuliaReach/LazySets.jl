@@ -1,5 +1,3 @@
-import Base.<=
-
 export HPolygon
 
 """
@@ -117,8 +115,8 @@ norm zero, any vertex is returned.
 
 ### Algorithm
 
-Comparison of directions is performed using polar angles; see the overload of
-`<=` for two-dimensional vectors.
+Comparison of directions is performed using polar angles; see the definition of
+`⪯` for two-dimensional vectors.
 
 For polygons with $BINARY_SEARCH_THRESHOLD or more constraints we use a binary
 search by default.
@@ -131,7 +129,7 @@ function σ(d::AbstractVector, P::HPolygon;
     if linear_search
         # linear search
         k = 1
-        while k <= n && P.constraints[k].a <= d
+        while k <= n && P.constraints[k].a ⪯ d
             k += 1
         end
     else
