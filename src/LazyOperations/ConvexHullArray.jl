@@ -240,3 +240,7 @@ function concretize(cha::ConvexHullArray)
     end
     return X
 end
+
+function translate(cha::ConvexHullArray, x::AbstractVector)
+    return ConvexHullArray([translate(X, x) for X in array(cha)])
+end

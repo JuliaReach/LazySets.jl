@@ -144,7 +144,7 @@ function AffineMap(M::AbstractMatrix, Z::ZeroSet, v::AbstractVector)
 end
 
 # EmptySet is absorbing for AffineMap
-function AffineMap(M::AbstractMatrix, ∅::EmptySet, v::AbstractVector)
+function AffineMap(::AbstractMatrix, ∅::EmptySet, ::AbstractVector)
     return ∅
 end
 
@@ -166,4 +166,11 @@ end
 
 function isboundedtype(::Type{<:AffineMap{N,S}}) where {N,S}
     return isboundedtype(S)
+end
+
+function translate(am::AffineMap, x::AbstractVector)
+    M = matrix(am)
+    X = set(am)
+    v = vector(am)
+    return AffineMap(M, X, v + x)
 end
