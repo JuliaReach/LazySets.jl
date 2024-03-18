@@ -303,7 +303,9 @@ A zonotope.
 """
 function overapproximate(P::SparsePolynomialZonotope, ::Type{<:Zonotope})
     cnew, Gnew = _zonotope_overapprox(center(P), genmat_dep(P), expmat(P))
-    return Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
+    Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
+    Zred = remove_redundant_generators(Z)
+    return Zred
 end
 
 """
@@ -380,7 +382,7 @@ function load_taylormodels_overapproximation()
 
         """
             overapproximate(vTM::Vector{TaylorModel1{T, S}}, ::Type{<:Zonotope};
-                            [remove_zero_generators]::Bool=true
+                            [remove_redundant_generators]::Bool=true
                             [normalize]::Bool=true) where {T, S}
 
         Overapproximate a Taylor model in one variable with a zonotope.
@@ -389,8 +391,8 @@ function load_taylormodels_overapproximation()
 
         - `vTM`       -- vector of `TaylorModel1`
         - `Zonotope`  --  target set type
-        - `remove_zero_generators` -- (optional; default: `true`) flag to remove zero
-                                      generators of the resulting zonotope
+        - `remove_redundant_generators` -- (optional; default: `true`) flag to remove
+                                           redundant generators of the resulting zonotope
         - `normalize` -- (optional; default: `true`) flag to skip the normalization of
                          the Taylor models
 
@@ -527,16 +529,16 @@ function load_taylormodels_overapproximation()
            normalization onto the symmetric intervals ``[-1, 1]``.
         """
         function overapproximate(vTM::Vector{TaylorModel1{T,S}}, ::Type{<:Zonotope};
-                                 remove_zero_generators::Bool=true,
+                                 remove_redundant_generators::Bool=true,
                                  normalize::Bool=true) where {T,S}
             return _overapproximate_vTM_zonotope(vTM, 1, T;
-                                                 remove_zero_generators=remove_zero_generators,
+                                                 remove_redundant_generators=remove_redundant_generators,
                                                  normalize=normalize)
         end
 
         """
             overapproximate(vTM::Vector{TaylorModelN{N, T, S}}, ::Type{<:Zonotope};
-                            [remove_zero_generators]::Bool=true
+                            [remove_redundant_generators]::Bool=true
                             [normalize]::Bool=true) where {N, T, S}
 
 
@@ -546,8 +548,8 @@ function load_taylormodels_overapproximation()
 
         - `vTM`       -- vector of `TaylorModelN`
         - `Zonotope`  -- target set type
-        - `remove_zero_generators` -- (optional; default: `true`) flag to remove zero
-                                      generators of the resulting zonotope
+        - `remove_redundant_generators` -- (optional; default: `true`) flag to remove
+                                           redundant generators of the resulting zonotope
         - `normalize` -- (optional; default: `true`) flag to skip the normalization of
                          the Taylor models
 
@@ -604,9 +606,9 @@ function load_taylormodels_overapproximation()
          124.0
 
         julia> Matrix(genmat(Z))
-        2×4 Matrix{Float64}:
-         0.0  -1.0  5.0    0.0
-         1.5   0.0  0.0  123.0
+        2×2 Matrix{Float64}:
+           0.0  -6.0
+         124.5   0.0
         ```
 
         ### Algorithm
@@ -614,16 +616,16 @@ function load_taylormodels_overapproximation()
         We refer to the algorithm description for the univariate case.
         """
         function overapproximate(vTM::Vector{TaylorModelN{N,T,S}}, ::Type{<:Zonotope};
-                                 remove_zero_generators::Bool=true,
+                                 remove_redundant_generators::Bool=true,
                                  normalize::Bool=true) where {N,T,S}
             n = N  # number of variables is get_numvars() in TaylorSeries
             return _overapproximate_vTM_zonotope(vTM, n, T;
-                                                 remove_zero_generators=remove_zero_generators,
+                                                 remove_redundant_generators=remove_redundant_generators,
                                                  normalize=normalize)
         end
 
         function _overapproximate_vTM_zonotope(vTM, n, N;
-                                               remove_zero_generators::Bool=true,
+                                               remove_redundant_generators::Bool=true,
                                                normalize::Bool=true)
             m = length(vTM)
 
@@ -656,8 +658,8 @@ function load_taylormodels_overapproximation()
             end
 
             Z = Zonotope(c, G)
-            if remove_zero_generators
-                Z = LazySets.remove_zero_generators(Z)
+            if remove_redundant_generators
+                Z = LazySets.remove_redundant_generators(Z)
             end
             return Z
         end
