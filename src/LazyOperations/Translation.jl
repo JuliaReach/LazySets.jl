@@ -386,3 +386,7 @@ The translation of the center of the wrapped set by the translation vector.
 function center(tr::Translation)
     return center(tr.X) + tr.v
 end
+
+function translate(tr::Translation, x::AbstractVector)
+    return Translation(translate(tr.X, x))
+end

@@ -253,3 +253,7 @@ norm for bloating is either 1-norm or the infinity norm.
 function is_polyhedral(B::Bloating)
     return (B.p == 1 || B.p == Inf) && is_polyhedral(B.X)
 end
+
+function translate(B::Bloating, x::AbstractVector)
+    return Bloating(translate(B.X, x), B.ε, B.p)
+end
