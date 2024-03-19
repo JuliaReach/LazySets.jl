@@ -13,6 +13,12 @@ import Distributions, ExponentialUtilities, Expokit, IntervalMatrices, Ipopt,
        MiniQhull, Optim, PkgVersion, RangeEnclosures, SCS, SetProg, TaylorModels
 import IntervalArithmetic as IA
 using IntervalArithmetic: IntervalBox, interval
+@static if VERSION >= v"1.9"
+    vGLPK = pkgversion(GLPK)
+else
+    using PkgVersion
+    vGLPK = PkgVersion.Version(GLPK)
+end
 using IntervalMatrices: ±, IntervalMatrix
 using TaylorModels: set_variables, TaylorModelN
 # ICP currently leads to unsatisfiable package requirements
