@@ -1210,7 +1210,7 @@ function ⊆(X::CartesianProductArray, Y::CartesianProductArray,
     end
 
     N = promote_type(eltype(X), eltype(Y))
-    for i in 1:length(aX)
+    for i in eachindex(aX)
         result = ⊆(aX[i], aY[i], witness)
         if !witness && !result
             return false
@@ -1218,7 +1218,7 @@ function ⊆(X::CartesianProductArray, Y::CartesianProductArray,
             # construct a witness
             w = Vector{N}(undef, dim(X))
             k = 1
-            for j in 1:length(aX)
+            for j in eachindex(aX)
                 Xj = aX[j]
                 l = k + dim(Xj)
                 w[k:(l - 1)] = j == i ? result[2] : an_element(Xj)

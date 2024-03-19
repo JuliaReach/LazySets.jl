@@ -984,7 +984,7 @@ function get_constrained_lowdimset(cpa::CartesianProductArray{N,S},
     sizehint!(block_structure, non_empty_length)
 
     last_var = 1
-    for i in 1:length(blocks)
+    for i in eachindex(blocks)
         start_index, end_index = blocks[i]
         block_end = last_var + end_index - start_index
         if start_index != -1

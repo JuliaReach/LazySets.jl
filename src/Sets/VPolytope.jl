@@ -67,7 +67,7 @@ VPolytope() = VPolytope{Float64}()
 
 # constructor from rectangular matrix
 function VPolytope(vertices_matrix::MT) where {N,MT<:AbstractMatrix{N}}
-    vertices = [vertices_matrix[:, j] for j in 1:size(vertices_matrix, 2)]
+    vertices = [vertices_matrix[:, j] for j in axes(vertices_matrix, 2)]
     return VPolytope(vertices)
 end
 

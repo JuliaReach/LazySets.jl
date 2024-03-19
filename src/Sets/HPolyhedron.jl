@@ -238,7 +238,7 @@ function rand(::Type{HPolyhedron};
     P = rand(HPolytope; N=N, dim=dim, rng=rng)
     constraints_P = constraints_list(P)
     constraints_Q = Vector{eltype(constraints_P)}()
-    for i in 1:length(constraints_P)
+    for i in eachindex(constraints_P)
         if rand(rng, Bool)
             push!(constraints_Q, constraints_P[i])
         end

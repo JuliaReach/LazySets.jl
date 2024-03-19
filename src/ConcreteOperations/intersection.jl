@@ -553,7 +553,7 @@ function intersection(P1::AbstractHPolygon, P2::AbstractHPolygon;
     i1 = 1
     i2 = 1
     duplicates = 0
-    for i in 1:length(c)
+    for i in eachindex(c)
         if c1[i1].a <= c2[i2].a
             if c2[i2].a <= c1[i1].a
                 duplicates += 1
