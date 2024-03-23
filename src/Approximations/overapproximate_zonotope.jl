@@ -112,31 +112,34 @@ constructed in the first phase.
     CAV 2009.
 """
 function overapproximate(X::ConvexHull{N,<:AbstractZonotope,<:AbstractZonotope},
-                         ::Type{<:Zonotope};
-                         algorithm="mean") where {N}
+                         ::Type{<:Zonotope}; algorithm="mean") where {N}
+    return _overapproximate_union_zonotope(X, algorithm)
+end
+
+function overapproximate(X::UnionSet{N,<:AbstractZonotope,<:AbstractZonotope},
+                         ::Type{<:Zonotope}; algorithm="mean") where {N}
+    return _overapproximate_union_zonotope(X, algorithm)
+end
+
+function _overapproximate_union_zonotope(X::LazySet, algorithm)
     # execute specific algorithm
     if algorithm == "mean"
-        return _overapproximate_convex_hull_zonotope_G05(X)
+        return _overapproximate_union_zonotope_G05(X)
     elseif algorithm == "join"
-        return _overapproximate_convex_hull_zonotope_GGP09(X)
+        return _overapproximate_union_zonotope_GGP09(X)
     else
         error("algorithm $algorithm is not known")
     end
 end
 
-function _overapproximate_convex_hull_zonotope_G05(ch::ConvexHull{N}) where {N}
+function _overapproximate_union_zonotope_G05(X::LazySet{N}) where {N}
     # reduce to the same order if possible
-    X, Y = first(ch), second(ch)
-    m1, m2 = ngens(X), ngens(Y)
+    Z1, Z2 = first(X), second(X)
+    m1, m2 = ngens(Z1), ngens(Z2)
     if m1 < m2
-        Z1 = X
-        Z2 = reduce_order(Y, max(1, m1))
+        Z2 = reduce_order(Z2, max(1, m1))
     elseif m1 > m2
-        Z1 = reduce_order(X, max(1, m2))
-        Z2 = Y
-    else
-        Z1 = X
-        Z2 = Y
+        Z1 = reduce_order(Z1, max(1, m2))
     end
 
     if order(Z2) > order(Z1)
@@ -165,12 +168,12 @@ function _overapproximate_convex_hull_zonotope_G05(ch::ConvexHull{N}) where {N}
     return remove_zero_generators(Z)
 end
 
-function _overapproximate_convex_hull_zonotope_GGP09(ch::ConvexHull{N}) where {N}
-    Z1, Z2 = first(ch), second(ch)
+function _overapproximate_union_zonotope_GGP09(X::LazySet{N}) where {N}
+    Z1, Z2 = first(X), second(X)
     m = min(ngens(Z1), ngens(Z2))
     G1, G2 = genmat(Z1), genmat(Z2)
     n = dim(Z1)
-    box = box_approximation(ch)
+    box = box_approximation(X)
 
     # new center: mid point of box approximation
     c = center(box)
@@ -1073,16 +1076,23 @@ A zonotope overapproximation of the convex hull array of zonotopic sets.
 This method iteratively applies the overapproximation algorithm to the
 convex hull of two zonotopic sets from the given array of zonotopic sets.
 """
-function overapproximate(CHA::ConvexHullArray{N,<:AbstractZonotope},
-                         ::Type{<:Zonotope}) where {N}
-    arr = array(CHA)
+function overapproximate(X::ConvexHullArray{N,<:AbstractZonotope}, ::Type{<:Zonotope}) where {N}
+    return _overapproximate_union_zonotope(array(X))
+end
+
+function overapproximate(X::UnionSetArray{N,<:AbstractZonotope}, ::Type{<:Zonotope}) where {N}
+    return _overapproximate_union_zonotope(array(X))
+end
+
+function _overapproximate_union_zonotope(arr::AbstractVector)
     n = length(arr)
-    if n == 1
+    @assert n > 0 "cannot overapproximate an empty array set"
+    @inbounds if n == 1
         return convert(Zonotope, arr[1])
     else
-        Zaux = overapproximate(ConvexHull(arr[1], arr[2]), Zonotope)
+        Zaux = overapproximate(UnionSet(arr[1], arr[2]), Zonotope)
         for k in 3:n
-            Zaux = overapproximate(ConvexHull(Zaux, arr[k]), Zonotope)
+            Zaux = overapproximate(UnionSet(Zaux, arr[k]), Zonotope)
         end
         return Zaux
     end
