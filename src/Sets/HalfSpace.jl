@@ -599,12 +599,7 @@ function load_symbolics_halfspace()
         Be careful with using the default `vars` value because it may introduce a wrong
         order.
 
-        ```jldoctest halfspace_symbolics
-        julia> vars = @variables x y
-        2-element Vector{Num}:
-         x
-         y
-
+        ```@example halfspace_symbolics  # doctest deactivated due to downgrade of Symbolics
         julia> HalfSpace(2x ≥ 5y - 1) # correct
         HalfSpace{Float64, Vector{Float64}}([-2.0, 5.0], 1.0)
 
@@ -616,6 +611,7 @@ function load_symbolics_halfspace()
 
         julia> HalfSpace(y - x ≥ 1, vars) # correct
         HalfSpace{Float64, Vector{Float64}}([1.0, -1.0], -1.0)
+        julia> nothing  # hide
         ```
 
         ### Algorithm

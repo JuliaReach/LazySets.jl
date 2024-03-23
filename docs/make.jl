@@ -9,7 +9,6 @@ makedocs(; sitename="LazySets.jl",
          format=Documenter.HTML(; prettyurls=get(ENV, "CI", nothing) == "true",
                                 assets=["assets/aligned.css"],
                                 size_threshold_warn=150 * 2^10),
-         doctest=false,
          pagesonly=true,
          pages=[
                 #

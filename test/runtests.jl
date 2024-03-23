@@ -35,30 +35,25 @@ using LazySets.Arrays: isinvertible, inner, allequal,
                        is_cyclic_permutation, SingleEntryVector
 
 global test_suite_basic = true
-global test_suite_doctests = VERSION >= v"1.7"
 global test_suite_polyhedra = true
 global test_suite_plotting = true
 
 if (length(ARGS) == 0) || (ARGS[1] == "--default")
-    # default test suite including doctests
+    # default test suite
 elseif ARGS[1] == "--basic"
     # basic test suite
-    test_suite_doctests = false
     test_suite_polyhedra = false
     test_suite_plotting = false
 elseif ARGS[1] == "--polyhedra"
     # Polyhedra.jl test suite
-    test_suite_doctests = false
     test_suite_polyhedra = true
     test_suite_plotting = false
 elseif ARGS[1] == "--plot"
     # plotting test suite
-    test_suite_doctests = false
     test_suite_polyhedra = false
     test_suite_plotting = true
 elseif ARGS[1] == "--all"
     # complete test suite
-    test_suite_doctests = true
     test_suite_polyhedra = true
     test_suite_plotting = true
 else
@@ -327,14 +322,6 @@ if test_suite_plotting
 
     @testset "LazySets.plotting" begin
         include("Utils/plot.jl")
-    end
-end
-
-if test_suite_doctests
-    using Documenter
-    include("../docs/init.jl")
-    @testset "LazySets.doctests" begin
-        doctest(LazySets)
     end
 end
 
