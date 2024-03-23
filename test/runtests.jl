@@ -10,13 +10,15 @@ Random.seed!(1234)
 # Optional dependencies
 # ========================
 import Distributions, ExponentialUtilities, Expokit, IntervalMatrices, Ipopt,
-       MiniQhull, Optim, PkgVersion, RangeEnclosures, SCS, SetProg, TaylorModels
+       MiniQhull, Optim, RangeEnclosures, SCS, SetProg, TaylorModels
 import IntervalArithmetic as IA
 using IntervalArithmetic: IntervalBox, interval
 @static if VERSION >= v"1.9"
+    vIA = pkgversion(IA)
     vGLPK = pkgversion(GLPK)
 else
-    using PkgVersion
+    import PkgVersion
+    vIA = PkgVersion.Version(IA)
     vGLPK = PkgVersion.Version(GLPK)
 end
 using IntervalMatrices: ±, IntervalMatrix
