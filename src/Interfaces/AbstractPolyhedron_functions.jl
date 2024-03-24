@@ -807,7 +807,7 @@ function _linear_map_hrep(M::AbstractMatrix{NM}, P::AbstractPolyhedron{NP},
     Phrep = polyhedron(Phrep, backend) # define concrete subtype
     Peli_block = Polyhedra.eliminate(Phrep, (m + 1):(m + n), method)
     Peli_block = Polyhedra.removeduplicates(Polyhedra.hrep(Peli_block),
-                                            default_lp_solver_polyhedra(N))
+                                            default_lp_solver_polyhedra(N; presolve=true))
 
     # TODO: take constraints directly -- see #1988
     return constraints_list(HPolyhedron(Peli_block))

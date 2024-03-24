@@ -536,8 +536,9 @@ representation.
 
 - `P1`      -- polyhedron
 - `P2`      -- polyhedron
-- `backend` -- (optional, default: `default_polyhedra_backend(P1)`) the
-               backend for polyhedral computations
+- `backend` -- (optional, default:
+    `default_polyhedra_backend(P1, default_lp_solver_polyhedra(N; presolve=true))`)
+               the backend for polyhedral computations
 
 ### Output
 
@@ -552,8 +553,9 @@ for the `convex_hull`.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
-function convex_hull(P1::HPoly, P2::HPoly;
-                     backend=default_polyhedra_backend(P1))
+function convex_hull(P1::HPoly{N}, P2::HPoly{N};
+                     backend=default_polyhedra_backend(P1,
+                                 default_lp_solver_polyhedra(N; presolve=true))) where {N}
     require(@__MODULE__, :Polyhedra; fun_name="convex_hull")
     Pch = Polyhedra.convexhull(polyhedron(P1; backend=backend),
                                polyhedron(P2; backend=backend))
