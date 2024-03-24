@@ -236,12 +236,12 @@ true
 isconvextype(X::Type{<:LazySet}) = false
 
 # Polyhedra backend (fallback method)
-function default_polyhedra_backend(P::LazySet{N}) where {N}
+function default_polyhedra_backend(P::LazySet{N}, solver=default_lp_solver_polyhedra(N)) where {N}
     require(@__MODULE__, :Polyhedra; fun_name="default_polyhedra_backend")
     if LazySets.dim(P) == 1
-        return default_polyhedra_backend_1d(N)
+        return default_polyhedra_backend_1d(N, solver)
     else
-        return default_polyhedra_backend_nd(N)
+        return default_polyhedra_backend_nd(N, solver)
     end
 end
 
