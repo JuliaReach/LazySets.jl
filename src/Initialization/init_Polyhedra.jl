@@ -12,8 +12,8 @@ function default_polyhedra_backend_nd(N::Type{<:Number},
     return Polyhedra.DefaultLibrary{N}(solver)
 end
 
-function default_lp_solver_polyhedra(N::Type{<:AbstractFloat};
-                                     presolve::Bool=true)
+function default_lp_solver_polyhedra(::Type{<:AbstractFloat};
+                                     presolve::Bool=false)
     if presolve
         return JuMP.optimizer_with_attributes(GLPK.Optimizer,
                                               "presolve" => GLPK_ON)
@@ -22,7 +22,7 @@ function default_lp_solver_polyhedra(N::Type{<:AbstractFloat};
     end
 end
 
-function default_lp_solver_polyhedra(N::Type{<:Rational};
+function default_lp_solver_polyhedra(::Type{<:Rational};
                                      presolve::Bool=false)
     if presolve
         return JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(; method=GLPK.EXACT),
@@ -33,7 +33,7 @@ function default_lp_solver_polyhedra(N::Type{<:Rational};
 end
 
 # solver interface
-function _is_polyhedra_backend(backend::Polyhedra.Library)
+function _is_polyhedra_backend(::Polyhedra.Library)
     return true
 end
 
