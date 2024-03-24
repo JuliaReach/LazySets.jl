@@ -535,7 +535,9 @@ function to_union_of_projections(R::Rectification{N},
                     cap = intersection(R.X, polyhedron)
                 else
                     cap = Intersection(R.X, polyhedron)
-                    set_isempty!(cap, false)  # intersection is known to not be empty
+                    if filter_empty_sets
+                        set_isempty!(cap, false)  # intersection is known to not be empty
+                    end
                 end
                 projection = construct_projection(cap,
                                                   negative_dimensions,
