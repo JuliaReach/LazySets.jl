@@ -13,6 +13,7 @@ function __init__()
     # @require StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c" include("Initialization/init_StaticArraysCore.jl")
     @require RangeEnclosures = "1b4d18b6-9e5d-11e9-236c-f792b01831f8" include("Initialization/init_RangeEnclosures.jl")
     @require Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7" include("Initialization/init_Symbolics.jl")
+    @require TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a" include("Initialization/init_TaylorModels.jl")
     @require WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192" include("Initialization/init_WriteVTK.jl")
 
     return nothing

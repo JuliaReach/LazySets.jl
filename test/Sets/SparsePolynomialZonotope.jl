@@ -105,13 +105,38 @@ for N in [Float64, Float32, Rational{Int}]
     end
 end
 
-SSPZ = SimpleSparsePolynomialZonotope([0.2, -0.6], [1 0; 0 0.4], [1 0; 0 1])
-SPZ = convert(SparsePolynomialZonotope, SSPZ)
-@test center(SPZ) == center(SSPZ)
-@test genmat_dep(SPZ) == genmat(SSPZ)
-@test expmat(SPZ) == expmat(SSPZ)
-@test isempty(genmat_indep(SPZ))
-@test indexvector(SPZ) == 1:2
+for N in [Float64]
+    SSPZ = SimpleSparsePolynomialZonotope(N[0.2, -0.6], N[1 0; 0 0.4], [1 0; 0 1])
+    SPZ = convert(SparsePolynomialZonotope, SSPZ)
+    @test center(SPZ) == center(SSPZ)
+    @test genmat_dep(SPZ) == genmat(SSPZ)
+    @test expmat(SPZ) == expmat(SSPZ)
+    @test isempty(genmat_indep(SPZ))
+    @test indexvector(SPZ) == 1:2
+
+    # conversion from Taylor model
+    x₁, x₂, x₃ = set_variables(Float64, ["x₁", "x₂", "x₃"]; order=3)
+    dom1 = IA.interval(N(-1), N(1))
+    dom = dom1 × dom1 × dom1
+    x0 = IA.IntervalBox(IA.mid.(dom)...)
+    rem = IA.interval(N(0), N(0))
+    p₁ = 33 + 2x₁ + 3x₂ + 4x₃ + 5x₁^2 + 6x₂ * x₃ + 7x₃^2 + 8x₁ * x₂ * x₃
+    p₂ = x₃ - x₁
+    vTM = [TaylorModels.TaylorModelN(pi, rem, x0, dom) for pi in [p₁, p₂]]
+    PZ = convert(SparsePolynomialZonotope, vTM)
+    # the following tests check for equality (but equivalence should be tested)
+    @test PZ.c == N[33, 0]
+    @test PZ.G == N[2 3 4 5 6 7 8;
+                    -1 0 1 0 0 0 0]
+    @test PZ.GI == Matrix{N}(undef, 2, 0)
+    @test PZ.E == [1 0 0 2 0 0 1;
+                   0 1 0 0 1 0 1;
+                   0 0 1 0 1 2 1]
+    # interestingly, the zonotope approximations are equivalent
+    Zt = overapproximate(vTM, Zonotope)
+    Zp = overapproximate(PZ, Zonotope)
+    @test isequivalent(Zt, Zp)
+end
 
 for Z in [rand(Zonotope), rand(Hyperrectangle)]
     ZS = convert(SparsePolynomialZonotope, Z)
