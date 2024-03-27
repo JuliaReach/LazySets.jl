@@ -93,6 +93,9 @@ _default_sampler(::Line2D) = HyperplaneSampler()
 _default_sampler(::AbstractSingleton) = SingletonSampler()
 _default_sampler(::AbstractPolynomialZonotope) = PolynomialZonotopeSampler()
 
+_rand(rng, U) = rand(rng, U)
+_rand(rng, U::AbstractVector) = rand.(Ref(rng), U)
+
 """
     RejectionSampler{D} <: AbstractSampler
 
@@ -159,12 +162,12 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
     U = sampler.distribution
     rng = reseed!(rng, seed)
     @inbounds for i in eachindex(D)
-        w = rand(rng, U)
+        w = _rand(rng, U)
 
         if !(sampler.tight)
             j = 1
             while w ∉ X && j <= sampler.maxiter
-                w = rand(rng, U)
+                w = _rand(rng, U)
                 j += 1
             end
             if j > sampler.maxiter
@@ -187,7 +190,7 @@ function sample!(D::Vector{VN}, L::LineSegment,
     q = L.q
 
     @inbounds for i in eachindex(D)
-        λ = rand(rng, U)
+        λ = _rand(rng, U)
         D[i] = p + λ * (q - p)
     end
     return D
@@ -252,7 +255,7 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
         @inbounds for i in eachindex(D)
             p = vlist[rand(1:m)]  # start from a random vertex
             for j in Random.randperm(m)  # choose a random target vertex
-                p += rand(rng, U) * (vlist[j] - p)  # move toward next vertex
+                p += _rand(rng, U) * (vlist[j] - p)  # move toward next vertex
             end
             D[i] = p
         end
@@ -569,7 +572,7 @@ function _add_generators!(x, P::DensePolynomialZonotope, U, rng)
     end
     # G
     for g in eachcol(P.G)
-        γ = rand(rng, U)  # independent factors
+        γ = _rand(rng, U)  # independent factors
         x .+= γ * g
     end
     return x
@@ -672,10 +675,6 @@ function load_distributions_samples()
 
         function RejectionSampler(distr::UnivariateDistribution; tight::Bool=false)
             return RejectionSampler([distr]; tight=tight)
-        end
-
-        function Base.rand(rng::AbstractRNG, U::AbstractVector{<:UnivariateDistribution})
-            return rand.(Ref(rng), U)
         end
 
         function _sample_unit_nsphere_muller_distributions!(D::Vector{Vector{N}},
