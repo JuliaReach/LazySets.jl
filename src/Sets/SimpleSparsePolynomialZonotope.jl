@@ -4,7 +4,7 @@ export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
 """
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N},
                                    MN<:AbstractMatrix{N},
-                                   ME<:AbstractMatrix{<:Integer}}
+                                   ME<:AbstractMatrix{Int}}
         <: AbstractPolynomialZonotope{N}
 
 Type that represents a sparse polynomial zonotope that is *simple* in the sense
@@ -39,7 +39,7 @@ JuliaReach and JuliaIntervals Days 3, 2021.
 """
 struct SimpleSparsePolynomialZonotope{N,VN<:AbstractVector{N},
                                       MN<:AbstractMatrix{N},
-                                      ME<:AbstractMatrix{<:Integer}} <:
+                                      ME<:AbstractMatrix{Int}} <:
        AbstractPolynomialZonotope{N}
     c::VN
     G::MN
@@ -49,7 +49,7 @@ struct SimpleSparsePolynomialZonotope{N,VN<:AbstractVector{N},
                                             E::ME) where {N,
                                                           VN<:AbstractVector{N},
                                                           MN<:AbstractMatrix{N},
-                                                          ME<:AbstractMatrix{<:Integer}}
+                                                          ME<:AbstractMatrix{Int}}
         @assert length(c) == size(G, 1) throw(DimensionMismatch("c and G " *
                                                                 "should have the same number of rows"))
         @assert size(G, 2) == size(E, 2) throw(DimensionMismatch("G and E " *

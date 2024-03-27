@@ -5,8 +5,8 @@ export SparsePolynomialZonotope, expmat, nparams, ngens_dep, ngens_indep,
 """
     SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N},
                              MNI<:AbstractMatrix{N},
-                             ME<:AbstractMatrix{<:Integer},
-                             VI<:AbstractVector{<:Integer}}
+                             ME<:AbstractMatrix{Int},
+                             VI<:AbstractVector{Int}}
         <: AbstractPolynomialZonotope{N}
 
 Type that represents a sparse polynomial zonotope.
@@ -47,8 +47,8 @@ struct SparsePolynomialZonotope{N,
                                 VN<:AbstractVector{N},
                                 MN<:AbstractMatrix{N},
                                 MNI<:AbstractMatrix{N},
-                                ME<:AbstractMatrix{<:Integer},
-                                VI<:AbstractVector{<:Integer}} <: AbstractPolynomialZonotope{N}
+                                ME<:AbstractMatrix{Int},
+                                VI<:AbstractVector{Int}} <: AbstractPolynomialZonotope{N}
     c::VN
     G::MN
     GI::MNI
@@ -60,8 +60,8 @@ struct SparsePolynomialZonotope{N,
                                       idx::VI=uniqueID(size(E, 1))) where {N,VN<:AbstractVector{N},
                                                                            MN<:AbstractMatrix{N},
                                                                            MNI<:AbstractMatrix{N},
-                                                                           ME<:AbstractMatrix{<:Integer},
-                                                                           VI<:AbstractVector{<:Integer}}
+                                                                           ME<:AbstractMatrix{Int},
+                                                                           VI<:AbstractVector{Int}}
         @assert length(c) == size(G, 1) throw(DimensionMismatch("c and G " *
                                                                 "should have the same number of rows"))
         @assert length(c) == size(GI, 1) throw(DimensionMismatch("c and GI " *
