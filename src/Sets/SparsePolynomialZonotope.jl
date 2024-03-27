@@ -1,5 +1,5 @@
 export SparsePolynomialZonotope, expmat, nparams, ngens_dep, ngens_indep,
-       genmat_dep, genmat_indep, indexvector, translate,
+       genmat_dep, genmat_indep, indexvector, polynomial_order, translate,
        linear_map, quadratic_map, remove_redundant_generators, reduce_order, ρ
 
 """
@@ -232,6 +232,27 @@ The index vector.
 The index vector contains positive integers for the dependent parameters.
 """
 indexvector(P::SPZ) = P.idx
+
+"""
+    polynomial_order(P::SPZ)
+
+Return the polynomial order of a sparse polynomial zonotope.
+
+### Input
+
+- `P` -- sparse polynomial zonotope
+
+### Output
+
+The polynomial order.
+
+### Notes
+
+The polynomial order is the maximum sum of all monomials' parameter exponents.
+"""
+function polynomial_order(P::SPZ)
+    return maximum(sum, eachcol(expmat(P)))
+end
 
 """
     uniqueID(n::Int)
