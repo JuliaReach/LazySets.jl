@@ -1,11 +1,11 @@
 """
-    overapproximate(Z::Zonotope, ::Type{<:Zonotope}, r::Union{Integer, Rational})
+    overapproximate(Z::AbstractZonotope, ::Type{<:Zonotope}, r::Real)
 
-Reduce the order of a zonotope.
+Reduce the order of a zonotopic set.
 
 ### Input
 
-- `Z`        -- zonotope
+- `Z`        -- zonotopic set
 - `Zonotope` -- target set type
 - `r`        -- desired order
 
@@ -17,8 +17,7 @@ A new zonotope with `r` generators, if possible.
 
 This method falls back to `reduce_order` with the default algorithm.
 """
-function overapproximate(Z::Zonotope, ::Type{<:Zonotope},
-                         r::Union{Integer,Rational})
+function overapproximate(Z::AbstractZonotope, ::Type{<:Zonotope}, r::Real)
     return reduce_order(Z, r)
 end
 
