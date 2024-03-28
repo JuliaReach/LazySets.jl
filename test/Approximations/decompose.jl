@@ -68,6 +68,14 @@ for N in [Float64, Rational{Int}, Float32]
     @test length(d.array) == 3
     d = decompose(b1, Hyperrectangle; block_size=3)
     @test length(d.array) == 3
+
+    # ================================
+    # partition with fixed output type
+    # ================================
+
+    partition = [[1, 2], [3, 4], [5, 6]]
+    d = decompose(b, partition, Hyperrectangle{N,Vector{N},Vector{N}})
+    @test length(d.array) == 3
 end
 
 # tests that do not work with Rational{Int}
