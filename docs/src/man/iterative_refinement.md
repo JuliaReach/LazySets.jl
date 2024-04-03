@@ -104,13 +104,13 @@ plot(b, 1e-3, aspectratio=1, alpha=0.3)
 
 # initialize box directions
 DIR_EAST, DIR_NORTH, DIR_WEST, DIR_SOUTH = [1., 0.], [0., 1.], [-1., 0.], [0., -1.]
-pe, pn, pw, ps = σ(DIR_EAST, b), σ(DIR_NORTH, b), σ(DIR_WEST, b), σ(DIR_SOUTH, b)
+pE, pN, pW, pS = σ(DIR_EAST, b), σ(DIR_NORTH, b), σ(DIR_WEST, b), σ(DIR_SOUTH, b)
 
 Ω = PolygonalOverapproximation(b)
-addapproximation!(Ω, ps, DIR_SOUTH, pe, DIR_EAST)
-addapproximation!(Ω, pw, DIR_WEST, ps, DIR_SOUTH)
-addapproximation!(Ω, pn, DIR_NORTH, pw, DIR_WEST)
-addapproximation!(Ω, pe, DIR_EAST, pn, DIR_NORTH)
+addapproximation!(Ω, pS, DIR_SOUTH, pE, DIR_EAST)
+addapproximation!(Ω, pW, DIR_WEST, pS, DIR_SOUTH)
+addapproximation!(Ω, pN, DIR_NORTH, pW, DIR_WEST)
+addapproximation!(Ω, pE, DIR_EAST, pN, DIR_NORTH)
 
 plot!(tohrep(Ω), alpha=0.2, color="orange")
 ```

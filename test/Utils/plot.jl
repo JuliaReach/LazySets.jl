@@ -44,9 +44,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     # unary set operations
     spI = SparseMatrixCSC{N}(2I, 2, 2)
-    sme = SparseMatrixExp(spI)
-    em = ExponentialMap(sme, b2)
-    psme = ProjectionSparseMatrixExp(spI, sme, spI)
+    smIe = SparseMatrixExp(spI)
+    em = ExponentialMap(smIe, b2)
+    psme = ProjectionSparseMatrixExp(spI, smIe, spI)
     epm = ExponentialProjectionMap(psme, b2)
 
     # binary set operations
