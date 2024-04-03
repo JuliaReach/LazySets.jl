@@ -207,22 +207,22 @@ function overapproximate_hausdorff(X::S, ε::Real) where {N<:AbstractFloat,S<:La
     end
 
     # initialize box directions
-    pe = σ(DIR_EAST(N), X)
-    pn = σ(DIR_NORTH(N), X)
-    pw = σ(DIR_WEST(N), X)
-    ps = σ(DIR_SOUTH(N), X)
-    east = dir_east(N, pe)
-    north = dir_north(N, pe)
-    west = dir_west(N, pe)
-    south = dir_south(N, pe)
+    pE = σ(DIR_EAST(N), X)
+    pN = σ(DIR_NORTH(N), X)
+    pW = σ(DIR_WEST(N), X)
+    pS = σ(DIR_SOUTH(N), X)
+    east = dir_east(N, pE)
+    north = dir_north(N, pE)
+    west = dir_west(N, pE)
+    south = dir_south(N, pE)
 
     Ω = PolygonalOverapproximation(X)
 
     # add constraints in reverse (i.e., clockwise) order to the stack
-    addapproximation!(Ω, ps, south, pe, east)
-    addapproximation!(Ω, pw, west, ps, south)
-    addapproximation!(Ω, pn, north, pw, west)
-    addapproximation!(Ω, pe, east, pn, north)
+    addapproximation!(Ω, pS, south, pE, east)
+    addapproximation!(Ω, pW, west, pS, south)
+    addapproximation!(Ω, pN, north, pW, west)
+    addapproximation!(Ω, pE, east, pN, north)
 
     approx_stack = Ω.approx_stack
     while !isempty(approx_stack)

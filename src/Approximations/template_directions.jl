@@ -197,10 +197,10 @@ julia> collect(dirs)
 The numeric type can be specified as well:
 
 ```jldoctest
-julia> BoxDirections{Rational{Int}}(10)
+julia> dirs = BoxDirections{Rational{Int}}(10)
 BoxDirections{Rational{Int64}, ReachabilityBase.Arrays.SingleEntryVector{Rational{Int64}}}(10)
 
-julia> length(ans)
+julia> length(dirs)
 20
 ```
 """
@@ -312,10 +312,10 @@ julia> Vector.(collect(dirs))
 The numeric type can be specified as well:
 
 ```jldoctest
-julia> OctDirections{Rational{Int}}(10)
+julia> dirs = OctDirections{Rational{Int}}(10)
 OctDirections{Rational{Int64}, SparseArrays.SparseVector{Rational{Int64}, Int64}}(10)
 
-julia> length(ans)
+julia> length(dirs)
 200
 ```
 """
@@ -452,10 +452,10 @@ julia> collect(dirs)
 The numeric type can be specified as well:
 
 ```jldoctest
-julia> DiagDirections{Rational{Int}}(10)
+julia> dirs = DiagDirections{Rational{Int}}(10)
 DiagDirections{Rational{Int64}, Vector{Rational{Int64}}}(10)
 
-julia> length(ans)
+julia> length(dirs)
 1024
 ```
 """
@@ -551,10 +551,10 @@ julia> collect(dirs)
 The numeric type can be specified as well:
 
 ```jldoctest
-julia> BoxDiagDirections{Rational{Int}}(10)
+julia> dirs = BoxDiagDirections{Rational{Int}}(10)
 BoxDiagDirections{Rational{Int64}, Vector{Rational{Int64}}}(10)
 
-julia> length(ans)
+julia> length(dirs)
 1044
 ```
 """

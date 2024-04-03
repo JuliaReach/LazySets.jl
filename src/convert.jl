@@ -541,9 +541,9 @@ function convert(::Type{CartesianProduct{N,Interval{N},Interval{N}}},
                         "convert it to the Cartesian product of two intervals, but it is " *
                         "$(dim(H))-dimensional; consider converting it to a " *
                         "`CartesianProductArray{$N, Interval{$N}}` instead"
-    Ix = Interval(low(H, 1), high(H, 1))
-    Iy = Interval(low(H, 2), high(H, 2))
-    return CartesianProduct(Ix, Iy)
+    I1 = Interval(low(H, 1), high(H, 1))
+    I2 = Interval(low(H, 2), high(H, 2))
+    return CartesianProduct(I1, I2)
 end
 
 """
