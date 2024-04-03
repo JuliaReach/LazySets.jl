@@ -513,13 +513,12 @@ for N in [Float64]
     cap = overapproximate(Z ∩ L, OctDirections)
     @test (L ∩ Z) ⊆ cap
 
-    # NOTE: ICP currently leads to unsatisfiable package requirements
     # overapproximate a nonlinear constraint with an HPolyhedron
-    #     dom = IntervalBox(interval(-2, 2), interval(-2, 2))
-    #     C = @constraint x^2 + y^2 <= 1
-    #     p = pave(C, dom, 0.01)
-    #     dirs = OctDirections(2)
-    #     H = overapproximate(p, dirs)
-    #     B2 = Ball2(N[0, 0], N(1))
-    #     @test B2 ⊆ H
+    dom = IntervalBox(interval(-2, 2), interval(-2, 2))
+    C = ICP.@constraint x^2 + y^2 <= 1
+    p = ICP.pave(C, dom, 0.01)
+    dirs = OctDirections(2)
+    H = overapproximate(p, dirs)
+    B2 = Ball2(N[0, 0], N(1))
+    @test B2 ⊆ H
 end
