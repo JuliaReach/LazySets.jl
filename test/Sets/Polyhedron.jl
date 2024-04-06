@@ -146,6 +146,12 @@ for N in [Float64, Rational{Int}, Float32]
     P = HPolyhedron([HalfSpace(SingleEntryVector(1, 2, N(1)), N(0))])
     Q = convert(typeof(P), P)
     @test P == Q
+
+    # permute
+    P = HPolyhedron(HalfSpace[HalfSpace(N[1, 2], N(3)), HalfSpace(N[-1, -2], N(-3))])
+    @test permute(P, 1:2) == P
+    @test permute(P, [2, 1]) ==
+          HPolyhedron(HalfSpace[HalfSpace(N[2, 1], N(3)), HalfSpace(N[-2, -1], N(-3))])
 end
 
 # default Float64 constructors

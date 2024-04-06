@@ -282,6 +282,12 @@ for N in [Float64, Rational{Int}, Float32]
     P2 = copy(P)
     scale!(N(2), P2)
     @test scale(N(2), P) == P2 == VPolytope([N[2, 4, 6], N[8, 10, 12]])
+
+    # permute
+    P = HPolytope(HalfSpace[HalfSpace(N[1, 2], N(3)), HalfSpace(N[-1, -2], N(-3))])
+    @test permute(P, 1:2) == P
+    @test permute(P, [2, 1]) ==
+          HPolytope(HalfSpace[HalfSpace(N[2, 1], N(3)), HalfSpace(N[-2, -1], N(-3))])
 end
 
 # default Float64 constructors

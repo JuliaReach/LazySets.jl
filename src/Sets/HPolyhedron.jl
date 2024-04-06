@@ -605,3 +605,8 @@ function load_symbolics_hpolyhedron()
         end
     end
 end  # quote / load_symbolics_hpolyhedron()
+
+function permute(P::HPoly, p::AbstractVector{Int})
+    T = basetype(P)
+    return T([permute(H, p) for H in P.constraints])
+end
