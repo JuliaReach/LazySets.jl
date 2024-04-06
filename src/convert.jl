@@ -1276,3 +1276,19 @@ function load_taylormodels_convert_polynomial_zonotope()
         end
     end
 end  # quote / load_taylormodels_convert_polynomial_zonotope
+
+function convert(::Type{Hyperrectangle}, Z::AbstractZonotope{N}) where {N}
+    c = center(Z)
+    n = length(c)
+    r = zeros(N, n)
+    @inbounds for cj in generators(Z)
+        i = findfirst(!=(zero(N)), cj)
+        if isnothing(i)
+            continue
+        end
+        @assert isnothing(findfirst(!=(zero(N)), @view cj[(i + 1):end])) "the zonotope " *
+                                                                         "is not hyperrectangular"
+        r[i] += cj[i]  # `+` because to allow for multiple generators in dimension i
+    end
+    return Hyperrectangle(c, r)
+end
