@@ -606,3 +606,9 @@ function load_reduce_order_static_zonotope()
         end
     end
 end # quote / load_reduce_order_static_zonotope
+
+function permute(Z::Zonotope, p::AbstractVector{Int})
+    c = Z.center[p]
+    G = Z.generators[p, :]
+    return Zonotope(c, G)
+end

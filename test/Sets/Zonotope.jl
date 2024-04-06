@@ -274,6 +274,11 @@ for N in [Float64, Rational{Int}, Float32]
     # reflect
     Z = Zonotope(N[1, -2], N[2 0; -1//2 1//2])
     @test reflect(Z) == Zonotope(N[-1, 2], N[2 0; -1//2 1//2])
+
+    # permute
+    Z = Zonotope(N[-1, -2], N[1 2 3; -4 -5 -6])
+    @test permute(Z, [1, 2]) == Z
+    @test permute(Z, [2, 1]) == Zonotope(N[-2, -1], N[-4 -5 -6; 1 2 3])
 end
 
 for N in [Float64]
