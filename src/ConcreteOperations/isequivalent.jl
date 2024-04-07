@@ -32,3 +32,7 @@ end
 function _isequivalent_inclusion(X::LazySet, Y::LazySet)
     return X ⊆ Y && Y ⊆ X
 end
+
+@commutative function isequivalent(S::AbstractSingleton, Z::AbstractZonotope)
+    return center(Z) == element(S) && iszero(genmat(Z))
+end
