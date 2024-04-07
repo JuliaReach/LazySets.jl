@@ -1,4 +1,9 @@
 for N in [Float64, Float32, Rational{Int}]
+    # -- singletons --
+    S = Singleton(N[1, 2])
+    @test isequivalent(S, S)
+    @test !isequivalent(S, Singleton(N[1, 1]))
+
     # -- singleton and zonotope --
 
     S = Singleton(N[1, 2])

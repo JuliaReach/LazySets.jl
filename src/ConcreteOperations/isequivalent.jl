@@ -36,3 +36,7 @@ end
 @commutative function isequivalent(S::AbstractSingleton, Z::AbstractZonotope)
     return center(Z) == element(S) && iszero(genmat(Z))
 end
+
+function isequivalent(S1::AbstractSingleton, S2::AbstractSingleton)
+    return isapprox(element(S1), element(S2))
+end
