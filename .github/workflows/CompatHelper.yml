@@ -13,7 +13,7 @@ jobs:
         run: which julia
         continue-on-error: true
       - name: Set up Julia if not already available
-        uses: julia-actions/setup-julia@v1
+        uses: julia-actions/setup-julia@v2
         with:
           version: '1'
           arch: ${{ runner.arch }}
