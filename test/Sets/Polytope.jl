@@ -175,6 +175,12 @@ for N in [Float64, Rational{Int}, Float32]
     Y = affine_map_inverse(M, P, zeros(N, 2))
     @test X == Y
 
+    # convert
+    P = HPolytope([HalfSpace(SingleEntryVector(1, 1, N(1)), N(1)),
+                   HalfSpace(SingleEntryVector(1, 1, N(-1)), N(0))])
+    Q = convert(typeof(P), P)
+    @test P == Q
+
     # -----
     # V-rep
     # -----

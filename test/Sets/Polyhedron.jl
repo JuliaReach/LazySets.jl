@@ -141,6 +141,11 @@ for N in [Float64, Rational{Int}, Float32]
             @test isempty(P; use_polyhedra_interface=true, backend=CDDLib.Library(:exact)) == true
         end
     end
+
+    # convert
+    P = HPolyhedron([HalfSpace(SingleEntryVector(1, 2, N(1)), N(0))])
+    Q = convert(typeof(P), P)
+    @test P == Q
 end
 
 # default Float64 constructors
