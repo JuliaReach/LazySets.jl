@@ -74,6 +74,8 @@ function convert(::Type{HPolytope}, X::LazySet)
     return HPolytope(constraints_list(X))
 end
 
+convert(::Type{HPolytope{N,VT}}, P::HPolytope{N,VT}) where {N,VT} = P
+
 function convert(::Type{HPolytope{N,VT}}, X::LazySet) where {N,VT}
     if !isboundedtype(typeof(X)) || !is_polyhedral(X)
         error("conversion to `HPolytope` requires a polytopic set")
@@ -105,6 +107,8 @@ function convert(::Type{HPolyhedron}, X::LazySet)
     end
     return HPolyhedron(constraints_list(X))
 end
+
+convert(::Type{HPolyhedron{N,VT}}, P::HPolyhedron{N,VT}) where {N,VT} = P
 
 function convert(::Type{HPolyhedron{N,VT}}, X::LazySet) where {N,VT}
     if !is_polyhedral(X)
