@@ -454,7 +454,8 @@ end
 
 # ZeroSet is the neutral element (+ disambiguation)
 for T in [:LazySet, :AbstractPolyhedron, :AbstractPolytope, :AbstractZonotope,
-          :AbstractHyperrectangle, :AbstractSingleton, :DensePolynomialZonotope]
+          :AbstractHyperrectangle, :AbstractSingleton, :DensePolynomialZonotope,
+          :SparsePolynomialZonotope]
     @eval begin
         @commutative minkowski_sum(::ZeroSet, X::$T) = X
     end
@@ -498,6 +499,13 @@ Compute the Minkowski sum of two sparse polyomial zonotopes.
 ### Output
 
 The Minkowski sum of `P1` and `P2`.
+
+### Algorithm
+
+See Proposition 3.1.19 in [1].
+
+[1] Kochdumper. *Extensions of polynomial zonotopes and their application to
+    verification of cyber-physical systems.* PhD diss., TU Munich, 2022.
 """
 function minkowski_sum(P1::SparsePolynomialZonotope,
                        P2::SparsePolynomialZonotope)
@@ -505,6 +513,17 @@ function minkowski_sum(P1::SparsePolynomialZonotope,
     G = hcat(genmat_dep(P1), genmat_dep(P2))
     GI = hcat(genmat_indep(P1), genmat_indep(P2))
     E = cat(expmat(P1), expmat(P2); dims=(1, 2))
+    return SparsePolynomialZonotope(c, G, GI, E)
+end
+
+# See Proposition 3.1.19 in [1].
+# [1] Kochdumper. *Extensions of polynomial zonotopes and their application to
+#     verification of cyber-physical systems.* PhD diss., TU Munich, 2022.
+@commutative function minkowski_sum(PZ::SparsePolynomialZonotope, Z::AbstractZonotope)
+    c = center(PZ) + center(Z)
+    G = genmat_dep(PZ)
+    GI = hcat(genmat_indep(PZ), genmat(Z))
+    E = expmat(PZ)
     return SparsePolynomialZonotope(c, G, GI, E)
 end
 

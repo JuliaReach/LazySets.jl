@@ -11,6 +11,15 @@ for N in [Float64, Float32, Rational{Int}]
         B2 = B(N[4, 5], N(6))
         @test minkowski_sum(B1, B2) == B(N[5, 7], N(9))
     end
+
+    H1 = Hyperrectangle(N[1, 2], N[3, 4])
+    H2 = Hyperrectangle(N[5, 6], N[7, 8])
+    @test minkowski_sum(H1, H2) == Hyperrectangle(N[6, 8], N[10, 12])
+    PZ = minkowski_sum(convert(SparsePolynomialZonotope, H1), H2)
+    # equality is not required but approximates the equivalence check
+    @test PZ == SparsePolynomialZonotope(N[6, 8], N[3 0; 0 4], N[7 0; 0 8], [1 0; 0 1], 1:2)
+    PZ = minkowski_sum(H1, convert(SparsePolynomialZonotope, H2))
+    @test PZ == SparsePolynomialZonotope(N[6, 8], N[7 0; 0 8], N[3 0; 0 4], [1 0; 0 1], 1:2)
 end
 
 for N in [Float64, Float32]
