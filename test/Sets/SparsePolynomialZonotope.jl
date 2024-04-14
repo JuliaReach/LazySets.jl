@@ -158,4 +158,9 @@ let
 
     @test expmat(Pred) == [1 0 1 2; 0 1 1 0]
     @test indexvector(Pred) == [1, 2]
+
+    @test order(P) == 4
+    for r in 4:8
+        @test reduce_order(P, r) == P
+    end
 end
