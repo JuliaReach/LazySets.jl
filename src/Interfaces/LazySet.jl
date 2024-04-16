@@ -377,6 +377,10 @@ approximation, so they are not necessarily contained in `X`.
 The bounds are computed with `low` and `high` by default.
 """
 function extrema(X::LazySet)
+    return _extrema_lowhigh(X)
+end
+
+function _extrema_lowhigh(X::LazySet)
     l = low(X)
     h = high(X)
     return (l, h)

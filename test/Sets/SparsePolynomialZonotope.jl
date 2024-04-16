@@ -103,6 +103,23 @@ for N in [Float64, Float32, Rational{Int}]
         v2 = ρ(d, PZ2; enclosure_method=RangeEnclosures.NaturalEnclosure())
         @test v <= v1 <= v2
     end
+
+    # extrema approximation
+    PZ = SparsePolynomialZonotope(N[-1, 2], N[1 2 0 2; 0 1 2 -1], N[1 0; 2 0], [1 0 1 2; 0 0 0 1])
+    l1, u1 = extrema(PZ; algorithm="zonotope")
+    @test (l1, u1) == extrema(PZ)  # default algorithm
+    @test_throws ArgumentError extrema(PZ; algorithm="???")
+    H1 = Hyperrectangle(low=l1, high=u1)
+    l2, u2 = extrema(PZ; algorithm="lowhigh")
+    H2 = Hyperrectangle(low=l2, high=u2)
+    @test H2 ⊆ H1 == Hyperrectangle(N[0, 5//2], N[5, 11//2])
+    # another example
+    PZ = SparsePolynomialZonotope(N[-1/2, -1/2], N[1 1 1 1; 1 0 -1 1], Matrix{N}(undef, 2, 0), [1 0 1 2; 0 1 1 0])
+    l1, u1 = extrema(PZ; algorithm="zonotope")
+    H1 = Hyperrectangle(low=l1, high=u1)
+    l2, u2 = extrema(PZ; algorithm="lowhigh")
+    H2 = Hyperrectangle(low=l2, high=u2)
+    @test H2 ⊆ H1 == Hyperrectangle(N[0, 0], N[7//2, 5//2])
 end
 
 SSPZ = SimpleSparsePolynomialZonotope([0.2, -0.6], [1 0; 0 0.4], [1 0; 0 1])
