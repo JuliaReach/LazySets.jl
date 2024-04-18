@@ -89,13 +89,22 @@ for N in [Float64, Float32, Rational{Int}]
     Z = overapproximate(S, Zonotope)
     @test isequivalent(Z, Zonotope(N[0, 0], N[1.5 1 1; 1.5 0 -1]))
 
+    # remove_redundant_generators
     PZ = SparsePolynomialZonotope(N[-1, 2], N[1 2 0 2; 0 1 2 -1], N[1 0; 2 0], [1 0 1 2; 0 0 0 1])
     PZreduced = remove_redundant_generators(PZ)
-
     @test center(PZreduced) == N[1, 3]
     @test genmat_dep(PZreduced) == N[1 2; 2 -1]
     @test genmat_indep(PZreduced) == hcat(N[1, 2])
     @test expmat(PZreduced) == [1 2; 0 1]
+    # also removes almost-zero columns
+    if N <: AbstractFloat
+        PZ = SparsePolynomialZonotope(N[-1, 2], N[1e-16; -1e-16;;], N[1e-16; -1e-16;;], [1; 1;;])
+        PZreduced = remove_redundant_generators(PZ)
+        @test center(PZreduced) == N[-1, 2]
+        @test size(genmat_dep(PZreduced)) == (2, 0)
+        @test size(genmat_indep(PZreduced)) == (2, 0)
+        @test size(expmat(PZreduced)) == (2, 0)
+    end
 
     # support function (enclosure)
     for (d, v) in [(N[1, 0], N(3)), (N[1, 1], N(7)), (N[1, -1], N(3))]

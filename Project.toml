@@ -24,7 +24,7 @@ IntervalArithmetic = "0.15 - 0.21, =0.21.2"  # v0.22 removed IntervalBox
 JuMP = "0.21 - 0.23, 1"
 LinearAlgebra = "<0.0.1, 1.6"
 Random = "<0.0.1, 1.6"
-ReachabilityBase = "0.2.1"
+ReachabilityBase = "0.2.5"
 RecipesBase = "0.6 - 0.8, 1"
 Reexport = "0.2, 1"
 Requires = "0.5, 1"
