@@ -11,6 +11,12 @@ function vertices_list(H::IA.IntervalBox)
     return vertices_list(convert(Hyperrectangle, H))
 end
 
+const zero_itv(N) = IA.interval(zero(N))
+const sym_itv(N) = IA.interval(-one(N), one(N))
+
+zero_box(n::Int, N=Float64) = IA.IntervalBox(zero_itv(N), n)
+sym_box(n::Int, N=Float64) = IA.IntervalBox(sym_itv(N), n)
+
 """
     fast_interval_pow(a::IntervalArithmetic.Interval, n::Int)
 
