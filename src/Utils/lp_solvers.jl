@@ -11,12 +11,12 @@ end
 end
 
 # default LP solver for rational numbers
-@inline function default_lp_solver_factory(::Type{<:Rational})
+@inline function default_lp_solver_factory(::Union{Type{<:Rational},Type{Int}})
     return JuMP.optimizer_with_attributes(() -> GLPK.Optimizer(; method=GLPK.EXACT))
 end
 
 @inline task_local_lp_solver_key(::Type{<:AbstractFloat}) = "LAZYSETS_FLOAT_LP_SOLVER"
-@inline task_local_lp_solver_key(::Type{<:Rational}) = "LAZYSETS_EXACT_LP_SOLVER"
+@inline task_local_lp_solver_key(::Union{Type{<:Rational},Type{Int}}) = "LAZYSETS_EXACT_LP_SOLVER"
 
 # default LP solver given two possibly different numeric types
 @inline function default_lp_solver(M::Type{<:Number}, N::Type{<:Number})

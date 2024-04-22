@@ -1,6 +1,9 @@
-# Check that the default model and explicit solver
-# specification works for linprog
+# check solver handling
+for N in [Float64, Rational{Int}, Int]
+    LazySets.default_lp_solver(N)
+end
 
+# check that the default model and explicit solver specification work for linprog
 for N in [Float64]
     p = HPolyhedron{N}()
     c1 = LinearConstraint(N[2, 2], N(12))
@@ -15,7 +18,10 @@ for N in [Float64]
     P = HPolyhedron([HalfSpace(N[3 // 50, -4 // 10], N(1)),
                      HalfSpace(N[-1 // 50, 1 // 10], N(-1))])
 
-    # With default model 
+    ####################
+    # with default model
+    ####################
+
     # support vector
     d = N[1, 0]
     @test σ(d, p) == N[4, 2]
@@ -29,7 +35,9 @@ for N in [Float64]
     # an_element
     @test an_element(P) ∈ P
 
-    # With explicit solver
+    ######################
+    # with explicit solver
+    ######################
     solver = optimizer_with_attributes(() -> GLPK.Optimizer(; method=GLPK.SIMPLEX))
 
     # support vector
