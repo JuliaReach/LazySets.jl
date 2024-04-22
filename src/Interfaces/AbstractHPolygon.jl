@@ -1,14 +1,7 @@
-import Base: rand,
-             ∈
-
 export AbstractHPolygon,
-       an_element,
        isredundant,
        remove_redundant_constraints!,
-       addconstraint!,
-       vertices_list,
-       constraints_list,
-       isbounded
+       addconstraint!
 
 # This constant marks the threshold for the number of constraints of an
 # H-polygon above which we use a binary search to find the relevant constraint

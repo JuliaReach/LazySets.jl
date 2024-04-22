@@ -1,5 +1,5 @@
 export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
-       linear_map, quadratic_map, remove_redundant_generators
+       quadratic_map, remove_redundant_generators
 
 """
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N},

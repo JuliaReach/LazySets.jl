@@ -1,5 +1,3 @@
-export cartesian_product
-
 """
     cartesian_product(X::LazySet, Y::LazySet; [backend]=nothing,
                       [algorithm]::String="vrep")

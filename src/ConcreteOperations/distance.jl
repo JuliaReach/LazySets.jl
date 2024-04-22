@@ -1,5 +1,3 @@
-export distance
-
 """
     distance(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle;
              [p]::Real=2)
@@ -20,10 +18,6 @@ Compute the standard distance between two hyperrectangular sets, defined as
 
 The distance, which is zero if the sets intersect and otherwise the ``p``-norm
 of the shortest line segment between any pair of points.
-
-### Notes
-
-See also [`hausdorff_distance`](@ref) for an alternative distance notion.
 """
 function distance(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle;
                   p::Real=2)

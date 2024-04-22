@@ -1,9 +1,5 @@
-import Base: rand,
-             ∈
-
 export LineSegment,
-       halfspace_left, halfspace_right,
-       constraints_list
+       halfspace_left, halfspace_right
 
 """
     LineSegment{N, VN<:AbstractVector{N}} <: AbstractZonotope{N}

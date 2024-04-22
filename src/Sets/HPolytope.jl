@@ -1,9 +1,4 @@
-import Base.rand
-import Base.rationalize
-
-export HPolytope,
-       vertices_list,
-       isbounded
+export HPolytope
 
 """
     HPolytope{N, VN<:AbstractVector{N}} <: AbstractPolytope{N}

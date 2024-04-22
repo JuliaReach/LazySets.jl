@@ -1,45 +1,9 @@
-import Base: isempty, extrema, ==, ≈, copy, eltype, rationalize, ∈
-import Random.rand
-
 export LazySet,
-       low,
-       high,
        basetype,
-       ρ, support_function,
-       σ, support_vector,
-       complement,
-       dim,
-       norm,
-       radius,
-       diameter,
-       an_element,
-       isbounded,
-       isboundedtype,
        neutral,
        absorbing,
        tosimplehrep,
-       isuniversal,
-       translate,
-       linear_map,
-       affine_map,
-       exponential_map,
-       reflect,
-       is_interior_point,
-       isempty,
-       isoperation,
-       isoperationtype,
-       isequivalent,
-       isconvextype,
-       is_polyhedral,
-       area,
-       surface,
        singleton_list,
-       concretize,
-       constraints,
-       vertices,
-       project,
-       rectify,
-       permute,
        chebyshev_center_radius,
        ○,
        flatten
@@ -56,16 +20,16 @@ for using different numeric types.
 
 Every concrete `LazySet` must define the following method:
 
-- `dim(S::LazySet)` -- the ambient dimension of `S`
+- `dim(X::LazySet)` -- the ambient dimension of `X`
 
 While not strictly required, it is useful to define the following method:
 
-- `σ(d::AbstractVector, S::LazySet)` -- the support vector of `S` in a given
+- `σ(d::AbstractVector, X::LazySet)` -- the support vector of `X` in a given
     direction `d`
 
 The method
 
-- `ρ(d::AbstractVector, S::LazySet)` -- the support function of `S` in a given
+- `ρ(d::AbstractVector, X::LazySet)` -- the support function of `X` in a given
     direction `d`
 
 is optional because there is a fallback implementation relying on `σ`.
@@ -181,42 +145,28 @@ A `Ellipsoid`s or `Ball2`s depending on the type of `a`.
 
 ### Notes
 
-The function symbol can be typed via `\\bigcirc[TAB]`.
+"`○`" can be typed by `\\bigcirc<tab>`.
 """
 function ○(c, a) end
 
 """
-    isconvextype(X::Type{<:LazySet})
+### Algorithm
 
-Check whether the given `LazySet` type is convex.
-
-### Input
-
-- `X` -- subtype of `LazySet`
-
-### Output
-
-`true` if the given set type is guaranteed to be convex by using only type
-information, and `false` otherwise.
-
-### Notes
-
-Since this operation only acts on types (not on values), it can return false
-negatives, i.e., there may be instances where the set is convex, even though the
-answer of this function is `false`. The examples below illustrate this point.
+The default implementation returns `false`. All set types that can determine
+convexity should override this behavior.
 
 ### Examples
 
-A ball in the infinity norm is always convex, hence we get:
+A ball in the infinity norm is always convex:
 
 ```jldoctest convex_types
 julia> isconvextype(BallInf)
 true
 ```
 
-For instance, the union (`UnionSet`) of two sets may in general be either convex
-or not. Since convexity cannot be decided by just using type information,
-`isconvextype` returns `false`.
+The union (`UnionSet`) of two sets may in general be either convex or not. Since
+convexity cannot be decided by just using type information, `isconvextype`
+returns `false`.
 
 ```jldoctest convex_types
 julia> isconvextype(UnionSet)
@@ -224,16 +174,16 @@ false
 ```
 
 However, the type parameters of set operations allow to decide convexity in some
-cases by falling back to the convexity information of the type of its arguments.
-Consider for instance the lazy intersection. The intersection of two convex sets
-is always convex, hence we get:
+cases by falling back to the convexity information of the argument types.
+Consider the lazy intersection. The intersection of two convex sets is always
+convex:
 
 ```jldoctest convex_types
 julia> isconvextype(Intersection{Float64, BallInf{Float64}, BallInf{Float64}})
 true
 ```
 """
-isconvextype(X::Type{<:LazySet}) = false
+isconvextype(::Type{<:LazySet}) = false
 
 # Polyhedra backend (fallback method)
 function default_polyhedra_backend(P::LazySet{N}) where {N}
@@ -257,25 +207,9 @@ function _low(X::LazySet{N}, i::Int) where {N}
 end
 
 """
-    low(X::LazySet)
+### Algorithm
 
-Return a vector with the lowest coordinates of the set in each canonical
-direction.
-
-### Input
-
-- `X` -- set
-
-### Output
-
-A vector with the lower coordinate of the set in each dimension.
-
-### Notes
-
-See also `low(X::LazySet, i::Int)`.
-
-The result is the lowermost corner of the box approximation, so it is not
-necessarily contained in `X`.
+The default implementation applies `low` in each dimension.
 """
 function low(X::LazySet)
     n = dim(X)
@@ -294,25 +228,9 @@ function _high(X::LazySet{N}, i::Int) where {N}
 end
 
 """
-    high(X::LazySet)
+### Algorithm
 
-Return a vector with the highest coordinate of the set in each canonical
-direction.
-
-### Input
-
-- `X` -- set
-
-### Output
-
-A vector with the highest coordinate of the set in each dimension.
-
-### Notes
-
-See also `high(X::LazySet, i::Int)`.
-
-The result is the uppermost corner of the box approximation, so it is not
-necessarily contained in `X`.
+The default implementation applies `high` in each dimension.
 """
 function high(X::LazySet)
     n = dim(X)
@@ -320,27 +238,9 @@ function high(X::LazySet)
 end
 
 """
-    extrema(X::LazySet, i::Int)
-
-Return the lower and higher coordinate of a set in a given dimension.
-
-### Input
-
-- `X` -- set
-- `i` -- dimension of interest
-
-### Output
-
-The lower and higher coordinate of the set in the given dimension.
-
-### Notes
-
-The result is equivalent to `(low(X, i), high(X, i))`, but sometimes it can be
-computed more efficiently.
-
 ### Algorithm
 
-The bounds are computed with `low` and `high`.
+The default implementation computes the extrema via `low` and `high`.
 """
 function extrema(X::LazySet, i::Int)
     l = low(X, i)
@@ -349,32 +249,9 @@ function extrema(X::LazySet, i::Int)
 end
 
 """
-    extrema(X::LazySet)
-
-Return two vectors with the lowest and highest coordinate of `X` in each
-canonical direction.
-
-### Input
-
-- `X` -- set
-
-### Output
-
-Two vectors with the lowest and highest coordinates of `X` in each dimension.
-
-### Notes
-
-See also [`extrema(X::LazySet, i::Int)`](@ref).
-
-The result is equivalent to `(low(X), high(X))`, but sometimes it can be
-computed more efficiently.
-
-The resulting points are the lowermost and uppermost corners of the box
-approximation, so they are not necessarily contained in `X`.
-
 ### Algorithm
 
-The bounds are computed with `low` and `high` by default.
+The default implementation computes the extrema via `low` and `high`.
 """
 function extrema(X::LazySet)
     l = low(X)
@@ -436,32 +313,16 @@ function _convex_hull_polytopes(X; kwargs...)
 end
 
 """
-    eltype(::Type{<:LazySet{N}}) where {N}
+### Algorithm
 
-Return the numeric type (`N`) of the given set type.
-
-### Input
-
-- `T` -- set type
-
-### Output
-
-The numeric type of `T`.
+The default implementation assumes that the first type parameter is `N`.
 """
 eltype(::Type{<:LazySet{N}}) where {N} = N
 
 """
-    eltype(::LazySet{N}) where {N}
+### Algorithm
 
-Return the numeric type (`N`) of the given set.
-
-### Input
-
-- `X` -- set
-
-### Output
-
-The numeric type of `X`.
+The default implementation assumes that the first type parameter is `N`.
 """
 eltype(::LazySet{N}) where {N} = N
 
@@ -481,17 +342,17 @@ The base type of `T`.
 basetype(T::Type{<:LazySet}) = Base.typename(T).wrapper
 
 """
-    basetype(S::LazySet)
+    basetype(X::LazySet)
 
 Return the base type of the given set (i.e., without type parameters).
 
 ### Input
 
-- `S` -- set
+- `X` -- set
 
 ### Output
 
-The base type of `S`.
+The base type of `X`.
 
 ### Examples
 
@@ -508,80 +369,41 @@ julia> basetype(LinearMap(rand(2, 2), Z + Z))
 LinearMap
 ```
 """
-basetype(S::LazySet) = basetype(typeof(S))
+basetype(X::LazySet) = basetype(typeof(X))
 
 """
-    ρ(d::AbstractVector, S::LazySet)
+### Algorithm
 
-Evaluate the support function of a set in a given direction.
-
-### Input
-
-- `d` -- direction
-- `S` -- set
-
-### Output
-
-The evaluation of the support function of the set `S` for the direction `d`.
+The default implementation computes a support vector via `σ`.
 """
-function ρ(d::AbstractVector, S::LazySet)
-    return dot(d, σ(d, S))
+function ρ(d::AbstractVector, X::LazySet)
+    return dot(d, σ(d, X))
 end
 
 """
-    support_function
+### Notes
 
-Alias for the support function ρ.
-"""
-const support_function = ρ
-
-"""
-    σ
-
-Function to compute the support vector σ.
-"""
-function σ end
-
-"""
-    support_vector
-
-Alias for the support vector σ.
-"""
-const support_vector = σ
-
-"""
-    isboundedtype(T::Type{<:LazySet})
-
-Check whether a set type only represents bounded sets.
-
-### Input
-
-- `T` -- set type
-
-### Output
-
-`true` if the set type only represents bounded sets.
 Note that some sets may still represent an unbounded set even though their type
 actually does not (example: [`HPolytope`](@ref), because the construction with
 non-bounding linear constraints is allowed).
 
-### Notes
+### Algorithm
 
-By default this function returns `false`.
-All set types that can determine boundedness should override this behavior.
+The default implementation returns `false`. All set types that can determine
+boundedness should override this behavior.
 """
-function isboundedtype(T::Type{<:LazySet})
+function isboundedtype(::Type{<:LazySet})
     return false
 end
 
 """
-    isbounded(S::LazySet)
+    isbounded(X::LazySet; [algorithm]="support_function")
 
 Check whether a set is bounded.
 
 ### Input
 
-- `S`         -- set
+- `X`         -- set
 - `algorithm` -- (optional, default: `"support_function"`) algorithm choice,
                  possible options are `"support_function"` and `"stiemke"`
 
@@ -594,24 +416,24 @@ Check whether a set is bounded.
 See the documentation of `_isbounded_unit_dimensions` or `_isbounded_stiemke`
 for details.
 """
-function isbounded(S::LazySet; algorithm="support_function")
+function isbounded(X::LazySet; algorithm="support_function")
     if algorithm == "support_function"
-        return _isbounded_unit_dimensions(S)
+        return _isbounded_unit_dimensions(X)
     elseif algorithm == "stiemke"
-        return _isbounded_stiemke(constraints_list(S))
+        return _isbounded_stiemke(constraints_list(X))
     else
         throw(ArgumentError("unknown algorithm $algorithm"))
     end
 end
 
 """
-    _isbounded_unit_dimensions(S::LazySet)
+    _isbounded_unit_dimensions(X::LazySet)
 
 Check whether a set is bounded in each unit dimension.
 
 ### Input
 
-- `S` -- set
+- `X` -- set
 
 ### Output
 
@@ -621,9 +443,9 @@ Check whether a set is bounded in each unit dimension.
 
 This function asks for upper and lower bounds in each ambient dimension.
 """
-function _isbounded_unit_dimensions(S::LazySet)
-    @inbounds for i in 1:dim(S)
-        if isinf(low(S, i)) || isinf(high(S, i))
+function _isbounded_unit_dimensions(X::LazySet)
+    @inbounds for i in 1:dim(X)
+        if isinf(low(X, i)) || isinf(high(X, i))
             return false
         end
     end
@@ -631,277 +453,99 @@ function _isbounded_unit_dimensions(S::LazySet)
 end
 
 """
-    is_polyhedral(S::LazySet)
+### Algorithm
 
-Trait for polyhedral sets.
-
-### Input
-
-- `S` -- set
-
-### Output
-
-`true` only if the set behaves like an [`AbstractPolyhedron`](@ref).
-
-### Notes
-
-The answer is conservative, i.e., may sometimes be `false` even if the set is
-polyhedral.
+The default implementation returns `false`. All set types that can determine the
+polyhedral property should override this behavior.
 """
-function is_polyhedral(S::LazySet)
+function is_polyhedral(::LazySet)
     return false
 end
 
 """
-    norm(S::LazySet, [p]::Real=Inf)
+### Algorithm
 
-Return the norm of a set.
-It is the norm of the enclosing ball (of the given ``p``-norm) of minimal volume
-that is centered in the origin.
-
-### Input
-
-- `S` -- set
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the norm.
+The default implementation handles the case `p == Inf` using `extrema`.
+Otherwise it checks whether `X` is polytopic, in which case it iterates over all
+vertices.
 """
-function norm(S::LazySet, p::Real=Inf)
+function norm(X::LazySet, p::Real=Inf)
     if p == Inf
-        l, h = extrema(S)
+        l, h = extrema(X)
         return max(maximum(abs, l), maximum(abs, h))
-    elseif is_polyhedral(S) && isboundedtype(typeof(S))
-        return maximum(norm(v, p) for v in vertices_list(S))
+    elseif is_polyhedral(X) && isboundedtype(typeof(X))
+        return maximum(norm(v, p) for v in vertices_list(X))
     else
         error("the norm for this value of p=$p is not implemented")
     end
 end
 
 """
-    radius(S::LazySet, [p]::Real=Inf)
+### Algorithm
 
-Return the radius of a set.
-It is the radius of the enclosing ball (of the given ``p``-norm) of minimal
-volume with the same center.
-
-### Input
-
-- `S` -- set
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the radius.
+The default implementation handles the case `p == Inf` using
+`ballinf_approximation`.
 """
-function radius(S::LazySet, p::Real=Inf)
+function radius(X::LazySet, p::Real=Inf)
     if p == Inf
-        return radius(Approximations.ballinf_approximation(S), p)
+        return radius(Approximations.ballinf_approximation(X), p)
     else
         error("the radius for this value of p=$p is not implemented")
     end
 end
 
 """
-    diameter(S::LazySet, [p]::Real=Inf)
+### Algorithm
 
-Return the diameter of a set.
-It is the maximum distance between any two elements of the set, or,
-equivalently, the diameter of the enclosing ball (of the given ``p``-norm) of
-minimal volume with the same center.
-
-### Input
-
-- `S` -- set
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the diameter.
+The default implementation applies the function `radius` and doubles the result.
 """
-function diameter(S::LazySet, p::Real=Inf)
-    return radius(S, p) * 2
+function diameter(X::LazySet, p::Real=Inf)
+    return radius(X, p) * 2
 end
 
 """
-    affine_map(M, X::LazySet, v::AbstractVector; kwargs...)
-
-Compute the concrete affine map ``M·X + v``.
-
-### Input
-
-- `M` -- linear map
-- `X` -- set
-- `v` -- translation vector
-
-### Output
-
-A set representing the affine map ``M·X + v``.
-
 ### Algorithm
 
-The implementation applies the functions `linear_map` and `translate`.
+The default implementation calls `translate!` on a copy of `X`.
+"""
+function translate(X::LazySet, v::AbstractVector)
+    Y = copy(X)
+    translate!(Y, v)
+    return Y
+end
+
+"""
+### Algorithm
+
+The default implementation applies the functions `linear_map` and `translate`.
 """
 function affine_map(M, X::LazySet, v::AbstractVector; kwargs...)
     return translate(linear_map(M, X; kwargs...), v)
 end
 
 """
-    exponential_map(M::AbstractMatrix, X::LazySet)
-
-Compute the concrete exponential map of `M` and `X`, i.e., `exp(M) * X`.
-
-### Input
-
-- `M` -- matrix
-- `X` -- set
-
-### Output
-
-A set representing the exponential map of `M` and `X`.
-
 ### Algorithm
 
-The implementation applies the functions `exp` and `linear_map`.
+The default implementation applies the functions `exp` and `linear_map`.
 """
 function exponential_map(M::AbstractMatrix, X::LazySet)
     return linear_map(exp(M), X)
 end
 
 """
-    an_element(S::LazySet)
-
-Return some element of a set.
-
-### Input
-
-- `S` -- set
-
-### Output
-
-An element of a set.
-
 ### Algorithm
 
-An element of the set is obtained by evaluating its support vector along
-direction ``[1, 0, …, 0]``.
-This may fail for unbounded sets.
+The default implementation computes a support vector along direction
+``[1, 0, …, 0]``. This may fail for unbounded sets.
 """
-function an_element(S::LazySet)
-    return _an_element_lazySet(S)
+function an_element(X::LazySet)
+    return _an_element_lazySet(X)
 end
 
-function _an_element_lazySet(S::LazySet)
-    N = eltype(S)
-    e₁ = SingleEntryVector(1, dim(S), one(N))
-    return σ(e₁, S)
-end
-
-"""
-    ==(X::LazySet, Y::LazySet)
-
-Check whether two sets use exactly the same set representation.
-
-### Input
-
-- `X` -- set
-- `Y` -- set
-
-### Output
-
-- `true` iff `X` is equal to `Y`.
-
-### Notes
-
-The check is purely syntactic and the sets need to have the same base type.
-For instance, `X::VPolytope == Y::HPolytope` returns `false` even if `X` and `Y`
-represent the same polytope.
-However `X::HPolytope{Int64} == Y::HPolytope{Float64}` is a valid comparison.
-
-### Algorithm
-
-We recursively compare the fields of `X` and `Y` until a mismatch is found.
-
-### Examples
-
-```jldoctest
-julia> HalfSpace([1], 1) == HalfSpace([1], 1)
-true
-
-julia> HalfSpace([1], 1) == HalfSpace([1.0], 1.0)
-true
-
-julia> Ball1([0.0], 1.0) == Ball2([0.0], 1.0)
-false
-```
-"""
-function ==(X::LazySet, Y::LazySet)
-    # if the common supertype of X and Y is abstract, they cannot be compared
-    if isabstracttype(promote_type(typeof(X), typeof(Y)))
-        return false
-    end
-
-    for f in fieldnames(typeof(X))
-        if getfield(X, f) != getfield(Y, f)
-            return false
-        end
-    end
-
-    return true
-end
-
-"""
-    ≈(X::LazySet, Y::LazySet)
-
-Check whether two sets of the same type are approximately equal.
-
-### Input
-
-- `X` -- set
-- `Y` -- set of the same base type as `X`
-
-### Output
-
-- `true` iff `X` is equal to `Y`.
-
-### Notes
-
-The check is purely syntactic and the sets need to have the same base type.
-For instance, `X::VPolytope ≈ Y::HPolytope` returns `false` even if `X` and `Y`
-represent the same polytope.
-However `X::HPolytope{Int64} ≈ Y::HPolytope{Float64}` is a valid comparison.
-
-### Algorithm
-
-We recursively compare the fields of `X` and `Y` until a mismatch is found.
-
-### Examples
-
-```jldoctest
-julia> HalfSpace([1], 1) ≈ HalfSpace([1], 1)
-true
-
-julia> HalfSpace([1], 1) ≈ HalfSpace([1.00000001], 0.99999999)
-true
-
-julia> Ball1([0.0], 1.0) ≈ Ball2([0.0], 1.0)
-false
-```
-"""
-function ≈(X::LazySet, Y::LazySet)
-    # if the common supertype of X and Y is abstract, they cannot be compared
-    if isabstracttype(promote_type(typeof(X), typeof(Y)))
-        return false
-    end
-
-    for f in fieldnames(typeof(X))
-        if !_isapprox(getfield(X, f), getfield(Y, f))
-            return false
-        end
-    end
-
-    return true
+function _an_element_lazySet(X::LazySet)
+    N = eltype(X)
+    e₁ = SingleEntryVector(1, dim(X), one(N))
+    return σ(e₁, X)
 end
 
 # hook into random API
@@ -909,27 +553,11 @@ function rand(rng::AbstractRNG, ::SamplerType{T}) where {T<:LazySet}
     return rand(T; rng=rng)
 end
 
-"""
-    copy(S::LazySet)
-
-Return a copy of a set by copying its values recursively.
-
-### Input
-
-- `S` -- set
-
-### Output
-
-A copy of `S`.
-
-### Notes
-
-This function computes a `copy` of each field in `S`.
-See the documentation of `?copy` for further details.
-"""
-function copy(S::T) where {T<:LazySet}
-    args = [copy(getfield(S, f)) for f in fieldnames(T)]
-    BT = basetype(S)
+# This function computes a `copy` of each field in `X`. See the documentation of
+# `?copy` for further details.
+function copy(X::T) where {T<:LazySet}
+    args = [copy(getfield(X, f)) for f in fieldnames(T)]
+    BT = basetype(X)
     return BT(args...)
 end
 
@@ -975,7 +603,7 @@ available, i.e., that it can be written as
 ``P = \\{z ∈ ℝⁿ: ⋂ sᵢᵀz ≤ rᵢ, i = 1, ..., N\\}.``
 
 This function can be used to implement the alternative definition of the
-Minkowski Difference
+Minkowski difference
 ```math
     A ⊖ B = \\{a − b \\mid a ∈ A, b ∈ B\\} = A ⊕ (-B)
 ```
@@ -993,33 +621,16 @@ function reflect(P::LazySet)
 end
 
 """
-    is_interior_point(d::AbstractVector{N}, X::LazySet{N};
-                      p=N(Inf), ε=_rtol(N)) where {N}
-
-Check whether the point `d` is contained in the interior of the set `X`.
-
-### Input
-
-- `d`  -- point
-- `X`  -- set
-- `p`  -- (optional; default: `N(Inf)`) norm of the ball used to apply the error
-          tolerance
-- `ε`  -- (optional; default: `_rtol(N)`) error tolerance of check
-
-### Output
-
-Boolean which indicates if the point `d` is contained in `X`.
-
 ### Algorithm
 
-The implementation checks if a `Ballp` of norm `p` with center `d` and radius
-`ε` is contained in the set `X`.
-This is a numerical check for `d ∈ interior(X)` with error tolerance `ε`.
+The default implementation determines `v ∈ interior(X)` with error tolerance
+`ε` by checking whether a `Ballp` of norm `p` with center `v` and radius `ε` is
+contained in `X`.
 """
-function is_interior_point(d::AbstractVector{N}, X::LazySet{N};
-                           p=N(Inf), ε=_rtol(N)) where {N}
-    return Ballp(p, d, ε) ⊆ X
+function is_interior_point(v::AbstractVector{N}, X::LazySet{N}; p=N(Inf), ε=_rtol(N)) where {N}
+    return Ballp(p, v, ε) ⊆ X
 end
+
 
 """
     plot_recipe(X::LazySet, [ε])
@@ -1058,7 +669,7 @@ function plot_recipe(X::LazySet, ε)
     @assert isconvextype(typeof(X)) "can only plot convex sets"
 
     if dim(X) == 1
-        Y = convert(Interval, X)
+        Y = convert(LazySets.Interval, X)
     elseif dim(X) == 2
         Y = overapproximate(X, ε)
     else
@@ -1104,21 +715,9 @@ function _plot_recipe_3d_polytope(P::LazySet, N=eltype(P))
 end
 
 """
-    isoperation(X::LazySet)
+### Algorithm
 
-Check whether a set is an instance of a set operation or not.
-
-### Input
-
-- `X` -- set
-
-### Output
-
-`true` if `X` is an instance of a set-based operation and `false` otherwise.
-
-### Notes
-
-This fallback implementation checks whether the set type of the input is an
+The default implementation checks whether the set type of the input is an
 operation type using [`isoperationtype(::Type{<:LazySet})`](@ref).
 
 ### Examples
@@ -1139,117 +738,27 @@ end
 
 # common error
 function isoperation(::Type{<:LazySet})
-    return error("`isoperation` cannot be applied to a " *
-                 "set type; use `isoperationtype` instead")
-end
-
-"""
-    isoperationtype(X::Type{<:LazySet})
-
-Check whether the given set type is an operation or not.
-
-### Input
-
-- `X` -- set type
-
-### Output
-
-`true` if the given set type is a set operation and `false` otherwise.
-
-### Notes
-
-This fallback implementation returns an error that `isoperationtype` is not
-implemented. Subtypes of `LazySet` should dispatch on this function as required.
-
-See also [`isoperation(X<:LazySet)`](@ref).
-
-### Examples
-
-```jldoctest
-julia> isoperationtype(BallInf)
-false
-
-julia> isoperationtype(LinearMap)
-true
-```
-"""
-function isoperationtype(X::Type{<:LazySet})
-    return error("`isoperationtype` is not implemented for type $X")
+    throw(ArgumentError("`isoperation` cannot be applied to a set type; use " *
+                        "`isoperationtype` instead"))
 end
 
 # common error
 function isoperationtype(::LazySet)
-    return error("`isoperationtype` cannot be applied to a " *
-                 "set instance; use `isoperation` instead")
+    throw(ArgumentError("`isoperationtype` cannot be applied to a set " *
+                        "instance; use `isoperation` instead"))
 end
 
 """
-    isequivalent(X::LazySet, Y::LazySet)
+### Algorithm
 
-Check whether two sets are equal in the mathematical sense, i.e., equivalent.
-
-### Input
-
-- `X` -- set
-- `Y` -- set
-
-### Output
-
-`true` iff `X` is equivalent to `Y` (up to some precision).
-
-## Algorithm
-
-First we check `X ≈ Y`, which returns `true` if and only if `X` and `Y` have the
-same type and approximately the same values (checked with `LazySets._isapprox`).
-If that fails, we check the double inclusion `X ⊆ Y && Y ⊆ X`.
-
-### Examples
-
-```jldoctest
-julia> X = BallInf([0.1, 0.2], 0.3);
-
-julia> Y = convert(HPolytope, X);
-
-julia> X == Y
-false
-
-julia> isequivalent(X, Y)
-true
-```
-"""
-function isequivalent(X::LazySet, Y::LazySet)
-    try  # TODO temporary try-catch construct until ≈ is fixed for all set types
-        if X ≈ Y
-            return true
-        end
-    catch e
-    end
-    return _isequivalent_inclusion(X, Y)
-end
-
-function _isequivalent_inclusion(X::LazySet, Y::LazySet)
-    return X ⊆ Y && Y ⊆ X
-end
-
-"""
-    surface(X::LazySet)
-
-Compute the surface area of a set.
-
-### Input
-
-- `X` -- set
-
-### Output
-
-A real number representing the surface area of `X`.
+The default implementation applies `area` for two-dimensional sets.
 """
 function surface(X::LazySet)
     if dim(X) == 2
         return area(X)
     else
-        throw(ArgumentError("the surface function is only implemented for " *
-                            "two-dimensional sets, but the given set is $(dim(X))-dimensional"))
+        throw(ArgumentError("the `surface` function is only implemented for two-dimensional" *
+                            "sets, but the given set is $(dim(X))-dimensional"))
     end
 end
 
@@ -1371,63 +880,36 @@ function singleton_list(P::LazySet)
 end
 
 """
-    concretize(X::LazySet)
+### Algorithm
 
-Construct a concrete representation of a (possibly lazy) set.
-
-### Input
-
-- `X` -- set
-
-### Output
-
-A concrete representation of `X` (as far as possible).
-
-### Notes
-
-Since not every lazy set has a concrete set representation in this library, the
-result may be partially lazy.
+The default implementation returns `X`. All relevant lazy set types should
+override this behavior, typically by recursively calling `concretize` on the
+set arguments.
 """
 function concretize(X::LazySet)
     return X
 end
 
 """
-    constraints(X::LazySet)
+### Algorithm
 
-Construct an iterator over the constraints of a polyhedral set.
-
-### Input
-
-- `X` -- polyhedral set
-
-### Output
-
-An iterator over the constraints of `X`.
+The default implementation computes all constraints via `constraints_list`.
 """
 function constraints(X::LazySet)
     return _constraints_fallback(X)
 end
 
+function _constraints_fallback(X::LazySet)
+    return VectorIterator(constraints_list(X))
+end
+
 """
-    vertices(X::LazySet)
+### Algorithm
 
-Construct an iterator over the vertices of a polytopic set.
-
-### Input
-
-- `X` -- polytopic set
-
-### Output
-
-An iterator over the vertices of `X`.
+The default implementation computes all vertices via `vertices_list`.
 """
 function vertices(X::LazySet)
     return _vertices_fallback(X)
-end
-
-function _constraints_fallback(X::LazySet)
-    return VectorIterator(constraints_list(X))
 end
 
 function _vertices_fallback(X::LazySet)
@@ -1495,113 +977,100 @@ function load_delaunay_MiniQhull()
 end  # load_delaunay_MiniQhull
 
 """
-    complement(X::LazySet)
-
-Return the complement of a polyhedral set.
-
-### Input
-
-- `X` -- polyhedral set
-
-### Output
-
-A `UnionSetArray` of half-spaces, i.e., the output is the union of the linear
-constraints which are obtained by complementing each constraint of `X`.
-
 ### Algorithm
 
-The principle used in this implementation is that for any pair of sets
-``(X, Y)`` we have that ``(X ∩ Y)^C = X^C ∪ Y^C``. In particular, we can apply
-this rule for each constraint that defines a polyhedral set. Hence the concrete
-complement can be represented as the set union of the complement of each
-constraint.
+The default implementation assumes that `X` is polyhedral and returns a
+`UnionSetArray` of `HalfSpace`s, i.e., the output is the union of the linear
+constraints which are obtained by complementing each constraint of `X`. For any
+pair of sets ``(X, Y)`` we have the identity ``(X ∩ Y)^C = X^C ∪ Y^C``. We can
+apply this identity for each constraint that defines a polyhedral set.
 """
 function complement(X::LazySet)
     return UnionSetArray(constraints_list(Complement(X)))
 end
 
 """
-    project(S::LazySet, block::AbstractVector{Int}, [::Nothing=nothing],
-            [n]::Int=dim(S); [kwargs...])
+    project(X::LazySet, block::AbstractVector{Int}, [::Nothing=nothing],
+            [n]::Int=dim(X); [kwargs...])
 
 Project a set to a given block by using a concrete linear map.
 
 ### Input
 
-- `S`       -- set
+- `X`       -- set
 - `block`   -- block structure - a vector with the dimensions of interest
-- `nothing` -- (default: `nothing`)
-- `n`       -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+- `nothing` -- (default: `nothing`) needed for dispatch
+- `n`       -- (optional, default: `dim(X)`) ambient dimension of the set `X`
 
 ### Output
 
-A set representing the projection of the set `S` to block `block`.
+A set representing the projection of `X` to block `block`.
 
 ### Algorithm
 
 We apply the function `linear_map`.
 """
-@inline function project(S::LazySet, block::AbstractVector{Int},
-                         ::Nothing=nothing, n::Int=dim(S); kwargs...)
-    return _project_linear_map(S, block, n; kwargs...)
+@inline function project(X::LazySet, block::AbstractVector{Int},
+                         ::Nothing=nothing, n::Int=dim(X); kwargs...)
+    return _project_linear_map(X, block, n; kwargs...)
 end
 
-@inline function _project_linear_map(S::LazySet{N}, block::AbstractVector{Int},
-                                     n::Int=dim(S); kwargs...) where {N}
+@inline function _project_linear_map(X::LazySet{N}, block::AbstractVector{Int},
+                                     n::Int=dim(X); kwargs...) where {N}
     M = projection_matrix(block, n, N)
-    return linear_map(M, S)
+    return linear_map(M, X)
 end
 
 """
-    project(S::LazySet, block::AbstractVector{Int}, set_type::Type{TS},
-            [n]::Int=dim(S); [kwargs...]) where {TS<:LazySet}
+    project(X::LazySet, block::AbstractVector{Int}, set_type::Type{T},
+            [n]::Int=dim(X); [kwargs...]) where {T<:LazySet}
 
 Project a set to a given block and set type, possibly involving an
 overapproximation.
 
 ### Input
 
-- `S`        -- set
+- `X`        -- set
 - `block`    -- block structure - a vector with the dimensions of interest
 - `set_type` -- target set type
-- `n`        -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+- `n`        -- (optional, default: `dim(X)`) ambient dimension of the set `X`
 
 ### Output
 
 A set of type `set_type` representing an overapproximation of the projection of
-`S`.
+`X`.
 
 ### Algorithm
 
-1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block
+1. Project the set `X` with `M⋅X`, where `M` is the identity matrix in the block
 coordinates and zero otherwise.
 2. Overapproximate the projected set using `overapproximate` and `set_type`.
 """
-@inline function project(S::LazySet, block::AbstractVector{Int},
-                         set_type::Type{TS}, n::Int=dim(S);
-                         kwargs...) where {TS<:LazySet}
-    lm = project(S, block, LinearMap, n)
+@inline function project(X::LazySet, block::AbstractVector{Int},
+                         set_type::Type{T}, n::Int=dim(X);
+                         kwargs...) where {T<:LazySet}
+    lm = project(X, block, LinearMap, n)
     return overapproximate(lm, set_type)
 end
 
 """
-    project(S::LazySet, block::AbstractVector{Int},
-            set_type_and_precision::Pair{T, N}, [n]::Int=dim(S);
+    project(X::LazySet, block::AbstractVector{Int},
+            set_type_and_precision::Pair{T, N}, [n]::Int=dim(X);
             [kwargs...]) where {T<:UnionAll, N<:Real}
 
 Project a set to a given block and set type with a certified error bound.
 
 ### Input
 
-- `S`     -- set
+- `X`     -- set
 - `block` -- block structure - a vector with the dimensions of interest
 - `set_type_and_precision` -- pair `(T, ε)` of a target set type `T` and an
                               error bound `ε` for approximation
-- `n`     -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+- `n`     -- (optional, default: `dim(X)`) ambient dimension of the set `X`
 
 ### Output
 
-A set representing the epsilon-close approximation of the projection of `S`.
+A set representing the epsilon-close approximation of the projection of `X`.
 
 ### Notes
 
@@ -1610,100 +1079,87 @@ must be two-dimensional.
 
 ### Algorithm
 
-1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block
+1. Project the set `X` with `M⋅X`, where `M` is the identity matrix in the block
 coordinates and zero otherwise.
 2. Overapproximate the projected set with the given error bound `ε`.
 """
-@inline function project(S::LazySet, block::AbstractVector{Int},
-                         set_type_and_precision::Pair{T,N}, n::Int=dim(S);
+@inline function project(X::LazySet, block::AbstractVector{Int},
+                         set_type_and_precision::Pair{T,N}, n::Int=dim(X);
                          kwargs...) where {T<:UnionAll,N<:Real}
     set_type, ε = set_type_and_precision
-    @assert length(block) == 2 && set_type == HPolygon "currently only 2D " *
-                                                       "HPolygon projection is supported"
+    @assert length(block) == 2 && set_type == HPolygon "currently only 2D HPolygon " *
+                                                       "projection is supported"
 
-    lm = project(S, block, LinearMap, n)
+    lm = project(X, block, LinearMap, n)
     return overapproximate(lm, set_type, ε)
 end
 
 """
-    project(S::LazySet, block::AbstractVector{Int}, ε::Real, [n]::Int=dim(S);
+    project(X::LazySet, block::AbstractVector{Int}, ε::Real, [n]::Int=dim(X);
             [kwargs...])
 
-Project a set to a given block and set type with a certified error bound.
+Project a set to a given block and set type with an error bound.
 
 ### Input
 
-- `S`     -- set
+- `X`     -- set
 - `block` -- block structure - a vector with the dimensions of interest
 - `ε`     -- error bound for approximation
-- `n`     -- (optional, default: `dim(S)`) ambient dimension of the set `S`
+- `n`     -- (optional, default: `dim(X)`) ambient dimension of the set `X`
 
 ### Output
 
-A set representing the epsilon-close approximation of the projection of `S`.
+A set representing the epsilon-close approximation of the projection of `X`.
 
 ### Algorithm
 
-1. Project the set `S` with `M⋅S`, where `M` is the identity matrix in the block
+1. Project the set `X` with `M⋅X`, where `M` is the identity matrix in the block
 coordinates and zero otherwise.
 2. Overapproximate the projected set with the given error bound `ε`.
 The target set type is chosen automatically.
 """
-@inline function project(S::LazySet, block::AbstractVector{Int}, ε::Real,
-                         n::Int=dim(S); kwargs...)
+@inline function project(X::LazySet, block::AbstractVector{Int}, ε::Real,
+                         n::Int=dim(X); kwargs...)
     # currently we only support HPolygon
     if length(block) == 2
         set_type = HPolygon
     else
-        throw(ArgumentError("ε-close approximation is only supported for 2D " *
-                            "blocks"))
+        throw(ArgumentError("ε-close approximation is only supported for 2D blocks"))
     end
-    return project(S, block, set_type => ε, n)
+    return project(X, block, set_type => ε, n)
 end
 
 """
-    rectify(X::LazySet, [concrete_intersection]::Bool=false)
-
-Concrete rectification of a set.
-
-### Input
-
-- `X`                     -- set
-- `concrete_intersection` -- (optional, default: `false`) flag to compute
-                             concrete intersections for intermediate results
-
-### Output
-
-A set corresponding to the rectification of `X`, which is in general a union of
-linear maps of intersections.
-
 ### Algorithm
 
 For each dimension in which `X` is both positive and negative, we split `X` into
-these two parts. Additionally we project the negative part to zero.
+these two parts and then project the negative part to zero.
 """
 function rectify(X::LazySet, concrete_intersection::Bool=false)
     return to_union_of_projections(Rectification(X), concrete_intersection)
 end
 
 """
-    rationalize(::Type{T}, X::LazySet{<:AbstractFloat}, tol::Real)
-        where {T<:Integer}
+    rationalize(::Type{T}, X::LazySet, tol::Real) where {T<:Integer}
 
-Approximate a set of floating-point numbers as a set whose entries are rationals
-of the given integer type.
+Approximate a set represented with floating-point numbers as a set represented
+with rationals of the given integer type.
 
 ### Input
 
 - `T`   -- (optional, default: `Int`) integer type to represent the rationals
-- `X`   -- set which has floating-point components
+- `X`   -- set represented by floating-point components
 - `tol` -- (optional, default: `eps(N)`) tolerance of the result; each rationalized
            component will differ by no more than `tol` with respect to the floating-point value
 
 ### Output
 
-A set of the same base type of `X` where each numerical component is of
-type `Rational{T}`.
+A set of the same base type as `X` where each numerical component is of type
+`Rational{T}`.
+
+### Algorithm
+
+The default implementation rationalizes each field.
 """
 function rationalize(::Type{T}, X::LazySet{<:AbstractFloat}, tol::Real) where {T<:Integer}
     m = length(fieldnames(typeof(X)))
@@ -1725,23 +1181,6 @@ function rationalize(::Type{T}, X::AbstractVector{<:LazySet{<:AbstractFloat}},
                      tol::Real) where {T<:Integer}
     return rationalize.(Ref(T), X, Ref(tol))
 end
-
-"""
-    permute(X::LazySet, p::AbstractVector{Int})
-
-Permute the dimensions of a set according to a given permutation vector.
-
-### Input
-
-- `X` -- set
-- `p` -- permutation vector
-
-### Output
-
-A new set corresponding to `X` where the dimensions have been permuted according
-to `p`.
-"""
-function permute end
 
 """
     chebyshev_center_radius(P::LazySet{N};
@@ -1892,7 +1331,7 @@ Check whether a polyhedral set is empty.
 ### Notes
 
 The default value of the `backend` is set internally and depends on whether the
-`use_polyhedra_interface` option is set or not.
+`use_polyhedra_interface` option is set.
 If the option is set, we use `default_polyhedra_backend(P)`.
 
 Witness production is not supported if `use_polyhedra_interface` is `true`.
@@ -1903,7 +1342,7 @@ The algorithm sets up a feasibility LP for the constraints of `P`.
 If `use_polyhedra_interface` is `true`, we call `Polyhedra.isempty`.
 Otherwise, we set up the LP internally.
 """
-function isempty(P::LazySet{N},
+function isempty(P::LazySet{N},  # type parameter must be present for Documenter
                  witness::Bool=false;
                  use_polyhedra_interface::Bool=false,
                  solver=nothing,
@@ -1994,22 +1433,9 @@ function _linear_map_center(M::AbstractMatrix, X::LazySet)
 end
 
 """
-    scale(α::Real, X::LazySet)
+### Algorithm
 
-Concrete scaling of a set.
-
-### Input
-
-- `α` -- scalar
-- `X` -- set
-
-### Output
-
-A new set of the same type (if possible).
-
-### Notes
-
-This fallback method calls `scale!` on a copy of `X`.
+The default implementation calls `scale!` on a copy of `X`.
 """
 function scale(α::Real, X::LazySet)
     Y = copy(X)
@@ -2031,8 +1457,10 @@ function tovrep(X::LazySet)
     return VPolytope(vertices_list(X))
 end
 
+# The default implementation throws an error because Julia's default behavior
+# leads to an error that is hard to understand.
 function ∈(::AbstractVector, X::LazySet)
-    throw(ArgumentError("membership check for set type $(basetype(X)) not implemented"))
+    throw(ArgumentError("membership check for set type $(basetype(X)) is not implemented"))
 end
 
 function linear_map_inverse(A::AbstractMatrix, P::LazySet)

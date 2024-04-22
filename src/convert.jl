@@ -1192,7 +1192,7 @@ function load_taylormodels_convert_polynomial_zonotope()
                 pol = polynomial(TMi)
                 rem = remainder(TMi)
                 c[i] = IA.mid(rem) + constant_term(pol)
-                GI_diag[i] = radius(rem)
+                GI_diag[i] = IA.radius(rem)
                 for (order, term_order) in enumerate(pol.coeffs)
                     # we skip the first (= constant) term
                     if order == 1 || iszero(term_order)

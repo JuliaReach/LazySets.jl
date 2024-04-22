@@ -1,12 +1,10 @@
-import Base: isempty, ∈, ∩
+import Base: ∩
 
 export Intersection,
        isempty_known,
        set_isempty!,
        swap,
-       use_precise_ρ,
-       constraints_list,
-       linear_map
+       use_precise_ρ
 
 """
     IntersectionCache
@@ -18,7 +16,7 @@ Container for information cached by a lazy `Intersection` object.
 - `isempty` -- is the intersection empty? There are three possible states,
                encoded as `Int8` values -1, 0, 1:
 
-    * ``-1`` - it is currently unknown whether the intersection is empty or not
+    * ``-1`` - it is currently unknown whether the intersection is empty
     *  ``0`` - intersection is not empty
     *  ``1`` - intersection is empty
 """

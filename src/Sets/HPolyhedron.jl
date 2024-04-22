@@ -1,13 +1,6 @@
-import Base: rand,
-             convert
-
 export HPolyhedron,
-       dim, σ, ∈,
        addconstraint!,
-       constraints_list,
        tohrep, tovrep,
-       convex_hull,
-       cartesian_product,
        remove_redundant_constraints,
        remove_redundant_constraints!,
        constrained_dimensions,

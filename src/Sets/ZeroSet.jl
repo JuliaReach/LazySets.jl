@@ -1,8 +1,4 @@
-import Base: rand,
-             ∈
-
-export ZeroSet,
-       linear_map
+export ZeroSet
 
 """
     ZeroSet{N} <: AbstractSingleton{N}

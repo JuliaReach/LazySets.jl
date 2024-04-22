@@ -10,6 +10,5 @@ CurrentModule = LazySets
 # Exact Sum
 
 ```@docs
-⊞
 exact_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 ```

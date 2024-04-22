@@ -1,5 +1,4 @@
 using LazySets.Arrays: find_unique_nonzero_entry
-import Base: isempty
 
 export ResetMap
 

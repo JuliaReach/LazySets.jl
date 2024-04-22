@@ -1,5 +1,3 @@
-export linear_combination
-
 """
     linear_combination(P1::SimpleSparsePolynomialZonotope,
                        P2::SimpleSparsePolynomialZonotope)
@@ -13,15 +11,10 @@ Compute the linear combination of two simple sparse polynomial zonotopes.
 
 ### Output
 
-Linear combination of `P1` and `P2`.
+A `SimpleSparsePolynomialZonotope` representing the linear combination of `P1`
+and `P2`.
 
 ### Notes
-
-The linear combination of two sets ``P₁`` and ``P₂`` is defined as
-
-```math
-\\left\\{\\frac{1}{2}(1+λ)p₁ + \\frac{1}{2}(1-λ)p₂ \\mid p₁ ∈ P₁, p₂ ∈ P₂, λ ∈ [-1, 1]\\right\\}.
-```
 
 This method implements the algorithm described in Proposition 3.1.25 of [1].
 

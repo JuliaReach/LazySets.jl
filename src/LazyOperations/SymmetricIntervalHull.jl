@@ -1,5 +1,4 @@
-export SymmetricIntervalHull, ⊡,
-       an_element
+export SymmetricIntervalHull, ⊡
 
 """
     SymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractHyperrectangle{N}

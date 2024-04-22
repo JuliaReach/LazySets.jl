@@ -1,7 +1,3 @@
-import Base: isdisjoint
-
-export isdisjoint, is_intersection_empty
-
 """
     isdisjoint(X::LazySet, Y::LazySet, [witness]::Bool=false)
 
@@ -43,9 +39,6 @@ function _isdisjoint_general(X::LazySet, Y::LazySet, witness::Bool=false)
     end
     return witness ? (false, an_element(cap)) : false
 end
-
-# alias
-const is_intersection_empty = isdisjoint
 
 # quick sufficient check that tries to find a separating hyperplane
 # the result `true` is also sufficient for non-convex sets

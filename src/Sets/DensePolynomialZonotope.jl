@@ -1,10 +1,6 @@
 export DensePolynomialZonotope,
-       dim,
-       σ,
        polynomial_order,
-       order,
-       linear_map,
-       scale
+       order
 
 """
     DensePolynomialZonotope{N, VT, VMT, MT} <: AbstractPolynomialZonotope{N}

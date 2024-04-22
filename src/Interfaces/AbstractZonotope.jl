@@ -1,12 +1,10 @@
-import Base: ∈, split
+import Base: split
 
 export AbstractZonotope,
        genmat,
        generators,
        ngens,
        order,
-       translate,
-       translate!,
        togrep,
        split!,
        reduce_order

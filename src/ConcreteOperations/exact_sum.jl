@@ -1,5 +1,3 @@
-export exact_sum, ⊞
-
 """
     exact_sum(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
 
@@ -36,14 +34,3 @@ function exact_sum(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
 
     return SparsePolynomialZonotope(c, G, GI, E, idx)
 end
-
-"""
-    ⊞(X::LazySet, Y::LazySet)
-
-Unicode alias constructor for the (concrete) `exact_sum` function.
-
-### Notes
-
-Write `\\boxplus[TAB]` to enter this symbol.
-"""
-const ⊞ = exact_sum

@@ -1,9 +1,5 @@
-import Base: isempty
 
 export Translation,
-       an_element,
-       constraints_list,
-       linear_map,
        center
 
 """

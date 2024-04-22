@@ -1,9 +1,4 @@
-import Base.isempty
-
-export AbstractPolytope,
-       vertices_list,
-       isempty,
-       minkowski_sum
+export AbstractPolytope
 
 """
     AbstractPolytope{N} <: AbstractPolyhedron{N}

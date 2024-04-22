@@ -44,7 +44,7 @@ Returns the dimension of the generated directions.
 
 The ambient dimension of the generated directions.
 """
-function dim(ad::AbstractDirections) end
+function LazySets.dim(::AbstractDirections) end
 
 """
     isbounding(ad::AbstractDirections)
@@ -76,7 +76,7 @@ The function can be applied to an instance of an `AbstractDirections` subtype or
 to the subtype itself. By default, the check on the instance falls back to the
 check on the subtype.
 """
-function isbounding(ad::Type{<:AbstractDirections})
+function isbounding(::Type{<:AbstractDirections})
     return false
 end
 
@@ -107,7 +107,7 @@ The function can be applied to an instance of an `AbstractDirections` subtype or
 to the subtype itself. By default, the check on the instance falls back to the
 check on the subtype.
 """
-function isnormalized(ad::Type{<:AbstractDirections})
+function isnormalized(::Type{<:AbstractDirections})
     return false
 end
 
@@ -135,11 +135,11 @@ Project a high-dimensional set to a given block using direction vectors.
 The polyhedral overapproximation of the projection of `S` in the given
 directions.
 """
-@inline function project(S::LazySet,
-                         block::AbstractVector{Int},
-                         directions::Type{<:AbstractDirections},
-                         n::Int=dim(S);
-                         kwargs...)
+@inline function LazySets.project(S::LazySet,
+                                  block::AbstractVector{Int},
+                                  directions::Type{<:AbstractDirections},
+                                  n::Int=dim(S);
+                                  kwargs...)
     lm = project(S, block, LinearMap, n; kwargs...)
     return overapproximate(lm, directions(length(block)))
 end
@@ -218,7 +218,7 @@ Base.eltype(::Type{BoxDirections{N,VN}}) where {N,VN} = VN
 Base.length(bd::BoxDirections) = 2 * bd.n
 
 # interface functions
-dim(bd::BoxDirections) = bd.n
+LazySets.dim(bd::BoxDirections) = bd.n
 isbounding(::Type{<:BoxDirections}) = true
 isnormalized(::Type{<:BoxDirections}) = true
 
@@ -333,7 +333,7 @@ Base.eltype(::Type{OctDirections{N,VN}}) where {N,VN} = VN
 Base.length(od::OctDirections) = 2 * od.n^2
 
 # interface functions
-dim(od::OctDirections) = od.n
+LazySets.dim(od::OctDirections) = od.n
 isbounding(::Type{<:OctDirections}) = true
 isnormalized(::Type{<:OctDirections}) = false
 
@@ -473,7 +473,7 @@ Base.eltype(::Type{DiagDirections{N,VN}}) where {N,VN} = VN
 Base.length(dd::DiagDirections) = 2^dd.n
 
 # interface function
-dim(dd::DiagDirections) = dd.n
+LazySets.dim(dd::DiagDirections) = dd.n
 isbounding(::Type{<:DiagDirections}) = true
 isnormalized(::Type{<:DiagDirections}) = false
 
@@ -572,7 +572,7 @@ Base.eltype(::Type{BoxDiagDirections{N,VN}}) where {N,VN} = VN
 Base.length(bdd::BoxDiagDirections) = bdd.n == 1 ? 2 : 2^bdd.n + 2 * bdd.n
 
 # interface function
-dim(bdd::BoxDiagDirections) = bdd.n
+LazySets.dim(bdd::BoxDiagDirections) = bdd.n
 isbounding(::Type{<:BoxDiagDirections}) = true
 isnormalized(::Type{<:BoxDiagDirections}) = false
 
@@ -675,7 +675,7 @@ Base.eltype(::Type{PolarDirections{N,VN}}) where {N,VN} = VN
 Base.length(pd::PolarDirections) = pd.Nφ
 
 # interface functions
-dim(pd::PolarDirections) = 2
+LazySets.dim(pd::PolarDirections) = 2
 isbounding(pd::PolarDirections) = pd.Nφ > 2
 isnormalized(::Type{<:PolarDirections}) = true
 
@@ -790,7 +790,7 @@ Base.eltype(::Type{SphericalDirections{N,VN}}) where {N,VN} = VN
 Base.length(sd::SphericalDirections) = length(sd.stack)
 
 # interface functions
-dim(::SphericalDirections) = 3
+LazySets.dim(::SphericalDirections) = 3
 isbounding(sd::SphericalDirections) = sd.Nθ > 2 && sd.Nφ > 2
 isnormalized(::Type{<:SphericalDirections}) = true
 
@@ -887,7 +887,7 @@ Base.eltype(::Type{CustomDirections{N,VN}}) where {N,VN} = VN
 Base.length(cd::CustomDirections) = length(cd.directions)
 
 # interface functions
-dim(cd::CustomDirections) = cd.n
+LazySets.dim(cd::CustomDirections) = cd.n
 isbounding(cd::Type{<:CustomDirections}) = false  # not a property of the type
 isbounding(cd::CustomDirections) = cd.bounded
 isnormalized(cd::Type{<:CustomDirections}) = false  # not a property of the type

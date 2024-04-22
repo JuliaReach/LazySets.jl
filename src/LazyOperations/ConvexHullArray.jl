@@ -1,5 +1,3 @@
-import Base.isempty
-
 export ConvexHullArray, CHArray,
        array
 

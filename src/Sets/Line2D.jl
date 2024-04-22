@@ -1,9 +1,4 @@
-import Base: rand,
-             ∈,
-             isempty
-
-export Line2D,
-       an_element
+export Line2D
 
 """
     Line2D{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}

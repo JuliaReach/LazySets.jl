@@ -5,20 +5,8 @@ Module `Approximations.jl` -- polygonal approximation of sets.
 """
 module Approximations
 
-using LazySets, ReachabilityBase.Arrays, Requires, LinearAlgebra, SparseArrays
-import IntervalArithmetic as IA
-
-using ReachabilityBase.Comparison: _isapprox, _leq, _geq, _rtol, isapproxzero
-using LazySets: default_lp_solver, _isbounded_stiemke, require, dim, linprog,
-                is_lp_optimal, _normal_Vector, default_sdp_solver,
-                get_exponential_backend, _expmv, second
-using LazySets.JuMP: Model, set_silent, @variable, @constraint, optimize!,
-                     value, @NLobjective, @objective
-
 import Base: convert
-import LazySets: project, □
-
-using ..LazySets: @assert
+import ..LazySets: dim, project, □
 
 export approximate,
        ballinf_approximation,
@@ -35,6 +23,16 @@ export approximate,
        SphericalDirections,
        CustomDirections,
        isbounding
+
+using ..LazySets, ReachabilityBase.Arrays, Requires, LinearAlgebra, SparseArrays
+import IntervalArithmetic as IA
+
+using ReachabilityBase.Comparison: _isapprox, _leq, _geq, _rtol, isapproxzero
+using ..LazySets: default_lp_solver, _isbounded_stiemke, require, linprog,
+                  is_lp_optimal, _normal_Vector, default_sdp_solver,
+                  get_exponential_backend, _expmv, second, @assert
+using ..LazySets.JuMP: Model, set_silent, @variable, @constraint, optimize!,
+                       value, @NLobjective, @objective
 
 include("box_approximation.jl")
 include("iterative_refinement.jl")

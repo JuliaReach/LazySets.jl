@@ -1,10 +1,4 @@
-import Base: rand,
-             ∈,
-             isempty
-
-export EmptySet, ∅,
-       an_element,
-       linear_map
+export EmptySet, ∅
 
 """
     EmptySet{N} <: ConvexSet{N}

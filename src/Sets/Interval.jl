@@ -1,11 +1,8 @@
-import Base: +, -, *, ∈, ⊆, rand, min, max
+import Base: +, -, *, min, max
 
 export Interval,
-       dim, σ, center,
-       vertices_list,
-       isflat,
-       linear_map
-constraints_list
+       center,
+       isflat
 
 """
     Interval{N} <: AbstractHyperrectangle{N}
@@ -650,7 +647,7 @@ function rectify(x::Interval{N}) where {N}
         return x
     else
         # lower end is negative
-        return Interval(zero(N), max(x.dat.hi, zero(N)))
+        return Interval(zero(N), Base.max(x.dat.hi, zero(N)))
     end
 end
 

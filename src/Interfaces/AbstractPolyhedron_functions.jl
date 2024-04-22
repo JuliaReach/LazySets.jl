@@ -1,12 +1,7 @@
-import Base.∈
-
 export constrained_dimensions,
        tosimplehrep,
        remove_redundant_constraints,
        remove_redundant_constraints!,
-       linear_map,
-       an_element,
-       vertices_list,
        isfeasible
 
 isconvextype(::Type{<:AbstractPolyhedron}) = true

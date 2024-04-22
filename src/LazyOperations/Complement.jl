@@ -1,8 +1,4 @@
-import Base: ∈,
-             isempty
-
-export Complement,
-       complement
+export Complement
 
 """
     Complement{N, S<:LazySet{N}} <: LazySet{N}

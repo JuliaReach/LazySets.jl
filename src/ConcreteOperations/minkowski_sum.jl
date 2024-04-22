@@ -1,5 +1,3 @@
-export minkowski_sum
-
 """
     minkowski_sum(P::LazySet, Q::LazySet;
                   [backend]=nothing, [algorithm]=nothing, [prune]=true)

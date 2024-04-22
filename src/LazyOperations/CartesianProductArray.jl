@@ -1,4 +1,4 @@
-import Base: *, ∈, isempty
+import Base: *
 
 export CartesianProductArray,
        array,

@@ -5,7 +5,7 @@ import Polyhedra, Optim, ExponentialUtilities, TaylorModels, Distributions,
 include("init.jl")
 
 makedocs(; sitename="LazySets.jl",
-         modules=[LazySets, Approximations, LazySets.Parallel],
+         modules=[LazySets, LazySets.API, Approximations, LazySets.Parallel],
          format=Documenter.HTML(; prettyurls=get(ENV, "CI", nothing) == "true",
                                 assets=["assets/aligned.css"],
                                 size_threshold_warn=150 * 2^10),
@@ -33,6 +33,7 @@ makedocs(; sitename="LazySets.jl",
                                 "Lazy Intersections" => "man/lazy_intersections.md"
                                 #
                                 ],
+                "API" => "lib/API.md",
                 "Library" => Any["Set Interfaces" => [
                                                       #
                                                       "lib/interfaces/overview.md",

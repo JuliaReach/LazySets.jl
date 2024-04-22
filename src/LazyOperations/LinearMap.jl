@@ -1,8 +1,6 @@
-import Base: *, ∈, isempty
+import Base: *
 
 export LinearMap,
-       an_element,
-       constraints_list,
        Projection
 
 """

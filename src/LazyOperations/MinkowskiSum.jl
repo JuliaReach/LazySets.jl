@@ -1,4 +1,4 @@
-import Base: +, getindex, isempty
+import Base: +, getindex
 
 export MinkowskiSum, ⊕,
        MinkowskiSum!,
