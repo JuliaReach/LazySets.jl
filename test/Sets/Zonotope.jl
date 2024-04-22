@@ -176,6 +176,12 @@ for N in [Float64, Rational{Int}, Float32]
     # flat hyperrectangle
     Z = convert(Zonotope, Hyperrectangle(N[2, 3], N[0, 0]))
     @test Z.center == N[2, 3] && isempty(Z.generators)
+    # conversion back to hyperrectangle
+    H = Hyperrectangle(N[2, 3], N[4, 5])
+    Z = convert(Zonotope, H)
+    @test convert(Hyperrectangle, Z) == H
+    Z = Zonotope(N[1, 1], N[2 1; 1 2])
+    @test_throws AssertionError convert(Hyperrectangle, Z)
 
     # convert the cartesian product of two hyperrectangles to a zonotope
     h1 = Hyperrectangle(N[1 / 2], N[1 / 2])
