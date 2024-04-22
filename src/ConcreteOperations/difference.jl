@@ -64,7 +64,7 @@ Depending on the position of the intervals, the output is one of the following:
 ### Algorithm
 
 Let ``X = [a, b]`` and ``Y = [c, d]`` be intervals. Their set difference is
-``X \\setminus Y = \\{x: x ∈ X \\text{ and } x ∉ Y \\}`` and, depending on their
+``X ∖ Y = \\{x: x ∈ X \\text{ and } x ∉ Y \\}`` and, depending on their
 position, three different results may occur:
 
 - If ``X`` and ``Y`` do not overlap, i.e., if their intersection is empty, then
@@ -120,7 +120,7 @@ Compute the set difference between two hyperrectangular sets.
 The set difference is defined as:
 
 ```math
-    X \\setminus Y = \\{x: x ∈ X \\text{ and } x ∉ Y \\}
+    X ∖ Y = \\{x: x ∈ X \\text{ and } x ∉ Y \\}
 ```
 
 ### Output

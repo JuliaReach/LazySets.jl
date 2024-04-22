@@ -10,7 +10,7 @@ export Complement,
 Type that represents the complement of a set, i.e., the set
 
 ```math
-Y = \\{y ∈ \\mathbb{R}^n : y ∉ X\\}.
+Y = \\{y ∈ ℝ^n : y ∉ X\\}.
 ```
 
 The complement is often denoted with the ``C`` superscript, as in ``Y = X^C``.

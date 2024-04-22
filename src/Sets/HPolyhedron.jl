@@ -19,10 +19,10 @@ export HPolyhedron,
 Type that represents a convex polyhedron in constraint representation, that is,
 a finite intersection of half-spaces,
 ```math
-P = \\bigcap_{i = 1}^m H_i,
+P = ⋂_{i = 1}^m H_i,
 ```
-where each ``H_i = \\{x \\in \\mathbb{R}^n : a_i^T x \\leq b_i \\}`` is a
-half-space, ``a_i \\in \\mathbb{R}^n`` is the normal vector of the ``i``-th
+where each ``H_i = \\{x ∈ ℝ^n : a_i^T x ≤ b_i \\}`` is a
+half-space, ``a_i ∈ ℝ^n`` is the normal vector of the ``i``-th
 half-space and ``b_i`` is the displacement. The set ``P`` may or may not be
 bounded (see also [`HPolytope`](@ref), which assumes boundedness).
 

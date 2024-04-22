@@ -315,9 +315,9 @@ Let `X` and `Y` be the two sets of `ch`.
 We make use of the following property:
 
 ```math
-\\square(CH(X, Y))
-    = \\square\\left( X \\cup Y \\right)
-    = \\square\\left( \\square(X) \\cup \\square(Y) \\right)
+□(CH(X, Y))
+    = □\\left( X ∪ Y \\right)
+    = □\\left( □(X) ∪ □(Y) \\right)
 ```
 
 If `algorithm == "extrema"`, we compute the low and high coordinates of `X` and
@@ -391,7 +391,7 @@ A hyperrectangle.
 The box approximation distributes over the Minkowski sum:
 
 ```math
-\\square(X \\oplus Y) = \\square(X) \\oplus \\square(Y)
+□(X ⊕ Y) = □(X) ⊕ □(Y)
 ```
 
 It suffices to compute the box approximation of each summand and then take the

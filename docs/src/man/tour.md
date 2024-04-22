@@ -32,7 +32,7 @@ Sets can be created using the constructor for each set type. Here we define the
 two-dimensional half-space
 
 ```math
-H = \{ (x, y) ∈ \mathbb{R}^2 : x ≤ y\} = \{ (x, y) ∈ \mathbb{R}^2 : x - y ≤ 0\}.
+H = \{ (x, y) ∈ ℝ^2 : x ≤ y\} = \{ (x, y) ∈ ℝ^2 : x - y ≤ 0\}.
 ```
 
 ```@example tour
@@ -51,7 +51,7 @@ using Symbolics
 
 var = @variables x y
 
-H′ = HalfSpace(x ≤ y, var)  # for `′`, type H\prime[TAB]
+H′ = HalfSpace(x ≤ y, var)  # for `′`, type H\prime<tab>
 ```
 
 We can use LazySets to check that `H` and `H′` represent the same sets
@@ -66,7 +66,7 @@ High-dimensional sets can be conveniently defined using array notation. Here we
 create the nine-dimensional half-space
 
 ```math
-H9 = \left\{ x ∈ \mathbb{R}^{9} : \sum_{i=1}^{9} i x_i ≤ 10 \right\}.
+H9 = \left\{ x ∈ ℝ^{9} : ∑_{i=1}^{9} i x_i ≤ 10 \right\}.
 ```
 
 ```@example tour
@@ -128,7 +128,7 @@ var = @variables x y
 H1 = HalfSpace(y ≥ x, var)
 H2 = HalfSpace(y ≥ -x, var)
 
-P = H1 ∩ H2  # for `∩`, type `\cap[TAB]`
+P = H1 ∩ H2  # for `∩`, type `\cap<tab>`
 ```
 
 Naturally, LazySets can plot the resulting set using the
@@ -228,7 +228,7 @@ The constraint iterator is called with `constraints`.
 constraints(Q)
 ```
 
-The **Minkowski sum** of two sets can be computed using `⊕` (type `\oplus[TAB]`)
+The **Minkowski sum** of two sets can be computed using `⊕` (type `\oplus<tab>`)
 (or alternatively just `+` for convenience):
 
 ```@example tour
@@ -278,14 +278,14 @@ C = ConvexHullArray([E, Q, X])
 plot!(C, c=:grey, lab="C = CH(E, Q, X)")
 ```
 
-The **Cartesian product** of sets is defined with `×` (type `\times[TAB]`) (or
+The **Cartesian product** of sets is defined with `×` (type `\times<tab>`) (or
 alternatively just `*` for convenience).
 
 ```@example tour
 X = Interval(0, 1) × Ball1([1.0, 2.0, 3.0], 1.0) × Interval(2, 4)
 ```
 
-**Set unions** are defined with `∪` (type `\cup[TAB]`).
+**Set unions** are defined with `∪` (type `\cup<tab>`).
 
 ```@example tour
 Y = Ball2([1.0, 2.0, 3.0], 1.0) × LineSegment([0.0, 0.0], [1.0, 1.0])
@@ -329,11 +329,11 @@ Consider the class of zonotopic sets, `AbstractZonotope`, which are those that
 can be represented as
 
 ```math
-Z = \left\{ x ∈ \mathbb{R}^n : x = c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i \in [-1, 1]~~ ∀ i = 1,…, p \right\},
+Z = \left\{ x ∈ ℝ^n : x = c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i ∈ [-1, 1]~~ ∀ i = 1,…, p \right\},
 ```
 
-where ``c \in \mathbb{R}^n`` is called the center and the vectors
-``\{g_i\}_{i=1}^p``, ``g_i \in \mathbb{R}^n``, are called the generators.
+where ``c ∈ ℝ^n`` is called the center and the vectors
+``\{g_i\}_{i=1}^p``, ``g_i ∈ ℝ^n``, are called the generators.
 
 ```@example tour
 print_tree(AbstractZonotope)
@@ -342,7 +342,7 @@ print_tree(AbstractZonotope)
 All the sets belonging to the abstract zonotope interface have in common that
 they can be characterized by a center and a generator matrix (equivalently, as
 the finite Minkowski sum of line segments, or as the image of a unit
-infinity-norm ball in ``\mathbb{R}^n`` by an affine transformation). Hence, new
+infinity-norm ball in ``ℝ^n`` by an affine transformation). Hence, new
 set types implementing a few interface functions can make use of all the
 available functionality that are implemented by generic algorithms working at
 the interface level.
@@ -383,7 +383,7 @@ plot(Q, lab="Q")
 plot!(Singleton.(S), lab="S", c=:magenta)
 ```
 
-Set membership is computed with the `∈` operator (type `\in[TAB]`):
+Set membership is computed with the `∈` operator (type `\in<tab>`):
 
 ```@example tour
 all(s -> s ∈ Q, S)
@@ -439,9 +439,9 @@ non-negative numbers ``λ_j`` that sum up to ``1`` we have that
 intersection of (possibly infinitely many) closed half-spaces.
 
 One of the central functions are `support_function(d, X)` (with the alias
-`ρ(d, X)` (type `\rho[TAB]`)) and `support_vector` (with the alias `σ` (type
-`\sigma[TAB]`)). The support function of a set ``X`` along direction
-``d ∈ \mathbb{R}^n`` corresponds to the (signed) distance of the maximum element
+`ρ(d, X)` (type `\rho<tab>`)) and `support_vector` (with the alias `σ` (type
+`\sigma<tab>`)). The support function of a set ``X`` along direction
+``d ∈ ℝ^n`` corresponds to the (signed) distance of the maximum element
 in ``X`` along direction ``d``. The support vector is a (among possibly
 infinitely many) maximizer of the support function.
 
@@ -525,7 +525,7 @@ the result is expensive (e.g., if `X` is high-dimensional), since this command
 just builds an object representing the linear map of `A` and `X`. In LazySets,
 Unicode symbols such as `A * X`, `X ⊕ Y`, `X ⊖ Y`, `X × Y`, all default to lazy
 operations by design. Unicode is written using the LaTeX macro of the symbol
-followed by the TAB key, such as `\oplus[TAB]` for the (lazy) Minkowski sum ⊕.
+followed by the TAB key, such as `\oplus<tab>` for the (lazy) Minkowski sum ⊕.
 
 Finally, one can combine lazy set operations to build lazy expressions that
 represent several operations between sets, such as `Q = (Z ⊕ A*X) × T`.

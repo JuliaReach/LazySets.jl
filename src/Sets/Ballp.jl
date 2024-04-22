@@ -11,12 +11,12 @@ Type that represents a ball in the p-norm, for ``1 ≤ p ≤ ∞``.
 It is defined as the set
 
 ```math
-\\mathcal{B}_p^n(c, r) = \\{ x ∈ \\mathbb{R}^n : ‖ x - c ‖_p ≤ r \\},
+\\mathcal{B}_p^n(c, r) = \\{ x ∈ ℝ^n : ‖ x - c ‖_p ≤ r \\},
 ```
-where ``c ∈ \\mathbb{R}^n`` is its center and ``r ∈ \\mathbb{R}_+`` its radius.
+where ``c ∈ ℝ^n`` is its center and ``r ∈ ℝ_+`` its radius.
 Here ``‖ ⋅ ‖_p`` for ``1 ≤ p ≤ ∞`` denotes the vector ``p``-norm, defined as
-``‖ x ‖_p = \\left( \\sum\\limits_{i=1}^n |x_i|^p \\right)^{1/p}`` for any
-``x ∈ \\mathbb{R}^n``.
+``‖ x ‖_p = \\left( ∑\\limits_{i=1}^n |x_i|^p \\right)^{1/p}`` for any
+``x ∈ ℝ^n``.
 
 ### Fields
 

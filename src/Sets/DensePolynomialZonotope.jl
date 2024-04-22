@@ -28,7 +28,7 @@ set representation to the reachability problem of nonlinear ODEs.
 Mathematically, a polynomial zonotope is defined as the tuple ``(c, E, F, G)``,
 where:
 
-- ``c ∈ \\mathbb{R}^n`` is the starting point (in some particular cases it
+- ``c ∈ ℝ^n`` is the starting point (in some particular cases it
   corresponds to the center of a usual zonotope),
 
 - ``E = [E^{[1]} ⋯ E^{[η]}]`` is an ``n × p × η`` matrix with column

@@ -49,7 +49,7 @@ Alias for the n-ary Cartesian product.
 
 ### Notes
 
-The function symbol can be typed via `\\times[TAB]`.
+The function symbol can be typed via `\\times<tab>`.
 """
 ×(X::LazySet, Xs::LazySet...) = *(X, Xs...)
 ×(Xs::Vector{<:LazySet}) = *(Xs)

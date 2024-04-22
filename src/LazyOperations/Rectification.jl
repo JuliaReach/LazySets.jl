@@ -480,7 +480,7 @@ Next we identify those dimensions from ``I_\\text{neg}`` where ``X`` is also
 positive, using another `high` query in each dimension, and collect the
 dimensions in the index set ``I_\\text{mix}``.
 Let us call the remaining dimensions
-(``I_\\text{neg} \\setminus I_\\text{mix}``) ``I_\\text{nonpos}``.
+(``I_\\text{neg} ∖ I_\\text{mix}``) ``I_\\text{nonpos}``.
 For each dimension in ``j ∈ I_\\text{mix}`` we will apply an intersection with
 axis-aligned polyhedra.
 In particular, we distinguish two cases using half-spaces ``x_j ≤ 0`` and

@@ -83,7 +83,7 @@ generator from ``Z₁``, say, ``g₁``, with another generator from ``Z₂``, sa
 The entry of ``g`` in the ``i``-th dimension is given as
 
 ```math
-    g[i] = \\arg\\min_{\\min(g₁[i], g₂[i]) ≤ x ≤ \\max(g₁[i], g₂[i])} |x|.
+    g[i] = \\argmin_{\\min(g₁[i], g₂[i]) ≤ x ≤ \\max(g₁[i], g₂[i])} |x|.
 ```
 
 If ``g`` is the zero vector, it can be omitted.
@@ -511,7 +511,7 @@ function load_taylormodels_overapproximation()
         ### Algorithm
 
         Let ``\\text{vTM} = (p, I)`` be a vector of ``m`` Taylor models, where ``I``
-        is the interval remainder in ``\\mathbb{R}^m``. Let ``p_{lin}``
+        is the interval remainder in ``ℝ^m``. Let ``p_{lin}``
         (resp. ``p_{nonlin}``) correspond to the linear (resp. nonlinear) part of each
         scalar polynomial.
 
@@ -706,7 +706,7 @@ function load_intervalmatrices_overapproximation()
 
         ```math
             v_j = \\begin{cases} 0 & i ≠ j \\\\
-                  \\hat{M}_j (|c| + \\sum_{k=1}^m |g_k|) & i = j. \\end{cases}
+                  \\hat{M}_j (|c| + ∑_{k=1}^m |g_k|) & i = j. \\end{cases}
         ```
 
         [1] Althoff, Stursberg, Buss. *Reachability analysis of linear systems with
@@ -829,11 +829,11 @@ directions ``d_k`` in `dir` presented in Section 4.2 in [1], adapting the
 notation to the one used in this library.
 
 ```math
-    \\min \\sum_{k=1}^l α_k \\
+    \\min ∑_{k=1}^l α_k \\
     s.t. \\
-    c + \\sum_{k=1}^l b_{kj} * d_k = v_j \\quad \\forall j \\
-    -α_k ≤ b_{kj} ≤ α_k \\quad \\forall k, j \\
-    α_k ≥ 0 \\quad \\forall k
+    c + ∑_{k=1}^l b_{kj} * d_k = v_j \\quad ∀ j \\
+    -α_k ≤ b_{kj} ≤ α_k \\quad ∀ k, j \\
+    α_k ≥ 0 \\quad ∀ k
 ```
 
 The resulting zonotope has center `c` and generators `α_k · d_k`.
@@ -878,7 +878,7 @@ function _overapproximate_zonotope_vrep(X::LazySet{N},
     sense = vcat(fill('=', n * m), fill('<', 2 * l * m))
     b = zeros(N, nconstraints)
     r = 1
-    # constraints p[i] + \sum_k v_j*b_kj = p_j
+    # constraints p[i] + ∑_k v_j*b_kj = p_j
     col_offset_p = l
     col_offset_b = l + n + 1
     for (j, vj) in enumerate(V)
@@ -1117,7 +1117,7 @@ A zonotope overapproximating the quadratic map of a zonotopic set.
 Mathematically, a quadratic map of a zonotope with matrices ``Q`` is defined as:
 
 ```math
-Z_Q = \\right\\{ \\lambda | \\lambda_i = x^T Q\\^{(i)} x,~i = 1, \\ldots, n,~x \\in Z \\left\\}
+    Z_Q = \\right\\{ λ \\mid λ_i = x^T Q\\^{(i)} x,~i = 1, …, n,~x ∈ Z \\left\\}
 ```
 
 ### Algorithm

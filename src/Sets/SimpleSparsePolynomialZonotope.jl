@@ -10,13 +10,13 @@ export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
 Type that represents a sparse polynomial zonotope that is *simple* in the sense
 that there is no distinction between independent and dependent generators.
 
-A simple sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is
+A simple sparse polynomial zonotope ``\\mathcal{PZ} ⊂ ℝ^n`` is
 represented by the set
 ```math
-\\mathcal{PZ} = \\left\\{x \\in \\mathbb{R}^n : x = c + \\sum_{i=1}^h \\left(\\prod_{k=1}^p \\alpha_k^{E_{k, i}} \\right) g_i,~~ \\alpha_k \\in [-1, 1]~~ \\forall i = 1,\\ldots,p \\right\\},
+\\mathcal{PZ} = \\left\\{x ∈ ℝ^n : x = c + ∑_{i=1}^h \\left(∏_{k=1}^p α_k^{E_{k, i}} \\right) g_i,~~ α_k ∈ [-1, 1]~~ ∀ i = 1,…,p \\right\\},
 ```
-where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center),
-``G ∈ \\mathbb{R}^{n \\times h}`` is the generator matrix with columns ``g_i``
+where ``c ∈ ℝ^n`` is the offset vector (or center),
+``G ∈ ℝ^{n × h}`` is the generator matrix with columns ``g_i``
 (each ``g_i`` is called a *generator*), and where ``E ∈ \\mathbb{N}^{p×h}_{≥0}``
 is the exponent matrix with matrix elements ``E_{k, i}``.
 
@@ -288,7 +288,9 @@ end
 
 Return the quadratic map of two simple sparse polynomial zonotopes.
 The quadratic map is the set
-``\\{x | xᵢ = s₁ᵀQᵢs₂, s₁ ∈ S₁, s₂ ∈ S₂, Qᵢ ∈ Q\\}``.
+```math
+    \\{x \\mid xᵢ = s₁ᵀQᵢs₂, s₁ ∈ S₁, s₂ ∈ S₂, Qᵢ ∈ Q\\}.
+```
 
 ### Input
 

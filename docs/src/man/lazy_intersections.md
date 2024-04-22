@@ -13,7 +13,7 @@ which should be positive definite, i.e. its eigenvalues must be positive.
 Mathematically, it is the set
 
 ```math
-    E = \{ x ∈ \mathbb{R}^n : (x-c)Q^{-1}(x-c) ≤ 1\}.
+    E = \{ x ∈ ℝ^n : (x-c)Q^{-1}(x-c) ≤ 1\}.
 ```
 
 Let's make two rotated ellipsoids and plot them in the same pair of axes.

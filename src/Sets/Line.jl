@@ -13,7 +13,7 @@ export Line,
 Type that represents a line of the form
 
 ```math
-    \\{y ∈ \\mathbb{R}^n: y = p + λd, λ ∈ \\mathbb{R}\\}
+    \\{y ∈ ℝ^n: y = p + λd, λ ∈ ℝ\\}
 ```
 where ``p`` is a point on the line and ``d`` is its direction vector (not
 necessarily normalized).
@@ -62,9 +62,9 @@ Line{Float64, Vector{Float64}}([0.5, 0.0], [0.0, -1.0])
 
 ### Algorithm
 
-Given two points ``p ∈ \\mathbb{R}^n`` and ``q ∈ \\mathbb{R}^n``, the line that
+Given two points ``p ∈ ℝ^n`` and ``q ∈ ℝ^n``, the line that
 passes through these two points is
-`L: `\\{y ∈ \\mathbb{R}^n: y = p + λ(q - p), λ ∈ \\mathbb{R}\\}``.
+`L: `\\{y ∈ ℝ^n: y = p + λ(q - p), λ ∈ ℝ\\}``.
 """
 struct Line{N,VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
     p::VN

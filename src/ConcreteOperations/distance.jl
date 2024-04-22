@@ -7,7 +7,7 @@ export distance
 Compute the standard distance between two hyperrectangular sets, defined as
 
 ```math
-    \\inf_{x \\in H_1, y \\in H_2} \\{ d(x, y) \\}.
+    \\inf_{x ∈ H_1, y ∈ H_2} \\{ d(x, y) \\}.
 ```
 
 ### Input

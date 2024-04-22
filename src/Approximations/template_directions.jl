@@ -619,7 +619,7 @@ Polar directions representation.
 ### Notes
 
 The `PolarDirections` constructor computes a sample of the unit sphere
-in ``\\mathbb{R}^2``, which is parameterized by the polar angle
+in ``ℝ^2``, which is parameterized by the polar angle
 ``φ ∈ Dφ := [0, 2π]``; see the Wikipedia entry on the
 [polar coordinate system](https://en.wikipedia.org/wiki/Polar_coordinate_system)
 for details. The resulting directions are stored in `stack`.
@@ -698,7 +698,7 @@ Spherical directions representation.
 ### Notes
 
 The `SphericalDirections` constructor provides a sample of the unit sphere
-in ``\\mathbb{R}^3``, which is parameterized by the azimuthal and polar angles
+in ``ℝ^3``, which is parameterized by the azimuthal and polar angles
 ``θ ∈ Dθ := [0, π]`` and ``φ ∈ Dφ := [0, 2π]`` respectively; see the Wikipedia
 entry on the
 [spherical coordinate system](https://en.wikipedia.org/wiki/Spherical_coordinate_system)

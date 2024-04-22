@@ -14,7 +14,7 @@ Type representing an interval on the real line.
 Mathematically, it is of the form
 
 ```math
-[a, b] := \\{ a ≤ x ≤ b \\} ⊆ \\mathbb{R}.
+[a, b] := \\{ a ≤ x ≤ b \\} ⊆ ℝ.
 ```
 
 ### Fields
@@ -657,7 +657,7 @@ end
 """
     diameter(x::Interval, [p]::Real=Inf)
 
-Compute the diameter of an interval, defined as ``\\Vert b - a\\Vert`` in the
+Compute the diameter of an interval, defined as ``‖b - a‖`` in the
 ``p`-norm, where ``a`` (resp. ``b``) are the minimum (resp. maximum) value of
 the interval.
 
