@@ -641,7 +641,7 @@ function load_paving_overapproximation()
         converted into hyperrectangles, and then calculates the support function of the
         set along each  direction in dirs, to compute the `HPolyhedron` constraints.
 
-        ### Requires IntervalConstraintProgramming
+        This algorithm requires the IntervalConstraintProgramming package.
         """
         function overapproximate(p::Paving{L,N}, dirs::AbstractDirections{N,VN}) where {L,N,VN}
             # enclose outer approximation

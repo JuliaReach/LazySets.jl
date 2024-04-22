@@ -58,8 +58,6 @@ The package [`IntervalLinearAlgebra`](https://github.com/JuliaIntervals/Interval
 |[`IntervalMatrices`](https://github.com/JuliaReach/IntervalMatrices.jl) | Set operations that involve matrices whose coefficients are intervals.|
 |[`TaylorModels`](https://github.com/JuliaIntervals/TaylorModels.jl) |Taylor expansion of functions with rigorous interval remainder.|
 
-Note: `IntervalConstraintProgramming` is currently not tested due to compatibility issues.
-
 ## Optimization algorithms
 
 Some computations require use of external numerical optimization solvers. The modeling language [`JuMP`](https://github.com/jump-dev/JuMP.jl) is loaded by default, together with the [GLPK](https://en.wikipedia.org/wiki/GNU_Linear_Programming_Kit) solver for linear programs (LPs). Other solvers can be loaded on-demand, even commercial ones, provided that you have the appropriate license. See JuMP's [documentation page on supported solvers](https://jump.dev/JuMP.jl/stable/installation/#Supported-solvers) for further details.
