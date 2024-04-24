@@ -106,13 +106,13 @@ for N in [Float64, Float32, Rational{Int}]
 end
 
 for N in [Float64]
-    SSPZ = SimpleSparsePolynomialZonotope(N[0.2, -0.6], N[1 0; 0 0.4], [1 0; 0 1])
-    SPZ = convert(SparsePolynomialZonotope, SSPZ)
-    @test center(SPZ) == center(SSPZ)
-    @test genmat_dep(SPZ) == genmat(SSPZ)
-    @test expmat(SPZ) == expmat(SSPZ)
-    @test isempty(genmat_indep(SPZ))
-    @test indexvector(SPZ) == 1:2
+    PZS = SimpleSparsePolynomialZonotope(N[0.2, -0.6], N[1 0; 0 0.4], [1 0; 0 1])
+    PZ = convert(SparsePolynomialZonotope, PZS)
+    @test center(PZ) == center(PZS)
+    @test genmat_dep(PZ) == genmat(PZS)
+    @test expmat(PZ) == expmat(PZS)
+    @test isempty(genmat_indep(PZ))
+    @test indexvector(PZ) == 1:2
 
     # conversion from Taylor model
     x₁, x₂, x₃ = set_variables(Float64, ["x₁", "x₂", "x₃"]; order=3)
