@@ -72,3 +72,11 @@ end
 function ρ(d::AbstractVector, P::Polygon)
     return _ρ_vertices(d, P.vertices)
 end
+
+function isempty(P::Polygon)
+    return isempty(P.vertices)
+end
+
+function convex_hull(P::Polygon)
+    return VPolygon(P.vertices)
+end

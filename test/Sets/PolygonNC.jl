@@ -11,6 +11,13 @@ for N in [Float64, Rational{Int}, Float32]
     d = N[1, 1]
     @test σ(d, P) == N[2, 2]
     @test ρ(d, P) == N(4)
+
+    # isempty
+    @test !isempty(P)
+    @test isempty(Polygon())
+
+    # convex hull
+    @test convex_hull(P) == VPolygon([N[0, 0], N[2, 0], N[2, 2], N[0, 2]])
 end
 
 # default Float64 constructor
