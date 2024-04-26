@@ -64,7 +64,7 @@ A `Hyperrectangle`s or `BallInf`s depending on the type of `r`.
 
 ### Notes
 
-The function symbol can be typed via `\\square[TAB]`.
+The function symbol can be typed via `\\square<tab>`.
 """
 function □(c, r) end
 

@@ -70,12 +70,12 @@ end
 
 ## Basic convex sets
 
-A set ``X ⊆ \mathbb{R}^n`` is convex if for any two points ``x``, ``y`` in ``X``
+A set ``X ⊆ ℝ^n`` is convex if for any two points ``x``, ``y`` in ``X``
 the whole line segment connecting ``x`` and ``y`` is also contained in ``X``.
 Formally:
 
 ```math
-    X = \{λ · x + (1 − λ) · y \mid x, y ∈ X, λ ∈ [0, 1] ⊆ \mathbb{R}\}
+    X = \{λ · x + (1 − λ) · y \mid x, y ∈ X, λ ∈ [0, 1] ⊆ ℝ\}
 ```
 
 Below we show an example of a convex set and a non-convex set.

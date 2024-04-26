@@ -121,7 +121,7 @@ Alias for the lazy intersection.
 
 ### Notes
 
-The function symbol can be typed via `\\cap[TAB]`.
+The function symbol can be typed via `\\cap<tab>`.
 """
 ∩(X::LazySet, Y::LazySet) = Intersection(X, Y)
 
@@ -383,7 +383,7 @@ The algorithms are based on solving the associated optimization problem
 \\min_{λ ∈ D_h} ρ(ℓ - λa, X) + λb.
 ```
 where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
-``D_h = \\{ λ : λ ∈ \\mathbb{R} \\}`` if ``H`` is a hyperplane.
+``D_h = \\{ λ : λ ∈ ℝ \\}`` if ``H`` is a hyperplane.
 
 For additional information we refer to:
 
@@ -756,7 +756,7 @@ hyperplane/line ``H = \\{x: a^T x = b \\}``, calculate:
 \\min_{λ ∈ D_h} ρ(ℓ - λa, X) + λb.
 ```
 where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
-``D_h = \\{ λ : λ ∈ \\mathbb{R} \\}`` if ``H`` is a hyperplane.
+``D_h = \\{ λ : λ ∈ ℝ \\}`` if ``H`` is a hyperplane.
 
 ### Input
 

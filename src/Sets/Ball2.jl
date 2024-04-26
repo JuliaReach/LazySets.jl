@@ -20,12 +20,12 @@ Type that represents a ball in the 2-norm.
 Mathematically, a ball in the 2-norm is defined as the set
 
 ```math
-\\mathcal{B}_2^n(c, r) = \\{ x ∈ \\mathbb{R}^n : ‖ x - c ‖_2 ≤ r \\},
+\\mathcal{B}_2^n(c, r) = \\{ x ∈ ℝ^n : ‖ x - c ‖_2 ≤ r \\},
 ```
-where ``c ∈ \\mathbb{R}^n`` is its center and ``r ∈ \\mathbb{R}_+`` its radius.
+where ``c ∈ ℝ^n`` is its center and ``r ∈ ℝ_+`` its radius.
 Here ``‖ ⋅ ‖_2`` denotes the Euclidean norm (also known as 2-norm), defined as
-``‖ x ‖_2 = \\left( \\sum\\limits_{i=1}^n |x_i|^2 \\right)^{1/2}`` for any
-``x ∈ \\mathbb{R}^n``.
+``‖ x ‖_2 = \\left( ∑\\limits_{i=1}^n |x_i|^2 \\right)^{1/2}`` for any
+``x ∈ ℝ^n``.
 
 ### Examples
 

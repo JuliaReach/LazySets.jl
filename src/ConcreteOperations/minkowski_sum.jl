@@ -79,15 +79,15 @@ and `Q`.
 
 This function implements the concrete Minkowski sum by projection and variable
 elimination as detailed in [1]. The idea is that if we write ``P`` and ``Q`` in
-*simple H-representation*, that is, ``P = \\{x ∈ \\mathbb{R}^n : Ax ≤ b \\}``
-and ``Q = \\{x ∈ \\mathbb{R}^n : Cx ≤ d \\}``, then their Minkowski sum can be
+*simple H-representation*, that is, ``P = \\{x ∈ ℝ^n : Ax ≤ b \\}``
+and ``Q = \\{x ∈ ℝ^n : Cx ≤ d \\}``, then their Minkowski sum can be
 seen as the projection onto the first ``n``-dimensional coordinates of the
 polyhedron:
 ```math
-    \\begin{pmatrix} 0 & A \\ C & -C \\end{pmatrix} \\binom{x}{y} ≤ \binom{b}{d}
+    \\begin{pmatrix} 0 & A \\ C & -C \\end{pmatrix} \\binom{x}{y} ≤ \\binom{b}{d}
 ```
 This is seen by noting that ``P ⊕ Q`` corresponds to the set of points
-``x ∈ \\mathbb{R}^n`` such that ``x = y + z`` with ``Ay ≤ b`` and ``Cz ≤ d``;
+``x ∈ ℝ^n`` such that ``x = y + z`` with ``Ay ≤ b`` and ``Cz ≤ d``;
 hence it follows that ``Ay ≤ b`` and ``C(x-y) ≤ d``, and the inequality
 above follows by considering the ``2n``-dimensional space ``\\binom{x}{y}``.
 The reduction from ``2n`` to ``n`` variables is performed using an elimination

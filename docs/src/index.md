@@ -31,7 +31,7 @@ Concrete information is obtained through evaluating the set in specific
 directions.
 More precisely, each concrete subtype ``\mathcal{X}`` of the abstract type
 `LazySet` exports a method to calculate its support vector
-``σ(d, \mathcal{X})`` in a given (arbitrary) direction ``d \in \mathbb{R}^n``.
+``σ(d, \mathcal{X})`` in a given (arbitrary) direction ``d ∈ ℝ^n``.
 Representing sets exactly but lazily has the advantage of being able to perform
 only the required operations on-demand.
 
@@ -46,9 +46,9 @@ refinement method.
 
 ## Example
 
-Let ``\mathcal{X}_0 \subset \mathbb{R}^{1000}`` be the Euclidean ball of center
-``(1, \ldots, 1)`` and radius ``0.1`` in dimension ``n=1000``.
-Given a real matrix ``A \in \mathbb{R}^{1000 \times 1000}``, suppose that we are
+Let ``\mathcal{X}_0 \subset ℝ^{1000}`` be the Euclidean ball of center
+``(1, …, 1)`` and radius ``0.1`` in dimension ``n=1000``.
+Given a real matrix ``A ∈ ℝ^{1000 × 1000}``, suppose that we are
 interested in the equation
 
 ``\mathcal{Y} = CH(e^{A δ} \mathcal{X}_0 ⊕ δ B\mathcal{U}, \mathcal{X}_0),``

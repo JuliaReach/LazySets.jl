@@ -42,7 +42,7 @@ Alias for the n-ary Minkowski sum.
 
 ### Notes
 
-The function symbol can be typed via `\\oplus[TAB]`.
+The function symbol can be typed via `\\oplus<tab>`.
 """
 ⊕(X::LazySet, Xs::LazySet...) = +(X, Xs...)
 ⊕(Xs::Vector{<:LazySet}) = +(Xs)

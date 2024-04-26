@@ -10,9 +10,9 @@ export CartesianProduct,
 Type that represents the Cartesian product of two sets, i.e., the set
 
 ```math
-Z = \\{ z ∈ \\mathbb{R}^{n + m} : z = (x, y),\\qquad x ∈ X, y ∈ Y \\}.
+Z = \\{ z ∈ ℝ^{n + m} : z = (x, y),\\qquad x ∈ X, y ∈ Y \\}.
 ```
-If ``X ⊆ \\mathbb{R}^n`` and ``Y ⊆ \\mathbb{R}^m``, then ``Z`` is
+If ``X ⊆ ℝ^n`` and ``Y ⊆ ℝ^m``, then ``Z`` is
 ``n+m``-dimensional.
 
 ### Fields
@@ -39,7 +39,7 @@ natural order, i.e. we say that the first block of a Cartesian product `cp` is
 
 The Cartesian product of two sets `X` and `Y` can be constructed either using
 `CartesianProduct(X, Y)` or the short-cut notation `X × Y` (to enter the *times*
-symbol, write `\\times[TAB]`).
+symbol, write `\\times<tab>`).
 
 ```jldoctest cartesianproduct_constructor
 julia> I1 = Interval(0, 1);
@@ -109,7 +109,7 @@ Alias for the binary Cartesian product.
 
 ### Notes
 
-The function symbol can be typed via `\\times[TAB]`.
+The function symbol can be typed via `\\times<tab>`.
 """
 ×(X::LazySet, Y::LazySet) = CartesianProduct(X, Y)
 

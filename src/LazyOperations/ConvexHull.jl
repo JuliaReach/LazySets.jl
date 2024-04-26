@@ -12,7 +12,7 @@ export ConvexHull, CH,
 Type that represents the convex hull of the union of two sets, i.e., the set
 
 ```math
-Z = \\{z ∈ \\mathbb{R}^n : z = λx + (1-λ)y,\\qquad x ∈ X, y ∈ Y,λ ∈ [0, 1] \\}.
+Z = \\{z ∈ ℝ^n : z = λx + (1-λ)y,\\qquad x ∈ X, y ∈ Y,λ ∈ [0, 1] \\}.
 ```
 
 ### Fields

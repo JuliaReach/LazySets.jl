@@ -11,14 +11,14 @@ export Star,
 Generalized star set with a polyhedral predicate, i.e.
 
 ```math
-X = \\{x ∈ \\mathbb{R}^n : x = x₀ + \\sum_{i=1}^m α_i v_i,~~\\textrm{s.t. } P(α) = ⊤ \\},
+X = \\{x ∈ ℝ^n : x = x₀ + ∑_{i=1}^m α_i v_i,~~\\textrm{s.t. } P(α) = ⊤ \\},
 ```
-where ``x₀ ∈ \\mathbb{R}^n`` is the center, the ``m`` vectors ``v₁, …, vₘ`` form
+where ``x₀ ∈ ℝ^n`` is the center, the ``m`` vectors ``v₁, …, vₘ`` form
 the basis of the star set, and the combination factors
-``α = (α₁, …, αₘ) ∈ \\mathbb{R}^m`` are the predicate's decision variables,
-i.e., ``P : α ∈ \\mathbb{R}^m → \\{⊤, ⊥\\}`` where the polyhedral predicate
+``α = (α₁, …, αₘ) ∈ ℝ^m`` are the predicate's decision variables,
+i.e., ``P : α ∈ ℝ^m → \\{⊤, ⊥\\}`` where the polyhedral predicate
 satisfies ``P(α) = ⊤`` if and only if ``A·α ≤ b`` for some fixed
-``A ∈ \\mathbb{R}^{p × m}`` and ``b ∈ \\mathbb{R}^p``.
+``A ∈ ℝ^{p × m}`` and ``b ∈ ℝ^p``.
 
 ### Fields
 
@@ -30,7 +30,7 @@ satisfies ``P(α) = ⊤`` if and only if ``A·α ≤ b`` for some fixed
 
 The predicate function is implemented as a conjunction of linear constraints,
 i.e., a subtype of `AbstractPolyhedron`. By a slight abuse of notation, the
-predicate is also used to denote the subset of ``\\mathbb{R}^n`` such that
+predicate is also used to denote the subset of ``ℝ^n`` such that
 ``P(α) = ⊤`` holds.
 
 The ``m`` basis vectors (each one ``n``-dimensional) are stored as the columns
@@ -43,7 +43,7 @@ polyhedral set `P`, with the transformation matrix and translation vector being
 ### Examples
 
 This example is drawn from Example 1 in [2]. Consider the two-dimensional plane
-``\\mathbb{R}^2``. Let
+``ℝ^2``. Let
 
 ```jldoctest star_constructor
 julia> V = [[1.0, 0.0], [0.0, 1.0]];
@@ -86,7 +86,7 @@ In this case, the generalized star ``S`` above is equivalent to the rectangle
 ``T`` below.
 
 ```math
-    T = \\{(x, y) ∈ \\mathbb{R}^2 : (2 ≤ x ≤ 4) ∧ (2 ≤ y ≤ 4) \\}
+    T = \\{(x, y) ∈ ℝ^2 : (2 ≤ x ≤ 4) ∧ (2 ≤ y ≤ 4) \\}
 ```
 
 ### References

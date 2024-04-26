@@ -10,7 +10,7 @@ export MinkowskiSum, ⊕,
 Type that represents the Minkowski sum of two sets, i.e., the set
 
 ```math
-X \\oplus Y = \\{x + y : x \\in X, y \\in Y\\}.
+X ⊕ Y = \\{x + y : x ∈ X, y ∈ Y\\}.
 ```
 
 ### Fields
@@ -51,7 +51,7 @@ Alias for the Minkowski sum.
 
 ### Notes
 
-The function symbol can be typed via `\\oplus[TAB]`.
+The function symbol can be typed via `\\oplus<tab>`.
 """
 ⊕(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
 

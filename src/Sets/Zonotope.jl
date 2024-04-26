@@ -22,14 +22,14 @@ Type that represents a zonotope.
 Mathematically, a zonotope is defined as the set
 
 ```math
-Z = \\left\\{ x ∈ \\mathbb{R}^n : x = c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i \\in [-1, 1]~~ ∀ i = 1,…, p \\right\\},
+Z = \\left\\{ x ∈ ℝ^n : x = c + ∑_{i=1}^p ξ_i g_i,~~ ξ_i ∈ [-1, 1]~~ ∀ i = 1,…, p \\right\\},
 ```
-where ``c \\in \\mathbb{R}^n`` is its *center* and ``\\{g_i\\}_{i=1}^p``,
-``g_i \\in \\mathbb{R}^n``, is the set of *generators*.
+where ``c ∈ ℝ^n`` is its *center* and ``\\{g_i\\}_{i=1}^p``,
+``g_i ∈ ℝ^n``, is the set of *generators*.
 This characterization defines a zonotope as the finite Minkowski sum of line
 segments.
 Zonotopes can be equivalently described as the image of a unit infinity-norm
-ball in ``\\mathbb{R}^n`` by an affine transformation.
+ball in ``ℝ^n`` by an affine transformation.
 
 Zonotopes can be constructed in two different ways: either passing the
 generators as a matrix, where each column represents a generator, or passing a

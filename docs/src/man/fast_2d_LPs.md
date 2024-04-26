@@ -31,14 +31,14 @@ The following lemma provides an algorithm to find the support vector.
 
 Let ``\mathcal{X}`` be a polygon described by ``m`` linear constraints
 ``a_i^T x \leq b_i``, ordered by the normal vectors ``(a_i)``, i.e.,
-``a_{i} \preceq a_{i+1}`` for all ``i \in \{1,\ldots,m\}``, where we identify
+``a_{i} \preceq a_{i+1}`` for all ``i ∈ \{1,…,m\}``, where we identify
 ``a_{m+1}`` with ``a_1``.
-Let ``\ell \in \mathbb{R}^2 \setminus \{\mathbf{0}_2\}``.
-Then there exists ``i \in \{1,\dots,m\}`` such that
+Let ``\ell ∈ ℝ^2 ∖ \{\mathbf{0}_2\}``.
+Then there exists ``i ∈ \{1,…,m\}`` such that
 ``a_i \preceq \ell \preceq a_{i+1}`` and every optimal solution ``\bar{x}`` of
 the linear program
-``\rho_\mathcal{X}(\ell) = \max\{ \ell^T x : x \in \mathcal{X}\}`` satisfies
-``\bar{x} \in \{x : a_i^T x \leq b_i\} \cap \{x : a_{i+1}^T x \leq b_{i+1}\}.``
+``\rho_\mathcal{X}(\ell) = \max\{ \ell^T x : x ∈ \mathcal{X}\}`` satisfies
+``\bar{x} ∈ \{x : a_i^T x \leq b_i\} ∩ \{x : a_{i+1}^T x \leq b_{i+1}\}.``
 
 ## Algorithm
 

@@ -12,11 +12,11 @@ Type that represents a convex polytope in constraint representation, i.e., a
 bounded set characterized by a finite intersection of half-spaces,
 
 ```math
-P = \\bigcap_{i = 1}^m H_i,
+P = ⋂_{i = 1}^m H_i,
 ```
 
-where each ``H_i = \\{x \\in \\mathbb{R}^n : a_i^T x \\leq b_i \\}`` is a
-half-space, ``a_i \\in \\mathbb{R}^n`` is the normal vector of the ``i``-th
+where each ``H_i = \\{x ∈ ℝ^n : a_i^T x ≤ b_i \\}`` is a
+half-space, ``a_i ∈ ℝ^n`` is the normal vector of the ``i``-th
 half-space and ``b_i`` is the displacement.
 It is assumed that ``P`` is bounded (see also [`HPolyhedron`](@ref), which does
 not make such an assumption).

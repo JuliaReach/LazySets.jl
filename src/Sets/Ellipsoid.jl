@@ -12,9 +12,9 @@ Type that represents an ellipsoid.
 It is defined as the set
 
 ```math
-E = \\left\\{ x ∈ \\mathbb{R}^n : (x-c)^T Q^{-1} (x-c) ≤ 1 \\right\\},
+E = \\left\\{ x ∈ ℝ^n : (x-c)^T Q^{-1} (x-c) ≤ 1 \\right\\},
 ```
-where ``c \\in \\mathbb{R}^n`` is its *center* and ``Q \\in \\mathbb{R}^{n×n}``
+where ``c ∈ ℝ^n`` is its *center* and ``Q ∈ ℝ^{n×n}``
 its *shape matrix*, which should be a positive definite matrix.
 An ellipsoid can also be characterized as the image of a Euclidean ball by an
 invertible linear transformation. It is the higher-dimensional generalization
@@ -281,7 +281,7 @@ The matrix is symmetric positive definite, but also diagonally dominant.
 ```math
 Q =  \\frac{1}{2}(S + S^T) + nI,
 ```
-where ``n`` = `dim` and ``S`` is a ``n \\times n`` random matrix whose
+where ``n`` = `dim` and ``S`` is a ``n × n`` random matrix whose
 coefficients are uniformly distributed in the interval ``[-1, 1]``.
 """
 function rand(::Type{Ellipsoid};

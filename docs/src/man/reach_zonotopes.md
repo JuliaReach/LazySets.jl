@@ -23,7 +23,7 @@ Let us introduce some notation. Consider the continuous initial set-valued probl
 in the time interval ``t ∈ [0, T]``, where:
 
 -  ``A`` is a real matrix of order ``n``,
-- ``u(t)`` is a non-deterministic input such that ``\Vert u(t) \Vert_∞ ≤ μ`` for all ``t``,
+- ``u(t)`` is a non-deterministic input such that ``‖ u(t) ‖_∞ ≤ μ`` for all ``t``,
 - ``x(0) ∈ \mathcal{X}_0``, where ``\mathcal{X}_0`` is a convex set.
 
 Given a step size ``δ``, `Algorithm1` returns a sequence of sets that

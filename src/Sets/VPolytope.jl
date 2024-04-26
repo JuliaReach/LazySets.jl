@@ -212,9 +212,9 @@ Then we solve the following ``m``-dimensional linear program.
 
 ```math
 \\max 0 \\text{ s.t. }
-\\bigwedge_{i=1}^n \\sum_{j=1}^m λ_j v_j[i] = x[i]
-∧ \\sum_{j=1}^m λ_j = 1
-∧ \\bigwedge_{j=1}^m λ_j ≥ 0
+⋀_{i=1}^n ∑_{j=1}^m λ_j v_j[i] = x[i]
+∧ ∑_{j=1}^m λ_j = 1
+∧ ⋀_{j=1}^m λ_j ≥ 0
 ```
 """
 function ∈(x::AbstractVector{N}, P::VPolytope{N};

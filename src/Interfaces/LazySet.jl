@@ -977,7 +977,7 @@ available, i.e., that it can be written as
 This function can be used to implement the alternative definition of the
 Minkowski Difference
 ```math
-A ⊖ B = \\{a − b | a ∈ A, b ∈ B\\} = A ⊕ (-B)
+    A ⊖ B = \\{a − b \\mid a ∈ A, b ∈ B\\} = A ⊕ (-B)
 ```
 by calling `minkowski_sum(A, reflect(B))`.
 """

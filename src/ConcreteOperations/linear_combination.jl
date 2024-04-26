@@ -20,7 +20,7 @@ Linear combination of `P1` and `P2`.
 The linear combination of two sets ``P₁`` and ``P₂`` is defined as
 
 ```math
-\\{1/2(1+λ)p₁ + 1/2(1-λ)p₂ | p₁ ∈ P₁, p₂ ∈ P₂, λ ∈ [-1, 1]\\}.
+\\left\\{\\frac{1}{2}(1+λ)p₁ + \\frac{1}{2}(1-λ)p₂ \\mid p₁ ∈ P₁, p₂ ∈ P₂, λ ∈ [-1, 1]\\right\\}.
 ```
 
 This method implements the algorithm described in Proposition 3.1.25 of [1].

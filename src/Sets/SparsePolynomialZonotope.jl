@@ -11,20 +11,20 @@ export SparsePolynomialZonotope, expmat, nparams, ngens_dep, ngens_indep,
 
 Type that represents a sparse polynomial zonotope.
 
-A sparse polynomial zonotope ``\\mathcal{PZ} ⊂ \\mathbb{R}^n`` is represented by the set
+A sparse polynomial zonotope ``\\mathcal{PZ} ⊂ ℝ^n`` is represented by the set
 ```math
-\\mathcal{PZ} = \\left\\{x \\in \\mathbb{R}^n : x = c + ∑ᵢ₌₁ʰ\\left(∏ₖ₌₁ᵖ α_k^{E_{k, i}} \\right)Gᵢ+∑ⱼ₌₁^qβⱼGIⱼ,~~ α_k, βⱼ ∈ [-1, 1],~~ ∀ k = 1,…,p, j=1,…,q \\right\\},
+\\mathcal{PZ} = \\left\\{x ∈ ℝ^n : x = c + ∑ᵢ₌₁ʰ\\left(∏ₖ₌₁ᵖ α_k^{E_{k, i}} \\right)Gᵢ+∑ⱼ₌₁^qβⱼGIⱼ,~~ α_k, βⱼ ∈ [-1, 1],~~ ∀ k = 1,…,p, j=1,…,q \\right\\},
 ```
-where ``c ∈ \\mathbb{R}^n`` is the offset vector (or center),
-``Gᵢ ∈ \\mathbb{R}^{n}`` are the dependent generators,
-``GIⱼ ∈ \\mathbb{R}^{n}`` are the independent generators, and
+where ``c ∈ ℝ^n`` is the offset vector (or center),
+``Gᵢ ∈ ℝ^{n}`` are the dependent generators,
+``GIⱼ ∈ ℝ^{n}`` are the independent generators, and
 ``E ∈ \\mathbb{N}^{p×h}_{≥0}`` is the exponent matrix with matrix elements ``E_{k, i}``.
 
-In the implementation, ``Gᵢ ∈ \\mathbb{R}^n`` are arranged as columns of the dependent generator
-matrix ``G ∈ \\mathbb{R}^{n \\times h}``, and similarly ``GIⱼ ∈ \\mathbb{R}^{n}`` are arranged as
-columns of the independent generator matrix ``GI ∈ \\mathbb{R}^{n×q}``.
+In the implementation, ``Gᵢ ∈ ℝ^n`` are arranged as columns of the dependent generator
+matrix ``G ∈ ℝ^{n × h}``, and similarly ``GIⱼ ∈ ℝ^{n}`` are arranged as
+columns of the independent generator matrix ``GI ∈ ℝ^{n×q}``.
 
-The shorthand notation ``\\mathcal{PZ} = \\langle c, G, GI, E, idx \\rangle`` is often used, where
+The shorthand notation ``\\mathcal{PZ} = ⟨ c, G, GI, E, idx ⟩`` is often used, where
 ``idx ∈ \\mathbb{N}^p`` is a list of non-repeated natural numbers
 storing a unique identifier for each dependent factor ``αₖ``.
 

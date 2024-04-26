@@ -1,8 +1,7 @@
 export QuadraticMap
 
 """
-    QuadraticMap{N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}}
-        <: LazySet{N}
+    QuadraticMap{N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}} <: LazySet{N}
 
 Type that represents a quadratic map of a set.
 
@@ -17,7 +16,7 @@ The quadratic map of a set ``X`` given ``n`` square matrices ``Q^{(i)}`` is
 defined as
 
 ```math
-\\left\\{ \\lambda \\mid \\lambda_i = x^T Q^{(i)} x,~i = 1, \\ldots, n,~x \\in X \\right\\}
+\\left\\{ λ \\mid λ_i = x^T Q^{(i)} x,~i = 1, …, n,~x ∈ X \\right\\}
 ```
 
 where each coordinate ``i`` is influenced by the ``i``-th matrix ``Q^{(i)}``.
@@ -39,15 +38,15 @@ struct QuadraticMap{N,S<:LazySet{N},MVT<:AbstractVector{<:AbstractMatrix{N}}} <:
     end
 end
 
-function isoperationtype(P::Type{<:QuadraticMap})
+function isoperationtype(::Type{<:QuadraticMap})
     return true
 end
 
-function isconvextype(P::Type{<:QuadraticMap})
+function isconvextype(::Type{<:QuadraticMap})
     return false
 end
 
-function isboundedtype(P::Type{<:QuadraticMap{MVT,S}}) where {MVT,S}
+function isboundedtype(::Type{<:QuadraticMap{MVT,S}}) where {MVT,S}
     return isboundedtype(S)
 end
 

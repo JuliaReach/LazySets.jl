@@ -93,7 +93,7 @@ optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``S ⊆ H``
 * If `witness` option is activated:
   * `(true, [])` iff ``S ⊆ H``
-  * `(false, v)` iff ``S ⊈ H`` and ``v ∈ S \\setminus H``
+  * `(false, v)` iff ``S ⊈ H`` and ``v ∈ S ∖ H``
 
 ### Algorithm
 
@@ -150,7 +150,7 @@ hyperrectangular set, and if not, optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``H1 ⊆ H2``
 * If `witness` option is activated:
   * `(true, [])` iff ``H1 ⊆ H2``
-  * `(false, v)` iff ``H1 ⊈ H2`` and ``v ∈ H1 \\setminus H2``
+  * `(false, v)` iff ``H1 ⊈ H2`` and ``v ∈ H1 ∖ H2``
 
 ### Algorithm
 
@@ -210,7 +210,7 @@ optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``P ⊆ S``
 * If `witness` option is activated:
   * `(true, [])` iff ``P ⊆ S``
-  * `(false, v)` iff ``P ⊈ S`` and ``v ∈ P \\setminus S``
+  * `(false, v)` iff ``P ⊈ S`` and ``v ∈ P ∖ S``
 
 ### Algorithm
 
@@ -270,7 +270,7 @@ optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``X ⊆ P``
 * If `witness` option is activated:
   * `(true, [])` iff ``X ⊆ P``
-  * `(false, v)` iff ``X ⊈ P`` and ``v ∈ P \\setminus X``
+  * `(false, v)` iff ``X ⊈ P`` and ``v ∈ P ∖ X``
 
 ### Algorithm
 
@@ -377,7 +377,7 @@ if not, optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``S ⊆ X``
 * If `witness` option is activated:
   * `(true, [])` iff ``S ⊆ X``
-  * `(false, v)` iff ``S ⊈ X`` and ``v ∈ S \\setminus X``
+  * `(false, v)` iff ``S ⊈ X`` and ``v ∈ S ∖ X``
 """
 function ⊆(S::AbstractSingleton, X::LazySet, witness::Bool=false)
     return _issubset_singleton(S, X, witness)
@@ -414,7 +414,7 @@ single value, and if not, optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``S1 ⊆ S2`` iff ``S1 == S2``
 * If `witness` option is activated:
   * `(true, [])` iff ``S1 ⊆ S2``
-  * `(false, v)` iff ``S1 ⊈ S2`` and ``v ∈ S1 \\setminus S2``
+  * `(false, v)` iff ``S1 ⊈ S2`` and ``v ∈ S1 ∖ S2``
 """
 function ⊆(S1::AbstractSingleton, S2::AbstractSingleton, witness::Bool=false)
     s1 = element(S1)
@@ -439,7 +439,7 @@ and if not, optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``B1 ⊆ B2``
 * If `witness` option is activated:
   * `(true, [])` iff ``B1 ⊆ B2``
-  * `(false, v)` iff ``B1 ⊈ B2`` and ``v ∈ B1 \\setminus B2``
+  * `(false, v)` iff ``B1 ⊈ B2`` and ``v ∈ B1 ∖ B2``
 
 ### Algorithm
 
@@ -475,7 +475,7 @@ value, and if not, optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``B ⊆ S``
 * If `witness` option is activated:
   * `(true, [])` iff ``B ⊆ S``
-  * `(false, v)` iff ``B ⊈ S`` and ``v ∈ B \\setminus S``
+  * `(false, v)` iff ``B ⊈ S`` and ``v ∈ B ∖ S``
 """
 function ⊆(B::Union{Ball2,Ballp}, S::AbstractSingleton, witness::Bool=false)
     result = isapproxzero(B.radius) && _isapprox(B.center, element(S))
@@ -512,7 +512,7 @@ optionally compute a witness.
 * If `witness` option is deactivated: `true` iff ``L ⊆ S``
 * If `witness` option is activated:
   * `(true, [])` iff ``L ⊆ S``
-  * `(false, v)` iff ``L ⊈ S`` and ``v ∈ L \\setminus S``
+  * `(false, v)` iff ``L ⊈ S`` and ``v ∈ L ∖ S``
 
 ### Algorithm
 
@@ -926,7 +926,7 @@ Check whether a union of two convex sets is contained in another set.
 * If `witness` option is activated:
   * `(true, [])` iff ``\\text{U} ⊆ X``
   * `(false, v)` iff ``\\text{U} \\not\\subseteq X`` and
-    ``v ∈ \\text{U} \\setminus X``
+    ``v ∈ \\text{U} ∖ X``
 """
 function ⊆(U::UnionSet, X::LazySet, witness::Bool=false)
     return _issubset_union_in_set(U, X, witness)
@@ -950,7 +950,7 @@ set.
 * If `witness` option is activated:
   * `(true, [])` iff ``\\text{U} ⊆ X``
   * `(false, v)` iff ``\\text{U} \\not\\subseteq X`` and
-    ``v ∈ \\text{U} \\setminus X``
+    ``v ∈ \\text{U} ∖ X``
 """
 function ⊆(U::UnionSetArray, X::LazySet, witness::Bool=false)
     return _issubset_union_in_set(U, X, witness)
@@ -1034,7 +1034,7 @@ compute a witness.
 * If `witness` option is activated:
   * `(true, [])` iff ``U ⊆ X``
   * `(false, v)` iff ``U \\not\\subseteq X`` and
-    ``v ∈ U \\setminus X``
+    ``v ∈ U ∖ X``
 
 ### Algorithm
 
@@ -1073,7 +1073,7 @@ optionally compute a witness.
 * If `witness` option is activated:
   * `(true, [])` iff ``X ⊆ C``
   * `(false, v)` iff ``X \\not\\subseteq C`` and
-    ``v ∈ X \\setminus C``
+    ``v ∈ X ∖ C``
 
 ### Algorithm
 
@@ -1113,7 +1113,7 @@ product of two sets, and otherwise optionally compute a witness.
 * If `witness` option is activated:
   * `(true, [])` iff ``X ⊆ Y``
   * `(false, v)` iff ``X \\not\\subseteq Y`` and
-    ``v ∈ X \\setminus Y``
+    ``v ∈ X ∖ Y``
 
 ### Notes
 
@@ -1183,7 +1183,7 @@ witness.
 * If `witness` option is activated:
   * `(true, [])` iff ``X ⊆ Y``
   * `(false, v)` iff ``X \\not\\subseteq Y`` and
-    ``v ∈ X \\setminus Y``
+    ``v ∈ X ∖ Y``
 
 ### Notes
 

@@ -29,7 +29,7 @@ corresponding overapproximation option.
 
 The argument `partition` deserves some explanation.
 Typically, the list of blocks should form a partition of the set
-``\\{1, \\dots, n\\}`` represented as a list of consecutive blocks, where ``n``
+``\\{1, …, n\\}`` represented as a list of consecutive blocks, where ``n``
 is the ambient dimension of set `S`.
 
 However, technically there is no problem if the blocks are not consecutive,

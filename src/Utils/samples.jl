@@ -220,8 +220,8 @@ Choose a random convex combination of the vertices of a convex polytope `X`.
 
 If `variant == false`, we proceed as follows.
 Let ``V = \\{v_i\\}_i`` denote the set of vertices of `X`.
-Then any point ``p \\in \\mathbb{R}^n`` of the convex polytope ``X`` is a convex
-combination of its vertices, i.e., ``p = \\sum_{i} v_i α_i`` for some
+Then any point ``p ∈ ℝ^n`` of the convex polytope ``X`` is a convex
+combination of its vertices, i.e., ``p = ∑_{i} v_i α_i`` for some
 (non-negative) coefficients ``\\{α_i\\}_i`` that add up to 1.
 The algorithm chooses a random convex combination (the ``α_i``).
 To produce this combination, we apply the finite-difference operator on a sorted

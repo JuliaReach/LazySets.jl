@@ -13,9 +13,9 @@ The ball is also known as a
 It is defined as the set
 
 ```math
-\\mathcal{B}_1^n(c, r) = \\{ x ∈ \\mathbb{R}^n : ∑_{i=1}^n |c_i - x_i| ≤ r \\},
+\\mathcal{B}_1^n(c, r) = \\{ x ∈ ℝ^n : ∑_{i=1}^n |c_i - x_i| ≤ r \\},
 ```
-where ``c ∈ \\mathbb{R}^n`` is its center and ``r ∈ \\mathbb{R}_+`` its radius.
+where ``c ∈ ℝ^n`` is its center and ``r ∈ ℝ_+`` its radius.
 
 ### Fields
 

@@ -73,7 +73,7 @@ If such value is not specified, it defaults to `1e-3`.
 
 Next we want to decompose ``\mathcal{X}`` into a Cartesian product of intervals.
 That is, we project it to the ``x``-axis and ``y``-axis and then compose these intervals
-again: ``\hat{\mathcal{X}} := \hat{\mathcal{X}}_1 \times \hat{\mathcal{X}}_2``.
+again: ``\hat{\mathcal{X}} := \hat{\mathcal{X}}_1 × \hat{\mathcal{X}}_2``.
 
 ```@example deco_label
 Xhat = overapproximate(X)  # approximation of X with an axis-aligned polygon
@@ -95,7 +95,7 @@ plot!(example, Y, color="yellow", alpha=0.3)
 
 However, we want our approximation be again a Cartesian product of intervals, so
 we have to overapproximate this diamond-like shape again:
-``\hat{\mathcal{Y}} := \hat{\mathcal{X}}' = \hat{\mathcal{X}}_1' \times \hat{\mathcal{X}}_2'``
+``\hat{\mathcal{Y}} := \hat{\mathcal{X}}' = \hat{\mathcal{X}}_1' × \hat{\mathcal{X}}_2'``
 
 ```@example deco_label
 Xhatp = overapproximate(Y)
