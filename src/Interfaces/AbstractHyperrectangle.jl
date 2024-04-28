@@ -666,6 +666,38 @@ function split(H::AbstractHyperrectangle{N},
     return result
 end
 
+# non-uniform partition
+function split(H::AbstractHyperrectangle{N},
+               bounds::AbstractVector{<:AbstractVector{<:Real}}) where {N}
+    @assert length(bounds) == dim(H) "the bounds ($(length(bounds))) must be " *
+                                     "specified in each dimension ($(dim(H)))"
+    lo = low(H)
+    hi = high(H)
+    n = length(lo)
+
+    bs = [length(b) + 1 for b in bounds]
+    total_number = prod(bs)
+    result = Vector{Hyperrectangle{N,Vector{N},Vector{N}}}(undef, total_number)
+    for (j, vj) in enumerate(CartesianIterator(bs, false))
+        l = Vector{N}(undef, n)
+        h = Vector{N}(undef, n)
+        for (i, ei) in enumerate(vj)
+            if ei == 1
+                l[i] = lo[i]
+            else
+                l[i] = bounds[i][ei-1]
+            end
+            if ei == bs[i]
+                h[i] = hi[i]
+            else
+                h[i] = bounds[i][ei]
+            end
+        end
+        result[j] = Hyperrectangle(low=l, high=h)
+    end
+    return result
+end
+
 """
     rectify(H::AbstractHyperrectangle)
 
