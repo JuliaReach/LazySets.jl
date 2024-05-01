@@ -1,5 +1,3 @@
-export convex_hull
-
 function default_convex_hull_algorithm(points)
     if length(points) != 0 && length(first(points)) == 2
         return "monotone_chain"

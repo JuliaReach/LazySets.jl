@@ -1,11 +1,4 @@
-import Base: rand,
-             ∈,
-             isempty
-
-export Line,
-       an_element,
-       translate,
-       translate!
+export Line
 
 """
     Line{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
@@ -213,7 +206,7 @@ function constraints_list(L::Line)
     return out
 end
 
-function _parameters(L::Line{N,VN}) where {N,VN}
+function _parameters(::Line{N,VN}) where {N,VN}
     return (N, VN)
 end
 
@@ -399,7 +392,7 @@ end
 """
     isempty(L::Line)
 
-Check whether a line is empty or not.
+Check whether a line is empty.
 
 ### Input
 

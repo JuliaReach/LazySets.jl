@@ -2,8 +2,7 @@ export Star,
        center,
        basis,
        predicate,
-       intersection!,
-       dim
+       intersection!
 
 """
     Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}} <: AbstractPolyhedron{N}

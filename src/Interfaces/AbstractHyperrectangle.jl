@@ -1,13 +1,9 @@
-import Base: ∈, split
+import Base: split
 using Base: product
 
 export AbstractHyperrectangle,
        radius_hyperrectangle,
-       constraints_list,
-       low, high,
        isflat,
-       rectify,
-       volume,
        □
 
 """

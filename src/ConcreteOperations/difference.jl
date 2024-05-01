@@ -1,35 +1,21 @@
-export difference
-
-# alias for set difference
-import Base: \
-
 """
     \\(X::LazySet, Y::LazySet)
 
-Convenience alias for set difference.
-
-### Input
-
-- `X` -- first set
-- `Y` -- second set
-
-### Output
-
-The set difference between `X` and `Y`.
+Convenience alias for the `difference` function.
 
 ### Notes
 
-If `X` and `Y` are intervals, `X \\ Y` is used in some libraries to denote
-the left division, as the example below shows. However, it should not be
-confused with the *set difference*. For example,
+In this library, `X \\ Y` denotes the set difference. If `X` and `Y` are
+intervals, in some libraries it denotes the left division, as the example below
+shows.
 
 ```jldoctest
 julia> X = Interval(0, 2); Y = Interval(1, 4);
 
-julia> X \\ Y  # computing the set difference
+julia> X \\ Y  # compute the set difference
 Interval{Float64}([0, 1])
 
-julia> X.dat \\ Y.dat  # computing the left division
+julia> X.dat \\ Y.dat  # underlying intervals compute the left division instead
 [0.5, ∞]
 ```
 """
@@ -39,14 +25,6 @@ julia> X.dat \\ Y.dat  # computing the left division
     difference(X::Interval{N}, Y::Interval) where {N}
 
 Compute the set difference between two intervals.
-
-The set difference is defined as:
-
-```math
-    X \\setminus Y = \\{x: x ∈ X \\text{ and } x ∉ Y \\}
-```
-
-The backslash symbol, `\\`, can be used as an alias.
 
 ### Input
 
@@ -74,9 +52,9 @@ position, three different results may occur:
   contained in ``X``.
 
 To check for strict inclusion, we assume that the inclusion is strict and then
-check if the resulting intervals that cover ``X`` (one to its left and one to
-its right, let them be `L` and `R`), obtained by intersection with ``Y``, are
-flat or not. Three cases may arise:
+check whether the resulting intervals that cover ``X`` (one to its left and one
+to its right, let them be `L` and `R`), obtained by intersection with ``Y``, are
+flat. Three cases may arise:
 
 - If both `L` and `R` are flat then ``X = Y`` and the result is the empty set.
 - If only `L` is flat, then the result is `R`, the remaining interval not
@@ -108,7 +86,7 @@ function difference(X::Interval{N}, Y::Interval) where {N}
 end
 
 """
-    difference(X::AbstractHyperrectangle{N}, Y::AbstractHyperrectangle) where {N}
+    difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
 
 Compute the set difference between two hyperrectangular sets.
 
@@ -132,7 +110,7 @@ union is in general not convex.
 
 This implementation uses `IntervalArithmetic.setdiff`.
 """
-function difference(X::AbstractHyperrectangle{N}, Y::AbstractHyperrectangle) where {N}
+function difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
     Xib = convert(IA.IntervalBox, X)
     Yib = convert(IA.IntervalBox, Y)
     return UnionSetArray(convert.(Hyperrectangle, IA.setdiff(Xib, Yib)))

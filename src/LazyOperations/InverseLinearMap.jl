@@ -1,8 +1,6 @@
-import Base: *, ∈, isempty
+import Base: *
 
-export InverseLinearMap,
-       an_element,
-       constraints_list
+export InverseLinearMap
 
 """
     InverseLinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}}

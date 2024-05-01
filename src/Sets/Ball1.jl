@@ -1,6 +1,3 @@
-import Base: rand,
-             ∈
-
 export Ball1
 
 """

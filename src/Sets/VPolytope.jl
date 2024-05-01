@@ -1,9 +1,4 @@
-import Base: rand,
-             ∈
-
 export VPolytope,
-       vertices_list,
-       linear_map,
        remove_redundant_vertices,
        tohrep,
        tovrep

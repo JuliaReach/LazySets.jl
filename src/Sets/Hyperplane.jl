@@ -1,9 +1,4 @@
-import Base: rand,
-             ∈,
-             isempty
-
-export Hyperplane,
-       an_element
+export Hyperplane
 
 """
     Hyperplane{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}

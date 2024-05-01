@@ -67,7 +67,6 @@ an_element(::LazySet)
 tosimplehrep(::LazySet)
 reflect(::LazySet)
 is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
-isoperationtype(::Type{<:LazySet})
 isoperation(::LazySet)
 isequivalent(::LazySet, ::LazySet)
 surface(::LazySet)
@@ -108,9 +107,7 @@ definition based on `σ` is used.
 
 ```@docs
 σ
-support_vector
 ρ(::AbstractVector, ::LazySet)
-support_function
 ```
 
 ## Set functions that override Base functions
@@ -118,8 +115,6 @@ support_function
 ```@docs
 ==(::LazySet, ::LazySet)
 ≈(::LazySet, ::LazySet)
-copy(::LazySet)
-eltype
 ```
 
 ## Aliases for set types

@@ -1,5 +1,3 @@
-import Base: isempty, ∈
-
 export AbstractAffineMap,
        matrix, vector, set
 

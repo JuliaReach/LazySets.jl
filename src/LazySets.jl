@@ -1,23 +1,39 @@
 module LazySets
 
-using LinearAlgebra, RecipesBase, Reexport, Requires, SparseArrays
+using Reexport
+
+include("API/API.jl")
+@reexport using .API
+import .API: eltype, extrema, isdisjoint, isempty, \, ∈, ≈, ==, ⊆,
+             rand, norm, permute, distance, rectify,
+             affine_map, an_element, area, complement, concretize, constraints_list,
+             constraints, convex_hull, diameter, dim, exponential_map, high,
+             is_interior_point, is_polyhedral, isbounded, isboundedtype, isconvextype,
+             isempty, isoperation, isoperationtype, isuniversal, linear_map, low,
+             norm, project, radius, rectify, reflect, sample, scale, scale!,
+             support_function, ρ, support_vector, σ, surface, translate, translate!,
+             vertices_list, vertices, volume,
+             cartesian_product, difference, distance, exact_sum, ⊞, intersection,
+             is_intersection_empty, isequivalent, ⊂, linear_combination,
+             minkowski_difference, pontryagin_difference, minkowski_sum
+
+import Base: copy, rationalize, \
+import LinearAlgebra: ×, normalize, normalize!
+import RecipesBase: apply_recipe
+
+export Arrays
+export ×, normalize, subtypes
+
+using LinearAlgebra, RecipesBase, Requires, SparseArrays
 import GLPK, JuMP, Random, ReachabilityBase
 import IntervalArithmetic as IA
 using IntervalArithmetic: mince
-import IntervalArithmetic: radius, ⊂
 using LinearAlgebra: checksquare
-import LinearAlgebra: norm, ×, normalize, normalize!
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle, randperm
-import RecipesBase: apply_recipe
-import SparseArrays: permute
 
 @static if VERSION < v"1.9"
     stack(vecs) = hcat(vecs...)
 end
-
-export Arrays
-export ×, normalize, ⊂,
-       subtypes
 
 # ================
 # ReachabilityBase
@@ -33,9 +49,7 @@ using ReachabilityBase.Iteration
 using ReachabilityBase.Commutative
 using ReachabilityBase.Distribution
 using ReachabilityBase.Subtypes
-
 using ReachabilityBase.Arrays
-import .Arrays: distance, rectify, rationalize
 
 # =================
 # External packages
@@ -157,9 +171,12 @@ include("ConcreteOperations/difference.jl")
 include("ConcreteOperations/distance.jl")
 include("ConcreteOperations/exact_sum.jl")
 include("ConcreteOperations/intersection.jl")
+include("ConcreteOperations/isapprox.jl")
 include("ConcreteOperations/isdisjoint.jl")
-include("ConcreteOperations/issubset.jl")
+include("ConcreteOperations/isequal.jl")
+include("ConcreteOperations/isequivalent.jl")
 include("ConcreteOperations/isstrictsubset.jl")
+include("ConcreteOperations/issubset.jl")
 include("ConcreteOperations/linear_combination.jl")
 include("ConcreteOperations/minkowski_difference.jl")
 include("ConcreteOperations/minkowski_sum.jl")

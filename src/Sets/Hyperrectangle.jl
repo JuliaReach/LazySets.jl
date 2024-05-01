@@ -1,5 +1,3 @@
-import Base.rand
-
 export Hyperrectangle
 
 """

@@ -1,7 +1,4 @@
-import Base.rand
-
-export BallInf,
-       volume
+export BallInf
 
 const BALLINF_THRESHOLD_ρ = 30  # threshold value in `ρ`
 const BALLINF_THRESHOLD_VOLUME = 50  # threshold value in `volume`

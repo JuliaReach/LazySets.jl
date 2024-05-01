@@ -98,7 +98,6 @@ plot1
 ## Methods
 
 ```@docs
-issubset
 ⊆(::LazySet, ::LazySet, ::Bool=false)
 ⊆(::LazySet, ::AbstractHyperrectangle, ::Bool=false)
 ⊆(::AbstractPolytope, ::LazySet, ::Bool=false)

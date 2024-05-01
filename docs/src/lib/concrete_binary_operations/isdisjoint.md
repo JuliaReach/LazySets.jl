@@ -12,9 +12,6 @@ CurrentModule = LazySets
 The function `isdisjoint` checks whether the intersection of two sets is empty.
 It can optionally produce a witness if the intersection is nonempty.
 
-!!! note
-    `is_intersection_empty` can be used as an alternative name to `isdisjoint`.
-
 ## Examples
 
 We use the following four sets for illustration.

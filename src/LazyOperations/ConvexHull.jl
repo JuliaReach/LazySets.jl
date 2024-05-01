@@ -1,7 +1,4 @@
-import Base.isempty
-
 export ConvexHull, CH,
-       convex_hull,
        convex_hull!,
        ConvexHull!,
        swap

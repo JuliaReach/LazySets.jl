@@ -1,29 +1,3 @@
-import Base.issubset
-
-"""
-    issubset(X::LazySet, Y::LazySet, [witness]::Bool=false, args...)
-
-Alias for `⊆` (inclusion check).
-
-### Input
-
-- `X`       -- set
-- `Y`       -- set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``X ⊆ Y``
-* If `witness` option is activated:
-  * `(true, [])` iff ``X ⊆ Y``
-  * `(false, v)` iff ``X ⊈ Y`` and ``v ∈ X \\setminus Y``
-
-### Notes
-
-For more documentation see `⊆`.
-"""
-function issubset end
-
 # this operation is invalid, but it is a common error, so we give a detailed
 # error message
 function ⊆(::AbstractVector, ::LazySet)
@@ -41,38 +15,18 @@ end
 ⊆(X::IA.IntervalBox, Y::LazySet) = ⊆(convert(Hyperrectangle, X), Y)
 
 """
-    ⊆(X::LazySet, P::LazySet, [witness]::Bool=false)
-
-Check whether a set is contained in a polyhedral set, and if not, optionally
-compute a witness.
-
-### Input
-
-- `X`       -- inner set
-- `Y`       -- outer polyhedral set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``X ⊆ P``
-* If `witness` option is activated:
-  * `(true, [])` iff ``X ⊆ P``
-  * `(false, v)` iff ``X ⊈ P`` and ``v ∈ X \\setminus P``
-
-### Notes
-
-We require that `constraints_list(P)` is available.
-
 ### Algorithm
 
-We check inclusion of `X` in every constraint of `P`.
+The default implementation assumes that `Y` is polyhedral, i.e., that
+`constraints_list(Y)` is available, and checks inclusion of `X` in every
+constraint of `Y`.
 """
-function ⊆(X::LazySet, P::LazySet, witness::Bool=false)
-    if is_polyhedral(P)
-        return _issubset_constraints_list(X, P, witness)
+function ⊆(X::LazySet, Y::LazySet, witness::Bool=false)
+    if is_polyhedral(Y)
+        return _issubset_constraints_list(X, Y, witness)
     else
-        error("an inclusion check for the given combination of set types is " *
-              "not available")
+        throw(ArgumentError("an inclusion check for the given combination of " *
+                            "set types is not available"))
     end
 end
 

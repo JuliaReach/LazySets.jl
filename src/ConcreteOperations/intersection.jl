@@ -1,5 +1,3 @@
-export intersection
-
 for T in [:LazySet, :AbstractSingleton, :Interval, :Universe, :LinearMap,
           :UnionSet, :UnionSetArray]
     @eval begin

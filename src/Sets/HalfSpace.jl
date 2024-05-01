@@ -1,11 +1,4 @@
-import Base: rand,
-             ∈,
-             isempty,
-             convert
-
 export HalfSpace, LinearConstraint,
-       an_element,
-       complement,
        constrained_dimensions,
        halfspace_left, halfspace_right,
        iscomplement

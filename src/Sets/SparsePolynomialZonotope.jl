@@ -1,6 +1,6 @@
 export SparsePolynomialZonotope, expmat, nparams, ngens_dep, ngens_indep,
-       genmat_dep, genmat_indep, indexvector, polynomial_order, translate,
-       linear_map, quadratic_map, remove_redundant_generators, reduce_order, ρ
+       genmat_dep, genmat_indep, indexvector, polynomial_order, quadratic_map,
+       remove_redundant_generators, reduce_order
 
 """
     SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N},

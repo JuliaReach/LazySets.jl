@@ -1,9 +1,4 @@
-import Base: rand,
-             ∈
-
-export Ball2,
-       sample,
-       volume
+export Ball2
 
 """
     Ball2{N<:AbstractFloat, VN<:AbstractVector{N}} <: AbstractBallp{N}

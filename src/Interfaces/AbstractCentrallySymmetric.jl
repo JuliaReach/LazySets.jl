@@ -1,8 +1,5 @@
-import Base.isempty
-
 export AbstractCentrallySymmetric,
-       center,
-       an_element
+       center
 
 """
     AbstractCentrallySymmetric{N} <: ConvexSet{N}

@@ -1,13 +1,11 @@
 export HParallelotope,
        directions,
        offset,
-       dim,
        base_vertex,
        extremal_vertices,
        center,
        genmat,
-       generators,
-       constraints_list
+       generators
 
 """
     HParallelotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}

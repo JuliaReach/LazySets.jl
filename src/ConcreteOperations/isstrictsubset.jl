@@ -1,31 +1,12 @@
 """
-    ⊂(X::LazySet{N}, Y::LazySet, [witness]::Bool=false) where {N}
-
-Strict inclusion check of a set in another set.
-
-### Input
-
-- `X`       -- first set
-- `Y`       -- second set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``X ⊂ Y``
-* If `witness` option is activated:
-  * `(true, v)` iff ``X ⊂ Y`` and ``v ∈ Y \\setminus X``
-  * `(false, [])` iff not ``X ⊂ Y``
-
 ### Algorithm
 
-We check inclusion of `X` in `Y` and then check inclusion of `Y` in `X`:
-
-```math
-X ⊂ Y \\Leftrightarrow X ⊆ Y \\land ¬ (Y ⊆ X)
-```
+The default implementation first checks inclusion of `X` in `Y` and then checks
+noninclusion of `Y` in `X`:
 """
-function ⊂(X::LazySet{N}, Y::LazySet, witness::Bool=false) where {N}
+function ⊂(X::LazySet, Y::LazySet, witness::Bool=false)
     if witness
+        N = promote_type(eltype(X), eltype(Y))
         res, w = ⊆(X, Y, witness)
         if res
             res, w = ⊆(Y, X, witness)

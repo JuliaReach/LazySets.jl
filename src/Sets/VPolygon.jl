@@ -1,11 +1,6 @@
-import Base: rand,
-             ∈
-
 export VPolygon,
        remove_redundant_vertices,
-       remove_redundant_vertices!,
-       linear_map,
-       project
+       remove_redundant_vertices!
 
 # heuristic to define the method used to compute the support vector of a polygon
 # in vertex representation; if the number of vertices of the polygon is smaller

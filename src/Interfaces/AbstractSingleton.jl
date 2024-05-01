@@ -1,8 +1,5 @@
-import Base.∈
-
 export AbstractSingleton,
-       element,
-       an_element
+       element
 
 """
     AbstractSingleton{N} <: AbstractHyperrectangle{N}

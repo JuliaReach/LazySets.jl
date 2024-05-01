@@ -1,5 +1,3 @@
-export minkowski_difference, pontryagin_difference
-
 """
     minkowski_difference(P::LazySet, Q::LazySet)
 
@@ -56,24 +54,6 @@ function minkowski_difference(P::LazySet, Q::LazySet)
         return HPolyhedron(A, g_PminusQ)
     end
 end
-
-"""
-    pontryagin_difference(X::LazySet, Y::LazySet)
-
-An alias for the function `minkowski_difference`.
-
-### Notes
-
-There is some inconsistency in the literature regarding the naming conventions.
-In this library, both the names *Minkowski difference* and
-*Pontryagin difference* refer to the geometric difference of two sets.
-Mathematically:
-
-```math
-    X ⊖ Y = \\{z ∈ ℝ^n: z + v ∈ X  ~∀~v ∈ Y\\}
-```
-"""
-const pontryagin_difference = minkowski_difference
 
 for ST in [:LazySet, :AbstractZonotope, :AbstractHyperrectangle]
     # Minkowski difference with singleton is a translation

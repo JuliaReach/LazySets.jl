@@ -1,9 +1,5 @@
-import Base.isempty
-
 export AbstractCentrallySymmetricPolytope,
-       center,
-       an_element,
-       vertices_list
+       center
 
 """
     AbstractCentrallySymmetricPolytope{N} <: AbstractPolytope{N}

@@ -1,5 +1,3 @@
-__precompile__(true)
-
 """
 Module `Parallel.jl` -- LazySets algorithms that are parallelized.
 """

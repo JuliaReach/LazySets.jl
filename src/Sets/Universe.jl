@@ -1,7 +1,3 @@
-import Base: rand,
-             ∈,
-             isempty
-
 export Universe
 
 """
