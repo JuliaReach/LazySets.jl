@@ -17,8 +17,8 @@ for N in [Float64, Rational{Int}]
     @test convex_hull([[N(1), N(0)], [N(1), N(0)]]) == [[N(1), N(0)]]
 
     # test corner cases with one and two vectors (see #876)
-    p1 = [1.0, 2.0]
-    p2 = [1.0, 3.0]
+    p1 = N[1, 2]
+    p2 = N[1, 3]
     @test convex_hull([p1]) == [p1]
     @test ispermutation(convex_hull([p1, p2]), [p1, p2])
 
@@ -168,4 +168,21 @@ for N in [Float64, Rational{Int}]
     @test isequivalent(convex_hull(U), P)
     U = UnionSetArray([convert(HPolytope, V1), convert(HPolytope, V2)])
     @test isequivalent(convex_hull(U), P)
+
+    # ==========================
+    # Unary concrete convex hull
+    # ==========================
+
+    # convex set
+    S = Singleton(N[1])
+    @test convex_hull(S) == S
+
+    # non-convex set
+    P = Polygon([N[0, 0], N[0, 2], N[2, 2], N[2, 0], N[1, 1]])
+    Pc = VPolygon([N[0, 0], N[2, 0], N[2, 2], N[0, 2]])
+    @test convex_hull(P) == Pc
+
+    # binary convex hull with an empty set is identical to unary
+    @test convex_hull(S, EmptySet{N}(1)) == convex_hull(EmptySet{N}(1), S) == S
+    @test convex_hull(P, EmptySet{N}(1)) == convex_hull(EmptySet{N}(1), P) == Pc
 end

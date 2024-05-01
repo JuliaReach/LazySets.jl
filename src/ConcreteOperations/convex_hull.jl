@@ -562,9 +562,7 @@ function convex_hull(P1::HPoly, P2::HPoly;
 end
 
 @commutative function convex_hull(X::LazySet, ::EmptySet)
-    @assert isconvextype(typeof(X)) "this implementation requires a convex " *
-                                    "set as input"
-    return X
+    return convex_hull(X)
 end
 
 convex_hull(∅::EmptySet, ::EmptySet) = ∅
