@@ -631,7 +631,6 @@ function is_interior_point(v::AbstractVector{N}, X::LazySet{N}; p=N(Inf), ε=_rt
     return Ballp(p, v, ε) ⊆ X
 end
 
-
 """
     plot_recipe(X::LazySet, [ε])
 
