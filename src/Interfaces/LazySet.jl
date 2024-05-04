@@ -1,5 +1,4 @@
 export LazySet,
-       basetype,
        neutral,
        absorbing,
        tosimplehrep,
@@ -325,51 +324,6 @@ eltype(::Type{<:LazySet{N}}) where {N} = N
 The default implementation assumes that the first type parameter is `N`.
 """
 eltype(::LazySet{N}) where {N} = N
-
-"""
-    basetype(T::Type{<:LazySet})
-
-Return the base type of the given set type (i.e., without type parameters).
-
-### Input
-
-- `T` -- set type
-
-### Output
-
-The base type of `T`.
-"""
-basetype(T::Type{<:LazySet}) = Base.typename(T).wrapper
-
-"""
-    basetype(X::LazySet)
-
-Return the base type of the given set (i.e., without type parameters).
-
-### Input
-
-- `X` -- set
-
-### Output
-
-The base type of `X`.
-
-### Examples
-
-```jldoctest
-julia> Z = rand(Zonotope);
-
-julia> basetype(Z)
-Zonotope
-
-julia> basetype(Z + Z)
-MinkowskiSum
-
-julia> basetype(LinearMap(rand(2, 2), Z + Z))
-LinearMap
-```
-"""
-basetype(X::LazySet) = basetype(typeof(X))
 
 """
 ### Algorithm

@@ -50,6 +50,7 @@ using ReachabilityBase.Commutative
 using ReachabilityBase.Distribution
 using ReachabilityBase.Subtypes
 using ReachabilityBase.Arrays
+using ReachabilityBase.Basetype
 
 # =================
 # External packages
