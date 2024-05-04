@@ -15,20 +15,20 @@ import ReachabilityBase.Arrays: distance, rectify
 
 export
 # unary set operations
-       an_element, area, complement, concretize, constraints_list, constraints,
-       convex_hull, diameter, dim, high, is_polyhedral, isbounded,
-       isboundedtype, isconvextype, isempty, isoperation, isoperationtype,
-       isuniversal, low, norm, radius, rectify, reflect, sample,
-       support_function, ρ, support_vector, σ, surface, vertices_list, vertices,
-       volume,
+      an_element, area, complement, concretize, constraints_list, constraints,
+      convex_hull, diameter, dim, high, is_polyhedral, isbounded,
+      isboundedtype, isconvextype, isempty, isoperation, isoperationtype,
+      isuniversal, low, norm, radius, rectify, reflect, sample,
+      support_function, ρ, support_vector, σ, surface, vertices_list, vertices,
+      volume,
 # mixed set operations (typically with vectors or matrices)
-       affine_map, exponential_map, is_interior_point, linear_map, project,
-       scale!, scale, support_function, ρ, support_vector, σ, translate!,
-       translate,
+      affine_map, exponential_map, is_interior_point, linear_map, project,
+      scale!, scale, support_function, ρ, support_vector, σ, translate!,
+      translate,
 # binary set operations
-       cartesian_product, difference, distance, exact_sum, ⊞, intersection,
-       is_intersection_empty, isequivalent, ⊂, linear_combination,
-       minkowski_difference, pontryagin_difference, minkowski_sum
+      cartesian_product, difference, distance, exact_sum, ⊞, intersection,
+      is_intersection_empty, isequivalent, ⊂, linear_combination,
+      minkowski_difference, pontryagin_difference, minkowski_sum
 
 include("LazySet.jl")
 
