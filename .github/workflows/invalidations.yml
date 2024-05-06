@@ -25,7 +25,7 @@ jobs:
       - name: Check out repository in current branch
         uses: actions/checkout@v4
       - name: Cache artifacts
-        uses: julia-actions/cache@v1
+        uses: julia-actions/cache@v2
       - name: Build package in current branch
         uses: julia-actions/julia-buildpkg@v1
       - name: Count invalidations in current branch
