@@ -1215,3 +1215,73 @@ function _overapproximate_zonotope_hyperplane(Z::AbstractZonotope, H::Hyperplane
     G_cap = G * Gs
     return Zonotope(c_cap, G_cap)
 end
+
+function overapproximate(X::Intersection{N,<:AbstractZonotope,<:HalfSpace{N,<:SingleEntryVector}},
+                         ::Type{Zonotope}) where {N}
+    return _overapproximate_zonotope_halfspace_ICP(first(X), second(X))
+end
+
+# symmetric method
+function overapproximate(X::Intersection{N,<:HalfSpace{N,<:SingleEntryVector},<:AbstractZonotope},
+                         ::Type{Zonotope}) where {N}
+    return _overapproximate_zonotope_halfspace_ICP(second(X), first(X))
+end
+
+# method for a single constraint of the form x_i <= b based on ICP
+# - zonotope = G * []^p + c, where []^p is the p-dimensional unit cube
+# - let G_i be the i-th row of G
+# - build an ICP contractor for the constraint G_i^T x <= b - c
+# - contract the domain of []^p under this constraint to D
+# - the resulting zonotope is G * D + c
+function _overapproximate_zonotope_halfspace_ICP(Z::AbstractZonotope{N},
+                                                 H::HalfSpace{N,SingleEntryVector{N}}) where {N}
+    c = center(Z)
+    G = genmat(Z)
+    p = size(G, 2)
+    d = H.a.i
+
+    a = G[d, :]
+    io = IOBuffer()
+    first = true
+    v = H.a.v
+    negate = v < zero(N)
+    if negate
+        v = -v
+    end
+    for (i, ai) in enumerate(a)
+        if first
+            first = false
+        elseif ai >= 0
+            write(io, "+")
+        end
+        write(io, "$(v * ai)*x$(i)")
+    end
+    if negate
+        write(io, ">=$(-H.b + c[d])")
+    else
+        write(io, "<=$(H.b - c[d])")
+    end
+    e = Meta.parse(String(take!(io)))
+    X = IA.IntervalBox(IA.interval(-1, 1), p)
+    newD = _contract_zonotope_halfspace_ICP(e, X)
+    if isempty(newD)
+        return EmptySet{N}(length(c))
+    end
+    return affine_map(G, convert(Hyperrectangle, newD), c)
+end
+
+function load_overapproximate_ICP()
+    return quote
+        import .IntervalConstraintProgramming as ICP
+
+        function _contract_zonotope_halfspace_ICP(e, X)
+            separator = eval(quote
+                                 ICP.@constraint $e
+                             end)
+            # smallest box containing all points in domain X satisfying constraint
+            # (`invokelatest` to avoid world-age issue; `Base.` for VERSION < v"1.9")
+            out, _ = Base.invokelatest(separator, X)
+            return out
+        end
+    end
+end  # load_overapproximate_ICP()

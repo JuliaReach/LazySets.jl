@@ -521,4 +521,12 @@ for N in [Float64]
     H = overapproximate(p, dirs)
     B2 = Ball2(N[0, 0], N(1))
     @test B2 ⊆ H
+
+    # overapproximate the intersection of a zonotope with an axis-aligned
+    # half-space by a zonotope using ICP
+    Z = Zonotope(N[0, 2], N[1//2 1//2; 1 0])
+    H = HalfSpace(SingleEntryVector(1, 2, N(1)), N(0))
+    R = overapproximate(Z ∩ H, Zonotope)
+    R_exact = intersection(Z, H)
+    @test R ⊆ Z && R_exact ⊆ R
 end
