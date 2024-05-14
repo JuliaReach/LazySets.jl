@@ -788,3 +788,7 @@ A scalar representing the distance between point `x` and half-space `H`.
     a, b = _normalize_halfspace(H, N(2))
     return max(dot(x, a) - b, zero(N))
 end
+
+function permute(H::HalfSpace, p::AbstractVector{Int})
+    return HalfSpace(H.a[p], H.b)
+end

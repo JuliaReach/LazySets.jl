@@ -152,6 +152,10 @@ for N in [Float64, Rational{Int}, Float32]
     for x in sample(H, 10)
         @test x ∈ H
     end
+
+    # permute
+    H = HalfSpace(N[1, -2], N(3))
+    @test permute(H, 1:2) == H && permute(H, [2, 1]) == HalfSpace(N[-2, 1], N(3))
 end
 
 # tests that only work with Float64 and Float32
