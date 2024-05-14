@@ -434,10 +434,18 @@ This method implements the algorithm described in Proposition 3.1.39 of [1].
 """
 function reduce_order(P::SparsePolynomialZonotope, r::Real,
                       method::AbstractReductionMethod=GIR05())
-    @assert r ≥ 1
+    @assert r ≥ 1 "cannot reduce below order 1 (got $r)"
+
+    if order(P) <= r
+        return P
+    end
+
     n = dim(P)
     h = ngens_dep(P)
     q = ngens_indep(P)
+
+    a = min(h + q, ceil(Int, h + q - n * (r - 1)))
+    @assert a > 0  # holds because `r > order(P)`
 
     c = center(P)
     G = genmat_dep(P)
@@ -445,12 +453,10 @@ function reduce_order(P::SparsePolynomialZonotope, r::Real,
     E = expmat(P)
     idx = indexvector(P)
 
-    a = max(0, min(h + q, ceil(Int, h + q - n * (r - 1))))
     Gbar = hcat(G, GI)
     norms = [norm(g) for g in eachcol(Gbar)]
     th = sort(norms)[a]
 
-    # TODO: case a = 0
     # TODO is constructing an array of booleans the most efficient way?
     K = [norms[i] ≤ th for i in 1:h]
     Kbar = .!K
