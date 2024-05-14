@@ -1159,7 +1159,7 @@ function project(P::AbstractPolyhedron{N}, block::AbstractVector{Int};
     end
 
     if isnothing(clist)  # set is unconstrained in the given dimensions
-        return Universe{N}(dim(P))
+        return Universe{N}(length(block))
     end
 
     if isboundedtype(typeof(P))
