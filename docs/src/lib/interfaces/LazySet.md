@@ -49,7 +49,6 @@ extrema(::LazySet, ::Int)
 extrema(::LazySet)
 convex_hull(::LazySet; kwargs...)
 triangulate(::LazySet)
-basetype
 isboundedtype(::Type{<:LazySet})
 isbounded(::LazySet)
 _isbounded_unit_dimensions(::LazySet)
