@@ -245,6 +245,9 @@ if test_suite_basic
     @testset "LazySets.isdisjoint" begin
         include("ConcreteOperations/isdisjoint.jl")
     end
+    @testset "LazySets.isequivalent" begin
+        include("ConcreteOperations/isequivalent.jl")
+    end
     @testset "LazySets.isstrictsubset" begin
         include("ConcreteOperations/isstrictsubset.jl")
     end
