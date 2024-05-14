@@ -266,7 +266,12 @@ constrained to ``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p`` such that
 function ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
     @assert length(x) == dim(Z)
 
-    p, n = ngens(Z), dim(Z)
+    p = ngens(Z)
+    if p == 0
+        # no generators can cause trouble in LP solver
+        return isapprox(x, center(Z))
+    end
+
     N = promote_type(eltype(x), eltype(Z))
     A = genmat(Z)
     sense = '='

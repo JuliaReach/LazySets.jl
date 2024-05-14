@@ -71,6 +71,14 @@ for N in [Float64, Rational{Int}, Float32]
     # an_element function
     @test an_element(z) ∈ z
 
+    # membership
+    Z = Zonotope(N[1, 2], N[2 1; 1 2])
+    @test N[-2, -1] ∈ Z && N[2, 1] ∈ Z && N[4, 5] ∈ Z && N[0, 3] ∈ Z
+    @test N[1, 0] ∉ Z && N[3, 2] ∉ Z && N[1, 4] ∉ Z && N[-1, 2] ∉ Z
+    # zonotope without generators
+    Z = Zonotope(N[1, 2], Matrix{N}(undef, 2, 0))
+    @test N[1, 2] ∈ Z && N[1, 1] ∉ Z
+
     # concrete operations
     gens = N[1 1; -1 1]
     Z1 = Zonotope(N[1, 1], gens)
