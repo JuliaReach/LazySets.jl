@@ -377,7 +377,7 @@ function _remove_redundant_generators_polyzono(c, G, E)
 
     visited_exps = Dict{Vector{Int},Int}()
     @inbounds for (gi, ei) in zip(eachcol(G), eachcol(E))
-        iszero(gi) && continue
+        all(isapproxzero, gi) && continue
         if iszero(ei)
             cnew += gi
         elseif haskey(visited_exps, ei) # repeated exponent
