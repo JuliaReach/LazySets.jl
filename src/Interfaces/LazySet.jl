@@ -253,6 +253,10 @@ end
 The default implementation computes the extrema via `low` and `high`.
 """
 function extrema(X::LazySet)
+    return _extrema_lowhigh(X)
+end
+
+function _extrema_lowhigh(X::LazySet)
     l = low(X)
     h = high(X)
     return (l, h)
