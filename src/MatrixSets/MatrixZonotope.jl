@@ -18,7 +18,7 @@ struct MatrixZonotope{N,MN<:AbstractMatrix{N}}
             (allequal(size.(Ai)) && size(A0) == first(Ai)) ||
                 throw(ArgumentError("The size of all generator matrices should match."))
         end
-        return new(A0, Ai, id)
+        return new{N,MN}(A0, Ai, id)
     end
 end
 
