@@ -564,7 +564,7 @@ function _extrema_polyzono_zonotope(P::SparsePolynomialZonotope{N}) where {N}
     for GIj in eachcol(genmat_indep(P))
         g₄ .+= abs.(GIj)
     end
-    c = center(P) + N(1/2) .* g₁
-    r = N(1/2) .* g₂ + g₃ + g₄
+    c = center(P) + N(1 / 2) .* g₁
+    r = N(1 / 2) .* g₂ + g₃ + g₄
     return (c .- r, c .+ r)
 end

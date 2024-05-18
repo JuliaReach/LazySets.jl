@@ -174,32 +174,35 @@ for N in [Float64, Rational{Int}, Float32]
     S = split(H, [2, 2])
     @test S isa Vector{typeof(H)}
     # split with non-uniform partition
-    H = Hyperrectangle(low=N[1, 2], high=N[5, 6])
+    H = Hyperrectangle(; low=N[1, 2], high=N[5, 6])
     S = split(H, [N[3], N[4]])
-    @test ispermutation(S, [Hyperrectangle(low=N[1, 2], high=N[3, 4]),
-                            Hyperrectangle(low=N[3, 2], high=N[5, 4]),
-                            Hyperrectangle(low=N[1, 4], high=N[3, 6]),
-                            Hyperrectangle(low=N[3, 4], high=N[5, 6])])
+    @test ispermutation(S,
+                        [Hyperrectangle(; low=N[1, 2], high=N[3, 4]),
+                         Hyperrectangle(; low=N[3, 2], high=N[5, 4]),
+                         Hyperrectangle(; low=N[1, 4], high=N[3, 6]),
+                         Hyperrectangle(; low=N[3, 4], high=N[5, 6])])
     S = split(H, [N[2, 3], N[4, 5]])
-    @test ispermutation(S, [Hyperrectangle(low=N[1, 2], high=N[2, 4]),
-                            Hyperrectangle(low=N[2, 2], high=N[3, 4]),
-                            Hyperrectangle(low=N[3, 2], high=N[5, 4]),
-                            Hyperrectangle(low=N[1, 4], high=N[2, 5]),
-                            Hyperrectangle(low=N[2, 4], high=N[3, 5]),
-                            Hyperrectangle(low=N[3, 4], high=N[5, 5]),
-                            Hyperrectangle(low=N[1, 5], high=N[2, 6]),
-                            Hyperrectangle(low=N[2, 5], high=N[3, 6]),
-                            Hyperrectangle(low=N[3, 5], high=N[5, 6])])
-    H = Hyperrectangle(low=N[1, 2, 3], high=N[5, 6, 7])
+    @test ispermutation(S,
+                        [Hyperrectangle(; low=N[1, 2], high=N[2, 4]),
+                         Hyperrectangle(; low=N[2, 2], high=N[3, 4]),
+                         Hyperrectangle(; low=N[3, 2], high=N[5, 4]),
+                         Hyperrectangle(; low=N[1, 4], high=N[2, 5]),
+                         Hyperrectangle(; low=N[2, 4], high=N[3, 5]),
+                         Hyperrectangle(; low=N[3, 4], high=N[5, 5]),
+                         Hyperrectangle(; low=N[1, 5], high=N[2, 6]),
+                         Hyperrectangle(; low=N[2, 5], high=N[3, 6]),
+                         Hyperrectangle(; low=N[3, 5], high=N[5, 6])])
+    H = Hyperrectangle(; low=N[1, 2, 3], high=N[5, 6, 7])
     S = split(H, [N[3], N[4], N[5]])
-    @test ispermutation(S, [Hyperrectangle(low=N[1, 2, 3], high=N[3, 4, 5]),
-                            Hyperrectangle(low=N[1, 2, 5], high=N[3, 4, 7]),
-                            Hyperrectangle(low=N[1, 4, 3], high=N[3, 6, 5]),
-                            Hyperrectangle(low=N[1, 4, 5], high=N[3, 6, 7]),
-                            Hyperrectangle(low=N[3, 2, 3], high=N[5, 4, 5]),
-                            Hyperrectangle(low=N[3, 2, 5], high=N[5, 4, 7]),
-                            Hyperrectangle(low=N[3, 4, 3], high=N[5, 6, 5]),
-                            Hyperrectangle(low=N[3, 4, 5], high=N[5, 6, 7])])
+    @test ispermutation(S,
+                        [Hyperrectangle(; low=N[1, 2, 3], high=N[3, 4, 5]),
+                         Hyperrectangle(; low=N[1, 2, 5], high=N[3, 4, 7]),
+                         Hyperrectangle(; low=N[1, 4, 3], high=N[3, 6, 5]),
+                         Hyperrectangle(; low=N[1, 4, 5], high=N[3, 6, 7]),
+                         Hyperrectangle(; low=N[3, 2, 3], high=N[5, 4, 5]),
+                         Hyperrectangle(; low=N[3, 2, 5], high=N[5, 4, 7]),
+                         Hyperrectangle(; low=N[3, 4, 3], high=N[5, 6, 5]),
+                         Hyperrectangle(; low=N[3, 4, 5], high=N[5, 6, 7])])
 
     # subset
     H1 = Hyperrectangle(N[1, 3], N[0.5, 0.5])

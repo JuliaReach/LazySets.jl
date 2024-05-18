@@ -685,7 +685,7 @@ function split(H::AbstractHyperrectangle{N},
             if ei == 1
                 l[i] = lo[i]
             else
-                l[i] = bounds[i][ei-1]
+                l[i] = bounds[i][ei - 1]
             end
             if ei == bs[i]
                 h[i] = hi[i]
@@ -693,7 +693,7 @@ function split(H::AbstractHyperrectangle{N},
                 h[i] = bounds[i][ei]
             end
         end
-        result[j] = Hyperrectangle(low=l, high=h)
+        result[j] = Hyperrectangle(; low=l, high=h)
     end
     return result
 end
