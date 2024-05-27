@@ -2,7 +2,7 @@ module IntervalModule
 
 using Reexport
 
-using ..LazySets: AbstractHyperrectangle, HalfSpace, Zonotope
+using ..LazySets: AbstractHyperrectangle, LazySet, HalfSpace, Zonotope
 using ..API: isconvextype
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays
@@ -15,7 +15,7 @@ import IntervalArithmetic as IA
                         translate, vertices_list
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens, plot_recipe,
                              radius_hyperrectangle, split
-import Base: -, *, min, max
+import Base: convert, -, *, min, max
 
 export Interval
 
@@ -25,6 +25,7 @@ include("an_element.jl")
 include("center.jl")
 include("chebyshev_center_radius.jl")
 include("constraints_list.jl")
+include("convert.jl")
 include("diameter.jl")
 include("dim.jl")
 include("high.jl")

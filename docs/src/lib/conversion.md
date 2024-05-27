@@ -13,11 +13,8 @@ CurrentModule = LazySets
 ```
 
 ```@docs
-convert(::Type{Interval}, ::LazySet)
 convert(::Type{Interval}, ::Rectification{N, IN}) where {N, IN<:Interval}
 convert(::Type{Interval}, ::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval}
-convert(::Type{Interval}, ::IA.Interval)
-convert(::Type{IA.Interval}, ::LazySet)
 convert(::Type{IA.IntervalBox}, ::AbstractHyperrectangle)
 convert(::Type{Hyperrectangle}, ::IA.IntervalBox)
 convert(::Type{Hyperrectangle}, ::AbstractHyperrectangle)

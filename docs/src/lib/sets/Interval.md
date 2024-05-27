@@ -8,6 +8,14 @@ CurrentModule = LazySets.IntervalModule
 Interval
 ```
 
+## Conversion
+
+```@docs
+convert(::Type{Interval}, ::LazySet)
+convert(::Type{IA.Interval}, ::LazySet)
+convert(::Type{Interval}, ::IA.Interval)
+```
+
 ## Operations
 
 ```@docs
