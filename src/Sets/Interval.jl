@@ -669,10 +669,10 @@ A real number representing the diameter.
 
 ### Notes
 
-In one dimension all p-norms are identical.
+In one dimension, all p-norms are identical.
 """
-function diameter(x::Interval, p::Real=Inf)
-    return IA.diam(x.dat)
+function diameter(x::Interval, ::Real=Inf)
+    return max(x) - min(x)
 end
 
 """
