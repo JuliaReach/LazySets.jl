@@ -1,11 +1,16 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.IntervalModule
 ```
 
 # [Interval](@id def_Interval)
 
 ```@docs
 Interval
+```
+
+## Operations
+
+```@docs
 dim(::Interval)
 σ(::AbstractVector, ::Interval)
 ρ(::AbstractVector, ::Interval)

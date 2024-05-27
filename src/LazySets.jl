@@ -123,6 +123,7 @@ include("Sets/ZeroSet.jl")
 include("Sets/Zonotope.jl")
 
 include("Sets/Interval/IntervalModule.jl")
+@reexport using ..IntervalModule: Interval
 
 # =================================
 # Types representing set operations

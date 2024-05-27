@@ -1,7 +1,23 @@
-import Base: +, -, *, min, max
+module IntervalModule
 
-export Interval,
-       isflat
+using Reexport
+
+using ..LazySets: AbstractHyperrectangle, HalfSpace, Zonotope
+using ..API: isconvextype
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays
+using ReachabilityBase.Comparison
+using ReachabilityBase.Distribution: reseed!
+import IntervalArithmetic as IA
+
+@reexport import ..API: an_element, center, constraints_list, diameter, dim, high, ∈,
+                        isoperationtype, linear_map, low, rand, rectify, reflect, scale, ρ, σ,
+                        translate, vertices_list
+@reexport import ..LazySets: chebyshev_center_radius, isflat, ngens, plot_recipe,
+                             radius_hyperrectangle, split
+import Base: -, *, min, max
+
+export Interval
 
 """
     Interval{N} <: AbstractHyperrectangle{N}
@@ -765,3 +781,5 @@ If ``x = [a, b]``, then ``-x = [-b, -a]``.
 function reflect(x::Interval)
     return Interval(-max(x), -min(x))
 end
+
+end  # module
