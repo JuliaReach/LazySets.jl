@@ -696,7 +696,7 @@ end
 
 function split(x::Interval, k::Int)
     @assert k > 0 "can only split into a positive number of intervals"
-    return [Interval(x2) for x2 in mince(x.dat, k)]
+    return [Interval(x2) for x2 in IA.mince(x.dat, k)]
 end
 
 """
