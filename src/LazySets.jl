@@ -122,6 +122,8 @@ include("Sets/Tetrahedron.jl")
 include("Sets/ZeroSet.jl")
 include("Sets/Zonotope.jl")
 
+include("LazyOperations/UnionSet.jl")  # must come before IntervalModule
+
 include("Sets/Interval/IntervalModule.jl")
 @reexport using ..IntervalModule: Interval
 
@@ -148,7 +150,6 @@ include("LazyOperations/QuadraticMap.jl")
 include("LazyOperations/ResetMap.jl")
 include("LazyOperations/SymmetricIntervalHull.jl")
 include("LazyOperations/Translation.jl")
-include("LazyOperations/UnionSet.jl")
 include("LazyOperations/UnionSetArray.jl")
 include("LazyOperations/Rectification.jl")  # must come after UnionSet
 
