@@ -15,8 +15,8 @@ import ReachabilityBase.Arrays: distance, rectify
 
 export
 # unary set operations
-      an_element, area, complement, concretize, constraints_list, constraints,
-      convex_hull, diameter, dim, high, is_polyhedral, isbounded,
+      an_element, area, center, complement, concretize, constraints_list,
+      constraints, convex_hull, diameter, dim, high, is_polyhedral, isbounded,
       isboundedtype, isconvextype, isempty, isoperation, isoperationtype,
       isuniversal, low, norm, radius, rectify, reflect, sample,
       support_function, ρ, support_vector, σ, surface, vertices_list, vertices,
@@ -34,6 +34,7 @@ include("LazySet.jl")
 
 include("Unary/an_element.jl")
 include("Unary/area.jl")
+include("Unary/center.jl")
 include("Unary/complement.jl")
 include("Unary/concretize.jl")
 include("Unary/constraints_list.jl")

@@ -1,5 +1,4 @@
-export AbstractCentrallySymmetricPolytope,
-       center
+export AbstractCentrallySymmetricPolytope
 
 """
     AbstractCentrallySymmetricPolytope{N} <: AbstractPolytope{N}

@@ -3,7 +3,6 @@ export HParallelotope,
        offset,
        base_vertex,
        extremal_vertices,
-       center,
        genmat,
        generators
 

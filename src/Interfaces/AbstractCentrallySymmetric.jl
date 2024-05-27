@@ -1,5 +1,4 @@
-export AbstractCentrallySymmetric,
-       center
+export AbstractCentrallySymmetric
 
 """
     AbstractCentrallySymmetric{N} <: ConvexSet{N}

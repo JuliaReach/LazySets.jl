@@ -1,5 +1,4 @@
 export Star,
-       center,
        basis,
        predicate,
        intersection!

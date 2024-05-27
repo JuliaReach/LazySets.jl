@@ -22,6 +22,8 @@ LazySet
 ```@docs
 an_element(::LazySet)
 area(::LazySet)
+center(::LazySet, ::Int)
+center(::LazySet)
 complement(::LazySet)
 concretize(::LazySet)
 constraints_list(::LazySet)
