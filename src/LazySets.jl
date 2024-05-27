@@ -107,7 +107,6 @@ include("Sets/HPolytope.jl")
 include("Sets/HPolyhedron.jl")
 include("Sets/Hyperplane.jl")
 include("Sets/Hyperrectangle.jl")
-include("Sets/Interval.jl")
 include("Sets/Line2D.jl")
 include("Sets/Line.jl")
 include("Sets/LineSegment.jl")
@@ -122,6 +121,8 @@ include("Sets/VPolytope.jl")
 include("Sets/Tetrahedron.jl")
 include("Sets/ZeroSet.jl")
 include("Sets/Zonotope.jl")
+
+include("Sets/Interval/IntervalModule.jl")
 
 # =================================
 # Types representing set operations
