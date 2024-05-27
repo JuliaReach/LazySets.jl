@@ -2,8 +2,9 @@ module IntervalModule
 
 using Reexport
 
-using ..LazySets: AbstractHyperrectangle, LazySet, HalfSpace, Zonotope
-using ..API: isconvextype
+using ..LazySets: AbstractHyperrectangle, LazySet, HalfSpace, Zonotope, EmptySet, UnionSet,
+                  _witness_result_empty
+using ..API: eltype, isconvextype, isempty
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays
 using ReachabilityBase.Comparison
@@ -12,7 +13,9 @@ import IntervalArithmetic as IA
 
 @reexport import ..API: an_element, center, constraints_list, diameter, dim, high, ∈,
                         isoperationtype, linear_map, low, rand, rectify, reflect, scale, ρ, σ,
-                        translate, vertices_list
+                        translate, vertices_list,
+                        difference, intersection, isdisjoint, ⊆, minkowski_difference,
+                        minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens, plot_recipe,
                              radius_hyperrectangle, split
 import Base: convert, -, *, min, max
@@ -46,6 +49,13 @@ include("support_vector.jl")
 include("support_function.jl")
 include("translate.jl")
 include("vertices_list.jl")
+
+include("difference.jl")
+include("intersection.jl")
+include("isdisjoint.jl")
+include("issubset.jl")
+include("minkowski_difference.jl")
+include("minkowski_sum.jl")
 
 """
     -(x::Interval, y::Interval)

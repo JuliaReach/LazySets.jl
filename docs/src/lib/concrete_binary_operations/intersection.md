@@ -13,7 +13,6 @@ CurrentModule = LazySets
 intersection(::AbstractSingleton, ::LazySet)
 intersection(::Line2D, ::Line2D)
 intersection(::AbstractHyperrectangle, ::AbstractHyperrectangle)
-intersection(::Interval, ::Interval)
 intersection(::Interval, ::HalfSpace)
 intersection(::Interval, ::Hyperplane)
 intersection(::Interval, ::LazySet)

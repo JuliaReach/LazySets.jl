@@ -112,7 +112,6 @@ plot1
 ⊆(::Union{Ball2, Ballp}, ::AbstractSingleton, ::Bool=false)
 ⊆(::LineSegment, ::LazySet, ::Bool=false)
 ⊆(::LineSegment, ::AbstractHyperrectangle, ::Bool=false)
-⊆(::Interval, ::Interval, ::Bool=false)
 ⊆(::Interval, ::UnionSet, ::Bool=false)
 ⊆(::EmptySet, ::LazySet, ::Bool=false)
 ⊆(::LazySet, ::EmptySet, ::Bool=false)

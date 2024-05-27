@@ -51,6 +51,17 @@ chebyshev_center_radius(::Interval)
 reflect(::Interval)
 ```
 
+## Binary operations
+
+```@docs
+difference(::Interval{N}, ::Interval) where {N}
+intersection(::Interval, ::Interval)
+isdisjoint(::Interval, ::Interval, ::Bool=false)
+⊆(::Interval, ::Interval, ::Bool=false)
+minkowski_difference(::Interval, ::Interval)
+minkowski_sum(::Interval, ::Interval)
+```
+
 ```@meta
 CurrentModule = LazySets.API
 ```

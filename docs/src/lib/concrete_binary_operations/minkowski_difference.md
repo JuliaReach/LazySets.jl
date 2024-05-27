@@ -13,5 +13,4 @@ CurrentModule = LazySets
 minkowski_difference(::LazySet, ::LazySet)
 minkowski_difference(::AbstractZonotope, ::AbstractZonotope)
 minkowski_difference(::AbstractHyperrectangle, ::AbstractHyperrectangle)
-minkowski_difference(::Interval, ::Interval)
 ```
