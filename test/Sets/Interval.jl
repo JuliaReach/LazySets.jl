@@ -133,8 +133,11 @@ for N in [Float64, Float32, Rational{Int}]
     @test diameter(x) == diameter(x, Inf) == diameter(x, 2) == N(2)
 
     # split
-    @test split(x, 4) == [Interval(N(1), N(3 // 2)), Interval(N(3 // 2), N(2)),
-                          Interval(N(2), N(5 // 2)), Interval(N(5 // 2), N(3))]
+    intervals = [Interval(N(1), N(3 // 2)), Interval(N(3 // 2), N(2)),
+                 Interval(N(2), N(5 // 2)), Interval(N(5 // 2), N(3))]
+    @test split(x, 4) == split(x, [4]) == intervals
+    @test_throws AssertionError split(x, 0)
+    @test_throws AssertionError split(x, [4, 4])
 
     # concrete intersection
     A = Interval(N(5), N(7))
