@@ -13,8 +13,8 @@ using ReachabilityBase.Distribution: reseed!
 import IntervalArithmetic as IA
 
 @reexport import ..API: an_element, center, constraints_list, diameter, dim, high, ∈,
-                        isoperationtype, linear_map, low, rand, rectify, reflect, scale, ρ, σ,
-                        translate, vertices_list,
+                        isoperationtype, linear_map, low, permute, rand, rectify, reflect,
+                        scale, ρ, σ, translate, vertices_list,
                         difference, intersection, isdisjoint, ⊆, minkowski_difference,
                         minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens, plot_recipe,
@@ -39,6 +39,7 @@ include("linear_map.jl")
 include("low.jl")
 include("isoperationtype.jl")
 include("ngens.jl")
+include("permute.jl")
 include("radius.jl")
 include("radius_hyperrectangle.jl")
 include("rand.jl")

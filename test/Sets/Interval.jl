@@ -288,4 +288,10 @@ for N in [Float64, Float32, Rational{Int}]
     end
     res, w = ⊆(I13, I13, true)
     @test ⊆(I13, I13) && res && w == N[]
+
+    # permute
+    @test permute(x, [1]) == x
+    @test_throws AssertionError permute(x, Int[])
+    @test_throws AssertionError permute(x, Int[2])
+    @test_throws AssertionError permute(x, Int[1, 1])
 end
