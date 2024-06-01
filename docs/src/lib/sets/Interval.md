@@ -63,6 +63,7 @@ CurrentModule = LazySets.API
 Undocumented implementations:
 * [`isoperationtype`](@ref isoperationtype(::Type{<:LazySet}))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
+* [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`radius`](@ref radius(::LazySet, ::Real))
 
 ```@meta

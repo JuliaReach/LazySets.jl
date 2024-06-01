@@ -294,4 +294,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError permute(x, Int[])
     @test_throws AssertionError permute(x, Int[2])
     @test_throws AssertionError permute(x, Int[1, 1])
+
+    # project
+    @test project(x, [1]) == x
+    @test_throws AssertionError project(x, Int[])
+    @test_throws AssertionError project(x, Int[2])
+    @test_throws AssertionError project(x, Int[1, 1])
 end
