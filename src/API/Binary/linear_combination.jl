@@ -19,5 +19,7 @@ The linear combination of two sets ``X`` and ``Y`` is defined as
 ```math
     \\left\\{\\frac{1}{2}(1+λ)x + \\frac{1}{2}(1-λ)y \\mid x ∈ X, y ∈ Y, λ ∈ [-1, 1]\\right\\}.
 ```
+
+If ``X`` and ``Y`` are convex, their linear combination is identical with their convex hull.
 """
 function linear_combination(::LazySet, ::LazySet) end
