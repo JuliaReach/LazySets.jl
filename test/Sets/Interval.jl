@@ -256,4 +256,15 @@ for N in [Float64, Float32, Rational{Int}]
     @test reflect(Interval(N(1), N(2))) == Interval(N(-2), N(-1))
     @test reflect(Interval(N(-1), N(2))) == Interval(N(-2), N(1))
     @test reflect(Interval(N(-2), N(-1))) == Interval(N(1), N(2))
+
+    # issubset
+    I13 = Interval(N(1), N(3))
+    I02 = Interval(N(0), N(2))
+    I24 = Interval(N(2), N(4))
+    for I in (I02, I24)
+        res, w = ⊆(I13, I, true)
+        @test !(⊆(I13, I)) && !res && w ∈ I13 && w ∉ I
+    end
+    res, w = ⊆(I13, I13, true)
+    @test ⊆(I13, I13) && res && w == N[]
 end
