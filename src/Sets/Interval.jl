@@ -1,7 +1,6 @@
 import Base: +, -, *, min, max
 
 export Interval,
-       center,
        isflat
 
 """
