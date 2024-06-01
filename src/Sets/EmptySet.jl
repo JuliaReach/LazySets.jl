@@ -339,7 +339,7 @@ Translate (i.e., shift) an empty set by a given vector.
 The empty set.
 """
 function translate(∅::EmptySet, v::AbstractVector)
-    return translate!(∅, v)
+    return translate!(∅, v)  # no need to copy
 end
 
 function translate!(∅::EmptySet, v::AbstractVector)

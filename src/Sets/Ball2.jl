@@ -242,29 +242,6 @@ function rand(::Type{Ball2};
 end
 
 """
-    translate(B::Ball2, v::AbstractVector)
-
-Translate (i.e., shift) a ball in the 2-norm by the given vector.
-
-### Input
-
-- `B` -- ball in the 2-norm
-- `v` -- translation vector
-
-### Output
-
-A translated ball in the 2-norm.
-
-### Notes
-
-See also [`translate!(::Ball2, ::AbstractVector)`](@ref) for the in-place
-version.
-"""
-function translate(B::Ball2, v::AbstractVector)
-    return translate!(copy(B), v)
-end
-
-"""
     translate!(B::Ball2, v::AbstractVector)
 
 Translate (i.e., shift) a ball in the 2-norm by the given vector, in-place.

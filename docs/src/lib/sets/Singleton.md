@@ -8,7 +8,6 @@ CurrentModule = LazySets
 Singleton
 rand(::Type{Singleton})
 element(::Singleton)
-translate(::Singleton, ::AbstractVector)
 translate!(::Singleton, ::AbstractVector)
 rectify(S::Singleton)
 project(::Singleton, ::AbstractVector{Int})
@@ -18,6 +17,7 @@ linear_map(::AbstractMatrix, ::Singleton)
 ```
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

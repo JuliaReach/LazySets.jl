@@ -14,7 +14,6 @@ isflat(::BallInf)
 rand(::Type{BallInf})
 σ(::AbstractVector, ::BallInf)
 ρ(::AbstractVector, ::BallInf)
-translate(::BallInf, ::AbstractVector)
 translate!(::BallInf, ::AbstractVector)
 ngens(::BallInf)
 volume(::BallInf)
@@ -24,6 +23,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`area`](@ref area(::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

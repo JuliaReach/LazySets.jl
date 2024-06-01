@@ -17,7 +17,6 @@ isbounded(::Line)
 isuniversal(::Line; ::Bool=false)
 isempty(::Line)
 constraints_list(::Line)
-translate(::Line, ::AbstractVector)
 translate!(::Line, ::AbstractVector)
 normalize(::Line{N}, ::Real=N(2)) where{N}
 normalize!(::Line{N}, ::Real=N(2)) where{N}
@@ -33,3 +32,4 @@ Inherited from [`LazySet`](@ref):
 * [`low`](@ref low(::LazySet, ::Int))
 * [`high`](@ref high(::LazySet, ::Int))
 * [`reflect`](@ref reflect(::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))

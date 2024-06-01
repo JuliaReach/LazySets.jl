@@ -309,28 +309,6 @@ function constraints_list(B::Ball1)
 end
 
 """
-    translate(B::Ball1, v::AbstractVector)
-
-Translate (i.e., shift) a ball in the 1-norm by the given vector.
-
-### Input
-
-- `B` -- ball in the 1-norm
-- `v` -- translation vector
-
-### Output
-
-The translated ball in the 1-norm.
-
-### Notes
-
-See also [`translate!(::Ball1, ::AbstractVector)`](@ref) for the in-place version.
-"""
-function translate(B::Ball1, v::AbstractVector)
-    return translate!(copy(B), v)
-end
-
-"""
     translate!(B::Ball1, v::AbstractVector)
 
 Translate (i.e., shift) a ball in the 1-norm by the given vector, in-place.

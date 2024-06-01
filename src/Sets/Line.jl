@@ -405,28 +405,6 @@ Check whether a line is empty.
 isempty(::Line) = false
 
 """
-    translate(L::Line, v::AbstractVector)
-
-Translate (i.e., shift) a line by a given vector.
-
-### Input
-
-- `L` -- line
-- `v` -- translation vector
-
-### Output
-
-A translated line.
-
-### Notes
-
-See also `translate!` for the in-place version.
-"""
-function translate(L::Line, v::AbstractVector)
-    return translate!(copy(L), v)
-end
-
-"""
     translate!(L::Line, v::AbstractVector)
 
 Translate (i.e., shift) a line by a given vector, in-place.

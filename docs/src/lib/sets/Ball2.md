@@ -12,7 +12,6 @@ center(::Ball2)
 ∈(::AbstractVector, ::Ball2)
 rand(::Type{Ball2})
 sample(::Ball2{N}, ::Int) where {N}
-translate(::Ball2, ::AbstractVector)
 translate!(::Ball2, ::AbstractVector)
 chebyshev_center_radius(::Ball2)
 volume(::Ball2)
@@ -25,6 +24,7 @@ Inherited from [`LazySet`](@ref):
 * [`rectify`](@ref rectify(::LazySet))
 * [`low`](@ref low(::LazySet))
 * [`high`](@ref high(::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))

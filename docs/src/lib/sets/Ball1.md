@@ -13,7 +13,6 @@ center(::Ball1)
 vertices_list(::Ball1)
 rand(::Type{Ball1})
 constraints_list(::Ball1)
-translate(::Ball1, ::AbstractVector)
 translate!(::Ball1, ::AbstractVector)
 reflect(::Ball1)
 ```
@@ -28,6 +27,7 @@ Inherited from [`LazySet`](@ref):
 * [`low`](@ref low(::LazySet))
 * [`high`](@ref high(::LazySet))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet)
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

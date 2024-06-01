@@ -325,29 +325,6 @@ function rand(::Type{BallInf};
 end
 
 """
-    translate(B::BallInf, v::AbstractVector)
-
-Translate (i.e., shift) a ball in the infinity norm by a given vector.
-
-### Input
-
-- `B` -- ball in the infinity norm
-- `v` -- translation vector
-
-### Output
-
-A translated ball in the infinity norm.
-
-### Notes
-
-See also [`translate!(::BallInf, ::AbstractVector)`](@ref) for the in-place
-version.
-"""
-function translate(B::BallInf, v::AbstractVector)
-    return translate!(copy(B), v)
-end
-
-"""
     translate!(B::BallInf, v::AbstractVector)
 
 Translate (i.e., shift) a ball in the infinity norm by a given vector, in-place.

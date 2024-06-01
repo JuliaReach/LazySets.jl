@@ -8,7 +8,6 @@ CurrentModule = LazySets
 Ballp
 center(::Ballp)
 rand(::Type{Ballp})
-translate(::Ballp, ::AbstractVector)
 translate!(::Ballp, ::AbstractVector)
 reflect(::Ballp)
 ```
@@ -19,6 +18,7 @@ Inherited from [`LazySet`](@ref):
 * [`rectify`](@ref rectify(::LazySet))
 * [`low`](@ref low(::LazySet))
 * [`high`](@ref high(::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))

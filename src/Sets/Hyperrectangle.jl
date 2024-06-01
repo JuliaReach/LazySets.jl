@@ -294,3 +294,10 @@ function scale!(α::Real, H::Hyperrectangle)
     H.radius .*= abs(α)
     return H
 end
+
+function translate!(H::Hyperrectangle, v::AbstractVector)
+    @assert length(v) == dim(H) "cannot translate a $(dim(H))-dimensional " *
+                                "set by a $(length(v))-dimensional vector"
+    H.center .+= v
+    return H
+end
