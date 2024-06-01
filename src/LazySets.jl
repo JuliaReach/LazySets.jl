@@ -27,7 +27,6 @@ export ×, normalize, subtypes
 using LinearAlgebra, RecipesBase, Requires, SparseArrays
 import GLPK, JuMP, Random, ReachabilityBase
 import IntervalArithmetic as IA
-using IntervalArithmetic: mince
 using LinearAlgebra: checksquare
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle, randperm
 
