@@ -300,4 +300,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError project(x, Int[])
     @test_throws AssertionError project(x, Int[2])
     @test_throws AssertionError project(x, Int[1, 1])
+
+    # isapprox
+    @test x ≈ x ≈ translate(x, [1e-8])
+    @test !(x ≈ translate(x, [1e-4]))
 end
