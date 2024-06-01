@@ -186,9 +186,15 @@ for N in [Float64, Float32, Rational{Int}]
     M = hcat(N[2])
     B = convert(Interval, M * H)
     @test B isa Interval && low(B) == [N(-1)] && high(B) == [N(1)]
-    # conversion to an IntervalArithmetic.Interval
+    # conversion to and from IntervalArithmetic.Interval
     B2 = convert(IA.Interval, M * H)
     @test B2 == B.dat
+    B3 = convert(Interval, B2)
+    @test B3 == B
+    # conversion from a non-convex set fails
+    U = UnionSet(Interval(1, 2), Interval(3, 4))
+    @test_throws AssertionError convert(Interval, U)
+    @test_throws AssertionError convert(IA.Interval, U)
 
     # set difference
     A = Interval(N(5), N(8))

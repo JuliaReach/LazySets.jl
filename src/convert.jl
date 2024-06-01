@@ -412,14 +412,7 @@ Interval{Float64}([0, 1])
 ```
 """
 function convert(::Type{Interval}, X::LazySet)
-    @assert dim(X) == 1 "cannot convert a $(dim(X))-dimensional set to an " *
-                        "`Interval`"
-    if !isconvextype(typeof(X))
-        error("this implementation requires a convex set")
-    end
-
-    l, h = extrema(X, 1)
-    return Interval(l, h)
+    return Interval(convert(IA.Interval, X))
 end
 
 """
@@ -619,9 +612,11 @@ Convert a convex set to an `Interval` from `IntervalArithmetic`.
 An `IntervalArithmetic.Interval`.
 """
 function convert(::Type{IA.Interval}, X::LazySet)
-    @assert dim(X) == 1 "cannot convert a $(dim(X))-dimensional set to an " *
-                        "interval"
-    return convert(Interval, X).dat
+    @assert dim(X) == 1 "cannot convert a $(dim(X))-dimensional set to an `Interval`"
+    @assert isconvextype(typeof(X)) "cannot convert a non-convex set to an `Interval`"
+
+    l, h = extrema(X, 1)
+    return IA.interval(l, h)
 end
 
 """
