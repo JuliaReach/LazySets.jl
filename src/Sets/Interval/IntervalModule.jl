@@ -12,9 +12,9 @@ using ReachabilityBase.Comparison
 using ReachabilityBase.Distribution: reseed!
 import IntervalArithmetic as IA
 
-@reexport import ..API: an_element, center, constraints_list, diameter, dim, high, ∈,
-                        isoperationtype, linear_map, low, permute, project, rand, rectify,
-                        reflect, scale, ρ, σ, translate, vertices_list,
+@reexport import ..API: an_element, center, constraints_list, convex_hull, diameter, dim,
+                        high, ∈, isoperationtype, linear_map, low, permute, project,
+                        rand, rectify, reflect, scale, ρ, σ, translate, vertices_list,
                         difference, intersection, ≈, isdisjoint, ⊆, minkowski_difference,
                         minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens, plot_recipe,
@@ -30,6 +30,7 @@ include("center.jl")
 include("chebyshev_center_radius.jl")
 include("constraints_list.jl")
 include("convert.jl")
+include("convex_hull.jl")
 include("diameter.jl")
 include("dim.jl")
 include("high.jl")

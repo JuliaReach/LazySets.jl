@@ -65,6 +65,7 @@ Undocumented implementations:
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`radius`](@ref radius(::LazySet, ::Real))
+* [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 
 ```@meta
