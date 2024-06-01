@@ -38,6 +38,17 @@ chebyshev_center_radius(::Interval)
 reflect(::Interval)
 ```
 
+```@meta
+CurrentModule = LazySets.API
+```
+
+Undocumented implementations:
+* [`radius`](@ref radius(::LazySet, ::Real))
+
+```@meta
+CurrentModule = LazySets
+```
+
 Inherited from [`LazySet`](@ref):
 * [`singleton_list`](@ref singleton_list(::LazySet))
 
@@ -54,7 +65,6 @@ Inherited from [`AbstractZonotope`](@ref):
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
-* [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
 * [`low`](@ref low(::AbstractHyperrectangle, ::Int))

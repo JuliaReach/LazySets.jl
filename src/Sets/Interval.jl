@@ -469,7 +469,8 @@ function translate(x::Interval, v::AbstractVector)
     return Interval(x.dat + @inbounds v[1])
 end
 
-function _radius(x::Interval{N}) where {N}
+# in 1D, the radius is the same for any `p`
+function radius(x::Interval{N}, ::Real=Inf) where {N}
     return (max(x) - min(x)) / N(2)
 end
 
@@ -489,7 +490,7 @@ The box radius in the given dimension.
 """
 function radius_hyperrectangle(x::Interval{N}, i::Int) where {N}
     @assert i == 1 "an interval has dimension 1, but the index is $i"
-    return _radius(x)
+    return radius(x)
 end
 
 """
@@ -506,7 +507,7 @@ Return the box radius of an interval in every dimension.
 The box radius of the interval (a one-dimensional vector).
 """
 function radius_hyperrectangle(x::Interval)
-    return [_radius(x)]
+    return [radius(x)]
 end
 
 """
@@ -741,7 +742,7 @@ of the largest ball with center `c` enclosed by `x`.
 The Chebyshev center of an interval is just the center of the interval.
 """
 function chebyshev_center_radius(x::Interval; kwargs...)
-    return center(x), _radius(x)
+    return center(x), radius(x)
 end
 
 """
