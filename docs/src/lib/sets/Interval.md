@@ -61,6 +61,7 @@ CurrentModule = LazySets.API
 ```
 
 Undocumented implementations:
+* [`complement`](@ref complement(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{<:LazySet}))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
@@ -73,7 +74,6 @@ CurrentModule = LazySets
 ```
 
 Inherited from [`LazySet`](@ref):
-* [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))

@@ -309,4 +309,10 @@ for N in [Float64, Float32, Rational{Int}]
     I1 = Interval(N(0), N(1))
     I2 = Interval(N(2), N(3))
     @test convex_hull(I1, I2) == linear_combination(I1, I2) == Interval(N(0), N(3))
+
+    # complement
+    C = complement(I2)
+    L = HalfSpace(N[1], N(2))
+    H = HalfSpace(N[-1], N(-3))
+    @test length(C) == 2 && ispermutation([C[1], C[2]], [L, H])
 end
