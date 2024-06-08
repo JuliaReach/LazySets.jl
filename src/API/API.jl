@@ -22,9 +22,9 @@ export
       support_function, ρ, support_vector, σ, surface, vertices_list, vertices,
       volume,
 # mixed set operations (typically with vectors or matrices)
-      affine_map, exponential_map, is_interior_point, linear_map, project,
-      scale!, scale, support_function, ρ, support_vector, σ, translate!,
-      translate,
+      affine_map, exponential_map, is_interior_point, linear_map, permute,
+      project, scale!, scale, support_function, ρ, support_vector, σ,
+      translate!, translate,
 # binary set operations
       cartesian_product, difference, distance, exact_sum, ⊞, intersection,
       is_intersection_empty, isequivalent, ⊂, linear_combination,
