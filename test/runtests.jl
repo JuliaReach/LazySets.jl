@@ -30,7 +30,8 @@ using Symbolics
 # Non-exported helper functions
 # ==============================
 using LazySets: _leq, _geq, isapproxzero, _isapprox, _ztol, ispermutation, basetype
-using LazySets.Arrays: isinvertible, inner, allequal, is_cyclic_permutation, SingleEntryVector
+using LazySets.ReachabilityBase.Arrays: allequal, inner, is_cyclic_permutation,
+                                        isinvertible, SingleEntryVector
 
 global test_suite_basic = true
 global test_suite_polyhedra = true
