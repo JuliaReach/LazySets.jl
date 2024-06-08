@@ -80,29 +80,6 @@ function rand(::Type{Singleton};
 end
 
 """
-    translate(S::Singleton, v::AbstractVector)
-
-Translate (i.e., shift) a singleton by a given vector.
-
-### Input
-
-- `S` -- singleton
-- `v` -- translation vector
-
-### Output
-
-A translated singleton.
-
-### Notes
-
-See also [`translate!(::Singleton, ::AbstractVector)`](@ref) for the in-place
-version.
-"""
-function translate(S::Singleton, v::AbstractVector)
-    return translate!(copy(S), v)
-end
-
-"""
     translate!(S::Singleton, v::AbstractVector)
 
 Translate (i.e., shift) a singleton by a given vector, in-place.

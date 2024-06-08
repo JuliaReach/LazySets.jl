@@ -12,7 +12,6 @@ shape_matrix(::Ellipsoid)
 σ(::AbstractVector, ::Ellipsoid)
 ∈(::AbstractVector, ::Ellipsoid)
 rand(::Type{Ellipsoid})
-translate(::Ellipsoid, ::AbstractVector)
 translate!(::Ellipsoid, ::AbstractVector)
 linear_map(::AbstractMatrix, ::Ellipsoid)
 ```
@@ -23,6 +22,7 @@ Inherited from [`LazySet`](@ref):
 * [`rectify`](@ref rectify(::LazySet))
 * [`low`](@ref low(::LazySet))
 * [`high`](@ref high(::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`dim`](@ref dim(::AbstractCentrallySymmetric))

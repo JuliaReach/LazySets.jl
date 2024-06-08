@@ -308,29 +308,6 @@ function rand(::Type{Ellipsoid};
 end
 
 """
-    translate(E::Ellipsoid, v::AbstractVector)
-
-Translate (i.e., shift) an ellipsoid by a given vector.
-
-### Input
-
-- `E` -- ellipsoid
-- `v` -- translation vector
-
-### Output
-
-A translated ellipsoid.
-
-### Notes
-
-See also [`translate!(::Ellipsoid, ::AbstractVector)`](@ref) for the in-place
-version.
-"""
-function translate(E::Ellipsoid, v::AbstractVector)
-    return translate!(copy(E), v)
-end
-
-"""
     translate!(E::Ellipsoid, v::AbstractVector)
 
 Translate (i.e., shift) an ellipsoid by a given vector, in-place.

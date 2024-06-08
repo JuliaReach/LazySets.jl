@@ -138,29 +138,6 @@ function rand(::Type{Ballp};
 end
 
 """
-    translate(B::Ballp, v::AbstractVector)
-
-Translate (i.e., shift) a ball in the p-norm by a given vector.
-
-### Input
-
-- `B` -- ball in the p-norm
-- `v` -- translation vector
-
-### Output
-
-A translated ball in the p- norm.
-
-### Notes
-
-See also [`translate!(::Ballp, ::AbstractVector)`](@ref) for the in-place
-version.
-"""
-function translate(B::Ballp, v::AbstractVector)
-    return translate!(copy(B), v)
-end
-
-"""
     translate!(B::Ballp, v::AbstractVector)
 
 Translate (i.e., shift) a ball in the p-norm by a given vector, in-place.

@@ -19,6 +19,7 @@ remove_zero_generators(::Zonotope)
 linear_map!(::Zonotope, ::AbstractMatrix, ::Zonotope)
 LazySets._bound_intersect_2D(::Zonotope, ::Line2D)
 remove_redundant_generators(Z::Zonotope{N}) where {N}
+translate!(::Zonotope, ::AbstractVector)
 ```
 Inherited from [`LazySet`](@ref):
 * [`high`](@ref high(::LazySet))
@@ -27,6 +28,7 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
@@ -43,8 +45,6 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`σ`](@ref σ(::AbstractVector, ::AbstractZonotope))
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
-* [`translate`](@ref translate(::AbstractZonotope, ::AbstractVector))
-* [`translate!`](@ref translate!(::AbstractZonotope, ::AbstractVector))
 * [`split`](@ref split(::AbstractZonotope, ::Int))
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 * [`constraints_list`](@ref constraints_list(::AbstractZonotope))

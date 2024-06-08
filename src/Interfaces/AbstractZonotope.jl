@@ -334,60 +334,6 @@ function _linear_map_zonotope_nD(M::AbstractMatrix, Z::LazySet)
 end
 
 """
-    translate(Z::AbstractZonotope, v::AbstractVector)
-
-Translate (i.e., shift) a zonotopic set by a given vector.
-
-### Input
-
-- `Z` -- zonotopic set
-- `v` -- translation vector
-
-### Output
-
-A translated zonotopic set.
-
-### Notes
-
-See also [`translate!(Z::AbstractZonotope, v::AbstractVector)`](@ref) for the
-in-place version.
-"""
-function translate(Z::AbstractZonotope, v::AbstractVector)
-    return translate!(copy(Z), v)
-end
-
-"""
-    translate!(Z::AbstractZonotope, v::AbstractVector)
-
-Translate (i.e., shift) a zonotopic set by a given vector in-place.
-
-### Input
-
-- `Z` -- zonotopic set
-- `v` -- translation vector
-
-### Output
-
-A translated zonotopic set.
-
-### Notes
-
-See also [`translate(Z::AbstractZonotope, v::AbstractVector)`](@ref) for the
-out-of-place version.
-
-### Algorithm
-
-We add the translation vector to the center of the zonotopic set.
-"""
-function translate!(Z::AbstractZonotope, v::AbstractVector)
-    @assert length(v) == dim(Z) "cannot translate a $(dim(Z))-dimensional " *
-                                "set by a $(length(v))-dimensional vector"
-    c = center(Z)
-    c .+= v
-    return Z
-end
-
-"""
     vertices_list(Z::AbstractZonotope; [apply_convex_hull]::Bool=true)
 
 Return a list of the vertices of a zonotopic set.
