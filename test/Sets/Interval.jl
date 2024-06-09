@@ -322,4 +322,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError low(I1, 2)
     @test_throws AssertionError high(I1, 2)
     @test_throws AssertionError extrema(I1, 2)
+
+    # norm
+    @test norm(I1) == N(1)
+    @test norm(Interval(N(-2), N(1))) == N(2)
 end

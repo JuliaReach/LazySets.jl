@@ -14,7 +14,7 @@ import IntervalArithmetic as IA
 
 @reexport import ..API: an_element, center, complement, constraints_list, convex_hull,
                         diameter, dim, extrema, high, ∈, isoperationtype, linear_map,
-                        low, permute, project, rand, rectify, reflect, scale, ρ, σ,
+                        low, norm, permute, project, rand, rectify, reflect, scale, ρ, σ,
                         translate, vertices_list,
                         difference, intersection, ≈, isdisjoint, ⊆, minkowski_difference,
                         minkowski_sum
@@ -43,6 +43,7 @@ include("linear_map.jl")
 include("low.jl")
 include("isoperationtype.jl")
 include("ngens.jl")
+include("norm.jl")
 include("permute.jl")
 include("project.jl")
 include("radius.jl")
