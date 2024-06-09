@@ -71,6 +71,7 @@ Undocumented implementations:
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`radius`](@ref radius(::LazySet, ::Real))
+* [`volume`](@ref volume(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 
@@ -125,7 +126,6 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
 * [`isconvextype`](@ref isconvextype(::Type{<:AbstractHyperrectangle}))
-* [`volume`](@ref volume(::AbstractHyperrectangle))
 * [`cartesian_product`](@ref cartesian_product(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 * [`distance`](@ref distance(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 

@@ -15,7 +15,7 @@ import IntervalArithmetic as IA
 @reexport import ..API: an_element, center, complement, constraints_list, convex_hull,
                         diameter, dim, extrema, high, ∈, isoperationtype, linear_map,
                         low, norm, permute, project, rand, rectify, reflect, scale, ρ, σ,
-                        translate, vertices_list,
+                        translate, vertices_list, volume,
                         difference, intersection, ≈, isdisjoint, ⊆, minkowski_difference,
                         minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens, plot_recipe,
@@ -57,6 +57,7 @@ include("support_vector.jl")
 include("support_function.jl")
 include("translate.jl")
 include("vertices_list.jl")
+include("volume.jl")
 
 include("difference.jl")
 include("intersection.jl")

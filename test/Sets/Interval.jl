@@ -326,4 +326,8 @@ for N in [Float64, Float32, Rational{Int}]
     # norm
     @test norm(I1) == N(1)
     @test norm(Interval(N(-2), N(1))) == N(2)
+
+    # volume
+    @test volume(I1) == 1
+    @test volume(Interval(N(-2), N(1))) == N(3)
 end
