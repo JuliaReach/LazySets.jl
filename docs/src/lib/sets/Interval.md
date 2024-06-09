@@ -62,6 +62,8 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 * [`complement`](@ref complement(::LazySet))
+* [`extrema`](@ref extrema(::LazySet))
+* [`extrema`](@ref extrema(::LazySet, ::Int))
 * [`isoperationtype`](@ref isoperationtype(::Type{<:LazySet}))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
@@ -117,8 +119,6 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`togrep`](@ref togrep(::AbstractZonotope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`extrema`](@ref extrema(::AbstractHyperrectangle))
-* [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
 * [`high`](@ref high(::AbstractHyperrectangle, ::Int))

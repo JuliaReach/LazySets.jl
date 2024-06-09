@@ -315,4 +315,11 @@ for N in [Float64, Float32, Rational{Int}]
     L = HalfSpace(N[1], N(2))
     H = HalfSpace(N[-1], N(-3))
     @test length(C) == 2 && ispermutation([C[1], C[2]], [L, H])
+
+    # low, high, extrema
+    @test extrema(I1) == (low(I1), high(I1)) == (N[0], N[1])
+    @test extrema(I1, 1) == (low(I1, 1), high(I1, 1)) == (N(0), N(1))
+    @test_throws AssertionError low(I1, 2)
+    @test_throws AssertionError high(I1, 2)
+    @test_throws AssertionError extrema(I1, 2)
 end
