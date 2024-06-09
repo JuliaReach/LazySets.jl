@@ -64,7 +64,7 @@ volume(::LazySet)
 affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector)
 exponential_map(::AbstractMatrix, ::LazySet)
 ∈(::AbstractVector, ::LazySet)
-is_interior_point(::AbstractVector{N}, ::LazySet; p=Inf, ε=_rtol(N)) where {N<:Real}
+is_interior_point(::AbstractVector{<:Real}, ::LazySet; kwargs...)
 linear_map(::AbstractMatrix, ::LazySet)
 permute(::LazySet, ::AbstractVector{Int})
 project(::LazySet, ::AbstractVector{Int})
