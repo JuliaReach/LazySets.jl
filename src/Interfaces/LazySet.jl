@@ -487,6 +487,9 @@ end
 The default implementation applies the functions `exp` and `linear_map`.
 """
 function exponential_map(M::AbstractMatrix, X::LazySet)
+    n = dim(X)
+    @assert size(M) == (n, n) "cannot apply an exponential map of dimension " *
+                              "$(size(M)) to an $n-dimensional set"
     return linear_map(exp(M), X)
 end
 

@@ -335,4 +335,7 @@ for N in [Float64, Float32, Rational{Int}]
     M = hcat(N[2])
     v = N[-3]
     @test affine_map(M, I1, v) == Interval(N(-3), N(-1))
+
+    # exponential_map
+    @test exponential_map(M, I1) == Interval(N(0), N(exp(N(2))))
 end
