@@ -12,7 +12,7 @@ using ReachabilityBase.Distribution: reseed!
 import IntervalArithmetic as IA
 
 @reexport import ..API: an_element, center, constraints_list, diameter, dim, high, ∈,
-                        isoperationtype, linear_map, low, rand, rectify, reflect, scale, ρ, σ,
+                        is_interior_point, isoperationtype, linear_map, low, rand, rectify, reflect, scale, ρ, σ,
                         translate, vertices_list,
                         difference, intersection, isdisjoint, ⊆, minkowski_difference,
                         minkowski_sum
@@ -33,6 +33,7 @@ include("diameter.jl")
 include("dim.jl")
 include("high.jl")
 include("in.jl")
+include("is_interior_point.jl")
 include("isflat.jl")
 include("linear_map.jl")
 include("low.jl")

@@ -267,4 +267,23 @@ for N in [Float64, Float32, Rational{Int}]
     end
     res, w = ⊆(I13, I13, true)
     @test ⊆(I13, I13) && res && w == N[]
+
+    # is_interior_point
+    v1 = N[5//2]
+    v2 = N[2]
+    if N <: AbstractFloat
+        @test is_interior_point(v1, I2) && !is_interior_point(v2, I2)
+    else
+        @test_throws AssertionError is_interior_point(v1, I2)
+        @test is_interior_point(v1, I2; ε=1//100) && !is_interior_point(v2, I2; ε=1//100)
+    end
+    # different numeric type
+    v1 = Float16[5//2]
+    if N <: AbstractFloat
+        v2 = Float16[1]
+        @test is_interior_point(v1, I2) && !is_interior_point(v2, I2)
+    else
+        @test_throws ArgumentError is_interior_point(v1, I2)
+        @test_throws ArgumentError is_interior_point(v1, I2; ε=1//100)
+    end
 end

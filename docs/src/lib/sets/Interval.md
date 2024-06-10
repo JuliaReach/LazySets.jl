@@ -67,6 +67,7 @@ CurrentModule = LazySets.API
 ```
 
 Undocumented implementations:
+* [`is_interior_point`](@ref is_interior_point(::AbstractVector{N}, ::LazySet; p=Inf, ε=_rtol(N)) where {N<:Real})
 * [`radius`](@ref radius(::LazySet, ::Real))
 
 ```@meta
