@@ -338,4 +338,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # exponential_map
     @test exponential_map(M, I1) == Interval(N(0), N(exp(N(2))))
+
+    # isequivalent
+    @test isequivalent(I1, I1) && !isequivalent(I1, I2)
 end
