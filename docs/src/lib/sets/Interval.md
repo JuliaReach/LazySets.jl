@@ -59,6 +59,7 @@ CurrentModule = LazySets.API
 ```
 
 Undocumented implementations:
+* [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`complement`](@ref complement(::LazySet))
 * [`extrema`](@ref extrema(::LazySet))
 * [`extrema`](@ref extrema(::LazySet, ::Int))
@@ -87,7 +88,6 @@ Inherited from [`LazySet`](@ref):
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
-* [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int))

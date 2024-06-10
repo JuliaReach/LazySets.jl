@@ -330,4 +330,9 @@ for N in [Float64, Float32, Rational{Int}]
     # volume
     @test volume(I1) == 1
     @test volume(Interval(N(-2), N(1))) == N(3)
+
+    # affine_map
+    M = hcat(N[2])
+    v = N[-3]
+    @test affine_map(M, I1, v) == Interval(N(-3), N(-1))
 end
