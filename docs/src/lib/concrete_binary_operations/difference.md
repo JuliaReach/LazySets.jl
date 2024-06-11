@@ -10,6 +10,5 @@ CurrentModule = LazySets
 # Set difference
 
 ```@docs
-\(::LazySet, ::LazySet)
 difference(::AbstractHyperrectangle, ::AbstractHyperrectangle)
 ```
