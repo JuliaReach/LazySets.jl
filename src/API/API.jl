@@ -26,7 +26,7 @@ export
       project, scale!, scale, support_function, ρ, support_vector, σ,
       translate!, translate,
 # binary set operations
-      cartesian_product, difference, distance, exact_sum, ⊞, intersection,
+      cartesian_product, difference, distance, exact_sum, intersection,
       is_intersection_empty, isequivalent, ⊂, linear_combination,
       minkowski_difference, pontryagin_difference, minkowski_sum
 
