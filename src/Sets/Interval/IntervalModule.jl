@@ -16,8 +16,8 @@ import IntervalArithmetic as IA
                         convex_hull, diameter, dim, exponential_map, extrema, high, ∈,
                         isoperationtype, linear_map, low, norm, permute, project, rand,
                         rectify, reflect, scale, ρ, σ, translate, vertices_list, volume,
-                        difference, intersection, ≈, isdisjoint, isequivalent, ⊂, ⊆,
-                        minkowski_difference, minkowski_sum
+                        difference, distance, intersection, ≈, isdisjoint, isequivalent,
+                        ⊂, ⊆, minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens, plot_recipe,
                              radius_hyperrectangle, split
 import Base: convert, -, *, min, max
@@ -62,6 +62,7 @@ include("vertices_list.jl")
 include("volume.jl")
 
 include("difference.jl")
+include("distance.jl")
 include("intersection.jl")
 include("isapprox.jl")
 include("isdisjoint.jl")
