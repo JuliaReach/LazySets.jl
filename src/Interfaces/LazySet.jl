@@ -857,7 +857,7 @@ function constraints(X::LazySet)
 end
 
 function _constraints_fallback(X::LazySet)
-    return VectorIterator(constraints_list(X))
+    return constraints_list(X)
 end
 
 """
@@ -870,7 +870,7 @@ function vertices(X::LazySet)
 end
 
 function _vertices_fallback(X::LazySet)
-    return VectorIterator(vertices_list(X))
+    return vertices_list(X)
 end
 
 function load_delaunay_MiniQhull()
