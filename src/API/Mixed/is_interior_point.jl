@@ -15,4 +15,4 @@ Check whether a point is contained in the interior of a set.
 
 `true` iff the point `v` is strictly contained in `X` with tolerance `ε`.
 """
-function is_interior_point(::AbstractVector{<:Real}, ::LazySet; kwargs...) end
+function is_interior_point(::AbstractVector, ::LazySet) end
