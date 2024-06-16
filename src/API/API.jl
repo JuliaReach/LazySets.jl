@@ -17,13 +17,12 @@ export
 # unary set operations
       an_element, area, center, complement, concretize, constraints_list,
       constraints, convex_hull, diameter, dim, high, is_polyhedral, isbounded,
-      isboundedtype, isconvextype, isempty, isoperation, isoperationtype,
-      isuniversal, low, norm, radius, rectify, reflect, sample,
-      support_function, ρ, support_vector, σ, surface, vertices_list, vertices,
+      isboundedtype, isconvextype, isoperation, isoperationtype, isuniversal,
+      low, norm, radius, rectify, reflect, surface, vertices_list, vertices,
       volume,
 # mixed set operations (typically with vectors or matrices)
       affine_map, exponential_map, is_interior_point, linear_map, permute,
-      project, scale!, scale, support_function, ρ, support_vector, σ,
+      project, sample, scale!, scale, support_function, ρ, support_vector, σ,
       translate!, translate,
 # binary set operations
       cartesian_product, difference, distance, exact_sum, intersection,
