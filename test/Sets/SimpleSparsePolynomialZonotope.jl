@@ -15,7 +15,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test nparams(S) == 2
     @test order(S) == 1 // 1
 
-    @test overapproximate(S, Zonotope) == Zonotope(N[3.0, 1], N[1 1; 2 1.0])
+    Z = Zonotope(N[3.0, 1], N[1 1; 2 1.0])
+    @test overapproximate(S, Zonotope) == Z
+    @test overapproximate(S, UnionSetArray{Zonotope}; nsdiv=1) == UnionSetArray([Z])
     @test length(overapproximate(S, UnionSetArray{Zonotope}; nsdiv=3)) == 9
     if vIA >= v"0.19.0"  # `mince` with non-uniform partition was introduced in IA v0.19.0
         @test length(overapproximate(S, UnionSetArray{Zonotope}; partition=(2, 3))) == 6
