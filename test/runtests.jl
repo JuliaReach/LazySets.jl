@@ -1,5 +1,10 @@
-using LazySets, LazySets.Approximations, Test, LinearAlgebra, SparseArrays,
-      StaticArrays, GLPK
+using Test
+
+@testset "LazySets.API" begin
+    include("API.jl")
+end
+
+using LazySets, LazySets.Approximations, GLPK, LinearAlgebra, SparseArrays, StaticArrays
 using JuMP: optimizer_with_attributes
 
 # fix random number generator seed
