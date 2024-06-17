@@ -641,6 +641,154 @@ function load_symbolics_halfspace()
     end
 end  # quote / load_symbolics_halfspace()
 
+# =====================================
+# Functionality that requires SymEngine
+# =====================================
+
+function load_symengine_halfspace()
+    return quote
+        """
+            _is_halfspace(expr::Expr)
+
+        Determine whether the given expression corresponds to a half-space.
+
+        ### Input
+
+        - `expr` -- a symbolic expression
+
+        ### Output
+
+        `true` if `expr` corresponds to a half-space or `false` otherwise.
+
+        ### Examples
+
+        ```jldoctest
+        julia> using LazySets: _is_halfspace
+
+        julia> all(_is_halfspace.([:(x1 <= 0), :(x1 < 0), :(x1 > 0), :(x1 >= 0)]))
+        true
+
+        julia> _is_halfspace(:(2*x1 <= 4))
+        true
+
+        julia> _is_halfspace(:(6.1 <= 5.3*f - 0.1*g))
+        true
+
+        julia> _is_halfspace(:(2*x1^2 <= 4))
+        false
+
+        julia> _is_halfspace(:(x1^2 > 4*x2 - x3))
+        false
+
+        julia> _is_halfspace(:(x1 > 4*x2 - x3))
+        true
+        ```
+        """
+        function _is_halfspace(expr::Expr)::Bool
+
+            # check that there are three arguments
+            # these are the comparison symbol, the left hand side and the right hand side
+            if (length(expr.args) != 3) || !(expr.head == :call)
+                return false
+            end
+
+            # check that this is an inequality
+            if !(expr.args[1] in [:(<=), :(<), :(>=), :(>)])
+                return false
+            end
+
+            # convert to symengine expressions
+            lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
+
+            # check if the expression defines a half-space
+            return _is_linearcombination(lhs) && _is_linearcombination(rhs)
+        end
+
+        """
+            convert(::Type{HalfSpace{N}}, expr::Expr; vars=nothing) where {N}
+
+        Return a `LazySet.HalfSpace` given a symbolic expression that represents a half-space.
+
+        ### Input
+
+        - `expr` -- a symbolic expression
+        - `vars` -- (optional, default: `nothing`): set of variables with respect to which
+                    the gradient is taken; if nothing, it takes the free symbols in the given expression
+
+        ### Output
+
+        A `HalfSpace`, in the form `ax <= b`.
+
+        ### Examples
+
+        ```jldoctest convert_halfspace
+        julia> convert(HalfSpace, :(x1 <= -0.03))
+        HalfSpace{Float64, Vector{Float64}}([1.0], -0.03)
+
+        julia> convert(HalfSpace, :(x1 < -0.03))
+        HalfSpace{Float64, Vector{Float64}}([1.0], -0.03)
+
+        julia> convert(HalfSpace, :(x1 > -0.03))
+        HalfSpace{Float64, Vector{Float64}}([-1.0], 0.03)
+
+        julia> convert(HalfSpace, :(x1 >= -0.03))
+        HalfSpace{Float64, Vector{Float64}}([-1.0], 0.03)
+
+        julia> convert(HalfSpace, :(x1 + x2 <= 2*x4 + 6))
+        HalfSpace{Float64, Vector{Float64}}([1.0, 1.0, -2.0], 6.0)
+        ```
+
+        You can also specify the set of "ambient" variables, even if not
+        all of them appear:
+
+        ```jldoctest convert_halfspace
+        julia> using SymEngine: Basic
+
+        julia> convert(HalfSpace, :(x1 + x2 <= 2*x4 + 6), vars=Basic[:x1, :x2, :x3, :x4])
+        HalfSpace{Float64, Vector{Float64}}([1.0, 1.0, 0.0, -2.0], 6.0)
+        ```
+        """
+        function convert(::Type{HalfSpace{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
+            @assert _is_halfspace(expr) "the expression :(expr) does not correspond to a half-space"
+
+            # check sense of the inequality, assuming < or <= by default
+            got_geq = expr.args[1] in [:(>=), :(>)]
+
+            # get sides of the inequality
+            lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
+
+            # a1 x1 + ... + an xn + K [cmp] 0 for cmp in <, <=, >, >=
+            eq = lhs - rhs
+            if isempty(vars)
+                vars = free_symbols(eq)
+            end
+            K = subs(eq, [vi => zero(N) for vi in vars]...)
+            a = convert(Basic, eq - K)
+
+            # convert to numeric types
+            K = convert(N, K)
+            a = convert(Vector{N}, diff.(a, vars))
+
+            if got_geq
+                return HalfSpace(-a, K)
+            else
+                return HalfSpace(a, -K)
+            end
+        end
+
+        # type-less default half-space conversion
+        function convert(::Type{HalfSpace}, expr::Expr; vars::Vector{Basic}=Basic[])
+            return convert(HalfSpace{Float64}, expr; vars=vars)
+        end
+
+        function free_symbols(expr::Expr, ::Type{<:HalfSpace})
+            # get sides of the inequality
+            lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
+            return free_symbols(lhs - rhs)
+        end
+    end
+end  # quote / load_symengine_halfspace()
+
 """
     complement(H::HalfSpace)
 
