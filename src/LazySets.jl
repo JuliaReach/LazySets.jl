@@ -107,7 +107,6 @@ include("Sets/HPolytope.jl")
 include("Sets/HPolyhedron.jl")
 include("Sets/Hyperplane.jl")
 include("Sets/Hyperrectangle.jl")
-include("Sets/Interval.jl")
 include("Sets/Line2D.jl")
 include("Sets/Line.jl")
 include("Sets/LineSegment.jl")
@@ -122,6 +121,11 @@ include("Sets/VPolytope.jl")
 include("Sets/Tetrahedron.jl")
 include("Sets/ZeroSet.jl")
 include("Sets/Zonotope.jl")
+
+include("LazyOperations/UnionSet.jl")  # must come before IntervalModule
+
+include("Sets/Interval/IntervalModule.jl")
+@reexport using ..IntervalModule: Interval
 
 # =================================
 # Types representing set operations
@@ -146,7 +150,6 @@ include("LazyOperations/QuadraticMap.jl")
 include("LazyOperations/ResetMap.jl")
 include("LazyOperations/SymmetricIntervalHull.jl")
 include("LazyOperations/Translation.jl")
-include("LazyOperations/UnionSet.jl")
 include("LazyOperations/UnionSetArray.jl")
 include("LazyOperations/Rectification.jl")  # must come after UnionSet
 

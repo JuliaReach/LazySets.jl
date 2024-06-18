@@ -1,11 +1,24 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.IntervalModule
 ```
 
 # [Interval](@id def_Interval)
 
 ```@docs
 Interval
+```
+
+## Conversion
+
+```@docs
+convert(::Type{Interval}, ::LazySet)
+convert(::Type{IA.Interval}, ::LazySet)
+convert(::Type{Interval}, ::IA.Interval)
+```
+
+## Operations
+
+```@docs
 dim(::Interval)
 σ(::AbstractVector, ::Interval)
 ρ(::AbstractVector, ::Interval)
@@ -36,6 +49,17 @@ split(::Interval, ::AbstractVector{Int})
 ngens(::Interval)
 chebyshev_center_radius(::Interval)
 reflect(::Interval)
+```
+
+## Binary operations
+
+```@docs
+difference(::Interval{N}, ::Interval) where {N}
+intersection(::Interval, ::Interval)
+isdisjoint(::Interval, ::Interval, ::Bool=false)
+⊆(::Interval, ::Interval, ::Bool=false)
+minkowski_difference(::Interval, ::Interval)
+minkowski_sum(::Interval, ::Interval)
 ```
 
 ```@meta

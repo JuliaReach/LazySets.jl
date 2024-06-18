@@ -11,6 +11,5 @@ CurrentModule = LazySets
 
 ```@docs
 \(::LazySet, ::LazySet)
-difference(::Interval{N}, ::Interval) where {N}
 difference(::AbstractHyperrectangle, ::AbstractHyperrectangle)
 ```

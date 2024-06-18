@@ -217,6 +217,10 @@ macro declare_binary_operation(SET)
     return nothing
 end
 
+# declare function here so it can be found
+# (the `Bool` argument is a dummy to avoid warnings; the actual argument is `Type{<:LazySet}`)
+function concrete_function(::Bool) end
+
 """
     @declare_array_version(SET, SETARR)
 
