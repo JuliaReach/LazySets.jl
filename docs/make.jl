@@ -33,8 +33,8 @@ makedocs(; sitename="LazySets.jl",
                                 "Lazy Intersections" => "man/lazy_intersections.md"
                                 #
                                 ],
-                "API" => "lib/API.md",
-                "Library" => Any["Set Interfaces" => [
+                "Library" => Any["API" => "lib/API.md",
+                                 "Set Interfaces" => [
                                                       #
                                                       "lib/interfaces/overview.md",
                                                       "lib/interfaces/LazySet.md",
