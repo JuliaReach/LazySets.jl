@@ -37,7 +37,7 @@ global test_suite_basic = true
 global test_suite_polyhedra = true
 global test_suite_plotting = true
 
-if (length(ARGS) == 0) || (ARGS[1] == "--default")
+if (length(ARGS) == 0) || (ARGS[1] == "--default") || isnothing(ARGS[1])
     # default test suite
 elseif ARGS[1] == "--basic"
     # basic test suite
