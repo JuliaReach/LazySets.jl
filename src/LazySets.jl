@@ -93,33 +93,33 @@ include("Interfaces/AbstractBallp.jl")
 # =============================
 # Types representing basic sets
 # =============================
-include("Sets/Ball1.jl")
-include("Sets/Ball2.jl")
-include("Sets/BallInf.jl")
-include("Sets/Ballp.jl")
-include("Sets/DensePolynomialZonotope.jl")
-include("Sets/Ellipsoid.jl")
+include("Sets/Ball1/Ball1Module.jl")
+include("Sets/Ball2/Ball2Module.jl")
+include("Sets/BallInf/BallInfModule.jl")
+include("Sets/Ballp/BallpModule.jl")
+include("Sets/DensePolynomialZonotope/DensePolynomialZonotopeModule.jl")
+include("Sets/Ellipsoid/EllipsoidModule.jl")
+include("Sets/Hyperplane/HyperplaneModule.jl")
+include("Sets/Line2D/Line2DModule.jl")
+include("Sets/Line/LineModule.jl")
+include("Sets/LineSegment/LineSegmentModule.jl")
+include("Sets/Polygon/PolygonModule.jl")
+include("Sets/Singleton/SingletonModule.jl")
+include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
+include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
+include("Sets/Universe/UniverseModule.jl")
+include("Sets/VPolygon/VPolygonModule.jl")
+include("Sets/VPolytope/VPolytopeModule.jl")
+include("Sets/Tetrahedron/TetrahedronModule.jl")
+include("Sets/ZeroSet/ZeroSetModule.jl")
 include("Sets/EmptySet.jl")
 include("Sets/HParallelotope.jl")
 include("Sets/HPolygon.jl")
 include("Sets/HPolygonOpt.jl")
 include("Sets/HPolytope.jl")
 include("Sets/HPolyhedron.jl")
-include("Sets/Hyperplane.jl")
 include("Sets/Hyperrectangle.jl")
-include("Sets/Line2D.jl")
-include("Sets/Line.jl")
-include("Sets/LineSegment.jl")
-include("Sets/Polygon.jl")
 include("Sets/RotatedHyperrectangle.jl")
-include("Sets/Singleton.jl")
-include("Sets/SimpleSparsePolynomialZonotope.jl")
-include("Sets/SparsePolynomialZonotope.jl")
-include("Sets/Universe.jl")
-include("Sets/VPolygon.jl")
-include("Sets/VPolytope.jl")
-include("Sets/Tetrahedron.jl")
-include("Sets/ZeroSet.jl")
 include("Sets/Zonotope.jl")
 
 include("LazyOperations/UnionSet.jl")  # must come before IntervalModule
@@ -153,12 +153,13 @@ include("LazyOperations/Translation.jl")
 include("LazyOperations/UnionSetArray.jl")
 include("LazyOperations/Rectification.jl")  # must come after UnionSet
 
+include("Sets/Star/StarModule.jl")  # must come after AffineMap
+
 # =======
 # Aliases
 # =======
 include("Interfaces/aliases.jl")
 include("Interfaces/AbstractArraySet.jl")
-include("Sets/Star.jl")
 
 # =============================
 # Conversions between set types
