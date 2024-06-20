@@ -1,3 +1,10 @@
+module EllipsoidModule
+
+using Reexport
+
+using ..LazySets: AbstractCentrallySymmetric
+using Random: AbstractRNG, GLOBAL_RNG
+
 export Ellipsoid,
        shape_matrix
 
@@ -372,3 +379,5 @@ function affine_map(M::AbstractMatrix, E::Ellipsoid, v::AbstractVector)
     Q = _linear_map_shape_matrix(M, E)
     return Ellipsoid(c + v, Q)
 end
+
+end  # module

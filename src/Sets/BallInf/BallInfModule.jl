@@ -1,3 +1,11 @@
+module BallInfModule
+
+using Reexport
+
+using ..LazySets: AbstractHyperrectangle
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays
+
 export BallInf
 
 const BALLINF_THRESHOLD_ρ = 30  # threshold value in `ρ`
@@ -464,3 +472,5 @@ end
 function scale(α::Real, B::BallInf)
     return BallInf(B.center .* α, B.radius * abs(α))
 end
+
+end  # module

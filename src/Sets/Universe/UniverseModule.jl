@@ -1,3 +1,10 @@
+module UniverseModule
+
+using Reexport
+
+using ..LazySets: AbstractPolyhedron
+using Random: AbstractRNG, GLOBAL_RNG
+
 export Universe
 
 """
@@ -466,3 +473,5 @@ function scale!(α::Real, U::Universe)
     end
     return U
 end
+
+end  # module

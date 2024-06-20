@@ -1,3 +1,10 @@
+module SimpleSparsePolynomialZonotopeModule
+
+using Reexport
+
+using ..LazySets: AbstractPolynomialZonotope
+using Random: AbstractRNG, GLOBAL_RNG
+
 export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
        quadratic_map, remove_redundant_generators
 
@@ -461,3 +468,5 @@ The tightest convex simple sparse polynomial zonotope containing `P`.
 function convex_hull(P::SimpleSparsePolynomialZonotope)
     return linear_combination(P, P)
 end
+
+end  # module

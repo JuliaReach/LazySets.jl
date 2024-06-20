@@ -1,3 +1,9 @@
+module PolygonModule
+
+using Reexport
+
+using ..LazySets: LazySet
+
 export Polygon
 
 """
@@ -80,3 +86,5 @@ end
 function convex_hull(P::Polygon)
     return VPolygon(P.vertices)
 end
+
+end  # module

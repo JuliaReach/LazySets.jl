@@ -1,3 +1,9 @@
+module DensePolynomialZonotopeModule
+
+using Reexport
+
+using ..LazySets: AbstractPolynomialZonotope
+
 export DensePolynomialZonotope,
        polynomial_order,
        order
@@ -221,3 +227,5 @@ function scale!(α::Real, P::DensePolynomialZonotope)
     P.G .*= α
     return P
 end
+
+end  # module

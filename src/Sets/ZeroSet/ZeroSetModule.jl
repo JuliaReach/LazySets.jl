@@ -1,3 +1,10 @@
+module ZeroSetModule
+
+using Reexport
+
+using ..LazySets: AbstractSingleton
+using Random: AbstractRNG, GLOBAL_RNG
+
 export ZeroSet
 
 """
@@ -232,3 +239,5 @@ end
 function scale!(::Real, Z::ZeroSet)
     return Z
 end
+
+end  # module

@@ -1,3 +1,10 @@
+module LineSegmentModule
+
+using Reexport
+
+using ..LazySets: AbstractZonotope
+using Random: AbstractRNG, GLOBAL_RNG
+
 export LineSegment,
        halfspace_left, halfspace_right
 
@@ -412,3 +419,5 @@ function scale!(α::Real, L::LineSegment)
     L.q .*= α
     return L
 end
+
+end  # module

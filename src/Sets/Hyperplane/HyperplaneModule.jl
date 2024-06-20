@@ -1,3 +1,10 @@
+module HyperplaneModule
+
+using Reexport
+
+using ..LazySets: AbstractPolyhedron, AbstractLinearMapAlgorithm, @commutative
+using Random: AbstractRNG, GLOBAL_RNG
+
 export Hyperplane
 
 """
@@ -663,3 +670,5 @@ end
 function _reflect_point_hyperplane(x, a, b)
     return x - 2 * (dot(x, a) - b) / dot(a, a) * a
 end
+
+end  # module

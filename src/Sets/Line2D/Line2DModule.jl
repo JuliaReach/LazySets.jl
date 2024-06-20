@@ -1,3 +1,10 @@
+module Line2DModule
+
+using Reexport
+
+using ..LazySets: AbstractPolyhedron, AbstractLinearMapAlgorithm
+using Random: AbstractRNG, GLOBAL_RNG
+
 export Line2D
 
 """
@@ -416,3 +423,5 @@ The projection of ``x`` onto a line of the form ``a⋅x = b`` is
 function project(x::AbstractVector, L::Line2D)
     return x - L.a * (dot(L.a, x) - L.b) / norm(L.a, 2)^2
 end
+
+end  # module

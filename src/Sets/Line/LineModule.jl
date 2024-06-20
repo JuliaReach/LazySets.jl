@@ -1,3 +1,10 @@
+module LineModule
+
+using Reexport
+
+using ..LazySets: AbstractPolyhedron, @commutative
+using Random: AbstractRNG, GLOBAL_RNG
+
 export Line
 
 """
@@ -491,3 +498,5 @@ function project(L::Line{N}, block::AbstractVector{Int}; kwargs...) where {N}
         return Line(L.p[block], d)
     end
 end
+
+end  # module

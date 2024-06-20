@@ -93,25 +93,6 @@ include("Interfaces/AbstractBallp.jl")
 # =============================
 # Types representing basic sets
 # =============================
-include("Sets/Ball1/Ball1Module.jl")
-include("Sets/Ball2/Ball2Module.jl")
-include("Sets/BallInf/BallInfModule.jl")
-include("Sets/Ballp/BallpModule.jl")
-include("Sets/DensePolynomialZonotope/DensePolynomialZonotopeModule.jl")
-include("Sets/Ellipsoid/EllipsoidModule.jl")
-include("Sets/Hyperplane/HyperplaneModule.jl")
-include("Sets/Line2D/Line2DModule.jl")
-include("Sets/Line/LineModule.jl")
-include("Sets/LineSegment/LineSegmentModule.jl")
-include("Sets/Polygon/PolygonModule.jl")
-include("Sets/Singleton/SingletonModule.jl")
-include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
-include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
-include("Sets/Universe/UniverseModule.jl")
-include("Sets/VPolygon/VPolygonModule.jl")
-include("Sets/VPolytope/VPolytopeModule.jl")
-include("Sets/Tetrahedron/TetrahedronModule.jl")
-include("Sets/ZeroSet/ZeroSetModule.jl")
 include("Sets/EmptySet.jl")
 include("Sets/HParallelotope.jl")
 include("Sets/HPolygon.jl")
@@ -121,6 +102,44 @@ include("Sets/HPolyhedron.jl")
 include("Sets/Hyperrectangle.jl")
 include("Sets/RotatedHyperrectangle.jl")
 include("Sets/Zonotope.jl")
+include("Sets/Ball1/Ball1Module.jl")
+@reexport using ..Ball1Module: Ball1
+include("Sets/Ball2/Ball2Module.jl")
+@reexport using ..Ball2Module: Ball2
+include("Sets/BallInf/BallInfModule.jl")
+@reexport using ..BallInfModule: BallInf, load_genmat_ballinf_static
+include("Sets/Ballp/BallpModule.jl")
+@reexport using ..BallpModule: Ballp
+include("Sets/DensePolynomialZonotope/DensePolynomialZonotopeModule.jl")
+@reexport using ..DensePolynomialZonotopeModule: DensePolynomialZonotope
+include("Sets/Ellipsoid/EllipsoidModule.jl")
+@reexport using ..EllipsoidModule: Ellipsoid
+include("Sets/Hyperplane/HyperplaneModule.jl")
+@reexport using ..HyperplaneModule: Hyperplane
+include("Sets/Line2D/Line2DModule.jl")
+@reexport using ..Line2DModule: Line2D
+include("Sets/Line/LineModule.jl")
+@reexport using ..LineModule: Line
+include("Sets/LineSegment/LineSegmentModule.jl")
+@reexport using ..LineSegmentModule: LineSegment
+include("Sets/Polygon/PolygonModule.jl")
+@reexport using ..PolygonModule: Polygon
+include("Sets/Singleton/SingletonModule.jl")
+@reexport using ..SingletonModule: Singleton
+include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
+@reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope
+include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
+@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope
+include("Sets/Universe/UniverseModule.jl")
+@reexport using ..UniverseModule: Universe
+include("Sets/VPolygon/VPolygonModule.jl")
+@reexport using ..VPolygonModule: VPolygon
+include("Sets/VPolytope/VPolytopeModule.jl")
+@reexport using ..VPolytopeModule: VPolytope
+include("Sets/Tetrahedron/TetrahedronModule.jl")
+@reexport using ..TetrahedronModule: Tetrahedron
+include("Sets/ZeroSet/ZeroSetModule.jl")
+@reexport using ..ZeroSetModule: ZeroSet
 
 include("LazyOperations/UnionSet.jl")  # must come before IntervalModule
 
@@ -154,6 +173,7 @@ include("LazyOperations/UnionSetArray.jl")
 include("LazyOperations/Rectification.jl")  # must come after UnionSet
 
 include("Sets/Star/StarModule.jl")  # must come after AffineMap
+@reexport using ..StarModule: Star, STAR
 
 # =======
 # Aliases

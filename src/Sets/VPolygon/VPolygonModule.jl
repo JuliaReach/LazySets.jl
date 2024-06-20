@@ -1,3 +1,10 @@
+module VPolygonModule
+
+using Reexport
+
+using ..LazySets: AbstractPolygon, AbstractHPolygon
+using Random: AbstractRNG, GLOBAL_RNG
+
 export VPolygon,
        remove_redundant_vertices,
        remove_redundant_vertices!
@@ -729,3 +736,5 @@ See [`area(::LazySet)`](@ref).
 function area(V::VPolygon)
     return _area_vlist(V.vertices; apply_convex_hull=false)
 end
+
+end  # module

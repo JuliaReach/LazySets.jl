@@ -1,3 +1,10 @@
+module VPolytopeModule
+
+using Reexport
+
+using ..LazySets: AbstractPolytope, LinearMapVRep
+using Random: AbstractRNG, GLOBAL_RNG
+
 export VPolytope,
        remove_redundant_vertices,
        tohrep,
@@ -651,3 +658,5 @@ function scale!(α::Real, P::VPolytope)
     P.vertices .*= α
     return P
 end
+
+end  # module

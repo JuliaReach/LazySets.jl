@@ -1,3 +1,10 @@
+module SingletonModule
+
+using Reexport
+
+using ..LazySets: AbstractSingleton
+using Random: AbstractRNG, GLOBAL_RNG
+
 export Singleton
 
 """
@@ -206,3 +213,5 @@ function scale!(α::Real, S::Singleton)
     S.element .*= α
     return S
 end
+
+end  # module

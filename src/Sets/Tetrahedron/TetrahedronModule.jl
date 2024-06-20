@@ -1,3 +1,10 @@
+module TetrahedronModule
+
+using Reexport
+
+using ..LazySets: AbstractPolytope
+using Random: AbstractRNG, GLOBAL_RNG
+
 export Tetrahedron
 
 """
@@ -132,3 +139,5 @@ end
 function constraints_list(T::Tetrahedron)
     return constraints_list(convert(VPolytope, T))
 end
+
+end  # module

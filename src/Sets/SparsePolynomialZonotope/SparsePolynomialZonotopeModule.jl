@@ -1,3 +1,10 @@
+module SparsePolynomialZonotopeModule
+
+using Reexport
+
+using ..LazySets: AbstractPolynomialZonotope, AbstractReductionMethod
+using Random: AbstractRNG, GLOBAL_RNG
+
 export SparsePolynomialZonotope, expmat, nparams, ngens_dep, ngens_indep,
        genmat_dep, genmat_indep, indexvector, polynomial_order, quadratic_map,
        remove_redundant_generators, reduce_order
@@ -568,3 +575,5 @@ function _extrema_polyzono_zonotope(P::SparsePolynomialZonotope{N}) where {N}
     r = N(1 / 2) .* g₂ + g₃ + g₄
     return (c .- r, c .+ r)
 end
+
+end  # module

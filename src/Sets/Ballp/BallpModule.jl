@@ -1,3 +1,10 @@
+module BallpModule
+
+using Reexport
+
+using ..LazySets: AbstractBallp
+using Random: AbstractRNG, GLOBAL_RNG
+
 export Ballp
 
 """
@@ -198,3 +205,5 @@ end
 function scale(α::Real, B::Ballp)
     return Ballp(B.p, B.center .* α, B.radius * abs(α))
 end
+
+end  # module

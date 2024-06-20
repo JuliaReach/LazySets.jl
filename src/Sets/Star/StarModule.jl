@@ -1,3 +1,10 @@
+module StarModule
+
+using Reexport
+
+using ..LazySets: AbstractPolyhedron, AffineMap
+using Random: AbstractRNG, GLOBAL_RNG
+
 export Star,
        basis,
        predicate,
@@ -450,3 +457,5 @@ function rand(::Type{Star};
     V = randn(rng, N, dim, LazySets.dim(P))
     return Star(c, V, P)
 end
+
+end  # module

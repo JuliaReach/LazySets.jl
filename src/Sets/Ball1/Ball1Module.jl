@@ -1,3 +1,10 @@
+module Ball1Module
+
+using Reexport
+
+using ..LazySets: AbstractCentrallySymmetricPolytope
+using Random: AbstractRNG, GLOBAL_RNG
+
 export Ball1
 
 """
@@ -368,3 +375,5 @@ end
 function scale(α::Real, B::Ball1)
     return Ball1(B.center .* α, B.radius * abs(α))
 end
+
+end  # module
