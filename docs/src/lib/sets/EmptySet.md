@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.EmptySetModule
 ```
 
 # [Empty set (EmptySet)](@id def_EmptySet)
@@ -7,6 +7,11 @@ CurrentModule = LazySets
 ```@docs
 EmptySet
 ∅
+```
+
+## Operations
+
+```@docs
 dim(::EmptySet)
 σ(::AbstractVector, ::EmptySet)
 ρ(::AbstractVector, ::EmptySet)
