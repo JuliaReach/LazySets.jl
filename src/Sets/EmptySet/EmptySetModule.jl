@@ -2,7 +2,7 @@ module EmptySetModule
 
 using Reexport
 
-using ..LazySets: ConvexSet, Universe
+using ..LazySets: LazySet, ConvexSet, Universe, _witness_result_empty
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator
@@ -12,7 +12,8 @@ using ReachabilityBase.Iteration: EmptyIterator
                          isoperationtype, isuniversal, linear_map, low, norm,
                          project, radius, rand, rectify, reflect, scale, scale!,
                          ρ, σ, translate, translate!, vertices, vertices_list,
-                         volume
+                         volume,
+                         convex_hull, intersection, isdisjoint, ⊆
 @reexport import ..LazySets: chebyshev_center_radius, plot_recipe
 
 export EmptySet, ∅
@@ -48,6 +49,11 @@ include("translate.jl")
 include("vertices_list.jl")
 include("vertices.jl")
 include("volume.jl")
+
+include("convex_hull.jl")
+include("intersection.jl")
+include("isdisjoint.jl")
+include("issubset.jl")
 
 """
     plot_recipe(∅::EmptySet{N}, [ε]=zero(N)) where {N}

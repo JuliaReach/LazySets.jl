@@ -1115,12 +1115,6 @@ end
     return _isdisjoint_emptyset(∅, X, witness)
 end
 
-function _isdisjoint_emptyset(∅::EmptySet, X::LazySet, witness::Bool=false)
-    @assert dim(∅) == dim(X) "the dimensions of the given sets should match, " *
-                             "but they are $(dim(∅)) and $(dim(X)), respectively"
-    return _witness_result_empty(witness, true, ∅, X)
-end
-
 # disambiguations
 for ST in [:AbstractPolyhedron, :AbstractSingleton, :HalfSpace, :Hyperplane,
            :Line2D, :Universe, :Complement, :UnionSet, :UnionSetArray]
@@ -1128,8 +1122,6 @@ for ST in [:AbstractPolyhedron, :AbstractSingleton, :HalfSpace, :Hyperplane,
         return _isdisjoint_emptyset(∅, X, witness)
     end
 end
-
-isdisjoint(∅1::EmptySet, ∅2::EmptySet, witness::Bool=false) = _isdisjoint_emptyset(∅1, ∅2, witness)
 
 """
     isdisjoint(L1::Line2D, L2::Line2D, [witness]::Bool=false)

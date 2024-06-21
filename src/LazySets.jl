@@ -96,7 +96,7 @@ include("Interfaces/AbstractBallp.jl")
 include("Sets/Universe.jl")
 
 include("Sets/EmptySet/EmptySetModule.jl")
-@reexport using ..EmptySetModule: EmptySet, ∅
+@reexport using ..EmptySetModule: EmptySet, ∅, _isdisjoint_emptyset
 
 include("Sets/Ball1.jl")
 include("Sets/Ball2.jl")
