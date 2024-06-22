@@ -438,16 +438,6 @@ julia> plot(Singleton([0.5, 1.0]))
     return plot_recipe(S, ε)
 end
 
-"""
-    plot_emptyset(∅::EmptySet, [ε]::Real=zero(N); ...)
-
-Plot an empty set.
-
-### Input
-
-- `∅` -- empty set
-- `ε` -- (optional, default: `0`) ignored, used for dispatch
-"""
 @recipe function plot_emptyset(∅::EmptySet{N}, ::Real=zero(N)) where {N}  # COV_EXCL_LINE
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID
