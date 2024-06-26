@@ -19,46 +19,41 @@ convert(::Type{Interval}, ::IA.Interval)
 ## Operations
 
 ```@docs
-dim(::Interval)
-σ(::AbstractVector, ::Interval)
-ρ(::AbstractVector, ::Interval)
-∈(::AbstractVector, ::Interval)
 an_element(::Interval)
-vertices_list(::Interval)
-translate(::Interval, ::AbstractVector)
 center(::Interval)
 center(::Interval, ::Int)
+chebyshev_center_radius(::Interval)
+constraints_list(::Interval)
+diameter(::Interval, ::Real=Inf)
+dim(::Interval)
+high(::Interval)
+∈(::AbstractVector, ::Interval)
+isflat(::Interval)
+linear_map(::AbstractMatrix, ::Interval)
+low(::Interval)
 min(::Interval)
 max(::Interval)
-low(::Interval)
-high(::Interval)
+ngens(::Interval)
 radius_hyperrectangle(::Interval)
 radius_hyperrectangle(::Interval{N}, ::Int) where {N}
--(::Interval, ::Interval)
-*(::Interval, ::Interval)
 rand(::Type{Interval})
-isflat(::Interval)
-plot_recipe(::Interval{N}, ::Any=zero(N)) where {N}
-linear_map(::AbstractMatrix, ::Interval)
-scale(::Real, ::Interval)
-constraints_list(::Interval)
 rectify(::Interval{N}) where {N}
-diameter(::Interval, ::Real=Inf)
-split(::Interval, ::AbstractVector{Int})
-ngens(::Interval)
-chebyshev_center_radius(::Interval)
 reflect(::Interval)
-```
-
-## Binary operations
-
-```@docs
+scale(::Real, ::Interval)
+split(::Interval, ::AbstractVector{Int})
+ρ(::AbstractVector, ::Interval)
+σ(::AbstractVector, ::Interval)
+translate(::Interval, ::AbstractVector)
+vertices_list(::Interval)
 difference(::Interval{N}, ::Interval) where {N}
 intersection(::Interval, ::Interval)
 isdisjoint(::Interval, ::Interval, ::Bool=false)
 ⊆(::Interval, ::Interval, ::Bool=false)
 minkowski_difference(::Interval, ::Interval)
 minkowski_sum(::Interval, ::Interval)
+plot_recipe(::Interval{N}, ::Any=zero(N)) where {N}
+-(::Interval, ::Interval)
+*(::Interval, ::Interval)
 ```
 
 ```@meta
@@ -87,11 +82,11 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`togrep`](@ref togrep(::AbstractZonotope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
-* [`low`](@ref low(::AbstractHyperrectangle, ::Int))
 * [`high`](@ref high(::AbstractHyperrectangle, ::Int))
+* [`low`](@ref low(::AbstractHyperrectangle, ::Int))
+* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 
 Some additional functionality is available for `IntervalArithmetic.Interval`s:
 
