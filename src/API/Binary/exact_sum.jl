@@ -10,22 +10,6 @@ Compute the exact sum of two parametric sets.
 
 ### Output
 
-A set representing the exact sum ``X ⊞ Y``.
-
-### Notes
-
-The convenience alias `⊞` is also available, which can be typed by
-`\\boxplus<tab>`.
+A set representing the exact sum, sometimes written ``X ⊞ Y``.
 """
 function exact_sum(::LazySet, ::LazySet) end
-
-"""
-    ⊞(X::LazySet, Y::LazySet)
-
-Convenience alias for the (concrete) `exact_sum` function.
-
-### Notes
-
-"`⊞`" can be typed by `\\boxplus<tab>`.
-"""
-const ⊞ = exact_sum

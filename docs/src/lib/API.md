@@ -86,7 +86,6 @@ cartesian_product(::LazySet, ::LazySet)
 difference(::LazySet, ::LazySet)
 distance(::LazySet, ::LazySet)
 exact_sum(::LazySet, ::LazySet)
-⊞
 intersection(::LazySet, ::LazySet)
 ≈(::LazySet, ::LazySet)
 isdisjoint(::LazySet, ::LazySet)

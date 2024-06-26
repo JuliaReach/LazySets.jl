@@ -37,7 +37,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test expmat(LMPZ) == [1 0 1; 0 1 3]
     @test indexvector(LMPZ) == indexvector(PZ)
 
-    ESPZ = PZ ⊞ PZ2
+    ESPZ = exact_sum(PZ, PZ2)
     @test center(ESPZ) == [4, 4]
     @test genmat_dep(ESPZ) == [2 1 2 2 0 1; 0 2 2 1 2 1]
     @test genmat_indep(ESPZ) == hcat([1, 0])

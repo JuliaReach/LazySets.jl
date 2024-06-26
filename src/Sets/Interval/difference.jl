@@ -38,6 +38,15 @@ flat. Three cases may arise:
   covered by ``Y``. Similarly, if only `R` is flat, then the result is `L`.
 - Finally, if none of the intervals is flat, then ``Y`` is strictly contained
   in ``X`` and the set union of `L` and `R` is returned.
+
+### Examples
+
+```jldoctest
+julia> X = Interval(0, 2); Y = Interval(1, 4);
+
+julia> difference(X, Y)
+Interval{Float64}([0, 1])
+```
 """
 function difference(X::Interval{N}, Y::Interval) where {N}
     Z = intersection(X, Y)

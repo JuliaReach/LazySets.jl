@@ -1,27 +1,4 @@
 """
-    \\(X::LazySet, Y::LazySet)
-
-Convenience alias for the `difference` function.
-
-### Notes
-
-In this library, `X \\ Y` denotes the set difference. If `X` and `Y` are
-intervals, in some libraries it denotes the left division, as the example below
-shows.
-
-```jldoctest
-julia> X = Interval(0, 2); Y = Interval(1, 4);
-
-julia> X \\ Y  # compute the set difference
-Interval{Float64}([0, 1])
-
-julia> X.dat \\ Y.dat  # underlying intervals compute the left division instead
-[0.5, ∞]
-```
-"""
-\(X::LazySet, Y::LazySet) = difference(X, Y)
-
-"""
     difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
 
 Compute the set difference between two hyperrectangular sets.
