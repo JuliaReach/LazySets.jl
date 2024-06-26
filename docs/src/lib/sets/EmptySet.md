@@ -52,7 +52,7 @@ Undocumented implementations:
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
-* [`is_interior_point`](@ref is_interior_point(::AbstractVector{N}, ::LazySet; p=N(Inf), ε=_rtol(N)) where {N<:Real})
+* [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
