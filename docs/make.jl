@@ -1,6 +1,6 @@
 using Documenter, LazySets
 import Polyhedra, Optim, ExponentialUtilities, TaylorModels, Distributions,
-       MiniQhull, Symbolics
+       MiniQhull, Symbolics, SymEngine
 
 include("init.jl")
 
