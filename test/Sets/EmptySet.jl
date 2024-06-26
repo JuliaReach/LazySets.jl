@@ -8,11 +8,15 @@ for N in [Float64, Rational{Int}, Float32]
     # dim
     @test dim(E) == 2
 
-    # support vector
+    # support function & support vector
+    @test_throws ErrorException ρ(N[0], E)
     @test_throws ErrorException σ(N[0], E)
 
     # boundedness
     @test isbounded(E) && isboundedtype(typeof(E))
+
+    # isconvextype
+    @test isconvextype(typeof(E))
 
     # isuniversal
     res, w = isuniversal(E, true)
@@ -75,14 +79,27 @@ for N in [Float64, Rational{Int}, Float32]
     E2 = copy(E)
     scale!(N(2), E2)
     @test scale(N(2), E) == E2 == EmptySet{N}(dim(E))
-end
 
-# tests that only work with Float64 and Float32
-for N in [Float64, Float32]
-    B = Ball2(N[0, 0], N(1))
-    E = EmptySet{N}(2)
+    # area
+    @test area(E) == N(0)
 
-    @test isdisjoint(E, B) && isdisjoint(B, E)
+    # chebyshev_center_radius
+    @test_throws ErrorException chebyshev_center_radius(E)
+
+    # low/high
+    @test_throws ErrorException low(E)
+    @test_throws ErrorException low(E, 1)
+    @test_throws ErrorException high(E)
+    @test_throws ErrorException high(E, 1)
+
+    # isdisjoint
+    @test isdisjoint(E, B) && isdisjoint(B, E) && isdisjoint(E, E)
+    for (res, w) in (isdisjoint(E, B, true), isdisjoint(B, E, true), isdisjoint(E, E, true))
+        @test res && w == N[]
+    end
+
+    # convex_hull
+    @test convex_hull(E, E) == E
 end
 
 # default Float64 constructor

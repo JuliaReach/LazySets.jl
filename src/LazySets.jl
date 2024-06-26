@@ -93,13 +93,17 @@ include("Interfaces/AbstractBallp.jl")
 # =============================
 # Types representing basic sets
 # =============================
+include("Sets/Universe.jl")
+
+include("Sets/EmptySet/EmptySetModule.jl")
+@reexport using ..EmptySetModule: EmptySet, ∅, _isdisjoint_emptyset
+
 include("Sets/Ball1.jl")
 include("Sets/Ball2.jl")
 include("Sets/BallInf.jl")
 include("Sets/Ballp.jl")
 include("Sets/DensePolynomialZonotope.jl")
 include("Sets/Ellipsoid.jl")
-include("Sets/EmptySet.jl")
 include("Sets/HParallelotope.jl")
 include("Sets/HPolygon.jl")
 include("Sets/HPolygonOpt.jl")
@@ -115,7 +119,6 @@ include("Sets/RotatedHyperrectangle.jl")
 include("Sets/Singleton.jl")
 include("Sets/SimpleSparsePolynomialZonotope.jl")
 include("Sets/SparsePolynomialZonotope.jl")
-include("Sets/Universe.jl")
 include("Sets/VPolygon.jl")
 include("Sets/VPolytope.jl")
 include("Sets/Tetrahedron.jl")

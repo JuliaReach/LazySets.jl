@@ -563,8 +563,6 @@ end
     return convex_hull(X)
 end
 
-convex_hull(∅::EmptySet, ::EmptySet) = ∅
-
 """
     convex_hull(P1::SimpleSparsePolynomialZonotope,
                 P2::SimpleSparsePolynomialZonotope)

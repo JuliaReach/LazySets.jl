@@ -2,8 +2,9 @@ module IntervalModule
 
 using Reexport
 
-using ..LazySets: AbstractHyperrectangle, LazySet, HalfSpace, Zonotope, EmptySet, UnionSet,
+using ..LazySets: AbstractHyperrectangle, LazySet, HalfSpace, Zonotope, UnionSet,
                   _witness_result_empty
+using ..LazySets.EmptySetModule: EmptySet
 using ..API: eltype, isconvextype, isempty
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays

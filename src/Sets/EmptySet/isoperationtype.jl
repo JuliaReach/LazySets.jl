@@ -1,0 +1,1 @@
+isoperationtype(::Type{<:EmptySet}) = false
