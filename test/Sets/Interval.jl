@@ -37,6 +37,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # test interface method an_element and membership
     @test an_element(x) ∈ x
+    # number in interval is invalid
+    @test_throws MethodError N(1) ∈ x
     # test containment
     @test x ⊆ x
     @test x ⊈ N(0.2) * x
