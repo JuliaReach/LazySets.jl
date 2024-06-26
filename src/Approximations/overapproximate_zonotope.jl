@@ -213,8 +213,9 @@ function _overapproximate_union_zonotope_GGP09(X::LazySet{N}) where {N}
 end
 
 # Given center, (dependent) generator matrix and exponent matrix of a (simple)
-# sparse polynomial zonotope, compute thew new center and generator matrix of
-# its zonotope overapproximation.
+# sparse polynomial zonotope, compute the new center and generator matrix of
+# its zonotope overapproximation. This method assumes that the parameter domain
+# is [-1, 1]ᵖ.
 function _zonotope_overapprox!(c, G, E)
     @inbounds for (j, g) in enumerate(eachcol(G))
         if all(iseven, E[:, j])
@@ -284,7 +285,7 @@ function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope},
         end
         m, r = IA.midpoint_radius(α)
         cnew .+= m * g
-        Gnew[:, j] .= abs.(g) * r
+        Gnew[:, j] .= r * g
     end
     return Zonotope(cnew, Gnew)
 end

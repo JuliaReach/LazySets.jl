@@ -62,6 +62,10 @@ for N in [Float64, Float32, Rational{Int}]
                            0 0 0 1 0 1;
                            0 0 0 0 1 3]
     Z = overapproximate(PZ2, Zonotope)
+    SSPZ2 = convert(SimpleSparsePolynomialZonotope, PZ2)
+    dom2 = IntervalBox(IA.interval(N(-1), N(1)), IA.interval(N(-1), N(1)))
+    Z2 = overapproximate(SSPZ2, Zonotope, dom2)
+    @test isequivalent(Z, Z2)
     CPPZ = cartesian_product(PZ, Z)
     @test center(CPPZ) == N[4, 4, 0, 0]
     @test genmat_dep(CPPZ) == N[2 1 2;
@@ -130,6 +134,10 @@ for N in [Float64, Float32, Rational{Int}]
     l2, u2 = extrema(PZ; algorithm="lowhigh")
     H2 = Hyperrectangle(; low=l2, high=u2)
     @test H2 ⊆ H1 == Hyperrectangle(N[0, 0], N[7 // 2, 5 // 2])
+    Z = Zonotope(N[0, 0], N[3//2 1 1; 3//2 0 -1])
+    @test isequivalent(overapproximate(PZ, Zonotope), Z)
+    SSPZ2 = convert(SimpleSparsePolynomialZonotope, PZ)
+    @test isequivalent(overapproximate(SSPZ2, Zonotope, dom2), Z)
 end
 
 for N in [Float64]
