@@ -65,7 +65,7 @@ exponential_map(::AbstractMatrix, ::LazySet)
 an_element(::LazySet)
 tosimplehrep(::LazySet)
 reflect(::LazySet)
-is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=Inf, ε=_rtol(N)) where {N<:Real}
+is_interior_point(::AbstractVector{<:Real}, ::LazySet; kwargs...)
 isoperation(::LazySet)
 isequivalent(::LazySet, ::LazySet)
 surface(::LazySet)

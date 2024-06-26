@@ -585,7 +585,22 @@ The default implementation determines `v ∈ interior(X)` with error tolerance
 `ε` by checking whether a `Ballp` of norm `p` with center `v` and radius `ε` is
 contained in `X`.
 """
-function is_interior_point(v::AbstractVector{N}, X::LazySet{N}; p=N(Inf), ε=_rtol(N)) where {N}
+function is_interior_point(v::AbstractVector{<:Real}, X::LazySet; kwargs...)
+    N = promote_type(eltype(v), eltype(X))
+    if N != eltype(X)
+        throw(ArgumentError("the set eltype must be more general"))
+    end
+    if N != eltype(v)
+        v = convert(Vector{N}, v)
+    end
+    ε = get(kwargs, :ε, _rtol(N))
+    p = get(kwargs, :p, N(Inf))
+    return is_interior_point(v, X; p=p, ε=ε)
+end
+
+function is_interior_point(v::AbstractVector{N}, X::LazySet{N}; p=N(Inf),
+                           ε=_rtol(N)) where {N<:Real}
+    @assert ε > zero(N) "the tolerance must be strictly positive"
     return Ballp(p, v, ε) ⊆ X
 end
 

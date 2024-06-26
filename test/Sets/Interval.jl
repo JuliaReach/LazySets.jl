@@ -250,6 +250,25 @@ for N in [Float64, Float32, Rational{Int}]
     gens = collect(generators(x_degenerate))
     @test isempty(gens) && gens isa Vector{SingleEntryVector{N}}
 
+    # is_interior_point
+    v1 = N[3/2]
+    v2 = N[1]
+    if N <: AbstractFloat
+        @test is_interior_point(v1, x) && !is_interior_point(v2, x)
+    else
+        @test_throws AssertionError is_interior_point(v1, x)
+        @test is_interior_point(v1, x; ε=1//100) && !is_interior_point(v2, x; ε=1//100)
+    end
+    # different numeric type
+    v1 = Float16[3/2]
+    if N <: AbstractFloat
+        v2 = Float16[1]
+        @test is_interior_point(v1, x) && !is_interior_point(v2, x)
+    else
+        @test_throws ArgumentError is_interior_point(v1, x)
+        @test_throws ArgumentError is_interior_point(v1, x; ε=1//100)
+    end
+
     # Chebyshev center
     c, r = chebyshev_center_radius(x)
     @test c == center(x) && r == N(1 // 2)
