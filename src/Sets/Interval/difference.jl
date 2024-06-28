@@ -37,10 +37,16 @@ flat. Three cases may arise:
 ### Examples
 
 ```jldoctest
-julia> X = Interval(0, 2); Y = Interval(1, 4);
+julia> X = Interval(0, 2); Y = Interval(1, 4); Z = Interval(2, 3);
+
+julia> difference(X, X)
+∅(1)
 
 julia> difference(X, Y)
 Interval{Float64}([0, 1])
+
+julia> difference(Y, Z)
+UnionSet{Float64, Interval{Float64}, Interval{Float64}}(Interval{Float64}([1, 2]), Interval{Float64}([3, 4]))
 ```
 """
 function difference(X::Interval{N}, Y::Interval) where {N}
