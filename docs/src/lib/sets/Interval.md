@@ -10,7 +10,7 @@ Interval
 
 ## Conversion
 
-```@docs
+```julia
 convert(::Type{Interval}, ::LazySet)
 convert(::Type{IA.Interval}, ::LazySet)
 convert(::Type{Interval}, ::IA.Interval)
@@ -20,13 +20,7 @@ convert(::Type{Interval}, ::IA.Interval)
 
 ```@docs
 an_element(::Interval)
-center(::Interval)
-center(::Interval, ::Int)
 chebyshev_center_radius(::Interval)
-constraints_list(::Interval)
-diameter(::Interval, ::Real=Inf)
-dim(::Interval)
-∈(::AbstractVector, ::Interval)
 isflat(::Interval)
 linear_map(::AbstractMatrix, ::Interval)
 ngens(::Interval)
@@ -34,19 +28,12 @@ radius_hyperrectangle(::Interval)
 radius_hyperrectangle(::Interval{N}, ::Int) where {N}
 rand(::Type{Interval})
 rectify(::Interval{N}) where {N}
-reflect(::Interval)
-scale(::Real, ::Interval)
 split(::Interval, ::AbstractVector{Int})
-ρ(::AbstractVector, ::Interval)
-σ(::AbstractVector, ::Interval)
 translate(::Interval, ::AbstractVector)
 vertices_list(::Interval)
 difference(::Interval{N}, ::Interval) where {N}
-intersection(::Interval, ::Interval)
 isdisjoint(::Interval, ::Interval, ::Bool=false)
-⊆(::Interval, ::Interval, ::Bool=false)
 minkowski_difference(::Interval, ::Interval)
-minkowski_sum(::Interval, ::Interval)
 plot_recipe(::Interval{N}, ::Any=zero(N)) where {N}
 min(::Interval)
 max(::Interval)
@@ -60,12 +47,18 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
+* [`center`](@ref center(::LazySet))
+* [`center`](@ref center(::LazySet, ::Int))
 * [`complement`](@ref complement(::LazySet))
+* [`constraints_list`](@ref constraints_list(::LazySet))
+* [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
+* [`dim`](@ref dim(::LazySet))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`extrema`](@ref extrema(::LazySet))
 * [`extrema`](@ref extrema(::LazySet, ::Int))
 * [`high`](@ref high(::LazySet, ::Int))
 * [`high`](@ref high(::LazySet))
+* [`∈`](@ref ∈(::AbstractVector, ::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{<:LazySet}))
 * [`low`](@ref low(::LazySet, ::Int))
 * [`low`](@ref low(::LazySet))
@@ -73,12 +66,19 @@ Undocumented implementations:
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`radius`](@ref radius(::LazySet, ::Real))
+* [`reflect`](@ref reflect(::LazySet))
+* [`scale`](@ref scale(::Real, ::LazySet))
+* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
+* [`σ`](@ref σ(::AbstractVector, ::LazySet))
 * [`volume`](@ref volume(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`distance`](@ref distance(::LazySet, ::LazySet))
+* [`intersection`](@ref intersection(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
+* [`⊆`](@ref ⊆(::LazySet, ::LazySet, ::Bool=false))
+* [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets

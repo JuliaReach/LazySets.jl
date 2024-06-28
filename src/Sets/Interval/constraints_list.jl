@@ -1,17 +1,3 @@
-"""
-    constraints_list(x::Interval)
-
-Return the list of constraints of an interval.
-
-### Input
-
-- `x` -- interval
-
-### Output
-
-The list of constraints of the interval represented as two one-dimensional
-half-spaces.
-"""
 function constraints_list(x::Interval)
     N = eltype(x)
     constraints = Vector{HalfSpace{N,SingleEntryVector{N}}}(undef, 2)

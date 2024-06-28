@@ -1,17 +1,11 @@
 """
+# Extended help
+
     minkowski_difference(I1::Interval, I2::Interval)
-
-Compute the Minkowski difference of two intervals.
-
-### Input
-
-- `I1` -- interval
-- `I2` -- interval
 
 ### Output
 
-An `Interval` that corresponds to the Minkowski difference of `I1` minus `I2`,
-or an `EmptySet` if the difference is empty.
+An `Interval`, or an `EmptySet` if the difference is empty.
 """
 function minkowski_difference(I1::Interval, I2::Interval)
     l = min(I1) - min(I2)

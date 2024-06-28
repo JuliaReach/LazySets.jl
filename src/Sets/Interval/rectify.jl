@@ -1,20 +1,12 @@
 """
+# Extended help
+
     rectify(x::Interval{N}) where {N}
-
-Concrete rectification of an interval.
-
-### Input
-
-- `x` -- interval
 
 ### Output
 
-The `Interval` that corresponds to the rectification of `x`.
-
-### Notes
-
-Note that the result is an `Interval` even if the set becomes a singleton (which
-is the case if the original interval was nonpositive).
+An `Interval`, even if it represents a singleton only containing the origin
+(which is the case if the original interval was nonpositive).
 """
 function rectify(x::Interval{N}) where {N}
     if x.dat.lo >= zero(N)

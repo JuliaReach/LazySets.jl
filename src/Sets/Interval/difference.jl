@@ -1,12 +1,7 @@
 """
+# Extended help
+
     difference(X::Interval{N}, Y::Interval) where {N}
-
-Compute the set difference between two intervals.
-
-### Input
-
-- `X` -- first interval
-- `Y` -- second interval
 
 ### Output
 
