@@ -566,9 +566,6 @@ function load_symbolics_hyperplane()
          x
          y
 
-        julia> Hyperplane(x - y == 2)
-        Hyperplane{Float64, Vector{Float64}}([1.0, -1.0], 2.0)
-
         julia> Hyperplane(x == y)
         Hyperplane{Float64, Vector{Float64}}([1.0, -1.0], -0.0)
 
