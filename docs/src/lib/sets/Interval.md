@@ -18,21 +18,64 @@ convert(::Type{Interval}, ::IA.Interval)
 
 ## Operations
 
+```@docs; canonical=false
+an_element(::LazySet)
+```
 ```@docs
 an_element(::Interval)
 chebyshev_center_radius(::Interval)
 isflat(::Interval)
+```
+```@docs; canonical=false
+linear_map(::AbstractMatrix, ::LazySet)
+```
+```@docs
 linear_map(::AbstractMatrix, ::Interval)
 ngens(::Interval)
 radius_hyperrectangle(::Interval)
 radius_hyperrectangle(::Interval{N}, ::Int) where {N}
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@docs
 rand(::Type{Interval})
+```
+```@docs; canonical=false
+rectify(::LazySet, ::AbstractVector{Int})
+```
+```@docs
 rectify(::Interval{N}) where {N}
 split(::Interval, ::AbstractVector{Int})
+```
+```@docs; canonical=false
+translate(::LazySet, ::AbstractVector)
+```
+```@docs
 translate(::Interval, ::AbstractVector)
+```
+```@docs; canonical=false
+vertices_list(::LazySet)
+```
+```@docs
 vertices_list(::Interval)
+```
+```@docs; canonical=false
+difference(::LazySet, ::LazySet)
+```
+```@docs
 difference(::Interval{N}, ::Interval) where {N}
+```
+```@docs; canonical=false
+isdisjoint(::LazySet, ::LazySet, ::Bool=false)
+```
+```@docs
 isdisjoint(::Interval, ::Interval, ::Bool=false)
+```
+```@docs; canonical=false
+minkowski_difference(::LazySet, ::LazySet)
+```
+```@docs
 minkowski_difference(::Interval, ::Interval)
 plot_recipe(::Interval{N}, ::Any=zero(N)) where {N}
 min(::Interval)
