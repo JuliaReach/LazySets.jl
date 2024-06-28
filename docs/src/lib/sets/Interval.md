@@ -18,16 +18,28 @@ convert(::Type{Interval}, ::IA.Interval)
 
 ## Operations
 
+```@meta
+CurrentModule = LazySets.API
+```
 ```@docs; canonical=false
 an_element(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
 an_element(::Interval)
 chebyshev_center_radius(::Interval)
 isflat(::Interval)
 ```
+```@meta
+CurrentModule = LazySets.API
+```
 ```@docs; canonical=false
 linear_map(::AbstractMatrix, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
 linear_map(::AbstractMatrix, ::Interval)
@@ -35,45 +47,87 @@ ngens(::Interval)
 radius_hyperrectangle(::Interval)
 radius_hyperrectangle(::Interval{N}, ::Int) where {N}
 ```
+```@meta
+CurrentModule = LazySets.API
+```
 ```@docs; canonical=false
-rand(::Type{LazySet})
+rand(::Type{<:LazySet})
+```
+```@meta
+CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
 rand(::Type{Interval})
 ```
+```@meta
+CurrentModule = LazySets.API
+```
 ```@docs; canonical=false
-rectify(::LazySet, ::AbstractVector{Int})
+rectify(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
 rectify(::Interval{N}) where {N}
 split(::Interval, ::AbstractVector{Int})
 ```
+```@meta
+CurrentModule = LazySets.API
+```
 ```@docs; canonical=false
 translate(::LazySet, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
 translate(::Interval, ::AbstractVector)
 ```
+```@meta
+CurrentModule = LazySets.API
+```
 ```@docs; canonical=false
 vertices_list(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
 vertices_list(::Interval)
 ```
+```@meta
+CurrentModule = LazySets.API
+```
 ```@docs; canonical=false
 difference(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
 difference(::Interval{N}, ::Interval) where {N}
 ```
+```@meta
+CurrentModule = LazySets.API
+```
 ```@docs; canonical=false
 isdisjoint(::LazySet, ::LazySet, ::Bool=false)
+```
+```@meta
+CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
 isdisjoint(::Interval, ::Interval, ::Bool=false)
 ```
+```@meta
+CurrentModule = LazySets.API
+```
 ```@docs; canonical=false
 minkowski_difference(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
 minkowski_difference(::Interval, ::Interval)
