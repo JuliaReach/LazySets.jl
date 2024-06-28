@@ -1,20 +1,7 @@
 """
+# Extended help
+
     translate(x::Interval, v::AbstractVector)
-
-Translate (i.e., shift) an interval by a given vector.
-
-### Input
-
-- `x` -- interval
-- `v` -- translation vector
-
-### Output
-
-A translated interval.
-
-### Algorithm
-
-We add the vector to the left and right of the interval.
 
 ### Notes
 
