@@ -5,7 +5,7 @@
 
 ### Algorithm
 
-``I1 ∩ I2 ≠ ∅`` iff there is a gap between the left-most point of the second
+``I1 ∩ I2 = ∅`` iff there is a gap between the left-most point of the second
 interval and the right-most point of the first interval, or vice-versa.
 
 A witness is computed by taking the maximum over the left-most points of each
