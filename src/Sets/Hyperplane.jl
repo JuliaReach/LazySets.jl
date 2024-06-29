@@ -720,7 +720,7 @@ function load_symengine_hyperplane()
 
             # treats the 4 in :(2*x1 = 4)
             rhs = :args in fieldnames(typeof(expr.args[2])) ? convert(Basic, expr.args[2].args[2]) :
-                convert(Basic, expr.args[2])
+                  convert(Basic, expr.args[2])
 
             # a1 x1 + ... + an xn + K = 0
             eq = lhs - rhs
