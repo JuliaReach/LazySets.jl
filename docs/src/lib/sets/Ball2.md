@@ -21,6 +21,8 @@ translate!(::Ball2, ::AbstractVector)
 chebyshev_center_radius(::Ball2)
 volume(::Ball2)
 reflect(::Ball2)
+isdisjoint(::Ball2, ::Ball2, ::Bool=false)
+⊆(::Ball2, ::Ball2, ::Bool=false)
 ```
 
 ```@meta
