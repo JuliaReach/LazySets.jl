@@ -1,6 +1,6 @@
 module Ball2Module
 
-using Reexport
+using Reexport, Requires
 
 using ..LazySets: AbstractBallp, _witness_result_empty
 using Random: AbstractRNG, GLOBAL_RNG
@@ -41,5 +41,7 @@ include("issubset.jl")
 function ○(c::VN, r::N) where {N<:AbstractFloat,VN<:AbstractVector{N}}
     return Ball2(c, r)
 end
+
+include("init.jl")
 
 end  # module
