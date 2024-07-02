@@ -1,11 +1,16 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.Ball1Module
 ```
 
 # [Manhattan-norm ball (Ball1)](@id def_Ball1)
 
 ```@docs
 Ball1
+```
+
+## Operations
+
+```@docs
 center(::Ball1)
 σ(::AbstractVector, ::Ball1)
 ρ(::AbstractVector, ::Ball1)
