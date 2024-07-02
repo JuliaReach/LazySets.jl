@@ -10,7 +10,8 @@ using ReachabilityBase.Require
 using LinearAlgebra: dot, axpby!
 
 @reexport import ..API: area, center, isoperationtype, rand, reflect, sample,
-                        volume, ∈, project, scale, ρ, σ, translate!
+                        volume, ∈, project, scale, ρ, σ, translate!,
+                        isdisjoint, ⊆
 @reexport import ..LazySets: ball_norm, chebyshev_center_radius, ○, radius_ball
 @reexport using ..API
 
@@ -34,6 +35,8 @@ include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
 include("volume.jl")
+include("isdisjoint.jl")
+include("issubset.jl")
 
 function ○(c::VN, r::N) where {N<:AbstractFloat,VN<:AbstractVector{N}}
     return Ball2(c, r)
