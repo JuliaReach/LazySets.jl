@@ -1,11 +1,16 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.Ball2Module
 ```
 
 # [Euclidean-norm ball (Ball2)](@id def_Ball2)
 
 ```@docs
 Ball2
+```
+
+## Operations
+
+```@docs
 center(::Ball2)
 ρ(::AbstractVector, ::Ball2)
 σ(::AbstractVector, ::Ball2)
@@ -17,6 +22,11 @@ chebyshev_center_radius(::Ball2)
 volume(::Ball2)
 reflect(::Ball2)
 ```
+
+```@meta
+CurrentModule = LazySets
+```
+
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
