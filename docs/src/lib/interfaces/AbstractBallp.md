@@ -15,6 +15,13 @@ A ball is a centrally-symmetric set with a characteristic p-norm.
 AbstractBallp
 ```
 
+This interface requires to implement the following functions:
+
+```@docs
+radius_ball(::AbstractBallp)
+ball_norm(::AbstractBallp)
+```
+
 This interface defines the following functions:
 
 ```@docs
