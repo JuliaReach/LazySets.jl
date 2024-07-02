@@ -100,7 +100,9 @@ include("Sets/EmptySet/EmptySetModule.jl")
 
 include("Sets/Ball1.jl")
 include("Sets/Ball2.jl")
-include("Sets/BallInf.jl")
+
+include("Sets/BallInf/BallInfModule.jl")
+
 include("Sets/Ballp.jl")
 include("Sets/DensePolynomialZonotope.jl")
 include("Sets/Ellipsoid.jl")
