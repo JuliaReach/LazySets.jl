@@ -1,6 +1,6 @@
 module BallInfModule
 
-using Reexport
+using Reexport, Requires
 
 using ..LazySets: AbstractHyperrectangle, _high_AbstractBallp, _low_AbstractBallp,
                   _ρ_sev_hyperrectangle, _σ_sev_hyperrectangle
@@ -40,6 +40,8 @@ include("scale.jl")
 include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
+
+include("init.jl")
 
 function □(c::VN, r::N) where {N,VN<:AbstractVector{N}}
     return BallInf(c, r)

@@ -1,5 +1,7 @@
 function load_genmat_ballinf_static()
     return quote
+        using StaticArraysCore: SMatrix, SVector, MMatrix
+
         function genmat(B::BallInf{N,SVector{L,N}}) where {L,N}
             if isflat(B)
                 return SMatrix{L,0,N,0}()
