@@ -19,8 +19,9 @@ Evaluation of the support function in the given direction.
 
 Let ``B`` be a ball in the infinity norm with center ``c`` and radius ``r`` and
 let ``d`` be the direction of interest.
-For balls with dimensions less than 30 we use the implementation for
-`AbstractHyperrectangle`, tailored to a `BallInf`, which computes
+For balls with dimensions less than ``$BALLINF_THRESHOLD_ρ`` we use the
+implementation for `AbstractHyperrectangle`, tailored to a `BallInf`, which
+computes
 
 ```math
     ∑_{i=1}^n d_i (c_i + \\textrm{sgn}(d_i) · r)
