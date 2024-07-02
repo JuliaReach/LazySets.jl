@@ -99,7 +99,10 @@ include("Sets/EmptySet/EmptySetModule.jl")
 @reexport using ..EmptySetModule: EmptySet, ∅, _isdisjoint_emptyset
 
 include("Sets/Ball1.jl")
-include("Sets/Ball2.jl")
+
+include("Sets/Ball2/Ball2Module.jl")
+@reexport using ..Ball2Module: Ball2
+
 include("Sets/BallInf.jl")
 include("Sets/Ballp.jl")
 include("Sets/DensePolynomialZonotope.jl")
