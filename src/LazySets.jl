@@ -101,7 +101,10 @@ include("Sets/EmptySet/EmptySetModule.jl")
 include("Sets/Ball1.jl")
 include("Sets/Ball2.jl")
 include("Sets/BallInf.jl")
-include("Sets/Ballp.jl")
+
+include("Sets/Ballp/BallpModule.jl")
+@reexport using ..BallpModule: Ballp
+
 include("Sets/DensePolynomialZonotope.jl")
 include("Sets/Ellipsoid.jl")
 include("Sets/HParallelotope.jl")
