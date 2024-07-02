@@ -1,16 +1,26 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.BallpModule
 ```
 
 # [p-norm ball (Ballp)](@id def_Ballp)
 
 ```@docs
 Ballp
+```
+
+## Operations
+
+```@docs
 center(::Ballp)
 rand(::Type{Ballp})
 translate!(::Ballp, ::AbstractVector)
 reflect(::Ballp)
 ```
+
+```@meta
+CurrentModule = LazySets
+```
+
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
