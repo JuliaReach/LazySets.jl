@@ -1,3 +1,21 @@
+module BallInfModule
+
+using Reexport
+
+using ..LazySets: AbstractHyperrectangle, _high_AbstractBallp, _low_AbstractBallp,
+                  _ρ_sev_hyperrectangle, _σ_sev_hyperrectangle
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: SingleEntryVector
+using ReachabilityBase.Comparison: isapproxzero
+using ReachabilityBase.Distribution: reseed!
+using LinearAlgebra: dot
+
+@reexport import ..API: area, center, isoperationtype, high, low, radius, rand,
+                        reflect, volume, project, scale, ρ, σ, translate!
+@reexport import ..LazySets: ball_norm, isflat, ngens, radius_ball,
+                             radius_hyperrectangle, □
+@reexport using ..API
+
 export BallInf
 
 const BALLINF_THRESHOLD_ρ = 30  # threshold value in `ρ`
@@ -464,3 +482,5 @@ end
 function scale(α::Real, B::BallInf)
     return BallInf(B.center .* α, B.radius * abs(α))
 end
+
+end  # module
