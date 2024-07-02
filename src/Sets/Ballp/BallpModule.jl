@@ -1,3 +1,16 @@
+module BallpModule
+
+using Reexport
+
+using ..LazySets: AbstractBallp, Ball1, Ball2, BallInf
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Distribution: reseed!
+
+@reexport import ..API: center, isoperationtype, rand, reflect, project, scale,
+                        translate!
+@reexport import ..LazySets: ball_norm, radius_ball
+@reexport using ..API
+
 export Ballp
 
 """
@@ -198,3 +211,5 @@ end
 function scale(α::Real, B::Ballp)
     return Ballp(B.p, B.center .* α, B.radius * abs(α))
 end
+
+end  # module
