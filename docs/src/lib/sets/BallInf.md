@@ -1,11 +1,16 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.BallInfModule
 ```
 
 # [Infinity-norm ball (BallInf)](@id def_BallInf)
 
 ```@docs
 BallInf
+```
+
+## Operations
+
+```@docs
 center(::BallInf)
 radius(::BallInf, ::Real=Inf)
 radius_hyperrectangle(::BallInf)
@@ -19,6 +24,11 @@ ngens(::BallInf)
 volume(::BallInf)
 reflect(::BallInf)
 ```
+
+```@meta
+CurrentModule = LazySets
+```
+
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
