@@ -1,16 +1,8 @@
-"""
-    high(x::Interval)
+function high(X::Interval, i::Int)
+    @assert i == 1 "an interval has dimension 1, but the index is $i"
+    return max(X)
+end
 
-Return the higher coordinate of an interval set.
-
-### Input
-
-- `x` -- interval
-
-### Output
-
-A vector with the higher coordinate of the interval.
-"""
-function high(x::Interval)
-    return [x.dat.hi]
+function high(X::Interval)
+    return [max(X)]
 end

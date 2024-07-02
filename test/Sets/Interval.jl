@@ -282,10 +282,79 @@ for N in [Float64, Float32, Rational{Int}]
     I13 = Interval(N(1), N(3))
     I02 = Interval(N(0), N(2))
     I24 = Interval(N(2), N(4))
+    I03 = Interval(N(0), N(3))
+    I14 = Interval(N(1), N(4))
     for I in (I02, I24)
         res, w = ⊆(I13, I, true)
         @test !(⊆(I13, I)) && !res && w ∈ I13 && w ∉ I
     end
     res, w = ⊆(I13, I13, true)
     @test ⊆(I13, I13) && res && w == N[]
+    # isstrictsubset
+    for I in (I02, I24, I13)
+        res, w = ⊂(I13, I, true)
+        @test !(⊂(I13, I)) && !res && w == N[]
+    end
+    for I in (I03, I14)
+        res, w = ⊂(I13, I, true)
+        @test ⊂(I13, I) && res && w ∈ I && w ∉ I13
+    end
+
+    # permute
+    @test permute(x, [1]) == x
+    @test_throws AssertionError permute(x, Int[])
+    @test_throws AssertionError permute(x, Int[2])
+    @test_throws AssertionError permute(x, Int[1, 1])
+
+    # project
+    @test project(x, [1]) == x
+    @test_throws AssertionError project(x, Int[])
+    @test_throws AssertionError project(x, Int[2])
+    @test_throws AssertionError project(x, Int[1, 1])
+
+    # isapprox
+    @test x ≈ x ≈ translate(x, [1e-8])
+    @test !(x ≈ translate(x, [1e-4]))
+
+    # convex_hull & linear_combination
+    I1 = Interval(N(0), N(1))
+    I2 = Interval(N(2), N(3))
+    @test convex_hull(I1, I2) == linear_combination(I1, I2) == Interval(N(0), N(3))
+
+    # complement
+    C = complement(I2)
+    L = HalfSpace(N[1], N(2))
+    H = HalfSpace(N[-1], N(-3))
+    @test length(C) == 2 && ispermutation([C[1], C[2]], [L, H])
+
+    # low, high, extrema
+    @test extrema(I1) == (low(I1), high(I1)) == (N[0], N[1])
+    @test extrema(I1, 1) == (low(I1, 1), high(I1, 1)) == (N(0), N(1))
+    @test_throws AssertionError low(I1, 2)
+    @test_throws AssertionError high(I1, 2)
+    @test_throws AssertionError extrema(I1, 2)
+
+    # norm
+    @test norm(I1) == N(1)
+    @test norm(Interval(N(-2), N(1))) == N(2)
+
+    # volume
+    @test volume(I1) == 1
+    @test volume(Interval(N(-2), N(1))) == N(3)
+
+    # affine_map
+    M = hcat(N[2])
+    v = N[-3]
+    @test affine_map(M, I1, v) == Interval(N(-3), N(-1))
+
+    # exponential_map
+    @test exponential_map(M, I1) == Interval(N(0), N(exp(N(2))))
+
+    # isequivalent
+    @test isequivalent(I1, I1) && !isequivalent(I1, I2)
+
+    # distance
+    @test distance(I1, I2) == distance(I2, I1) == N(1)
+    I3 = Interval(N(1//2), N(2))
+    @test distance(I1, I3) == distance(I2, I3) == distance(I1, I1) == N(0)
 end

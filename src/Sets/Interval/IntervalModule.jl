@@ -12,11 +12,12 @@ using ReachabilityBase.Comparison
 using ReachabilityBase.Distribution: reseed!
 import IntervalArithmetic as IA
 
-@reexport import ..API: an_element, center, constraints_list, diameter, dim, high, ∈,
-                        isoperationtype, linear_map, low, rand, rectify, reflect, scale, ρ, σ,
-                        translate, vertices_list,
-                        difference, intersection, isdisjoint, ⊆, minkowski_difference,
-                        minkowski_sum
+@reexport import ..API: affine_map, an_element, center, complement, constraints_list,
+                        convex_hull, diameter, dim, exponential_map, extrema, high, ∈,
+                        isoperationtype, linear_map, low, norm, permute, project, rand,
+                        rectify, reflect, scale, ρ, σ, translate, vertices_list, volume,
+                        difference, distance, intersection, ≈, isdisjoint, isequivalent,
+                        ⊂, ⊆, minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens, plot_recipe,
                              radius_hyperrectangle, split
 import Base: convert, -, *, min, max
@@ -25,20 +26,28 @@ export Interval
 
 include("Interval.jl")
 
+include("affine_map.jl")
 include("an_element.jl")
 include("center.jl")
 include("chebyshev_center_radius.jl")
+include("complement.jl")
 include("constraints_list.jl")
 include("convert.jl")
+include("convex_hull.jl")
 include("diameter.jl")
 include("dim.jl")
+include("exponential_map.jl")
+include("extrema.jl")
 include("high.jl")
 include("in.jl")
 include("isflat.jl")
+include("isoperationtype.jl")
 include("linear_map.jl")
 include("low.jl")
-include("isoperationtype.jl")
 include("ngens.jl")
+include("norm.jl")
+include("permute.jl")
+include("project.jl")
 include("radius.jl")
 include("radius_hyperrectangle.jl")
 include("rand.jl")
@@ -50,10 +59,15 @@ include("support_vector.jl")
 include("support_function.jl")
 include("translate.jl")
 include("vertices_list.jl")
+include("volume.jl")
 
 include("difference.jl")
+include("distance.jl")
 include("intersection.jl")
+include("isapprox.jl")
 include("isdisjoint.jl")
+include("isequivalent.jl")
+include("isstrictsubset.jl")
 include("issubset.jl")
 include("minkowski_difference.jl")
 include("minkowski_sum.jl")

@@ -1,16 +1,8 @@
-"""
-    low(x::Interval)
+function low(X::Interval, i::Int)
+    @assert i == 1 "an interval has dimension 1, but the index is $i"
+    return min(X)
+end
 
-Return the lower coordinate of an interval set.
-
-### Input
-
-- `x` -- interval
-
-### Output
-
-A vector with the lower coordinate of the interval.
-"""
-function low(x::Interval)
-    return [x.dat.lo]
+function low(X::Interval)
+    return [min(X)]
 end
