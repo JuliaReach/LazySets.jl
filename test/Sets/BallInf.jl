@@ -80,6 +80,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test ρ(N[-1, -1], B) == N(-1)
     @test ρ(N[-1, 0], B) == N(0)
     @test ρ(N[-1, 1], B) == N(3)
+    # high dimension
+    Bh = BallInf(ones(N, 60), N(1))
+    @test ρ(ones(N, 60), Bh) == N(120)
 
     # boundedness
     @test isbounded(b)
