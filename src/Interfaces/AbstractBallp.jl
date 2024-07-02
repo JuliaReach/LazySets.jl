@@ -30,6 +30,36 @@ they also implement other interfaces and hence cannot be subtypes: `Ball1` and
 """
 abstract type AbstractBallp{N} <: AbstractCentrallySymmetric{N} end
 
+"""
+    radius_ball(B::AbstractBallp)
+
+Compute the radius of a p-norm ball.
+
+### Input
+
+- `B` -- p-norm ball
+
+### Output
+
+A number representing the radius.
+"""
+function radius_ball(::AbstractBallp) end
+
+"""
+    ball_norm(B::AbstractBallp)
+
+Determine the norm (p) of a p-norm ball.
+
+### Input
+
+- `B` -- p-norm ball
+
+### Output
+
+A number representing the norm.
+"""
+function ball_norm(::AbstractBallp) end
+
 function low(B::AbstractBallp)
     return _low_AbstractBallp(B)
 end
