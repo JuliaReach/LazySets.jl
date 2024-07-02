@@ -21,6 +21,7 @@ import IntervalArithmetic as IA
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens, plot_recipe,
                              radius_hyperrectangle, split
 import Base: convert, -, *, min, max
+@reexport using ..API
 
 export Interval
 
