@@ -102,6 +102,7 @@ include("Sets/Ball1/Ball1Module.jl")
 @reexport using ..Ball1Module: Ball1
 
 include("Sets/Ball2/Ball2Module.jl")
+@reexport using ..Ball2Module: Ball2
 
 include("Sets/BallInf/BallInfModule.jl")
 @reexport using ..BallInfModule: BallInf

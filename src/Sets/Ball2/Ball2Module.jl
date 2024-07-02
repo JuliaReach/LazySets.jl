@@ -1,3 +1,19 @@
+module Ball2Module
+
+using Reexport
+
+using ..LazySets: AbstractBallp, _witness_result_empty
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Comparison: _leq, isapproxzero
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Require
+using LinearAlgebra: dot, axpby!
+
+@reexport import ..API: area, center, isoperationtype, rand, reflect, sample,
+                        volume, ∈, project, scale, ρ, σ, translate!
+@reexport import ..LazySets: ball_norm, chebyshev_center_radius, ○, radius_ball
+@reexport using ..API
+
 export Ball2
 
 """
@@ -405,3 +421,5 @@ end
 function scale(α::Real, B::Ball2)
     return Ball2(B.center .* α, B.radius * abs(α))
 end
+
+end  # module
