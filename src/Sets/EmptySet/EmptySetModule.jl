@@ -15,6 +15,7 @@ using ReachabilityBase.Iteration: EmptyIterator
                         volume,
                         convex_hull, intersection, isdisjoint, ⊆
 @reexport import ..LazySets: chebyshev_center_radius, plot_recipe
+@reexport using ..API
 
 export EmptySet, ∅
 
