@@ -38,7 +38,6 @@ LazySets.read_gen(::String)
 
 ```@docs
 _sample_unit_nsphere_muller!
-_sample_unit_nball_muller!
 sample
 LazySets.AbstractSampler
 LazySets.CombinedSampler

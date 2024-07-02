@@ -83,3 +83,11 @@ Inherited from [`AbstractBallp`](@ref):
 * [`high`](@ref high(::AbstractBallp, ::Int))
 * [`low`](@ref low(::AbstractBallp, ::Int))
 * `minkowski_sum`
+
+```@meta
+CurrentModule = LazySets.Ball2Module
+```
+
+```@docs
+_sample_unit_nball_muller!
+```
