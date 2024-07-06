@@ -355,6 +355,6 @@ for N in [Float64, Float32, Rational{Int}]
 
     # distance
     @test distance(I1, I2) == distance(I2, I1) == N(1)
-    I3 = Interval(N(1//2), N(2))
+    I3 = Interval(N(1 // 2), N(2))
     @test distance(I1, I3) == distance(I2, I3) == distance(I1, I1) == N(0)
 end
