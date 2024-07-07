@@ -110,8 +110,9 @@ include("Sets/BallInf/BallInfModule.jl")
 include("Sets/Ballp/BallpModule.jl")
 @reexport using ..BallpModule: Ballp
 
+include("Sets/Ellipsoid/EllipsoidModule.jl")
+
 include("Sets/DensePolynomialZonotope.jl")
-include("Sets/Ellipsoid.jl")
 include("Sets/HParallelotope.jl")
 include("Sets/HPolygon.jl")
 include("Sets/HPolygonOpt.jl")
