@@ -102,7 +102,10 @@ include("Sets/Ball1/Ball1Module.jl")
 @reexport using ..Ball1Module: Ball1
 
 include("Sets/Ball2.jl")
-include("Sets/BallInf.jl")
+
+include("Sets/BallInf/BallInfModule.jl")
+@reexport using ..BallInfModule: BallInf
+
 include("Sets/Ballp.jl")
 include("Sets/DensePolynomialZonotope.jl")
 include("Sets/Ellipsoid.jl")
