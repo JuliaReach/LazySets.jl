@@ -34,7 +34,6 @@ Undocumented implementations:
 * [`low`](@ref low(::LazySet, ::Int))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`scale`](@ref scale(::Real, ::LazySet))
-* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
 ```@meta
 CurrentModule = LazySets
