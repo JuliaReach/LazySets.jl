@@ -18,7 +18,7 @@ Given an ellipsoid ``⟨c, Q⟩`` and a matrix ``M``, the linear map yields the
 ellipsoid ``⟨M c, M Q Mᵀ⟩``.
 """
 function linear_map(M::AbstractMatrix, E::Ellipsoid)
-    c = _linear_map_center(M, E)
+    c = M * center(E)
     Q = _linear_map_shape_matrix(M, E)
     return Ellipsoid(c, Q)
 end

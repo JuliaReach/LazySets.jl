@@ -1403,10 +1403,6 @@ function linear_map(a::Number, X::LazySet; kwargs...)
     return scale(a, X; kwargs...)
 end
 
-function _linear_map_center(M::AbstractMatrix, X::LazySet)
-    return M * center(X)
-end
-
 """
 ### Algorithm
 
