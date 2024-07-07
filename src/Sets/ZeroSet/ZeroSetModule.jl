@@ -1,3 +1,16 @@
+module ZeroSetModule
+
+using Reexport
+
+using ..LazySets: AbstractSingleton, Singleton
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Distribution: reseed!
+
+@reexport import ..API: dim, isoperationtype, rand, rectify, reflect, ∈,
+                        linear_map, scale, scale!, ρ, translate
+@reexport import ..LazySets: element
+@reexport using ..API
+
 export ZeroSet
 
 """
@@ -232,3 +245,5 @@ end
 function scale!(::Real, Z::ZeroSet)
     return Z
 end
+
+end  # module

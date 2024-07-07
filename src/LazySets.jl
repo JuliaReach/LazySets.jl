@@ -132,6 +132,7 @@ include("Sets/VPolytope.jl")
 include("Sets/Tetrahedron.jl")
 
 include("Sets/ZeroSet/ZeroSetModule.jl")
+@reexport using ..ZeroSetModule: ZeroSet
 
 include("Sets/Zonotope.jl")
 

@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.ZeroSetModule
 ```
 
 # [Origin (ZeroSet)](@id def_ZeroSet)
@@ -17,6 +17,11 @@ translate(::ZeroSet, ::AbstractVector)
 rectify(::ZeroSet)
 reflect(::ZeroSet)
 ```
+
+```@meta
+CurrentModule = LazySets
+```
+
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
