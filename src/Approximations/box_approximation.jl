@@ -54,6 +54,9 @@ function box_approximation(S::LazySet{N}) where {N}
     r = Vector{N}(undef, n)
     @inbounds for i in 1:n
         lo, hi = extrema(S, i)
+        if isinf(lo) || isinf(hi)
+            throw(ArgumentError("the box approximation of an unbounded set is undefined"))
+        end
         ri = (hi - lo) / 2
         if ri < zero(N)
             if !_geq(ri, zero(N))
