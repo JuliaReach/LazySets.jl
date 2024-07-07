@@ -65,6 +65,9 @@ for N in [Float64, Float32]
     # unicode constructor
     @test ○(center(E), shape_matrix(E)) == E
 
+    # isoperationtype
+    @test !isoperationtype(Ellipsoid)
+
     # boundedness
     @test isbounded(E)
 
