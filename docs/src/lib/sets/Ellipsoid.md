@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.EllipsoidModule
 ```
 
 # [Ellipsoid](@id def_Ellipsoid)
@@ -15,6 +15,11 @@ rand(::Type{Ellipsoid})
 translate!(::Ellipsoid, ::AbstractVector)
 linear_map(::AbstractMatrix, ::Ellipsoid)
 ```
+
+```@meta
+CurrentModule = LazySets
+```
+
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))

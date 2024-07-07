@@ -1,3 +1,18 @@
+module EllipsoidModule
+
+using Reexport
+
+using ..LazySets: AbstractCentrallySymmetric
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Arrays: inner
+using LinearAlgebra: dot, I, checksquare, isposdef
+
+@reexport import ..API: center, isoperationtype, rand, affine_map, ∈,
+                        linear_map, ρ, σ, translate!
+@reexport import ..LazySets: ○
+@reexport using ..API
+
 export Ellipsoid,
        shape_matrix
 
@@ -372,3 +387,5 @@ function affine_map(M::AbstractMatrix, E::Ellipsoid, v::AbstractVector)
     Q = _linear_map_shape_matrix(M, E)
     return Ellipsoid(c + v, Q)
 end
+
+end  # module
