@@ -9,6 +9,9 @@ for N in [Float64, Rational{Int}, Float32]
     # dimension
     @test dim(l) == 2
 
+    # isoperationtype
+    @test !isoperationtype(LineSegment)
+
     # support vector
     @test σ(N[1, 1], l) == q
     @test σ(N[0, 1], l) == q
