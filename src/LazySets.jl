@@ -121,13 +121,13 @@ include("Sets/Hyperplane.jl")
 include("Sets/Hyperrectangle.jl")
 include("Sets/Line2D.jl")
 include("Sets/Line.jl")
+include("Sets/Polygon.jl")
+include("Sets/RotatedHyperrectangle.jl")
+include("Sets/Singleton.jl")
 
 include("Sets/LineSegment/LineSegmentModule.jl")
 @reexport using ..LineSegmentModule: LineSegment
 
-include("Sets/Polygon.jl")
-include("Sets/RotatedHyperrectangle.jl")
-include("Sets/Singleton.jl")
 include("Sets/SimpleSparsePolynomialZonotope.jl")
 include("Sets/SparsePolynomialZonotope.jl")
 include("Sets/VPolygon.jl")

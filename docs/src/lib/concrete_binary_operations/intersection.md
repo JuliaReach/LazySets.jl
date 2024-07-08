@@ -28,7 +28,6 @@ intersection(::CartesianProductArray, ::CartesianProductArray)
 intersection(::LinearMap, ::LazySet)
 intersection(::Union{CartesianProduct,CartesianProductArray}, ::AbstractPolyhedron)
 intersection(::LineSegment, ::Line2D)
-intersection(::LineSegment, ::LineSegment)
 intersection(::AbstractZonotope{N}, ::HalfSpace{N}) where {N}
 intersection(::Star, ::HalfSpace)
 intersection!(::Star, ::HalfSpace)

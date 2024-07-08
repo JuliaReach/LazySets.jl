@@ -21,6 +21,7 @@ vertices_list(::LineSegment)
 σ(::AbstractVector, ::LineSegment)
 ρ(::AbstractVector, ::LineSegment)
 translate(::LineSegment, ::AbstractVector)
+intersection(::LineSegment, ::LineSegment)
 isdisjoint(::LineSegment, ::LineSegment)
 ```
 
