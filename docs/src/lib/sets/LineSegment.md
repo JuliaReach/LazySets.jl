@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.LineSegmentModule
 ```
 
 # [Line segment (LineSegment)](@id def_LineSegment)
@@ -22,6 +22,11 @@ generators(::LineSegment)
 ngens(::LineSegment)
 genmat(::LineSegment)
 ```
+
+```@meta
+CurrentModule = LazySets
+```
+
 Inherited from [`LazySet`](@ref):
 * [`high`](@ref high(::LazySet))
 * [`low`](@ref low(::LazySet))

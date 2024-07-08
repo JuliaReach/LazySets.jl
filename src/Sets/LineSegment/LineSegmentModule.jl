@@ -1,5 +1,22 @@
-export LineSegment,
-       halfspace_left, halfspace_right
+module LineSegmentModule
+
+using Reexport
+
+using ..LazySets: AbstractZonotope, right_turn
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Comparison: _isapprox, isapproxzero, _leq
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Iteration: EmptyIterator, SingletonIterator
+using LinearAlgebra: dot
+
+@reexport import ..API: an_element, center, constraints_list, dim,
+                        isoperationtype, rand, vertices_list, ∈, scale!, ρ, σ,
+                        translate
+@reexport import ..LazySets: generators, genmat, ngens, halfspace_left,
+                             halfspace_right
+@reexport using ..API
+
+export LineSegment
 
 """
     LineSegment{N, VN<:AbstractVector{N}} <: AbstractZonotope{N}
@@ -412,3 +429,5 @@ function scale!(α::Real, L::LineSegment)
     L.q .*= α
     return L
 end
+
+end  # module
