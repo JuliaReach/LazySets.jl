@@ -125,7 +125,8 @@ include("Sets/Line2D.jl")
 include("Sets/Line.jl")
 include("Sets/Polygon.jl")
 include("Sets/RotatedHyperrectangle.jl")
-include("Sets/Singleton.jl")
+
+include("Sets/Singleton/SingletonModule.jl")
 
 include("Sets/LineSegment/LineSegmentModule.jl")
 @reexport using ..LineSegmentModule: LineSegment
