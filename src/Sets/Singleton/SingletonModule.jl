@@ -1,3 +1,16 @@
+module SingletonModule
+
+using Reexport
+
+using ..LazySets: AbstractSingleton
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Distribution: reseed!
+
+@reexport import ..API: isoperationtype, rand, rectify, linear_map, permute,
+                        project, scale!, translate!
+@reexport import ..LazySets: element, singleton_list
+@reexport using ..API
+
 export Singleton
 
 """
@@ -206,3 +219,5 @@ function scale!(α::Real, S::Singleton)
     S.element .*= α
     return S
 end
+
+end  # module

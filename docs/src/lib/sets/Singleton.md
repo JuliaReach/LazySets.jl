@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.SingletonModule
 ```
 
 # [Singleton](@id def_Singleton)
@@ -15,6 +15,11 @@ permute(::Singleton, ::AbstractVector{Int})
 singleton_list(::Singleton)
 linear_map(::AbstractMatrix, ::Singleton)
 ```
+
+```@meta
+CurrentModule = LazySets
+```
+
 Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))

@@ -127,6 +127,7 @@ include("Sets/Polygon.jl")
 include("Sets/RotatedHyperrectangle.jl")
 
 include("Sets/Singleton/SingletonModule.jl")
+@reexport using ..SingletonModule: Singleton
 
 include("Sets/LineSegment/LineSegmentModule.jl")
 @reexport using ..LineSegmentModule: LineSegment
