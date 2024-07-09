@@ -2,6 +2,14 @@ for N in [Float64, Rational{Int}, Float32]
     # random singleton
     rand(Singleton)
 
+    # constructors
+    S1 = Singleton(N[1, 2])
+    S2 = Singleton(N(1), N(2))
+    @test S1 == S2
+
+    # isoperationtype
+    @test !isoperationtype(Singleton)
+
     # center/radius/high/low/generators
     c = N[0, 0]
     r = N[0, 0]
@@ -175,4 +183,7 @@ for N in [Float64, Rational{Int}, Float32]
     S2 = copy(S)
     scale!(N(2), S2)
     @test scale(N(2), S) == S2 == Singleton(N[0, -2, 4])
+
+    # singleton_list
+    @test singleton_list(S) == [S]
 end
