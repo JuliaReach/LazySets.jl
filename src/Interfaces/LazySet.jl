@@ -961,6 +961,9 @@ pair of sets ``(X, Y)`` we have the identity ``(X ∩ Y)^C = X^C ∪ Y^C``. We c
 apply this identity for each constraint that defines a polyhedral set.
 """
 function complement(X::LazySet)
+    if !is_polyhedral(X)
+        throw(ArgumentError("this implementation requires a polyhedral set"))
+    end
     return UnionSetArray(constraints_list(Complement(X)))
 end
 
