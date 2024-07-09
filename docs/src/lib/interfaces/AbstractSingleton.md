@@ -15,6 +15,12 @@ A singleton is a special hyperrectangle consisting of only one point.
 AbstractSingleton
 ```
 
+This interface requires to implement the following function:
+
+```@docs
+element(::AbstractSingleton)
+```
+
 This interface defines the following functions:
 
 ```@docs
