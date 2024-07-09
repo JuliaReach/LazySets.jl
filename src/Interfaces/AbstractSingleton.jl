@@ -11,6 +11,9 @@ Abstract type for sets with a single value.
 Every concrete `AbstractSingleton` must define the following function:
 
 - `element(::AbstractSingleton)` -- return the single element
+
+The following function is then automatically defined:
+
 - `element(::AbstractSingleton, i::Int)` -- return the single element at index
                                             `i`
 
@@ -24,6 +27,21 @@ julia> subtypes(AbstractSingleton)
 abstract type AbstractSingleton{N} <: AbstractHyperrectangle{N} end
 
 isconvextype(::Type{<:AbstractSingleton}) = true
+
+"""
+    element(S::AbstractSingleton)
+
+Return the element of a set with a single value.
+
+### Input
+
+- `S` -- set with a single value
+
+### Output
+
+The unique element of `S`.
+"""
+function element(::AbstractSingleton) end
 
 """
     element(S::AbstractSingleton, i::Int)
