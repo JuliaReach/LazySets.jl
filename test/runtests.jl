@@ -1,5 +1,26 @@
 using Test
 
+# auxiliary code to skip expensive tests
+begin
+    __test_short = haskey(ENV, "JULIA_PKGEVAL")
+
+    macro ts(arg)
+        if !__test_short
+            quote
+                $(esc(arg))
+            end
+        end
+    end
+
+    macro tv(v1, v2)
+        if __test_short
+            return v1
+        else
+            return @eval vcat($v1, $v2)
+        end
+    end
+end
+
 @testset "LazySets.API" begin
     include("API.jl")
 end
@@ -14,22 +35,24 @@ Random.seed!(1234)
 # ========================
 # Optional dependencies
 # ========================
-import Distributions, ExponentialUtilities, Expokit, IntervalMatrices, Ipopt,
-       MiniQhull, Optim, PkgVersion, RangeEnclosures, SCS, SetProg, TaylorModels
-import IntervalConstraintProgramming as ICP
-import IntervalArithmetic as IA
-using IntervalArithmetic: IntervalBox, interval
-@static if VERSION >= v"1.9"
-    vIA = pkgversion(IA)
-    vGLPK = pkgversion(GLPK)
-else
-    import PkgVersion
-    vIA = PkgVersion.Version(IA)
-    vGLPK = PkgVersion.Version(GLPK)
+@ts begin
+    import Distributions, ExponentialUtilities, Expokit, IntervalMatrices, Ipopt,
+           MiniQhull, Optim, PkgVersion, RangeEnclosures, SCS, SetProg, TaylorModels
+    import IntervalConstraintProgramming as ICP
+    import IntervalArithmetic as IA
+    using IntervalArithmetic: IntervalBox, interval
+    @static if VERSION >= v"1.9"
+        vIA = pkgversion(IA)
+        vGLPK = pkgversion(GLPK)
+    else
+        import PkgVersion
+        vIA = PkgVersion.Version(IA)
+        vGLPK = PkgVersion.Version(GLPK)
+    end
+    using IntervalMatrices: ±, IntervalMatrix
+    using TaylorModels: set_variables, TaylorModelN
+    using Symbolics
 end
-using IntervalMatrices: ±, IntervalMatrix
-using TaylorModels: set_variables, TaylorModelN
-using Symbolics
 
 # ==============================
 # Non-exported helper functions
@@ -38,9 +61,10 @@ using LazySets: _leq, _geq, isapproxzero, _isapprox, _ztol, ispermutation, baset
 using LazySets.ReachabilityBase.Arrays: allequal, inner, is_cyclic_permutation,
                                         isinvertible, SingleEntryVector
 
-global test_suite_basic = true
-global test_suite_polyhedra = true
-global test_suite_plotting = true
+global test_suite_basic = !__test_short
+global test_suite_polyhedra = !__test_short
+global test_suite_plotting = !__test_short
+global test_suite_aqua = !__test_short
 
 if (length(ARGS) == 0) || (ARGS[1] ∈ ("--default", ""))
     # default test suite
@@ -48,18 +72,22 @@ elseif ARGS[1] == "--basic"
     # basic test suite
     test_suite_polyhedra = false
     test_suite_plotting = false
+    test_suite_aqua = false
 elseif ARGS[1] == "--polyhedra"
     # Polyhedra.jl test suite
     test_suite_polyhedra = true
     test_suite_plotting = false
+    test_suite_aqua = false
 elseif ARGS[1] == "--plot"
     # plotting test suite
     test_suite_polyhedra = false
     test_suite_plotting = true
+    test_suite_aqua = false
 elseif ARGS[1] == "--all"
     # complete test suite
     test_suite_polyhedra = true
     test_suite_plotting = true
+    test_suite_aqua = true
 else
     error("unknown parameter 1: $(ARGS[1])")
 end
@@ -332,4 +360,6 @@ if test_suite_plotting
     end
 end
 
-include("Aqua.jl")
+if test_suite_aqua
+    include("Aqua.jl")
+end
