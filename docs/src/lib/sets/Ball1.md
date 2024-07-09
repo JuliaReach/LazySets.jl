@@ -60,6 +60,7 @@ Inherited from [`LazySet`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet)
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
+* [`sample`](@ref sample(::LazySet, ::Int))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
