@@ -5,8 +5,12 @@ for N in [Float64, Rational{Int}, Float32]
     Z = ZeroSet{N}(2)
     B = BallInf(ones(N, 2), N(1))
 
-    # support vector
+    # isoperationtype
+    @test !isoperationtype(ZeroSet)
+
+    # support function & support vector
     d = N[1, 0]
+    @test ρ(d, Z) == zero(N)
     @test σ(d, Z) == zeros(N, 2)
 
     # testing that the zero set is neutral element for the Minkowski sum

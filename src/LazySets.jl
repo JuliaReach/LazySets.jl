@@ -135,7 +135,10 @@ include("Sets/SparsePolynomialZonotope.jl")
 include("Sets/VPolygon.jl")
 include("Sets/VPolytope.jl")
 include("Sets/Tetrahedron.jl")
-include("Sets/ZeroSet.jl")
+
+include("Sets/ZeroSet/ZeroSetModule.jl")
+@reexport using ..ZeroSetModule: ZeroSet
+
 include("Sets/Zonotope.jl")
 
 include("LazyOperations/UnionSet.jl")  # must come before IntervalModule

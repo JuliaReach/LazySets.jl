@@ -435,8 +435,6 @@ for T in [:LazySet, :AbstractPolyhedron, :AbstractPolytope, :AbstractZonotope,
         @commutative minkowski_sum(::ZeroSet, X::$T) = X
     end
 end
-# disambiguation
-minkowski_sum(Z::ZeroSet, ::ZeroSet) = Z
 
 """
     minkowski_sum(P1::SimpleSparsePolynomialZonotope,
