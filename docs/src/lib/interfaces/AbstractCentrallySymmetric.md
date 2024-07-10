@@ -21,14 +21,14 @@ AbstractCentrallySymmetric
 This interface defines the following functions:
 
 ```@docs
-dim(::AbstractCentrallySymmetric)
-isbounded(::AbstractCentrallySymmetric)
-isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N}
 an_element(::AbstractCentrallySymmetric)
-isempty(::AbstractCentrallySymmetric)
+dim(::AbstractCentrallySymmetric)
 center(::AbstractCentrallySymmetric, ::Int)
-extrema(::AbstractCentrallySymmetric, ::Int)
 extrema(::AbstractCentrallySymmetric)
+extrema(::AbstractCentrallySymmetric, ::Int)
+isbounded(::AbstractCentrallySymmetric)
+isempty(::AbstractCentrallySymmetric)
+isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N}
 ```
 
 ## Implementations

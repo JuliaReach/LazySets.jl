@@ -19,23 +19,23 @@ AbstractZonotope
 This interface defines the following functions:
 
 ```@docs
-ngens(::AbstractZonotope)
-genmat_fallback(::AbstractZonotope{N}) where {N}
-generators_fallback(::AbstractZonotope)
-ρ(::AbstractVector, ::AbstractZonotope)
-σ(::AbstractVector, ::AbstractZonotope)
-∈(::AbstractVector, ::AbstractZonotope)
-linear_map(::AbstractMatrix, ::AbstractZonotope)
-split(::AbstractZonotope, ::Int)
-split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int})
 constraints_list(::AbstractZonotope)
 constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat}
-vertices_list(::AbstractZonotope)
+generators_fallback(::AbstractZonotope)
+genmat_fallback(::AbstractZonotope{N}) where {N}
+ngens(::AbstractZonotope)
 order(::AbstractZonotope)
-togrep(::AbstractZonotope)
-remove_redundant_generators(::AbstractZonotope)
-reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05())
 reflect(::AbstractZonotope)
+remove_redundant_generators(::AbstractZonotope)
+togrep(::AbstractZonotope)
+vertices_list(::AbstractZonotope)
+∈(::AbstractVector, ::AbstractZonotope)
+linear_map(::AbstractMatrix, ::AbstractZonotope)
+reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05())
+split(::AbstractZonotope, ::Int)
+split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int})
+ρ(::AbstractVector, ::AbstractZonotope)
+σ(::AbstractVector, ::AbstractZonotope)
 ```
 
 ## Order-reduction methods

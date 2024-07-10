@@ -18,17 +18,17 @@ AbstractAffineMap
 This interface defines the following functions:
 
 ```@docs
-dim(::AbstractAffineMap)
-σ(::AbstractVector, ::AbstractAffineMap)
-ρ(::AbstractVector, ::AbstractAffineMap)
 an_element(::AbstractAffineMap)
-isempty(::AbstractAffineMap)
-isbounded(::AbstractAffineMap)
-∈(::AbstractVector, ::AbstractAffineMap)
 center(::AbstractAffineMap)
-vertices_list(::AbstractAffineMap)
 constraints_list(::AbstractAffineMap)
+dim(::AbstractAffineMap)
+isbounded(::AbstractAffineMap)
+isempty(::AbstractAffineMap)
+∈(::AbstractVector, ::AbstractAffineMap)
 linear_map(::AbstractMatrix, ::AbstractAffineMap)
+ρ(::AbstractVector, ::AbstractAffineMap)
+σ(::AbstractVector, ::AbstractAffineMap)
+vertices_list(::AbstractAffineMap)
 ```
 
 ## Implementations

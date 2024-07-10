@@ -20,28 +20,28 @@ This interface defines the following functions:
 
 ```@docs
 □(c, r)
-norm(::AbstractHyperrectangle, ::Real=Inf)
-radius(::AbstractHyperrectangle, ::Real=Inf)
-σ(::AbstractVector, ::AbstractHyperrectangle)
-ρ(::AbstractVector, ::AbstractHyperrectangle)
-∈(::AbstractVector, ::AbstractHyperrectangle)
-vertices_list(::AbstractHyperrectangle)
 constraints_list(::AbstractHyperrectangle{N}) where {N}
-high(::AbstractHyperrectangle)
-high(::AbstractHyperrectangle, ::Int)
-low(::AbstractHyperrectangle)
-low(::AbstractHyperrectangle, ::Int)
 extrema(::AbstractHyperrectangle)
 extrema(::AbstractHyperrectangle, ::Int)
-isflat(::AbstractHyperrectangle)
-split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N}
 generators(::AbstractHyperrectangle)
 genmat(::AbstractHyperrectangle)
+high(::AbstractHyperrectangle)
+high(::AbstractHyperrectangle, ::Int)
+isflat(::AbstractHyperrectangle)
+low(::AbstractHyperrectangle)
+low(::AbstractHyperrectangle, ::Int)
 ngens(::AbstractHyperrectangle{N}) where {N}
+norm(::AbstractHyperrectangle, ::Real=Inf)
+radius(::AbstractHyperrectangle, ::Real=Inf)
 rectify(::AbstractHyperrectangle)
+reflect(::AbstractHyperrectangle)
+vertices_list(::AbstractHyperrectangle)
 volume(::AbstractHyperrectangle)
 distance(::AbstractVector, ::AbstractHyperrectangle{N}; ::Real=N(2)) where {N}
-reflect(::AbstractHyperrectangle)
+∈(::AbstractVector, ::AbstractHyperrectangle)
+split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N}
+ρ(::AbstractVector, ::AbstractHyperrectangle)
+σ(::AbstractVector, ::AbstractHyperrectangle)
 ```
 
 ## Implementations
