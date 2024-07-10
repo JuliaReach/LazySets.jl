@@ -16,6 +16,13 @@ center and a collection of generators.
 AbstractZonotope
 ```
 
+This interface requires to implement the following functions:
+
+```@docs
+generators(::AbstractZonotope)
+genmat(::AbstractZonotope)
+```
+
 This interface defines the following functions:
 
 ```@docs

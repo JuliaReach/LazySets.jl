@@ -32,9 +32,9 @@ See [`Zonotope`](@ref) for a standard implementation of this interface.
 
 Every concrete `AbstractZonotope` must define the following functions:
 
-- `genmat(::AbstractZonotope)` -- return the generator matrix
-
 - `generators(::AbstractZonotope)` -- return an iterator over the generators
+
+- `genmat(::AbstractZonotope)` -- return a generator matrix
 
 Since the functions `genmat` and `generators` can be defined in terms of each
 other, it is sufficient to only genuinely implement one of them and let the
@@ -54,6 +54,36 @@ julia> subtypes(AbstractZonotope)
 ```
 """
 abstract type AbstractZonotope{N} <: AbstractCentrallySymmetricPolytope{N} end
+
+"""
+    generators(Z::AbstractZonotope)
+
+Return an iterator over the generators of a zonotopic set.
+
+### Input
+
+- `Z` -- zonotopic set
+
+### Output
+
+An iterator over the generators of `Z`.
+"""
+function generators(::AbstractZonotope) end
+
+"""
+    genmat(Z::AbstractZonotope)
+
+Return a generator matrix of a zonotopic set.
+
+### Input
+
+- `Z` -- zonotopic set
+
+### Output
+
+A generator matrix of `Z`.
+"""
+function genmat(::AbstractZonotope) end
 
 """
     genmat_fallback(Z::AbstractZonotope{N};
