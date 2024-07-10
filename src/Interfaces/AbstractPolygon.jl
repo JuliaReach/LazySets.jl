@@ -11,8 +11,8 @@ Abstract type for convex polygons (i.e., two-dimensional polytopes).
 
 Every concrete `AbstractPolygon` must define the following functions:
 
-- `tovrep(::AbstractPolygon{N})` -- transform into vertex representation
-- `tohrep(::AbstractPolygon{N})` -- transform into constraint representation
+- `tohrep(::AbstractPolygon)` -- transform into constraint representation
+- `tovrep(::AbstractPolygon)` -- transform into vertex representation
 
 The subtypes of `AbstractPolygon` (including abstract interfaces):
 
@@ -24,6 +24,36 @@ julia> subtypes(AbstractPolygon)
 ```
 """
 abstract type AbstractPolygon{N} <: AbstractPolytope{N} end
+
+"""
+    tohrep(P::AbstractPolygon)
+
+Convert a convex polygon to constraint representation.
+
+### Input
+
+- `P` -- convex polygon
+
+### Output
+
+A polygon in constraint representation.
+"""
+function tohrep(::AbstractPolygon) end
+
+"""
+    tovrep(P::AbstractPolygon)
+
+Convert a convex polygon to vertex representation.
+
+### Input
+
+- `P` -- convex polygon
+
+### Output
+
+A polygon in vertex representation.
+"""
+function tovrep(::AbstractPolygon) end
 
 isconvextype(::Type{<:AbstractPolygon}) = true
 
