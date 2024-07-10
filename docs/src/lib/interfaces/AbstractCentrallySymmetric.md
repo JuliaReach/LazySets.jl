@@ -18,6 +18,19 @@ Note that there is a special interface combination
 AbstractCentrallySymmetric
 ```
 
+This interface requires to implement the following functions:
+
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+center(::LazySet)
+center(::LazySet, ::Int)
+```
+```@meta
+CurrentModule = LazySets
+```
+
 This interface defines the following functions:
 
 ```@docs
