@@ -11,11 +11,31 @@ CurrentModule = LazySets
 
 ```@docs
 AbstractPolynomialZonotope
+```
+
+This interface requires to implement the following functions:
+
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+center(::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+order(::AbstractPolynomialZonotope)
+```
+
+This interface defines the following functions:
+
+```@docs
 dim(::AbstractPolynomialZonotope)
 ```
 
 ## Implementations
 
-* [Polynomial zonotope (DensePolynomialZonotope)](@ref def_DensePolynomialZonotope)
-* [Simplified sparse polynomial zonotope (SimpleSparsePolynomialZonotope)](@ref def_SimpleSparsePolynomialZonotope)
+* [Dense polynomial zonotope (DensePolynomialZonotope)](@ref def_DensePolynomialZonotope)
 * [Sparse polynomial zonotope (SparsePolynomialZonotope)](@ref def_SparsePolynomialZonotope)
+* [Simplified sparse polynomial zonotope (SimpleSparsePolynomialZonotope)](@ref def_SimpleSparsePolynomialZonotope)
