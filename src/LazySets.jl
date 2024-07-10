@@ -123,7 +123,9 @@ include("Sets/HPolyhedron.jl")
 include("Sets/Hyperplane.jl")
 include("Sets/Hyperrectangle.jl")
 include("Sets/Line2D.jl")
-include("Sets/Line.jl")
+
+include("Sets/Line/LineModule.jl")
+
 include("Sets/Polygon.jl")
 include("Sets/RotatedHyperrectangle.jl")
 
