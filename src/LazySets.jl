@@ -93,7 +93,7 @@ include("Interfaces/AbstractBallp.jl")
 # =============================
 # Types representing basic sets
 # =============================
-include("Sets/Universe.jl")
+include("Sets/Universe/UniverseModule.jl")
 
 include("Sets/EmptySet/EmptySetModule.jl")
 @reexport using ..EmptySetModule: EmptySet, ∅, _isdisjoint_emptyset
