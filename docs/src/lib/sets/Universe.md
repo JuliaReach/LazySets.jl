@@ -1,11 +1,16 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.UniverseModule
 ```
 
 # [Universe](@id def_Universe)
 
 ```@docs
 Universe
+```
+
+## Operations
+
+```@docs
 dim(::Universe)
 ρ(::AbstractVector, ::Universe)
 σ(::AbstractVector, ::Universe)

@@ -1,3 +1,22 @@
+module UniverseModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractPolyhedron, HalfSpace, default_polyhedra_backend
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Iteration: EmptyIterator
+using ReachabilityBase.Require
+
+@reexport import ..API: an_element, complement, constraints, constraints_list,
+                        diameter, dim, isbounded, isboundedtype, isempty,
+                        isoperationtype, isuniversal, norm, radius, rand,
+                        reflect, ∈, permute, project, scale, scale!, ρ, σ,
+                        translate, translate!
+@reexport import ..LazySets: constrained_dimensions, linear_map_inverse,
+                             tosimplehrep
+@reexport using ..API
+
 export Universe
 
 """
@@ -402,6 +421,8 @@ Return the complement of an universe.
 The empty set of the same dimension.
 """
 function complement(U::Universe{N}) where {N}
+    require(@__MODULE__, :LazySets; fun_name="complement")
+
     return EmptySet{N}(dim(U))
 end
 
@@ -424,6 +445,8 @@ end
 
 function scale(α::Real, U::Universe{N}) where {N}
     if iszero(α)
+        require(@__MODULE__, :LazySets; fun_name="scale")
+
         return ZeroSet{N}(dim(U))
     end
     return U
@@ -435,3 +458,7 @@ function scale!(α::Real, U::Universe)
     end
     return U
 end
+
+include("init.jl")
+
+end  # module
