@@ -1,4 +1,25 @@
-export Line
+module LineModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractPolyhedron, HalfSpace, @commutative
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: ismultiple
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Comparison: _isapprox, isapproxzero
+using ReachabilityBase.Require
+import LinearAlgebra
+using LinearAlgebra: dot, nullspace
+
+@reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
+                        isoperationtype, isuniversal, project, rand, distance,
+                        ∈, linear_map, ρ, σ, translate!
+@reexport import ..LazySets: normalize
+@reexport import ..LinearAlgebra: normalize!
+@reexport using ..API
+
+export Line,
+       direction
 
 """
     Line{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
@@ -476,6 +497,8 @@ function linear_map(M::AbstractMatrix, L::Line)
     Mp = M * L.p
     Md = M * L.d
     if iszero(Md)
+        require(@__MODULE__, :LazySets; fun_name="linear_map")
+
         return Singleton(Mp)
     end
     return Line(Mp, Md)
@@ -484,10 +507,18 @@ end
 function project(L::Line{N}, block::AbstractVector{Int}; kwargs...) where {N}
     d = L.d[block]
     if iszero(d)
+        require(@__MODULE__, :LazySets; fun_name="project")
+
         return Singleton(L.p[block])  # projected out all nontrivial dimensions
     elseif length(d) == 1
+        require(@__MODULE__, :LazySets; fun_name="project")
+
         return Universe{N}(1)  # special case: 1D line is a universe
     else
         return Line(L.p[block], d)
     end
 end
+
+include("init.jl")
+
+end  # module

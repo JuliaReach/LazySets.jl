@@ -125,6 +125,7 @@ include("Sets/Hyperrectangle.jl")
 include("Sets/Line2D.jl")
 
 include("Sets/Line/LineModule.jl")
+@reexport using ..LineModule: Line, direction
 
 include("Sets/Polygon.jl")
 include("Sets/RotatedHyperrectangle.jl")
