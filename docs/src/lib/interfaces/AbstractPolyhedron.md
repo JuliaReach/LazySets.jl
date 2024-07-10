@@ -16,18 +16,30 @@ necessarily bounded.
 AbstractPolyhedron
 ```
 
+This interface requires to implement the following function:
+
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+constraints_list(::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+
 This interface defines the following functions:
 
 ```@docs
-∈(::AbstractVector, ::AbstractPolyhedron)
-isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N}
-constrained_dimensions(::AbstractPolyhedron)
 an_element(::AbstractPolyhedron{N}) where {N}
+constrained_dimensions(::AbstractPolyhedron)
 isbounded(::AbstractPolyhedron{N}) where {N}
+isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N}
 vertices_list(::AbstractPolyhedron)
+∈(::AbstractVector, ::AbstractPolyhedron)
 project(::AbstractPolyhedron{N}, ::AbstractVector{Int}) where {N}
-LazySets._linear_map_polyhedron
 LazySets._isbounded_stiemke
+LazySets._linear_map_polyhedron
 ```
 
 Some common functions to work with linear constraints:

@@ -18,16 +18,16 @@ AbstractBallp
 This interface requires to implement the following functions:
 
 ```@docs
-radius_ball(::AbstractBallp)
 ball_norm(::AbstractBallp)
+radius_ball(::AbstractBallp)
 ```
 
 This interface defines the following functions:
 
 ```@docs
-σ(::AbstractVector, ::AbstractBallp)
-ρ(::AbstractVector, ::AbstractBallp)
 ∈(::AbstractVector, ::AbstractBallp)
+ρ(::AbstractVector, ::AbstractBallp)
+σ(::AbstractVector, ::AbstractBallp)
 ```
 
 ## Implementations

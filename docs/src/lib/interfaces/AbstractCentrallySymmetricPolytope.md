@@ -20,13 +20,13 @@ AbstractCentrallySymmetricPolytope
 This interface defines the following functions:
 
 ```@docs
-dim(::AbstractCentrallySymmetricPolytope)
 an_element(::AbstractCentrallySymmetricPolytope)
+dim(::AbstractCentrallySymmetricPolytope)
+center(::AbstractCentrallySymmetricPolytope, ::Int)
+extrema(::AbstractCentrallySymmetricPolytope)
+extrema(::AbstractCentrallySymmetricPolytope, ::Int)
 isempty(::AbstractCentrallySymmetricPolytope)
 isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N}
-center(::AbstractCentrallySymmetricPolytope, ::Int)
-extrema(::AbstractCentrallySymmetricPolytope, ::Int)
-extrema(::AbstractCentrallySymmetricPolytope)
 ```
 
 ## Implementations

@@ -18,17 +18,30 @@ Note that there is a special interface combination
 AbstractCentrallySymmetric
 ```
 
+This interface requires to implement the following functions:
+
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+center(::LazySet)
+center(::LazySet, ::Int)
+```
+```@meta
+CurrentModule = LazySets
+```
+
 This interface defines the following functions:
 
 ```@docs
-dim(::AbstractCentrallySymmetric)
-isbounded(::AbstractCentrallySymmetric)
-isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N}
 an_element(::AbstractCentrallySymmetric)
-isempty(::AbstractCentrallySymmetric)
+dim(::AbstractCentrallySymmetric)
 center(::AbstractCentrallySymmetric, ::Int)
-extrema(::AbstractCentrallySymmetric, ::Int)
 extrema(::AbstractCentrallySymmetric)
+extrema(::AbstractCentrallySymmetric, ::Int)
+isbounded(::AbstractCentrallySymmetric)
+isempty(::AbstractCentrallySymmetric)
+isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N}
 ```
 
 ## Implementations

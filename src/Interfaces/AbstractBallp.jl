@@ -11,9 +11,8 @@ See [`Ballp`](@ref) for a standard implementation of this interface.
 
 Every concrete `AbstractBallp` must define the following methods:
 
-- `center(::AbstractBallp)` -- return the center
-- `radius_ball(::AbstractBallp)` -- return the ball radius
 - `ball_norm(::AbstractBallp)` -- return the characteristic norm
+- `radius_ball(::AbstractBallp)` -- return the ball radius
 
 The subtypes of `AbstractBallp`:
 

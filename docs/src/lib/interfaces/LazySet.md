@@ -15,6 +15,18 @@ Every set type in this library is a subtype of the abstract type `LazySet`.
 LazySet
 ```
 
+This interface requires to implement the following function:
+
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+dim(::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+
 ## Plotting
 
 Plotting via the `Plots` package is available for one- or two-dimensional sets.

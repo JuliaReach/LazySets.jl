@@ -25,6 +25,26 @@ julia> subtypes(AbstractPolynomialZonotope)
 """
 abstract type AbstractPolynomialZonotope{N} <: LazySet{N} end
 
+"""
+    order(PZ::AbstractPolynomialZonotope)
+
+Return the order of a polynomial zonotope.
+
+### Input
+
+- `PZ` -- polynomial zonotope
+
+### Output
+
+A rational number representing the order of `PZ`.
+
+### Notes
+
+The order of a polynomial zonotope is defined as the quotient of its number of
+generators and its dimension.
+"""
+function order(::AbstractPolynomialZonotope) end
+
 isconvextype(::Type{<:AbstractPolynomialZonotope}) = false
 isboundedtype(::Type{<:AbstractPolynomialZonotope}) = true
 

@@ -24,24 +24,24 @@ element(::AbstractSingleton)
 This interface defines the following functions:
 
 ```@docs
-σ(::AbstractVector, ::AbstractSingleton)
-ρ(::AbstractVector, ::AbstractSingleton)
-∈(::AbstractVector, ::AbstractSingleton)
 center(::AbstractSingleton)
 center(::AbstractSingleton, ::Int)
 element(::AbstractSingleton, ::Int)
-vertices(::AbstractSingleton{N}) where {N}
-vertices_list(::AbstractSingleton)
-radius_hyperrectangle(::AbstractSingleton{N}) where {N}
-radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N}
+generators(::AbstractSingleton{N}) where {N}
+genmat(::AbstractSingleton{N}) where {N}
 high(::AbstractSingleton)
 high(::AbstractSingleton, ::Int)
 low(::AbstractSingleton)
 low(::AbstractSingleton, ::Int)
-generators(::AbstractSingleton{N}) where {N}
-genmat(::AbstractSingleton{N}) where {N}
 ngens(::AbstractSingleton)
+radius_hyperrectangle(::AbstractSingleton{N}) where {N}
+radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N}
 reflect(::AbstractSingleton)
+vertices(::AbstractSingleton{N}) where {N}
+vertices_list(::AbstractSingleton)
+∈(::AbstractVector, ::AbstractSingleton)
+ρ(::AbstractVector, ::AbstractSingleton)
+σ(::AbstractVector, ::AbstractSingleton)
 plot_recipe(::AbstractSingleton{N}, ::Any=zero(N)) where {N}
 RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::Real=zero(N)) where {N}
 ```

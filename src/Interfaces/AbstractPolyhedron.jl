@@ -9,8 +9,7 @@ Abstract type for compact convex polyhedral sets.
 
 Every concrete `AbstractPolyhedron` must define the following functions:
 
-- `constraints_list(::AbstractPolyhedron{N})` -- return a list of all facet
-    constraints
+- `constraints_list(::AbstractPolyhedron)` -- return a list of all facet constraints
 
 Polyhedra are defined as the intersection of a finite number of closed
 half-spaces.
