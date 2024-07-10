@@ -405,37 +405,6 @@ function complement(U::Universe{N}) where {N}
     return EmptySet{N}(dim(U))
 end
 
-function load_polyhedra_universe() # function to be loaded by Requires
-    return quote
-        # see the interface file init_Polyhedra.jl for the imports
-
-        """
-            polyhedron(U::Universe; [backend]=default_polyhedra_backend(P))
-
-        Return an `HRep` polyhedron from `Polyhedra.jl` given a universe.
-
-        ### Input
-
-        - `U`       -- universe
-        - `backend` -- (optional, default: call `default_polyhedra_backend(P)`)
-                       the backend for polyhedral computations
-
-        ### Output
-
-        An `HRep` polyhedron.
-
-        ### Notes
-
-        For further information on the supported backends see
-        [Polyhedra's documentation](https://juliapolyhedra.github.io/).
-        """
-        function polyhedron(U::Universe; backend=default_polyhedra_backend(U))
-            A, b = tosimplehrep(U)
-            return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
-        end
-    end
-end  # quote / load_polyhedra_universe()
-
 """
     reflect(U::Universe)
 

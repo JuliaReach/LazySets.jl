@@ -25,6 +25,5 @@ translate(::Universe, ::AbstractVector)
 translate!(::Universe, ::AbstractVector)
 permute(::Universe, ::AbstractVector{Int})
 complement(::Universe{N}) where {N}
-polyhedron(::Universe)
 reflect(::Universe)
 ```
