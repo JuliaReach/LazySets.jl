@@ -16,6 +16,18 @@ necessarily bounded.
 AbstractPolyhedron
 ```
 
+This interface requires to implement the following function:
+
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+constraints_list(::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+
 This interface defines the following functions:
 
 ```@docs
