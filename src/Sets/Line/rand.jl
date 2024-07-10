@@ -28,8 +28,8 @@ function rand(::Type{Line};
     rng = reseed!(rng, seed)
     d = randn(rng, N, dim)
     while iszero(d)
-        d = randn(rng, N, dim)
-    end
+        d = randn(rng, N, dim)  # COV_EXCL_LINE
+    end  # COV_EXCL_LINE
     p = randn(rng, N, dim)
     return Line(p, d)
 end

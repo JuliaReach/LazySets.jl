@@ -15,12 +15,25 @@ for N in [Float64, Rational{Int}, Float32]
     @test N[1, 0] ∈ ll && N[1, 1] ∈ ll
     ll = Line(N[1, -1], N(0)) # x == y
     @test N[0, 0] ∈ ll && N[1, 1] ∈ ll
+    @test_throws ArgumentError Line(zeros(N, 2), N(0))
 
     # the lines are the same modulo the sign of the normal vector
     @test l1.p ≈ l2.p && l1.d ≈ -l2.d
 
+    # direction
+    @test direction(l2) == N[1, 0]
+
+    # normalize
+    l3 = Line(N[0, 1], N[2, 0])
+    @test normalize(l3) == Line(N[0, 1], N[1, 0])
+    normalize!(l3)
+    @test l3 == Line(N[0, 1], N[1, 0])
+
     # dimension
     @test dim(l1) == 2
+
+    # isoperationtype
+    @test !isoperationtype(Line)
 
     # support function
     @test ρ(N[0, 1], l1) == N(1)
