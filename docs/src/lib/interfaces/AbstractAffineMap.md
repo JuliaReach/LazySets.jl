@@ -15,6 +15,14 @@ An affine map consists of a linear map and a translation.
 AbstractAffineMap
 ```
 
+This interface requires to implement the following functions:
+
+```@docs
+matrix(::AbstractAffineMap)
+vector(::AbstractAffineMap)
+set(::AbstractAffineMap)
+```
+
 This interface defines the following functions:
 
 ```@docs

@@ -32,6 +32,51 @@ julia> subtypes(AbstractAffineMap)
 """
 abstract type AbstractAffineMap{N,S<:LazySet{N}} <: LazySet{N} end
 
+"""
+    matrix(X::AbstractAffineMap)
+
+Return the matrix of an affine map.
+
+### Input
+
+- `X` -- affine map
+
+### Output
+
+The matrix of `X`.
+"""
+function matrix(::AbstractAffineMap) end
+
+"""
+    vector(X::AbstractAffineMap)
+
+Return the vector of an affine map.
+
+### Input
+
+- `X` -- affine map
+
+### Output
+
+The vector of `X`.
+"""
+function vector(::AbstractAffineMap) end
+
+"""
+    set(X::AbstractAffineMap)
+
+Return the set of an affine map.
+
+### Input
+
+- `X` -- affine map
+
+### Output
+
+The set of `X` before applying the map.
+"""
+function set(::AbstractAffineMap) end
+
 isoperationtype(::Type{<:AbstractAffineMap}) = true
 isconvextype(::Type{<:AbstractAffineMap{N,S}}) where {N,S} = isconvextype(S)
 is_polyhedral(am::AbstractAffineMap) = is_polyhedral(set(am))
