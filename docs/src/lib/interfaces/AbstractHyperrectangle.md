@@ -16,6 +16,12 @@ facets.
 AbstractHyperrectangle
 ```
 
+This interface requires to implement the following function:
+
+```@docs
+radius_hyperrectangle(::AbstractHyperrectangle)
+```
+
 This interface defines the following functions:
 
 ```@docs
@@ -33,6 +39,7 @@ low(::AbstractHyperrectangle, ::Int)
 ngens(::AbstractHyperrectangle{N}) where {N}
 norm(::AbstractHyperrectangle, ::Real=Inf)
 radius(::AbstractHyperrectangle, ::Real=Inf)
+radius_hyperrectangle(::AbstractHyperrectangle, ::Int)
 rectify(::AbstractHyperrectangle)
 reflect(::AbstractHyperrectangle)
 vertices_list(::AbstractHyperrectangle)

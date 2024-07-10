@@ -20,11 +20,13 @@ Every concrete `AbstractHyperrectangle` must define the following functions:
 - `radius_hyperrectangle(::AbstractHyperrectangle)` -- return the
     hyperrectangle's radius, which is a full-dimensional vector
 
-- `radius_hyperrectangle(::AbstractHyperrectangle, i::Int)` -- return the
-    hyperrectangle's radius in the `i`-th dimension
+The following functions are then automatically defined:
 
 - `isflat(::AbstractHyperrectangle)` -- check whether the hyperrectangle's
     radius is zero in some dimension
+
+- `radius_hyperrectangle(::AbstractHyperrectangle, i::Int)` -- return the
+    hyperrectangle's radius in the `i`-th dimension
 
 Every hyperrectangular set is also a zonotopic set; see
 [`AbstractZonotope`](@ref).
@@ -42,6 +44,40 @@ julia> subtypes(AbstractHyperrectangle)
 ```
 """
 abstract type AbstractHyperrectangle{N} <: AbstractZonotope{N} end
+
+"""
+    radius_hyperrectangle(H::AbstractHyperrectangle)
+
+Return the hyperrectangle radius of a hyperrectangular set.
+
+### Input
+
+- `H` -- hyperrectangular set
+
+### Output
+
+The hyperrectangle radius of `H`, which is a full-dimensional vector.
+"""
+function radius_hyperrectangle(::AbstractHyperrectangle) end
+
+"""
+    radius_hyperrectangle(H::AbstractHyperrectangle, i::Int)
+
+Return the hyperrectangle radius of a hyperrectangular set in a given dimension.
+
+### Input
+
+- `H` -- hyperrectangular set
+- `i` -- dimension
+
+### Output
+
+The hyperrectangle radius of `H` in dimension `i`.
+
+"""
+function radius_hyperrectangle(H::AbstractHyperrectangle, i::Int)
+    return radius_hyperrectangle(H)[i]
+end
 
 """
     □(c, r)
