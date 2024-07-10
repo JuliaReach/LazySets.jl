@@ -22,7 +22,7 @@ import LinearAlgebra: ×, normalize, normalize!
 import RecipesBase: apply_recipe
 
 export Arrays
-export ×, normalize, subtypes
+export ×, normalize, normalize!, subtypes
 
 using LinearAlgebra, RecipesBase, Requires, SparseArrays
 import GLPK, JuMP, Random, ReachabilityBase
