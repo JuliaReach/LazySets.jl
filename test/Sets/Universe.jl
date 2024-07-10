@@ -55,6 +55,13 @@ for N in [Float64, Rational{Int}, Float32]
     # an_element
     @test an_element(U) ∈ U
 
+    # constrained_dimensions
+    @test constrained_dimensions(U) == Int[]
+
+    # traits
+    @test !isboundedtype(Universe)
+    @test !isoperationtype(Universe)
+
     # norm/radius/diameter functions
     @test_throws ErrorException norm(U)
     @test_throws ErrorException radius(U)
@@ -64,8 +71,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test translate(U, N[1, 2]) == U
     @test translate!(U, N[1, 2]) == U
 
-    # constraints / constraints_list
+    # constraints / constraints_list / tosimplehrep
     @test collect(constraints(U)) == constraints_list(U) == Vector{N}()
+    A, b = tosimplehrep(U)
+    @test A == zeros(N, 0, 2) && b == N[]
 
     # concrete intersection
     @test intersection(B, U) == intersection(U, B) == B
