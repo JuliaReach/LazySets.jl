@@ -18,6 +18,18 @@ Note that there is a special interface combination
 AbstractPolytope
 ```
 
+This interface requires to implement the following function:
+
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+vertices_list(::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+
 This interface defines the following functions:
 
 ```@docs
