@@ -22,7 +22,7 @@ import LinearAlgebra: ×, normalize, normalize!
 import RecipesBase: apply_recipe
 
 export Arrays
-export ×, normalize, subtypes
+export ×, normalize, normalize!, subtypes
 
 using LinearAlgebra, RecipesBase, Requires, SparseArrays
 import GLPK, JuMP, Random, ReachabilityBase
@@ -123,7 +123,10 @@ include("Sets/HPolyhedron.jl")
 include("Sets/Hyperplane.jl")
 include("Sets/Hyperrectangle.jl")
 include("Sets/Line2D.jl")
-include("Sets/Line.jl")
+
+include("Sets/Line/LineModule.jl")
+@reexport using ..LineModule: Line, direction
+
 include("Sets/Polygon.jl")
 include("Sets/RotatedHyperrectangle.jl")
 
