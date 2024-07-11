@@ -130,21 +130,9 @@ julia> nparams(S)
 """
 nparams(P::SSPZ) = size(P.E, 1)
 
-"""
-    order(P::SimpleSparsePolynomialZonotope)
-
-Return the order of a simple sparse polynomial zonotope.
-
-### Input
-
-- `P` -- simple sparse polynomial zonotope
-
-### Output
-
-The order of `P`, defined as the quotient between the number of generators and
-the ambient dimension.
-"""
-order(P::SSPZ) = ngens(P) // dim(P)
+function polynomial_order(P::SSPZ)
+    return maximum(sum, eachcol(expmat(P)))
+end
 
 """
     center(P::SimpleSparsePolynomialZonotope)
