@@ -1,12 +1,16 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.SimpleSparsePolynomialZonotopeModule
 ```
 
 # [SimpleSparsePolynomialZonotope](@id def_SimpleSparsePolynomialZonotope)
 
 ```@docs
 SimpleSparsePolynomialZonotope
-PolynomialZonotope
+```
+
+## Operations
+
+```@docs
 center(::SimpleSparsePolynomialZonotope)
 convex_hull(::SimpleSparsePolynomialZonotope)
 expmat(::SimpleSparsePolynomialZonotope)
@@ -18,6 +22,16 @@ remove_redundant_generators(::SimpleSparsePolynomialZonotope)
 linear_map(::AbstractMatrix, ::SimpleSparsePolynomialZonotope)
 quadratic_map(::Vector{MT}, ::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
 quadratic_map(::Vector{MT}, ::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+```
+
+```@meta
+CurrentModule = LazySets
+```
+
+Alias:
+
+```@docs
+PolynomialZonotope
 ```
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):

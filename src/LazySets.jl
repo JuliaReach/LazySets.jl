@@ -138,9 +138,21 @@ include("Sets/Singleton/SingletonModule.jl")
 include("Sets/LineSegment/LineSegmentModule.jl")
 @reexport using ..LineSegmentModule: LineSegment
 
-include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
-
 include("Sets/SparsePolynomialZonotope.jl")
+
+include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
+@reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
+                                                        SSPZ,
+                                                        quadratic_map
+using ..SimpleSparsePolynomialZonotopeModule: _remove_redundant_generators_polyzono
+
+"""
+    PolynomialZonotope = SimpleSparsePolynomialZonotope
+
+Alias for `SimpleSparsePolynomialZonotope`.
+"""
+const PolynomialZonotope = SimpleSparsePolynomialZonotope
+
 include("Sets/VPolygon.jl")
 include("Sets/VPolytope.jl")
 include("Sets/Tetrahedron.jl")

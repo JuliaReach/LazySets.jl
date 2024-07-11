@@ -1,5 +1,21 @@
-export SimpleSparsePolynomialZonotope, PolynomialZonotope, expmat, nparams,
-       quadratic_map, remove_redundant_generators
+module SimpleSparsePolynomialZonotopeModule
+
+using Reexport
+
+using ..LazySets: AbstractPolynomialZonotope
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Comparison: isapproxzero
+using LinearAlgebra: dot
+
+@reexport import ..API: convex_hull, center, isoperationtype, rand, linear_map
+@reexport import ..LazySets: expmat, genmat, ngens, nparams, polynomial_order,
+                             remove_redundant_generators
+@reexport using ..API
+
+export SimpleSparsePolynomialZonotope,
+       SSPZ,
+       quadratic_map
 
 """
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N},
@@ -60,17 +76,6 @@ struct SimpleSparsePolynomialZonotope{N,VN<:AbstractVector{N},
         return new{N,VN,MN,ME}(c, G, E)
     end
 end
-
-"""
-    PolynomialZonotope = SimpleSparsePolynomialZonotope
-
-Alias for `SimpleSparsePolynomialZonotope`.
-
-### Notes
-
-Another shorthand is `SSPZ`.
-"""
-const PolynomialZonotope = SimpleSparsePolynomialZonotope
 
 # short-hand
 const SSPZ = SimpleSparsePolynomialZonotope
@@ -449,3 +454,5 @@ The tightest convex simple sparse polynomial zonotope containing `P`.
 function convex_hull(P::SimpleSparsePolynomialZonotope)
     return linear_combination(P, P)
 end
+
+end  # module
