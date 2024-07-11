@@ -346,6 +346,10 @@ for N in [Float64, Float32, Rational{Int}]
     M = hcat(N[2])
     v = N[-3]
     @test affine_map(M, I1, v) == Interval(N(-3), N(-1))
+    M2 = N[2; -2;;]
+    v = N[-1, -1]
+    H = affine_map(M2, I1, v)
+    @test H isa Zonotope && isequivalent(H, LineSegment(N[-1, -1], N[1, -3]))
 
     # exponential_map
     @test exponential_map(M, I1) == Interval(N(0), N(exp(N(2))))
