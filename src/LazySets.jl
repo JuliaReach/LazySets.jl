@@ -138,7 +138,8 @@ include("Sets/Singleton/SingletonModule.jl")
 include("Sets/LineSegment/LineSegmentModule.jl")
 @reexport using ..LineSegmentModule: LineSegment
 
-include("Sets/SimpleSparsePolynomialZonotope.jl")
+include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
+
 include("Sets/SparsePolynomialZonotope.jl")
 include("Sets/VPolygon.jl")
 include("Sets/VPolytope.jl")
