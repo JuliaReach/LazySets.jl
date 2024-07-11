@@ -1,6 +1,4 @@
-export DensePolynomialZonotope,
-       polynomial_order,
-       order
+export DensePolynomialZonotope
 
 """
     DensePolynomialZonotope{N, VT, VMT, MT} <: AbstractPolynomialZonotope{N}
@@ -152,22 +150,6 @@ function ngens_dep(P::DensePolynomialZonotope)
     p = size(P.E[1], 2)  # number of dependent factors
     return sum(i -> binomial(p + i - 1, i), 1:η)
 end
-
-"""
-    order(P::DensePolynomialZonotope)
-
-Order of a polynomial zonotope.
-
-### Input
-
-- `P` -- polynomial zonotope
-
-## Output
-
-The order, a rational number defined as the total number of generators divided
-by the ambient dimension.
-"""
-order(P::DensePolynomialZonotope) = (ngens_dep(P) + ngens_indep(P)) // dim(P)
 
 """
     linear_map(M::AbstractMatrix, P::DensePolynomialZonotope)

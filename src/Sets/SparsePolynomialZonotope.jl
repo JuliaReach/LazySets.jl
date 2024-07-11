@@ -1,5 +1,5 @@
-export SparsePolynomialZonotope, expmat, nparams, ngens_dep, ngens_indep,
-       genmat_dep, genmat_indep, indexvector, polynomial_order, quadratic_map,
+export SparsePolynomialZonotope, expmat, nparams,
+       genmat_dep, genmat_indep, indexvector, quadratic_map,
        remove_redundant_generators, reduce_order
 
 """
@@ -132,22 +132,6 @@ The number of dependent parameters in the polynomial representation.
 This number corresponds to the number of rows in the exponent matrix ``E``.
 """
 nparams(P::SPZ) = size(P.E, 1)
-
-"""
-    order(P::SparsePolynomialZonotope)
-
-Return the order of a sparse polynomial zonotope.
-
-### Input
-
-- `P` -- sparse polynomial zonotope
-
-### Output
-
-The order, defined as the quotient between the number of generators and the
-ambient dimension, as a `Rational` number.
-"""
-order(P::SPZ) = (ngens_dep(P) + ngens_indep(P)) // dim(P)
 
 """
     center(P::SparsePolynomialZonotope)

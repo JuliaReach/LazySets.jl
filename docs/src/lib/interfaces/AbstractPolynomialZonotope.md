@@ -25,13 +25,17 @@ center(::LazySet)
 CurrentModule = LazySets
 ```
 ```@docs
-order(::AbstractPolynomialZonotope)
+ngens_dep(::AbstractPolynomialZonotope)
+ngens_indep(::AbstractPolynomialZonotope)
+polynomial_order(::AbstractPolynomialZonotope)
 ```
 
 This interface defines the following functions:
 
 ```@docs
 dim(::AbstractPolynomialZonotope)
+ngens(::AbstractPolynomialZonotope)
+order(::AbstractPolynomialZonotope)
 ```
 
 ## Implementations

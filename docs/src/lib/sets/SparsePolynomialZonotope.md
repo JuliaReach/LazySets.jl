@@ -6,23 +6,24 @@ CurrentModule = LazySets
 
 ```@docs
 SparsePolynomialZonotope
-rand(::Type{SparsePolynomialZonotope})
 center(::SparsePolynomialZonotope)
+expmat(::SparsePolynomialZonotope)
 genmat_dep(::SparsePolynomialZonotope)
 genmat_indep(::SparsePolynomialZonotope)
-expmat(::SparsePolynomialZonotope)
-indexvector(P::SparsePolynomialZonotope)
-uniqueID(::Int)
+indexvector(::SparsePolynomialZonotope)
 ngens_dep(::SparsePolynomialZonotope)
 ngens_indep(::SparsePolynomialZonotope)
 nparams(::SparsePolynomialZonotope)
 polynomial_order(::SparsePolynomialZonotope)
-order(::SparsePolynomialZonotope)
-linear_map(::AbstractMatrix, ::SparsePolynomialZonotope)
-translate(::SparsePolynomialZonotope, ::AbstractVector)
+rand(::Type{SparsePolynomialZonotope})
 remove_redundant_generators(::SparsePolynomialZonotope)
+uniqueID(::Int)
+linear_map(::AbstractMatrix, ::SparsePolynomialZonotope)
 reduce_order(::SparsePolynomialZonotope, ::Real, ::AbstractReductionMethod=GIR05())
 ρ(::AbstractVector, ::SparsePolynomialZonotope)
+translate(::SparsePolynomialZonotope, ::AbstractVector)
 ```
+
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
+* [`order`](@ref dim(::AbstractPolynomialZonotope))
