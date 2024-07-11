@@ -1,3 +1,13 @@
+module DensePolynomialZonotopeModule
+
+using Reexport
+
+using ..LazySets: AbstractPolynomialZonotope
+
+@reexport import ..API: center, isoperationtype, linear_map, scale!
+@reexport import ..LazySets: ngens_dep, ngens_indep, polynomial_order
+@reexport using ..API
+
 export DensePolynomialZonotope
 
 """
@@ -203,3 +213,5 @@ function scale!(α::Real, P::DensePolynomialZonotope)
     P.G .*= α
     return P
 end
+
+end  # module
