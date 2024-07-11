@@ -38,7 +38,7 @@ arguments, and returns the line through them. See the algorithm section for
 details.
 
 ```jldoctest
-julia> Line(from=[-1.0, 2, 3], to=[-4.0, 2, 4])
+julia> Line(from=[-1.0, 2, 3], to=[2.0, 2, 2])
 Line{Float64, Vector{Float64}}([-1.0, 2.0, 3.0], [3.0, 0.0, -1.0])
 ```
 
@@ -48,7 +48,7 @@ lines. It takes two inputs, `a` and `b`, and constructs the line such that
 
 ```jldoctest
 julia> Line([2.0, 0], 1.)
-Line{Float64, Vector{Float64}}([0.5, 0.0], [0.0, -1.0])
+Line{Float64, Vector{Float64}}([0.5, 0.0], [0.0, 1.0])
 ```
 
 ### Algorithm
@@ -73,7 +73,7 @@ struct Line{N,VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
 end
 
 function Line(; from::AbstractVector, to::AbstractVector, normalize=false)
-    d = from - to
+    d = to - from
     @assert !iszero(d) "points `$from` and `$to` should be distinct"
     return Line(from, d; normalize=normalize)
 end
