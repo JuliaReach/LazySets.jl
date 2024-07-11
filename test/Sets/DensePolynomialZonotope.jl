@@ -25,4 +25,7 @@ for N in [Float64, Float32, Rational{Int}]
     z = Zonotope(N[1.0, 2.0], Matrix(N(1)I, 2, 2))
     minkowski_sum(P, z)
     minkowski_sum(z, P)
+
+    # isoperationtype
+    @test !isoperationtype(DensePolynomialZonotope)
 end
