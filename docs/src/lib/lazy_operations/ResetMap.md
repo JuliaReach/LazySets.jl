@@ -10,7 +10,7 @@ dim(::ResetMap)
 ρ(::AbstractVector, ::ResetMap)
 σ(::AbstractVector, ::ResetMap)
 an_element(::ResetMap)
-matrix(::ResetMap)
+matrix(::ResetMap{N}) where {N}
 vector(::ResetMap)
 set(::ResetMap)
 constraints_list(::ResetMap)
