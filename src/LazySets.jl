@@ -114,7 +114,8 @@ include("Sets/Ballp/BallpModule.jl")
 include("Sets/Ellipsoid/EllipsoidModule.jl")
 @reexport using ..EllipsoidModule: Ellipsoid, shape_matrix
 
-include("Sets/DensePolynomialZonotope.jl")
+include("Sets/DensePolynomialZonotope/DensePolynomialZonotopeModule.jl")
+
 include("Sets/HParallelotope.jl")
 include("Sets/HPolygon.jl")
 include("Sets/HPolygonOpt.jl")
