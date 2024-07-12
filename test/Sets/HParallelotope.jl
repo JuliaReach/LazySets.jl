@@ -39,6 +39,8 @@ for N in [Float32, Float64, Rational{Int}]
                                   HalfSpace(-D[1, :], c[4]),
                                   HalfSpace(-D[2, :], c[5]),
                                   HalfSpace(-D[3, :], c[6])]
+    P3 = HParallelotope(zeros(N, 0, 0), zeros(N, 0); check_consistency=false)
+    @test isempty(constraints_list(P3))
 
     P = HParallelotope(N[1 0; 0 1], N[1, 1, 1, 1])
 
@@ -79,3 +81,5 @@ for N in [Float64]
     P = HParallelotope(N[1 0; 0 1], N[1, 1, 1, 1])
     @test collect(generators(P)) == [N[1, 0], N[0, 1]]
 end
+
+@test !isoperationtype(HParallelotope)
