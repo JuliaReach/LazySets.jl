@@ -140,7 +140,7 @@ include("Sets/Singleton/SingletonModule.jl")
 include("Sets/LineSegment/LineSegmentModule.jl")
 @reexport using ..LineSegmentModule: LineSegment
 
-include("Sets/SparsePolynomialZonotope.jl")
+include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
 
 include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
