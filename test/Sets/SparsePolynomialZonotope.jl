@@ -186,6 +186,9 @@ for Z in [rand(Zonotope), rand(Hyperrectangle)]
 end
 
 let
+    # isoperationtype
+    @test !isoperationtype(SparsePolynomialZonotope)
+
     # example 3.1.32 from Niklas' thesis (page 60)
     PZ1 = SparsePolynomialZonotope([0.0, 0.0], [1.0 -1 1; -1 2 1], hcat([0.1, 0]), [1 0 2; 0 1 1],
                                    1:2)

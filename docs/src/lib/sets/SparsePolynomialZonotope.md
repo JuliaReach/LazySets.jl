@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.SparsePolynomialZonotopeModule
 ```
 
 # [SparsePolynomialZonotope](@id def_SparsePolynomialZonotope)
@@ -19,6 +19,10 @@ linear_map(::AbstractMatrix, ::SparsePolynomialZonotope)
 reduce_order(::SparsePolynomialZonotope, ::Real, ::AbstractReductionMethod=GIR05())
 ρ(::AbstractVector, ::SparsePolynomialZonotope)
 translate(::SparsePolynomialZonotope, ::AbstractVector)
+```
+
+```@meta
+CurrentModule = LazySets
 ```
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):
