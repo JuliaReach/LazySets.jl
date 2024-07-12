@@ -16,4 +16,4 @@ The number of generators of `P`.
 This number corresponds to the number of monomials in the polynomial
 representation of `P`.
 """
-ngens(P::SSPZ) = size(P.G, 2)
+ngens(P::SSPZ) = ngens_dep(P)

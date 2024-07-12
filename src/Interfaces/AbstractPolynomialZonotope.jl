@@ -19,13 +19,20 @@ Every concrete `AbstractPolynomialZonotope` must define the following functions:
 
 - `center(::AbstractPolynomialZonotope)` -- return the center
 
-- `order(::AbstractPolynomialZonotope)` -- return the order
-
 - `polynomial_order(::AbstractPolynomialZonotope)` -- return the polynomial order
+
+By defining the functions
 
 - `ngens_dep` -- return the number of dependent generators
 
 - `ngens_indep` -- return the number of independent generators
+
+the following functions are also available (alternatively, these functions can
+be defined directly):
+
+- `order(::AbstractPolynomialZonotope)` -- return the order
+
+- `ngens(::AbstractPolynomialZonotope)` -- return the total number of generators
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolynomialZonotope)
