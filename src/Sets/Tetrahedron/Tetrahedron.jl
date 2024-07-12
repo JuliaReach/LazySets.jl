@@ -39,12 +39,6 @@ struct Tetrahedron{N,VN<:AbstractVector{N},VT<:AbstractVector{VN}} <: AbstractPo
     end
 end
 
-# constructor with empty vertices list
-Tetrahedron{N}() where {N} = Tetrahedron(Vector{Vector{N}}())
-
-# constructor with no vertices of type Float64
-Tetrahedron() = Tetrahedron{Float64}()
-
 # constructor from rectangular matrix
 function Tetrahedron(vertices_matrix::MT) where {N,MT<:AbstractMatrix{N}}
     vertices = collect(eachcol(vertices_matrix))
