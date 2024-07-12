@@ -119,7 +119,8 @@ include("Sets/Ellipsoid/EllipsoidModule.jl")
 include("Sets/DensePolynomialZonotope/DensePolynomialZonotopeModule.jl")
 @reexport using ..DensePolynomialZonotopeModule: DensePolynomialZonotope
 
-include("Sets/HParallelotope.jl")
+include("Sets/HParallelotope/HParallelotopeModule.jl")
+
 include("Sets/HPolygon.jl")
 include("Sets/HPolygonOpt.jl")
 include("Sets/HPolytope.jl")
