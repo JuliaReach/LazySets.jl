@@ -6,6 +6,11 @@ CurrentModule = LazySets.SparsePolynomialZonotopeModule
 
 ```@docs
 SparsePolynomialZonotope
+```
+
+## Operations
+
+```@docs
 center(::SparsePolynomialZonotope)
 expmat(::SparsePolynomialZonotope)
 genmat_dep(::SparsePolynomialZonotope)

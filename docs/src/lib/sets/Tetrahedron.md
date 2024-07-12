@@ -1,11 +1,16 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.TetrahedronModule
 ```
 
 # [Tetrahedron](@id def_Tetrahedron)
 
 ```@docs
 Tetrahedron
-σ(::AbstractVector, ::Tetrahedron)
+```
+
+## Operations
+
+```@docs
 ∈(::AbstractVector, ::Tetrahedron)
+σ(::AbstractVector, ::Tetrahedron)
 ```
