@@ -145,7 +145,6 @@ include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModul
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
                                                         SSPZ,
                                                         quadratic_map
-using ..SimpleSparsePolynomialZonotopeModule: _remove_redundant_generators_polyzono
 
 """
     PolynomialZonotope = SimpleSparsePolynomialZonotope

@@ -2,7 +2,7 @@ module SimpleSparsePolynomialZonotopeModule
 
 using Reexport
 
-using ..LazySets: AbstractPolynomialZonotope
+using ..LazySets: AbstractPolynomialZonotope, _remove_redundant_generators_polyzono
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Comparison: isapproxzero
