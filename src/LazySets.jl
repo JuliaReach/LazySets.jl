@@ -140,11 +140,6 @@ include("Sets/Singleton/SingletonModule.jl")
 include("Sets/LineSegment/LineSegmentModule.jl")
 @reexport using ..LineSegmentModule: LineSegment
 
-include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
-@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ,
-                                                  indexvector
-using ..SparsePolynomialZonotopeModule: uniqueID
-
 include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
                                                         SSPZ,
@@ -165,6 +160,11 @@ include("Sets/ZeroSet/ZeroSetModule.jl")
 @reexport using ..ZeroSetModule: ZeroSet
 
 include("Sets/Zonotope.jl")
+
+include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
+@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ,
+                                                  indexvector
+using ..SparsePolynomialZonotopeModule: uniqueID
 
 include("LazyOperations/UnionSet.jl")  # must come before IntervalModule
 
