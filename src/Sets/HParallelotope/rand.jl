@@ -53,5 +53,5 @@ function rand(::Type{HParallelotope};
             return P = HParallelotope(D, offset; check_consistency=false)
         end
         # set is unbounded; sample a new set in the next iteration
-    end
+    end  # COV_EXCL_LINE
 end
