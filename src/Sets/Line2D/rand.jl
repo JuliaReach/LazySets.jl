@@ -30,8 +30,8 @@ function rand(::Type{Line2D};
     rng = reseed!(rng, seed)
     a = randn(rng, N, dim)
     while iszero(a)
-        a = randn(rng, N, dim)
-    end
+        a = randn(rng, N, dim)  # COV_EXCL_LINE
+    end  # COV_EXCL_LINE
     b = randn(rng, N)
     return Line2D(a, b)
 end

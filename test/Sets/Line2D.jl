@@ -93,6 +93,9 @@ for N in [Float64, Rational{Int}, Float32]
     lm = linear_map(M, L)
     @test lm isa Line2D{N,Vector{N}}
     @test lm.a ≈ N[1 / 2, -2] && lm.b ≈ N(0)
+    # map to a single point
+    M = zeros(N, 2, 2)
+    @test_broken linear_map(M, L)
 
     # projection
     L = Line2D(N[1, -1], N(0))  # x = y
@@ -102,6 +105,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test project(L, [1]) == Singleton(N[2])
     @test project(L, [2]) == Universe{N}(1)
     @test project(L, [1, 2]) == L
+    @test project(L, [2, 1]) == Line2D(N[0, 2], N(4))
+    @test_throws ArgumentError project(L, [1, 1])
+    @test_throws ArgumentError project(L, [1, 2, 1])
 
     # translation
     @test translate(l1, N[1, 2]) == Line2D(a1, N(3))
@@ -120,3 +126,6 @@ for N in [Float64, Float32]
         @test x ∈ L
     end
 end
+
+# isoperationtype
+@test !isoperationtype(Line2D)
