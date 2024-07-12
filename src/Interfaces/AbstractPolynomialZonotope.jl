@@ -1,9 +1,8 @@
 export AbstractPolynomialZonotope,
        center,
        expmat,
-       ngens,
-       ngens_dep,
-       ngens_indep,
+       genmat_dep, genmat_indep,
+       ngens, ngens_dep, ngens_indep,
        nparams,
        order,
        polynomial_order
@@ -69,6 +68,36 @@ definition) and each column corresponds to a monomial.
 function expmat(::AbstractPolynomialZonotope) end
 
 """
+    genmat_dep(P::AbstractPolynomialZonotope)
+
+Return the matrix of dependent generators of a polynomial zonotope.
+
+### Input
+
+- `P` -- polynomial zonotope
+
+### Output
+
+The matrix of dependent generators.
+"""
+function genmat_dep(::AbstractPolynomialZonotope) end
+
+"""
+    genmat_indep(P::AbstractPolynomialZonotope)
+
+Return the matrix of independent generators of a polynomial zonotope.
+
+### Input
+
+- `P` -- polynomial zonotope
+
+### Output
+
+The matrix of independent generators.
+"""
+function genmat_indep(::AbstractPolynomialZonotope) end
+
+"""
     polynomial_order(P::AbstractPolynomialZonotope)
 
 Determine the polynomial order of a polynomial zonotope.
@@ -100,7 +129,9 @@ Determine the number of dependent generators of a polynomial zonotope.
 
 A nonnegative integer representing the number of dependent generators.
 """
-function ngens_dep(::AbstractPolynomialZonotope) end
+function ngens_dep(P::AbstractPolynomialZonotope)
+    return size(genmat_dep(P), 2)
+end
 
 """
     ngens_indep(P::AbstractPolynomialZonotope)
@@ -115,7 +146,9 @@ Determine the number of independent generators of a polynomial zonotope.
 
 A nonnegative integer representing the number of independent generators.
 """
-function ngens_indep(::AbstractPolynomialZonotope) end
+function ngens_indep(P::AbstractPolynomialZonotope)
+    return size(genmat_indep(P), 2)
+end
 
 """
     nparams(P::AbstractPolynomialZonotope)

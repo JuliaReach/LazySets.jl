@@ -35,5 +35,7 @@ PolynomialZonotope
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
+* [`ngens_dep`](@ref ngens_dep(::AbstractPolynomialZonotope))
+* [`ngens_indep`](@ref ngens_indep(::AbstractPolynomialZonotope))
 * [`nparams`](@ref dim(::AbstractPolynomialZonotope))
 * [`order`](@ref dim(::AbstractPolynomialZonotope))

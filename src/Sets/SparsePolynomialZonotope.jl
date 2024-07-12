@@ -1,6 +1,5 @@
 export SparsePolynomialZonotope,
-       genmat_dep, genmat_indep, indexvector, quadratic_map,
-       remove_redundant_generators, reduce_order
+       indexvector
 
 """
     SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N},
@@ -82,36 +81,6 @@ const SPZ = SparsePolynomialZonotope
 function isoperationtype(P::Type{<:SparsePolynomialZonotope})
     return false
 end
-
-"""
-    ngens_dep(P::SparsePolynomialZonotope)
-
-Return the number of dependent generators of a sparse polynomial zonotope.
-
-### Input
-
-- `P` -- sparse polynomial zonotope
-
-### Output
-
-The number of dependent generators.
-"""
-ngens_dep(P::SPZ) = size(P.G, 2)
-
-"""
-    ngens_indep(P::SparsePolynomialZonotope)
-
-Return the number of independent generators of a sparse polynomial zonotope.
-
-### Input
-
-- `P` -- sparse polynomial zonotope
-
-### Output
-
-The number of independent generators.
-"""
-ngens_indep(P::SPZ) = size(P.GI, 2)
 
 """
     center(P::SparsePolynomialZonotope)

@@ -26,8 +26,8 @@ CurrentModule = LazySets
 ```
 ```@docs
 expmat(::AbstractPolynomialZonotope)
-ngens_dep(::AbstractPolynomialZonotope)
-ngens_indep(::AbstractPolynomialZonotope)
+genmat_dep(::AbstractPolynomialZonotope)
+genmat_indep(::AbstractPolynomialZonotope)
 polynomial_order(::AbstractPolynomialZonotope)
 ```
 
@@ -36,6 +36,8 @@ This interface defines the following functions:
 ```@docs
 dim(::AbstractPolynomialZonotope)
 ngens(::AbstractPolynomialZonotope)
+ngens_dep(::AbstractPolynomialZonotope)
+ngens_indep(::AbstractPolynomialZonotope)
 nparams(::AbstractPolynomialZonotope)
 order(::AbstractPolynomialZonotope)
 ```
