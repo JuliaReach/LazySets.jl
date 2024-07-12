@@ -126,7 +126,8 @@ include("Sets/HPolytope.jl")
 include("Sets/HPolyhedron.jl")
 include("Sets/Hyperplane.jl")
 include("Sets/Hyperrectangle.jl")
-include("Sets/Line2D.jl")
+
+include("Sets/Line2D/Line2DModule.jl")
 
 include("Sets/Line/LineModule.jl")
 @reexport using ..LineModule: Line, direction
