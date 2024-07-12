@@ -2,7 +2,7 @@
     SimpleSparsePolynomialZonotope{N, VN<:AbstractVector{N},
                                    MN<:AbstractMatrix{N},
                                    ME<:AbstractMatrix{Int}}
-        <: AbstractPolynomialZonotope{N}
+        <: AbstractSparsePolynomialZonotope{N}
 
 Type that represents a sparse polynomial zonotope that is *simple* in the sense
 that there is no distinction between independent and dependent generators.
@@ -37,7 +37,7 @@ JuliaReach and JuliaIntervals Days 3, 2021.
 struct SimpleSparsePolynomialZonotope{N,VN<:AbstractVector{N},
                                       MN<:AbstractMatrix{N},
                                       ME<:AbstractMatrix{Int}} <:
-       AbstractPolynomialZonotope{N}
+       AbstractSparsePolynomialZonotope{N}
     c::VN
     G::MN
     E::ME

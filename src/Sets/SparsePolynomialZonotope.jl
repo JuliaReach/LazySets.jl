@@ -6,7 +6,7 @@ export SparsePolynomialZonotope,
                              MNI<:AbstractMatrix{N},
                              ME<:AbstractMatrix{Int},
                              VI<:AbstractVector{Int}}
-        <: AbstractPolynomialZonotope{N}
+        <: AbstractSparsePolynomialZonotope{N}
 
 Type that represents a sparse polynomial zonotope.
 
@@ -47,7 +47,7 @@ struct SparsePolynomialZonotope{N,
                                 MN<:AbstractMatrix{N},
                                 MNI<:AbstractMatrix{N},
                                 ME<:AbstractMatrix{Int},
-                                VI<:AbstractVector{Int}} <: AbstractPolynomialZonotope{N}
+                                VI<:AbstractVector{Int}} <: AbstractSparsePolynomialZonotope{N}
     c::VN
     G::MN
     GI::MNI

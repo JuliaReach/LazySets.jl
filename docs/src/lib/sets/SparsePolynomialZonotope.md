@@ -23,7 +23,10 @@ translate(::SparsePolynomialZonotope, ::AbstractVector)
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
+* [`ngens`](@ref ngens(::AbstractPolynomialZonotope))
+* [`order`](@ref order(::AbstractPolynomialZonotope))
+
+Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`ngens_dep`](@ref ngens_dep(::AbstractPolynomialZonotope))
 * [`ngens_indep`](@ref ngens_indep(::AbstractPolynomialZonotope))
-* [`nparams`](@ref dim(::AbstractPolynomialZonotope))
-* [`order`](@ref dim(::AbstractPolynomialZonotope))
+* [`nparams`](@ref nparams(::AbstractPolynomialZonotope))
