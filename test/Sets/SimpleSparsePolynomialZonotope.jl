@@ -14,6 +14,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test ngens(S) == 2
     @test nparams(S) == 2
     @test order(S) == 1 // 1
+    @test polynomial_order(S) == 6
 
     Z = Zonotope(N[3.0, 1], N[1 1; 2 1.0])
     @test overapproximate(S, Zonotope) == Z
@@ -96,6 +97,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test expmat(Sred) == [4 1 3 7
                            5 2 4 8
                            6 3 5 9]
+
+    # isoperationtype
+    @test !isoperationtype(SimpleSparsePolynomialZonotope)
 end
 
 for Z in [rand(Zonotope), rand(Hyperrectangle)]
