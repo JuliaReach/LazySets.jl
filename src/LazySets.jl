@@ -97,7 +97,8 @@ include("Sets/Universe/UniverseModule.jl")
 @reexport using ..UniverseModule: Universe
 
 include("Sets/EmptySet/EmptySetModule.jl")
-@reexport using ..EmptySetModule: EmptySet, ∅, _isdisjoint_emptyset
+@reexport using ..EmptySetModule: EmptySet, ∅
+using ..EmptySetModule: _isdisjoint_emptyset
 
 include("Sets/Ball1/Ball1Module.jl")
 @reexport using ..Ball1Module: Ball1
