@@ -128,6 +128,8 @@ include("Sets/Hyperplane.jl")
 include("Sets/Hyperrectangle.jl")
 
 include("Sets/Line2D/Line2DModule.jl")
+@reexport using ..Line2DModule: Line2D
+using ..Line2DModule: _linear_map_hrep_helper
 
 include("Sets/Line/LineModule.jl")
 @reexport using ..LineModule: Line, direction

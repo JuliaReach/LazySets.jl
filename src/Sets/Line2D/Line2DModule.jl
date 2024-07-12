@@ -1,3 +1,23 @@
+module Line2DModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractPolyhedron, AbstractLinearMapAlgorithm,
+                  _constraints_list_hyperplane, _linear_map_hrep,
+                  _non_element_halfspace, _σ_hyperplane_halfspace
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: nonzero_indices
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Comparison: _isapprox
+using ReachabilityBase.Require: require
+using LinearAlgebra: dot
+
+@reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
+                        isoperationtype, isuniversal, rand, ∈, project, σ,
+                        translate
+@reexport import ..LazySets: constrained_dimensions, _linear_map_hrep_helper
+@reexport using ..API
+
 export Line2D
 
 """
@@ -416,3 +436,7 @@ The projection of ``x`` onto a line of the form ``a⋅x = b`` is
 function project(x::AbstractVector, L::Line2D)
     return x - L.a * (dot(L.a, x) - L.b) / norm(L.a, 2)^2
 end
+
+include("init.jl")
+
+end  # module
