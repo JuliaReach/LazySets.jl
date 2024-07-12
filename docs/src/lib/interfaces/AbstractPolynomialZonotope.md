@@ -36,6 +36,7 @@ This interface defines the following functions:
 ```@docs
 dim(::AbstractPolynomialZonotope)
 ngens(::AbstractPolynomialZonotope)
+nparams(::AbstractPolynomialZonotope)
 order(::AbstractPolynomialZonotope)
 ```
 

@@ -1,4 +1,4 @@
-export SparsePolynomialZonotope, nparams,
+export SparsePolynomialZonotope,
        genmat_dep, genmat_indep, indexvector, quadratic_map,
        remove_redundant_generators, reduce_order
 
@@ -112,26 +112,6 @@ Return the number of independent generators of a sparse polynomial zonotope.
 The number of independent generators.
 """
 ngens_indep(P::SPZ) = size(P.GI, 2)
-
-"""
-    nparams(P::SparsePolynomialZonotope)
-
-Return the number of dependent parameters in the polynomial representation of a
-sparse polynomial zonotope.
-
-### Input
-
-- `P` -- sparse polynomial zonotope
-
-### Output
-
-The number of dependent parameters in the polynomial representation.
-
-### Notes
-
-This number corresponds to the number of rows in the exponent matrix ``E``.
-"""
-nparams(P::SPZ) = size(P.E, 1)
 
 """
     center(P::SparsePolynomialZonotope)

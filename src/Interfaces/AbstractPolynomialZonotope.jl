@@ -1,11 +1,12 @@
 export AbstractPolynomialZonotope,
        center,
        expmat,
-       polynomial_order,
-       order,
        ngens,
        ngens_dep,
-       ngens_indep
+       ngens_indep,
+       nparams,
+       order,
+       polynomial_order
 
 """
     AbstractPolynomialZonotope{N} <: LazySet{N}
@@ -115,6 +116,28 @@ Determine the number of independent generators of a polynomial zonotope.
 A nonnegative integer representing the number of independent generators.
 """
 function ngens_indep(::AbstractPolynomialZonotope) end
+
+"""
+    nparams(P::AbstractPolynomialZonotope)
+
+Return the number of dependent parameters in the polynomial representation of a
+polynomial zonotope.
+
+### Input
+
+- `P` -- polynomial zonotope
+
+### Output
+
+The number of dependent parameters in the polynomial representation.
+
+### Notes
+
+This number corresponds to the number of rows in the exponent matrix.
+"""
+function nparams(P::AbstractPolynomialZonotope)
+    return size(expmat(P), 1)
+end
 
 """
     ngens(P::AbstractPolynomialZonotope)

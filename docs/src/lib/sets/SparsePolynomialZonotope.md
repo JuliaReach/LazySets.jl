@@ -13,7 +13,6 @@ genmat_indep(::SparsePolynomialZonotope)
 indexvector(::SparsePolynomialZonotope)
 ngens_dep(::SparsePolynomialZonotope)
 ngens_indep(::SparsePolynomialZonotope)
-nparams(::SparsePolynomialZonotope)
 polynomial_order(::SparsePolynomialZonotope)
 rand(::Type{SparsePolynomialZonotope})
 remove_redundant_generators(::SparsePolynomialZonotope)
@@ -26,4 +25,5 @@ translate(::SparsePolynomialZonotope, ::AbstractVector)
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
+* [`nparams`](@ref dim(::AbstractPolynomialZonotope))
 * [`order`](@ref dim(::AbstractPolynomialZonotope))
