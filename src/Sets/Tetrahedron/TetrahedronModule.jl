@@ -1,3 +1,15 @@
+module TetrahedronModule
+
+using Reexport
+
+using ..LazySets: AbstractPolytope, VPolytope
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Comparison: isapproxzero
+using LinearAlgebra: dot, cross
+
+@reexport import ..API: constraints_list, dim, isoperationtype, rand, ∈, σ
+@reexport using ..API
+
 export Tetrahedron
 
 """
@@ -132,3 +144,5 @@ end
 function constraints_list(T::Tetrahedron)
     return constraints_list(convert(VPolytope, T))
 end
+
+end  # module
