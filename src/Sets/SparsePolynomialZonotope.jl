@@ -1,13 +1,12 @@
-export SparsePolynomialZonotope, expmat, nparams,
-       genmat_dep, genmat_indep, indexvector, quadratic_map,
-       remove_redundant_generators, reduce_order
+export SparsePolynomialZonotope,
+       indexvector
 
 """
     SparsePolynomialZonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N},
                              MNI<:AbstractMatrix{N},
                              ME<:AbstractMatrix{Int},
                              VI<:AbstractVector{Int}}
-        <: AbstractPolynomialZonotope{N}
+        <: AbstractSparsePolynomialZonotope{N}
 
 Type that represents a sparse polynomial zonotope.
 
@@ -48,7 +47,7 @@ struct SparsePolynomialZonotope{N,
                                 MN<:AbstractMatrix{N},
                                 MNI<:AbstractMatrix{N},
                                 ME<:AbstractMatrix{Int},
-                                VI<:AbstractVector{Int}} <: AbstractPolynomialZonotope{N}
+                                VI<:AbstractVector{Int}} <: AbstractSparsePolynomialZonotope{N}
     c::VN
     G::MN
     GI::MNI
@@ -82,56 +81,6 @@ const SPZ = SparsePolynomialZonotope
 function isoperationtype(P::Type{<:SparsePolynomialZonotope})
     return false
 end
-
-"""
-    ngens_dep(P::SparsePolynomialZonotope)
-
-Return the number of dependent generators of a sparse polynomial zonotope.
-
-### Input
-
-- `P` -- sparse polynomial zonotope
-
-### Output
-
-The number of dependent generators.
-"""
-ngens_dep(P::SPZ) = size(P.G, 2)
-
-"""
-    ngens_indep(P::SparsePolynomialZonotope)
-
-Return the number of independent generators of a sparse polynomial zonotope.
-
-### Input
-
-- `P` -- sparse polynomial zonotope
-
-### Output
-
-The number of independent generators.
-"""
-ngens_indep(P::SPZ) = size(P.GI, 2)
-
-"""
-    nparams(P::SparsePolynomialZonotope)
-
-Return the number of dependent parameters in the polynomial representation of a
-sparse polynomial zonotope.
-
-### Input
-
-- `P` -- sparse polynomial zonotope
-
-### Output
-
-The number of dependent parameters in the polynomial representation.
-
-### Notes
-
-This number corresponds to the number of rows in the exponent matrix ``E``.
-"""
-nparams(P::SPZ) = size(P.E, 1)
 
 """
     center(P::SparsePolynomialZonotope)

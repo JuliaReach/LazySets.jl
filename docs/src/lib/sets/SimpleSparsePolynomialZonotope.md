@@ -16,7 +16,6 @@ convex_hull(::SimpleSparsePolynomialZonotope)
 expmat(::SimpleSparsePolynomialZonotope)
 genmat(::SimpleSparsePolynomialZonotope)
 ngens(::SimpleSparsePolynomialZonotope)
-nparams(::SimpleSparsePolynomialZonotope)
 rand(::Type{SimpleSparsePolynomialZonotope})
 remove_redundant_generators(::SimpleSparsePolynomialZonotope)
 linear_map(::AbstractMatrix, ::SimpleSparsePolynomialZonotope)
@@ -36,4 +35,9 @@ PolynomialZonotope
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
-* [`order`](@ref dim(::AbstractPolynomialZonotope))
+* [`order`](@ref order(::AbstractPolynomialZonotope))
+
+Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
+* [`ngens_dep`](@ref ngens_dep(::AbstractPolynomialZonotope))
+* [`ngens_indep`](@ref ngens_indep(::AbstractPolynomialZonotope))
+* [`nparams`](@ref nparams(::AbstractPolynomialZonotope))

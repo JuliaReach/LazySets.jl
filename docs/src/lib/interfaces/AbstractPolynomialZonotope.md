@@ -41,5 +41,3 @@ order(::AbstractPolynomialZonotope)
 ## Implementations
 
 * [Dense polynomial zonotope (DensePolynomialZonotope)](@ref def_DensePolynomialZonotope)
-* [Sparse polynomial zonotope (SparsePolynomialZonotope)](@ref def_SparsePolynomialZonotope)
-* [Simplified sparse polynomial zonotope (SimpleSparsePolynomialZonotope)](@ref def_SimpleSparsePolynomialZonotope)

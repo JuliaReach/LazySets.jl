@@ -50,6 +50,7 @@ makedocs(; sitename="LazySets.jl",
                                                       "lib/interfaces/AbstractSingleton.md",
                                                       "lib/interfaces/AbstractAffineMap.md",
                                                       "lib/interfaces/AbstractPolynomialZonotope.md",
+                                                      "lib/interfaces/AbstractSparsePolynomialZonotope.md",
                                                       "lib/interfaces/AbstractBallp.md"
                                                       #
                                                       ],

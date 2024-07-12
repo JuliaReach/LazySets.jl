@@ -32,26 +32,3 @@ function remove_redundant_generators(S::SimpleSparsePolynomialZonotope)
 
     return SimpleSparsePolynomialZonotope(c, G, E)
 end
-
-function _remove_redundant_generators_polyzono(c, G, E)
-    Gnew = Matrix{eltype(G)}(undef, size(G, 1), 0)
-    Enew = Matrix{eltype(E)}(undef, size(E, 1), 0)
-    cnew = copy(c)
-
-    visited_exps = Dict{Vector{Int},Int}()
-    @inbounds for (gi, ei) in zip(eachcol(G), eachcol(E))
-        all(isapproxzero, gi) && continue
-        if iszero(ei)
-            cnew += gi
-        elseif haskey(visited_exps, ei) # repeated exponent
-            idx = visited_exps[ei]
-            Gnew[:, idx] += gi
-        else
-            Gnew = hcat(Gnew, gi)
-            Enew = hcat(Enew, ei)
-            visited_exps[ei] = size(Enew, 2)
-        end
-    end
-
-    return cnew, Gnew, Enew
-end

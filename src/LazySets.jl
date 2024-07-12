@@ -76,6 +76,7 @@ include("Interfaces/LazySet.jl")
 include("Interfaces/ConvexSet.jl")
 # include("Interfaces/AbstractStar.jl")
 include("Interfaces/AbstractPolynomialZonotope.jl")
+include("Interfaces/AbstractSparsePolynomialZonotope.jl")
 include("Interfaces/AbstractPolyhedron.jl")
 include("Sets/HalfSpace.jl")  # must come before AbstractPolyhedron_functions
 include("Interfaces/AbstractPolyhedron_functions.jl")
@@ -145,7 +146,6 @@ include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModul
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
                                                         SSPZ,
                                                         quadratic_map
-using ..SimpleSparsePolynomialZonotopeModule: _remove_redundant_generators_polyzono
 
 """
     PolynomialZonotope = SimpleSparsePolynomialZonotope

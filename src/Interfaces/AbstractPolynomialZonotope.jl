@@ -1,10 +1,8 @@
 export AbstractPolynomialZonotope,
        center,
-       polynomial_order,
+       ngens, ngens_dep, ngens_indep,
        order,
-       ngens,
-       ngens_dep,
-       ngens_indep
+       polynomial_order
 
 """
     AbstractPolynomialZonotope{N} <: LazySet{N}
@@ -19,20 +17,19 @@ Every concrete `AbstractPolynomialZonotope` must define the following functions:
 
 - `center(::AbstractPolynomialZonotope)` -- return the center
 
-- `order(::AbstractPolynomialZonotope)` -- return the order
-
 - `polynomial_order(::AbstractPolynomialZonotope)` -- return the polynomial order
 
 - `ngens_dep` -- return the number of dependent generators
 
 - `ngens_indep` -- return the number of independent generators
 
+The subtypes of `AbstractPolynomialZonotope` (including abstract interfaces):
+
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractPolynomialZonotope)
-3-element Vector{Any}:
+2-element Vector{Any}:
+ AbstractSparsePolynomialZonotope
  DensePolynomialZonotope
- SimpleSparsePolynomialZonotope
- SparsePolynomialZonotope
 ```
 """
 abstract type AbstractPolynomialZonotope{N} <: LazySet{N} end
