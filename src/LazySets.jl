@@ -164,7 +164,8 @@ const PolynomialZonotope = SimpleSparsePolynomialZonotope
 
 include("Sets/VPolygon.jl")
 include("Sets/VPolytope.jl")
-include("Sets/Tetrahedron.jl")
+
+include("Sets/Tetrahedron/TetrahedronModule.jl")
 
 include("Sets/ZeroSet/ZeroSetModule.jl")
 @reexport using ..ZeroSetModule: ZeroSet
