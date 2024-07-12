@@ -1,4 +1,4 @@
-export SparsePolynomialZonotope, expmat, nparams,
+export SparsePolynomialZonotope, nparams,
        genmat_dep, genmat_indep, indexvector, quadratic_map,
        remove_redundant_generators, reduce_order
 

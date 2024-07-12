@@ -1,5 +1,6 @@
 export AbstractPolynomialZonotope,
        center,
+       expmat,
        polynomial_order,
        order,
        ngens,
@@ -20,6 +21,8 @@ Every concrete `AbstractPolynomialZonotope` must define the following functions:
 - `center(::AbstractPolynomialZonotope)` -- return the center
 
 - `polynomial_order(::AbstractPolynomialZonotope)` -- return the polynomial order
+
+- `expmat(::AbstractPolynomialZonotope)` -- return the exponent matrix (sparse PZ only)
 
 By defining the functions
 
@@ -43,6 +46,26 @@ julia> subtypes(AbstractPolynomialZonotope)
 ```
 """
 abstract type AbstractPolynomialZonotope{N} <: LazySet{N} end
+
+"""
+    expmat(P::AbstractPolynomialZonotope)
+
+Return the matrix of exponents of a polynomial zonotope.
+
+### Input
+
+- `P` -- polynomial zonotope
+
+### Output
+
+The matrix of exponents, where each column is a multidegree.
+
+### Notes
+
+In the exponent matrix, each row corresponds to a parameter (``αₖ`` in the
+definition) and each column corresponds to a monomial.
+"""
+function expmat(::AbstractPolynomialZonotope) end
 
 """
     polynomial_order(P::AbstractPolynomialZonotope)

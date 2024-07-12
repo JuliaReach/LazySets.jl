@@ -25,6 +25,7 @@ center(::LazySet)
 CurrentModule = LazySets
 ```
 ```@docs
+expmat(::AbstractPolynomialZonotope)
 ngens_dep(::AbstractPolynomialZonotope)
 ngens_indep(::AbstractPolynomialZonotope)
 polynomial_order(::AbstractPolynomialZonotope)
