@@ -12,6 +12,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test expmat(S) == E
     @test dim(S) == 2
     @test ngens(S) == 2
+    @test ngens_dep(S) == 2
+    @test ngens_indep(S) == 0
+    @test genmat_dep(S) == G
+    @test genmat_indep(S) == zeros(N, 2, 0)
     @test nparams(S) == 2
     @test order(S) == 1 // 1
     @test polynomial_order(S) == 6
