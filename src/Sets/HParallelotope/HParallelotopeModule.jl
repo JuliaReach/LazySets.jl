@@ -1,10 +1,23 @@
+module HParallelotopeModule
+
+using Reexport
+
+using ..LazySets: AbstractZonotope, HalfSpace, HPolyhedron, generators_fallback
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: to_negative_vector
+using ReachabilityBase.Distribution: reseed!
+using LinearAlgebra: checksquare, det
+
+@reexport import ..API: center, constraints_list, dim, isoperationtype, rand,
+                        volume
+@reexport import ..LazySets: generators, genmat
+@reexport using ..API
+
 export HParallelotope,
        directions,
-       offset,
        base_vertex,
        extremal_vertices,
-       genmat,
-       generators
+       offset
 
 """
     HParallelotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
@@ -423,3 +436,5 @@ function volume(P::HParallelotope)
     n = dim(P)
     return 2^n * abs(det(genmat(P)))
 end
+
+end  # module

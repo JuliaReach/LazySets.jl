@@ -120,6 +120,11 @@ include("Sets/DensePolynomialZonotope/DensePolynomialZonotopeModule.jl")
 @reexport using ..DensePolynomialZonotopeModule: DensePolynomialZonotope
 
 include("Sets/HParallelotope/HParallelotopeModule.jl")
+@reexport using ..HParallelotopeModule: HParallelotope,
+                                        directions,
+                                        base_vertex,
+                                        extremal_vertices,
+                                        offset
 
 include("Sets/HPolygon.jl")
 include("Sets/HPolygonOpt.jl")
