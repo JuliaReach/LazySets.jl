@@ -1,3 +1,22 @@
+module SparsePolynomialZonotopeModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractSparsePolynomialZonotope, AbstractReductionMethod,
+                  genmat, GIR05, order, remove_zero_columns, Zonotope,
+                  _extrema_lowhigh, _remove_redundant_generators_polyzono
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Require: require
+import IntervalArithmetic as IA
+
+@reexport import ..API: center, extrema, isoperationtype, rand, linear_map, ρ,
+                        translate
+@reexport import ..LazySets: expmat, genmat_dep, genmat_indep, ngens_dep,
+                             ngens_indep, nparams, polynomial_order,
+                             reduce_order, remove_redundant_generators
+@reexport using ..API
+
 export SparsePolynomialZonotope,
        indexvector
 
@@ -440,7 +459,7 @@ function ρ(d::AbstractVector, P::SparsePolynomialZonotope;
     return _ρ_range_enclosures(d, P, enclosure_method)
 end
 
-function _load_rho_range_enclosures()
+function load_RangeEnclosures_rho()
     return quote
         function _ρ_range_enclosures(d::AbstractVector, P::SparsePolynomialZonotope,
                                      method::Union{RangeEnclosures.AbstractEnclosureAlgorithm,
@@ -501,3 +520,7 @@ function _extrema_polyzono_zonotope(P::SparsePolynomialZonotope{N}) where {N}
     r = N(1 / 2) .* g₂ + g₃ + g₄
     return (c .- r, c .+ r)
 end
+
+include("init.jl")
+
+end  # module

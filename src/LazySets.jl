@@ -141,6 +141,9 @@ include("Sets/LineSegment/LineSegmentModule.jl")
 @reexport using ..LineSegmentModule: LineSegment
 
 include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
+@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ,
+                                                  indexvector
+using ..SparsePolynomialZonotopeModule: uniqueID
 
 include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
