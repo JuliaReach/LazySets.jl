@@ -11,7 +11,8 @@ using LinearAlgebra: dot
 
 @reexport import ..API: convex_hull, center, isoperationtype, rand, linear_map
 @reexport import ..LazySets: expmat, genmat, genmat_dep, genmat_indep, ngens,
-                             polynomial_order, remove_redundant_generators
+                             ngens_indep, polynomial_order,
+                             remove_redundant_generators
 @reexport using ..API
 
 export SimpleSparsePolynomialZonotope,
