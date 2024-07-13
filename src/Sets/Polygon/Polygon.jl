@@ -1,5 +1,3 @@
-export Polygon
-
 """
     Polygon{N, VN<:AbstractVector{N}} <: LazySet{N}
 
@@ -39,44 +37,3 @@ Polygon{N}() where {N} = Polygon(Vector{Vector{N}}())
 
 # constructor with no vertices of type Float64
 Polygon() = Polygon{Float64}()
-
-function isoperationtype(::Type{<:Polygon})
-    return false
-end
-
-function isconvextype(::Type{<:Polygon})
-    return false
-end
-
-function isboundedtype(::Type{<:Polygon})
-    return true
-end
-
-function dim(::Polygon)
-    return 2
-end
-
-function isbounded(::Polygon)
-    return true
-end
-
-function plot_recipe(P::Polygon{N}, ε=zero(N)) where {N}
-    vlist = P.vertices
-    return _plot_recipe_2d_vlist(vlist, N)
-end
-
-function σ(d::AbstractVector, P::Polygon)
-    return _σ_vertices(d, P.vertices)
-end
-
-function ρ(d::AbstractVector, P::Polygon)
-    return _ρ_vertices(d, P.vertices)
-end
-
-function isempty(P::Polygon)
-    return isempty(P.vertices)
-end
-
-function convex_hull(P::Polygon)
-    return VPolygon(P.vertices)
-end
