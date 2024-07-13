@@ -11,8 +11,8 @@ P = ⋂_{i = 1}^m H_i,
 where each ``H_i = \\{x ∈ ℝ^n : a_i^T x ≤ b_i \\}`` is a
 half-space, ``a_i ∈ ℝ^n`` is the normal vector of the ``i``-th
 half-space and ``b_i`` is the displacement.
-It is assumed that ``P`` is bounded (see also [`HPolyhedron`](@ref), which does
-not make such an assumption).
+It is assumed that ``P`` is bounded (see also [`LazySets.HPolyhedron`](@ref),
+which does not make such an assumption).
 
 ### Fields
 
