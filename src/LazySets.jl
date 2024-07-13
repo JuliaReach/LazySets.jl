@@ -141,7 +141,8 @@ using ..Line2DModule: _linear_map_hrep_helper
 include("Sets/Line/LineModule.jl")
 @reexport using ..LineModule: Line, direction
 
-include("Sets/Polygon.jl")
+include("Sets/Polygon/PolygonModule.jl")
+
 include("Sets/RotatedHyperrectangle.jl")
 
 include("Sets/Singleton/SingletonModule.jl")
