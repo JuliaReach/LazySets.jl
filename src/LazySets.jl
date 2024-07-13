@@ -123,7 +123,7 @@ include("Sets/HPolygon.jl")
 
 include("Sets/HPolygonOpt.jl")
 
-include("Sets/HPolytope.jl")
+include("Sets/HPolytope/HPolytopeModule.jl")
 
 include("Sets/HPolyhedron.jl")
 
