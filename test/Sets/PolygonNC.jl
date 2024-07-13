@@ -1,4 +1,9 @@
 for N in [Float64, Rational{Int}, Float32]
+    # constructor from empty vertex list
+    P = Polygon{N}()
+    @test P isa Polygon{N,Vector{N}} && isempty(P.vertices)
+
+    # constructor from nonempty vertex list
     P = Polygon([N[0, 0], N[0, 2], N[2, 2], N[2, 0], N[1, 1]])
 
     # dim
@@ -18,6 +23,10 @@ for N in [Float64, Rational{Int}, Float32]
 
     # convex hull
     @test convex_hull(P) == VPolygon([N[0, 0], N[2, 0], N[2, 2], N[0, 2]])
+
+    # plot_recipe (only check for correct output type)
+    x, y = LazySets.plot_recipe(P)
+    @test x isa Vector{N} && y isa Vector{N}
 end
 
 # default Float64 constructor
