@@ -1,3 +1,20 @@
+module HPolytopeModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractPolytope, HalfSpace, HPolygon,
+                  AbstractLinearMapAlgorithm, default_polyhedra_backend,
+                  vertices_list_1d, _linear_map_hrep, _normal_Vector
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Comparison: isapproxzero, _ztol
+using ReachabilityBase.Require: require
+
+@reexport import ..API: isbounded, isoperationtype, rand, vertices_list
+@reexport import ..LazySets: _linear_map_hrep_helper, _vertices_list
+@reexport import Base: convert
+@reexport using ..API
+
 export HPolytope
 
 """
@@ -151,7 +168,7 @@ end
 
 function load_polyhedra_hpolytope() # function to be loaded by Requires
     return quote
-        # see the file init_Polyhedra.jl for the imports
+        using .Polyhedra: HRep
 
         function convert(::Type{HPolytope}, P::HRep{N}) where {N}
             VT = Polyhedra.hvectortype(P)
@@ -238,9 +255,9 @@ function vertices_list(P::HPolytope; backend=nothing, prune::Bool=true)
     if isnothing(backend)
         backend = default_polyhedra_backend(P)
     end
-    Q = polyhedron(P; backend=backend)
+    Q = Polyhedra.polyhedron(P; backend=backend)
     if prune
-        removevredundancy!(Q; ztol=_ztol(N))
+        Polyhedra.removevredundancy!(Q; ztol=_ztol(N))
     end
     return collect(Polyhedra.points(Q))
 end
@@ -251,6 +268,8 @@ end
 
 function load_symbolics_hpolytope()
     return quote
+        using .Symbolics: Num
+
         """
             HPolytope(expr::Vector{<:Num}, vars=_get_variables(expr);
                       [N]::Type{<:Real}=Float64, [check_boundedness]::Bool=false)
@@ -307,3 +326,7 @@ function load_symbolics_hpolytope()
         end
     end
 end  # quote / load_modeling_toolkit_hpolytope()
+
+include("init.jl")
+
+end  # module

@@ -54,4 +54,3 @@ end
 eval(load_symbolics_hyperplane())
 eval(load_symbolics_halfspace())
 eval(load_symbolics_hpolyhedron())
-eval(load_symbolics_hpolytope())
