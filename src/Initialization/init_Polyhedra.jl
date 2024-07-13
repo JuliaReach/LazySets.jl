@@ -39,6 +39,5 @@ end
 
 eval(load_polyhedra_hpolytope())
 eval(load_polyhedra_hpolyhedron())
-eval(load_polyhedra_vpolytope())
 eval(load_polyhedra_mesh())
 eval(load_polyhedra_lazyset())

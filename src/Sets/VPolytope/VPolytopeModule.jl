@@ -1,7 +1,26 @@
-export VPolytope,
-       remove_redundant_vertices,
-       tohrep,
-       tovrep
+module VPolytopeModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractPolytope, HPolytope, VPolygon, LinearMapVRep,
+                  default_lp_solver, default_lp_solver_polyhedra,
+                  default_polyhedra_backend, is_lp_infeasible, is_lp_optimal,
+                  linprog
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: projection_matrix
+using ReachabilityBase.Comparison: _ztol
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Require: require
+using LinearAlgebra: dot
+
+@reexport import ..API: constraints_list, dim, isoperationtype, rand, reflect,
+                        vertices_list, ∈, linear_map, permute, project, scale!,
+                        ρ, σ, translate, translate!
+@reexport import ..LazySets: remove_redundant_vertices, tohrep, tovrep,
+                             _linear_map_vrep
+@reexport using ..API
+
+export VPolytope
 
 """
     VPolytope{N, VN<:AbstractVector{N}, VT<:AbstractVector{VN}} <: AbstractPolytope{N}
@@ -485,7 +504,7 @@ function remove_redundant_vertices(P::VPolytope{N};
         vQ = Polyhedra.vrep(Q)
         Polyhedra.setvrep!(Q, Polyhedra.removevredundancy(vQ, solver))
     else
-        removevredundancy!(Q; ztol=_ztol(N))
+        Polyhedra.removevredundancy!(Q; ztol=_ztol(N))
     end
     return VPolytope(Q)
 end
@@ -542,7 +561,8 @@ end
 
 function load_polyhedra_vpolytope() # function to be loaded by Requires
     return quote
-        # see the interface file init_Polyhedra.jl for the imports
+        import .Polyhedra: polyhedron
+        using .Polyhedra: VRep
 
         # VPolytope from a VRep
         function VPolytope(P::VRep{N}) where {N}
@@ -651,3 +671,7 @@ function scale!(α::Real, P::VPolytope)
     P.vertices .*= α
     return P
 end
+
+include("init.jl")
+
+end  # module

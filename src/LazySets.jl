@@ -168,6 +168,7 @@ const PolynomialZonotope = SimpleSparsePolynomialZonotope
 include("Sets/VPolygon.jl")
 
 include("Sets/VPolytope/VPolytopeModule.jl")
+@reexport using ..VPolytopeModule: VPolytope
 
 include("Sets/Polygon/PolygonModule.jl")
 @reexport using ..PolygonModule: Polygon
