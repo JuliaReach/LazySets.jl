@@ -193,9 +193,17 @@ for N in [Float64, Rational{Int}, Float32]
     # dim
     @test dim(p) == 2
 
-    # support vector
+    # support function/vector
     d = N[1, 0]
+    @test ρ(d, p) == N(1)
     @test σ(d, p) == N[1, 0]
+    # empty polytope
+    V = VPolytope{N}()
+    @test_throws ErrorException ρ(d, V)
+    @test_throws ErrorException σ(d, V)
+    # one vertex
+    V = VPolytope([N[2, 1]])
+    @test σ(d, V) == N[2, 1]
 
     # boundedness
     @test isbounded(p)
@@ -224,6 +232,10 @@ for N in [Float64, Rational{Int}, Float32]
         Vempty = VPolytope()
         @test_throws ErrorException polyhedron(Vempty) # needs to pass the (relative) dim
         Pe = polyhedron(Vempty; relative_dimension=2)
+
+        # remove_redundant_vertices
+        V2 = remove_redundant_vertices(V)
+        @test V2 == V
     end
 
     # volume
@@ -233,6 +245,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test translate(p, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]])
     pp = copy(p)
     @test translate!(pp, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]]) == pp
+    # empty polytope
+    V = VPolytope{N}()
+    @test translate!(copy(V), N[1]) == V
 
     # copy (see #1002)
     p, q = [N(1)], [N(2)]
@@ -247,6 +262,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test project(V, [1]) == Interval(N(0), N(1))
     @test project(V, [1, 2]) == VPolygon([N[0, 0], N[0, 1], N[0, -1], N[1, 0]])
     @test project(V, [1, 2, 3]) == V
+    # empty polytope
+    V = VPolytope{N}()
+    @test project(V, [1]) == V
 
     # linear_map with redundant vertices
     A = N[1 0; 0 0]
@@ -352,6 +370,12 @@ for N in [Float64]
     @test N[0.51, 0.51] ∉ p
     q = VPolytope([N[0, 1], N[0, 2]])
     @test N[0, 1 // 2] ∉ q
+    # empty polytope
+    V = VPolytope{N}()
+    @test N[0] ∉ V
+    # one vertex
+    V = VPolytope([N[1, 2]])
+    @test N[1, 2] ∈ V && N[2, 2] ∉ V
 
     # creation from a matrix (each column is a vertex)
     pmat = VPolytope(copy(N[0 0; 1 0; 0 1]'))
@@ -623,6 +647,9 @@ for N in [Float64]
         @test ispermutation(vertices_list(overapproximate(Projection(X, [1, 2]), 1e-3)), v12)
     end
 end
+
+@test !isoperationtype(HPolytope)
+@test !isoperationtype(VPolytope)
 
 for N in [Float64, Rational{Int}]
     # delaunay triangulation

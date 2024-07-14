@@ -2,8 +2,8 @@ module PolygonModule
 
 using Reexport
 
-using ..LazySets: LazySet, VPolygon, _ρ_vertices, _σ_vertices,
-                  _plot_recipe_2d_vlist
+using ..LazySets: LazySet, VPolygon, _plot_recipe_2d_vlist
+using ..LazySets.VPolytopeModule: _ρ_vertices, _σ_vertices
 
 @reexport import ..API: convex_hull, dim, isconvextype, isbounded,
                         isboundedtype, isempty, isoperationtype, ρ, σ

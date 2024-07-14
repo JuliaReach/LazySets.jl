@@ -120,8 +120,11 @@ include("Sets/DensePolynomialZonotope/DensePolynomialZonotopeModule.jl")
 @reexport using ..DensePolynomialZonotopeModule: DensePolynomialZonotope
 
 include("Sets/HPolygon.jl")
+
 include("Sets/HPolygonOpt.jl")
+
 include("Sets/HPolytope.jl")
+
 include("Sets/HPolyhedron.jl")
 
 include("Sets/HParallelotope/HParallelotopeModule.jl")
@@ -132,6 +135,7 @@ include("Sets/HParallelotope/HParallelotopeModule.jl")
                                         offset
 
 include("Sets/Hyperplane.jl")
+
 include("Sets/Hyperrectangle.jl")
 
 include("Sets/Line2D/Line2DModule.jl")
@@ -162,7 +166,9 @@ Alias for `SimpleSparsePolynomialZonotope`.
 const PolynomialZonotope = SimpleSparsePolynomialZonotope
 
 include("Sets/VPolygon.jl")
-include("Sets/VPolytope.jl")
+
+include("Sets/VPolytope/VPolytopeModule.jl")
+@reexport using ..VPolytopeModule: VPolytope
 
 include("Sets/Polygon/PolygonModule.jl")
 @reexport using ..PolygonModule: Polygon
