@@ -66,5 +66,5 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
     elseif is_lp_infeasible(lp.status)
         return false
     end
-    return error("LP returned status $(lp.status) unexpectedly")
+    return error("LP returned status $(lp.status) unexpectedly")  # COV_EXCL_LINE
 end
