@@ -80,6 +80,7 @@ end
 function load_symbolics_hpolytope()
     return quote
         using .Symbolics: Num
+        using ..LazySets: _get_variables, _vec
 
         """
             HPolytope(expr::Vector{<:Num}, vars=_get_variables(expr);
