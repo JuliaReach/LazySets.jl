@@ -50,10 +50,6 @@ function _σ_helper(d::AbstractVector, vlist::Vector{VN}) where {N,VN<:AbstractV
     end
 end
 
-function _brute_force_support_vector(d::AbstractVector, P::VPolygon)
-    return _brute_force_support_vector(d, P.vertices)
-end
-
 function _brute_force_support_vector(d::AbstractVector{M},
                                      vlist::Vector{VT}) where {M,T,VT<:AbstractVector{T}}
     max_idx = 1
@@ -66,10 +62,6 @@ function _brute_force_support_vector(d::AbstractVector{M},
         end
     end
     return max_idx
-end
-
-function _binary_support_vector(d::AbstractVector, P::VPolygon)
-    return _binary_support_vector(d, P.vertices)
 end
 
 # checks if the given vector is pointing toward the given direction
