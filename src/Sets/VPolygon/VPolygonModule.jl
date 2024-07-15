@@ -1,6 +1,23 @@
-export VPolygon,
-       remove_redundant_vertices,
-       remove_redundant_vertices!
+module VPolygonModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractPolygon, AbstractHPolygon, HPolygon, halfspace_left,
+                  is_right_turn, _area_vlist, _linear_map_vrep
+using Random: AbstractRNG, GLOBAL_RNG, shuffle
+using ReachabilityBase.Arrays: isabove, rand_pos_neg_zerosum_vector
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Require: require
+using LinearAlgebra: dot
+
+@reexport import ..API: an_element, area, constraints_list, isoperationtype,
+                        rand, vertices_list, ∈, linear_map, permute, project,
+                        σ, translate, translate!
+@reexport import ..LazySets: remove_redundant_vertices,
+                             remove_redundant_vertices!, tohrep, tovrep
+@reexport using ..API
+
+export VPolygon
 
 # heuristic to define the method used to compute the support vector of a polygon
 # in vertex representation; if the number of vertices of the polygon is smaller
@@ -223,9 +240,11 @@ function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon) where {N,HPOLYGON<:Ab
         return EmptySet{N}(2)
     elseif n == 1
         # only one vertex -> use function for singletons
+        require(@__MODULE__, :LauySets; fun_name="convert")
         return convert(HPOLYGON, Singleton(vl[1]))
     elseif n == 2
         # only two vertices -> use function for line segments
+        require(@__MODULE__, :LauySets; fun_name="convert")
         return convert(HPOLYGON, LineSegment(vl[1], vl[2]))
     else
         # find right-most vertex
@@ -681,3 +700,7 @@ See [`area(::LazySet)`](@ref).
 function area(V::VPolygon)
     return _area_vlist(V.vertices; apply_convex_hull=false)
 end
+
+include("init.jl")
+
+end  # module

@@ -28,7 +28,7 @@ using LinearAlgebra, RecipesBase, Requires, SparseArrays
 import GLPK, JuMP, Random, ReachabilityBase
 import IntervalArithmetic as IA
 using LinearAlgebra: checksquare
-using Random: AbstractRNG, GLOBAL_RNG, SamplerType, shuffle, randperm
+using Random: AbstractRNG, GLOBAL_RNG, SamplerType, randperm
 
 @static if VERSION < v"1.9"
     stack(vecs) = hcat(vecs...)
@@ -167,6 +167,8 @@ Alias for `SimpleSparsePolynomialZonotope`.
 const PolynomialZonotope = SimpleSparsePolynomialZonotope
 
 include("Sets/VPolygon/VPolygonModule.jl")
+@reexport using ..VPolygonModule: VPolygon
+using ..VPolygonModule: _σ_helper
 
 include("Sets/VPolytope/VPolytopeModule.jl")
 @reexport using ..VPolytopeModule: VPolytope
