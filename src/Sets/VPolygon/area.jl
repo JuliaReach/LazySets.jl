@@ -13,7 +13,7 @@ A number representing the area of `V`.
 
 ### Algorithm
 
-See [`area(::LazySet)`](@ref).
+See [`area(::LazySets.LazySet)`](@ref).
 """
 function area(V::VPolygon)
     return _area_vlist(V.vertices; apply_convex_hull=false)
