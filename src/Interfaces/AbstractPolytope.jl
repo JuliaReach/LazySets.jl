@@ -1,4 +1,6 @@
-export AbstractPolytope
+export AbstractPolytope,
+       remove_redundant_vertices,
+       remove_redundant_vertices!
 
 """
     AbstractPolytope{N} <: AbstractPolyhedron{N}
@@ -176,3 +178,34 @@ function volume(P::AbstractPolytope; backend=nothing)
 
     return Polyhedra.volume(polyhedron(P; backend=backend))
 end
+
+"""
+    remove_redundant_vertices(P::AbstractPolytope)
+
+Return an equivalent polytope in vertex representation with redundant vertices
+removed.
+
+### Input
+
+- `P` -- polytope in vertex representation
+
+### Output
+
+A new polytope with the redundant vertices removed.
+"""
+function remove_redundant_vertices(::AbstractPolytope) end
+
+"""
+    remove_redundant_vertices!(P::AbstractPolytope)
+
+Remove the redundant vertices from a polytope in vertex representation in-place.
+
+### Input
+
+- `P` -- polytope in vertex representation
+
+### Output
+
+A new polytope with the redundant vertices removed.
+"""
+function remove_redundant_vertices!(::AbstractPolytope) end
