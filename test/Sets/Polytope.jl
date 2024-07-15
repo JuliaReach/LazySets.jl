@@ -67,6 +67,10 @@ for N in [Float64, Rational{Int}, Float32]
         # conversion to and from Polyhedra's VRep data structure
         cl = constraints_list(convert(HPolytope, polyhedron(p)))
         @test length(p.constraints) == length(cl)
+
+        # invalid half-space
+        P = Polyhedra.HalfSpace(N[0, 0], N(1)) ∩ Polyhedra.HalfSpace(N[0, 0], N(-1))
+        @test_throws AssertionError convert(HPolytope, P)
     end
 
     # vertices_list of "universal polytope" (strictly speaking: illegal input)
@@ -627,6 +631,10 @@ for N in [Float64]
     @static if isdefined(@__MODULE__, :Symbolics)
         vars = @variables x y
         p1 = HPolytope([x + y <= 1, x + y >= -1, x - y <= 1, x - y >= -1], vars)
+        p2 = HPolytope([x + y <= 1, x + y >= -1, x - y <= 1, x - y >= -1])
+        @test p1 == p2
+        p2 = HPolytope([x + y <= 1, x + y >= -1, x - y <= 1, x - y >= -1], [vars])
+        @test p1 == p2
         b1 = Ball1(zeros(2), 1.0)
         @test isequivalent(p1, b1)
     end

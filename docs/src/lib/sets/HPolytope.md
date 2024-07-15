@@ -9,17 +9,33 @@ The type `HPolytope` represents polytopes.
 While identical to [`HPolyhedron`](@ref) in its representation, `HPolytope`
 instances are assumed to be bounded.
 
+```@meta
+CurrentModule = LazySets.HPolytopeModule
+```
+
 ```@docs
 HPolytope
+```
+
+```@meta
+CurrentModule = LazySets
 ```
 
 Most functionality is shared with [`HPolyhedron`](@ref).
 Additional functionality specific to `HPolytope` is listed below.
 
+```@meta
+CurrentModule = LazySets.HPolytopeModule
+```
+
 ```@docs
 rand(::Type{HPolytope})
 vertices_list(::HPolytope)
 isbounded(::HPolytope, ::Bool=true)
+```
+
+```@meta
+CurrentModule = LazySets
 ```
 
 Inherited from [`AbstractPolytope`](@ref):
