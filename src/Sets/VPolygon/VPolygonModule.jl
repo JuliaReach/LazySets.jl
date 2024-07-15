@@ -627,54 +627,6 @@ function translate!(P::VPolygon, v::AbstractVector)
     return P
 end
 
-function _isinside(p, a, b)
-    @inbounds begin
-        α = (b[1] - a[1]) * (p[2] - a[2])
-        β = (b[2] - a[2]) * (p[1] - a[1])
-    end
-    return !_leq(α, β)
-end
-
-function _intersection_line_segments(a, b, s, f)
-    @inbounds begin
-        dc = [a[1] - b[1], a[2] - b[2]]
-        dp = [s[1] - f[1], s[2] - f[2]]
-        n1 = a[1] * b[2] - a[2] * b[1]
-        n2 = s[1] * f[2] - s[2] * f[1]
-        n3 = 1.0 / (dc[1] * dp[2] - dc[2] * dp[1])
-
-        α = (n1 * dp[1] - n2 * dc[1]) * n3
-        β = (n1 * dp[2] - n2 * dc[2]) * n3
-    end
-    return [α, β]
-end
-
-# Note: this method assumes that the vertices are sorted in CCW order
-function _intersection_vrep_2d(spoly::AbstractVector{VT},
-                               cpoly::AbstractVector{VT}) where {VT<:AbstractVector}
-    outarr = spoly
-    q = cpoly[end]
-    for p in cpoly
-        inarr = outarr
-        outarr = Vector{VT}()
-        isempty(inarr) && break
-        s = inarr[end]
-        for vtx in inarr
-            if _isinside(vtx, q, p)
-                if !_isinside(s, q, p)
-                    push!(outarr, _intersection_line_segments(q, p, s, vtx))
-                end
-                push!(outarr, vtx)
-            elseif _isinside(s, q, p)
-                push!(outarr, _intersection_line_segments(q, p, s, vtx))
-            end
-            s = vtx
-        end
-        q = p
-    end
-    return outarr
-end
-
 function project(V::VPolygon, block::AbstractVector{Int}; kwargs...)
     if length(block) == 1
         @assert block[1] == 1 || block[1] == 2 "invalid projection to $block"
