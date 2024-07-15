@@ -345,6 +345,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test point ∉ VPolygon([N[0, 2]])
     @test point ∈ VPolygon([N[0, 0], N[0, 2]])
     @test point ∉ VPolygon([N[1, 0], N[1, 2]])
+    @test point ∈ VPolygon([N[1, 1], N[0, 0], N[-1, 1]])
+    @test point ∉ VPolygon([N[1, 1], N[0, 0], N[1, 0]])
 
     # translation
     vp2 = VPolygon([N[0, 0], N[1, 0], N[0, 1]])
@@ -435,8 +437,16 @@ for N in [Float64, Float32, Rational{Int}]
     V = VPolygon([N[0, 1], N[1, 0], N[-1, 0]])
     @test project(V, [1]) == Interval(N(-1), N(1))
     @test project(V, 1:2) == V
+    @test project(V, [2, 1]) == VPolygon([N[1, 0], N[0, 1], N[0, -1]])
     V = VPolygon([N[1, 0], N[1, 1]])
     @test project(V, [1]) == Interval(N(1), N(1))
+    @test_throws AssertionError project(V, [3])
+    @test_throws AssertionError project(V, [1, 3])
+    @test_throws ArgumentError project(V, [1, 2, 3])
+
+    # permute
+    V = VPolygon([N[1, 0], N[1, 2]])
+    @test permute(V, [2, 1]) == VPolygon([N[0, 1], N[2, 1]])
 
     # concrete cartesian product
     V = VPolygon([N[0, 1], N[1, 0], N[-1, 0]])
@@ -589,6 +599,12 @@ for N in [Float64, Float32]
             @test x == [c1, c3]
         end
     end
+
+    # rand
+    @test rand(VPolygon; N=N, num_vertices=0) == VPolygon{N}()
+    vp = rand(VPolygon; N=N, num_vertices=1)
+    @test vp isa VPolygon{N} && length(vp.vertices) == 1
+    @test rand(VPolygon; N=N) isa VPolygon{N}
 end
 
 for N in [Float64]
@@ -662,9 +678,13 @@ end
 # random polygons
 rand(HPolygon)
 rand(HPolygonOpt)
-rand(VPolygon)
 
 # default Float64 constructors
 @test HPolygon() isa HPolygon{Float64,Vector{Float64}}
 @test HPolygonOpt() isa HPolygonOpt{Float64,Vector{Float64}}
 @test VPolygon() isa VPolygon{Float64}
+
+# isoperationtype
+@test !isoperationtype(HPolygon)
+@test !isoperationtype(HPolygonOpt)
+@test !isoperationtype(VPolygon)
