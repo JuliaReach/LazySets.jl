@@ -1,9 +1,9 @@
 module PolygonModule
 
-using Reexport
+using Reexport, Requires
 
-using ..LazySets: LazySet, VPolygon, _plot_recipe_2d_vlist
-using ..LazySets.VPolytopeModule: _ρ_vertices, _σ_vertices
+using ..LazySets: LazySet, _plot_recipe_2d_vlist
+using ReachabilityBase.Require: require
 
 @reexport import ..API: convex_hull, dim, isconvextype, isbounded,
                         isboundedtype, isempty, isoperationtype, ρ, σ
@@ -28,5 +28,7 @@ function plot_recipe(P::Polygon{N}, ε=zero(N)) where {N}
     vlist = P.vertices
     return _plot_recipe_2d_vlist(vlist, N)
 end
+
+include("init.jl")
 
 end  # module

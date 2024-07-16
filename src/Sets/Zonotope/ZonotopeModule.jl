@@ -4,12 +4,12 @@ using Reexport, Requires
 
 using ..LazySets: AbstractZonotope, generators_fallback,
                   _vertices_list_zonotope_iterative
+using LinearAlgebra: mul!
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: ismultiple, remove_zero_columns, to_matrix,
                                vector_type
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
-using LinearAlgebra: mul!
 
 @reexport import ..API: center, high, isoperationtype, low, rand, vertices_list,
                         permute, scale!, translate!

@@ -1,10 +1,11 @@
 module BallpModule
 
-using Reexport
+using Reexport, Requires
 
-using ..LazySets: AbstractBallp, Ball1, Ball2, BallInf
+using ..LazySets: AbstractBallp
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Require: require
 
 @reexport import ..API: center, isoperationtype, rand, reflect, project, scale,
                         translate!
@@ -24,5 +25,7 @@ include("rand.jl")
 include("reflect.jl")
 include("scale.jl")
 include("translate.jl")
+
+include("init.jl")
 
 end  # module

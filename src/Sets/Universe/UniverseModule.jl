@@ -2,11 +2,11 @@ module UniverseModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolyhedron, HalfSpace, default_polyhedra_backend
+using ..LazySets: AbstractPolyhedron, default_polyhedra_backend
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator
-using ReachabilityBase.Require
+using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, complement, constraints, constraints_list,
                         diameter, dim, isbounded, isboundedtype, isempty,

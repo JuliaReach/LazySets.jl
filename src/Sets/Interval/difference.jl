@@ -60,6 +60,8 @@ function difference(X::Interval{N}, Y::Interval) where {N}
         flat_right = isflat(R)
 
         if flat_left && flat_right
+            require(@__MODULE__, :LazySets; fun_name="difference")
+
             return EmptySet{N}(1)
         elseif flat_left && !flat_right
             return R

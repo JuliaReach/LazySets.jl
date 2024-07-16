@@ -31,6 +31,8 @@ function reduce_order(P::SparsePolynomialZonotope, r::Real,
         return P
     end
 
+    require(@__MODULE__, :LazySets; fun_name="reduce_order")
+
     n = dim(P)
     h = ngens_dep(P)
     q = ngens_indep(P)

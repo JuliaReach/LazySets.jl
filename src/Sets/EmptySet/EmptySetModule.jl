@@ -1,19 +1,19 @@
 module EmptySetModule
 
-using Reexport
+using Reexport, Requires
 
-using ..LazySets: LazySet, ConvexSet, Universe, _witness_result_empty
+using ..LazySets: LazySet, ConvexSet, _witness_result_empty
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator
+using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, area, complement, diameter, dim, high, ∈,
                         isbounded, isboundedtype, isconvextype, isempty,
                         isoperationtype, isuniversal, linear_map, low, norm,
                         project, radius, rand, rectify, reflect, scale, scale!,
                         ρ, σ, translate, translate!, vertices, vertices_list,
-                        volume,
-                        convex_hull, intersection, isdisjoint, ⊆
+                        volume, convex_hull, intersection, isdisjoint, ⊆
 @reexport import ..LazySets: chebyshev_center_radius, plot_recipe
 @reexport using ..API
 
@@ -74,5 +74,7 @@ An empty array.
 function plot_recipe(::EmptySet{N}, ε=zero(N)) where {N}
     return []
 end
+
+include("init.jl")
 
 end  # module

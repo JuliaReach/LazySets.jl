@@ -2,20 +2,21 @@ module LineModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolyhedron, HalfSpace, @commutative
+using ..LazySets: AbstractPolyhedron
+import LinearAlgebra
+using LinearAlgebra: dot, nullspace
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: ismultiple
 using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Commutative: @commutative
 using ReachabilityBase.Comparison: _isapprox, isapproxzero
 using ReachabilityBase.Require
-import LinearAlgebra
-using LinearAlgebra: dot, nullspace
 
 @reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
                         isoperationtype, isuniversal, project, rand, distance,
                         ∈, linear_map, ρ, σ, translate!
 @reexport import ..LazySets: normalize
-@reexport import ..LinearAlgebra: normalize!
+@reexport import LinearAlgebra: normalize!
 @reexport using ..API
 
 export Line,

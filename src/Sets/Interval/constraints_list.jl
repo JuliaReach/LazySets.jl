@@ -13,6 +13,8 @@ The list of constraints of the interval represented as two one-dimensional
 half-spaces.
 """
 function constraints_list(x::Interval)
+    require(@__MODULE__, :LazySets; fun_name="constraints_list")
+
     N = eltype(x)
     constraints = Vector{HalfSpace{N,SingleEntryVector{N}}}(undef, 2)
     e₁ = SingleEntryVector(1, 1, one(N))

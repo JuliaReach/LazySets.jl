@@ -22,6 +22,8 @@ The constraints can be defined as ``d_i^T (x-c) ≤ r`` for all ``d_i``, where
 all possible ``d_i``, the function `Iterators.product` is used.
 """
 function constraints_list(B::Ball1)
+    require(@__MODULE__, :LazySets; fun_name="constraints_list")
+
     n = dim(B)
     c, r = B.center, B.radius
     N = eltype(B)

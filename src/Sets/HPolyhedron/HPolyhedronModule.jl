@@ -2,18 +2,19 @@ module HPolyhedronModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolyhedron, HalfSpace, default_lp_solver,
+using ..LazySets: AbstractPolyhedron, default_lp_solver,
                   default_polyhedra_backend, iscomplement, is_lp_infeasible,
                   is_lp_optimal, is_lp_unbounded, has_lp_infeasibility_ray,
                   linprog, tosimplehrep, _isempty_polyhedron, _normal_Vector
+using ..HalfSpaceModule: HalfSpace
 using ..HPolytopeModule: HPolytope
+using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: to_negative_vector
 using ReachabilityBase.Basetype: basetype
 using ReachabilityBase.Comparison: isapproxzero
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
-using LinearAlgebra: dot
 
 @reexport import ..API: constraints_list, dim, isempty, isoperationtype, rand,
                         permute, ρ, σ, translate

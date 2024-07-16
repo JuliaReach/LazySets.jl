@@ -40,6 +40,8 @@ function vertices_list(P::HPolytope; backend=nothing, prune::Bool=true)
         if n == 1
             return vertices_list_1d(P)
         elseif n == 2
+            require(@__MODULE__, :LazySets; fun_name="vertices_list")
+
             return vertices_list(convert(HPolygon, P; prune=prune))
         end
     end

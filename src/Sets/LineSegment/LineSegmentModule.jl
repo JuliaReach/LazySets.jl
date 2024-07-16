@@ -1,13 +1,14 @@
 module LineSegmentModule
 
-using Reexport
+using Reexport, Requires
 
 using ..LazySets: AbstractZonotope, Line2D, Singleton, EmptySet, right_turn
+using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: _isapprox, isapproxzero, _leq
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator, SingletonIterator
-using LinearAlgebra: dot
+using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, center, constraints_list, dim,
                         isoperationtype, rand, vertices_list, ∈, scale!, ρ, σ,
@@ -40,5 +41,7 @@ include("intersection.jl")
 
 include("halfspace_left.jl")
 include("halfspace_right.jl")
+
+include("init.jl")
 
 end  # module

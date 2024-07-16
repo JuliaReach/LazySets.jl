@@ -34,6 +34,8 @@ function rand(::Type{HParallelotope};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing)
+    require(@__MODULE__, :LazySets; fun_name="rand")
+
     rng = reseed!(rng, seed)
 
     while true

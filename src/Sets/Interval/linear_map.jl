@@ -35,6 +35,8 @@ function _linear_map_interval(M::AbstractMatrix, x::Interval)
 end
 
 function _linear_map_zonotope(M::AbstractMatrix, x::Interval)
+    require(@__MODULE__, :LazySets; fun_name="linear_map")
+
     nout = size(M, 1)
     cx = _center(x)
     gx = cx - min(x)

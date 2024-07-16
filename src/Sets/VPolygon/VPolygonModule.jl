@@ -2,13 +2,14 @@ module VPolygonModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolygon, AbstractHPolygon, HPolygon, convex_hull,
+using ..LazySets: AbstractPolygon, AbstractHPolygon, convex_hull,
                   halfspace_left, is_right_turn, _area_vlist, _linear_map_vrep
+using ..HPolygonModule: HPolygon
+using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG, shuffle
 using ReachabilityBase.Arrays: isabove, rand_pos_neg_zerosum_vector
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
-using LinearAlgebra: dot
 
 @reexport import ..API: an_element, area, constraints_list, isoperationtype,
                         rand, vertices_list, ∈, linear_map, permute, project,

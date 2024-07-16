@@ -2,9 +2,10 @@ module HPolytopeModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolytope, HalfSpace, HPolygon,
-                  AbstractLinearMapAlgorithm, default_polyhedra_backend,
-                  vertices_list_1d, _linear_map_hrep, _normal_Vector
+using ..LazySets: AbstractPolytope, AbstractLinearMapAlgorithm,
+                  default_polyhedra_backend, vertices_list_1d, _linear_map_hrep,
+                  _normal_Vector
+using ..HalfSpaceModule: HalfSpace
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Comparison: isapproxzero, _ztol
