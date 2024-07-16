@@ -132,11 +132,6 @@ function Star(c::VN, vlist::AbstractVector{VN},
     return Star(c, V, P)
 end
 
-# analogous AffineMap type
-const STAR{N,VN<:AbstractVector{N},
-MN<:AbstractMatrix{N},
-PT<:AbstractPolyhedron{N}} = AffineMap{N,PT,N,MN,VN}
-
 isoperationtype(::Type{<:Star}) = false
 
 """

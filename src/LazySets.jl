@@ -212,6 +212,14 @@ include("LazyOperations/IntersectionArray.jl")
 include("LazyOperations/LinearMap.jl")
 include("LazyOperations/InverseLinearMap.jl")
 include("LazyOperations/AffineMap.jl")  # must come after LinearMap
+
+# must come after AffineMap
+const STAR{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N},PT<:AbstractPolyhedron{N}} = AffineMap{N,
+                                                                                                PT,
+                                                                                                N,
+                                                                                                MN,
+                                                                                                VN}
+
 include("LazyOperations/MinkowskiSum.jl")
 include("LazyOperations/MinkowskiSumArray.jl")
 include("LazyOperations/CachedMinkowskiSumArray.jl")
