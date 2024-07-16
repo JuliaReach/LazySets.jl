@@ -42,6 +42,13 @@ LazySets._isbounded_stiemke
 LazySets._linear_map_polyhedron
 ```
 
+Some common functions implemented by several subtypes:
+
+```@docs
+addconstraint!(::AbstractPolyhedron, ::HalfSpace)
+is_hyperplanar(::AbstractPolyhedron)
+```
+
 Some common functions to work with linear constraints:
 
 ```@docs

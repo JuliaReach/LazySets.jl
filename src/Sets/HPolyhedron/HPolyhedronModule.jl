@@ -1,10 +1,4 @@
-export HPolyhedron,
-       addconstraint!,
-       tohrep, tovrep,
-       remove_redundant_constraints,
-       remove_redundant_constraints!,
-       constrained_dimensions,
-       is_hyperplanar
+export HPolyhedron
 
 """
     HPolyhedron{N, VN<:AbstractVector{N}} <: AbstractPolyhedron{N}
