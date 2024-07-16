@@ -126,7 +126,7 @@ include("Sets/HPolygonOpt.jl")
 include("Sets/HPolytope/HPolytopeModule.jl")
 @reexport using ..HPolytopeModule: HPolytope
 
-include("Sets/HPolyhedron.jl")
+include("Sets/HPolyhedron/HPolyhedronModule.jl")
 
 include("Sets/HParallelotope/HParallelotopeModule.jl")
 @reexport using ..HParallelotopeModule: HParallelotope,
