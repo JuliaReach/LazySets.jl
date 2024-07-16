@@ -166,6 +166,9 @@ Alias for `SimpleSparsePolynomialZonotope`.
 """
 const PolynomialZonotope = SimpleSparsePolynomialZonotope
 
+include("Sets/Star/StarModule.jl")
+@reexport using ..StarModule: Star, basis, predicate
+
 include("Sets/VPolygon/VPolygonModule.jl")
 @reexport using ..VPolygonModule: VPolygon
 using ..VPolygonModule: _σ_helper
@@ -210,6 +213,14 @@ include("LazyOperations/IntersectionArray.jl")
 include("LazyOperations/LinearMap.jl")
 include("LazyOperations/InverseLinearMap.jl")
 include("LazyOperations/AffineMap.jl")  # must come after LinearMap
+
+# must come after AffineMap
+const STAR{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N},PT<:AbstractPolyhedron{N}} = AffineMap{N,
+                                                                                                PT,
+                                                                                                N,
+                                                                                                MN,
+                                                                                                VN}
+
 include("LazyOperations/MinkowskiSum.jl")
 include("LazyOperations/MinkowskiSumArray.jl")
 include("LazyOperations/CachedMinkowskiSumArray.jl")
@@ -225,7 +236,6 @@ include("LazyOperations/Rectification.jl")  # must come after UnionSet
 # =======
 include("Interfaces/aliases.jl")
 include("Interfaces/AbstractArraySet.jl")
-include("Sets/Star.jl")
 
 # =============================
 # Conversions between set types
