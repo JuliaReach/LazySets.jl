@@ -1,5 +1,4 @@
-using .Symbolics: gradient,
-                  simplify,
+using .Symbolics: simplify,
                   Num,  # variable like, e.g. x[1]
                   Term, # term like, eg. x[1] + x[2] == 1
                   Symbolic,

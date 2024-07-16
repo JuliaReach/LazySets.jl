@@ -111,7 +111,7 @@ function load_symbolics_hpolyhedron()
                     end
                 end
 
-                coeffs = [N(α.val) for α in gradient(sexpr, vars_list)]
+                coeffs = [N(α.val) for α in Symbolics.gradient(sexpr, vars_list)]
                 β = -N(Symbolics.substitute(sexpr, zeroed_vars))
 
                 push!(clist, HalfSpace(coeffs, β))
