@@ -65,9 +65,25 @@ for N in [Float64, Float32, Rational{Int}]
     am = affine_map(M, S, v)
     @test isa(am, Star)
     @test isequivalent(am, Star(v, M, B))
+
+    # an_element and ∈
+    e = an_element(S)
+    @test e ∈ B && e ∈ S
+
+    # isempty
+    @test !isempty(S)
+
+    # isbounded
+    @test isbounded(S)
+
+    # vertices_list
+    @test ispermutation(vertices_list(S), vertices_list(B))
 end
 
 for N in [Float64]
     # random star
     rand(Star)
 end
+
+# isoperationtype
+@test !isoperationtype(Star)
