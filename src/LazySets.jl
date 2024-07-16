@@ -166,6 +166,8 @@ Alias for `SimpleSparsePolynomialZonotope`.
 """
 const PolynomialZonotope = SimpleSparsePolynomialZonotope
 
+include("Sets/Star/StarModule.jl")
+
 include("Sets/VPolygon/VPolygonModule.jl")
 @reexport using ..VPolygonModule: VPolygon
 using ..VPolygonModule: _σ_helper
@@ -225,7 +227,6 @@ include("LazyOperations/Rectification.jl")  # must come after UnionSet
 # =======
 include("Interfaces/aliases.jl")
 include("Interfaces/AbstractArraySet.jl")
-include("Sets/Star.jl")
 
 # =============================
 # Conversions between set types
