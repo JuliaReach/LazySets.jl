@@ -39,6 +39,13 @@ isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N}
 volume(::AbstractPolytope)
 ```
 
+The following functions can be implemented for sets in vertex representation:
+
+```@docs
+remove_redundant_vertices(::AbstractPolytope)
+remove_redundant_vertices!(::AbstractPolytope)
+```
+
 ## Implementations
 
 * [Polytope in constraint representation (HPolytope)](@ref def_HPolytope)
