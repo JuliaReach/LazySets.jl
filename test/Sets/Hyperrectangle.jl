@@ -34,25 +34,35 @@ for N in [Float64, Rational{Int}, Float32]
     h = Hyperrectangle(N[0], N[1])
     # Test Dimension
     @test dim(h) == 1
-    # Test Support Vector
+    # support function & support vector
     d = N[1]
     @test σ(d, h) == N[1]
+    @test ρ(d, h) == 1
     d = N[-1]
     @test σ(d, h) == N[-1]
+    @test ρ(d, h) == 1
 
     # 2D Hyperrectangle
     h = Hyperrectangle(N[0, 0], N[1, 1])
     # Test Dimension
     @test dim(h) == 2
-    # Test Support Vector
+    # support function & support vector
     d = N[1, 1]
     @test σ(d, h) == N[1, 1]
+    @test ρ(d, h) == 2
     d = N[-1, 1]
     @test σ(d, h) == N[-1, 1]
+    @test ρ(d, h) == 2
     d = N[-1, -1]
     @test σ(d, h) == N[-1, -1]
+    @test ρ(d, h) == 2
     d = N[1, -1]
     @test σ(d, h) == N[1, -1]
+    @test ρ(d, h) == 2
+    d = SingleEntryVector(1, 2, N(1))
+    v = σ(d, h)
+    @test v isa Vector{N} && length(v) == 2 && v[1] == N(1) && N(-1) <= v[2] <= N(1)
+    @test ρ(d, h) == 1
 
     # 2D Hyperrectangle not 0-centered
     h = Hyperrectangle(N[1, 2], N[1, 1])
@@ -104,8 +114,12 @@ for N in [Float64, Rational{Int}, Float32]
     # unicode constructor
     @test □(center(h), radius_hyperrectangle(h)) == h
 
-    # generators matrix for sparse hyperrectangle
-    @test genmat(Hyperrectangle(sparsevec(N[3, 2]), sparsevec(N[2, 1]))) isa SparseMatrixCSC
+    # generators matrix for hyperrectangle with sparse or static arrays
+    G1 = genmat(Hyperrectangle(sparsevec(N[3, 2]), sparsevec(N[2, 1])))
+    G2 = genmat(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))
+    G3 = LazySets._genmat_static(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))
+    @test G1 isa SparseMatrixCSC && G2 isa SMatrix && G3 isa SMatrix
+    @test G1 == G2 == G3 == N[2 0; 0 1]
 
     # alternative constructor
     c = ones(N, 2)
@@ -339,6 +353,13 @@ for N in [Float64, Rational{Int}, Float32]
     H2 = copy(H)
     scale!(N(-2), H2)
     @test scale(N(-2), H) == H2 == Hyperrectangle(N[-2, -4, -6], N[8, 10, 12])
+
+    # translate / translate!
+    v = N[2, 3, 4]
+    H2 = translate(H, v)
+    H3 = copy(H)
+    translate!(H3, v)
+    @test H2 == H3 == Hyperrectangle(N[3, 5, 7], N[4, 5, 6])
 end
 
 # tests that only work with Float64 and Float32
@@ -358,3 +379,6 @@ for N in [Float64, Float32]
     @test Z isa Zonotope && center(Z) == N[exp(1), 2 * exp(2)] &&
           genmat(Z) == N[2*exp(1) 0; 0 3*exp(2)]
 end
+
+# isoperationtype
+@test !isoperationtype(Hyperrectangle)

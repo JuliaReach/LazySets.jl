@@ -1030,3 +1030,6 @@ behave the same way.
 function reflect(Z::AbstractZonotope)
     return Zonotope(-center(Z), genmat(Z))
 end
+
+# internal function; defined here due to dependency StaticArrays and submodules
+function _genmat_static(::AbstractZonotope) end

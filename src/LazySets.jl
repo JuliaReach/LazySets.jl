@@ -137,7 +137,8 @@ include("Sets/HParallelotope/HParallelotopeModule.jl")
 
 include("Sets/Hyperplane.jl")
 
-include("Sets/Hyperrectangle.jl")
+include("Sets/Hyperrectangle/HyperrectangleModule.jl")
+@reexport using ..HyperrectangleModule: Hyperrectangle
 
 include("Sets/Line2D/Line2DModule.jl")
 @reexport using ..Line2DModule: Line2D
