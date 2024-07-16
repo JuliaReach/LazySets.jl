@@ -137,7 +137,7 @@ include("Sets/HParallelotope/HParallelotopeModule.jl")
                                         extremal_vertices,
                                         offset
 
-include("Sets/Hyperplane.jl")
+include("Sets/Hyperplane/HyperplaneModule.jl")
 
 include("Sets/Hyperrectangle/HyperrectangleModule.jl")
 @reexport using ..HyperrectangleModule: Hyperrectangle
