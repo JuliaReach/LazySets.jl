@@ -40,7 +40,7 @@ Random.seed!(1234)
            MiniQhull, Optim, PkgVersion, RangeEnclosures, SCS, SetProg, TaylorModels
     import IntervalConstraintProgramming as ICP
     import IntervalArithmetic as IA
-    using IntervalArithmetic: IntervalBox, interval
+    using IntervalArithmetic: IntervalBox
     @static if VERSION >= v"1.9"
         vIA = pkgversion(IA)
         vGLPK = pkgversion(GLPK)
