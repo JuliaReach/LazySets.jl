@@ -1,3 +1,20 @@
+module HyperrectangleModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractHyperrectangle, _ρ_sev_hyperrectangle,
+                  _σ_sev_hyperrectangle
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: SingleEntryVector
+using ReachabilityBase.Comparison: isapproxzero
+using ReachabilityBase.Distribution: reseed!
+using SparseArrays: SparseVector, findnz, sparse
+
+@reexport import ..API: center, isoperationtype, rand, permute, scale!, ρ, σ,
+                        translate, translate!
+@reexport import ..LazySets: genmat, radius_hyperrectangle, □, _genmat_static
+@reexport using ..API
+
 export Hyperrectangle
 
 """
@@ -145,6 +162,8 @@ end
 
 function load_genmat_hyperrectangle_static()
     return quote
+        using .StaticArraysCore: SVector, MMatrix, SMatrix
+
         function genmat(H::Hyperrectangle{N,SVector{L,N},SVector{L,N}}) where {L,N}
             gens = zeros(MMatrix{L,L,N})
             nzcol = Vector{Int}()
@@ -301,3 +320,7 @@ function translate!(H::Hyperrectangle, v::AbstractVector)
     H.center .+= v
     return H
 end
+
+include("init.jl")
+
+end  # module
