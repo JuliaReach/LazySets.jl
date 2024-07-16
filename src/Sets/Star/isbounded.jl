@@ -15,7 +15,7 @@ Check whether a star is bounded.
 
 ### Algorithm
 
-See [`isbounded(::AbstractAffineMap)`](@ref).
+See [`isbounded(::LazySets.AbstractAffineMap)`](@ref).
 """
 function isbounded(X::Star; cond_tol::Number=DEFAULT_COND_TOL)
     am = convert(STAR, X)

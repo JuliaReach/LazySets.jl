@@ -15,7 +15,7 @@ A list of vertices.
 
 ### Algorithm
 
-See [`vertices_list(::AbstractAffineMap)`](@ref).
+See [`vertices_list(::LazySets.AbstractAffineMap)`](@ref).
 """
 function vertices_list(X::Star; apply_convex_hull::Bool=true)
     am = convert(STAR, X)
