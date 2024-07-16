@@ -4,7 +4,7 @@ for N in [Float64, Float32, Rational{Int}]
     rand(Interval)
 
     # constructor from IntervalArithmetic.Interval
-    x = Interval(interval(N(0), N(1)))
+    x = Interval(IA.interval(N(0), N(1)))
 
     # constructor from a vector
     x = Interval(N[0, 1])
@@ -231,7 +231,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test rectify(x) == x
 
     # list of vertices of IA types
-    b = IntervalBox(interval(0, 1), interval(0, 1))
+    b = IntervalBox(IA.interval(0, 1), IA.interval(0, 1))
     vlistIB = vertices_list(b)
     @test is_cyclic_permutation(vlistIB,
                                 [SA[N(1), N(1)], SA[N(0), N(1)], SA[N(1), N(0)], SA[N(0), N(0)]])
