@@ -1,7 +1,22 @@
+module StarModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractPolyhedron, HPolytope
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: At_mul_B, to_matrix, DEFAULT_COND_TOL
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Require: require
+using LinearAlgebra: dot
+
+@reexport import ..API: an_element, center, constraints_list, dim, isbounded,
+                        isempty, isoperationtype, rand, vertices_list,
+                        affine_map, ∈, linear_map, ρ, σ
+@reexport using ..API
+
 export Star,
        basis,
-       predicate,
-       intersection!
+       predicate
 
 """
     Star{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}, PT<:AbstractPolyhedron{N}} <: AbstractPolyhedron{N}
@@ -360,6 +375,8 @@ The list of constraints of the star.
 See [`constraints_list(::AbstractAffineMap)`](@ref).
 """
 function constraints_list(X::Star)
+    require(@__MODULE__, :LazySets; fun_name="constraints_list")
+
     am = convert(STAR, X)
     return constraints_list(am)
 end
@@ -445,3 +462,7 @@ function rand(::Type{Star};
     V = randn(rng, N, dim, LazySets.dim(P))
     return Star(c, V, P)
 end
+
+include("init.jl")
+
+end  # module

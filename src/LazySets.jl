@@ -167,6 +167,7 @@ Alias for `SimpleSparsePolynomialZonotope`.
 const PolynomialZonotope = SimpleSparsePolynomialZonotope
 
 include("Sets/Star/StarModule.jl")
+@reexport using ..StarModule: Star, basis, predicate
 
 include("Sets/VPolygon/VPolygonModule.jl")
 @reexport using ..VPolygonModule: VPolygon
