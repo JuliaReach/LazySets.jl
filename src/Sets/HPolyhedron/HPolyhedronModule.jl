@@ -1,3 +1,29 @@
+module HPolyhedronModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractPolyhedron, HalfSpace, default_lp_solver,
+                  default_polyhedra_backend, iscomplement, is_lp_infeasible,
+                  is_lp_optimal, is_lp_unbounded, has_lp_infeasibility_ray,
+                  linprog, tosimplehrep, _isempty_polyhedron, _normal_Vector
+using ..HPolytopeModule: HPolytope
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: to_negative_vector
+using ReachabilityBase.Basetype: basetype
+using ReachabilityBase.Comparison: isapproxzero
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Require: require
+using LinearAlgebra: dot
+
+@reexport import ..API: constraints_list, dim, isempty, isoperationtype, rand,
+                        permute, ρ, σ, translate
+@reexport import ..LazySets: is_hyperplanar, normalize,
+                             remove_redundant_constraints,
+                             remove_redundant_constraints!, tohrep, tovrep,
+                             addconstraint!
+@reexport import ..Base: convert
+@reexport using ..API
+
 export HPolyhedron
 
 """
@@ -340,6 +366,8 @@ function remove_redundant_constraints(P::HPoly; backend=nothing)
     if remove_redundant_constraints!(Pred; backend=backend)
         return Pred
     else # the polyhedron P is empty
+        require(@__MODULE__, :LazySets; fun_name="remove_redundant_constraints")
+
         N = eltype(P)
         return EmptySet{N}(dim(P))
     end
@@ -434,7 +462,9 @@ For further information on the supported backends see [Polyhedra's
 documentation](https://juliapolyhedra.github.io/).
 """
 function tovrep(P::HPoly; backend=default_polyhedra_backend(P))
+    require(@__MODULE__, :LazySets; fun_name="tovrep")
     require(@__MODULE__, :Polyhedra; fun_name="tovrep")
+
     P = polyhedron(P; backend=backend)
     return VPolytope(P)
 end
@@ -458,7 +488,8 @@ end
 
 function load_polyhedra_hpolyhedron() # function to be loaded by Requires
     return quote
-        # see the interface file init_Polyhedra.jl for the imports
+        using .Polyhedra: HRep,
+                          polyhedron
 
         """
              convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
@@ -515,6 +546,9 @@ end
 
 function load_symbolics_hpolyhedron()
     return quote
+        using .Symbolics: Num
+        using ..LazySets: _get_variables, _vec, _is_halfspace, _is_hyperplane
+
         """
             HPolyhedron(expr::Vector{<:Num}, vars=_get_variables(expr);
                         N::Type{<:Real}=Float64)
@@ -597,3 +631,7 @@ function permute(P::HPoly, p::AbstractVector{Int})
     T = basetype(P)
     return T([permute(H, p) for H in P.constraints])
 end
+
+include("init.jl")
+
+end  # module

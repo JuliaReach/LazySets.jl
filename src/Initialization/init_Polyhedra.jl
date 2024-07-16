@@ -37,6 +37,5 @@ function _is_polyhedra_backend(backend::Polyhedra.Library)
     return true
 end
 
-eval(load_polyhedra_hpolyhedron())
 eval(load_polyhedra_mesh())
 eval(load_polyhedra_lazyset())
