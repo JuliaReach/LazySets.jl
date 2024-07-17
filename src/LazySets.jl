@@ -138,6 +138,11 @@ include("Sets/HParallelotope/HParallelotopeModule.jl")
                                         offset
 
 include("Sets/Hyperplane/HyperplaneModule.jl")
+@reexport using ..HyperplaneModule: Hyperplane
+using ..HyperplaneModule: _an_element_helper_hyperplane,
+                          _constraints_list_hyperplane,
+                          _reflect_point_hyperplane,
+                          _σ_hyperplane_halfspace
 
 include("Sets/Hyperrectangle/HyperrectangleModule.jl")
 @reexport using ..HyperrectangleModule: Hyperrectangle

@@ -1,34 +1,44 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.HyperplaneModule
 ```
 
 # [Hyperplane](@id def_Hyperplane)
 
 ```@docs
 Hyperplane
-dim(::Hyperplane)
-ρ(::AbstractVector, ::Hyperplane)
-σ(::AbstractVector, ::Hyperplane)
-∈(::AbstractVector, ::Hyperplane)
+```
+
+## Operations
+
+```@docs
 an_element(::Hyperplane)
-rand(::Type{Hyperplane})
-isbounded(::Hyperplane)
-isuniversal(::Hyperplane, ::Bool=false)
-isempty(::Hyperplane)
 constrained_dimensions(::Hyperplane)
 constraints_list(::Hyperplane)
-translate(::Hyperplane, ::AbstractVector)
+dim(::Hyperplane)
+isbounded(::Hyperplane)
+isempty(::Hyperplane)
+isuniversal(::Hyperplane, ::Bool=false)
 normalize(::Hyperplane{N}, p::Real=N(2)) where {N}
+rand(::Type{Hyperplane})
 distance(::AbstractVector, ::Hyperplane{N}) where {N}
-reflect(::AbstractVector, ::Hyperplane)
+∈(::AbstractVector, ::Hyperplane)
 project(::AbstractVector, ::Hyperplane)
+reflect(::AbstractVector, ::Hyperplane)
+ρ(::AbstractVector, ::Hyperplane)
+σ(::AbstractVector, ::Hyperplane)
+translate(::Hyperplane, ::AbstractVector)
 ```
+
+```@meta
+CurrentModule = LazySets
+```
+
 Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`high`](@ref high(::LazySet))
 * [`low`](@ref low(::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`reflect`](@ref reflect(::LazySet))
 
 Inherited from [`AbstractPolyhedron`](@ref):

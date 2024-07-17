@@ -1,3 +1,25 @@
+module HyperplaneModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractPolyhedron, HalfSpace, AbstractLinearMapAlgorithm,
+                  @commutative, _linear_map_hrep, _non_element_halfspace,
+                  _normalize_halfspace
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: nonzero_indices
+using ReachabilityBase.Comparison: _isapprox
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Require: require
+using LinearAlgebra: dot
+
+@reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
+                        isoperationtype, isuniversal, rand, reflect, distance,
+                        ∈, project, ρ, σ, translate
+@reexport import ..LazySets: constrained_dimensions, is_hyperplanar, normalize,
+                             _is_hyperplane, _linear_map_hrep_helper
+@reexport import ..Base: convert
+@reexport using ..API
+
 export Hyperplane
 
 """
@@ -439,6 +461,8 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Hyperplane{N},
         c = first(constraints)
         return Hyperplane(c.a, c.b)
     elseif isempty(constraints)
+        require(@__MODULE__, :LazySets; fun_name="linear_map")
+
         return Universe{N}(size(M, 1))
     else
         error("unexpected number of $(length(constraints)) constraints")
@@ -522,6 +546,8 @@ end
 # ============================================
 function load_symbolics_hyperplane()
     return quote
+        using .Symbolics: Symbolic, Num, operation, arguments, simplify
+        using ..LazySets: _get_variables, _vec
 
         # returns `(true, sexpr)` if expr represents a hyperplane,
         # where sexpr is the simplified expression sexpr := LHS - RHS == 0
@@ -615,6 +641,10 @@ end  # quote / load_symbolics_hyperplane()
 
 function load_symengine_hyperplane()
     return quote
+        using .SymEngine: Basic
+        import .SymEngine: free_symbols
+        using ..LazySets: _is_linearcombination
+
         """
             _is_hyperplane(expr::Expr)
 
@@ -727,7 +757,7 @@ function load_symengine_hyperplane()
             if isempty(vars)
                 vars = free_symbols(eq)
             end
-            K = subs(eq, [vi => zero(N) for vi in vars]...)
+            K = SymEngine.subs(eq, [vi => zero(N) for vi in vars]...)
             a = convert(Basic, eq - K)
 
             # convert to numeric types
@@ -805,3 +835,7 @@ end
 function _reflect_point_hyperplane(x, a, b)
     return x - 2 * (dot(x, a) - b) / dot(a, a) * a
 end
+
+include("init.jl")
+
+end  # module
