@@ -103,6 +103,14 @@ for N in [Float64, Float32, Rational{Int}]
 
     # HPolygon/HPolygonOpt tests
     for (hp, t_hp) in [(p, HPolygon), (po, HPolygonOpt)]
+        # constructors
+        @test t_hp{N}() isa t_hp{N}
+        @test t_hp{N,Vector{N}}() isa t_hp{N,Vector{N}}
+        clist = [HalfSpace(N[1, 0], N(1)), HalfSpace(sparsevec([1], N[-1], 2), N(-1))]
+        P = t_hp(clist)
+        @test P isa t_hp{N,Vector{N}} &&
+              P.constraints == [HalfSpace(N[1, 0], N(1)), HalfSpace(N[-1, 0], N(-1))]
+
         # Test Dimension
         @test dim(hp) == 2
 
