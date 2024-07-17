@@ -78,7 +78,9 @@ include("Interfaces/ConvexSet.jl")
 include("Interfaces/AbstractPolynomialZonotope.jl")
 include("Interfaces/AbstractSparsePolynomialZonotope.jl")
 include("Interfaces/AbstractPolyhedron.jl")
-include("Sets/HalfSpace.jl")  # must come before AbstractPolyhedron_functions
+
+include("Sets/HalfSpace/HalfSpaceModule.jl")  # must come before AbstractPolyhedron_functions
+
 include("Interfaces/AbstractPolyhedron_functions.jl")
 include("Interfaces/AbstractPolytope.jl")
 include("Interfaces/AbstractCentrallySymmetric.jl")
