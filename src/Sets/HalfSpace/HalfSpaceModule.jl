@@ -272,6 +272,9 @@ function load_symengine_halfspace()
         julia> all(_is_halfspace.([:(x1 <= 0), :(x1 < 0), :(x1 > 0), :(x1 >= 0)]))
         true
 
+        julia> _is_halfspace(:(x1 = 0))
+        false
+
         julia> _is_halfspace(:(2*x1 <= 4))
         true
 
