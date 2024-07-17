@@ -164,8 +164,6 @@ include("Sets/LineSegment/LineSegmentModule.jl")
 include("Sets/Polygon/PolygonModule.jl")
 @reexport using ..PolygonModule: Polygon
 
-include("Sets/RotatedHyperrectangle.jl")
-
 include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
                                                         SSPZ,
