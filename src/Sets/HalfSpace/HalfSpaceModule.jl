@@ -1,5 +1,26 @@
+module HalfSpaceModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractPolyhedron, LazySet, AbstractLinearMapAlgorithm,
+                  @commutative
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: ismultiple, nonzero_indices, samedir
+using ReachabilityBase.Comparison: isapproxzero, _isapprox, _leq
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Require: require
+import LinearAlgebra
+using LinearAlgebra: dot
+
+@reexport import ..API: an_element, complement, constraints_list, dim,
+                        isbounded, isempty, isoperationtype, isuniversal, rand,
+                        distance, ∈, permute, project, ρ, σ, translate
+@reexport import ..LazySets: constrained_dimensions, normalize, _is_halfspace,
+                             _linear_map_hrep_helper
+@reexport import ..Base: convert
+@reexport using ..API
+
 export HalfSpace, LinearConstraint,
-       constrained_dimensions,
        halfspace_left, halfspace_right,
        iscomplement
 
@@ -486,9 +507,13 @@ function _linear_map_hrep_helper(M::AbstractMatrix, hs::HalfSpace,
     if length(constraints) == 1
         return first(constraints)
     elseif isempty(constraints)
+        require(@__MODULE__, :LazySets; fun_name="linear_map")
+
         N = promote_type(eltype(M), eltype(hs))
         return Universe{N}(size(M, 1))
     else
+        require(@__MODULE__, :LazySets; fun_name="linear_map")
+
         return HPolyhedron(constraints)
     end
 end
@@ -504,6 +529,8 @@ _normal_Vector(P::LazySet) = _normal_Vector(constraints_list(P))
 
 function load_symbolics_halfspace()
     return quote
+        using .Symbolics: Symbolic, Num, operation, arguments, simplify
+        using ..LazySets: _get_variables, _vec
 
         # returns `(true, sexpr)` if expr represents a half-space,
         # where sexpr is the simplified expression sexpr := LHS - RHS <= 0
@@ -647,6 +674,10 @@ end  # quote / load_symbolics_halfspace()
 
 function load_symengine_halfspace()
     return quote
+        using .SymEngine: Basic
+        import .SymEngine: free_symbols
+        using ..LazySets: _is_linearcombination
+
         """
             _is_halfspace(expr::Expr)
 
@@ -762,7 +793,7 @@ function load_symengine_halfspace()
             if isempty(vars)
                 vars = free_symbols(eq)
             end
-            K = subs(eq, [vi => zero(N) for vi in vars]...)
+            K = SymEngine.subs(eq, [vi => zero(N) for vi in vars]...)
             a = convert(Basic, eq - K)
 
             # convert to numeric types
@@ -940,3 +971,7 @@ end
 function permute(H::HalfSpace, p::AbstractVector{Int})
     return HalfSpace(H.a[p], H.b)
 end
+
+include("init.jl")
+
+end  # module
