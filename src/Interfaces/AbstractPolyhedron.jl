@@ -36,5 +36,50 @@ abstract type AbstractPolyhedron{N} <: ConvexSet{N} end
 # supertype for all linear map algorithms
 abstract type AbstractLinearMapAlgorithm end
 
-# To account for the compilation order, functions are defined in the file
+"""
+    constrained_dimensions(P::AbstractPolyhedron)
+
+Return the indices in which a polyhedron is constrained.
+
+### Input
+
+- `P` -- polyhedron
+
+### Output
+
+A vector of ascending indices `i` such that the polyhedron is constrained in
+dimension `i`.
+
+### Examples
+
+A 2D polyhedron with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
+"""
+function constrained_dimensions(P::AbstractPolyhedron)
+    constraints = constraints_list(P)
+    if isempty(constraints)
+        return Int[]
+    end
+    zero_indices = zeros(Int, dim(P))
+    for constraint in constraints
+        for i in constrained_dimensions(constraint)
+            zero_indices[i] = i
+        end
+    end
+    return filter(x -> x != 0, zero_indices)
+end
+
+# generic function for the AbstractPolyhedron interface => returns an HPolyhedron
+function _linear_map_hrep_helper(M::AbstractMatrix, P::LazySet,
+                                 algo::AbstractLinearMapAlgorithm)
+    constraints = _linear_map_hrep(M, P, algo)
+    return HPolyhedron(constraints)
+end
+
+# internal function; defined here due to dependency SymEngine and submodules
+function _is_halfspace() end
+
+# internal function; defined here due to dependency SymEngine and submodules
+function _is_hyperplane() end
+
+# To account for the compilation order, other functions are defined in the file
 # AbstractPolyhedron_functions.jl

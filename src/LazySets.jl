@@ -78,7 +78,14 @@ include("Interfaces/ConvexSet.jl")
 include("Interfaces/AbstractPolynomialZonotope.jl")
 include("Interfaces/AbstractSparsePolynomialZonotope.jl")
 include("Interfaces/AbstractPolyhedron.jl")
-include("Sets/HalfSpace.jl")  # must come before AbstractPolyhedron_functions
+
+include("Sets/HalfSpace/HalfSpaceModule.jl")  # must come before AbstractPolyhedron_functions
+@reexport using ..HalfSpaceModule: HalfSpace, LinearConstraint,
+                                   halfspace_left, halfspace_right,
+                                   iscomplement
+using ..HalfSpaceModule: is_tighter_same_dir_2D, _non_element_halfspace,
+                         _normalize_halfspace, _normal_Vector
+
 include("Interfaces/AbstractPolyhedron_functions.jl")
 include("Interfaces/AbstractPolytope.jl")
 include("Interfaces/AbstractCentrallySymmetric.jl")

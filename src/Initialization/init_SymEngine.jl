@@ -79,5 +79,3 @@ function free_symbols(expr::Expr)
         error("the free symbols for the expression $(expr) is not implemented")
     end
 end
-
-eval(load_symengine_halfspace())

@@ -16,5 +16,3 @@ _get_variables(expr::Num) = convert(Vector{Num}, Symbolics.get_variables(expr))
 function _get_variables(expr::Vector{<:Num})
     return unique(reduce(vcat, _get_variables(ex) for ex in expr))
 end
-
-eval(load_symbolics_halfspace())
