@@ -96,38 +96,6 @@ function isuniversal(P::AbstractPolyhedron{N}, witness::Bool=false) where {N}
 end
 
 """
-    constrained_dimensions(P::AbstractPolyhedron)
-
-Return the indices in which a polyhedron is constrained.
-
-### Input
-
-- `P` -- polyhedron
-
-### Output
-
-A vector of ascending indices `i` such that the polyhedron is constrained in
-dimension `i`.
-
-### Examples
-
-A 2D polyhedron with constraint ``x1 ≥ 0`` is constrained in dimension 1 only.
-"""
-function constrained_dimensions(P::AbstractPolyhedron)
-    constraints = constraints_list(P)
-    if isempty(constraints)
-        return Int[]
-    end
-    zero_indices = zeros(Int, dim(P))
-    for constraint in constraints
-        for i in constrained_dimensions(constraint)
-            zero_indices[i] = i
-        end
-    end
-    return filter(x -> x != 0, zero_indices)
-end
-
-"""
     tosimplehrep(constraints::AbstractVector{LC};
                  [n]::Int=0) where {N, LC<:HalfSpace{N}}
 
@@ -692,13 +660,6 @@ function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron,
     end
     P = tovrep(P_hpoly; backend=backend)
     return _linear_map_vrep(M, P, algo; apply_convex_hull=apply_convex_hull)
-end
-
-# generic function for the AbstractPolyhedron interface => returns an HPolyhedron
-function _linear_map_hrep_helper(M::AbstractMatrix, P::LazySet,
-                                 algo::AbstractLinearMapAlgorithm)
-    constraints = _linear_map_hrep(M, P, algo)
-    return HPolyhedron(constraints)
 end
 
 # preconditions should have been checked in the caller function
@@ -1289,9 +1250,3 @@ Determine whether a polyhedron is equivalent to a hyperplane.
 ``a·x ≤ b`` and ``-a·x ≤ -b``.
 """
 function is_hyperplanar(::AbstractPolyhedron) end
-
-# internal function; defined here due to dependency SymEngine and submodules
-function _is_halfspace() end
-
-# internal function; defined here due to dependency SymEngine and submodules
-function _is_hyperplane() end
