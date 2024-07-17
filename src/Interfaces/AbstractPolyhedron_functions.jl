@@ -2,7 +2,9 @@ export constrained_dimensions,
        tosimplehrep,
        remove_redundant_constraints,
        remove_redundant_constraints!,
-       isfeasible
+       isfeasible,
+       addconstraint!,
+       is_hyperplanar
 
 isconvextype(::Type{<:AbstractPolyhedron}) = true
 
@@ -1254,3 +1256,42 @@ function isfeasible(constraints::AbstractVector{<:HalfSpace},
         return !_isempty_polyhedron_lp(constraints, witness; solver=solver)
     end
 end
+
+"""
+    addconstraint!(P::AbstractPolyhedron, constraint::HalfSpace)
+
+Add a linear constraint to a set in constraint representation in-place.
+
+### Input
+
+- `P`          -- set in constraint representation
+- `constraint` -- linear constraint to add
+
+### Notes
+
+It is left to the user to guarantee that the dimension of all linear constraints
+is the same.
+"""
+function addconstraint!(::AbstractPolyhedron, ::HalfSpace) end
+
+"""
+    is_hyperplanar(P::AbstractPolyhedron)
+
+Determine whether a polyhedron is equivalent to a hyperplane.
+
+### Input
+
+- `P` -- polyhedron
+
+### Output
+
+`true` iff `P` is hyperplanar, i.e., consists of two linear constraints
+``a·x ≤ b`` and ``-a·x ≤ -b``.
+"""
+function is_hyperplanar(::AbstractPolyhedron) end
+
+# internal function; defined here due to dependency SymEngine and submodules
+function _is_halfspace() end
+
+# internal function; defined here due to dependency SymEngine and submodules
+function _is_hyperplane() end

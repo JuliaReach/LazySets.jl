@@ -6,6 +6,8 @@ for N in [Float64, Rational{Int}, Float32]
     # random polyhedron
     rand(HPolyhedron)
 
+    @test HPolyhedron{N}() isa HPolyhedron{N}
+    @test HPolyhedron{N,Vector{N}}() isa HPolyhedron{N,Vector{N}}
     p_univ = HPolyhedron{N}()
 
     # constructor from matrix and vector
@@ -45,6 +47,14 @@ for N in [Float64, Rational{Int}, Float32]
     # is_polyhedral
     @test is_polyhedral(p)
 
+    # is_hyperplanar
+    P = HPolyhedron([HalfSpace(N[1, 0], N(1))])
+    @test !is_hyperplanar(P)
+    addconstraint!(P, HalfSpace(N[-1, 0], N(-1)))
+    @test is_hyperplanar(P)
+    addconstraint!(P, HalfSpace(N[0, 1], N(1)))
+    @test !is_hyperplanar(P)
+
     # universality
     @test !isuniversal(p)
     res, w = isuniversal(p, true)
@@ -80,9 +90,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test isequivalent(p1, p1) && !isequivalent(p1, p2)
 
     if test_suite_polyhedra
-        # conversion to and from Polyhedra's VRep data structure
+        # conversion to and from Polyhedra's HRep data structure
         cl = constraints_list(HPolyhedron(polyhedron(p)))
         @test length(p.constraints) == length(cl)
+        # filtering of trivial constraint
+        P = Polyhedra.HalfSpace(N[0], N(1)) ∩ Polyhedra.HalfSpace(N[1], N(1))
+        @test HPolyhedron(P).constraints == [HalfSpace(N[1], N(1))]
 
         # convert hyperrectangle to a HPolyhedron
         H = Hyperrectangle(N[1, 1], N[2, 2])
@@ -214,6 +227,10 @@ for N in [Float64]
     @test σ(d, p) == N[-1, 1]
     d = N[0, -1]
     @test σ(d, p) == N[0, 0]
+    # unbounded set
+    P = HPolyhedron([c1, c2, c3])
+    d = N[1, 0]
+    @test σ(d, P) == N[Inf, -Inf]
 
     # membership
     @test [Inf, Inf] ∉ p
@@ -332,6 +349,10 @@ for N in [Float64]
         P = HPolyhedron([HalfSpace(N[1], N(0)), HalfSpace(N[1], N(1))])
         Q = remove_redundant_constraints(P)
         @test length(P.constraints) == 2 && length(Q.constraints) == 1
+        # removing redundant constraints from an empty polyhedron
+        P = HPolyhedron([HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1)), HalfSpace(N[-1], N(-1))])
+        Q = remove_redundant_constraints(P)
+        @test Q isa EmptySet{N} && dim(Q) == 1
 
         # checking for empty intersection (also test symmetric calls)
         P = convert(HPolytope, BallInf(zeros(N, 2), N(1)))
@@ -433,5 +454,11 @@ for N in [Float64]
         h2 = HPolyhedron([HalfSpace([1.0, 0.0], 0.0), HalfSpace([-1.0, 0.0], 0.0),
                           HalfSpace([0.0, 1.0], 0.0)])
         @test p2 ⊆ h2 && h2 ⊆ p2 # isequivalent(p2, h2) see #2370
+
+        # invalid expression
+        @test_throws ArgumentError HPolyhedron([x + y != 1], vars)
     end
 end
+
+# isoperationtype
+@test !isoperationtype(HPolyhedron)
