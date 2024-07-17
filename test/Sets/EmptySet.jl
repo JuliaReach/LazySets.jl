@@ -107,7 +107,7 @@ end
 
 # intersection
 for X in filter(!isoperationtype, LazySets.subtypes(LazySet, true))
-    if X ∈ [RotatedHyperrectangle, Star, Polygon, DensePolynomialZonotope,
+    if X ∈ [Star, Polygon, DensePolynomialZonotope,
             SparsePolynomialZonotope, SimpleSparsePolynomialZonotope]
         # missing rand()
         continue

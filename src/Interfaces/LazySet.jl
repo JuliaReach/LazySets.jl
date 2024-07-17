@@ -65,7 +65,7 @@ If we only consider *concrete* subtypes, then:
 julia> concrete_subtypes = subtypes(LazySet, true);
 
 julia> length(concrete_subtypes)
-54
+53
 
 julia> println.(concrete_subtypes);
 AffineMap
@@ -107,7 +107,6 @@ Polygon
 QuadraticMap
 Rectification
 ResetMap
-RotatedHyperrectangle
 SimpleSparsePolynomialZonotope
 Singleton
 SparsePolynomialZonotope
