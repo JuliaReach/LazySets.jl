@@ -170,6 +170,9 @@ function load_symengine_hyperplane()
         julia> _is_hyperplane(:(x1 = 0))
         true
 
+        julia> _is_hyperplane(:(x1 <= 0))
+        false
+
         julia> _is_hyperplane(:(2*x1 = 4))
         true
 

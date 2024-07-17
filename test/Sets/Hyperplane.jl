@@ -85,6 +85,8 @@ for N in [Float64, Rational{Int}, Float32]
             @test lm.a == N[0 // 1, -1 // 1] && lm.b == N(0 // 1)
         end
     end
+    M = zeros(N, 2, 2) # result is a singleton
+    @test_broken linear_map(M, H)
 
     # projection
     H = Hyperplane(N[1, -1], N(0))  # x = y
@@ -191,6 +193,7 @@ for N in [Float64]
         @test Hyperplane(2x + 3y == 5, vars) == Hyperplane([2.0, 3.0], 5.0)
         @test Hyperplane(2x == 5y) == Hyperplane([2.0, -5.0], 0.0)
         @test Hyperplane(2x == 5y, vars) == Hyperplane([2.0, -5.0], 0.0)
+        @test_throws ArgumentError Hyperplane(2x >= 5y, vars)
 
         # test with sparse variables
         @variables x[1:5]
@@ -201,3 +204,6 @@ for N in [Float64]
         @test Hyperplane(x[1] == t, vars) == Hyperplane([1.0, 0.0, -1.0], 0.0)
     end
 end
+
+# isoperationtype
+@test !isoperationtype(Hyperplane)
