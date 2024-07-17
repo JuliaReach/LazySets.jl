@@ -263,3 +263,6 @@ julia> LazySets._vec(vars)
 ```
 """
 function _vec end
+
+# internal function; defined here due to dependency SymEngine and submodules
+function _is_linearcombination end

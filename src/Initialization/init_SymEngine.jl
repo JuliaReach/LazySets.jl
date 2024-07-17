@@ -80,5 +80,4 @@ function free_symbols(expr::Expr)
     end
 end
 
-eval(load_symengine_hyperplane())
 eval(load_symengine_halfspace())
