@@ -202,6 +202,11 @@ include("Sets/ZeroSet/ZeroSetModule.jl")
 @reexport using ..ZeroSetModule: ZeroSet
 
 include("Sets/Zonotope/ZonotopeModule.jl")
+@reexport using ..ZonotopeModule: Zonotope,
+                                  remove_zero_generators,
+                                  linear_map!,
+                                  split!
+using ..ZonotopeModule: _split
 
 include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
 @reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ,

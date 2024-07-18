@@ -1,7 +1,25 @@
+module ZonotopeModule
+
+using Reexport, Requires
+
+using ..LazySets: AbstractZonotope, generators_fallback
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: ismultiple, remove_zero_columns, to_matrix,
+                               vector_type
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Require: require
+using LinearAlgebra: mul!
+
+@reexport import ..API: center, high, isoperationtype, low, rand, vertices_list,
+                        permute, scale!, translate!
+@reexport import ..LazySets: generators, genmat, ngens, reduce_order,
+                             remove_redundant_generators, togrep
+@reexport using ..API
+
 export Zonotope,
-       reduce_order,
        remove_zero_generators,
-       remove_redundant_generators
+       linear_map!,
+       split!
 
 """
     Zonotope{N, VN<:AbstractVector{N}, MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
@@ -396,6 +414,9 @@ function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N};
     if apply_convex_hull
         return _vertices_list_iterative(c, G; apply_convex_hull=apply_convex_hull)
     end
+
+    require(@__MODULE__, :LazySets; fun_name="_vertices_list_2D")
+
     angles = mapslices(_angles, G; dims=1)[1, :]
     perm = sortperm(angles)
     sorted_angles = angles[perm]
@@ -537,6 +558,8 @@ end
 
 function load_reduce_order_static_zonotope()
     return quote
+        using ..LazySets: AbstractReductionMethod
+
         # conversion for static matrix
         function reduce_order(Z::Zonotope{N,<:AbstractVector,<:MMatrix}, r::Real,
                               method::AbstractReductionMethod=GIR05()) where {N}
@@ -567,7 +590,7 @@ A translated zonotope.
 
 ### Notes
 
-See also [`translate(Z::LazySet, v::AbstractVector)`](@ref) for the
+See also [`translate(Z::LazySets.LazySet, v::AbstractVector)`](@ref) for the
 out-of-place version.
 
 ### Algorithm
@@ -580,3 +603,7 @@ function translate!(Z::Zonotope, v::AbstractVector)
     Z.center .+= v
     return Z
 end
+
+include("init.jl")
+
+end  # module
