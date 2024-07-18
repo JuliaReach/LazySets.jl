@@ -6,8 +6,8 @@ export AbstractZonotope,
        ngens,
        order,
        togrep,
-       split!,
-       reduce_order
+       reduce_order,
+       remove_redundant_generators
 
 """
     AbstractZonotope{N} <: AbstractCentrallySymmetricPolytope{N}

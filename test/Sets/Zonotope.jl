@@ -1,6 +1,11 @@
 for N in [Float64, Rational{Int}, Float32]
     # random zonotope
     rand(Zonotope)
+
+    # constructor from list of generators
+    Z = Zonotope(N[1, 1], [N[1, 2], N[3, 4]])
+    @test Z isa Zonotope{N} && Z == Zonotope(N[1, 1], N[1 3; 2 4])
+
     # Test dimension assertion
     @test_throws AssertionError Zonotope(N[1, 1], [N[0 0]; N[1 // 2 0]; N[0 1 // 2]; N[0 0]])
 
@@ -346,6 +351,11 @@ for N in [Float64]
     vlistZ = vertices_list(Z)
     @test length(vlistZ) == 6
     @test ispermutation(vlistZ, [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
+    c, G = Z.center, Z.generators
+    vlist2 = LazySets.ZonotopeModule._vertices_list_2D(c, G; apply_convex_hull=true)
+    @test ispermutation(vlistZ, vlist2)
+    vlist3 = LazySets.ZonotopeModule._vertices_list_2D(c, G; apply_convex_hull=false)
+    @test ispermutation(vlistZ, vlist3)
 
     # test 3d zonotope vertex enumeration
     Z = Zonotope([0.0, 0.0, 0.0], [1.0 0.0 1.0; 0.0 1.0 1.0; 0.1 1.0 1.0])
@@ -432,3 +442,6 @@ for N in [Float64]
                    HalfSpace(N[0, -1], N(1))])
     @test isequivalent(intersection(H, Z), P)
 end
+
+# isoperationtype
+@test !isoperationtype(Zonotope)
