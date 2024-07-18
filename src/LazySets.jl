@@ -201,7 +201,7 @@ include("Sets/Tetrahedron/TetrahedronModule.jl")
 include("Sets/ZeroSet/ZeroSetModule.jl")
 @reexport using ..ZeroSetModule: ZeroSet
 
-include("Sets/Zonotope.jl")
+include("Sets/Zonotope/ZonotopeModule.jl")
 
 include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
 @reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ,
