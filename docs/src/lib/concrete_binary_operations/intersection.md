@@ -31,4 +31,5 @@ intersection(::LineSegment, ::Line2D)
 intersection(::AbstractZonotope{N}, ::HalfSpace{N}) where {N}
 intersection(::Star, ::HalfSpace)
 intersection!(::Star, ::HalfSpace)
+LazySets._bound_intersect_2D(::Zonotope, ::Line2D)
 ```

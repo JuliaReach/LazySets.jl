@@ -376,64 +376,6 @@ function linear_map!(Zout::Zonotope, M::AbstractMatrix, Z::Zonotope)
     return Zout
 end
 
-"""
-    _bound_intersect_2D(Z::Zonotope, L::Line2D)
-
-Evaluate the support function in the direction [0, 1] of the intersection
-between the given zonotope and line.
-
-### Input
-
-- `Z` -- zonotope
-- `L` -- vertical 2D line
-
-### Output
-
-The support function in the direction [0, 1] of the intersection between the
-given zonotope and line.
-
-### Notes
-
-The algorithm assumes that the given line is vertical and that the intersection
-between the given sets is not empty.
-
-### Algorithm
-
-This function implements [Algorithm 8.2, 1].
-
-[1] *Colas Le Guernic. Reachability Analysis of Hybrid Systems with Linear
-Continuous Dynamics. Computer Science [cs]. Université Joseph-Fourier - Grenoble
-I, 2009. English. fftel-00422569v2f*
-"""
-function _bound_intersect_2D(Z::Zonotope, L::Line2D)
-    c = center(Z)
-    P = copy(c)
-    G = genmat(Z)
-    r = ngens(Z)
-    g(x) = view(G, :, x)
-    for i in 1:r
-        gi = g(i)
-        if !isupwards(gi)
-            gi .= -gi
-        end
-        P .= P - gi
-    end
-    G = sortslices(G; dims=2, by=x -> atan(x[2], x[1])) # sort gens
-    if P[1] < L.b
-        G .= G[:, end:-1:1]
-    end
-    j = 1
-    while isdisjoint(LineSegment(P, P + 2g(j)), L)
-        P .= P + 2g(j)
-        j += 1
-        if j > size(G, 2)
-            error("got an unexpected error; check that the sets intersect")
-        end
-    end
-    singleton = intersection(LineSegment(P, P + 2g(j)), L)
-    return element(singleton)[2]
-end
-
 # ====================================
 # Zonotope vertex enumeration methods
 # ====================================
