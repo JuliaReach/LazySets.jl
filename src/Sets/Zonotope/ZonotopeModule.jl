@@ -591,7 +591,7 @@ A translated zonotope.
 
 ### Notes
 
-See also [`translate(Z::LazySets.LazySet, v::AbstractVector)`](@ref) for the
+See also [`LazySets.API.translate(Z::LazySet, v::AbstractVector)`](@ref) for the
 out-of-place version.
 
 ### Algorithm
