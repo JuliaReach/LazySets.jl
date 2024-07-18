@@ -102,7 +102,7 @@ _normal_Vector(P::LazySet) = _normal_Vector(constraints_list(P))
 
 function load_symbolics_halfspace()
     return quote
-        using .Symbolics: Symbolic, Num, operation, arguments, simplify
+        using .Symbolics: Symbolic, Num
         using ..LazySets: _get_variables, _vec
 
         # returns `(true, sexpr)` if expr represents a half-space,
@@ -112,31 +112,31 @@ function load_symbolics_halfspace()
             got_halfspace = true
 
             # find sense and normalize
-            op = operation(expr)
-            args = arguments(expr)
+            op = Symbolics.operation(expr)
+            args = Symbolics.arguments(expr)
             if op in (<=, <)
                 a, b = args
-                sexpr = simplify(a - b)
+                sexpr = Symbolics.simplify(a - b)
 
             elseif op in (>=, >)
                 a, b = args
-                sexpr = simplify(b - a)
+                sexpr = Symbolics.simplify(b - a)
 
-            elseif (op == |) && (operation(args[1]) == <)
-                a, b = arguments(args[1])
-                sexpr = simplify(a - b)
+            elseif (op == |) && (Symbolics.operation(args[1]) == <)
+                a, b = Symbolics.arguments(args[1])
+                sexpr = Symbolics.simplify(a - b)
 
-            elseif (op == |) && (operation(args[2]) == <)
-                a, b = arguments(args[2])
-                sexpr = simplify(a - b)
+            elseif (op == |) && (Symbolics.operation(args[2]) == <)
+                a, b = Symbolics.arguments(args[2])
+                sexpr = Symbolics.simplify(a - b)
 
-            elseif (op == |) && (operation(args[1]) == >)
-                a, b = arguments(args[1])
-                sexpr = simplify(b - a)
+            elseif (op == |) && (Symbolics.operation(args[1]) == >)
+                a, b = Symbolics.arguments(args[1])
+                sexpr = Symbolics.simplify(b - a)
 
-            elseif (op == |) && (operation(args[2]) == >)
-                a, b = arguments(args[2])
-                sexpr = simplify(b - a)
+            elseif (op == |) && (Symbolics.operation(args[2]) == >)
+                a, b = Symbolics.arguments(args[2])
+                sexpr = Symbolics.simplify(b - a)
 
             else
                 got_halfspace = false

@@ -1,9 +1,4 @@
-using .Symbolics: simplify,
-                  Num,  # variable like, e.g. x[1]
-                  Term, # term like, eg. x[1] + x[2] == 1
-                  Symbolic,
-                  operation,
-                  arguments
+using .Symbolics: Num  # variable like, e.g. x[1]
 
 # reduce for several variables e.g. when vars = @variables x[1:3] t
 _vec(vars::Vector{Any}) = reduce(vcat, vars)

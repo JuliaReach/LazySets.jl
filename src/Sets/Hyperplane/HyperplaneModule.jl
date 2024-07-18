@@ -50,18 +50,18 @@ include("normalize.jl")
 # ============================================
 function load_symbolics_hyperplane()
     return quote
-        using .Symbolics: Symbolic, Num, operation, arguments, simplify
+        using .Symbolics: Symbolic, Num
         using ..LazySets: _get_variables, _vec
 
         # returns `(true, sexpr)` if expr represents a hyperplane,
         # where sexpr is the simplified expression sexpr := LHS - RHS == 0
         # otherwise returns `(false, expr)`
         function _is_hyperplane(expr::Symbolic)
-            got_hyperplane = operation(expr) == ==
+            got_hyperplane = Symbolics.operation(expr) == ==
             if got_hyperplane
                 # simplify to the form a*x + b == 0
-                a, b = arguments(expr)
-                sexpr = simplify(a - b)
+                a, b = Symbolics.arguments(expr)
+                sexpr = Symbolics.simplify(a - b)
             end
             return got_hyperplane ? (true, sexpr) : (false, expr)
         end
