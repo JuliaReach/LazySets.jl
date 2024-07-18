@@ -1,5 +1,3 @@
-__precompile__(true)
-
 """
 Module `Approximations.jl` -- polygonal approximation of sets.
 """
