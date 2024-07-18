@@ -1,5 +1,4 @@
-using .SymEngine: Basic, subs
-
+using .SymEngine: Basic
 import .SymEngine: free_symbols
 
 """
