@@ -2,7 +2,8 @@ module ZonotopeModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractZonotope, generators_fallback
+using ..LazySets: AbstractZonotope, generators_fallback,
+                  _vertices_list_zonotope_iterative
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: ismultiple, remove_zero_columns, to_matrix,
                                vector_type
@@ -412,7 +413,7 @@ end
 function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N};
                            apply_convex_hull::Bool) where {N}
     if apply_convex_hull
-        return _vertices_list_iterative(c, G; apply_convex_hull=apply_convex_hull)
+        return _vertices_list_zonotope_iterative(c, G; apply_convex_hull=apply_convex_hull)
     end
 
     require(@__MODULE__, :LazySets; fun_name="_vertices_list_2D")
