@@ -2,16 +2,15 @@ module VPolytopeModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolytope, HPolytope, VPolygon, LinearMapVRep,
-                  default_lp_solver, default_lp_solver_polyhedra,
-                  default_polyhedra_backend, is_lp_infeasible, is_lp_optimal,
-                  linprog
+using ..LazySets: AbstractPolytope, LinearMapVRep, default_lp_solver,
+                  default_lp_solver_polyhedra, default_polyhedra_backend,
+                  is_lp_infeasible, is_lp_optimal, linprog
+using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: projection_matrix
 using ReachabilityBase.Comparison: _ztol
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
-using LinearAlgebra: dot
 
 @reexport import ..API: constraints_list, dim, isoperationtype, rand, reflect,
                         vertices_list, ∈, linear_map, permute, project, scale!,

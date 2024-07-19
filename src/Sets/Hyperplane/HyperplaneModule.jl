@@ -2,15 +2,15 @@ module HyperplaneModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolyhedron, HalfSpace, AbstractLinearMapAlgorithm,
-                  @commutative, _linear_map_hrep, _non_element_halfspace,
-                  _normalize_halfspace
+using ..LazySets: AbstractPolyhedron, AbstractLinearMapAlgorithm,
+                  _linear_map_hrep, _non_element_halfspace, _normalize_halfspace
+using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: nonzero_indices
+using ReachabilityBase.Commutative: @commutative
 using ReachabilityBase.Comparison: _isapprox
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
-using LinearAlgebra: dot
 
 @reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
                         isoperationtype, isuniversal, rand, reflect, distance,

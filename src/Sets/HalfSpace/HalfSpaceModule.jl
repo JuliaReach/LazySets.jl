@@ -2,15 +2,15 @@ module HalfSpaceModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolyhedron, LazySet, AbstractLinearMapAlgorithm,
-                  @commutative
+using ..LazySets: AbstractPolyhedron, LazySet, AbstractLinearMapAlgorithm
+import LinearAlgebra
+using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: ismultiple, nonzero_indices, samedir
+using ReachabilityBase.Commutative: @commutative
 using ReachabilityBase.Comparison: isapproxzero, _isapprox, _leq
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
-import LinearAlgebra
-using LinearAlgebra: dot
 
 @reexport import ..API: an_element, complement, constraints_list, dim,
                         isbounded, isempty, isoperationtype, isuniversal, rand,

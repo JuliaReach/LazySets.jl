@@ -16,6 +16,8 @@ A list of constraints of the polytope.
 We use `tohrep` to compute the constraint representation of `P`.
 """
 function constraints_list(P::VPolytope)
+    require(@__MODULE__, :LazySets; fun_name="constraints_list")
+
     n = dim(P)
     if n == 1
         return constraints_list(convert(Interval, P))

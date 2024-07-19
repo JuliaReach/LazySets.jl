@@ -3,10 +3,10 @@ module EllipsoidModule
 using Reexport
 
 using ..LazySets: AbstractCentrallySymmetric
-using Random: AbstractRNG, GLOBAL_RNG
-using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Arrays: inner
 using LinearAlgebra: dot, I, checksquare, isposdef
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: inner
+using ReachabilityBase.Distribution: reseed!
 
 @reexport import ..API: center, isoperationtype, rand, affine_map, ∈,
                         linear_map, ρ, σ, translate!

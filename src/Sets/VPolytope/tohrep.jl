@@ -26,6 +26,8 @@ function tohrep(P::VPolytope{N};
                 backend=default_polyhedra_backend(P)) where {N}
     @assert !isempty(P.vertices) "cannot convert an empty polytope in vertex " *
                                  "representation to constraint representation"
+    require(@__MODULE__, :LazySets; fun_name="tohrep")
     require(@__MODULE__, :Polyhedra; fun_name="tohrep")
+
     return convert(HPolytope, polyhedron(P; backend=backend))
 end

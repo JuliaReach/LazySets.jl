@@ -4,11 +4,11 @@ using Reexport, Requires
 
 using ..LazySets: AbstractHyperrectangle, _high_AbstractBallp, _low_AbstractBallp,
                   _ρ_sev_hyperrectangle, _σ_sev_hyperrectangle
+using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: SingleEntryVector
 using ReachabilityBase.Comparison: isapproxzero
 using ReachabilityBase.Distribution: reseed!
-using LinearAlgebra: dot
 
 @reexport import ..API: area, center, isoperationtype, high, low, radius, rand,
                         reflect, volume, project, scale, ρ, σ, translate!

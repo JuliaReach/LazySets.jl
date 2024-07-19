@@ -1,19 +1,20 @@
 module Ball1Module
 
-using Reexport
+using Reexport, Requires
 
-using ..LazySets: AbstractCentrallySymmetricPolytope, HalfSpace
-using Random: AbstractRNG, GLOBAL_RNG
-using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Arrays: argmaxabs
+using ..LazySets: AbstractCentrallySymmetricPolytope, _high_AbstractBallp,
+                  _low_AbstractBallp
 using LinearAlgebra: dot
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: argmaxabs
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Require: require
 
 @reexport import ..API: center, constraints_list, high, isoperationtype, low,
                         rand, reflect, vertices_list, ∈, project, scale, ρ, σ,
                         translate!
 @reexport import ..LazySets: ball_norm, radius_ball
 @reexport using ..API
-using ..LazySets: _high_AbstractBallp, _low_AbstractBallp
 
 export Ball1
 
@@ -35,5 +36,7 @@ include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
 include("vertices_list.jl")
+
+include("init.jl")
 
 end  # module

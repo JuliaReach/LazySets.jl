@@ -24,6 +24,7 @@ intersection.
 - Otherwise, if there is no intersection, an empty set is returned.
 """
 function intersection(LS1::LineSegment, LS2::LineSegment)
+    require(@__MODULE__, :LazySets; fun_name="intersection")
 
     # cast each segment as a line
     L1 = Line2D(LS1.p, LS1.q)

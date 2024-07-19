@@ -1,11 +1,12 @@
 module TetrahedronModule
 
-using Reexport
+using Reexport, Requires
 
-using ..LazySets: AbstractPolytope, VPolytope
+using ..LazySets: AbstractPolytope
+using LinearAlgebra: dot, cross
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: isapproxzero
-using LinearAlgebra: dot, cross
+using ReachabilityBase.Require: require
 
 @reexport import ..API: constraints_list, dim, isoperationtype, rand, ∈, σ
 @reexport using ..API
@@ -20,5 +21,7 @@ include("isoperationtype.jl")
 include("rand.jl")
 include("in.jl")
 include("support_vector.jl")
+
+include("init.jl")
 
 end  # module

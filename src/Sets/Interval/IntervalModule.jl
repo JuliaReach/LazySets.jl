@@ -1,16 +1,16 @@
 module IntervalModule
 
-using Reexport
+using Reexport, Requires
 
-using ..LazySets: AbstractHyperrectangle, LazySet, HalfSpace, Zonotope, UnionSet,
+using ..LazySets: AbstractHyperrectangle, LazySet, UnionSet,
                   _witness_result_empty
-using ..LazySets.EmptySetModule: EmptySet
 using ..API: eltype, isconvextype, isempty
-using Random: AbstractRNG, GLOBAL_RNG
-using ReachabilityBase.Arrays
-using ReachabilityBase.Comparison
-using ReachabilityBase.Distribution: reseed!
 import IntervalArithmetic as IA
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: SingleEntryVector
+using ReachabilityBase.Comparison: isapproxzero, _isapprox, _leq
+using ReachabilityBase.Distribution: reseed!
+using ReachabilityBase.Require: require
 
 @reexport import ..API: affine_map, an_element, center, complement, constraints_list,
                         convex_hull, diameter, dim, exponential_map, extrema, high, ∈,
@@ -166,5 +166,7 @@ We consider the interval as a line segment with y coordinate equal to zero.
 function plot_recipe(x::Interval{N}, ε=zero(N)) where {N}
     return [min(x), max(x)], zeros(N, 2)
 end
+
+include("init.jl")
 
 end  # module
