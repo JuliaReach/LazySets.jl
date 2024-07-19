@@ -2,8 +2,8 @@ module VPolygonModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolygon, AbstractHPolygon, HPolygon, halfspace_left,
-                  is_right_turn, _area_vlist, _linear_map_vrep
+using ..LazySets: AbstractPolygon, AbstractHPolygon, HPolygon, convex_hull,
+                  halfspace_left, is_right_turn, _area_vlist, _linear_map_vrep
 using Random: AbstractRNG, GLOBAL_RNG, shuffle
 using ReachabilityBase.Arrays: isabove, rand_pos_neg_zerosum_vector
 using ReachabilityBase.Distribution: reseed!
