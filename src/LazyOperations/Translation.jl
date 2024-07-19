@@ -1,6 +1,4 @@
-
-export Translation,
-       center
+export Translation
 
 """
     Translation{N, S<:LazySet{N}, VN<:AbstractVector{N}}

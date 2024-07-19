@@ -1,7 +1,5 @@
 export AbstractHPolygon,
-       isredundant,
-       remove_redundant_constraints!,
-       addconstraint!
+       isredundant
 
 # This constant marks the threshold for the number of constraints of an
 # H-polygon above which we use a binary search to find the relevant constraint

@@ -1,5 +1,4 @@
 export constrained_dimensions,
-       tosimplehrep,
        remove_redundant_constraints,
        remove_redundant_constraints!,
        isfeasible,
