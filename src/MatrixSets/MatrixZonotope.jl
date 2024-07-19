@@ -27,7 +27,7 @@ See Prop. 1 in [1].
 
 [1] Luo, Ertai, Niklas Kochdumper, and Stanley Bak. "Reachability analysis for linear systems with uncertain parameters using polynomial zonotopes." Proceedings of the 26th ACM International Conference on Hybrid Systems: Computation and Control. 2023.
 """=#
-function linear_map(MZ::MatrixZonotope, P::SimpleSparsePolynomialZonotope)
+function LazySets.linear_map(MZ::MatrixZonotope, P::SimpleSparsePolynomialZonotope)
     A0 = MZ.A0
     Ai = MZ.Ai
     @assert size(A0, 2) == dim(P)

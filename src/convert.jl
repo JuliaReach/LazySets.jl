@@ -847,7 +847,7 @@ for T in subtypes(AbstractHPolygon, true)
         A polygon in constraint representation.
         """
         function convert(T::Type{$T}, P::VPolygon)
-            return tohrep(P, T)
+            return VPolygonModule.tohrep(P, T)
         end
 
         """

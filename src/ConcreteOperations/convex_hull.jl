@@ -373,7 +373,7 @@ function _convex_hull_nd!(points::Vector{VN};
                           backend=nothing,
                           solver=nothing) where {N,VN<:AbstractVector{N}}
     V = VPolytope(points)
-    Vch = remove_redundant_vertices(V; backend=backend, solver=solver)
+    Vch = VPolytopeModule.remove_redundant_vertices(V; backend=backend, solver=solver)
     m = length(Vch.vertices)
     points[1:m] = Vch.vertices
     return resize!(points, m)
