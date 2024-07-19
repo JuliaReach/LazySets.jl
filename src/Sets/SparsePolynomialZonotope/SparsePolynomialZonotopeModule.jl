@@ -3,9 +3,10 @@ module SparsePolynomialZonotopeModule
 using Reexport, Requires
 
 using ..LazySets: AbstractSparsePolynomialZonotope, AbstractReductionMethod,
-                  genmat, GIR05, order, remove_zero_columns, Zonotope,
-                  _extrema_lowhigh, _remove_redundant_generators_polyzono
+                  genmat, GIR05, order, Zonotope, _extrema_lowhigh,
+                  _remove_redundant_generators_polyzono
 using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: remove_zero_columns
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 import IntervalArithmetic as IA

@@ -17,12 +17,10 @@ import .API: eltype, extrema, isdisjoint, isempty, \, ∈, ≈, ==, ⊆,
              is_intersection_empty, isequivalent, ⊂, linear_combination,
              minkowski_difference, pontryagin_difference, minkowski_sum
 
+@reexport import LinearAlgebra: ×, normalize, normalize!
 import Base: copy, rationalize, \
-import LinearAlgebra: ×, normalize, normalize!
 import RecipesBase: apply_recipe
-
-export Arrays
-export ×, normalize, normalize!, subtypes
+export Arrays, subtypes
 
 using LinearAlgebra, RecipesBase, Requires, SparseArrays
 import GLPK, JuMP, Random, ReachabilityBase
@@ -42,14 +40,14 @@ import ReachabilityBase.Assertions
 using ReachabilityBase.Assertions: @assert
 include("Utils/assertions.jl")
 
-using ReachabilityBase.Require
-using ReachabilityBase.Comparison
-using ReachabilityBase.Iteration
-using ReachabilityBase.Commutative
-using ReachabilityBase.Distribution
-using ReachabilityBase.Subtypes
 using ReachabilityBase.Arrays
 using ReachabilityBase.Basetype
+using ReachabilityBase.Commutative
+using ReachabilityBase.Comparison
+using ReachabilityBase.Distribution
+using ReachabilityBase.Iteration
+using ReachabilityBase.Require
+using ReachabilityBase.Subtypes
 
 # =================
 # External packages

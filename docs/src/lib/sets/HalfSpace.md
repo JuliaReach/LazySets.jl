@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = LazySets
+CurrentModule = LazySets.HalfSpaceModule
 ```
 
 # [Half-space (HalfSpace)](@id def_HalfSpace)
@@ -7,32 +7,42 @@ CurrentModule = LazySets
 ```@docs
 HalfSpace
 LinearConstraint
-dim(::HalfSpace)
-ρ(::AbstractVector, ::HalfSpace)
-σ(::AbstractVector, ::HalfSpace)
-∈(::AbstractVector, ::HalfSpace)
+```
+
+## Operations
+
+```@docs
 an_element(::HalfSpace)
-rand(::Type{HalfSpace})
-normalize(::HalfSpace{N}, p::Real=N(2)) where {N}
-isbounded(::HalfSpace)
-isuniversal(::HalfSpace, ::Bool=false)
-isempty(::HalfSpace)
-constraints_list(::HalfSpace)
+complement(::HalfSpace)
 constrained_dimensions(::HalfSpace)
-translate(::HalfSpace, ::AbstractVector)
+constraints_list(::HalfSpace)
+dim(::HalfSpace)
+isbounded(::HalfSpace)
+isempty(::HalfSpace)
+isuniversal(::HalfSpace, ::Bool=false)
+normalize(::HalfSpace{N}, p::Real=N(2)) where {N}
+rand(::Type{HalfSpace})
+distance(::AbstractVector, ::HalfSpace{N}) where {N}
+∈(::AbstractVector, ::HalfSpace)
 halfspace_left(::AbstractVector, ::AbstractVector)
 halfspace_right(::AbstractVector, ::AbstractVector)
-complement(::HalfSpace)
 iscomplement(::HalfSpace{N}, ::HalfSpace) where {N}
 project(::HalfSpace{N}, ::AbstractVector{Int}) where {N}
-distance(::AbstractVector, ::HalfSpace{N}) where {N}
+ρ(::AbstractVector, ::HalfSpace)
+σ(::AbstractVector, ::HalfSpace)
+translate(::HalfSpace, ::AbstractVector)
 ```
+
+```@meta
+CurrentModule = LazySets
+```
+
 Inherited from [`LazySet`](@ref):
+* [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`high`](@ref high(::LazySet))
 * [`low`](@ref low(::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
-* [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`reflect`](@ref reflect(::LazySet))
 
 Inherited from [`AbstractPolyhedron`](@ref):

@@ -1,4 +1,4 @@
-using LazySets.Arrays: find_unique_nonzero_entry
+using ReachabilityBase.Arrays: find_unique_nonzero_entry
 
 export ResetMap
 

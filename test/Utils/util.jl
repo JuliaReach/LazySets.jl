@@ -1,10 +1,10 @@
-using LazySets.Arrays: extend,
-                       vector_type, matrix_type,
-                       to_negative_vector,
-                       nonzero_columns,
-                       remove_zero_columns,
-                       to_matrix,
-                       same_sign
+using LazySets.ReachabilityBase.Arrays: extend,
+                                        vector_type, matrix_type,
+                                        to_negative_vector,
+                                        nonzero_columns,
+                                        remove_zero_columns,
+                                        to_matrix,
+                                        same_sign
 
 for _dummy_ in 1:1 # avoid global variable warnings
     # square matrix
