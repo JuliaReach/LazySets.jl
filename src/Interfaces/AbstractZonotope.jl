@@ -3,8 +3,6 @@ import Base: split
 export AbstractZonotope,
        genmat,
        generators,
-       ngens,
-       order,
        togrep,
        reduce_order,
        remove_redundant_generators

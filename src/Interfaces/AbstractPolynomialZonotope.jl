@@ -1,5 +1,4 @@
 export AbstractPolynomialZonotope,
-       center,
        ngens, ngens_dep, ngens_indep,
        order,
        polynomial_order
