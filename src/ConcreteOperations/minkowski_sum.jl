@@ -125,12 +125,6 @@ function minkowski_sum(P::AbstractPolytope, Q::AbstractPolytope;
     return _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
 end
 
-function minkowski_sum(P::HPolytope, Q::HPolytope;
-                       backend=nothing, algorithm=nothing, prune=true)
-    res = _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
-    return convert(HPolytope, res)
-end
-
 # common code before calling _minkowski_sum_hrep
 function _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
     require(@__MODULE__, :Polyhedra; fun_name="minkowski_sum")
@@ -251,33 +245,6 @@ function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
     return Singleton(element(X) + element(Y))
 end
 
-"""
-    minkowski_sum(P::VPolygon, Q::VPolygon)
-
-The Minkowski Sum of two polygons in vertex representation.
-
-### Input
-
-- `P` -- polygon in vertex representation
-- `Q` -- polygon in vertex representation
-
-### Output
-
-A polygon in vertex representation.
-
-### Algorithm
-
-We treat each edge of the polygons as a vector, attaching them in polar order
-(attaching the tail of the next vector to the head of the previous vector). The
-resulting polygonal chain will be a polygon, which is the Minkowski sum of the
-given polygons. This algorithm assumes that the vertices of `P` and `Q` are
-sorted in counter-clockwise fashion and has linear complexity ``O(m+n)``, where
-``m`` and ``n`` are the number of vertices of `P` and `Q`, respectively.
-"""
-function minkowski_sum(P::VPolygon, Q::VPolygon)
-    R = _minkowski_sum_vrep_2d(P.vertices, Q.vertices)
-    return VPolygon(R)
-end
 
 function _minkowski_sum_vpolygon(P::LazySet, Q::LazySet)
     return minkowski_sum(convert(VPolygon, P), convert(VPolygon, Q))
@@ -343,46 +310,6 @@ function _minkowski_sum_vrep_2d_singleton(vlistP::Vector{VT},
     return R
 end
 
-"""
-    minkowski_sum(P1::VPolytope, P2::VPolytope;
-                  [apply_convex_hull]=true,
-                  [backend]=nothing,
-                  [solver]=nothing)
-
-Compute the Minkowski sum of two polytopes in vertex representation.
-
-### Input
-
-- `P1`                -- polytope
-- `P2`                -- polytope
-- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
-                         pairwise sums using a convex-hull algorithm
-- `backend`           -- (optional, default: `nothing`) the backend for
-                         polyhedral computations used to post-process with a
-                         convex hull; see `default_polyhedra_backend(P1)`
-- `solver`            -- (optional, default: `nothing`) the backend used to
-                         solve the linear program; see
-                         `default_lp_solver_polyhedra(N)`
-
-### Output
-
-A new polytope in vertex representation whose vertices are the convex hull of
-the sum of all possible sums of vertices of `P1` and `P2`.
-"""
-function minkowski_sum(P1::VPolytope, P2::VPolytope;
-                       apply_convex_hull::Bool=true, backend=nothing,
-                       solver=nothing)
-    @assert dim(P1) == dim(P2) "cannot compute the Minkowski sum of two " *
-                               "polytopes of dimension $(dim(P1)) and $(dim(P2)), respectively"
-
-    vlist1 = _vertices_list(P1, backend)
-    vlist2 = _vertices_list(P2, backend)
-    Vout = _minkowski_sum_vrep_nd(vlist1, vlist2;
-                                  apply_convex_hull=apply_convex_hull,
-                                  backend=backend, solver=solver)
-    return VPolytope(Vout)
-end
-
 function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
                                 apply_convex_hull::Bool=true, backend=nothing,
                                 solver=nothing) where {N,VT<:AbstractVector{N}}
@@ -434,59 +361,6 @@ for T in [:LazySet, :AbstractPolyhedron, :AbstractPolytope, :AbstractZonotope,
     @eval begin
         @commutative minkowski_sum(::ZeroSet, X::$T) = X
     end
-end
-
-"""
-    minkowski_sum(P1::SimpleSparsePolynomialZonotope,
-                  P2::SimpleSparsePolynomialZonotope)
-
-Compute the Minkowski sum of two simple sparse polynomial zonotopes.
-
-### Input
-
-- `P1` -- simple sparse polynomial zonotope
-- `P2` -- simple sparse polynomial zonotope
-
-### Output
-
-The Minkowski sum of `P1` and `P2`.
-"""
-function minkowski_sum(P1::SimpleSparsePolynomialZonotope,
-                       P2::SimpleSparsePolynomialZonotope)
-    c = center(P1) + center(P2)
-    G = hcat(genmat(P1), genmat(P2))
-    E = cat(expmat(P1), expmat(P2); dims=(1, 2))
-    return SimpleSparsePolynomialZonotope(c, G, E)
-end
-
-"""
-    minkowski_sum(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
-
-Compute the Minkowski sum of two sparse polyomial zonotopes.
-
-### Input
-
-- `P1` -- sparse polynomial zonotope
-- `P2` -- sparse polynomial zonotope
-
-### Output
-
-The Minkowski sum of `P1` and `P2`.
-
-### Algorithm
-
-See Proposition 3.1.19 in [1].
-
-[1] Kochdumper. *Extensions of polynomial zonotopes and their application to
-    verification of cyber-physical systems.* PhD diss., TU Munich, 2022.
-"""
-function minkowski_sum(P1::SparsePolynomialZonotope,
-                       P2::SparsePolynomialZonotope)
-    c = center(P1) + center(P2)
-    G = hcat(genmat_dep(P1), genmat_dep(P2))
-    GI = hcat(genmat_indep(P1), genmat_indep(P2))
-    E = cat(expmat(P1), expmat(P2); dims=(1, 2))
-    return SparsePolynomialZonotope(c, G, GI, E)
 end
 
 # See Proposition 3.1.19 in [1].

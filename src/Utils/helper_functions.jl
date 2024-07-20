@@ -269,3 +269,8 @@ function _is_linearcombination end
 
 # internal function; defined here due to dependency in submodules
 function _intersection_line2d end
+
+# internal functions; defined here due to dependency in submodules
+function _minkowski_sum_hrep_preprocess end
+function _minkowski_sum_vrep_2d end
+function _minkowski_sum_vrep_nd end

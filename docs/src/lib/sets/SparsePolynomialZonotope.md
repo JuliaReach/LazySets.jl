@@ -26,6 +26,7 @@ reduce_order(::SparsePolynomialZonotope, ::Real, ::AbstractReductionMethod=GIR05
 translate(::SparsePolynomialZonotope, ::AbstractVector)
 cartesian_product(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 exact_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
+minkowski_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 ```
 
 ```@meta

@@ -24,6 +24,7 @@ quadratic_map(::Vector{MT}, ::SimpleSparsePolynomialZonotope, ::SimpleSparsePoly
 cartesian_product(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 convex_hull(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 linear_combination(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
+minkowski_sum(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 ```
 
 ```@meta
