@@ -12,9 +12,6 @@ CurrentModule = LazySets
 ```@docs
 convex_hull(::LazySet, ::LazySet)
 convex_hull(::HPoly, ::HPoly)
-convex_hull(::VPolytope, ::VPolytope)
-convex_hull(::VPolygon, ::VPolygon)
 convex_hull(::Vector{VN}) where {N, VN<:AbstractVector{N}}
-convex_hull(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 monotone_chain!
 ```

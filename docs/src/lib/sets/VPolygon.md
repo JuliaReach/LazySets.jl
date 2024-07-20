@@ -32,6 +32,7 @@ permute(::VPolygon, ::AbstractVector{Int})
 σ(::AbstractVector, ::VPolygon)
 translate(::VPolygon, ::AbstractVector)
 translate!(::VPolygon, ::AbstractVector)
+convex_hull(::VPolygon, ::VPolygon)
 ```
 
 ```@meta

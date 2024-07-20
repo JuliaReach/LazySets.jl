@@ -2,8 +2,8 @@ module VPolygonModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolygon, LazySet, AbstractHPolygon, convex_hull,
-                  halfspace_left, is_right_turn, _area_vlist, _linear_map_vrep
+using ..LazySets: AbstractPolygon, LazySet, AbstractHPolygon, halfspace_left,
+                  is_right_turn, _area_vlist, _linear_map_vrep
 using ..HPolygonModule: HPolygon
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG, shuffle
@@ -13,7 +13,7 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, area, constraints_list, isoperationtype,
                         rand, vertices_list, ∈, linear_map, permute, project,
-                        σ, translate, translate!
+                        σ, translate, translate!, convex_hull
 @reexport import ..LazySets: remove_redundant_vertices,
                              remove_redundant_vertices!, tohrep, tovrep
 import Base: convert
@@ -35,6 +35,7 @@ include("permute.jl")
 include("project.jl")
 include("support_vector.jl")
 include("translate.jl")
+include("convex_hull.jl")
 
 include("remove_redundant_vertices.jl")
 include("tohrep.jl")

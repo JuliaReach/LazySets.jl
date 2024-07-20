@@ -14,7 +14,8 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: constraints_list, dim, isoperationtype, rand, reflect,
                         vertices_list, ∈, linear_map, permute, project, scale!,
-                        ρ, σ, translate, translate!, cartesian_product
+                        ρ, σ, translate, translate!, cartesian_product,
+                        convex_hull
 @reexport import ..LazySets: remove_redundant_vertices, tohrep, tovrep,
                              _linear_map_vrep
 import Base: convert
@@ -39,6 +40,7 @@ include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
 include("cartesian_product.jl")
+include("convex_hull.jl")
 
 include("polyhedron.jl")
 include("remove_redundant_vertices.jl")

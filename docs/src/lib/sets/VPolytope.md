@@ -33,6 +33,7 @@ linear_map(::AbstractMatrix, ::VPolytope)
 translate(::VPolytope, ::AbstractVector)
 translate!(::VPolytope, ::AbstractVector)
 cartesian_product(::VPolytope, ::VPolytope)
+convex_hull(::VPolytope, ::VPolytope)
 ```
 
 ```@meta
