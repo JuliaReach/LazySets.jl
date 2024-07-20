@@ -230,7 +230,6 @@ function convert(::Type{Zonotope},
     return linear_map(S.M, convert(Zonotope, S.X))
 end
 
-
 """
     convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, HN})
         where {N, HN<:AbstractHyperrectangle}
@@ -689,7 +688,6 @@ A star set.
 function convert(::Type{STAR}, X::Star)
     return AffineMap(X.V, X.P, X.c)
 end
-
 
 function convert(::Type{Hyperplane}, P::HPolyhedron; skip_check::Bool=false)
     # check that the number of constraints is fine

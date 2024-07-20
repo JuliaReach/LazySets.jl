@@ -31,3 +31,37 @@ function convert(::Type{HPolyhedron{N,VT}}, X::LazySet) where {N,VT}
     end
     return HPolyhedron([HalfSpace(VT(c.a), N(c.b)) for c in constraints(X)])
 end
+
+function load_Polyhedra_convert_HPolyhedron()
+    return quote
+        using .Polyhedra: HRep
+
+        """
+             convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
+
+        Convert an `HRep` polyhedron from `Polyhedra.jl` to a polyhedron in constraint
+        representation .
+
+        ### Input
+
+        - `HPolyhedron` -- target type
+        - `P`           -- `HRep` polyhedron
+
+        ### Output
+
+        An `HPolyhedron`.
+        """
+        function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
+            VN = Polyhedra.hvectortype(P)
+            constraints = Vector{HalfSpace{N,VN}}()
+            for hi in Polyhedra.allhalfspaces(P)
+                a, b = hi.a, hi.β
+                if isapproxzero(norm(a))
+                    continue
+                end
+                push!(constraints, HalfSpace(a, b))
+            end
+            return HPolyhedron(constraints)
+        end
+    end
+end  # load_Polyhedra_convert_HPolyhedron

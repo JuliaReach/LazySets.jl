@@ -51,46 +51,6 @@ include("addconstraint.jl")
 
 include("convert.jl")
 
-function load_polyhedra_hpolyhedron() # function to be loaded by Requires
-    return quote
-        using .Polyhedra: HRep,
-                          polyhedron
-
-        """
-             convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
-
-        Convert an `HRep` polyhedron from `Polyhedra.jl` to a polyhedron in constraint
-        representation .
-
-        ### Input
-
-        - `HPolyhedron` -- target type
-        - `P`           -- `HRep` polyhedron
-
-        ### Output
-
-        An `HPolyhedron`.
-        """
-        function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
-            VN = Polyhedra.hvectortype(P)
-            constraints = Vector{HalfSpace{N,VN}}()
-            for hi in Polyhedra.allhalfspaces(P)
-                a, b = hi.a, hi.β
-                if isapproxzero(norm(a))
-                    continue
-                end
-                push!(constraints, HalfSpace(a, b))
-            end
-            return HPolyhedron(constraints)
-        end
-
-        # convenience conversion method
-        function HPolyhedron(P::HRep{N}) where {N}
-            return convert(HPolyhedron, P)
-        end
-    end
-end  # quote / load_polyhedra_hpolyhedron()
-
 include("init.jl")
 
 end  # module

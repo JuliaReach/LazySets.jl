@@ -77,6 +77,30 @@ function HPolytope(A::AbstractMatrix, b::AbstractVector;
     return HPolytope(constraints_list(A, b); check_boundedness=check_boundedness)
 end
 
+function load_Polyhedra_HPolytope()
+    return quote
+        using .Polyhedra: HRep
+
+        """
+            HPolytope(P::HRep)
+
+        Return a polytope in constraint representation given an `HRep` polyhedron from
+        `Polyhedra.jl`.
+
+        ### Input
+
+        - `P` -- `HRep` polyhedron
+
+        ### Output
+
+        An `HPolytope`.
+        """
+        function HPolytope(P::HRep)
+            return convert(HPolytope, P)
+        end
+    end
+end  # load_Polyhedra_HPolytope
+
 function load_symbolics_hpolytope()
     return quote
         using .Symbolics: Num

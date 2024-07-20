@@ -26,6 +26,6 @@ function tovrep(P::HPoly; backend=default_polyhedra_backend(P))
     require(@__MODULE__, :LazySets; fun_name="tovrep")
     require(@__MODULE__, :Polyhedra; fun_name="tovrep")
 
-    P = polyhedron(P; backend=backend)
+    P = LazySets.polyhedron(P; backend=backend)
     return VPolytope(P)
 end
