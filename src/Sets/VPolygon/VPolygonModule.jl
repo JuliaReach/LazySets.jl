@@ -2,7 +2,7 @@ module VPolygonModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolygon, AbstractHPolygon, convex_hull,
+using ..LazySets: AbstractPolygon, LazySet, AbstractHPolygon, convex_hull,
                   halfspace_left, is_right_turn, _area_vlist, _linear_map_vrep
 using ..HPolygonModule: HPolygon
 using LinearAlgebra: dot
@@ -16,6 +16,7 @@ using ReachabilityBase.Require: require
                         σ, translate, translate!
 @reexport import ..LazySets: remove_redundant_vertices,
                              remove_redundant_vertices!, tohrep, tovrep
+import Base: convert
 @reexport using ..API
 
 export VPolygon
@@ -38,6 +39,8 @@ include("translate.jl")
 include("remove_redundant_vertices.jl")
 include("tohrep.jl")
 include("tovrep.jl")
+
+include("convert.jl")
 
 include("init.jl")
 

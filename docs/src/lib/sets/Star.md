@@ -8,6 +8,12 @@ CurrentModule = LazySets.StarModule
 Star
 ```
 
+## Conversion
+
+```@docs
+convert(::Type{Star}, ::AbstractPolyhedron{N}) where {N}
+```
+
 ## Operations
 
 ```@docs

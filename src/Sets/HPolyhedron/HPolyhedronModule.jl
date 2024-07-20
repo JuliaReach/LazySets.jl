@@ -2,7 +2,7 @@ module HPolyhedronModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolyhedron, default_lp_solver,
+using ..LazySets: AbstractPolyhedron, LazySet, default_lp_solver,
                   default_polyhedra_backend, iscomplement, is_lp_infeasible,
                   is_lp_optimal, is_lp_unbounded, has_lp_infeasibility_ray,
                   linprog, tosimplehrep, _isempty_polyhedron, _normal_Vector
@@ -48,6 +48,8 @@ include("remove_redundant_constraints.jl")
 include("tohrep.jl")
 include("tovrep.jl")
 include("addconstraint.jl")
+
+include("convert.jl")
 
 function load_polyhedra_hpolyhedron() # function to be loaded by Requires
     return quote

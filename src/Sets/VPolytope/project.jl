@@ -15,7 +15,6 @@ function project(P::VPolytope, block::AbstractVector{Int}; kwargs...)
     πvertices = broadcast(v -> M * v, P.vertices)
 
     if m == 2
-
         return VPolygon(πvertices; apply_convex_hull=true)
     else
         return VPolytope(πvertices)

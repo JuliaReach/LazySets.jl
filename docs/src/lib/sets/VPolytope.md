@@ -8,6 +8,12 @@ CurrentModule = LazySets.VPolytopeModule
 VPolytope
 ```
 
+## Conversion
+
+```@docs
+convert(::Type{VPolytope}, ::LazySet)
+```
+
 ## Operations
 
 ```@docs

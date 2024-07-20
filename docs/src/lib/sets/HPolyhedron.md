@@ -8,6 +8,13 @@ CurrentModule = LazySets.HPolyhedronModule
 HPolyhedron
 ```
 
+## Conversion
+
+```@docs
+convert(::Type{HPolyhedron}, ::LazySet)
+convert(::Type{HPolyhedron}, ::HRep{N}) where {N}
+```
+
 ## Operations
 
 The following methods are shared between `HPolytope` and `HPolyhedron`.

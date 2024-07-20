@@ -17,6 +17,14 @@ CurrentModule = LazySets.HPolytopeModule
 HPolytope
 ```
 
+## Conversion
+
+```@docs
+convert(::Type{HPolytope}, ::LazySet)
+```
+
+## Operations
+
 ```@meta
 CurrentModule = LazySets
 ```
