@@ -26,7 +26,6 @@ include("linear_map.jl")
 include("scale.jl")
 include("support_function.jl")
 include("translate.jl")
-
 include("minkowski_sum.jl")
 
 include("element.jl")

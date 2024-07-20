@@ -24,10 +24,11 @@ include("isoperationtype.jl")
 include("rand.jl")
 include("affine_map.jl")
 include("linear_map.jl")
-include("shape_matrix.jl")
 include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
+
+include("shape_matrix.jl")
 
 function ○(c::VN,
            shape_matrix::MN) where {N<:AbstractFloat,

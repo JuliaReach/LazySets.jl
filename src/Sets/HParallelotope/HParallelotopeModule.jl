@@ -24,18 +24,19 @@ export HParallelotope,
 
 include("HParallelotope.jl")
 
-include("base_vertex.jl")
 include("center.jl")
 include("constraints_list.jl")
 include("dim.jl")
+include("isoperationtype.jl")
+include("rand.jl")
+include("volume.jl")
+
+include("base_vertex.jl")
 include("directions.jl")
 include("extremal_vertices.jl")
 include("generators.jl")
 include("genmat.jl")
-include("isoperationtype.jl")
 include("offset.jl")
-include("rand.jl")
-include("volume.jl")
 
 include("convert.jl")
 
