@@ -58,3 +58,15 @@ function VPolytope(vertices_matrix::MT) where {N,MT<:AbstractMatrix{N}}
     vertices = [vertices_matrix[:, j] for j in axes(vertices_matrix, 2)]
     return VPolytope(vertices)
 end
+
+function load_Polyhedra_VPolytope()
+    return quote
+        using .Polyhedra: VRep
+
+        # VPolytope from a VRep
+        function VPolytope(P::VRep)
+            vertices = collect(Polyhedra.points(P))
+            return VPolytope(vertices)
+        end
+    end
+end  # load_Polyhedra_VPolytope
