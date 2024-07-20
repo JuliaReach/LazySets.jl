@@ -33,6 +33,7 @@ permute(::VPolygon, ::AbstractVector{Int})
 translate(::VPolygon, ::AbstractVector)
 translate!(::VPolygon, ::AbstractVector)
 convex_hull(::VPolygon, ::VPolygon)
+intersection(::VPolygon, ::VPolygon; ::Bool=true)
 minkowski_sum(::VPolygon, ::VPolygon)
 ```
 

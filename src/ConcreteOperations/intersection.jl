@@ -43,47 +43,6 @@ function intersection(S1::AbstractSingleton, S2::AbstractSingleton)
     return _isapprox(element(S1), element(S2)) ? S1 : EmptySet{N}(dim(S1))
 end
 
-"""
-    intersection(L1::Line2D, L2::Line2D)
-
-Compute the intersection of two two-dimensional lines.
-
-### Input
-
-- `L1` -- line
-- `L2` -- line
-
-### Output
-
-Three outcomes are possible:
-
-- If the lines are identical, the result is the first line.
-- If the lines are parallel and not identical, the result is the empty set.
-- Otherwise the result is the set with the unique intersection point.
-
-### Algorithm
-
-We first check whether the lines are parallel.
-If not, we use [Cramer's rule](https://en.wikipedia.org/wiki/Cramer%27s_rule)
-to compute the intersection point.
-
-### Examples
-
-The line ``y = x`` intersected with the line ``y = -x + 1`` respectively with
-itself:
-
-```jldoctest
-julia> intersection(Line2D([-1.0, 1], 0.0), Line2D([1.0, 1], 1.0))
-Singleton{Float64, Vector{Float64}}([0.5, 0.5])
-
-julia> intersection(Line2D([1.0, 1], 1.0), Line2D([1.0, 1], 1.0))
-Line2D{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
-```
-"""
-function intersection(L1::Line2D, L2::Line2D)
-    return _intersection_line2d(L1, L2)
-end
-
 # this method can also be called with `HalfSpace` arguments
 function _intersection_line2d(L1, L2)
     det = right_turn(L1.a, L2.a)
@@ -676,42 +635,6 @@ function intersection(P1::Union{VPolygon,VPolytope},
 end
 
 """
-    intersection(P1::VPolygon, P2::VPolygon; apply_convex_hull::Bool=true)
-
-Compute the intersection of two polygons in vertex representation.
-
-### Input
-
-- `P1` -- polygon in vertex representation
-- `P2` -- polygon in vertex representation
-- `apply_convex_hull` -- (default, optional: `true`) if `false`, skip the
-                         computation of the convex hull of the resulting polygon
-
-### Output
-
-A `VPolygon`, or an `EmptySet` if the intersection is empty.
-
-### Algorithm
-
-This function applies the [Sutherland–Hodgman polygon clipping
-algorithm](https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm).
-The implementation is based on the one found in
-[rosetta code](http://www.rosettacode.org/wiki/Sutherland-Hodgman_polygon_clipping#Julia).
-"""
-function intersection(P1::VPolygon, P2::VPolygon; apply_convex_hull::Bool=true)
-    v1 = vertices_list(P1)
-    v2 = vertices_list(P2)
-    v12 = _intersection_vrep_2d(v1, v2)
-
-    if isempty(v12)
-        N = promote_type(eltype(P1), eltype(P2))
-        return EmptySet{N}(2)
-    else
-        return VPolygon(v12; apply_convex_hull=apply_convex_hull)
-    end
-end
-
-"""
     intersection(cup::UnionSet, X::LazySet)
 
 Compute the intersection of a union of two sets and another set.
@@ -830,7 +753,6 @@ The set `X`.
 end
 
 # disambiguations
-intersection(U::Universe, ::Universe) = U
 @commutative intersection(U::Universe, P::AbstractPolyhedron) = P
 @commutative intersection(U::Universe, S::AbstractSingleton) = S
 @commutative intersection(U::Universe, X::Interval) = X

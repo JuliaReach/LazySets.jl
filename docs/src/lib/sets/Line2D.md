@@ -23,6 +23,7 @@ rand(::Type{Line2D})
 project(::AbstractVector, ::Line2D)
 σ(::AbstractVector, ::Line2D)
 translate(::Line2D, ::AbstractVector)
+intersection(::Line2D, ::Line2D)
 ```
 
 ```@meta
