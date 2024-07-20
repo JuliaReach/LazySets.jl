@@ -28,45 +28,6 @@ include("linear_map.jl")
 
 include("convert.jl")
 
-function load_polyhedra_hpolytope() # function to be loaded by Requires
-    return quote
-        using .Polyhedra: HRep
-
-        function convert(::Type{HPolytope}, P::HRep{N}) where {N}
-            VT = Polyhedra.hvectortype(P)
-            constraints = Vector{HalfSpace{N,VT}}()
-            for hi in Polyhedra.allhalfspaces(P)
-                a, b = hi.a, hi.β
-                if isapproxzero(norm(a))
-                    @assert b >= zero(N) "the half-space is inconsistent since it " *
-                                         "has a zero normal direction but the constraint is negative"
-                    continue
-                end
-                push!(constraints, HalfSpace(hi.a, hi.β))
-            end
-            return HPolytope(constraints)
-        end
-
-        """
-            HPolytope(P::HRep)
-
-        Return a polytope in constraint representation given an `HRep` polyhedron from
-        `Polyhedra.jl`.
-
-        ### Input
-
-        - `P` -- `HRep` polyhedron
-
-        ### Output
-
-        An `HPolytope`.
-        """
-        function HPolytope(P::HRep)
-            return convert(HPolytope, P)
-        end
-    end
-end  # quote / load_polyhedra_hpolytope()
-
 include("init.jl")
 
 end  # module
