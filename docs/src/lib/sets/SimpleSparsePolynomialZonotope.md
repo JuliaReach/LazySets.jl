@@ -21,6 +21,7 @@ remove_redundant_generators(::SimpleSparsePolynomialZonotope)
 linear_map(::AbstractMatrix, ::SimpleSparsePolynomialZonotope)
 quadratic_map(::Vector{MT}, ::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
 quadratic_map(::Vector{MT}, ::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope) where {N, MT<:AbstractMatrix{N}}
+cartesian_product(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 ```
 
 ```@meta

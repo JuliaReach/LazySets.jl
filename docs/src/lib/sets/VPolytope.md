@@ -32,6 +32,7 @@ linear_map(::AbstractMatrix, ::VPolytope)
 σ(::AbstractVector, ::VPolytope)
 translate(::VPolytope, ::AbstractVector)
 translate!(::VPolytope, ::AbstractVector)
+cartesian_product(::VPolytope, ::VPolytope)
 ```
 
 ```@meta

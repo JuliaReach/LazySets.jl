@@ -12,7 +12,7 @@ using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
 @reexport import ..API: center, extrema, isoperationtype, rand, linear_map, ρ,
-                        translate
+                        translate, cartesian_product
 @reexport import ..LazySets: expmat, genmat_dep, genmat_indep, ngens_dep,
                              ngens_indep, nparams, polynomial_order,
                              reduce_order, remove_redundant_generators
@@ -27,20 +27,21 @@ include("SparsePolynomialZonotope.jl")
 const SPZ = SparsePolynomialZonotope
 
 include("center.jl")
-include("expmat.jl")
 include("extrema.jl")
-include("genmat_dep.jl")
-include("genmat_indep.jl")
 include("isoperationtype.jl")
-include("polynomial_order.jl")
 include("rand.jl")
-include("remove_redundant_generators.jl")
 include("linear_map.jl")
-include("reduce_order.jl")
 include("support_function.jl")
 include("translate.jl")
+include("cartesian_product.jl")
 
+include("expmat.jl")
+include("genmat_dep.jl")
+include("genmat_indep.jl")
 include("indexvector.jl")
+include("polynomial_order.jl")
+include("remove_redundant_generators.jl")
+include("reduce_order.jl")
 
 include("init.jl")
 

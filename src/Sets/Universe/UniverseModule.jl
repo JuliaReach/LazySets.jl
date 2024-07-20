@@ -12,7 +12,7 @@ using ReachabilityBase.Require: require
                         diameter, dim, isbounded, isboundedtype, isempty,
                         isoperationtype, isuniversal, norm, radius, rand,
                         reflect, ∈, permute, project, scale, scale!, ρ, σ,
-                        translate, translate!
+                        translate, translate!, cartesian_product
 @reexport import ..LazySets: constrained_dimensions, linear_map_inverse,
                              tosimplehrep
 @reexport using ..API
@@ -43,6 +43,7 @@ include("scale.jl")
 include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
+include("cartesian_product.jl")
 
 include("constrained_dimensions.jl")
 include("linear_map_inverse.jl")

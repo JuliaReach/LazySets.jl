@@ -66,50 +66,6 @@ function cartesian_product(X::LazySet, Y::LazySet; backend=nothing,
     return Pout
 end
 
-"""
-    cartesian_product(P1::VPolytope, P2::VPolytope; [backend]=nothing)
-
-Compute the Cartesian product of two polytopes in vertex representation.
-
-### Input
-
-- `P1`      -- polytope in vertex representation
-- `P2`      -- polytope in vertex representation
-- `backend` -- (optional, default: `nothing`) backend for polyhedral computation
-
-### Output
-
-The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
-
-### Notes
-
-For further information on the supported backends see
-[Polyhedra's documentation](https://juliapolyhedra.github.io/).
-"""
-function cartesian_product(P1::VPolytope, P2::VPolytope; backend=nothing)
-    require(@__MODULE__, :Polyhedra; fun_name="cartesian_product")
-
-    return _cartesian_product_vrep(P1, P2; backend1=backend, backend2=backend)
-end
-
-function _cartesian_product_vrep(P1, P2; backend1=nothing, backend2=nothing)
-    if isnothing(backend1)
-        backend1 = default_polyhedra_backend(P1)
-    end
-    if isnothing(backend2)
-        backend2 = default_polyhedra_backend(P2)
-    end
-
-    P1′ = polyhedron(P1; backend=backend1)
-    P2′ = polyhedron(P2; backend=backend2)
-    Pout = Polyhedra.vcartesianproduct(P1′, P2′)
-    return VPolytope(Pout)
-end
-
-function cartesian_product(U1::Universe, U2::Universe)
-    return Universe(dim(U1) + dim(U2))
-end
-
 function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:LazySet,S2<:LazySet}
     N = promote_type(eltype(X), eltype(Y))
     U1 = Universe{N}(dim(X))
@@ -198,67 +154,6 @@ end
 
 function cartesian_product(U::Universe, H::HalfSpace)
     return HalfSpace(prepend_zeros(H.a, dim(U)), H.b)
-end
-
-"""
-    cartesian_product(P1::SimpleSparsePolynomialZonotope,
-                      P2::SimpleSparsePolynomialZonotope)
-
-Compute the Cartesian product of two simple sparse polynomial zonotopes.
-
-### Input
-
-- `P1` -- simple sparse polynomial zonotope
-- `P2` -- simple sparse polynomial zonotope
-
-### Output
-
-The Cartesian product of `P1` and `P2`.
-
-### Algorithm
-
-This method implements Proposition 3.1.22 in [1].
-
-[1] Kochdumper, Niklas. *Extensions of polynomial zonotopes and their application
-    to verification of cyber-physical systems.* PhD diss., Technische Universität
-    München, 2022.
-"""
-function cartesian_product(P1::SimpleSparsePolynomialZonotope,
-                           P2::SimpleSparsePolynomialZonotope)
-    c = vcat(center(P1), center(P2))
-    G = cat(genmat(P1), genmat(P2); dims=(1, 2))
-    E = cat(expmat(P1), expmat(P2); dims=(1, 2))
-    return SimpleSparsePolynomialZonotope(c, G, E)
-end
-
-"""
-    cartesian_product(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
-
-Compute the Cartesian product of two sparse polynomial zonotopes.
-
-### Input
-
-- `P1` -- sparse polynomial zonotope
-- `P2` -- sparse polynomial zonotope
-
-### Output
-
-The Cartesian product of `P1` and `P2`.
-
-### Algorithm
-
-This method implements Proposition 3.1.22 in [1].
-
-[1] Kochdumper, Niklas. *Extensions of polynomial zonotopes and their application
-    to verification of cyber-physical systems.* PhD diss., Technische Universität
-    München, 2022.
-"""
-function cartesian_product(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
-    c = vcat(center(P1), center(P2))
-    G = cat(genmat_dep(P1), genmat_dep(P2); dims=(1, 2))
-    GI = cat(genmat_indep(P1), genmat_indep(P2); dims=(1, 2))
-    E = cat(expmat(P1), expmat(P2); dims=(1, 2))
-    return SparsePolynomialZonotope(c, G, GI, E)
 end
 
 """
