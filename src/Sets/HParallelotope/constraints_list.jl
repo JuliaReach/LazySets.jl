@@ -23,6 +23,8 @@ function _parameters(P::HParallelotope{N,VN}) where {N,VN}
 end
 
 function _constraints_list_hparallelotope(D, c, N, VN)
+    require(@__MODULE__, :LazySets; fun_name="constraints_list")
+
     if isempty(D)
         return Vector{HalfSpace{N,VN}}(undef, 0)
     end
