@@ -48,6 +48,17 @@ function HPolyhedron(A::AbstractMatrix, b::AbstractVector)
     return HPolyhedron(constraints_list(A, b))
 end
 
+function load_Polyhedra_HPolyhedron()
+    return quote
+        using .Polyhedra: HRep
+
+        # convenience conversion method
+        function HPolyhedron(P::HRep{N}) where {N}
+            return convert(HPolyhedron, P)
+        end
+    end
+end  # load_Polyhedra_HPolyhedron
+
 function load_symbolics_hpolyhedron()
     return quote
         using .Symbolics: Num
