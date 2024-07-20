@@ -4,7 +4,7 @@ using Reexport, Requires
 
 using ..LazySets: AbstractPolyhedron
 using ..HPolytopeModule: HPolytope
-using LinearAlgebra: dot
+using LinearAlgebra: I, dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: At_mul_B, to_matrix, DEFAULT_COND_TOL
 using ReachabilityBase.Distribution: reseed!
@@ -13,6 +13,7 @@ using ReachabilityBase.Require: require
 @reexport import ..API: an_element, center, constraints_list, dim, isbounded,
                         isempty, isoperationtype, rand, vertices_list,
                         affine_map, ∈, linear_map, ρ, σ
+import Base: convert
 @reexport using ..API
 
 export Star,
@@ -38,6 +39,8 @@ include("support_vector.jl")
 
 include("basis.jl")
 include("predicate.jl")
+
+include("convert.jl")
 
 include("init.jl")
 

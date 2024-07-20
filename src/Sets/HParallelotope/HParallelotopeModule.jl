@@ -2,7 +2,8 @@ module HParallelotopeModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractZonotope, HalfSpace, generators_fallback
+using ..LazySets: AbstractZonotope, HalfSpace, generators_fallback, order,
+                  _constraints_list_zonotope
 using LinearAlgebra: checksquare, det
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: to_negative_vector
@@ -12,6 +13,7 @@ using ReachabilityBase.Require: require
 @reexport import ..API: center, constraints_list, dim, isoperationtype, rand,
                         volume
 @reexport import ..LazySets: generators, genmat
+import Base: convert
 @reexport using ..API
 
 export HParallelotope,
@@ -34,6 +36,8 @@ include("isoperationtype.jl")
 include("offset.jl")
 include("rand.jl")
 include("volume.jl")
+
+include("convert.jl")
 
 include("init.jl")
 

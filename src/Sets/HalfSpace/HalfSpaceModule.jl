@@ -50,6 +50,8 @@ include("halfspace_right.jl")
 include("iscomplement.jl")
 include("normalize.jl")
 
+include("convert.jl")
+
 """
     LinearConstraint
 

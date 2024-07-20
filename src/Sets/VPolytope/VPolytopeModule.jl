@@ -2,7 +2,7 @@ module VPolytopeModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolytope, LinearMapVRep, default_lp_solver,
+using ..LazySets: AbstractPolytope, LazySet, LinearMapVRep, default_lp_solver,
                   default_lp_solver_polyhedra, default_polyhedra_backend,
                   is_lp_infeasible, is_lp_optimal, linprog
 using LinearAlgebra: dot
@@ -17,6 +17,7 @@ using ReachabilityBase.Require: require
                         ρ, σ, translate, translate!
 @reexport import ..LazySets: remove_redundant_vertices, tohrep, tovrep,
                              _linear_map_vrep
+import Base: convert
 @reexport using ..API
 
 export VPolytope
@@ -41,6 +42,8 @@ include("translate.jl")
 include("remove_redundant_vertices.jl")
 include("tohrep.jl")
 include("tovrep.jl")
+
+include("convert.jl")
 
 function load_polyhedra_vpolytope() # function to be loaded by Requires
     return quote

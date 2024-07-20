@@ -8,6 +8,12 @@ CurrentModule = LazySets.ZonotopeModule
 Zonotope
 ```
 
+## Conversion
+
+```@docs
+convert(::Type{Zonotope}, ::AbstractZonotope)
+```
+
 ## Operations
 
 ```@docs

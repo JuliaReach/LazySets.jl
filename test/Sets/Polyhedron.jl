@@ -159,6 +159,11 @@ for N in [Float64, Rational{Int}, Float32]
     P = HPolyhedron([HalfSpace(SingleEntryVector(1, 2, N(1)), N(0))])
     Q = convert(typeof(P), P)
     @test P == Q
+    Q = convert(HPolyhedron{N,Vector{N}}, P.constraints[1])
+    @test P == Q
+    Z = SimpleSparsePolynomialZonotope(N[2, 0], N[1 2; 2 2.0], [1 4; 1 2])
+    @test_throws ErrorException convert(HPolyhedron, Z)
+    @test_throws ErrorException convert(HPolyhedron{N,Vector{N}}, Z)
 
     # permute
     P = HPolyhedron(HalfSpace[HalfSpace(N[1, 2], N(3)), HalfSpace(N[-1, -2], N(-3))])

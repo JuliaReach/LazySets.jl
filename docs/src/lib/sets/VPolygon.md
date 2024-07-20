@@ -8,6 +8,12 @@ CurrentModule = LazySets.VPolygonModule
 VPolygon
 ```
 
+## Conversion
+
+```@docs
+convert(::Type{VPolygon}, ::LazySet)
+```
+
 ## Operations
 
 ```@docs

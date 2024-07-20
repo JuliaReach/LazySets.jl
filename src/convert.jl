@@ -26,121 +26,6 @@ function convert(::Type{VPolygon}, P::AbstractHPolygon)
     return tovrep(P)
 end
 
-"""
-    convert(::Type{VPolygon}, X::LazySet)
-
-Convert a two-dimensional polytopic set to a polygon in vertex representation.
-
-### Input
-
-- `VPolygon` -- target type
-- `X`        -- two-dimensional polytopic set
-
-### Output
-
-The 2D set represented as a polygon.
-
-### Algorithm
-
-This method uses `vertices_list`.
-"""
-function convert(::Type{VPolygon}, X::LazySet)
-    @assert dim(X) == 2 "set must be two-dimensional for conversion"
-    return VPolygon(vertices_list(X))
-end
-
-"""
-    convert(::Type{HPolytope}, X::LazySet)
-
-Convert a polytopic set to a polytope in constraint representation.
-
-### Input
-
-- `HPolytope` -- target type
-- `X`         -- polytopic set
-
-### Output
-
-The given polytope represented as a polytope in constraint representation.
-
-### Algorithm
-
-This method uses `constraints_list`.
-"""
-function convert(::Type{HPolytope}, X::LazySet)
-    if !isboundedtype(typeof(X)) || !is_polyhedral(X)
-        error("conversion to `HPolytope` requires a polytopic set")
-    end
-    return HPolytope(constraints_list(X))
-end
-
-convert(::Type{HPolytope{N,VT}}, P::HPolytope{N,VT}) where {N,VT} = P
-
-function convert(::Type{HPolytope{N,VT}}, X::LazySet) where {N,VT}
-    if !isboundedtype(typeof(X)) || !is_polyhedral(X)
-        error("conversion to `HPolytope` requires a polytopic set")
-    end
-    return HPolytope([HalfSpace(VT(c.a), N(c.b)) for c in constraints_list(X)])
-end
-
-"""
-    convert(::Type{HPolyhedron}, X::LazySet)
-
-Convert a polyhedral set to a polyhedron in constraint representation.
-
-### Input
-
-- `HPolyhedron` -- target type
-- `X`           -- polyhedral set
-
-### Output
-
-The given set represented as a polyhedron in constraint representation.
-
-### Algorithm
-
-This method uses `constraints_list`.
-"""
-function convert(::Type{HPolyhedron}, X::LazySet)
-    if !is_polyhedral(X)
-        error("conversion to `HPolyhedron` requires a polyhedral set")
-    end
-    return HPolyhedron(constraints_list(X))
-end
-
-convert(::Type{HPolyhedron{N,VT}}, P::HPolyhedron{N,VT}) where {N,VT} = P
-
-function convert(::Type{HPolyhedron{N,VT}}, X::LazySet) where {N,VT}
-    if !is_polyhedral(X)
-        error("conversion to `HPolyhedron` requires a polyhedral set")
-    end
-    return HPolyhedron([HalfSpace(VT(c.a), N(c.b)) for c in constraints(X)])
-end
-
-"""
-    convert(::Type{VPolytope}, X::LazySet; [prune]::Bool=true)
-
-Convert a polytopic set to a polytope in vertex representation.
-
-### Input
-
-- `VPolytope` -- target type
-- `X`         -- polytopic set
-- `prune`     -- (optional, default: `true`) option to remove redundant vertices
-
-### Output
-
-The given set represented as a polytope in vertex representation.
-
-### Algorithm
-
-This method uses `vertices_list`. Use the option `prune` to select whether to
-remove redundant vertices before constructing the polytope.
-"""
-function convert(::Type{VPolytope}, X::LazySet; prune::Bool=true)
-    return VPolytope(vertices_list(X; prune=prune))
-end
-
 # fast conversion from a 2D hyperrectangular set to a zonotope
 function _convert_2D(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
     c = center(H)
@@ -209,30 +94,10 @@ function load_genmat_2D_static()
     end
 end  # quote / load_genmat_2D_static
 
-"""
-    convert(::Type{Zonotope}, Z::AbstractZonotope)
-
-Convert a zonotopic set to a zonotope.
-
-### Input
-
-- `Zonotope` -- target type
-- `H`        -- zonotopic set
-
-### Output
-
-A zonotope.
-"""
-function convert(::Type{Zonotope}, Z::AbstractZonotope)
-    return _convert_zonotope_fallback(Z)
-end
-
 function convert(::Type{Zonotope}, H::AbstractHyperrectangle)
     dim(H) == 2 && return _convert_2D(Zonotope, H)
-    return _convert_zonotope_fallback(H)
+    return Zonotope(center(H), genmat(H))
 end
-
-_convert_zonotope_fallback(Z) = Zonotope(center(Z), genmat(Z))
 
 function convert(::Type{Singleton},
                  cp::CartesianProduct{N,S1,S2}) where {N,S1<:AbstractSingleton,
@@ -365,30 +230,6 @@ function convert(::Type{Zonotope},
     return linear_map(S.M, convert(Zonotope, S.X))
 end
 
-"""
-    convert(::Type{Hyperrectangle}, H::AbstractHyperrectangle)
-
-Convert a hyperrectangular set to a hyperrectangle.
-
-### Input
-
-- `Hyperrectangle` -- hyperrectangle target type
-- `H`              -- hyperrectangular set
-
-### Output
-
-A hyperrectangle.
-
-### Examples
-
-```jldoctest
-julia> convert(Hyperrectangle, Interval(0.0, 1.0))
-Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([0.5], [0.5])
-```
-"""
-function convert(::Type{Hyperrectangle}, H::AbstractHyperrectangle)
-    return Hyperrectangle(center(H), radius_hyperrectangle(H))
-end
 
 """
     convert(::Type{Hyperrectangle}, cpa::CartesianProductArray{N, HN})
@@ -573,57 +414,6 @@ function convert(::Type{Zonotope},
 end
 
 """
-    convert(::Type{IntervalArithmetic.IntervalBox}, H::AbstractHyperrectangle)
-
-Convert a hyperrectangular set to an `IntervalBox` from `IntervalArithmetic`.
-
-### Input
-
-- `IntervalBox` -- target type
-- `H`           -- hyperrectangular set
-
-### Output
-
-An `IntervalBox`.
-"""
-function convert(::Type{IA.IntervalBox}, H::AbstractHyperrectangle)
-    return IA.IntervalBox(IA.interval.(low(H), high(H)))
-end
-
-"""
-    convert(::Type{Hyperrectangle}, IB::IntervalArithmetic.IntervalBox)
-
-Convert an `IntervalBox` from `IntervalArithmetic` to a hyperrectangular set.
-
-### Input
-
-- `Hyperrectangle` -- target type
-- `IB`             -- interval box
-
-### Output
-
-A `Hyperrectangle`.
-
-### Notes
-
-`IntervalArithmetic.IntervalBox` uses *static* vectors to store each component
-interval; hence the resulting `Hyperrectangle` has its center and radius
-represented as a static vector (`SArray`).
-"""
-function convert(::Type{Hyperrectangle}, IB::IA.IntervalBox)
-    low_IB = IA.inf.(IB)
-    high_IB = IA.sup.(IB)
-    return Hyperrectangle(; low=low_IB, high=high_IB)
-end
-
-# method for Interval
-function convert(::Type{Hyperrectangle}, I::IA.Interval)
-    low_I = [IA.inf(I)]
-    high_I = [IA.sup(I)]
-    return Hyperrectangle(; low=low_I, high=high_I)
-end
-
-"""
     convert(::Type{Hyperrectangle}, r::Rectification{N, AH})
         where {N, AH<:AbstractHyperrectangle}
 
@@ -700,57 +490,11 @@ function convert(::Type{Interval}, ms::MinkowskiSum{N,IT,IT}) where {N,IT<:Inter
     return concretize(ms)
 end
 
-# convert to concrete Vector representation
-function convert(::Type{HalfSpace{N,Vector{N}}},
-                 hs::HalfSpace{N,<:AbstractVector{N}}) where {N}
-    return HalfSpace(Vector(hs.a), hs.b)
-end
-
 function convert(::Type{Zonotope},
                  am::AbstractAffineMap{N,<:AbstractZonotope{N}}) where {N}
     Z1 = convert(Zonotope, linear_map(matrix(am), set(am)))
     translate!(Z1, vector(am))
     return Z1
-end
-
-"""
-    convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
-
-Convert a zonotopic set of order one to a parallelotope in constraint
-representation.
-
-### Input
-
-- `HParallelotope` -- target type
-- `Z`              -- zonotopic set of order one
-
-### Output
-
-A parallelotope in constraint representation.
-
-### Notes
-
-This function requires that the list of constraints of `Z` are obtained in
-the particular order returned from the `constraints_list` function of a
-`Zonotope`. Hence it first converts `Z` to a `Zonotope`.
-"""
-function convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
-    @assert order(Z) == 1 "cannot convert a zonotope that is not of order 1 " *
-                          "to a parallelotope"
-    n = dim(Z)
-
-    constraints = _constraints_list_zonotope(Z)
-
-    D = Matrix{N}(undef, n, n)
-    c = Vector{N}(undef, 2n)
-    j = 1
-    @inbounds for i in 1:n
-        D[i, :] = constraints[j].a
-        c[i] = constraints[j].b
-        c[i + n] = constraints[j + 1].b
-        j += 2
-    end
-    return HParallelotope(D, c; check_consistency=false)
 end
 
 """
@@ -946,26 +690,6 @@ function convert(::Type{STAR}, X::Star)
     return AffineMap(X.V, X.P, X.c)
 end
 
-"""
-    convert(::Type{Star}, P::AbstractPolyhedron{N}) where {N}
-
-Convert a polyhedral set to a star set.
-
-### Input
-
-- `Star` -- target type
-- `P`    -- polyhedral set
-
-### Output
-
-A star set.
-"""
-function convert(::Type{Star}, P::AbstractPolyhedron{N}) where {N}
-    n = dim(P)
-    c = zeros(N, n)
-    V = Matrix(one(N) * I, n, n)
-    return Star(c, V, P)
-end
 
 function convert(::Type{Hyperplane}, P::HPolyhedron; skip_check::Bool=false)
     # check that the number of constraints is fine

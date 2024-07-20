@@ -13,6 +13,7 @@ using SparseArrays: SparseVector, findnz, sparse
 @reexport import ..API: center, isoperationtype, rand, permute, scale!, ρ, σ,
                         translate, translate!
 @reexport import ..LazySets: genmat, radius_hyperrectangle, □, _genmat_static
+import Base: convert
 @reexport using ..API
 
 export Hyperrectangle
@@ -30,6 +31,8 @@ include("translate.jl")
 
 include("genmat.jl")
 include("radius_hyperrectangle.jl")
+
+include("convert.jl")
 
 function □(c::VNC, r::VNR) where {N,VNC<:AbstractVector{N},VNR<:AbstractVector{N}}
     return Hyperrectangle(c, r)

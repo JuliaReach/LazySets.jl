@@ -8,6 +8,14 @@ CurrentModule = LazySets.HyperrectangleModule
 Hyperrectangle
 ```
 
+## Conversion
+
+```@docs
+convert(::Type{Hyperrectangle}, ::AbstractHyperrectangle)
+convert(::Type{Hyperrectangle}, ::IA.IntervalBox)
+convert(::Type{IA.IntervalBox}, ::AbstractHyperrectangle)
+```
+
 ## Operations
 
 ```@docs

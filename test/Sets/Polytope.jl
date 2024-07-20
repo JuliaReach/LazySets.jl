@@ -184,6 +184,14 @@ for N in [Float64, Rational{Int}, Float32]
                    HalfSpace(SingleEntryVector(1, 1, N(-1)), N(0))])
     Q = convert(typeof(P), P)
     @test P == Q
+    Q = convert(HPolytope{N,Vector{N}}, tovrep(P))
+    @test P == Q
+    H = HalfSpace(N[1], N(1))
+    @test_throws ErrorException convert(HPolytope, H)
+    @test_throws ErrorException convert(HPolytope{N,Vector{N}}, H)
+    Z = SimpleSparsePolynomialZonotope(N[2, 0], N[1 2; 2 2.0], [1 4; 1 2])
+    @test_throws ErrorException convert(HPolytope, Z)
+    @test_throws ErrorException convert(HPolytope{N,Vector{N}}, Z)
 
     # -----
     # V-rep

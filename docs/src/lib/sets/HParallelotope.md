@@ -8,6 +8,12 @@ CurrentModule = LazySets.HParallelotopeModule
 HParallelotope
 ```
 
+## Conversion
+
+```@docs
+convert(::Type{HParallelotope}, Z::AbstractZonotope{N}) where {N}
+```
+
 ## Operations
 
 ```@docs
