@@ -12,7 +12,8 @@ using SparseArrays: SparseVector, findnz, sparse
 
 @reexport import ..API: center, isoperationtype, rand, permute, scale!, ρ, σ,
                         translate, translate!
-@reexport import ..LazySets: genmat, radius_hyperrectangle, □, _genmat_static
+@reexport import ..LazySets: genmat, radius_hyperrectangle, □
+import ..LazySets: _genmat_static
 import Base: convert
 @reexport using ..API
 

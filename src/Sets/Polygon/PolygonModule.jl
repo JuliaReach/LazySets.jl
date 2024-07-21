@@ -7,7 +7,7 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: convex_hull, dim, isconvextype, isbounded,
                         isboundedtype, isempty, isoperationtype, ρ, σ
-@reexport import ..LazySets: plot_recipe
+import ..LazySets: plot_recipe
 @reexport using ..API
 
 export Polygon
