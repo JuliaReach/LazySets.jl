@@ -32,6 +32,9 @@ linear_map(::AbstractMatrix, ::VPolytope)
 σ(::AbstractVector, ::VPolytope)
 translate(::VPolytope, ::AbstractVector)
 translate!(::VPolytope, ::AbstractVector)
+cartesian_product(::VPolytope, ::VPolytope)
+convex_hull(::VPolytope, ::VPolytope)
+minkowski_sum(::VPolytope, ::VPolytope)
 ```
 
 ```@meta

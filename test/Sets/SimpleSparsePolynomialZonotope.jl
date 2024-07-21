@@ -70,6 +70,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test genmat(CH1) == _g
     @test expmat(CH1) == _e
 
+    # convex hull with itself
+    CH2 = convex_hull(S, S)
+    Z1 = remove_redundant_generators(overapproximate(CH1, Zonotope))
+    Z2 = remove_redundant_generators(overapproximate(CH2, Zonotope))
+    @test_broken isequivalent(Z1, Z2)
+    @test Z1 ⊆ Z2 && center(Z1) == center(Z2)
+
     S2 = SimpleSparsePolynomialZonotope(N[1 // 5, -3 // 5], N[1 0; 0 2//5], [1 0; 0 1])
     Q = [N[0 1; 1 0], N[-16//5 6//5; 6//5 0]]
 

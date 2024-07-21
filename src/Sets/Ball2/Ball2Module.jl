@@ -20,13 +20,10 @@ export Ball2
 include("Ball2.jl")
 
 include("area.jl")
-include("ball_norm.jl")
 include("center.jl")
-include("chebyshev_center_radius.jl")
 include("in.jl")
 include("isoperationtype.jl")
 include("project.jl")
-include("radius_ball.jl")
 include("rand.jl")
 include("reflect.jl")
 include("sample.jl")
@@ -37,6 +34,10 @@ include("translate.jl")
 include("volume.jl")
 include("isdisjoint.jl")
 include("issubset.jl")
+
+include("ball_norm.jl")
+include("chebyshev_center_radius.jl")
+include("radius_ball.jl")
 
 function ○(c::VN, r::N) where {N<:AbstractFloat,VN<:AbstractVector{N}}
     return Ball2(c, r)

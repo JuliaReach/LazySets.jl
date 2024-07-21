@@ -20,7 +20,6 @@ export Ball1
 
 include("Ball1.jl")
 
-include("ball_norm.jl")
 include("center.jl")
 include("constraints_list.jl")
 include("high.jl")
@@ -28,7 +27,6 @@ include("in.jl")
 include("isoperationtype.jl")
 include("low.jl")
 include("project.jl")
-include("radius_ball.jl")
 include("rand.jl")
 include("reflect.jl")
 include("scale.jl")
@@ -36,6 +34,9 @@ include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
 include("vertices_list.jl")
+
+include("ball_norm.jl")
+include("radius_ball.jl")
 
 include("init.jl")
 

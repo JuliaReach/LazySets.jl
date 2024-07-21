@@ -18,7 +18,6 @@ include("Singleton.jl")
 include("isoperationtype.jl")
 include("rand.jl")
 include("rectify.jl")
-include("singleton_list.jl")
 include("linear_map.jl")
 include("permute.jl")
 include("project.jl")
@@ -26,5 +25,6 @@ include("scale.jl")
 include("translate.jl")
 
 include("element.jl")
+include("singleton_list.jl")
 
 end  # module

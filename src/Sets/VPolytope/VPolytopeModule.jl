@@ -4,7 +4,8 @@ using Reexport, Requires
 
 using ..LazySets: AbstractPolytope, LazySet, LinearMapVRep, default_lp_solver,
                   default_lp_solver_polyhedra, default_polyhedra_backend,
-                  is_lp_infeasible, is_lp_optimal, linprog
+                  is_lp_infeasible, is_lp_optimal, linprog,
+                  _minkowski_sum_vrep_nd, _vertices_list
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: projection_matrix
@@ -14,7 +15,8 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: constraints_list, dim, isoperationtype, rand, reflect,
                         vertices_list, ∈, linear_map, permute, project, scale!,
-                        ρ, σ, translate, translate!
+                        ρ, σ, translate, translate!, cartesian_product,
+                        convex_hull, minkowski_sum
 @reexport import ..LazySets: remove_redundant_vertices, tohrep, tovrep,
                              _linear_map_vrep
 import Base: convert
@@ -38,6 +40,9 @@ include("scale.jl")
 include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
+include("cartesian_product.jl")
+include("convex_hull.jl")
+include("minkowski_sum.jl")
 
 include("polyhedron.jl")
 include("remove_redundant_vertices.jl")

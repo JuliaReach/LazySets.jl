@@ -16,15 +16,16 @@ export Ballp
 
 include("Ballp.jl")
 
-include("ball_norm.jl")
 include("center.jl")
 include("isoperationtype.jl")
 include("project.jl")
-include("radius_ball.jl")
 include("rand.jl")
 include("reflect.jl")
 include("scale.jl")
 include("translate.jl")
+
+include("ball_norm.jl")
+include("radius_ball.jl")
 
 include("init.jl")
 

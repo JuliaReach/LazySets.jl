@@ -43,6 +43,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test genmat_indep(ESPZ) == hcat([1, 0])
     @test expmat(ESPZ) == [1 0 3 1 0 1; 0 1 1 0 1 3]
     @test indexvector(ESPZ) == indexvector(PZ)
+    PZidx = SparsePolynomialZonotope(c, G, GI, E, 3:4)
+    @test_throws ArgumentError exact_sum(PZ, PZidx)
 
     TPZ = translate(PZ, N[1, 2])
     @test center(TPZ) == N[5, 6]
