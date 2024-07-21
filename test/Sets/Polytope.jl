@@ -578,10 +578,12 @@ for N in [Float64]
         @test !(BallInf(N[0, 0], N(1.01)) ⊆ P)
 
         # concrete minkowski sum
-        B = convert(VPolytope, BallInf(N[0, 0, 0], N(1)))
-        X = minkowski_sum(B, B)
-        twoB = 2.0 * B
-        @test X ⊆ twoB && twoB ⊆ X
+        for T in (HPolytope, VPolytope)
+            B = convert(T, BallInf(N[0, 0, 0], N(1)))
+            X = minkowski_sum(B, B)
+            twoB = 2.0 * B
+            @test X ⊆ twoB && twoB ⊆ X
+        end
 
         # concrete Reflection
         F4 = N[3 0; 0 7]

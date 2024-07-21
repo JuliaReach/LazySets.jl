@@ -230,6 +230,10 @@ for N in [Float64, Float32, Rational{Int}]
     oaux = VPolygon([N[0, 0], N[1 / 2, 0], N[0, 1 / 2]])
     @test xaux ⊆ oaux && oaux ⊆ xaux # TODO use isequivalent
     @test LazySets._intersection_vrep_2d(paux.vertices, qaux.vertices) == xaux.vertices
+    # empty intersection
+    qaux = VPolygon([N[2, 2]])
+    xaux = intersection(paux, qaux)
+    @test xaux == EmptySet{N}(2)
 
     # concrete intersection of H-rep and V-rep
     q1 = intersection(paux, p)
