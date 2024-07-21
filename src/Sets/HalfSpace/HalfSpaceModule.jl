@@ -15,9 +15,9 @@ using ReachabilityBase.Require: require
 @reexport import ..API: an_element, complement, constraints_list, dim,
                         isbounded, isempty, isoperationtype, isuniversal, rand,
                         distance, ∈, permute, project, ρ, σ, translate
-@reexport import ..LazySets: constrained_dimensions, normalize, _is_halfspace,
-                             _linear_map_hrep_helper
-@reexport import ..Base: convert
+@reexport import ..LazySets: constrained_dimensions, normalize
+import ..LazySets: _is_halfspace, _linear_map_hrep_helper
+import ..Base: convert
 @reexport using ..API
 
 export HalfSpace, LinearConstraint,

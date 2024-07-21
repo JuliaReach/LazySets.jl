@@ -22,7 +22,7 @@ using ReachabilityBase.Require: require
                              remove_redundant_constraints,
                              remove_redundant_constraints!, tohrep, tovrep,
                              addconstraint!
-@reexport import ..Base: convert
+import ..Base: convert
 @reexport using ..API
 
 export HPolyhedron

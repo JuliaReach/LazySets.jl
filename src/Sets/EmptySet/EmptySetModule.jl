@@ -14,7 +14,8 @@ using ReachabilityBase.Require: require
                         project, radius, rand, rectify, reflect, scale, scale!,
                         ρ, σ, translate, translate!, vertices, vertices_list,
                         volume, convex_hull, intersection, isdisjoint, ⊆
-@reexport import ..LazySets: chebyshev_center_radius, plot_recipe
+@reexport import ..LazySets: chebyshev_center_radius
+import ..LazySets: plot_recipe
 @reexport using ..API
 
 export EmptySet, ∅
