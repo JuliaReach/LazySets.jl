@@ -352,9 +352,9 @@ for N in [Float64]
     @test length(vlistZ) == 6
     @test ispermutation(vlistZ, [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
     c, G = Z.center, Z.generators
-    vlist2 = LazySets.ZonotopeModule._vertices_list_2D(c, G; apply_convex_hull=true)
+    vlist2 = LazySets._vertices_list_2D(c, G; apply_convex_hull=true)
     @test ispermutation(vlistZ, vlist2)
-    vlist3 = LazySets.ZonotopeModule._vertices_list_2D(c, G; apply_convex_hull=false)
+    vlist3 = LazySets._vertices_list_2D(c, G; apply_convex_hull=false)
     @test ispermutation(vlistZ, vlist3)
 
     # test 3d zonotope vertex enumeration
