@@ -59,7 +59,7 @@ function load_Polyhedra_HPolyhedron()
     end
 end  # load_Polyhedra_HPolyhedron
 
-function load_symbolics_hpolyhedron()
+function load_Symbolics_HPolyhedron()
     return quote
         using .Symbolics: Num
         using ..LazySets: _get_variables, _vec, _is_halfspace, _is_hyperplane
@@ -140,4 +140,4 @@ function load_symbolics_hpolyhedron()
             return HPolyhedron(expr, _vec(vars); N=N)
         end
     end
-end  # quote / load_symbolics_hpolyhedron()
+end  # load_Symbolics_HPolyhedron
