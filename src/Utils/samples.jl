@@ -625,9 +625,9 @@ function _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
     return _sample_unit_nsphere_muller_distributions!(D, n, p; rng=rng, seed=seed)
 end
 
-function load_distributions_samples()
+function load_Distributions_sample()
     return quote
-        using .Distributions: Normal, UnivariateDistribution
+        using .Distributions: UnivariateDistribution
 
         function RejectionSampler(distr::UnivariateDistribution; tight::Bool=false)
             return RejectionSampler([distr]; tight=tight)
@@ -638,7 +638,7 @@ function load_distributions_samples()
                                                             rng::AbstractRNG=GLOBAL_RNG,
                                                             seed::Union{Int,Nothing}=nothing) where {N}
             rng = reseed!(rng, seed)
-            Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
+            Zdims = [Distributions.Normal() for _ in 1:n] # normal distributions for each dimension
             v = Vector{N}(undef, n) # sample direction
             @inbounds for j in 1:p
                 α = zero(N)
@@ -651,4 +651,4 @@ function load_distributions_samples()
             return D
         end
     end
-end  # quote / load_distributions_samples()
+end  # load_Distributions_sample

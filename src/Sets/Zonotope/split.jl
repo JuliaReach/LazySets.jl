@@ -35,16 +35,18 @@ end
 
 _split_ret(Z₁::Zonotope, Z₂::Zonotope) = (Z₁, Z₂)
 
-function load_split_static()
+function load_StaticArraysCore_split()
     return quote
+        using .StaticArraysCore: MMatrix, MVector
+
         function _split_ret(Z₁::Zonotope{N,SV,SM},
                             Z₂::Zonotope{N,SV,SM}) where {N,n,p,SV<:MVector{n,N},SM<:MMatrix{n,p,N}}
-            Z₁ = Zonotope(SVector{n}(Z₁.center), SMatrix{n,p}(Z₁.generators))
-            Z₂ = Zonotope(SVector{n}(Z₂.center), SMatrix{n,p}(Z₂.generators))
+            Z₁ = Zonotope(StaticArraysCore.SVector{n}(Z₁.center), StaticArraysCore.SMatrix{n,p}(Z₁.generators))
+            Z₂ = Zonotope(StaticArraysCore.SVector{n}(Z₂.center), StaticArraysCore.SMatrix{n,p}(Z₂.generators))
             return Z₁, Z₂
         end
     end
-end  # quote / load_split_static
+end  # load_StaticArraysCore_split
 
 function _split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
     p = length(gens)

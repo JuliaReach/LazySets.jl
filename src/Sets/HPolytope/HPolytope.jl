@@ -101,7 +101,7 @@ function load_Polyhedra_HPolytope()
     end
 end  # load_Polyhedra_HPolytope
 
-function load_symbolics_hpolytope()
+function load_Symbolics_HPolytope()
     return quote
         using .Symbolics: Num
         using ..LazySets: _get_variables, _vec
@@ -161,4 +161,4 @@ function load_symbolics_hpolytope()
             return HPolytope(expr, _vec(vars); N=N, check_boundedness=check_boundedness)
         end
     end
-end  # quote / load_symbolics_hpolytope()
+end  # load_Symbolics_HPolytope

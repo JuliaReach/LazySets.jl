@@ -29,7 +29,7 @@ function ρ(d::AbstractVector, P::SparsePolynomialZonotope;
     return _ρ_range_enclosures(d, P, enclosure_method)
 end
 
-function load_RangeEnclosures_rho()
+function load_RangeEnclosures_support_function()
     return quote
         function _ρ_range_enclosures(d::AbstractVector, P::SparsePolynomialZonotope,
                                      method::Union{RangeEnclosures.AbstractEnclosureAlgorithm,
@@ -48,8 +48,8 @@ function load_RangeEnclosures_rho()
             f(x) = sum(d' * gi * prod(x .^ ei) for (gi, ei) in zip(eachcol(G), eachcol(E)))
 
             dom = IA.IntervalBox(IA.interval(-1, 1), n)
-            res += IA.sup(enclose(f, dom, method))
+            res += IA.sup(RangeEnclosures.enclose(f, dom, method))
             return res
         end
     end
-end
+end  # load_RangeEnclosures_support_function

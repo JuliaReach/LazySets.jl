@@ -1,1 +1,1 @@
-eval(load_distributions_samples())
+eval(load_Distributions_sample())

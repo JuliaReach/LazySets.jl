@@ -82,17 +82,15 @@ function _sample_unit_nball_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
     return _sample_unit_nball_muller_distributions!(D, n, p; rng=rng, seed=seed)
 end
 
-function load_distributions_samples()
+function load_Distributions_sample()
     return quote
-        using .Distributions: Uniform, Normal
-
         function _sample_unit_nball_muller_distributions!(D::Vector{Vector{N}}, n::Int,
                                                           p::Int;
                                                           rng::AbstractRNG=GLOBAL_RNG,
                                                           seed::Union{Int,Nothing}=nothing) where {N}
             rng = reseed!(rng, seed)
-            Zdims = [Normal() for _ in 1:n] # normal distributions for each dimension
-            Zrad = Uniform() # distribution to pick random radius
+            Zdims = [Distributions.Normal() for _ in 1:n] # normal distributions for each dimension
+            Zrad = Distributions.Uniform() # distribution to pick random radius
             one_over_n = one(N) / n
             v = Vector{N}(undef, n) # sample direction
             @inbounds for j in 1:p
@@ -108,4 +106,4 @@ function load_distributions_samples()
             return D
         end
     end
-end  # quote / load_distributions_samples()
+end  # load_Distributions_sample
