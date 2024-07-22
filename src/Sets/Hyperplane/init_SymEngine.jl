@@ -7,7 +7,7 @@ function free_symbols(expr::Expr, ::Type{<:Hyperplane})
     # treats the 4 in :(2*x1 = 4)
     rhs = :args in fieldnames(typeof(expr.args[2])) ? convert(SymEngine.Basic, expr.args[2].args[2]) :
             convert(SymEngine.Basic, expr.args[2])
-    return free_symbols(lhs - rhs)
+    return SymEngine.free_symbols(lhs - rhs)
 end
 
 eval(load_SymEngine_ishyperplanar())
