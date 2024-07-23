@@ -6,6 +6,7 @@ using ..LazySets: AbstractPolytope
 using LinearAlgebra: dot, cross
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: isapproxzero
+using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
 @reexport import ..API: constraints_list, dim, isoperationtype, rand, ∈, σ
