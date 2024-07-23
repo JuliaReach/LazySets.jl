@@ -42,11 +42,11 @@ function load_Polyhedra_convert_HPolytope()
             for hi in Polyhedra.allhalfspaces(P)
                 a, b = hi.a, hi.β
                 if isapproxzero(norm(a))
-                    @assert b >= zero(N) "the half-space is inconsistent since it " *
-                                         "has a zero normal direction but the constraint is negative"
+                    @assert b >= zero(N) "the half-space is inconsistent since it has a zero " *
+                                         "normal direction but the constraint is negative"
                     continue
                 end
-                push!(constraints, HalfSpace(hi.a, hi.β))
+                push!(constraints, HalfSpace(a, b))
             end
             return HPolytope(constraints)
         end
