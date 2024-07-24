@@ -69,7 +69,8 @@ julia> free_symbols(:(x1 + x2 <= 2*x4 + 6), HalfSpace)
 """
 function free_symbols(::Expr, ::Type{<:LazySet}) end  # COV_EXCL_LINE
 
-function free_symbols(expr::Expr)
+# Note: this convenience function is not used anywhere
+function _free_symbols(expr::Expr)
     if _is_hyperplane(expr)
         return free_symbols(expr, Hyperplane)
     elseif _is_halfspace(expr)

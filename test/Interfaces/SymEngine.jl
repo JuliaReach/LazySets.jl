@@ -4,7 +4,7 @@
 @test !LazySets._is_linearcombination(:(2*x1^2))
 @test !LazySets._is_linearcombination(:(x1^2 - 4*x2 + x3 + 2))
 
-# free_symbols
-@test LazySets.free_symbols(:(x1 = 1)) == [SymEngine.Basic(:(x1))]
-@test LazySets.free_symbols(:(2*x2 <= 4)) == [SymEngine.Basic(:(x2))]
-@test_throws ErrorException LazySets.free_symbols(:(x3 != 4))
+# _free_symbols
+@test LazySets._free_symbols(:(x1 = 1)) == [SymEngine.Basic(:(x1))]
+@test LazySets._free_symbols(:(2*x2 <= 4)) == [SymEngine.Basic(:(x2))]
+@test_throws ErrorException LazySets._free_symbols(:(x3 != 4))
