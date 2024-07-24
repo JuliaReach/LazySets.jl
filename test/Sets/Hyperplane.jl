@@ -203,6 +203,28 @@ for N in [Float64]
         vars = @variables x[1:2] t
         @test Hyperplane(x[1] == t, vars) == Hyperplane([1.0, 0.0, -1.0], 0.0)
     end
+
+    # tests that require SymEngine
+    @static if isdefined(@__MODULE__, :SymEngine)
+        # _is_halfspace
+        @test LazySets._is_hyperplane(:(x1 = 0))
+        @test !LazySets._is_hyperplane(:(x1 <= 0))
+        @test LazySets._is_hyperplane(:(2*x1 = 4))
+        @test LazySets._is_hyperplane(:(6.1 = 5.3*f - 0.1*g))
+        @test !LazySets._is_hyperplane(:(2*x1^2 = 4))
+        @test !LazySets._is_hyperplane(:(x1^2 = 4*x2 - x3))
+        @test LazySets._is_hyperplane(:(x1 = 4*x2 - x3))
+
+        # convert
+        H = convert(Hyperplane, :(x1 = -0.03))
+        @test H == Hyperplane([1.0], -0.03)
+        H = convert(Hyperplane, :(x1 + 0.03 = 0))
+        @test H == Hyperplane([1.0], -0.03)
+        H = convert(Hyperplane, :(x1 + x2 = 2*x4 + 6))
+        @test H == Hyperplane([1.0, 1.0, -2.0], 6.0)
+        H = convert(Hyperplane, :(x1 + x2 = 2*x4 + 6), vars=SymEngine.Basic[:x1, :x2, :x3, :x4])
+        @test H == Hyperplane([1.0, 1.0, 0.0, -2.0], 6.0)
+    end
 end
 
 # isoperationtype

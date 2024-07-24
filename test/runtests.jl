@@ -51,7 +51,7 @@ Random.seed!(1234)
     end
     using IntervalMatrices: ±, IntervalMatrix
     using TaylorModels: set_variables, TaylorModelN
-    using Symbolics
+    using SymEngine, Symbolics
 end
 
 # ==============================
@@ -106,6 +106,9 @@ if test_suite_basic
     # =======================================
     @testset "LazySets.CDDLib" begin
         include("Interfaces/CDDLib.jl")
+    end
+    @testset "LazySets.SymEngine" begin
+        include("Interfaces/SymEngine.jl")
     end
 
     # =======================
