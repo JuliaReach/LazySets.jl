@@ -32,9 +32,9 @@ function rand(::Type{Star};
               P::Union{AbstractPolyhedron,Nothing}=nothing)
     rng = reseed!(rng, seed)
     c = randn(rng, N, dim)
-    V = randn(rng, N, dim, LazySets.dim(P))
     if isnothing(P)
         P = rand(HPolytope; N=N, dim=dim, rng=rng, seed=seed)
     end
+    V = randn(rng, N, dim, LazySets.dim(P))
     return Star(c, V, P)
 end
