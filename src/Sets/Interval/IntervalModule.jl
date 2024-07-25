@@ -23,7 +23,7 @@ using ReachabilityBase.Require: require
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens,
                              radius_hyperrectangle, split
 import ..LazySets: plot_recipe
-import Base: convert, -, *, min, max
+import Base: convert, min, max
 @reexport using ..API
 
 export Interval
@@ -76,44 +76,6 @@ include("radius_hyperrectangle.jl")
 include("split.jl")
 
 include("convert.jl")
-
-"""
-    -(x::Interval, y::Interval)
-
-Return the difference of two intervals (in the interval-arithmetic sense).
-
-### Input
-
-- `x` -- interval
-- `y` -- interval
-
-### Output
-
-The difference of the intervals as a new `Interval` set.
-"""
-function -(x::Interval, y::Interval)
-    return Interval(x.dat - y.dat)
-end
-
-"""
-```
-    *(x::Interval, y::Interval)
-```
-
-Return the product of two intervals (in the interval-arithmetic sense).
-
-### Input
-
-- `x` -- interval
-- `y` -- interval
-
-### Output
-
-The product of the intervals as a new `Interval` set.
-"""
-function *(x::Interval, y::Interval)
-    return Interval(x.dat * y.dat)
-end
 
 """
     min(x::Interval)
