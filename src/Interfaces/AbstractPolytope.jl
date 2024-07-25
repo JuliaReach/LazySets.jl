@@ -144,11 +144,6 @@ function _linear_map_hrep_helper(M::AbstractMatrix, P::AbstractPolytope,
     end
 end
 
-# the "backend" argument is ignored, used for dispatch
-function _vertices_list(P::AbstractPolytope, backend)
-    return vertices_list(P)
-end
-
 """
     volume(P::AbstractPolytope; backend=default_polyhedra_backend(P))
 

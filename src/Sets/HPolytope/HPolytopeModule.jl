@@ -13,7 +13,7 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: isbounded, isoperationtype, rand, vertices_list,
                         minkowski_sum
-import ..LazySets: _linear_map_hrep_helper, _vertices_list
+import ..LazySets: _linear_map_hrep_helper
 import Base: convert
 @reexport using ..API
 

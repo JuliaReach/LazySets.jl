@@ -30,8 +30,8 @@ function minkowski_sum(P1::VPolytope, P2::VPolytope;
     @assert dim(P1) == dim(P2) "cannot compute the Minkowski sum of two " *
                                "polytopes of dimension $(dim(P1)) and $(dim(P2)), respectively"
 
-    vlist1 = _vertices_list(P1, backend)
-    vlist2 = _vertices_list(P2, backend)
+    vlist1 = vertices_list(P1)
+    vlist2 = vertices_list(P2)
     Vout = _minkowski_sum_vrep_nd(vlist1, vlist2;
                                   apply_convex_hull=apply_convex_hull,
                                   backend=backend, solver=solver)
