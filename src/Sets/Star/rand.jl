@@ -11,7 +11,7 @@ Create a random star.
 - `dim`  -- (optional, default: 2) dimension
 - `rng`  -- (optional, default: `GLOBAL_RNG`) random number generator
 - `seed` -- (optional, default: `nothing`) seed for reseeding
-- `P`    -- (optional, default: a random `HPolytope`) predicate
+- `P`    -- (optional, default: `nothing`) predicate
 
 ### Output
 
@@ -19,8 +19,8 @@ A random star.
 
 ### Algorithm
 
-By default we generate a random `HPolytope` of dimension `dim` as predicate.
-Alternatively the predicate can be passed.
+A predicate `P` can be passed directly. If `P` is `nothing` (default), we
+generate a random `HPolytope` of dimension `dim`.
 
 All numbers are normally distributed with mean 0 and standard deviation 1.
 """
@@ -29,9 +29,12 @@ function rand(::Type{Star};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing,
-              P::AbstractPolyhedron=rand(HPolytope; N=N, dim=dim, rng=rng, seed=seed))
+              P::Union{AbstractPolyhedron,Nothing}=nothing)
     rng = reseed!(rng, seed)
     c = randn(rng, N, dim)
+    if isnothing(P)
+        P = rand(HPolytope; N=N, dim=dim, rng=rng, seed=seed)
+    end
     V = randn(rng, N, dim, LazySets.dim(P))
     return Star(c, V, P)
 end
