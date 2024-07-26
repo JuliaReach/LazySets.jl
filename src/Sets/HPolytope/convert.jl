@@ -36,7 +36,11 @@ function load_Polyhedra_convert_HPolytope()
     return quote
         using .Polyhedra: HRep
 
-        function convert(::Type{HPolytope}, P::HRep{N}) where {N}
+        function convert(::Type{HPolytope}, P::HRep)
+            return _convert_HPoly(HPolytope, P)
+        end
+
+        function _convert_HPoly(T, P::HRep{N}) where {N}
             VT = Polyhedra.hvectortype(P)
             constraints = Vector{HalfSpace{N,VT}}()
             for hi in Polyhedra.allhalfspaces(P)
@@ -48,7 +52,7 @@ function load_Polyhedra_convert_HPolytope()
                 end
                 push!(constraints, HalfSpace(a, b))
             end
-            return HPolytope(constraints)
+            return T(constraints)
         end
     end
 end  # load_Polyhedra_convert_HPolytope
