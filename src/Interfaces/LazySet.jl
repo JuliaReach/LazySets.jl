@@ -205,6 +205,18 @@ function _low(X::LazySet{N}, i::Int) where {N}
     return -ρ(d, X)
 end
 
+function _low_vlist(X::LazySet, i::Int)
+    return _low_vlist(vertices_list(X), i)
+end
+
+function _low_vlist(vlist::AbstractVector{<:AbstractVector{N}}, i::Int) where {N}
+    l = N(Inf)
+    @inbounds for v in vlist
+        l = min(l, v[i])
+    end
+    return l
+end
+
 """
 ### Algorithm
 
@@ -219,6 +231,12 @@ function _low(X::LazySet)
     return [low(X, i) for i in 1:n]
 end
 
+function _low_vlist(X::LazySet)
+    n = dim(X)
+    vlist = vertices_list(X)
+    return [_low_vlist(vlist, i) for i in 1:n]
+end
+
 # Note: this method cannot be documented due to a bug in Julia
 function high(X::LazySet, i::Int)
     return _high(X, i)
@@ -228,6 +246,18 @@ function _high(X::LazySet{N}, i::Int) where {N}
     n = dim(X)
     d = SingleEntryVector(i, n, one(N))
     return ρ(d, X)
+end
+
+function _high_vlist(X::LazySet, i::Int)
+    return _high_vlist(vertices_list(X), i)
+end
+
+function _high_vlist(vlist::AbstractVector{<:AbstractVector{N}}, i::Int) where {N}
+    h = N(-Inf)
+    @inbounds for v in vlist
+        h = max(h, v[i])
+    end
+    return h
 end
 
 """
@@ -242,6 +272,12 @@ end
 function _high(X::LazySet)
     n = dim(X)
     return [high(X, i) for i in 1:n]
+end
+
+function _high_vlist(X::LazySet)
+    n = dim(X)
+    vlist = vertices_list(X)
+    return [_high_vlist(vlist, i) for i in 1:n]
 end
 
 """
@@ -259,6 +295,26 @@ function _extrema_lowhigh(X::LazySet, i::Int)
     return (l, h)
 end
 
+function _extrema_vlist(X::LazySet, i::Int)
+    return _extrema_vlist(vertices_list(X), i)
+end
+
+function _extrema_vlist(vlist::AbstractVector{<:AbstractVector{N}}, i::Int) where {N}
+    if isempty(vlist)
+        return (N(Inf), N(-Inf))
+    end
+    l = h = @inbounds vlist[1][i]
+    @inbounds for v in vlist
+        vi = v[i]
+        if vi > h
+            h = vi
+        elseif vi < l
+            l = vi
+        end
+    end
+    return (l, h)
+end
+
 """
 ### Algorithm
 
@@ -271,6 +327,30 @@ end
 function _extrema_lowhigh(X::LazySet)
     l = low(X)
     h = high(X)
+    return (l, h)
+end
+
+function _extrema_vlist(X::LazySet{N}) where {N}
+    n = dim(X)
+    if n <= 0
+        return (N[], N[])
+    end
+    vlist = vertices_list(X)
+    if isempty(vlist)
+        return (fill(N(Inf), n), fill(N(-Inf), n))
+    end
+    l = copy(@inbounds vlist[1])
+    h = copy(l)
+    @inbounds for v in vlist
+        for i in 1:n
+            vi = v[i]
+            if vi > h[i]
+                h[i] = vi
+            elseif vi < l[i]
+                l[i] = vi
+            end
+        end
+    end
     return (l, h)
 end
 
