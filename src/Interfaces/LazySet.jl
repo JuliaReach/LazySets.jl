@@ -211,6 +211,10 @@ end
 The default implementation applies `low` in each dimension.
 """
 function low(X::LazySet)
+    return _low(X)
+end
+
+function _low(X::LazySet)
     n = dim(X)
     return [low(X, i) for i in 1:n]
 end
@@ -232,6 +236,10 @@ end
 The default implementation applies `high` in each dimension.
 """
 function high(X::LazySet)
+    return _high(X)
+end
+
+function _high(X::LazySet)
     n = dim(X)
     return [high(X, i) for i in 1:n]
 end
@@ -242,6 +250,10 @@ end
 The default implementation computes the extrema via `low` and `high`.
 """
 function extrema(X::LazySet, i::Int)
+    return _extrema_lowhigh(X, i)
+end
+
+function _extrema_lowhigh(X::LazySet, i::Int)
     l = low(X, i)
     h = high(X, i)
     return (l, h)
