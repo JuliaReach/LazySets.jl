@@ -35,9 +35,10 @@ end
 function load_Polyhedra_convert_HPolyhedron()
     return quote
         using .Polyhedra: HRep
+        using ..HPolytopeModule: _convert_HPoly
 
         """
-             convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
+             convert(::Type{HPolyhedron}, P::HRep)
 
         Convert an `HRep` polyhedron from `Polyhedra.jl` to a polyhedron in constraint
         representation .
@@ -51,19 +52,8 @@ function load_Polyhedra_convert_HPolyhedron()
 
         An `HPolyhedron`.
         """
-        function convert(::Type{HPolyhedron}, P::HRep{N}) where {N}
-            VN = Polyhedra.hvectortype(P)
-            constraints = Vector{HalfSpace{N,VN}}()
-            for hi in Polyhedra.allhalfspaces(P)
-                a, b = hi.a, hi.β
-                if isapproxzero(norm(a))
-                    @assert b >= zero(N) "the half-space is inconsistent since it has a zero " *
-                                         "normal direction but the constraint is negative"
-                    continue
-                end
-                push!(constraints, HalfSpace(a, b))
-            end
-            return HPolyhedron(constraints)
+        function convert(::Type{HPolyhedron}, P::HRep)
+            return _convert_HPoly(HPolyhedron, P)
         end
     end
 end  # load_Polyhedra_convert_HPolyhedron

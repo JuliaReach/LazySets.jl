@@ -12,7 +12,7 @@ HPolyhedron
 
 ```@docs
 convert(::Type{HPolyhedron}, ::LazySet)
-convert(::Type{HPolyhedron}, ::HRep{N}) where {N}
+convert(::Type{HPolyhedron}, ::HRep)
 ```
 
 ## Operations
