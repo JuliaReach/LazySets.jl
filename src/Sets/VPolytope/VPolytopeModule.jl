@@ -5,7 +5,7 @@ using Reexport, Requires
 using ..LazySets: AbstractPolytope, LazySet, LinearMapVRep, default_lp_solver,
                   default_lp_solver_polyhedra, default_polyhedra_backend,
                   is_lp_infeasible, is_lp_optimal, linprog,
-                  _minkowski_sum_vrep_nd, _vertices_list
+                  _minkowski_sum_vrep_nd
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: projection_matrix

@@ -56,7 +56,3 @@ function vertices_list(P::HPolytope; backend=nothing, prune::Bool=true)
     end
     return collect(Polyhedra.points(Q))
 end
-
-function _vertices_list(P::HPolytope, backend)
-    return vertices_list(P; backend=backend)
-end
