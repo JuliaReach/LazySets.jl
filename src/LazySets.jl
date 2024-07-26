@@ -99,12 +99,6 @@ include("Interfaces/AbstractBallp.jl")
 # =============================
 # Types representing basic sets
 # =============================
-include("Sets/Universe/UniverseModule.jl")
-@reexport using ..UniverseModule: Universe
-
-include("Sets/EmptySet/EmptySetModule.jl")
-@reexport using ..EmptySetModule: EmptySet, ∅
-using ..EmptySetModule: _isdisjoint_emptyset
 
 include("Sets/Ball1/Ball1Module.jl")
 @reexport using ..Ball1Module: Ball1
@@ -118,11 +112,22 @@ include("Sets/BallInf/BallInfModule.jl")
 include("Sets/Ballp/BallpModule.jl")
 @reexport using ..BallpModule: Ballp
 
+include("Sets/DensePolynomialZonotope/DensePolynomialZonotopeModule.jl")
+@reexport using ..DensePolynomialZonotopeModule: DensePolynomialZonotope
+
 include("Sets/Ellipsoid/EllipsoidModule.jl")
 @reexport using ..EllipsoidModule: Ellipsoid, shape_matrix
 
-include("Sets/DensePolynomialZonotope/DensePolynomialZonotopeModule.jl")
-@reexport using ..DensePolynomialZonotopeModule: DensePolynomialZonotope
+include("Sets/EmptySet/EmptySetModule.jl")
+@reexport using ..EmptySetModule: EmptySet, ∅
+using ..EmptySetModule: _isdisjoint_emptyset
+
+include("Sets/HParallelotope/HParallelotopeModule.jl")
+@reexport using ..HParallelotopeModule: HParallelotope,
+                                        directions,
+                                        base_vertex,
+                                        extremal_vertices,
+                                        offset
 
 include("Sets/HPolygon/HPolygonModule.jl")
 @reexport using ..HPolygonModule: HPolygon
@@ -132,16 +137,9 @@ include("Sets/HPolygonOpt.jl")
 include("Sets/HPolytope/HPolytopeModule.jl")
 @reexport using ..HPolytopeModule: HPolytope
 
-include("Sets/HPolyhedron/HPolyhedronModule.jl")
+include("Sets/HPolyhedron/HPolyhedronModule.jl")  # must come after HPolytopeModule
 @reexport using ..HPolyhedronModule: HPolyhedron
 using ..HPolyhedronModule: HPoly
-
-include("Sets/HParallelotope/HParallelotopeModule.jl")
-@reexport using ..HParallelotopeModule: HParallelotope,
-                                        directions,
-                                        base_vertex,
-                                        extremal_vertices,
-                                        offset
 
 include("Sets/Hyperplane/HyperplaneModule.jl")
 @reexport using ..HyperplaneModule: Hyperplane
@@ -153,20 +151,20 @@ using ..HyperplaneModule: _an_element_helper_hyperplane,
 include("Sets/Hyperrectangle/HyperrectangleModule.jl")
 @reexport using ..HyperrectangleModule: Hyperrectangle
 
+include("Sets/Line/LineModule.jl")
+@reexport using ..LineModule: Line, direction
+
 include("Sets/Line2D/Line2DModule.jl")
 @reexport using ..Line2DModule: Line2D
 using ..Line2DModule: _linear_map_hrep_helper
 
-include("Sets/Line/LineModule.jl")
-@reexport using ..LineModule: Line, direction
-
-include("Sets/RotatedHyperrectangle.jl")
-
-include("Sets/Singleton/SingletonModule.jl")
-@reexport using ..SingletonModule: Singleton
-
 include("Sets/LineSegment/LineSegmentModule.jl")
 @reexport using ..LineSegmentModule: LineSegment
+
+include("Sets/Polygon/PolygonModule.jl")
+@reexport using ..PolygonModule: Polygon
+
+include("Sets/RotatedHyperrectangle.jl")
 
 include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
@@ -180,8 +178,22 @@ Alias for `SimpleSparsePolynomialZonotope`.
 """
 const PolynomialZonotope = SimpleSparsePolynomialZonotope
 
+include("Sets/Singleton/SingletonModule.jl")
+@reexport using ..SingletonModule: Singleton
+
+include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
+@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ,
+                                                  indexvector
+using ..SparsePolynomialZonotopeModule: uniqueID
+
 include("Sets/Star/StarModule.jl")
 @reexport using ..StarModule: Star, basis, predicate
+
+include("Sets/Tetrahedron/TetrahedronModule.jl")
+@reexport using ..TetrahedronModule: Tetrahedron
+
+include("Sets/Universe/UniverseModule.jl")
+@reexport using ..UniverseModule: Universe
 
 include("Sets/VPolygon/VPolygonModule.jl")
 @reexport using ..VPolygonModule: VPolygon
@@ -189,12 +201,6 @@ using ..VPolygonModule: _σ_helper
 
 include("Sets/VPolytope/VPolytopeModule.jl")
 @reexport using ..VPolytopeModule: VPolytope
-
-include("Sets/Polygon/PolygonModule.jl")
-@reexport using ..PolygonModule: Polygon
-
-include("Sets/Tetrahedron/TetrahedronModule.jl")
-@reexport using ..TetrahedronModule: Tetrahedron
 
 include("Sets/ZeroSet/ZeroSetModule.jl")
 @reexport using ..ZeroSetModule: ZeroSet
@@ -205,11 +211,6 @@ include("Sets/Zonotope/ZonotopeModule.jl")
                                   linear_map!,
                                   split!
 using ..ZonotopeModule: _split
-
-include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
-@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ,
-                                                  indexvector
-using ..SparsePolynomialZonotopeModule: uniqueID
 
 include("LazyOperations/UnionSet.jl")  # must come before IntervalModule
 
