@@ -33,7 +33,7 @@ false
 ```
 """
 function _is_linearcombination(L::Basic)
-    return all(isempty.(free_symbols.(diff.(L, free_symbols(L)))))
+    return all(isempty.(free_symbols.(diff.(L, SymEngine.free_symbols(L)))))
 end
 
 _is_linearcombination(L::Expr) = _is_linearcombination(convert(Basic, L))

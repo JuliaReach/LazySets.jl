@@ -657,7 +657,7 @@ function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron,
     if isnothing(backend)
         backend = default_polyhedra_backend(P)
     end
-    P = tovrep(P_hpoly; backend=backend)
+    P = HPolyhedronModule.tovrep(P_hpoly; backend=backend)
     return _linear_map_vrep(M, P, algo; apply_convex_hull=apply_convex_hull)
 end
 
