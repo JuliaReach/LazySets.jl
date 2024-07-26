@@ -72,7 +72,6 @@ LazySets.convert(::Type{Hyperplane{N}}, ::Expr; vars::Vector{Basic}=Basic[]) whe
 ```@docs
 sign_cadlag
 minmax
-arg_minmax
 ```
 
 ## Other functions
