@@ -4,7 +4,7 @@ end
 
 function load_SymEngine_ishyperplanar()
     return quote
-        using ..LazySets: _is_linearcombination
+        using ..LazySets: _is_linear_combination
 
         """
             _ishyperplanar(expr::Expr)
@@ -57,7 +57,7 @@ function load_SymEngine_ishyperplanar()
             linexpr = _parse_hyperplane(expr)
 
             # check if the expression defines a hyperplane
-            return _is_linearcombination(linexpr)
+            return _is_linear_combination(linexpr)
         end
     end
 end  # load_SymEngine_ishyperplanar

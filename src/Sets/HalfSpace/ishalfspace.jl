@@ -1,6 +1,6 @@
 function load_SymEngine_ishalfspace()
     return quote
-        using ..LazySets: _is_linearcombination
+        using ..LazySets: _is_linear_combination
 
         """
             _ishalfspace(expr::Expr)
@@ -58,7 +58,7 @@ function load_SymEngine_ishalfspace()
             end
 
             # check if the expression defines a half-space
-            return _is_linearcombination(linexpr)
+            return _is_linear_combination(linexpr)
         end
     end
 end  # load_SymEngine_ishalfspace

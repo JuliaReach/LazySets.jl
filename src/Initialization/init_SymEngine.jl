@@ -2,7 +2,7 @@ using .SymEngine: Basic
 import .SymEngine: free_symbols
 
 """
-   _is_linearcombination(L::Basic)
+   _is_linear_combination(L::Basic)
 
 Determine whether the expression `L` is a linear combination of its symbols.
 
@@ -17,26 +17,26 @@ Determine whether the expression `L` is a linear combination of its symbols.
 ### Examples
 
 ```jldoctest
-julia> using LazySets: _is_linearcombination
+julia> using LazySets: _is_linear_combination
 
-julia> _is_linearcombination(:(2*x1 - 4))
+julia> _is_linear_combination(:(2*x1 - 4))
 true
 
-julia> _is_linearcombination(:(6.1 - 5.3*f - 0.1*g))
+julia> _is_linear_combination(:(6.1 - 5.3*f - 0.1*g))
 true
 
-julia> _is_linearcombination(:(2*x1^2))
+julia> _is_linear_combination(:(2*x1^2))
 false
 
-julia> _is_linearcombination(:(x1^2 - 4*x2 + x3 + 2))
+julia> _is_linear_combination(:(x1^2 - 4*x2 + x3 + 2))
 false
 ```
 """
-function _is_linearcombination(L::Basic)
+function _is_linear_combination(L::Basic)
     return all(isempty.(free_symbols.(diff.(L, SymEngine.free_symbols(L)))))
 end
 
-_is_linearcombination(L::Expr) = _is_linearcombination(convert(Basic, L))
+_is_linear_combination(L::Expr) = _is_linear_combination(convert(Basic, L))
 
 """
     free_symbols(expr::Expr, set_type::Type{LazySet})
