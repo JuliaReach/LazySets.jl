@@ -245,7 +245,6 @@ function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
     return Singleton(element(X) + element(Y))
 end
 
-
 function _minkowski_sum_vpolygon(P::LazySet, Q::LazySet)
     return minkowski_sum(convert(VPolygon, P), convert(VPolygon, Q))
 end

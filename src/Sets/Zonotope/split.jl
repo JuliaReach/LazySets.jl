@@ -41,8 +41,10 @@ function load_StaticArraysCore_split()
 
         function _split_ret(Z₁::Zonotope{N,SV,SM},
                             Z₂::Zonotope{N,SV,SM}) where {N,n,p,SV<:MVector{n,N},SM<:MMatrix{n,p,N}}
-            Z₁ = Zonotope(StaticArraysCore.SVector{n}(Z₁.center), StaticArraysCore.SMatrix{n,p}(Z₁.generators))
-            Z₂ = Zonotope(StaticArraysCore.SVector{n}(Z₂.center), StaticArraysCore.SMatrix{n,p}(Z₂.generators))
+            Z₁ = Zonotope(StaticArraysCore.SVector{n}(Z₁.center),
+                          StaticArraysCore.SMatrix{n,p}(Z₁.generators))
+            Z₂ = Zonotope(StaticArraysCore.SVector{n}(Z₂.center),
+                          StaticArraysCore.SMatrix{n,p}(Z₂.generators))
             return Z₁, Z₂
         end
     end

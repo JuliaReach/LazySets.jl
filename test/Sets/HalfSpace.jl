@@ -257,24 +257,24 @@ for N in [Float64]
         # _is_halfspace
         @test all(LazySets._is_halfspace.([:(x1 <= 0), :(x1 < 0), :(x1 > 0), :(x1 >= 0)]))
         @test !LazySets._is_halfspace(:(x1 = 0))
-        @test LazySets._is_halfspace(:(2*x1 <= 4))
-        @test LazySets._is_halfspace(:(6.1 <= 5.3*f - 0.1*g))
-        @test !LazySets._is_halfspace(:(2*x1^2 <= 4))
-        @test !LazySets._is_halfspace(:(x1^2 > 4*x2 - x3))
-        @test LazySets._is_halfspace(:(x1 > 4*x2 - x3))
+        @test LazySets._is_halfspace(:(2 * x1 <= 4))
+        @test LazySets._is_halfspace(:(6.1 <= 5.3 * f - 0.1 * g))
+        @test !LazySets._is_halfspace(:(2 * x1^2 <= 4))
+        @test !LazySets._is_halfspace(:(x1^2 > 4 * x2 - x3))
+        @test LazySets._is_halfspace(:(x1 > 4 * x2 - x3))
 
         # convert
         H = convert(HalfSpace, :(x1 <= -0.03))
-        @test  H == HalfSpace([1.0], -0.03)
+        @test H == HalfSpace([1.0], -0.03)
         H = convert(HalfSpace, :(x1 < -0.03))
         @test H == HalfSpace([1.0], -0.03)
         H = convert(HalfSpace, :(x1 > -0.03))
         @test H == HalfSpace([-1.0], 0.03)
         H = convert(HalfSpace, :(x1 >= -0.03))
         @test H == HalfSpace([-1.0], 0.03)
-        H = convert(HalfSpace, :(x1 + x2 <= 2*x4 + 6))
+        H = convert(HalfSpace, :(x1 + x2 <= 2 * x4 + 6))
         @test H == HalfSpace([1.0, 1.0, -2.0], 6.0)
-        H = convert(HalfSpace, :(x1 + x2 <= 2*x4 + 6), vars=SymEngine.Basic[:x1, :x2, :x3, :x4])
+        H = convert(HalfSpace, :(x1 + x2 <= 2 * x4 + 6); vars=SymEngine.Basic[:x1, :x2, :x3, :x4])
         @test H == HalfSpace([1.0, 1.0, 0.0, -2.0], 6.0)
     end
 end
