@@ -1,14 +1,16 @@
 import .SymEngine: free_symbols
 
-function free_symbols(expr::Expr, ::Type{<:Hyperplane})
-    # get sides of the equality
+function _parse_hyperplane(expr::Expr)
     lhs = convert(SymEngine.Basic, expr.args[1])
-
-    # treats the 4 in :(2*x1 = 4)
     rhs = :args in fieldnames(typeof(expr.args[2])) ?
           convert(SymEngine.Basic, expr.args[2].args[2]) :
           convert(SymEngine.Basic, expr.args[2])
-    return SymEngine.free_symbols(lhs - rhs)
+    return lhs - rhs
+end
+
+function free_symbols(expr::Expr, ::Type{<:Hyperplane})
+    linexpr = _parse_hyperplane(expr)
+    return SymEngine.free_symbols(linexpr)
 end
 
 eval(load_SymEngine_ishyperplanar())

@@ -7,6 +7,7 @@ end
 function load_SymEngine_convert_HalfSpace()
     return quote
         using .SymEngine: Basic
+        using ..LazySets: _parse_linear_expression
 
         """
             convert(::Type{HalfSpace{N}}, expr::Expr; vars=nothing) where {N}
@@ -53,31 +54,18 @@ function load_SymEngine_convert_HalfSpace()
         ```
         """
         function convert(::Type{HalfSpace{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
-            @assert _is_halfspace(expr) "the expression :(expr) does not correspond to a half-space"
+            @assert _is_halfspace(expr) "the expression $expr does not correspond to a half-space"
 
-            # check sense of the inequality, assuming < or <= by default
-            got_geq = expr.args[1] in [:(>=), :(>)]
+            # convert to SymEngine expressions
+            linexpr, cmp = _parse_halfspace(expr)
 
-            # get sides of the inequality
-            lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
+            # check sense of the inequality, assuming < or <= by default (checked before)
+            got_geq = cmp ∈ (:(>=), :(>))
 
-            # a1 x1 + ... + an xn + K [cmp] 0 for cmp in <, <=, >, >=
-            eq = lhs - rhs
-            if isempty(vars)
-                vars = SymEngine.free_symbols(eq)
-            end
-            K = SymEngine.subs(eq, [vi => zero(N) for vi in vars]...)
-            a = convert(Basic, eq - K)
+            # `a1 x1 + ... + an xn + b [cmp] 0` for [cmp] ∈ {<, <=, >, >=}
+            a, b = _parse_linear_expression(linexpr, vars, N)
 
-            # convert to numeric types
-            K = convert(N, K)
-            a = convert(Vector{N}, diff.(a, vars))
-
-            if got_geq
-                return HalfSpace(-a, K)
-            else
-                return HalfSpace(a, -K)
-            end
+            return got_geq ? HalfSpace(-a, b) : HalfSpace(a, -b)
         end
 
         # type-less default half-space conversion
