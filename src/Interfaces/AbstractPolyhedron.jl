@@ -77,7 +77,7 @@ end
 
 # internal functions; defined here due to dependency SymEngine and submodules
 function _is_halfspace end
-function _is_hyperplane end
+function _ishyperplanar end
 function _parse_linear_expression end
 
 # To account for the compilation order, other functions are defined in the file

@@ -86,7 +86,7 @@ function load_Symbolics_Hyperplane()
         """
         function Hyperplane(expr::Num, vars::AbstractVector{Num}=_get_variables(expr);
                             N::Type{<:Real}=Float64)
-            valid, sexpr = _is_hyperplane(Symbolics.value(expr))
+            valid, sexpr = _ishyperplanar(Symbolics.value(expr))
             if !valid
                 throw(ArgumentError("expected an expression of the form `ax == b`, got $expr"))
             end

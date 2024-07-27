@@ -86,7 +86,7 @@ end
 
 # Note: this convenience function is not used anywhere
 function _free_symbols(expr::Expr)
-    if _is_hyperplane(expr)
+    if _ishyperplanar(expr)
         return free_symbols(expr, Hyperplane)
     elseif _is_halfspace(expr)
         return free_symbols(expr, HalfSpace)

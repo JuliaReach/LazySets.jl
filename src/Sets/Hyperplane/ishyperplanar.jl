@@ -7,7 +7,7 @@ function load_SymEngine_ishyperplanar()
         using ..LazySets: _is_linearcombination
 
         """
-            _is_hyperplane(expr::Expr)
+            _ishyperplanar(expr::Expr)
 
         Determine whether the given expression corresponds to a hyperplane.
 
@@ -22,31 +22,31 @@ function load_SymEngine_ishyperplanar()
         ### Examples
 
         ```jldoctest
-        julia> using LazySets: _is_hyperplane
+        julia> using LazySets: _ishyperplanar
 
-        julia> _is_hyperplane(:(x1 = 0))
+        julia> _ishyperplanar(:(x1 = 0))
         true
 
-        julia> _is_hyperplane(:(x1 <= 0))
+        julia> _ishyperplanar(:(x1 <= 0))
         false
 
-        julia> _is_hyperplane(:(2*x1 = 4))
+        julia> _ishyperplanar(:(2*x1 = 4))
         true
 
-        julia> _is_hyperplane(:(6.1 = 5.3*f - 0.1*g))
+        julia> _ishyperplanar(:(6.1 = 5.3*f - 0.1*g))
         true
 
-        julia> _is_hyperplane(:(2*x1^2 = 4))
+        julia> _ishyperplanar(:(2*x1^2 = 4))
         false
 
-        julia> _is_hyperplane(:(x1^2 = 4*x2 - x3))
+        julia> _ishyperplanar(:(x1^2 = 4*x2 - x3))
         false
 
-        julia> _is_hyperplane(:(x1 = 4*x2 - x3))
+        julia> _ishyperplanar(:(x1 = 4*x2 - x3))
         true
         ```
         """
-        function _is_hyperplane(expr::Expr)::Bool
+        function _ishyperplanar(expr::Expr)::Bool
             # check that the head is `=` and there are two arguments:
             # the left-hand side and the right-hand side
             if (length(expr.args) != 2) || !(expr.head == :(=))
@@ -69,7 +69,7 @@ function load_Symbolics_ishyperplanar()
         # returns `(true, sexpr)` if expr represents a hyperplane,
         # where sexpr is the simplified expression sexpr := LHS - RHS == 0
         # otherwise returns `(false, expr)`
-        function _is_hyperplane(expr::Symbolic)
+        function _ishyperplanar(expr::Symbolic)
             got_hyperplane = Symbolics.operation(expr) == ==
             if got_hyperplane
                 # simplify to the form a*x + b == 0
