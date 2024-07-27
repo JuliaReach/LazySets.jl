@@ -1,6 +1,7 @@
 function load_SymEngine_convert_Hyperplane()
     return quote
         using .SymEngine: Basic
+        using ..LazySets: _parse_linear_expression
 
         """
             convert(::Type{Hyperplane{N}}, expr::Expr; vars=nothing) where {N}
@@ -41,28 +42,15 @@ function load_SymEngine_convert_Hyperplane()
         ```
         """
         function convert(::Type{Hyperplane{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
-            @assert _is_hyperplane(expr) "the expression :(expr) does not correspond to a Hyperplane"
+            @assert _is_hyperplane(expr) "the expression $expr does not correspond to a Hyperplane"
 
-            # get sides of the inequality
-            lhs = convert(Basic, expr.args[1])
+            # convert to SymEngine expression
+            linexpr = _parse_hyperplane(expr)
 
-            # treats the 4 in :(2*x1 = 4)
-            rhs = :args in fieldnames(typeof(expr.args[2])) ? convert(Basic, expr.args[2].args[2]) :
-                  convert(Basic, expr.args[2])
+            # a1 x1 + ... + an xn + b = 0
+            a, b = _parse_linear_expression(linexpr, vars, N)
 
-            # a1 x1 + ... + an xn + K = 0
-            eq = lhs - rhs
-            if isempty(vars)
-                vars = SymEngine.free_symbols(eq)
-            end
-            K = SymEngine.subs(eq, [vi => zero(N) for vi in vars]...)
-            a = convert(Basic, eq - K)
-
-            # convert to numeric types
-            K = convert(N, K)
-            a = convert(Vector{N}, diff.(a, vars))
-
-            return Hyperplane(a, -K)
+            return Hyperplane(a, -b)
         end
 
         # type-less default Hyperplane conversion

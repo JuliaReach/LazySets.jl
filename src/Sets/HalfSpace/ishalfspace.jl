@@ -1,7 +1,5 @@
 function load_SymEngine_ishalfspace()
     return quote
-        using .SymEngine: Basic
-        import .SymEngine: free_symbols
         using ..LazySets: _is_linearcombination
 
         """
@@ -45,23 +43,22 @@ function load_SymEngine_ishalfspace()
         ```
         """
         function _is_halfspace(expr::Expr)::Bool
-
-            # check that there are three arguments
-            # these are the comparison symbol, the left hand side and the right hand side
+            # check that there are three arguments:
+            # the comparison symbol, the left-hand side and the right-hand side
             if (length(expr.args) != 3) || !(expr.head == :call)
                 return false
             end
 
+            # convert to SymEngine expression
+            linexpr, cmp = _parse_halfspace(expr)
+
             # check that this is an inequality
-            if !(expr.args[1] in [:(<=), :(<), :(>=), :(>)])
+            if cmp ∉ [:(<=), :(<), :(>=), :(>)]
                 return false
             end
 
-            # convert to symengine expressions
-            lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
-
             # check if the expression defines a half-space
-            return _is_linearcombination(lhs) && _is_linearcombination(rhs)
+            return _is_linearcombination(linexpr)
         end
     end
 end  # load_SymEngine_ishalfspace

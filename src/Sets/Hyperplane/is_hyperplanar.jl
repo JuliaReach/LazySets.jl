@@ -4,7 +4,6 @@ end
 
 function load_SymEngine_ishyperplanar()
     return quote
-        using .SymEngine: Basic
         using ..LazySets: _is_linearcombination
 
         """
@@ -48,25 +47,17 @@ function load_SymEngine_ishyperplanar()
         ```
         """
         function _is_hyperplane(expr::Expr)::Bool
-
-            # check that there are three arguments
-            # these are the comparison symbol, the left hand side and the right hand side
+            # check that the head is `=` and there are two arguments:
+            # the left-hand side and the right-hand side
             if (length(expr.args) != 2) || !(expr.head == :(=))
                 return false
             end
 
-            # convert to symengine expressions
-            lhs = convert(Basic, expr.args[1])
-
-            if :args in fieldnames(typeof(expr.args[2]))
-                # treats the 4 in :(2*x1 = 4)
-                rhs = convert(Basic, expr.args[2].args[2])
-            else
-                rhs = convert(Basic, expr.args[2])
-            end
+            # convert to SymEngine expression
+            linexpr = _parse_hyperplane(expr)
 
             # check if the expression defines a hyperplane
-            return _is_linearcombination(lhs) && _is_linearcombination(rhs)
+            return _is_linearcombination(linexpr)
         end
     end
 end  # load_SymEngine_ishyperplanar

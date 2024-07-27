@@ -69,6 +69,21 @@ julia> free_symbols(:(x1 + x2 <= 2*x4 + 6), HalfSpace)
 """
 function free_symbols(::Expr, ::Type{<:LazySet}) end  # COV_EXCL_LINE
 
+# parse `a` and `b` from `a1 x1 + ... + an xn + K [cmp] 0` for [cmp] in {<, <=, =, >, >=}
+function _parse_linear_expression(linexpr::Basic, vars::Vector{Basic}, N)
+    if isempty(vars)
+        vars = SymEngine.free_symbols(linexpr)
+    end
+    b = SymEngine.subs(linexpr, [vi => zero(N) for vi in vars]...)
+    a = convert(Basic, linexpr - b)
+
+    # convert to correct numeric type
+    a = convert(Vector{N}, diff.(a, vars))
+    b = convert(N, b)
+
+    return a, b
+end
+
 # Note: this convenience function is not used anywhere
 function _free_symbols(expr::Expr)
     if _is_hyperplane(expr)
