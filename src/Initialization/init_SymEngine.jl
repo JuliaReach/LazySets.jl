@@ -88,7 +88,7 @@ end
 function _free_symbols(expr::Expr)
     if _ishyperplanar(expr)
         return free_symbols(expr, Hyperplane)
-    elseif _is_halfspace(expr)
+    elseif _ishalfspace(expr)
         return free_symbols(expr, HalfSpace)
     else
         error("the `free_symbols` method for the expression $expr is not implemented")

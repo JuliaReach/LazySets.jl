@@ -206,7 +206,7 @@ for N in [Float64]
 
     # tests that require SymEngine
     @static if isdefined(@__MODULE__, :SymEngine)
-        # _is_halfspace
+        # _ishalfspace
         @test LazySets._ishyperplanar(:(x1 = 0))
         @test !LazySets._ishyperplanar(:(x1 <= 0))
         @test LazySets._ishyperplanar(:(2 * x1 = 4))

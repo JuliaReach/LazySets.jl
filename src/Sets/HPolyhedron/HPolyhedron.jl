@@ -62,7 +62,7 @@ end  # load_Polyhedra_HPolyhedron
 function load_Symbolics_HPolyhedron()
     return quote
         using .Symbolics: Num
-        using ..LazySets: _get_variables, _vec, _is_halfspace, _ishyperplanar
+        using ..LazySets: _get_variables, _vec, _ishalfspace, _ishyperplanar
 
         """
             HPolyhedron(expr::Vector{<:Num}, vars=_get_variables(expr);
@@ -115,7 +115,7 @@ function load_Symbolics_HPolyhedron()
                 exval = Symbolics.value(ex)
                 got_hyperplane, sexpr = _ishyperplanar(exval)
                 if !got_hyperplane
-                    got_halfspace, sexpr = _is_halfspace(exval)
+                    got_halfspace, sexpr = _ishalfspace(exval)
                     if !got_halfspace
                         throw(ArgumentError("expected an expression describing either " *
                                             "a half-space of a hyperplane, got $expr"))
