@@ -5,8 +5,9 @@ function free_symbols(expr::Expr, ::Type{<:Hyperplane})
     lhs = convert(SymEngine.Basic, expr.args[1])
 
     # treats the 4 in :(2*x1 = 4)
-    rhs = :args in fieldnames(typeof(expr.args[2])) ? convert(SymEngine.Basic, expr.args[2].args[2]) :
-            convert(SymEngine.Basic, expr.args[2])
+    rhs = :args in fieldnames(typeof(expr.args[2])) ?
+          convert(SymEngine.Basic, expr.args[2].args[2]) :
+          convert(SymEngine.Basic, expr.args[2])
     return SymEngine.free_symbols(lhs - rhs)
 end
 
