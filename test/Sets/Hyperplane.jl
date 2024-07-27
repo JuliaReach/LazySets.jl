@@ -126,10 +126,10 @@ for N in [Float64, Rational{Int}, Float32]
                                   HalfSpace(N[-2, -6], N(-2))]), false),
                     (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, 6], N(-2))]), false),
                     (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(2))]), false)]
-        @test is_hyperplanar(P) == eq
+        @test ishyperplanar(P) == eq
         if eq
             H = convert(Hyperplane, P)
-            @test is_hyperplanar(H)
+            @test ishyperplanar(H)
             @test H isa Hyperplane{N} && isequivalent(P, H)
         else
             @test_throws ArgumentError convert(Hyperplane, P)

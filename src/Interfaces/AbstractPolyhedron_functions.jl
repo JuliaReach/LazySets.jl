@@ -3,7 +3,7 @@ export constrained_dimensions,
        remove_redundant_constraints!,
        isfeasible,
        addconstraint!,
-       is_hyperplanar
+       ishyperplanar
 
 isconvextype(::Type{<:AbstractPolyhedron}) = true
 
@@ -1235,7 +1235,7 @@ is the same.
 function addconstraint!(::AbstractPolyhedron, ::HalfSpace) end
 
 """
-    is_hyperplanar(P::AbstractPolyhedron)
+    ishyperplanar(P::AbstractPolyhedron)
 
 Determine whether a polyhedron is equivalent to a hyperplane.
 
@@ -1248,4 +1248,4 @@ Determine whether a polyhedron is equivalent to a hyperplane.
 `true` iff `P` is hyperplanar, i.e., consists of two linear constraints
 ``a·x ≤ b`` and ``-a·x ≤ -b``.
 """
-function is_hyperplanar(::AbstractPolyhedron) end
+function ishyperplanar(::AbstractPolyhedron) end

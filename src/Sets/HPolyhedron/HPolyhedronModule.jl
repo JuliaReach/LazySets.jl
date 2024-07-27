@@ -18,7 +18,7 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: constraints_list, dim, isempty, isoperationtype, rand,
                         permute, ρ, σ, translate, convex_hull
-@reexport import ..LazySets: is_hyperplanar, normalize,
+@reexport import ..LazySets: ishyperplanar, normalize,
                              remove_redundant_constraints,
                              remove_redundant_constraints!, tohrep, tovrep,
                              addconstraint!
@@ -43,7 +43,7 @@ include("support_vector.jl")
 include("translate.jl")
 include("convex_hull.jl")
 
-include("is_hyperplanar.jl")
+include("ishyperplanar.jl")
 include("normalize.jl")
 include("remove_redundant_constraints.jl")
 include("tohrep.jl")

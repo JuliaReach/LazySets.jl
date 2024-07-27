@@ -1,4 +1,4 @@
-function is_hyperplanar(::Hyperplane)
+function ishyperplanar(::Hyperplane)
     return true
 end
 

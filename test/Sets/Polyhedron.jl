@@ -47,13 +47,13 @@ for N in [Float64, Rational{Int}, Float32]
     # is_polyhedral
     @test is_polyhedral(p)
 
-    # is_hyperplanar
+    # ishyperplanar
     P = HPolyhedron([HalfSpace(N[1, 0], N(1))])
-    @test !is_hyperplanar(P)
+    @test !ishyperplanar(P)
     addconstraint!(P, HalfSpace(N[-1, 0], N(-1)))
-    @test is_hyperplanar(P)
+    @test ishyperplanar(P)
     addconstraint!(P, HalfSpace(N[0, 1], N(1)))
-    @test !is_hyperplanar(P)
+    @test !ishyperplanar(P)
 
     # universality
     @test !isuniversal(p)
