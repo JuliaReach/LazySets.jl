@@ -71,8 +71,8 @@ for N in [Float64, Float32]
     # boundedness
     @test isbounded(E)
 
-    # is_polyhedral
-    @test !is_polyhedral(E)
+    # ispolyhedral
+    @test !ispolyhedral(E)
 
     # isempty
     @test !isempty(E)

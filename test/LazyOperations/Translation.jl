@@ -33,11 +33,11 @@ for N in [Float64, Rational{Int}, Float32]
         @test !isbounded(Translation(HPolyhedron([HalfSpace(N[1, 1], N(1))]), N[0, 0]))
     end
 
-    # is_polyhedral
-    @test is_polyhedral(tr)
+    # ispolyhedral
+    @test ispolyhedral(tr)
     if N isa AbstractFloat
         tr2 = Translation(Ball2(zeros(N, 3), N(1)), v)
-        @test !is_polyhedral(tr2)
+        @test !ispolyhedral(tr2)
     end
 
     # function to get an element

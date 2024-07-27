@@ -1,5 +1,5 @@
 """
-    is_polyhedral(X::LazySet)
+    ispolyhedral(X::LazySet)
 
 Check whether a set is polyhedral.
 
@@ -16,4 +16,4 @@ Check whether a set is polyhedral.
 The answer is conservative, i.e., may sometimes be `false` even if the set is
 polyhedral.
 """
-function is_polyhedral(::LazySet) end
+function ispolyhedral(::LazySet) end

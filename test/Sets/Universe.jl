@@ -39,8 +39,8 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test !isbounded(U)
 
-    # is_polyhedral
-    @test is_polyhedral(U)
+    # ispolyhedral
+    @test ispolyhedral(U)
 
     # membership
     @test N[0, 0] ∈ U

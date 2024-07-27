@@ -224,7 +224,7 @@ end
 function concretize(cha::ConvexHullArray)
     a = array(cha)
     @assert !isempty(a) "an empty convex hull is not allowed"
-    if all(is_polyhedral, a)
+    if all(ispolyhedral, a)
         return _convex_hull_polytopes(cha)
     end
 

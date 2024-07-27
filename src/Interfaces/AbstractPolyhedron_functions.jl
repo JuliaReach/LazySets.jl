@@ -7,7 +7,7 @@ export constrained_dimensions,
 
 isconvextype(::Type{<:AbstractPolyhedron}) = true
 
-is_polyhedral(::AbstractPolyhedron) = true
+ispolyhedral(::AbstractPolyhedron) = true
 
 """
     constraints_list(A::AbstractMatrix{N}, b::AbstractVector)
