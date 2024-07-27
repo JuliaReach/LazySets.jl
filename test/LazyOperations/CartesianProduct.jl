@@ -63,14 +63,14 @@ for N in [Float64, Float32, Rational{Int}]
     cp2 = Singleton(N[1]) * HalfSpace(N[1], N(1))
     @test !isbounded(cp2) && !isboundedtype(typeof(cp2))
 
-    # is_polyhedral
-    @test is_polyhedral(cp)
-    @test is_polyhedral(cpa)
+    # ispolyhedral
+    @test ispolyhedral(cp)
+    @test ispolyhedral(cpa)
     if N isa AbstractFloat
         cp2 = CartesianProduct(b1, Ball2(N[0, 0], N(1)))
-        @test !is_polyhedral(cp2)
+        @test !ispolyhedral(cp2)
         cpa2 = CartesianProductArray([b1, Ball2(N[0, 0], N(1)), b1])
-        @test !is_polyhedral(cpa2)
+        @test !ispolyhedral(cpa2)
     end
 
     # isempty

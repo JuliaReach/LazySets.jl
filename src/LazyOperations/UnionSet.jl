@@ -32,7 +32,7 @@ isoperationtype(::Type{<:UnionSet}) = true
 
 isconvextype(::Type{<:UnionSet}) = false
 
-is_polyhedral(U::UnionSet) = is_polyhedral(U.X) && is_polyhedral(U.Y)
+ispolyhedral(U::UnionSet) = ispolyhedral(U.X) && ispolyhedral(U.Y)
 
 # EmptySet is the neutral element for UnionSet
 @neutral(UnionSet, EmptySet)

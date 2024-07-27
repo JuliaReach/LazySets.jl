@@ -16,7 +16,7 @@ import ReachabilityBase.Arrays: distance, rectify
 export
 # unary set operations
       an_element, area, center, complement, concretize, constraints_list,
-      constraints, convex_hull, diameter, dim, high, is_polyhedral, isbounded,
+      constraints, convex_hull, diameter, dim, high, ispolyhedral, isbounded,
       isboundedtype, isconvextype, isoperation, isoperationtype, isuniversal,
       low, norm, radius, rectify, reflect, surface, vertices_list, vertices,
       volume,
@@ -44,7 +44,7 @@ include("Unary/dim.jl")
 include("Unary/eltype.jl")
 include("Unary/extrema.jl")
 include("Unary/high.jl")
-include("Unary/is_polyhedral.jl")
+include("Unary/ispolyhedral.jl")
 include("Unary/isbounded.jl")
 include("Unary/isboundedtype.jl")
 include("Unary/isconvextype.jl")

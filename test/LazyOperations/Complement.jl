@@ -41,10 +41,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test isconvextype(typeof(Complement(EmptySet{N}(2))))
     @test isconvextype(typeof(Complement(HalfSpace(N[1], N(0)))))
 
-    # is_polyhedral
-    @test is_polyhedral(Complement(EmptySet{N}(2)))
-    @test is_polyhedral(Complement(HalfSpace(N[1], N(0))))
-    @test !is_polyhedral(Complement(Universe{N}(2)))
+    # ispolyhedral
+    @test ispolyhedral(Complement(EmptySet{N}(2)))
+    @test ispolyhedral(Complement(HalfSpace(N[1], N(0))))
+    @test !ispolyhedral(Complement(Universe{N}(2)))
 
     # concrete complement
     H = HalfSpace(N[1, 0], N(1)) # x <= 1

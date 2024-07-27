@@ -12,7 +12,7 @@ end
 
     # unary set operations
     for f in (an_element, area, center, complement, concretize, constraints_list, constraints,
-              convex_hull, diameter, dim, eltype, extrema, high, is_polyhedral, isbounded, isempty,
+              convex_hull, diameter, dim, eltype, extrema, high, ispolyhedral, isbounded, isempty,
               isoperation, isuniversal, low, norm, radius, rectify, reflect, sample, surface,
               vertices_list, vertices, volume)
         @test isnothing(f(X))

@@ -64,7 +64,7 @@ triangulate(::LazySet)
 isboundedtype(::Type{<:LazySet})
 isbounded(::LazySet)
 _isbounded_unit_dimensions(::LazySet)
-is_polyhedral(::LazySet)
+ispolyhedral(::LazySet)
 isfeasible
 norm(::LazySet, ::Real=Inf)
 radius(::LazySet, ::Real=Inf)

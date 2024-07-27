@@ -53,7 +53,7 @@ concrete_function(::Type{<:ConvexHull}) = convex_hull
 
 isconvextype(::Type{<:ConvexHull}) = true
 
-is_polyhedral(ch::ConvexHull) = is_polyhedral(ch.X) && is_polyhedral(ch.Y)
+ispolyhedral(ch::ConvexHull) = ispolyhedral(ch.X) && ispolyhedral(ch.Y)
 
 # EmptySet is the neutral element for ConvexHull
 @neutral(ConvexHull, EmptySet)

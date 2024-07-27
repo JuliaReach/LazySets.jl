@@ -711,7 +711,7 @@ function _isdisjoint_polyhedron(P::AbstractPolyhedron, X::LazySet,
         return false
     elseif algorithm == "exact"
         # exact check for empty intersection using a feasibility LP
-        if !is_polyhedral(X)
+        if !ispolyhedral(X)
             error("this algorithm requires a polyhedral input")
         end
         clist_P = _normal_Vector(P) # TODO
@@ -936,7 +936,7 @@ end
 
 function _isdisjoint_cpa_polyhedron(cpa::CartesianProductArray, P, witness)
     cpa_low_dim, vars, _block_structure = get_constrained_lowdimset(cpa, P)
-    if !is_polyhedral(cpa_low_dim)
+    if !ispolyhedral(cpa_low_dim)
         error("a polyhedral set is required")
     end
     T = isconvextype(typeof(cpa_low_dim)) ? HPolytope : HPolyhedron

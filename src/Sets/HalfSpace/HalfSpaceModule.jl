@@ -16,7 +16,7 @@ using ReachabilityBase.Require: require
                         isbounded, isempty, isoperationtype, isuniversal, rand,
                         distance, ∈, permute, project, ρ, σ, translate
 @reexport import ..LazySets: constrained_dimensions, normalize
-import ..LazySets: _is_halfspace, _linear_map_hrep_helper
+import ..LazySets: _ishalfspace, _linear_map_hrep_helper
 import ..Base: convert
 @reexport using ..API
 

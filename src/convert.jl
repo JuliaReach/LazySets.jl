@@ -691,7 +691,7 @@ end
 
 function convert(::Type{Hyperplane}, P::HPolyhedron; skip_check::Bool=false)
     # check that the number of constraints is fine
-    if !skip_check && !is_hyperplanar(P)
+    if !skip_check && !ishyperplanar(P)
         throw(ArgumentError("the polyhedron is not hyperplanar: $P"))
     end
 

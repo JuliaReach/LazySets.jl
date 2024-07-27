@@ -53,11 +53,11 @@ for N in [Float64, Rational{Int}, Float32]
         @test !isbounded(I2) && !isboundedtype(typeof(I2))
     end
 
-    # is_polyhedral
-    @test is_polyhedral(I)
+    # ispolyhedral
+    @test ispolyhedral(I)
     if N isa AbstractFloat
         I2 = Intersection(B, Ball2(N[0, 0], N(1)))
-        @test !is_polyhedral(I2)
+        @test !ispolyhedral(I2)
     end
 
     # emptiness of intersection
@@ -122,11 +122,11 @@ for N in [Float64, Rational{Int}, Float32]
     IArr2 = IntersectionArray([HalfSpace(N[1], N(1))])
     @test !isboundedtype(typeof(IArr2))
 
-    # is_polyhedral
-    @test is_polyhedral(IArr)
+    # ispolyhedral
+    @test ispolyhedral(IArr)
     if N isa AbstractFloat
         IArr2 = IntersectionArray([B, Ball2(N[0, 0], N(1))])
-        @test !is_polyhedral(IArr2)
+        @test !ispolyhedral(IArr2)
     end
 
     # isempty

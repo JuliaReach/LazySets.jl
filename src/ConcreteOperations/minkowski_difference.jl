@@ -41,7 +41,7 @@ of disturbance invariant sets for discrete-time linear systems.*
 317-367.](http://dx.doi.org/10.1155/S1024123X98000866)
 """
 function minkowski_difference(P::LazySet, Q::LazySet)
-    @assert is_polyhedral(P) "this implementation requires that the first argument " *
+    @assert ispolyhedral(P) "this implementation requires that the first argument " *
                              "is polyhedral; try overapproximating with an `HPolyhedron`"
     @assert isbounded(Q) "this implementation requires that the second " *
                          "argument is bounded, but it is not"

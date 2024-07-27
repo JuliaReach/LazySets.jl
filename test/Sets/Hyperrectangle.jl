@@ -145,8 +145,8 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test isbounded(H)
 
-    # is_polyhedral
-    @test is_polyhedral(H)
+    # ispolyhedral
+    @test ispolyhedral(H)
 
     # isempty
     @test !isempty(H)

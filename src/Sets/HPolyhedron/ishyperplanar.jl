@@ -1,4 +1,4 @@
-function is_hyperplanar(P::HPolyhedron)
+function ishyperplanar(P::HPolyhedron)
     clist = P.constraints
     m = length(clist)
 

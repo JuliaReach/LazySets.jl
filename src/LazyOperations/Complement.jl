@@ -46,8 +46,8 @@ isoperationtype(::Type{<:Complement}) = true
 # special cases for which the complement is always convex
 isconvextype(::Type{<:Complement{N,<:Union{EmptySet,HalfSpace,Universe}}}) where {N} = true
 
-is_polyhedral(::Complement) = false
-is_polyhedral(::Complement{N,<:Union{EmptySet,HalfSpace}}) where {N} = true
+ispolyhedral(::Complement) = false
+ispolyhedral(::Complement{N,<:Union{EmptySet,HalfSpace}}) where {N} = true
 
 # the complement of the complement is the original set again
 Complement(C::Complement) = C.X

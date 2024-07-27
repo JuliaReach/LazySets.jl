@@ -20,8 +20,8 @@ for N in [Float64, Float32, Rational{Int}]
     # membership
     @test zeros(N, 3) ∈ T
 
-    # is_polyhedral
-    @test is_polyhedral(T)
+    # ispolyhedral
+    @test ispolyhedral(T)
 
     # LazySets#3303
     T = Tetrahedron([N[0, 0, 0], N[0, 1, 0], N[1, 0, 0], N[1, 0, 1]])

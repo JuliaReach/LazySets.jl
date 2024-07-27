@@ -30,8 +30,8 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test isbounded(h) && isboundedtype(typeof(h))
 
-    # is_polyhedral
-    @test is_polyhedral(h)
+    # ispolyhedral
+    @test ispolyhedral(h)
 
     # isempty
     @test !isempty(h)

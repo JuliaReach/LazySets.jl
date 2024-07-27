@@ -70,7 +70,7 @@ Inherited from [`LazySet`](@ref):
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
-* [`is_polyhedral`](@ref is_polyhedral(::AbstractPolyhedron))
+* [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
 * [`intersection`](@ref intersection(::AbstractPolyhedron, ::AbstractPolyhedron))
 * [`isdisjoint`](@ref isdisjoint(::AbstractPolyhedron, ::AbstractPolyhedron))
 * [`⊆`](@ref ⊆(::AbstractPolyhedron, ::AbstractPolyhedron))

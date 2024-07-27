@@ -72,7 +72,7 @@ Inherited from [`LazySet`](@ref):
 * [`extrema`](@ref extrema(::LazySet))
 * [`extrema`](@ref extrema(::LazySet, ::Int))
 * [`isoperation`](@ref isoperation(::LazySet))
-* [`is_polyhedral`](@ref is_polyhedral(::LazySet))
+* [`ispolyhedral`](@ref ispolyhedral(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`surface`](@ref surface(::LazySet))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))

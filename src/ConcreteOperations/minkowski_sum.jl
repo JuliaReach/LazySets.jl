@@ -33,7 +33,7 @@ function minkowski_sum(P::LazySet, Q::LazySet;
     @assert n == dim(Q) "expected that the sets have the same dimension, " *
                         "but they are $n and $(dim(Q)) respectively"
 
-    @assert is_polyhedral(P) && is_polyhedral(Q) "this function requires " *
+    @assert ispolyhedral(P) && ispolyhedral(Q) "this function requires " *
                                                  "polyhedral sets; try overapproximating with an `HPolytope` or " *
                                                  "`HPolyhedron` first"
 

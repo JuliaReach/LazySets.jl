@@ -46,7 +46,7 @@ Some common functions implemented by several subtypes:
 
 ```@docs
 addconstraint!(::AbstractPolyhedron, ::HalfSpace)
-is_hyperplanar(::AbstractPolyhedron)
+ishyperplanar(::AbstractPolyhedron)
 ```
 
 Some common functions to work with linear constraints:
