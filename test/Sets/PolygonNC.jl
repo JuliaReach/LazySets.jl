@@ -27,6 +27,17 @@ for N in [Float64, Rational{Int}, Float32]
     # plot_recipe (only check for correct output type)
     x, y = LazySets.plot_recipe(P)
     @test x isa Vector{N} && y isa Vector{N}
+
+    # membership
+    P1 = Polygon([N[0, 0], N[2, 1], N[18//10, 12//10], N[1, 1], N[1//2, 3//2], N[-1//2, 2]]);
+    P2 = Polygon([N[0, 1], N[2, 1]]);
+    P3 = Polygon([N[3//2, 0], N[3//2, 11//10]]);
+    x = N[3//2, 1];
+    y = N[3//2, 3//2];
+    for P in (P1, P2, P3)
+        @test x ∈ P
+        @test y ∉ P
+    end
 end
 
 # default Float64 constructor
