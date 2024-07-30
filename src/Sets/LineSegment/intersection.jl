@@ -34,29 +34,18 @@ function intersection(LS1::LineSegment, LS2::LineSegment)
     m = intersection(L1, L2)
     N = promote_type(eltype(LS1), eltype(LS2))
     if m == L1
-        # simple solution: compute the box approximation and find the right vertices (there are only 4)
-        B1 = box_approximation(LS1)
-        B2 = box_approximation(LS2)
-        B = intersection(B1, B2)
-        if isempty(B)
-            return B
+        # find the middle two points of the four end points
+        points = [LS1.p, LS1.q, LS2.p, LS2.q]
+        sorted_points = sort(points, by = p -> (p[1], p[2]))
+        @inbounds begin
+            mid_point1 = sorted_points[2]
+            mid_point2 = sorted_points[3]
         end
-        p = nothing
-        vlist = [LS1.p, LS1.q, LS2.p, LS2.q]
-        for v1 in vertices(B)
-            for v2 in vlist
-                if _isapprox(v1, v2)
-                    if isnothing(p)
-                        p = v1
-                    elseif _isapprox(v1, p)
-                        return Singleton(p)
-                    else
-                        return LineSegment(p, v1)
-                    end
-                end
-            end
+        if _isapprox(mid_point1, mid_point2)
+            return Singleton(mid_point1)  # only one point in common
+        else
+            return LineSegment(mid_point1, mid_point2)
         end
-        error("this should not happen")
     elseif m isa Singleton && m.element ∈ LS1 && m.element ∈ LS2
         return m  # the intersection point between the lines is in the segments
     else
