@@ -131,17 +131,17 @@ for N in [Float64, Rational{Int}, Float32]
     @test ispermutation([cap.p, cap.q], [N[-5, -5], N[4, 4]])
     # parallel, not intersect
     s3 = LineSegment(N[-5, -4], N[4, 5])
-    @test intersection(s1, s3) isa EmptySet
+    @test intersection(s1, s3) == EmptySet{N}(2)
     # intersect outside of segment
     s4 = LineSegment(N[0, 10], N[6, 5])
-    @test intersection(s1, s4) isa EmptySet
+    @test intersection(s1, s4) == EmptySet{N}(2)
     # intersect in segment
     s5 = LineSegment(N[5, -5], N[-5, 5])
     @test intersection(s1, s5) isa Singleton
     @test isapprox(intersection(s1, s5).element, N[0, 0])
     # parallel, no points in common
     s6 = LineSegment(N[10, 10], N[11, 11])
-    @test intersection(s1, s6) isa EmptySet
+    @test intersection(s1, s6) == EmptySet{N}(2)
     # parallel one point in common
     s7 = LineSegment(N[5, 5], N[6, 6])
     @test intersection(s1, s7) isa Singleton
