@@ -39,8 +39,8 @@ function intersection(LS1::LineSegment, LS2::LineSegment)
         # check that the line segments intersect
         @inbounds begin
             # box approximation
-            l, r = LS1.p[1] < LS1.q[1] ? (LS1.p[1], LS1.q[1]) : (LS1.q[1], LS1.p[1])
-            b, t = LS1.p[2] < LS1.q[2] ? (LS1.p[2], LS1.q[2]) : (LS1.q[2], LS1.p[2])
+            l, r = extrema((LS1.p[1], LS1.q[1]))
+            b, t = extrema((LS1.p[2], LS1.q[2]))
             # check that the other line segment has at least one point inside the box
             if !(l <= LS2.p[1] <= r && b <= LS2.p[2] <= t) &&
                !(l <= LS2.q[1] <= r && b <= LS2.q[2] <= t)
