@@ -230,6 +230,27 @@ for N in [Float64, Rational{Int}, Float32]
     # vertices_list function
     @test vertices_list(p) == p.vertices
 
+    # low/high/extrema
+    p2 = VPolytope([N[5, 1], N[4, 0], N[3, 1], N[4, 2]])
+    @test low(p2) == N[3, 0] && low(p2, 1) == N(3) && low(p2, 2) == N(0)
+    @test high(p2) == N[5, 2] && high(p2, 1) == N(5) && high(p2, 2) == N(2)
+    @test extrema(p2) == (N[3, 0], N[5, 2]) && extrema(p2, 1) == (N(3), N(5)) &&
+          extrema(p2, 2) == (N(0), N(2))
+    # singleton
+    p2 = VPolytope([N[1, 2]])
+    @test low(p2) == N[1, 2] && low(p2, 1) == N(1) && low(p2, 2) == N(2)
+    @test high(p2) == N[1, 2] && high(p2, 1) == N(1) && high(p2, 2) == N(2)
+    @test extrema(p2) == (N[1, 2], N[1, 2]) && extrema(p2, 1) == (N(1), N(1)) &&
+          extrema(p2, 2) == (N(2), N(2))
+    # empty polytope cannot determine dimension and returns empty vectors
+    p2 = VPolytope{N}()
+    @test low(p2) == N[]
+    @test_throws AssertionError low(p2, 1)
+    @test high(p2) == N[]
+    @test_throws AssertionError high(p2, 1)
+    @test extrema(p2) == (N[], N[])
+    @test_throws AssertionError extrema(p2, 1)
+
     if test_suite_polyhedra
         V = VPolytope(polyhedron(p))
 
