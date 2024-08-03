@@ -50,8 +50,6 @@ minkowski_sum(::Interval, ::Interval)
 plot_recipe(::Interval{N}, ::Any=zero(N)) where {N}
 min(::Interval)
 max(::Interval)
--(::Interval, ::Interval)
-*(::Interval, ::Interval)
 ```
 
 ```@meta
