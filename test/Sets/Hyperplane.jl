@@ -85,8 +85,19 @@ for N in [Float64, Rational{Int}, Float32]
             @test lm.a == N[0 // 1, -1 // 1] && lm.b == N(0 // 1)
         end
     end
-    M = zeros(N, 2, 2) # result is a singleton
-    @test_broken linear_map(M, H)
+    # regular linear map
+    M = N[2 0; 0 4]
+    P = linear_map(M, H)
+    @test P == Hyperplane(N[1//2, -1//4], N(0))
+    # result is a singleton (but represented as a polyhedron)
+    M = zeros(N, 2, 2)
+    P = linear_map(M, H)
+    @test P isa HPolyhedron && isequivalent(P, ZeroSet{N}(2))
+    # non-origin singleton
+    H = Hyperplane(N[1, 0], N(1))
+    M = N[1 0; 0 0]
+    P = linear_map(M, H)
+    @test P isa HPolyhedron && isequivalent(P, Singleton(N[1, 0]))
 
     # projection
     H = Hyperplane(N[1, -1], N(0))  # x = y

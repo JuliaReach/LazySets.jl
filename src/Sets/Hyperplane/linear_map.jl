@@ -10,6 +10,8 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Hyperplane{N},
 
         return Universe{N}(size(M, 1))
     else
-        error("unexpected number of $(length(constraints)) constraints")
+        require(@__MODULE__, :LazySets; fun_name="linear_map")
+
+        return HPolyhedron(constraints)
     end
 end
