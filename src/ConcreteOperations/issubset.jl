@@ -790,13 +790,8 @@ function _issubset_in_emptyset(X::LazySet, ∅::EmptySet, witness::Bool=false)
 end
 
 # disambiguations
-for ST in [:AbstractPolytope, :UnionSet, :UnionSetArray]
+for ST in [:AbstractPolytope, :UnionSet, :UnionSetArray, :AbstractSingleton, :LineSegment]
     @eval ⊆(X::($ST), ∅::EmptySet, witness::Bool=false) = _issubset_in_emptyset(X, ∅, witness)
-end
-
-# disambiguations for sets that are never empty
-for ST in [:AbstractSingleton, :LineSegment]
-    @eval ⊆(X::($ST), ::EmptySet, witness::Bool=false) = witness ? (false, an_element(X)) : false
 end
 
 """
