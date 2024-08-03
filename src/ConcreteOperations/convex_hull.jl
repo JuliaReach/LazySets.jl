@@ -255,7 +255,7 @@ function _collinear_case!(points, A, B, C, D)
             # assign the points with max and min value in their second component
             # to the firsts points and the extra point to the third place, then
             # pop the point that was in the middle
-            min_y, max_y = arg_minmax(A[2], B[2], C[2])
+            min_y, max_y = _arg_minmax(A[2], B[2], C[2])
             points[1] = _get_i(min_y, A, B, C)
             points[2] = _get_i(max_y, A, B, C)
             points[3] = D
@@ -265,13 +265,30 @@ function _collinear_case!(points, A, B, C, D)
         # assign the points with max and min value in their first component to
         # the firsts points and the extra point to the third place, then pop the
         # point that was in the middle
-        min_x, max_x = arg_minmax(A[1], B[1], C[1])
+        min_x, max_x = _arg_minmax(A[1], B[1], C[1])
         points[1] = _get_i(min_x, A, B, C)
         points[2] = _get_i(max_x, A, B, C)
         points[3] = D
         pop!(points)
     end
     return _three_points_2d!(points)
+end
+
+# return the indices of the minimum and maximum of three numbers a, b, c
+function _arg_minmax(a, b, c)
+    if a > b
+        min, max = b, a
+        imin, imax = 2, 1
+    else
+        min, max = a, b
+        imin, imax = 1, 2
+    end
+    if c > max
+        imax = 3
+    elseif c < min
+        imin = 3
+    end
+    return imin, imax
 end
 
 function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N}
