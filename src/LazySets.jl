@@ -260,7 +260,7 @@ include("Interfaces/AbstractArraySet.jl")
 # =============================
 # Conversions between set types
 # =============================
-include("convert.jl")
+include("Convert/convert.jl")
 
 # ===========================
 # Concrete operations on sets
