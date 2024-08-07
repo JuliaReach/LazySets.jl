@@ -4,7 +4,7 @@ using Reexport, Requires
 
 using ..LazySets: AbstractPolygon, LazySet, AbstractHPolygon, halfspace_left,
                   is_right_turn, _area_vlist, _intersection_vrep_2d,
-                  _linear_map_vrep, _minkowski_sum_vrep_2d
+                  _linear_map_vrep, _minkowski_sum_vrep_2d, _to_colVector
 using ..HPolygonModule: HPolygon
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG, shuffle
