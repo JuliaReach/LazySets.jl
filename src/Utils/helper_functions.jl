@@ -274,3 +274,12 @@ function _intersection_line2d end
 function _minkowski_sum_hrep_preprocess end
 function _minkowski_sum_vrep_2d end
 function _minkowski_sum_vrep_nd end
+
+_to_colVector(M::AbstractMatrix) = convert(Vector, [M[:, j] for j in axes(M, 2)])
+_to_colVector(M::Matrix) = [M[:, j] for j in axes(M, 2)]
+
+function load_StaticArraysCore_to_colVector()
+    return quote
+        _to_colVector(M::SMatrix) = collect(eachcol(M))
+    end
+end  # load_StaticArraysCore_to_colVector()

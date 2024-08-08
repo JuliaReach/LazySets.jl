@@ -75,7 +75,7 @@ function VPolygon(vertices_matrix::MT; apply_convex_hull::Bool=true,
     @assert size(vertices_matrix, 1) == 2 "the number of rows of the matrix " *
                                           "of vertices should be 2, but it is $(size(vertices_matrix, 1))"
 
-    vertices = [vertices_matrix[:, j] for j in axes(vertices_matrix, 2)]
+    vertices = _to_colVector(vertices_matrix)
     return VPolygon(vertices; apply_convex_hull=apply_convex_hull,
                     algorithm=algorithm)
 end

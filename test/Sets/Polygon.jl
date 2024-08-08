@@ -505,6 +505,19 @@ for N in [Float64, Float32, Rational{Int}]
     @test area(P) == volume(P) == N(21)
     Q = tohrep(P)
     @test area(Q) == volume(Q) == N(21)
+
+    # Matrix to VPolygon
+    M = N[0 1 0; 0 0 1]
+    Vs = [N[0, 0], N[1, 0], N[0, 1]]
+    P = VPolygon(M)
+    @test P == VPolygon(Vs)
+    @test eltype(P.vertices) == eltype(Vs)
+    # StaticArraysCore.SMatrix to VPolygon
+    M = @SMatrix N[0 1 0; 0 0 1]
+    Vs = [@SVector[N(0), N(0)], @SVector[N(1), N(0)], @SVector[N(0), N(1)]]
+    Q = VPolygon(M)
+    @test Q == VPolygon(Vs) == P
+    @test eltype(Q.vertices) == eltype(Vs)
 end
 
 for N in [Float64, Float32]
