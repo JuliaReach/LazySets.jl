@@ -48,7 +48,7 @@ function load_Symbolics_HalfSpace()
         ### Input
 
         - `expr` -- symbolic expression that describes a half-space
-        - `vars` -- (optional, default: `get_variables(expr)`) if an array of variables
+        - `vars` -- (optional, default: `_get_variables(expr)`) if an array of variables
                     is given, use those as the ambient variables in the set with respect
                     to which derivations take place; otherwise, use only the variables
                     that appear in the given expression (but be careful because the
