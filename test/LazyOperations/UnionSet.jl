@@ -131,11 +131,11 @@ for N in [Float64, Rational{Int}, Float32]
     Uarr = UnionSetArray([X, B1])
     @test !isbounded(Uarr) && !isboundedtype(typeof(Uarr))
 
-    # is_polyhedral
-    @test is_polyhedral(UXY)
+    # ispolyhedral
+    @test ispolyhedral(UXY)
     if N isa AbstractFloat
         U2 = UnionSet(B1, Ball2(zeros(N, 2), N(1)))
-        @test !is_polyhedral(U2)
+        @test !ispolyhedral(U2)
     end
 
     # volume

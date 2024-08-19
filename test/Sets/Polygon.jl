@@ -152,8 +152,8 @@ for N in [Float64, Float32, Rational{Int}]
         addconstraint!(hp_shallow, c1)
         @test_throws AssertionError an_element(hp_shallow)
 
-        # is_polyhedral
-        @test is_polyhedral(hp)
+        # ispolyhedral
+        @test ispolyhedral(hp)
 
         # isuniversal
         answer, w = isuniversal(hp, true)
@@ -344,8 +344,8 @@ for N in [Float64, Float32, Rational{Int}]
     Q = remove_redundant_vertices(P)
     @test length(P.vertices) == 3 && length(Q.vertices) == 2
 
-    # is_polyhedral
-    @test is_polyhedral(p)
+    # ispolyhedral
+    @test ispolyhedral(p)
 
     # an_element function
     p = VPolygon([N[2, 3]])

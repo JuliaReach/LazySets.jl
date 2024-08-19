@@ -15,8 +15,8 @@ using ReachabilityBase.Require: require
 @reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
                         isoperationtype, isuniversal, rand, reflect, distance,
                         ∈, project, ρ, σ, translate
-@reexport import ..LazySets: constrained_dimensions, is_hyperplanar, normalize
-import ..LazySets: _is_hyperplane, _linear_map_hrep_helper
+@reexport import ..LazySets: constrained_dimensions, ishyperplanar, normalize
+import ..LazySets: _ishyperplanar, _linear_map_hrep_helper
 import ..Base: convert
 @reexport using ..API
 
@@ -42,7 +42,7 @@ include("support_vector.jl")
 include("translate.jl")
 
 include("constrained_dimensions.jl")
-include("is_hyperplanar.jl")
+include("ishyperplanar.jl")
 include("normalize.jl")
 
 include("convert.jl")

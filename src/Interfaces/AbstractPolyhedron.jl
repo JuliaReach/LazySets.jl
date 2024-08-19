@@ -76,8 +76,8 @@ function _linear_map_hrep_helper(M::AbstractMatrix, P::LazySet,
 end
 
 # internal functions; defined here due to dependency SymEngine and submodules
-function _is_halfspace end
-function _is_hyperplane end
+function _ishalfspace end
+function _ishyperplanar end
 function _parse_linear_expression end
 
 # To account for the compilation order, other functions are defined in the file

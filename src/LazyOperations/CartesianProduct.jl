@@ -75,7 +75,7 @@ function isconvextype(::Type{CartesianProduct{N,S1,S2}}) where {N,S1,S2}
     return isconvextype(S1) && isconvextype(S2)
 end
 
-is_polyhedral(cp::CartesianProduct) = is_polyhedral(cp.X) && is_polyhedral(cp.Y)
+ispolyhedral(cp::CartesianProduct) = ispolyhedral(cp.X) && ispolyhedral(cp.Y)
 
 # EmptySet is almost the absorbing element for CartesianProduct, but it should
 # sum up the dimension of both set arguments

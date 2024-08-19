@@ -56,8 +56,8 @@ for N in [Float64, Rational{Int}, Float32]
     gens = collect(generators(l_degenerate))
     @test isempty(gens) && gens isa Vector{Vector{N}}
 
-    # is_polyhedral
-    @test is_polyhedral(l)
+    # ispolyhedral
+    @test ispolyhedral(l)
 
     # isempty
     @test !isempty(l)

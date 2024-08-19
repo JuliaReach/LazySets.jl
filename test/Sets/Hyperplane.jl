@@ -46,8 +46,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isbounded(hp)
     @test isbounded(Hyperplane(ones(N, 1), N(1)))
 
-    # is_polyhedral
-    @test is_polyhedral(hp)
+    # ispolyhedral
+    @test ispolyhedral(hp)
 
     # universality
     @test !isuniversal(hp)
@@ -126,10 +126,10 @@ for N in [Float64, Rational{Int}, Float32]
                                   HalfSpace(N[-2, -6], N(-2))]), false),
                     (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, 6], N(-2))]), false),
                     (HPolyhedron([HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(2))]), false)]
-        @test is_hyperplanar(P) == eq
+        @test ishyperplanar(P) == eq
         if eq
             H = convert(Hyperplane, P)
-            @test is_hyperplanar(H)
+            @test ishyperplanar(H)
             @test H isa Hyperplane{N} && isequivalent(P, H)
         else
             @test_throws ArgumentError convert(Hyperplane, P)
@@ -206,14 +206,14 @@ for N in [Float64]
 
     # tests that require SymEngine
     @static if isdefined(@__MODULE__, :SymEngine)
-        # _is_halfspace
-        @test LazySets._is_hyperplane(:(x1 = 0))
-        @test !LazySets._is_hyperplane(:(x1 <= 0))
-        @test LazySets._is_hyperplane(:(2 * x1 = 4))
-        @test LazySets._is_hyperplane(:(6.1 = 5.3 * f - 0.1 * g))
-        @test !LazySets._is_hyperplane(:(2 * x1^2 = 4))
-        @test !LazySets._is_hyperplane(:(x1^2 = 4 * x2 - x3))
-        @test LazySets._is_hyperplane(:(x1 = 4 * x2 - x3))
+        # _ishalfspace
+        @test LazySets._ishyperplanar(:(x1 = 0))
+        @test !LazySets._ishyperplanar(:(x1 <= 0))
+        @test LazySets._ishyperplanar(:(2 * x1 = 4))
+        @test LazySets._ishyperplanar(:(6.1 = 5.3 * f - 0.1 * g))
+        @test !LazySets._ishyperplanar(:(2 * x1^2 = 4))
+        @test !LazySets._ishyperplanar(:(x1^2 = 4 * x2 - x3))
+        @test LazySets._ishyperplanar(:(x1 = 4 * x2 - x3))
 
         # convert
         H = convert(Hyperplane, :(x1 = -0.03))

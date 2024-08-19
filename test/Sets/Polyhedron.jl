@@ -44,16 +44,16 @@ for N in [Float64, Rational{Int}, Float32]
     # support vector of polyhedron with no constraints
     @test σ(N[1], p_univ) == N[Inf]
 
-    # is_polyhedral
-    @test is_polyhedral(p)
+    # ispolyhedral
+    @test ispolyhedral(p)
 
-    # is_hyperplanar
+    # ishyperplanar
     P = HPolyhedron([HalfSpace(N[1, 0], N(1))])
-    @test !is_hyperplanar(P)
+    @test !ishyperplanar(P)
     addconstraint!(P, HalfSpace(N[-1, 0], N(-1)))
-    @test is_hyperplanar(P)
+    @test ishyperplanar(P)
     addconstraint!(P, HalfSpace(N[0, 1], N(1)))
-    @test !is_hyperplanar(P)
+    @test !ishyperplanar(P)
 
     # universality
     @test !isuniversal(p)

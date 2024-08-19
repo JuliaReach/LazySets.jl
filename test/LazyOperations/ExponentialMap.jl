@@ -84,11 +84,11 @@ for exp_backend in [ExponentialUtilities, Expokit]
         emap2 = me * HalfSpace(ones(N, n), N(1))
         @test !isbounded(emap2) && !isboundedtype(typeof(emap2))
 
-        # is_polyhedral
-        @test is_polyhedral(emap)
+        # ispolyhedral
+        @test ispolyhedral(emap)
         if N isa AbstractFloat
             emap2 = me * Ball2(zeros(N, n), N(1))
-            @test !is_polyhedral(emap2)
+            @test !ispolyhedral(emap2)
         end
 
         # isempty

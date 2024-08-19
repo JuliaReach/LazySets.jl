@@ -1,9 +1,9 @@
 function load_SymEngine_ishalfspace()
     return quote
-        using ..LazySets: _is_linearcombination
+        using ..LazySets: _is_linear_combination
 
         """
-            _is_halfspace(expr::Expr)
+            _ishalfspace(expr::Expr)
 
         Determine whether the given expression corresponds to a half-space.
 
@@ -18,31 +18,31 @@ function load_SymEngine_ishalfspace()
         ### Examples
 
         ```jldoctest
-        julia> using LazySets: _is_halfspace
+        julia> using LazySets: _ishalfspace
 
-        julia> all(_is_halfspace.([:(x1 <= 0), :(x1 < 0), :(x1 > 0), :(x1 >= 0)]))
+        julia> all(_ishalfspace.([:(x1 <= 0), :(x1 < 0), :(x1 > 0), :(x1 >= 0)]))
         true
 
-        julia> _is_halfspace(:(x1 = 0))
+        julia> _ishalfspace(:(x1 = 0))
         false
 
-        julia> _is_halfspace(:(2*x1 <= 4))
+        julia> _ishalfspace(:(2*x1 <= 4))
         true
 
-        julia> _is_halfspace(:(6.1 <= 5.3*f - 0.1*g))
+        julia> _ishalfspace(:(6.1 <= 5.3*f - 0.1*g))
         true
 
-        julia> _is_halfspace(:(2*x1^2 <= 4))
+        julia> _ishalfspace(:(2*x1^2 <= 4))
         false
 
-        julia> _is_halfspace(:(x1^2 > 4*x2 - x3))
+        julia> _ishalfspace(:(x1^2 > 4*x2 - x3))
         false
 
-        julia> _is_halfspace(:(x1 > 4*x2 - x3))
+        julia> _ishalfspace(:(x1 > 4*x2 - x3))
         true
         ```
         """
-        function _is_halfspace(expr::Expr)::Bool
+        function _ishalfspace(expr::Expr)::Bool
             # check that there are three arguments:
             # the comparison symbol, the left-hand side and the right-hand side
             if (length(expr.args) != 3) || !(expr.head == :call)
@@ -58,7 +58,7 @@ function load_SymEngine_ishalfspace()
             end
 
             # check if the expression defines a half-space
-            return _is_linearcombination(linexpr)
+            return _is_linear_combination(linexpr)
         end
     end
 end  # load_SymEngine_ishalfspace
@@ -70,7 +70,7 @@ function load_Symbolics_ishalfspace()
         # returns `(true, sexpr)` if expr represents a half-space,
         # where sexpr is the simplified expression sexpr := LHS - RHS <= 0
         # otherwise, returns `(false, expr)`
-        function _is_halfspace(expr::Symbolic)
+        function _ishalfspace(expr::Symbolic)
             got_halfspace = true
 
             # find sense and normalize

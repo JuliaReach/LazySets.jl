@@ -54,7 +54,7 @@ function load_SymEngine_convert_HalfSpace()
         ```
         """
         function convert(::Type{HalfSpace{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
-            @assert _is_halfspace(expr) "the expression $expr does not correspond to a half-space"
+            @assert _ishalfspace(expr) "the expression $expr does not correspond to a half-space"
 
             # convert to SymEngine expressions
             linexpr, cmp = _parse_halfspace(expr)

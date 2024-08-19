@@ -97,7 +97,7 @@ Inherited from [`LazySet`](@ref):
 * [`==`](@ref ==(::LazySet, ::LazySet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
-* [`is_polyhedral`](@ref is_polyhedral(::AbstractPolyhedron))
+* [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
 
 Inherited from [`ConvexSet`](@ref):
 ```@meta

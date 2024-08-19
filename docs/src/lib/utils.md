@@ -60,9 +60,9 @@ LazySets._vec
 
 ```@docs
 LazySets.free_symbols
-LazySets._is_linearcombination
-LazySets._is_halfspace
-LazySets._is_hyperplane
+LazySets._is_linear_combination
+LazySets._ishalfspace
+LazySets._ishyperplanar
 LazySets.convert(::Type{HalfSpace{N}}, ::Expr; vars::Vector{Basic}=Basic[]) where {N}
 LazySets.convert(::Type{Hyperplane{N}}, ::Expr; vars::Vector{Basic}=Basic[]) where {N}
 ```

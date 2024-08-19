@@ -42,7 +42,7 @@ function load_SymEngine_convert_Hyperplane()
         ```
         """
         function convert(::Type{Hyperplane{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
-            @assert _is_hyperplane(expr) "the expression $expr does not correspond to a Hyperplane"
+            @assert _ishyperplanar(expr) "the expression $expr does not correspond to a Hyperplane"
 
             # convert to SymEngine expression
             linexpr = _parse_hyperplane(expr)

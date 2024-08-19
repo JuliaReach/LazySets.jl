@@ -3,7 +3,7 @@ function default_nln_solver(N::Type{<:Real}=Float64)
 end
 
 function _underapproximate_box(X::S, solver) where {S<:LazySet}
-    if !isconvextype(S) || !(is_polyhedral(X) && isboundedtype(S))
+    if !isconvextype(S) || !(ispolyhedral(X) && isboundedtype(S))
         error("box underapproximation is only available for convex polytopes")
     end
 

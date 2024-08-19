@@ -22,7 +22,7 @@ The default implementation assumes that `Y` is polyhedral, i.e., that
 constraint of `Y`.
 """
 function ⊆(X::LazySet, Y::LazySet, witness::Bool=false)
-    if is_polyhedral(Y)
+    if ispolyhedral(Y)
         return _issubset_constraints_list(X, Y, witness)
     else
         throw(ArgumentError("an inclusion check for the given combination of " *
@@ -181,7 +181,7 @@ function ⊆(P::AbstractPolytope, S::LazySet, witness::Bool=false;
 
     if isnothing(algorithm)
         # TODO smarter evaluation which representation is better
-        if is_polyhedral(S)
+        if ispolyhedral(S)
             algorithm = "constraints"
         else
             algorithm = "vertices"
@@ -296,7 +296,7 @@ end
 # ⊆(X::LazySet, P::AbstractPolyhedron, witness::Bool=false)
 function _issubset_constraints_list(S::LazySet, P::LazySet, witness::Bool=false)
     @assert dim(S) == dim(P) "incompatible set dimensions $(dim(S)) and $(dim(P))"
-    @assert is_polyhedral(P) "this inclusion check requires a polyhedral set " *
+    @assert ispolyhedral(P) "this inclusion check requires a polyhedral set " *
                              "on the right-hand side"
 
     @inbounds for H in constraints_list(P)

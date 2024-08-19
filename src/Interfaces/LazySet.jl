@@ -416,7 +416,7 @@ end
 The default implementation returns `false`. All set types that can determine the
 polyhedral property should override this behavior.
 """
-function is_polyhedral(::LazySet)
+function ispolyhedral(::LazySet)
     return false
 end
 
@@ -431,7 +431,7 @@ function norm(X::LazySet, p::Real=Inf)
     if p == Inf
         l, h = extrema(X)
         return max(maximum(abs, l), maximum(abs, h))
-    elseif is_polyhedral(X) && isboundedtype(typeof(X))
+    elseif ispolyhedral(X) && isboundedtype(typeof(X))
         return maximum(norm(v, p) for v in vertices_list(X))
     else
         error("the norm for this value of p=$p is not implemented")
@@ -571,7 +571,7 @@ Minkowski difference
 by calling `minkowski_sum(A, reflect(B))`.
 """
 function reflect(P::LazySet)
-    if !is_polyhedral(P)
+    if !ispolyhedral(P)
         error("this implementation requires a polyhedral set; try " *
               "overapproximating with an `HPolyhedron` first")
     end
@@ -655,7 +655,7 @@ end
 
 function _plot_recipe_3d_polytope(P::LazySet, N=eltype(P))
     require(@__MODULE__, :MiniQhull; fun_name="_plot_recipe_3d_polytope")
-    @assert is_polyhedral(P) && isboundedtype(typeof(P)) "3D plotting is " *
+    @assert ispolyhedral(P) && isboundedtype(typeof(P)) "3D plotting is " *
                                                          "only available for polytopes"
 
     vlist, C = delaunay_vlist_connectivity(P; compute_triangles_3d=true)
@@ -770,7 +770,7 @@ Otherwise, the general Shoelace formula is used; for details see the
 function area(X::LazySet)
     @assert dim(X) == 2 "this function only applies to two-dimensional sets, " *
                         "but the given set is $(dim(X))-dimensional"
-    @assert is_polyhedral(X) && isbounded(X) "this method requires a polytope"
+    @assert ispolyhedral(X) && isbounded(X) "this method requires a polytope"
 
     vlist = vertices_list(X)
     return _area_vlist(vlist)
@@ -1193,7 +1193,7 @@ function chebyshev_center_radius(P::LazySet{N};
                                  backend=default_polyhedra_backend(P),
                                  solver=default_lp_solver_polyhedra(N; presolve=true)) where {N}
     require(@__MODULE__, :Polyhedra; fun_name="chebyshev_center")
-    if !is_polyhedral(P) && !isboundedtype(typeof(P))
+    if !ispolyhedral(P) && !isboundedtype(typeof(P))
         error("can only compute a Chebyshev center for polytopes")
     end
 
@@ -1254,7 +1254,7 @@ function load_polyhedra_lazyset()  # function to be loaded by Requires
         function triangulate(X::LazySet)
             dim(X) == 3 || throw(ArgumentError("the dimension of the set should be " *
                                                "three, got $(dim(X))"))
-            @assert is_polyhedral(X) "triangulation requires a polyhedral set"
+            @assert ispolyhedral(X) "triangulation requires a polyhedral set"
 
             P = polyhedron(X)
             mes = Mesh(P)
@@ -1322,7 +1322,7 @@ function isempty(P::LazySet{N},  # type parameter must be present for Documenter
                  use_polyhedra_interface::Bool=false,
                  solver=nothing,
                  backend=nothing) where {N}
-    @assert is_polyhedral(P) "this algorithm requires a polyhedral set"
+    @assert ispolyhedral(P) "this algorithm requires a polyhedral set"
     clist = constraints_list(P)
     if length(clist) < 2
         # catch corner case because of problems in LP solver for Rationals
@@ -1387,7 +1387,7 @@ Concrete linear map of a polyhedral set.
 A set representing the concrete linear map.
 """
 function linear_map(M::AbstractMatrix, P::LazySet; kwargs...)
-    if is_polyhedral(P)
+    if ispolyhedral(P)
         return _linear_map_polyhedron(M, P; kwargs...)
     else
         throw(ArgumentError("`linear_map` is not implemented for the given set"))
@@ -1415,14 +1415,14 @@ function scale(α::Real, X::LazySet)
 end
 
 function tohrep(X::LazySet)
-    @assert is_polyhedral(X) "cannot compute the constraint representation " *
+    @assert ispolyhedral(X) "cannot compute the constraint representation " *
                              "of non-polyhedral sets"
 
     return HPolyhedron(constraints_list(X))
 end
 
 function tovrep(X::LazySet)
-    @assert is_polyhedral(X) "cannot compute the vertex representation of " *
+    @assert ispolyhedral(X) "cannot compute the vertex representation of " *
                              "non-polyhedral sets"
 
     return VPolytope(vertices_list(X))
@@ -1437,7 +1437,7 @@ end
 function linear_map_inverse(A::AbstractMatrix, P::LazySet)
     @assert size(A, 1) == dim(P) "an inverse linear map of size $(size(A)) " *
                                  "cannot be applied to a set of dimension $(dim(P))"
-    @assert is_polyhedral(P) "cannot compute the inverse linear map of " *
+    @assert ispolyhedral(P) "cannot compute the inverse linear map of " *
                              "non-polyhedral sets"
     constraints = _affine_map_inverse_hrep(A, P)
     if isempty(constraints)
@@ -1452,7 +1452,7 @@ function affine_map_inverse(A::AbstractMatrix, P::LazySet, b::AbstractVector)
     @assert size(A, 1) == dim(P) == length(b) "an inverse affine map of size $(size(A)) " *
                                               "and $(length(b)) cannot be applied to a " *
                                               "set of dimension $(dim(P))"
-    @assert is_polyhedral(P) "cannot compute the inverse affine map of " *
+    @assert ispolyhedral(P) "cannot compute the inverse affine map of " *
                              "non-polyhedral sets"
     constraints = _affine_map_inverse_hrep(A, P, b)
     if isempty(constraints)
