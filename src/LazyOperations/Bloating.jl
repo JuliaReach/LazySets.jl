@@ -200,8 +200,8 @@ We call `constraints_list` on the lazy Minkowski sum with the bloating ball.
 """
 function constraints_list(B::Bloating)
     @assert ispolyhedral(B) "the constraints list is only available for " *
-                             "polyhedral bloating (which requires a polyhedral base set and the " *
-                             "1-norm or the infinity norm)"
+                            "polyhedral bloating (which requires a polyhedral base set and the " *
+                            "1-norm or the infinity norm)"
     if B.ε < 0
         throw(ArgumentError("computing the constraints list of a negatively " *
                             "bloated set is not supported"))

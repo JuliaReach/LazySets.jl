@@ -656,7 +656,7 @@ end
 function _plot_recipe_3d_polytope(P::LazySet, N=eltype(P))
     require(@__MODULE__, :MiniQhull; fun_name="_plot_recipe_3d_polytope")
     @assert ispolyhedral(P) && isboundedtype(typeof(P)) "3D plotting is " *
-                                                         "only available for polytopes"
+                                                        "only available for polytopes"
 
     vlist, C = delaunay_vlist_connectivity(P; compute_triangles_3d=true)
 
@@ -1416,14 +1416,14 @@ end
 
 function tohrep(X::LazySet)
     @assert ispolyhedral(X) "cannot compute the constraint representation " *
-                             "of non-polyhedral sets"
+                            "of non-polyhedral sets"
 
     return HPolyhedron(constraints_list(X))
 end
 
 function tovrep(X::LazySet)
     @assert ispolyhedral(X) "cannot compute the vertex representation of " *
-                             "non-polyhedral sets"
+                            "non-polyhedral sets"
 
     return VPolytope(vertices_list(X))
 end
@@ -1438,7 +1438,7 @@ function linear_map_inverse(A::AbstractMatrix, P::LazySet)
     @assert size(A, 1) == dim(P) "an inverse linear map of size $(size(A)) " *
                                  "cannot be applied to a set of dimension $(dim(P))"
     @assert ispolyhedral(P) "cannot compute the inverse linear map of " *
-                             "non-polyhedral sets"
+                            "non-polyhedral sets"
     constraints = _affine_map_inverse_hrep(A, P)
     if isempty(constraints)
         return Universe{eltype(P)}(size(A, 2))
@@ -1453,7 +1453,7 @@ function affine_map_inverse(A::AbstractMatrix, P::LazySet, b::AbstractVector)
                                               "and $(length(b)) cannot be applied to a " *
                                               "set of dimension $(dim(P))"
     @assert ispolyhedral(P) "cannot compute the inverse affine map of " *
-                             "non-polyhedral sets"
+                            "non-polyhedral sets"
     constraints = _affine_map_inverse_hrep(A, P, b)
     if isempty(constraints)
         return Universe{eltype(P)}(size(A, 2))
