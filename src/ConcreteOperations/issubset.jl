@@ -297,7 +297,7 @@ end
 function _issubset_constraints_list(S::LazySet, P::LazySet, witness::Bool=false)
     @assert dim(S) == dim(P) "incompatible set dimensions $(dim(S)) and $(dim(P))"
     @assert ispolyhedral(P) "this inclusion check requires a polyhedral set " *
-                             "on the right-hand side"
+                            "on the right-hand side"
 
     @inbounds for H in constraints_list(P)
         if !_leq(ρ(H.a, S), H.b)

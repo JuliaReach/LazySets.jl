@@ -34,8 +34,8 @@ function minkowski_sum(P::LazySet, Q::LazySet;
                         "but they are $n and $(dim(Q)) respectively"
 
     @assert ispolyhedral(P) && ispolyhedral(Q) "this function requires " *
-                                                 "polyhedral sets; try overapproximating with an `HPolytope` or " *
-                                                 "`HPolyhedron` first"
+                                               "polyhedral sets; try overapproximating with an `HPolytope` or " *
+                                               "`HPolyhedron` first"
 
     if n == 2 && isboundedtype(typeof(P)) && isboundedtype(typeof(Q))
         # use vertex representation
