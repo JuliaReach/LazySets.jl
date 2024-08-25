@@ -123,34 +123,38 @@ for N in [Float64, Rational{Int}, Float32]
     @test !is_intersection_empty(l1, l1_copy) && !intersection_empty && point ∈ l1
 
     # intersection
-    s1 = LineSegment(N[-5.0, -5.0], N[5.0, 5.0])
+    s1 = LineSegment(N[-5, -5], N[5, 5])
     # collinear shifted down
-    s2 = LineSegment(N[-6.0, -6.0], N[4.0, 4.0])
-    @test intersection(s1, s2) isa LineSegment
-    @test isapprox(intersection(s1, s2).p, N[-5, -5])
-    @test isapprox(intersection(s1, s2).q, N[4, 4])
+    s2 = LineSegment(N[-6, -6], N[4, 4])
+    cap = intersection(s1, s2)
+    @test cap isa LineSegment
+    @test ispermutation([cap.p, cap.q], [N[-5, -5], N[4, 4]])
     # parallel, not intersect
-    s3 = LineSegment(N[-5.0, -4.0], N[4.0, 5.0])
-    @test intersection(s1, s3) isa EmptySet
+    s3 = LineSegment(N[-5, -4], N[4, 5])
+    @test intersection(s1, s3) == EmptySet{N}(2)
     # intersect outside of segment
-    s4 = LineSegment(N[0.0, 10.0], N[6.0, 5.0])
-    @test intersection(s1, s4) isa EmptySet
+    s4 = LineSegment(N[0, 10], N[6, 5])
+    @test intersection(s1, s4) == EmptySet{N}(2)
     # intersect in segment
-    s5 = LineSegment(N[5.0, -5.0], N[-5.0, 5.0])
+    s5 = LineSegment(N[5, -5], N[-5, 5])
     @test intersection(s1, s5) isa Singleton
     @test isapprox(intersection(s1, s5).element, N[0, 0])
     # parallel, no points in common
-    s6 = LineSegment(N[10.0, 10.0], N[11.0, 11.0])
-    @test intersection(s1, s6) isa EmptySet
+    s6 = LineSegment(N[10, 10], N[11, 11])
+    @test intersection(s1, s6) == EmptySet{N}(2)
     # parallel one point in common
-    s7 = LineSegment(N[5.0, 5.0], N[6.0, 6.0])
+    s7 = LineSegment(N[5, 5], N[6, 6])
     @test intersection(s1, s7) isa Singleton
     @test isapprox(intersection(s1, s7).element, N[5, 5])
-    s8 = LineSegment(N[0.0, 0.0], N[1.0, 0.0])
-    s9 = LineSegment(N[0.0, 0.0], N[2.0, 0.0])
-    @test intersection(s9, s8) isa LineSegment
-    @test isapprox(intersection(s9, s8).p, N[0, 0])
-    @test isapprox(intersection(s9, s8).q, N[1, 0])
+    s8 = LineSegment(N[0, 0], N[1, 0])
+    s9 = LineSegment(N[0, 0], N[2, 0])
+    cap = intersection(s8, s9)
+    @test cap isa LineSegment
+    @test ispermutation([cap.p, cap.q], [N[0, 0], N[1, 0]])
+    # intersect in segment, different orientation
+    s10 = LineSegment(N[-1, 2], N[2, -1])
+    s11 = LineSegment(N[0, 1], N[1, 0])
+    @test intersection(s10, s11) == s11
 
     # subset
     l = LineSegment(N[1, 1], N[2, 2])
