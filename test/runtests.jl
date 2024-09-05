@@ -183,9 +183,6 @@ if test_suite_basic
     @testset "LazySets.HParallelotope" begin
         include("Sets/HParallelotope.jl")
     end
-    @testset "LazySets.RotatedHyperrectangle" begin
-        include("Sets/RotatedHyperrectangle.jl")
-    end
     @testset "LazySets.Star" begin
         include("Sets/Star.jl")
     end
