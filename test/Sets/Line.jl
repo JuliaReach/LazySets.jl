@@ -46,6 +46,9 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test !isbounded(l1)
 
+    # box_approximation
+    @test_throws ArgumentError box_approximation(l1)
+
     # ispolyhedral
     @test ispolyhedral(l1)
 
