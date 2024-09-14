@@ -88,7 +88,7 @@ for N in [Float64, Rational{Int}, Float32]
     # regular linear map
     M = N[2 0; 0 4]
     P = linear_map(M, H)
-    @test P == Hyperplane(N[1//2, -1//4], N(0))
+    @test P == Hyperplane(N[1 // 2, -1 // 4], N(0))
     # result is a singleton (but represented as a polyhedron)
     M = zeros(N, 2, 2)
     P = linear_map(M, H)
