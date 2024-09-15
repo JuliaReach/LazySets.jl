@@ -1,17 +1,3 @@
-"""
-    constraints_list(x::Interval)
-
-Return the list of constraints of an interval.
-
-### Input
-
-- `x` -- interval
-
-### Output
-
-The list of constraints of the interval represented as two one-dimensional
-half-spaces.
-"""
 function constraints_list(x::Interval)
     require(@__MODULE__, :LazySets; fun_name="constraints_list")
 
