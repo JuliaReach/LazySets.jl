@@ -173,6 +173,18 @@ for N in [Float64, Rational{Int}, Float32]
     @test permute(P, 1:2) == P
     @test permute(P, [2, 1]) ==
           HPolyhedron(HalfSpace[HalfSpace(N[2, 1], N(3)), HalfSpace(N[-2, -1], N(-3))])
+
+    # low/high/extrema
+    P = HPolyhedron(HalfSpace[HalfSpace(N[1, 0], N(3)), HalfSpace(N[-1, 0], N(-2))])
+    @test low(P) == N[2, -Inf] && low(P, 1) == N(2) && low(P, 2) == N(-Inf)
+    @test high(P) == N[3, Inf] && high(P, 1) == N(3) && high(P, 2) == N(Inf)
+    @test extrema(P) == (N[2, -Inf], N[3, Inf]) && extrema(P, 1) == (N(2), N(3)) &&
+          extrema(P, 2) == (N(-Inf), N(Inf))
+    # 1D
+    P = HPolyhedron(HalfSpace[HalfSpace(N[2], N(6)), HalfSpace(N[-1], N(1))])
+    @test low(P) == N[-1] && low(P, 1) == N(-1)
+    @test high(P) == N[3] && high(P, 1) == N(3)
+    @test extrema(P) == (N[-1], N[3]) && extrema(P, 1) == (N(-1), N(3))
 end
 
 # default Float64 constructors
