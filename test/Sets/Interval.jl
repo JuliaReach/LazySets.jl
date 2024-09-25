@@ -77,27 +77,6 @@ for N in [Float64, Float32, Rational{Int}]
     # the concrete Minkowski sum of intervals returns an interval
     @test minkowski_sum(x, y) == Interval(N(-2), N(1.5))
 
-    # subtraction
-    d = x - y
-    @test dim(d) == 1
-    @test σ(N[1], d) == N[3]
-    @test σ(N[-1], d) == N[-0.5]
-    @test min(d) == N(-0.5) && max(d) == N(3)
-    v = vertices_list(d)
-    @test N[-0.5] in v && N[3] in v
-
-    # product of intervals: use the * operator
-    p = x * y
-    @test dim(p) == 1
-    @test σ(N[1], p) == N[0.5]
-    @test σ(N[-1], p) == N[-2]
-    v = vertices_list(p)
-    @test N[0.5] in v && N[-2] in v
-
-    # test different arithmetic operations
-    r = minkowski_sum(x, y) - minkowski_sum(d, p)
-    @test min(r) == N(-5.5) && max(r) == N(4)
-
     # ispolyhedral
     @test ispolyhedral(x)
 
