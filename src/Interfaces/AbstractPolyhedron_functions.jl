@@ -235,7 +235,7 @@ Remove the redundant constraints of a given list of linear constraints.
                    linear program
 ### Output
 
-The list of constraints with the redundant ones removed, or an empty set if the
+The list of constraints with the redundant ones removed, or an empty list if the
 constraints are infeasible.
 
 ### Notes
@@ -253,8 +253,7 @@ function remove_redundant_constraints(constraints::AbstractVector{S};
     if remove_redundant_constraints!(constraints_copy; backend=backend)
         return constraints_copy
     else  # the constraints are infeasible
-        N = eltype(first(constraints))
-        return EmptySet{N}(dim(constraints[1]))
+        return Vector{eltype(constraints)}(undef, 0)
     end
 end
 
