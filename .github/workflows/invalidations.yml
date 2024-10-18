@@ -20,7 +20,7 @@ jobs:
       - name: Set up Julia
         uses: julia-actions/setup-julia@v2
         with:
-          version: '1'
+          version: '1.10'  # currently not compatible with Julia v1.11
       # current branch
       - name: Check out repository in current branch
         uses: actions/checkout@v4
