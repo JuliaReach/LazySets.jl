@@ -206,6 +206,25 @@ for N in [Float64, Float32, Rational{Int}]
                                      N[9, 12], N[7, 12], N[4, 10]])
     end
 
+    # low/high/extrema
+    p2 = VPolygon([N[5, 1], N[4, 0], N[3, 1], N[4, 2]])
+    @test low(p2) == N[3, 0] && low(p2, 1) == N(3) && low(p2, 2) == N(0)
+    @test high(p2) == N[5, 2] && high(p2, 1) == N(5) && high(p2, 2) == N(2)
+    @test extrema(p2) == (N[3, 0], N[5, 2]) && extrema(p2, 1) == (N(3), N(5)) &&
+          extrema(p2, 2) == (N(0), N(2))
+    # singleton
+    p2 = VPolygon([N[1, 2]])
+    @test low(p2) == N[1, 2] && low(p2, 1) == N(1) && low(p2, 2) == N(2)
+    @test high(p2) == N[1, 2] && high(p2, 1) == N(1) && high(p2, 2) == N(2)
+    @test extrema(p2) == (N[1, 2], N[1, 2]) && extrema(p2, 1) == (N(1), N(1)) &&
+          extrema(p2, 2) == (N(2), N(2))
+    # empty polygon
+    p2 = VPolygon{N}()
+    @test low(p2) == N[Inf, Inf] && low(p2, 1) == N(Inf) && low(p2, 2) == N(Inf)
+    @test high(p2) == N[-Inf, -Inf] && high(p2, 1) == N(-Inf) && high(p2, 2) == N(-Inf)
+    @test extrema(p2) == (N[Inf, Inf], N[-Inf, -Inf]) && extrema(p2, 1) == (N(Inf), N(-Inf)) &&
+          extrema(p2, 2) == (N(Inf), N(-Inf))
+
     # ===================================
     # Concrete intersection
     # ===================================
