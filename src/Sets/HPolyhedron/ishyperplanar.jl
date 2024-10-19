@@ -6,6 +6,10 @@ function ishyperplanar(P::HPolyhedron)
     if m > 2
         # try to remove redundant constraints
         clist = remove_redundant_constraints(clist)
+        if isempty(clist)
+            # constraints are contradictory
+            return false
+        end
         m = length(clist)
     end
     if m != 2
