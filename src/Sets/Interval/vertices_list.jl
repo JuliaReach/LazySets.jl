@@ -1,11 +1,7 @@
 """
+# Extended help
+
     vertices_list(x::Interval; kwargs...)
-
-Return the list of vertices of an interval.
-
-### Input
-
-- `x` -- interval
 
 ### Output
 
