@@ -3,6 +3,7 @@ module PolygonModule
 using Reexport, Requires
 
 using ..LazySets: LazySet, _plot_recipe_2d_vlist
+using ReachabilityBase.Comparison: _leq, _geq, _isapprox
 using ReachabilityBase.Require: require
 
 @reexport import ..API: convex_hull, dim, isconvextype, isbounded,

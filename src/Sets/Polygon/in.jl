@@ -24,11 +24,11 @@ function ∈(x::AbstractVector, P::Polygon)
     p = @inbounds vlist[end]
     odd = false
     @inbounds for q in vlist
-        if (p[1] <= x[1] && q[1] >= x[1]) || (q[1] <= x[1] && p[1] >= x[1])
+        if (_leq(p[1], x[1]) && _geq(q[1], x[1])) || (_leq(q[1], x[1]) && _geq(p[1], x[1]))
             # line segment pq intersects vertical line through x
-            if p[1] == q[1]
+            if _isapprox(p[1], q[1])
                 # vertical line segment
-                if (p[2] <= x[2] && q[2] >= x[2]) || (q[2] <= x[2] && p[2] >= x[2])
+                if (_leq(p[2], x[2]) && _geq(q[2], x[2])) || (_leq(q[2], x[2]) && _geq(p[2], x[2]))
                     # x is on the line segment
                     return true
                 end
@@ -37,7 +37,7 @@ function ∈(x::AbstractVector, P::Polygon)
                 line2 = Line2D(p, q)
                 y = element(intersection(line2, vline))
                 # compare y coordinate
-                if y[2] >= x[2]
+                if _geq(y[2], x[2])
                     if y == x
                         # x is on line segment
                         return true
