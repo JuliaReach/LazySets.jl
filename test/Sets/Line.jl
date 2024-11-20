@@ -7,6 +7,7 @@ for N in [Float64, Rational{Int}, Float32]
     # construction
     l1 = Line(; from=N[0, 1], to=N[1, 1]) # two points on the line
     l2 = Line(N[0, 1], N[1, 0]) # point and direction
+    @test l1.p ≈ l2.p && l1.d ≈ l2.d  # the lines are the same
 
     # construction given a 2d direction and offset
     ll = Line(N[0, 1], N(1)) # y == 1
@@ -16,9 +17,6 @@ for N in [Float64, Rational{Int}, Float32]
     ll = Line(N[1, -1], N(0)) # x == y
     @test N[0, 0] ∈ ll && N[1, 1] ∈ ll
     @test_throws ArgumentError Line(zeros(N, 2), N(0))
-
-    # the lines are the same modulo the sign of the normal vector
-    @test l1.p ≈ l2.p && l1.d ≈ -l2.d
 
     # direction
     @test direction(l2) == N[1, 0]
