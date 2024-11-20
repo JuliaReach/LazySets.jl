@@ -1248,3 +1248,94 @@ Determine whether a polyhedron is equivalent to a hyperplane.
 ``a·x ≤ b`` and ``-a·x ≤ -b``.
 """
 function ishyperplanar(::AbstractPolyhedron) end
+
+function extrema(P::AbstractPolyhedron)
+    if dim(P) == 1
+        l, h = _extrema_1d(P)
+        return ([l], [h])
+    end
+    return _extrema_lowhigh(P)
+end
+
+function extrema(P::AbstractPolyhedron, i::Int)
+    if dim(P) == 1
+        @assert i == 1 "invalid index $i for a set of 1 dimension"
+        return _extrema_1d(P)
+    end
+    return _extrema_lowhigh(P, i)
+end
+
+function _extrema_1d(P::AbstractPolyhedron{N}) where {N}
+    l = N(-Inf)
+    h = N(Inf)
+    @inbounds for c in constraints(P)
+        a = c.a[1]
+        if a > zero(N)
+            # a·x <= b  =>  x <= b/a
+            h = min(h, c.b / a)
+        else
+            # HalfSpace `0·x <= b` is not allowed (type constraint)
+            @assert a < zero(N) "invalid constraint"
+
+            # -a·x <= -b  =>  x >= b/a
+            l = max(l, c.b / a)
+        end
+    end
+    return (l, h)
+end
+
+function low(P::AbstractPolyhedron)
+    if dim(P) == 1
+        l = _low_1d(P)
+        return [l]
+    end
+    return _low(P)
+end
+
+function low(P::AbstractPolyhedron, i::Int)
+    if dim(P) == 1
+        @assert i == 1 "invalid index $i for a set of 1 dimension"
+        return _low_1d(P)
+    end
+    return _low(P, i)
+end
+
+function _low_1d(P::AbstractPolyhedron{N}) where {N}
+    l = N(-Inf)
+    @inbounds for c in constraints(P)
+        a = c.a[1]
+        if a < zero(N)
+            # -a·x <= -b  =>  x >= b/a
+            l = max(l, c.b / a)
+        end
+    end
+    return l
+end
+
+function high(P::AbstractPolyhedron)
+    if dim(P) == 1
+        l = _high_1d(P)
+        return [l]
+    end
+    return _high(P)
+end
+
+function high(P::AbstractPolyhedron, i::Int)
+    if dim(P) == 1
+        @assert i == 1 "invalid index $i for a set of 1 dimension"
+        return _high_1d(P)
+    end
+    return _high(P, i)
+end
+
+function _high_1d(P::AbstractPolyhedron{N}) where {N}
+    h = N(Inf)
+    @inbounds for c in constraints(P)
+        a = c.a[1]
+        if a > zero(N)
+            # a·x <= b  =>  x <= b/a
+            h = min(h, c.b / a)
+        end
+    end
+    return h
+end
