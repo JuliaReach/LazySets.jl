@@ -218,13 +218,14 @@ for N in [Float64]
     # tests that require SymEngine
     @static if isdefined(@__MODULE__, :SymEngine)
         # _ishalfspace
-        @test LazySets._ishyperplanar(:(x1 = 0))
-        @test !LazySets._ishyperplanar(:(x1 <= 0))
-        @test LazySets._ishyperplanar(:(2 * x1 = 4))
-        @test LazySets._ishyperplanar(:(6.1 = 5.3 * f - 0.1 * g))
-        @test !LazySets._ishyperplanar(:(2 * x1^2 = 4))
-        @test !LazySets._ishyperplanar(:(x1^2 = 4 * x2 - x3))
-        @test LazySets._ishyperplanar(:(x1 = 4 * x2 - x3))
+        res = LazySets._ishyperplanar(:(x1 = 0))
+        res &= !LazySets._ishyperplanar(:(x1 <= 0))
+        res &= LazySets._ishyperplanar(:(2 * x1 = 4))
+        res &= LazySets._ishyperplanar(:(6.1 = 5.3 * f - 0.1 * g))
+        res &= !LazySets._ishyperplanar(:(2 * x1^2 = 4))
+        res &= !LazySets._ishyperplanar(:(x1^2 = 4 * x2 - x3))
+        res &= LazySets._ishyperplanar(:(x1 = 4 * x2 - x3))
+        @test res
 
         # convert
         H = convert(Hyperplane, :(x1 = -0.03))
