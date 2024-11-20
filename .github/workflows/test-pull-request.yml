@@ -46,7 +46,6 @@ jobs:
       - name: Run tests
         uses: julia-actions/julia-runtest@v1
         timeout-minutes: 30  # kill stale process earlier
-        continue-on-error: ${{ matrix.version == '1.6' }}
       - name: Process coverage
         uses: julia-actions/julia-processcoverage@v1
       - name: Upload coverage
