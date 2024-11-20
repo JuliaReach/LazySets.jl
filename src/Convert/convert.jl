@@ -104,32 +104,6 @@ for T in subtypes(AbstractHPolygon, true)
         end
 
         """
-            convert(::Type{$($T)}, S::AbstractSingleton{N}) where {N}
-
-        Convert a singleton to a polygon in constraint representation.
-
-        ### Input
-
-        - `$($T)` -- target type
-        - `S`     -- singleton
-
-        ### Output
-
-        A polygon in constraint representation with the minimal number of constraints
-        (three).
-        """
-        function convert(::Type{$T}, S::AbstractSingleton{N}) where {N}
-            constraints_list = Vector{HalfSpace{N,Vector{N}}}(undef, 3)
-            o = one(N)
-            z = zero(N)
-            v = element(S)
-            constraints_list[1] = HalfSpace([o, o], v[1] + v[2])
-            constraints_list[2] = HalfSpace([-o, z], -v[1])
-            constraints_list[3] = HalfSpace([z, -o], -v[2])
-            return $T(constraints_list)
-        end
-
-        """
             convert(::Type{$($T)}, L::LineSegment{N}) where {N}
 
         Convert a line segment to a polygon in constraint representation.
