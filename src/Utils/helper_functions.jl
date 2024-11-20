@@ -279,7 +279,14 @@ _to_colVector(M::AbstractMatrix) = convert(Vector, [M[:, j] for j in axes(M, 2)]
 _to_colVector(M::Matrix) = [M[:, j] for j in axes(M, 2)]
 
 function load_StaticArraysCore_to_colVector()
-    return quote
-        _to_colVector(M::SMatrix) = collect(eachcol(M))
+    @static if VERSION < v"1.9"
+        # in pre-v1.9 Julia versions, `collect` returned a `SizedVector`
+        return quote
+            _to_colVector(M::SMatrix) = [eachcol(M)...]
+        end
+    else
+        return quote
+            _to_colVector(M::SMatrix) = collect(eachcol(M))
+        end
     end
 end  # load_StaticArraysCore_to_colVector()
