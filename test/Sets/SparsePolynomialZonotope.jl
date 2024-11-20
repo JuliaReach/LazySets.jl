@@ -104,7 +104,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test expmat(PZreduced) == [1 2; 0 1]
     # also removes almost-zero columns
     if N <: AbstractFloat
-        PZ = SparsePolynomialZonotope(N[-1, 2], N[1e-16; -1e-16;;], N[1e-16; -1e-16;;], [1; 1;;])
+        PZ = SparsePolynomialZonotope(N[-1, 2], hcat(N[1e-16, -1e-16]),
+                                      hcat(N[1e-16, -1e-16]), hcat([1, 1]))
         PZreduced = remove_redundant_generators(PZ)
         @test center(PZreduced) == N[-1, 2]
         @test size(genmat_dep(PZreduced)) == (2, 0)
