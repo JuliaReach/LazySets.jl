@@ -1,12 +1,7 @@
 """
+# Extended help
+
     linear_map(M::AbstractMatrix, x::Interval)
-
-Concrete linear map of an interval.
-
-### Input
-
-- `M` -- matrix
-- `x` -- interval
 
 ### Output
 

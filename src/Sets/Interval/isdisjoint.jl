@@ -1,25 +1,11 @@
 """
+# Extended help
+
     isdisjoint(I1::Interval, I2::Interval, [witness]::Bool=false)
-
-Check whether two intervals do not intersect, and otherwise optionally compute a
-witness.
-
-### Input
-
-- `I1`      -- interval
-- `I2`      -- interval
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``I1 ∩ I2 = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``I1 ∩ I2 = ∅``
-  * `(false, v)` iff ``I1 ∩ I2 ≠ ∅`` and ``v ∈ I1 ∩ I2``
 
 ### Algorithm
 
-``I1 ∩ I2 ≠ ∅`` iff there is a gap between the left-most point of the second
+``I1 ∩ I2 = ∅`` iff there is a gap between the left-most point of the second
 interval and the right-most point of the first interval, or vice-versa.
 
 A witness is computed by taking the maximum over the left-most points of each
