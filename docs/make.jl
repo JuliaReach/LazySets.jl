@@ -1,15 +1,18 @@
-using Documenter, LazySets
+using Documenter, LazySets, DocumenterCitations
 import Polyhedra, Optim, ExponentialUtilities, TaylorModels, Distributions,
        MiniQhull, Symbolics, SymEngine
 
 include("init.jl")
 
+bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"); style=:alpha)
+
 makedocs(; sitename="LazySets.jl",
          modules=[LazySets, LazySets.API, Approximations, LazySets.Parallel],
          format=Documenter.HTML(; prettyurls=get(ENV, "CI", nothing) == "true",
-                                assets=["assets/aligned.css"],
+                                assets=["assets/aligned.css", "assets/citations.css"],
                                 size_threshold_warn=150 * 2^10),
          pagesonly=true,
+         plugins=[bib],
          pages=[
                 #
                 "Home" => "index.md",
@@ -140,7 +143,8 @@ makedocs(; sitename="LazySets.jl",
                                  "Parallel" => "lib/parallel.md"
                                  #
                                  ],
-                "About" => "about.md"
+                "About" => "about.md",
+                "Bibliography" => "bibliography.md"
                 #
                 ])
 

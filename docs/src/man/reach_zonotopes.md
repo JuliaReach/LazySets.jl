@@ -9,8 +9,7 @@ Depth = 3
 
 In this section we present an algorithm implemented using `LazySets` that
 computes the reach sets of an affine ordinary differential equation (ODE).
-This algorithm is from A. Girard's
-*"Reachability of uncertain linear systems using zonotopes*, HSCC. Vol. 5. 2005.
+This algorithm is taken from [Girard05](@citet).
 We have chosen this algorithm for the purpose of illustration of a complete
 application of `LazySets`.
 

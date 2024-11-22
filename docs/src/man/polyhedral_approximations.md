@@ -153,12 +153,4 @@ Finally, pick the facet normal with the largest distance, and add it to the
 template directions.
 This procedure is repeated until the distance is smaller than the desired error.
 
-For more details we refer to
-
-Kamenev, G. K. (1996). An algorithm for approximating polyhedra. Computational
-Mathematics and Mathematical Physics, 36(4), 533--544,
-
-[Lotov, A. V., & Pospelov, A. I. (2008). The modified method of refined bounds
-for polyhedral approximation of convex polytopes. Computational Mathematics and
-Mathematical Physics, 48(6), 933-941
-](https://link.springer.com/article/10.1134/S0965542508060055).
+For more details we refer to [Kamenev96,LotovP08](@citet).
