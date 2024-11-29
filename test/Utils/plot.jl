@@ -23,6 +23,9 @@ for N in [Float64, Float32, Rational{Int}]
         if n == 2
             ls = LineSegment(v0, v1)
         end
+        if N <: AbstractFloat  # `convert` not available for non-float
+            hpa = convert(HParallelotope, hr)
+        end
 
         # -------------------------------------------
         # plot polytopes
@@ -38,6 +41,9 @@ for N in [Float64, Float32, Rational{Int}]
         elseif n == 2
             plot(ls)
         end
+        if N <: AbstractFloat
+            plot(hpa)
+        end
 
         if N == Rational{Int}
             # rationals do not support epsilon-close approximation
@@ -48,6 +54,12 @@ for N in [Float64, Float32, Rational{Int}]
         b2 = Ball2(v0, p1)
         bp = Ballp(N(1.5), v0, p1)
         el = Ellipsoid(v0, Diagonal(ones(N, n)))
+        # dpz = convert(DensePolynomialZonotope, zt)  # TODO conversion currently missing
+        spz = convert(SparsePolynomialZonotope, zt)
+        sspz = convert(SimpleSparsePolynomialZonotope, zt)
+        if n == 2
+            ncp = Polygon([v0, v1])
+        end
 
         # unary set operations
         spI = SparseMatrixCSC{N}(2I, n, n)
@@ -79,13 +91,16 @@ for N in [Float64, Float32, Rational{Int}]
         # empty set
         es = EmptySet{N}(n)
 
-        # infinite sets
+        # bounded sets
         hs = HalfSpace(v1, p1)
         hp = Hyperplane(v1, p1)
+        hph = HPolyhedron(constraints)
         uni = Universe{N}(n)
+        l = Line(v0, v1)
         if n == 2
-            l = Line2D(v1, p1)
+            l2D = Line2D(v1, p1)
         end
+        sta = convert(Star, bi)
 
         # unary set operations
         sih = SymmetricIntervalHull(b1)
@@ -112,6 +127,12 @@ for N in [Float64, Float32, Rational{Int}]
         # ------------------------------------------------------------------
         # plot using epsilon-close approximation (default threshold ε value)
         # ------------------------------------------------------------------
+        plot(b2)
+        plot(bp)
+        plot(el)
+        if n == 2
+            plot(ncp)
+        end
         if N == Float64 # Float32 requires promotion see #1304
             plot(its)
         end
@@ -126,10 +147,13 @@ for N in [Float64, Float32, Rational{Int}]
         plot(es)
         plot(hs)
         plot(hp)
+        plot(hph)
         plot(uni)
+        plot(l)
         if n == 2
-            plot(l)
+            plot(l2D)
         end
+        plot(sta)
         plot(ch)
         plot(cha)
         plot(sih)
@@ -138,17 +162,20 @@ for N in [Float64, Float32, Rational{Int}]
         plot(ms)
         plot(msa)
         plot(cms)
-        # the UnionSet(Array) recipe uses kwargs, which are not supported with the workaround we use here
-        @test_broken plot(us)
-        @test_broken plot(usa)
         if n == 2
             plot(cp)
             plot(cpa)
         end
-
         if N == Float64
             plot(itsa)
         end
+
+        # recipes using kwargs are not supported with the workaround we use here
+        # @test_broken plot(dpz)
+        @test_broken plot(spz)
+        @test_broken plot(sspz)
+        @test_broken plot(us)
+        @test_broken plot(usa)
     end
 end
 
