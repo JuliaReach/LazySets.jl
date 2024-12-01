@@ -16,6 +16,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # standard zonotope
     P2 = DensePolynomialZonotope(c, Matrix{N}[], Matrix{N}[], G)
+    Z = Zonotope(c, G)
+    @test convert(DensePolynomialZonotope, Z) == P2
 
     @test dim(P) == 2
     @test polynomial_order(P) == 2
