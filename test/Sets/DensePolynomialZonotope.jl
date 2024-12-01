@@ -9,6 +9,14 @@ for N in [Float64, Float32, Rational{Int}]
     G = hcat(N[0.3, 0.3])
     P = DensePolynomialZonotope(c, E, F, G)
 
+    # constructor
+    @test_throws AssertionError DensePolynomialZonotope(c, E, F, hcat(N[0.3, 0.3, 0]))
+    @test_throws AssertionError DensePolynomialZonotope(c, [E1], F, G)
+    @test_throws AssertionError DensePolynomialZonotope(c, Matrix{N}[], F, G)
+
+    # standard zonotope
+    P2 = DensePolynomialZonotope(c, Matrix{N}[], Matrix{N}[], G)
+
     @test dim(P) == 2
     @test polynomial_order(P) == 2
     @test center(P) == c
