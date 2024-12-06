@@ -52,6 +52,9 @@ for N in [Float64, Float32, Rational{Int}]
           constraints_list(HPolygonOpt(A, b)) ==
           [HalfSpace(N[2, 0], N(-1)), HalfSpace(N[1, 3], N(1))]
 
+    # constructor for V-rep
+    @test_throws AssertionError VPolygon([N[0, 0], N[1]])
+
     # conversion to optimized polygon
     po = convert(HPolygonOpt, p)
     # conversion back

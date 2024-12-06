@@ -56,6 +56,7 @@ struct VPolygon{N,VN<:AbstractVector{N}} <: AbstractPolygon{N}
     function VPolygon(vertices::Vector{VN};
                       apply_convex_hull::Bool=true,
                       algorithm::String="monotone_chain") where {N,VN<:AbstractVector{N}}
+        @assert all(v -> length(v) == 2, vertices)
         if apply_convex_hull
             vertices = convex_hull(vertices; algorithm=algorithm)
         end
