@@ -5,6 +5,8 @@ for N in [Float64, Float32, Rational{Int}]
     T = Tetrahedron(vertices)
     @test eltype(T) == N
     @test dim(T) == 3
+    @test_throws AssertionError Tetrahedron([vertices[1]])
+    @test_throws AssertionError Tetrahedron([N[1], N[2], N[3], N[4]])
 
     vmat = reduce(hcat, vertices)
     Tmat = Tetrahedron(vmat)

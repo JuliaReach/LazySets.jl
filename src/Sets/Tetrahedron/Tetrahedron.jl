@@ -1,7 +1,7 @@
 """
     Tetrahedron{N, VN<:AbstractVector{N}, VT<:AbstractVector{VN}} <: AbstractPolytope{N}
 
-Type that represents a tetrahedron in vertex representation.
+Type that represents a (3-dimensional) tetrahedron in vertex representation.
 
 ### Fields
 
@@ -35,6 +35,7 @@ struct Tetrahedron{N,VN<:AbstractVector{N},VT<:AbstractVector{VN}} <: AbstractPo
 
     function Tetrahedron(vertices::VT) where {N,VN<:AbstractVector{N},VT<:AbstractVector{VN}}
         @assert length(vertices) == 4 "a tetrahedron requires four vertices"
+        @assert all(v -> length(v) == 3, vertices) "a tetrahedron requires 3D vertices"
         return new{N,VN,VT}(vertices)
     end
 end
