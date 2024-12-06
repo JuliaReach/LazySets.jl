@@ -74,10 +74,15 @@ struct DensePolynomialZonotope{N,VT,VMT,MT} <: AbstractPolynomialZonotope{N}
     # default constructor with dimension check
     function DensePolynomialZonotope(c::VT, E::VMT, F::VMT, G::MT) where {VT,VMT,MT}
         # check polynomial order
-        @assert length(E) == 1 + length(F) "incompatible lengths of E and F: " *
-                                           "$(length(E)) and $(length(F))"
-        N = typeof(c[1])
+        η = length(E)
+        @assert length(F) == (η > 0 ? η - 1 : 0) "incompatible lengths of E and F: $η and " *
+                                                 "$(length(F))"
+        # check dimension
+        n = length(c)
+        @assert size(G, 1) == n "incompatible dimension $n for G = $G"
+        @assert all(size(A, 1) == n for A in E) "incompatible dimension $n for E = $E"
 
+        N = eltype(c)
         return new{N,VT,VMT,MT}(c, E, F, G)
     end
 end

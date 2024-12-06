@@ -14,6 +14,7 @@ end
 include("AffineMap.jl")
 include("CartesianProduct.jl")
 include("CartesianProductArray.jl")
+include("DensePolynomialZonotope.jl")
 include("HPolyhedron.jl")
 include("HPolytope.jl")
 include("Hyperplane.jl")
