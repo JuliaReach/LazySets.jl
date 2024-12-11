@@ -9,8 +9,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test dim(E) == 2
 
     # support function & support vector
-    @test_throws ErrorException ρ(N[0], E)
-    @test_throws ErrorException σ(N[0], E)
+    @test_throws ArgumentError ρ(N[0], E)
+    @test_throws ArgumentError σ(N[0], E)
 
     # boundedness
     @test isbounded(E) && isboundedtype(typeof(E))
@@ -36,10 +36,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test isempty(E)
 
     # an_element/norm/radius/diameter functions
-    @test_throws ErrorException an_element(E)
-    @test_throws ErrorException norm(E)
-    @test_throws ErrorException radius(E)
-    @test_throws ErrorException diameter(E)
+    @test_throws ArgumentError an_element(E)
+    @test_throws ArgumentError norm(E)
+    @test_throws ArgumentError radius(E)
+    @test_throws ArgumentError diameter(E)
 
     # vertices / vertices_list
     @test collect(vertices(E)) == vertices_list(E) == Vector{Vector{N}}()
@@ -84,13 +84,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test area(E) == N(0)
 
     # chebyshev_center_radius
-    @test_throws ErrorException chebyshev_center_radius(E)
+    @test_throws ArgumentError chebyshev_center_radius(E)
 
     # low/high
-    @test_throws ErrorException low(E)
-    @test_throws ErrorException low(E, 1)
-    @test_throws ErrorException high(E)
-    @test_throws ErrorException high(E, 1)
+    @test_throws ArgumentError low(E)
+    @test_throws ArgumentError low(E, 1)
+    @test_throws ArgumentError high(E)
+    @test_throws ArgumentError high(E, 1)
 
     # isdisjoint
     @test isdisjoint(E, B) && isdisjoint(B, E) && isdisjoint(E, E)
