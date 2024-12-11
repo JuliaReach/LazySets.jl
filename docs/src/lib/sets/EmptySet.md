@@ -12,32 +12,9 @@ EmptySet
 ## Operations
 
 ```@docs
-an_element(::EmptySet)
-area(::EmptySet)
 chebyshev_center_radius(::EmptySet; kwargs...)
 complement(::EmptySet{N}) where {N}
-diameter(::EmptySet, ::Real=Inf)
-dim(::EmptySet)
-high(::EmptySet)
-high(::EmptySet, ::Int)
-isbounded(::EmptySet)
-isempty(::EmptySet)
-isuniversal(::EmptySet{N}, ::Bool=false) where {N}
-low(::EmptySet)
-low(::EmptySet, ::Int)
-norm(::EmptySet, ::Real=Inf)
-radius(::EmptySet, ::Real=Inf)
 rand(::Type{EmptySet})
-rectify(::EmptySet)
-reflect(::EmptySet)
-vertices_list(::EmptySet)
-vertices(::EmptySet)
-volume(::EmptySet{N}) where {N}
-∈(::AbstractVector, ::EmptySet)
-linear_map(::AbstractMatrix, ::EmptySet)
-ρ(::AbstractVector, ::EmptySet)
-σ(::AbstractVector, ::EmptySet)
-translate(::EmptySet, ::AbstractVector)
 plot_recipe(::EmptySet{N}, ::Any=zero(N)) where {N}
 ```
 
@@ -46,15 +23,36 @@ CurrentModule = LazySets.API
 ```
 
 Undocumented implementations:
+
+* [`an_element`](@ref an_element(::LazySet))
+* [`area`](@ref area(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
+* [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
+* [`dim`](@ref dim(::LazySet))
+* [`high`](@ref high(::LazySet))
+* [`high`](@ref high(::LazySet, ::Int))
+* [`isbounded`](@ref isbounded(::LazySet))
 * [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
 * [`isconvextype`](@ref isconvextype(::Type{LazySet}))
+* [`isempty`](@ref isempty(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
-* [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
-* [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
-* [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
+* [`isuniversal`](@ref isuniversal(::LazySet{N}, ::Bool=false) where {N})
+* [`low`](@ref low(::LazySet))
+* [`low`](@ref low(::LazySet, ::Int))
+* [`norm`](@ref norm(::LazySet, ::Real=Inf))
+* [`radius`](@ref radius(::LazySet, ::Real=Inf))
+* [`rectify`](@ref rectify(::LazySet))
+* [`reflect`](@ref reflect(::LazySet))
+* [`vertices_list`](@ref vertices_list(::LazySet))
+* [`vertices`](@ref vertices(::LazySet))
+* [`volume`](@ref volume(::LazySet{N}) where {N})
+* [`∈`](@ref ∈(::AbstractVector, ::LazySet))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
+* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
+* [`σ`](@ref σ(::AbstractVector, ::LazySet))
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`intersection`](@ref isequivalent(::LazySet, ::LazySet))
@@ -75,6 +73,9 @@ Inherited from [`LazySet`](@ref):
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`surface`](@ref surface(::LazySet))
+* [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
+* [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
+* [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
