@@ -12,8 +12,9 @@ using ReachabilityBase.Require: require
                         isbounded, isboundedtype, isconvextype, isempty,
                         isoperationtype, isuniversal, linear_map, low, norm,
                         project, radius, rand, rectify, reflect, scale, scale!,
-                        ρ, σ, translate, translate!, vertices, vertices_list,
-                        volume, convex_hull, intersection, isdisjoint, ⊆
+                        ρ, σ, surface, translate, translate!, vertices,
+                        vertices_list, volume, convex_hull, intersection,
+                        isdisjoint, ⊆
 @reexport import ..LazySets: chebyshev_center_radius
 import ..LazySets: plot_recipe
 @reexport using ..API
@@ -49,6 +50,7 @@ include("project.jl")
 include("scale.jl")
 include("support_function.jl")
 include("support_vector.jl")
+include("surface.jl")
 include("translate.jl")
 include("convex_hull.jl")
 include("intersection.jl")
