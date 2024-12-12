@@ -8,13 +8,13 @@ using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator
 using ReachabilityBase.Require: require
 
-@reexport import ..API: an_element, area, complement, diameter, dim, high, ∈,
-                        isbounded, isboundedtype, isconvextype, isempty,
-                        isoperationtype, isuniversal, linear_map, low, norm,
-                        project, radius, rand, rectify, reflect, scale, scale!,
-                        ρ, σ, surface, translate, translate!, vertices,
-                        vertices_list, volume, convex_hull, intersection,
-                        isdisjoint, ⊆
+@reexport import ..API: an_element, area, complement, diameter, dim,
+                        exponential_map, high, ∈, isbounded, isboundedtype,
+                        isconvextype, isempty, isoperationtype, isuniversal,
+                        linear_map, low, norm, project, radius, rand, rectify,
+                        reflect, scale, scale!, ρ, σ, surface, translate,
+                        translate!, vertices, vertices_list, volume,
+                        convex_hull, intersection, isdisjoint, ⊆
 @reexport import ..LazySets: chebyshev_center_radius
 import ..LazySets: plot_recipe
 @reexport using ..API
@@ -44,6 +44,7 @@ include("reflect.jl")
 include("vertices_list.jl")
 include("vertices.jl")
 include("volume.jl")
+include("exponential_map.jl")
 include("in.jl")
 include("linear_map.jl")
 include("project.jl")
