@@ -727,50 +727,22 @@ function ⊆(X::AbstractPolytope, U::UnionSetArray, witness::Bool=false; algorit
     return _issubset_unionsetarray(X, U, witness)
 end
 
-"""
-    ⊆(∅::EmptySet, X::LazySet, witness::Bool=false)
-
-Check whether the empty set is contained in another set.
-
-### Input
-
-- `∅`       -- inner empty set
-- `X`       -- outer set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-               (ignored, just kept for interface reasons)
-
-### Output
-
-`true`.
-"""
 function ⊆(∅::EmptySet, X::LazySet, witness::Bool=false)
     return _issubset_emptyset(∅, X, witness)
-end
-
-function _issubset_emptyset(∅::EmptySet, X::LazySet, witness::Bool=false)
-    return _witness_result_empty(witness, true, ∅, X)
 end
 
 # disambiguations
 for ST in [:AbstractPolyhedron, :AbstractHyperrectangle, :Complement, :UnionSet,
            :UnionSetArray]
-    @eval ⊆(∅::EmptySet, X::($ST), witness::Bool=false) = _issubset_emptyset(∅, X, witness)
+    @eval function ⊆(∅::EmptySet, X::($ST), witness::Bool=false)
+        return _issubset_emptyset(∅, X, witness)
+    end
 end
 
 """
+# Extended help
+
     ⊆(X::LazySet, ∅::EmptySet, [witness]::Bool=false)
-
-Check whether a set is contained in the empty set.
-
-### Input
-
-- `X`       -- inner set
-- `∅`       -- outer empty set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-`true` iff `X` is empty.
 
 ### Algorithm
 
@@ -778,20 +750,14 @@ We rely on `isempty(X)` for the emptiness check and on `an_element(X)` for
 witness production.
 """
 function ⊆(X::LazySet, ∅::EmptySet, witness::Bool=false)
-    return _issubset_in_emptyset(X, ∅, witness)
-end
-
-function _issubset_in_emptyset(X::LazySet, ∅::EmptySet, witness::Bool=false)
-    if isempty(X)
-        return _witness_result_empty(witness, true, X, ∅)
-    else
-        return witness ? (false, an_element(X)) : false
-    end
+    return _issubset_emptyset2(X, ∅, witness)
 end
 
 # disambiguations
 for ST in [:AbstractPolytope, :UnionSet, :UnionSetArray, :AbstractSingleton, :LineSegment]
-    @eval ⊆(X::($ST), ∅::EmptySet, witness::Bool=false) = _issubset_in_emptyset(X, ∅, witness)
+    @eval function ⊆(X::($ST), ∅::EmptySet, witness::Bool=false)
+        return _issubset_emptyset2(X, ∅, witness)
+    end
 end
 
 """

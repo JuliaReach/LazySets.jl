@@ -112,7 +112,6 @@ plot1
 ⊆(::LineSegment, ::LazySet, ::Bool=false)
 ⊆(::LineSegment, ::AbstractHyperrectangle, ::Bool=false)
 ⊆(::Interval, ::UnionSet, ::Bool=false)
-⊆(::EmptySet, ::LazySet, ::Bool=false)
 ⊆(::LazySet, ::EmptySet, ::Bool=false)
 ⊆(::UnionSet, ::LazySet, ::Bool=false)
 ⊆(::UnionSetArray, ::LazySet, ::Bool=false)
