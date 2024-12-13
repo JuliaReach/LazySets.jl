@@ -120,7 +120,7 @@ include("Sets/Ellipsoid/EllipsoidModule.jl")
 
 include("Sets/EmptySet/EmptySetModule.jl")
 @reexport using ..EmptySetModule: EmptySet, ∅
-using ..EmptySetModule: _isdisjoint_emptyset
+using ..EmptySetModule: _isdisjoint_emptyset, _issubset_emptyset, _issubset_emptyset2
 
 include("Sets/HParallelotope/HParallelotopeModule.jl")
 @reexport using ..HParallelotopeModule: HParallelotope,
