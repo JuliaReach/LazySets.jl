@@ -3,7 +3,11 @@ function convex_hull(∅::EmptySet)
 end
 
 function convex_hull(∅₁::EmptySet, ∅₂::EmptySet)
-    @assert dim(∅₁) == dim(∅₂) "cannot take the convex hull between two " *
-                               "empty sets of dimensions $(dim(∅₁)) and $(dim(∅₂))"
-    return ∅₁
+    return _convex_hull_emptyset(∅₁, ∅₂)
+end
+
+function _convex_hull_emptyset(∅::EmptySet, X::EmptySet)
+    @assert dim(∅) == dim(X) "the dimensions of the given sets should match, " *
+                             "but they are $(dim(∅)) and $(dim(X)), respectively"
+    return ∅
 end

@@ -4,16 +4,19 @@ using Reexport, Requires
 
 using ..LazySets: LazySet, ConvexSet, _witness_result_empty
 using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Comparison: _rtol
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator
 using ReachabilityBase.Require: require
 
-@reexport import ..API: an_element, area, complement, diameter, dim, high, ∈,
-                        isbounded, isboundedtype, isconvextype, isempty,
-                        isoperationtype, isuniversal, linear_map, low, norm,
-                        project, radius, rand, rectify, reflect, scale, scale!,
-                        ρ, σ, translate, translate!, vertices, vertices_list,
-                        volume, convex_hull, intersection, isdisjoint, ⊆
+@reexport import ..API: an_element, area, complement, diameter, dim,
+                        exponential_map, high, ∈, is_interior_point, isbounded,
+                        isboundedtype, isconvextype, isempty, isoperationtype,
+                        isuniversal, linear_map, low, norm, project, radius,
+                        rand, rectify, reflect, scale, scale!, ρ, σ, surface,
+                        translate, translate!, vertices, vertices_list, volume,
+                        cartesian_product, convex_hull, intersection, ≈,
+                        isdisjoint, ⊆
 @reexport import ..LazySets: chebyshev_center_radius
 import ..LazySets: plot_recipe
 @reexport using ..API
@@ -43,15 +46,20 @@ include("reflect.jl")
 include("vertices_list.jl")
 include("vertices.jl")
 include("volume.jl")
+include("exponential_map.jl")
 include("in.jl")
+include("is_interior_point.jl")
 include("linear_map.jl")
 include("project.jl")
 include("scale.jl")
 include("support_function.jl")
 include("support_vector.jl")
+include("surface.jl")
 include("translate.jl")
+include("cartesian_product.jl")
 include("convex_hull.jl")
 include("intersection.jl")
+include("isapprox.jl")
 include("isdisjoint.jl")
 include("issubset.jl")
 
