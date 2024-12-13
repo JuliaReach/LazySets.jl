@@ -37,9 +37,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # an_element/norm/radius/diameter functions
     @test_throws ArgumentError an_element(E)
-    @test_throws ArgumentError norm(E)
-    @test_throws ArgumentError radius(E)
-    @test_throws ArgumentError diameter(E)
+    @test norm(E) == N(0)
+    @test radius(E) == N(0)
+    @test diameter(E) == N(0)
 
     # vertices / vertices_list
     @test collect(vertices(E)) == vertices_list(E) == Vector{Vector{N}}()
