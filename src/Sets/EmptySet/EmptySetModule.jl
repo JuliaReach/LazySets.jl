@@ -19,6 +19,7 @@ using ReachabilityBase.Require: require
                         isdisjoint, ⊆
 @reexport import ..LazySets: chebyshev_center_radius
 import ..LazySets: plot_recipe
+import Base: convert
 @reexport using ..API
 
 export EmptySet, ∅
@@ -64,6 +65,8 @@ include("isdisjoint.jl")
 include("issubset.jl")
 
 include("chebyshev_center_radius.jl")
+
+include("convert.jl")
 
 """
     plot_recipe(∅::EmptySet{N}, [ε]=zero(N)) where {N}
