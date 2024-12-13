@@ -9,6 +9,12 @@ EmptySet
 ∅
 ```
 
+## Conversion
+
+```julia
+convert(::Type{EmptySet}, ::LazySet)
+```
+
 ## Operations
 
 ```@docs
