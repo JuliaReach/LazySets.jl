@@ -23,7 +23,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isuniversal(E) && !res && w ∉ E
 
     # membership
-    @test N[0] ∉ E
+    @test_throws AssertionError N[0] ∈ E
     @test N[0, 0] ∉ E
 
     # subset
