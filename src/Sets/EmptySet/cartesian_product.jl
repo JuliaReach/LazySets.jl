@@ -5,5 +5,6 @@ end
 function _cartesian_product_emptyset(∅::EmptySet, X::LazySet)
     @assert dim(∅) == dim(X) "the dimensions of the given sets should match, " *
                              "but they are $(dim(∅)) and $(dim(X)), respectively"
-    throw(ArgumentError("cannot take the Cartesian product with an empty set"))
+    N = promote_type(eltype(∅), eltype(X))
+    return EmptySet{N}(dim(∅) + dim(X))
 end
