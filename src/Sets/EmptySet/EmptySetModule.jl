@@ -12,10 +12,10 @@ using ReachabilityBase.Require: require
 @reexport import ..API: an_element, area, complement, diameter, dim,
                         exponential_map, high, ∈, is_interior_point, isbounded,
                         isboundedtype, isconvextype, isempty, isoperationtype,
-                        isuniversal, linear_map, low, norm, project, radius,
-                        rand, rectify, reflect, scale, scale!, ρ, σ, surface,
-                        translate, translate!, vertices, vertices_list, volume,
-                        cartesian_product, convex_hull, intersection, ≈,
+                        isuniversal, linear_map, low, norm, permute, project,
+                        radius, rand, rectify, reflect, scale, scale!, ρ, σ,
+                        surface, translate, translate!, vertices, vertices_list,
+                        volume, cartesian_product, convex_hull, intersection, ≈,
                         isdisjoint, ⊆
 @reexport import ..LazySets: chebyshev_center_radius
 import ..LazySets: plot_recipe
@@ -51,6 +51,7 @@ include("exponential_map.jl")
 include("in.jl")
 include("is_interior_point.jl")
 include("linear_map.jl")
+include("permute.jl")
 include("project.jl")
 include("scale.jl")
 include("support_function.jl")

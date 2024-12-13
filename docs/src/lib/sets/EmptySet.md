@@ -57,6 +57,8 @@ Undocumented implementations:
 * [`∈`](@ref ∈(::AbstractVector, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
+* [`project`](@ref project(::LazySet, ::AbstractVector))
+* [`permute`](@ref permute(::LazySet, ::AbstractVector))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
 * [`scale`](@ref scale(::Real, ::LazySet))
