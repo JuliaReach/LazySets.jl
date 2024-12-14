@@ -23,7 +23,7 @@ be bounded by their types, and an `HPolyhedron` otherwise.
 
 ### Notes
 
-This function requires that the list of constraints of both sets `P` and `Q` can
+This method requires that the list of constraints of both sets `P` and `Q` can
 be obtained. After obtaining the respective lists of constraints, the
 `minkowski_sum` method for polyhedral sets is used.
 """
@@ -33,8 +33,8 @@ function minkowski_sum(P::LazySet, Q::LazySet;
     @assert n == dim(Q) "expected that the sets have the same dimension, " *
                         "but they are $n and $(dim(Q)) respectively"
 
-    @assert ispolyhedral(P) && ispolyhedral(Q) "this function requires " *
-                                               "polyhedral sets; try overapproximating with an `HPolytope` or " *
+    @assert ispolyhedral(P) && ispolyhedral(Q) "this method requires polyhedral sets; try " *
+                                               "overapproximating with an `HPolytope` or " *
                                                "`HPolyhedron` first"
 
     if n == 2 && isboundedtype(typeof(P)) && isboundedtype(typeof(Q))
