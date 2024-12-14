@@ -49,6 +49,7 @@ Undocumented implementations:
 * [`radius`](@ref radius(::LazySet, ::Real=Inf))
 * [`rectify`](@ref rectify(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
+* [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`surface`](@ref surface(::LazySet))
 * [`vertices_list`](@ref vertices_list(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
