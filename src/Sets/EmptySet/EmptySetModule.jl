@@ -15,8 +15,8 @@ using ReachabilityBase.Require: require
                         isuniversal, linear_map, low, norm, permute, project,
                         radius, rand, rectify, reflect, scale, scale!, ρ, σ,
                         surface, translate, translate!, vertices, vertices_list,
-                        volume, cartesian_product, convex_hull, intersection, ≈,
-                        isdisjoint, ⊆
+                        volume, cartesian_product, convex_hull, difference,
+                        intersection, ≈, isdisjoint, ⊆
 @reexport import ..LazySets: chebyshev_center_radius
 import ..LazySets: plot_recipe
 import Base: convert
@@ -60,6 +60,7 @@ include("surface.jl")
 include("translate.jl")
 include("cartesian_product.jl")
 include("convex_hull.jl")
+include("difference.jl")
 include("intersection.jl")
 include("isapprox.jl")
 include("isdisjoint.jl")

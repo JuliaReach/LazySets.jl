@@ -67,6 +67,7 @@ Undocumented implementations:
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
+* [`difference`](@ref difference(::LazySet, ::LazySet))
 * [`intersection`](@ref isequivalent(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
