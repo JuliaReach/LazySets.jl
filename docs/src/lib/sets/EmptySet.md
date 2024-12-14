@@ -74,6 +74,7 @@ Undocumented implementations:
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 * [`⊆`](@ref ⊆(::LazySet, ::LazySet))
+* [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets

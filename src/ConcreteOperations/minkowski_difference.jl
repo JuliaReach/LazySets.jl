@@ -210,3 +210,20 @@ function _minkowski_difference_nd(Z1::AbstractZonotope, Z2::AbstractZonotope)
 
     return HPolytope(constraints)
 end
+
+function minkowski_difference(∅::EmptySet, X::LazySet)
+    return _minkowski_difference_emptyset(∅, X)
+end
+
+function minkowski_difference(X::LazySet, ∅::EmptySet)
+    return _minkowski_difference_emptyset2(X, ∅)
+end
+
+# disambiguation
+for T in [:AbstractSingleton, :ZeroSet]
+    @eval begin
+        function minkowski_difference(∅::EmptySet, X::$T)
+            return _minkowski_difference_emptyset(∅, X)
+        end
+    end
+end
