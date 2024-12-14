@@ -16,7 +16,8 @@ using ReachabilityBase.Require: require
                         radius, rand, rectify, reflect, sample, scale, scale!,
                         ρ, σ, surface, translate, translate!, vertices,
                         vertices_list, volume, cartesian_product, convex_hull,
-                        difference, distance, intersection, ≈, isdisjoint, ⊆
+                        difference, distance, intersection, ≈, isdisjoint, ⊆,
+                        minkowski_difference
 @reexport import ..LazySets: chebyshev_center_radius
 import ..LazySets: plot_recipe
 import Base: convert
@@ -67,6 +68,7 @@ include("intersection.jl")
 include("isapprox.jl")
 include("isdisjoint.jl")
 include("issubset.jl")
+include("minkowski_difference.jl")
 
 include("chebyshev_center_radius.jl")
 
