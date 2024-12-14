@@ -17,7 +17,7 @@ A set representing the Minkowski difference ``X ⊖ Y``.
 The Minkowski difference of two sets ``X`` and ``Y`` is defined as
 
 ```math
-    X ⊖ Y = \\{x \\mid x + y ∈ X ~∀~y ∈ Y\\}
+    X ⊖ Y = \\{z \\mid \\{z\\} ⊕ Y ⊆ X\\}
 ```
 
 The convenience alias `pontryagin_difference` is also available.
