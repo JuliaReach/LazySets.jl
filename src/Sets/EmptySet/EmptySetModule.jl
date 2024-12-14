@@ -13,10 +13,10 @@ using ReachabilityBase.Require: require
                         exponential_map, high, ∈, is_interior_point, isbounded,
                         isboundedtype, isconvextype, isempty, isoperationtype,
                         isuniversal, linear_map, low, norm, permute, project,
-                        radius, rand, rectify, reflect, scale, scale!, ρ, σ,
-                        surface, translate, translate!, vertices, vertices_list,
-                        volume, cartesian_product, convex_hull, difference,
-                        distance, intersection, ≈, isdisjoint, ⊆
+                        radius, rand, rectify, reflect, sample, scale, scale!,
+                        ρ, σ, surface, translate, translate!, vertices,
+                        vertices_list, volume, cartesian_product, convex_hull,
+                        difference, distance, intersection, ≈, isdisjoint, ⊆
 @reexport import ..LazySets: chebyshev_center_radius
 import ..LazySets: plot_recipe
 import Base: convert
@@ -44,6 +44,7 @@ include("radius.jl")
 include("rand.jl")
 include("rectify.jl")
 include("reflect.jl")
+include("sample.jl")
 include("vertices_list.jl")
 include("vertices.jl")
 include("volume.jl")
