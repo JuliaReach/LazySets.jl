@@ -64,3 +64,16 @@ function difference(X::LazySet{N}, U::Universe) where {N}
     @assert n == dim(U) "incompatible dimensions $n and $(dim(U))"
     return EmptySet{N}(n)
 end
+
+function difference(∅::EmptySet, X::LazySet)
+    return _difference_emptyset(∅, X)
+end
+
+function difference(X::LazySet, ∅::EmptySet)
+    return _difference_emptyset2(X, ∅)
+end
+
+# disambiguation
+function difference(∅::EmptySet, U::Universe)
+    return _difference_emptyset(∅, U)
+end
