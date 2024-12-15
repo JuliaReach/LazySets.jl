@@ -10,12 +10,14 @@ using ReachabilityBase.Require: require
 @reexport import ..API: dim, isoperationtype, rand, rectify, reflect, ∈,
                         linear_map, scale, scale!, ρ, translate, minkowski_sum
 @reexport import ..LazySets: element
+import Base: copy
 @reexport using ..API
 
 export ZeroSet
 
 include("ZeroSet.jl")
 
+include("copy.jl")
 include("dim.jl")
 include("isoperationtype.jl")
 include("rand.jl")

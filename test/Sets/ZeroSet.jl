@@ -5,6 +5,10 @@ for N in [Float64, Rational{Int}, Float32]
     Z = ZeroSet{N}(2)
     B = BallInf(ones(N, 2), N(1))
 
+    # copy
+    Z2 = copy(Z)
+    @test Z2 isa ZeroSet{N} && dim(Z2) == 2
+
     # isoperationtype
     @test !isoperationtype(ZeroSet)
 

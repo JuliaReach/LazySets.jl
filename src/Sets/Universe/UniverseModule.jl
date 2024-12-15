@@ -15,6 +15,7 @@ using ReachabilityBase.Require: require
                         translate, translate!, cartesian_product, intersection
 @reexport import ..LazySets: constrained_dimensions, linear_map_inverse,
                              tosimplehrep
+import Base: copy
 @reexport using ..API
 
 export Universe
@@ -25,6 +26,7 @@ include("an_element.jl")
 include("complement.jl")
 include("constraints.jl")
 include("constraints_list.jl")
+include("copy.jl")
 include("diameter.jl")
 include("dim.jl")
 include("isbounded.jl")

@@ -30,6 +30,10 @@ for N in [Float64, Rational{Int}, Float32]
     # dim
     @test dim(U) == 2
 
+    # copy
+    U2 = copy(U)
+    @test U2 isa Universe{N} && dim(U2) == 2
+
     # support function and support vector
     @test ρ(N[0, 1], U) == N(Inf)
     @test ρ(N[0, 0], U) == zero(N)
