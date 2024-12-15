@@ -1,14 +1,15 @@
 """
 # Extended help
 
-    rectify(x::Interval{N}) where {N}
+    rectify(x::Interval)
 
 ### Output
 
 An `Interval`, even if it represents a singleton only containing the origin
 (which is the case if the original interval was nonpositive).
 """
-function rectify(x::Interval{N}) where {N}
+function rectify(x::Interval)
+    N = eltype(x)
     if x.dat.lo >= zero(N)
         # interval is already nonnegative
         return x

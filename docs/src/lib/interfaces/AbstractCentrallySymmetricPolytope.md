@@ -26,7 +26,7 @@ center(::AbstractCentrallySymmetricPolytope, ::Int)
 extrema(::AbstractCentrallySymmetricPolytope)
 extrema(::AbstractCentrallySymmetricPolytope, ::Int)
 isempty(::AbstractCentrallySymmetricPolytope)
-isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N}
+isuniversal(::AbstractCentrallySymmetricPolytope, ::Bool=false)
 ```
 
 ## Implementations

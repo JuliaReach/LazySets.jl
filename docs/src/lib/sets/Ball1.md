@@ -95,4 +95,4 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetricPolytope))
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetricPolytope, ::Int))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N})
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope, ::Bool=false))

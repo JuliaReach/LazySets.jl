@@ -66,7 +66,7 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope))
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope, ::Bool=false))
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`order`](@ref order(::AbstractZonotope))
