@@ -331,8 +331,15 @@ for N in [Float64, Rational{Int}, Float32]
 
     # set difference
     h = Hyperrectangle(; low=N[0], high=N[1])
-    q = Hyperrectangle(; low=N[0], high=N[0.5])
-    @test convert(Interval, difference(h, q).array[1]) == Interval(N(0.5), N(1))
+    q = Hyperrectangle(; low=N[0], high=N[2])
+    @test difference(h, q) == EmptySet{N}(1)
+    q = Hyperrectangle(; low=N[0], high=N[1//2])
+    d = difference(h, q)
+    @test d isa Hyperrectangle{N} && convert(Interval, d) == Interval(N(1//2), N(1))
+    q = Hyperrectangle(N[1//2], N[1//4])
+    d = difference(h, q)
+    @test d isa UnionSetArray{N}
+    @test ispermutation(convert.(Interval, d.array), [Interval(N(0), N(1//4)), Interval(N(3//4), N(1))])
 
     # concrete projection
     @test project(Hyperrectangle(N[4, 3, 2, 1], N[8, 7, 6, 5]), [2, 4]) ==

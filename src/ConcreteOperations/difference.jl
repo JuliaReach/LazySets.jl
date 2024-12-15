@@ -26,7 +26,15 @@ This implementation uses `IntervalArithmetic.setdiff`.
 function difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
     Xib = convert(IA.IntervalBox, X)
     Yib = convert(IA.IntervalBox, Y)
-    return UnionSetArray(convert.(Hyperrectangle, IA.setdiff(Xib, Yib)))
+    list = IA.setdiff(Xib, Yib)
+    if isempty(list)
+        N = promote_type(eltype(X), eltype(Y))
+        return EmptySet{N}(dim(X))
+    elseif length(list) == 1
+        return convert(Hyperrectangle, first(list))
+    else
+        return UnionSetArray(convert.(Hyperrectangle, list))
+    end
 end
 
 function difference(X::Interval{N}, H::HalfSpace) where {N}
