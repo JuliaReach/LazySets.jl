@@ -30,9 +30,20 @@ function rand(::Type{HPolytope};
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing,
               num_vertices::Int=-1)
-    require(@__MODULE__, :Polyhedra; fun_name="rand")
-    rng = reseed!(rng, seed)
-    vpolytope = rand(VPolytope; N=N, dim=dim, rng=rng, seed=seed,
-                     num_vertices=num_vertices)
-    return convert(HPolytope, vpolytope)
+    require(@__MODULE__, :LazySets; fun_name="rand")
+
+    if num_vertices == 1
+        P = rand(Singleton; N=N, dim=dim, rng=rng, seed=seed)
+    elseif dim == 1
+        if num_vertices ∉ (-1, 2)
+            throw(ArgumentError("creating a 1D random polytope is only supported for 2 vertices"))
+        end
+        P = rand(Interval; N=N, dim=dim, rng=rng, seed=seed)
+    elseif dim == 2
+        P = rand(VPolygon; N=N, dim=dim, rng=rng, seed=seed, num_vertices=num_vertices)
+    else
+        rng = reseed!(rng, seed)
+        P = rand(VPolytope; N=N, dim=dim, rng=rng, seed=seed, num_vertices=num_vertices)
+    end
+    return convert(HPolytope, P)
 end
