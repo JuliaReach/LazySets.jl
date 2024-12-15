@@ -122,8 +122,8 @@ include("Sets/EmptySet/EmptySetModule.jl")
 @reexport using ..EmptySetModule: EmptySet, ∅
 using ..EmptySetModule: _difference_emptyset, _difference_emptyset2, _distance_emptyset,
                         _isdisjoint_emptyset, _issubset_emptyset, _issubset_emptyset2,
-                        _minkowski_difference_emptyset, _minkowski_difference_emptyset2,
-                        _minkowski_sum_emptyset
+                        _linear_combination_emptyset, _minkowski_difference_emptyset,
+                        _minkowski_difference_emptyset2, _minkowski_sum_emptyset
 
 include("Sets/HParallelotope/HParallelotopeModule.jl")
 @reexport using ..HParallelotopeModule: HParallelotope,

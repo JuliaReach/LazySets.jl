@@ -17,7 +17,7 @@ using ReachabilityBase.Require: require
                         ρ, σ, surface, translate, translate!, vertices,
                         vertices_list, volume, cartesian_product, convex_hull,
                         difference, distance, intersection, ≈, isdisjoint, ⊆,
-                        minkowski_difference, minkowski_sum
+                        linear_combination, minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius
 import ..LazySets: plot_recipe
 import Base: convert, copy
@@ -68,6 +68,7 @@ include("intersection.jl")
 include("isapprox.jl")
 include("isdisjoint.jl")
 include("issubset.jl")
+include("linear_combination.jl")
 include("minkowski_difference.jl")
 include("minkowski_sum.jl")
 
