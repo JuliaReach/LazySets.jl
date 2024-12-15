@@ -33,6 +33,7 @@ Undocumented implementations:
 * [`an_element`](@ref an_element(::LazySet))
 * [`area`](@ref area(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
+* `copy(::Type{EmptySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`dim`](@ref dim(::LazySet))
 * [`high`](@ref high(::LazySet))

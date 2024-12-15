@@ -20,7 +20,7 @@ using ReachabilityBase.Require: require
                         minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius
 import ..LazySets: plot_recipe
-import Base: convert
+import Base: convert, copy
 @reexport using ..API
 
 export EmptySet, ∅
@@ -74,6 +74,7 @@ include("minkowski_sum.jl")
 include("chebyshev_center_radius.jl")
 
 include("convert.jl")
+include("copy.jl")
 
 """
     plot_recipe(∅::EmptySet{N}, [ε]=zero(N)) where {N}
