@@ -9,8 +9,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test dim(E) == 2
 
     # support function & support vector
-    @test_throws ArgumentError ρ(N[0], E)
-    @test_throws ArgumentError σ(N[0], E)
+    @test_throws AssertionError ρ(N[0], E)
+    @test_throws AssertionError σ(N[0], E)
 
     # boundedness
     @test isbounded(E) && isboundedtype(typeof(E))
