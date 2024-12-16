@@ -19,7 +19,7 @@ convert(::Type{EmptySet}, ::LazySet)
 
 ```@docs
 chebyshev_center_radius(::EmptySet; kwargs...)
-complement(::EmptySet{N}) where {N}
+complement(::EmptySet)
 rand(::Type{EmptySet})
 plot_recipe(::EmptySet{N}, ::Any=zero(N)) where {N}
 ```
