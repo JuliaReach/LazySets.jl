@@ -4,11 +4,8 @@ global test_suite_polyhedra
 
 for N in [Float64, Rational{Int}, Float32]
     # random polytopes
-    if test_suite_polyhedra
-        rand(HPolytope)
-    else
-        @test_throws AssertionError rand(HPolytope)
-    end
+    @test_throws ArgumentError rand(HPolytope; N=N, dim=1, num_vertices=3)
+    @test_broken rand(HPolytope; N=N, dim=1, num_vertices=0)
     rand(VPolytope)
 
     # -----
@@ -347,6 +344,22 @@ end
 
 # tests that only work with Float64 and Float32
 for N in [Float64, Float32]
+    # rand
+    @test_broken rand(HPolytope; N=N, dim=2, num_vertices=0)  # TODO fix
+    @test_broken rand(HPolytope; N=N, dim=3, num_vertices=0)  # TODO fix
+    p = rand(HPolytope; N=N, num_vertices=1)
+    @test p isa HPolytope{N} && dim(p) == 2
+    p = rand(HPolytope; N=N, dim=1)
+    @test p isa HPolytope{N} && dim(p) == 1  # TODO fix
+    p = rand(HPolytope; N=N, dim=2)
+    @test p isa HPolytope{N} && dim(p) == 2
+    if test_suite_polyhedra
+        p = rand(HPolytope; N=N, dim=3)
+        @test p isa HPolytope{Float64} && dim(p) == 3
+    else
+        @test_throws AssertionError rand(HPolytope; N=N, dim=3)
+    end
+
     # normalization
     p1 = HPolytope([HalfSpace(N[1e5], N(3e5)), HalfSpace(N[-2e5], N(4e5))])
     p2 = normalize(p1)
