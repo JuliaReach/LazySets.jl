@@ -20,9 +20,17 @@ A random polytope in constraint representation.
 
 ### Algorithm
 
-We create a random polytope in vertex representation and convert it to
-constraint representation (hence the argument `num_vertices`).
-See [`rand(::Type{VPolytope})`](@ref).
+If `num_vertices == 0`, we create a fixed infeasible polytope (corresponding to
+the `EmptySet`).
+
+If `num_vertices == 1`, we create a random `Singleton` and convert it.
+
+If `dim == 1`, we create a random `Interval` and convert it.
+
+If `dim == 2`, we create a random `VPolygon` and convert it.
+
+Otherwise, we create a random `VPolytope` and convert it (hence also the
+argument `num_vertices`). See [`rand(::Type{VPolytope})`](@ref).
 """
 function rand(::Type{HPolytope};
               N::Type{<:Real}=Float64,
@@ -32,7 +40,11 @@ function rand(::Type{HPolytope};
               num_vertices::Int=-1)
     require(@__MODULE__, :LazySets; fun_name="rand")
 
-    if num_vertices == 1
+    rng = reseed!(rng, seed)
+    if num_vertices == 0
+        clist = _infeasible_constraints_list(dim; N=N)
+        return HPolytope(clist)
+    elseif num_vertices == 1
         P = rand(Singleton; N=N, dim=dim, rng=rng, seed=seed)
     elseif dim == 1
         if num_vertices ∉ (-1, 2)
@@ -42,7 +54,6 @@ function rand(::Type{HPolytope};
     elseif dim == 2
         P = rand(VPolygon; N=N, dim=dim, rng=rng, seed=seed, num_vertices=num_vertices)
     else
-        rng = reseed!(rng, seed)
         P = rand(VPolytope; N=N, dim=dim, rng=rng, seed=seed, num_vertices=num_vertices)
     end
     return convert(HPolytope, P)
