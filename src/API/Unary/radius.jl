@@ -15,6 +15,6 @@ A real number representing the radius.
 ### Notes
 
 The radius of a set is the radius of the enclosing ball (of the given
-``p``-norm) of minimal volume with the same center.
+``p``-norm) of minimal volume.
 """
 function radius(::LazySet, ::Real=Inf) end

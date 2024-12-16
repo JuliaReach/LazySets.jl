@@ -50,9 +50,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test E2 isa EmptySet{N} && dim(E2) == 2
 
     # diameter
-    @test_throws ArgumentError diameter(E)  # TODO this should maybe change
-    # res = diameter(E)
-    # @test res isa N && res == N(0)
+    res = diameter(E)
+    @test res isa N && res == N(0)
 
     # dim
     @test dim(E) == 2
@@ -99,14 +98,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ArgumentError low(E, 1)
 
     # norm
-    @test_throws ArgumentError norm(E)  # TODO this should maybe change
-    # res = norm(E)
-    # @test res isa N && res == N(0)
+    res = norm(E)
+    @test res isa N && res == N(0)
 
     # radius
-    @test_throws ArgumentError radius(E)  # TODO this should maybe change
-    # res = radius(E)
-    # @test res isa N && res == N(0)
+    res = radius(E)
+    @test res isa N && res == N(0)
 
     # rand
     @test rand(EmptySet; N=N) isa EmptySet{N}
