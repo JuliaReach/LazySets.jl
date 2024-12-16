@@ -191,6 +191,8 @@ for N in [Float64, Rational{Int}, Float32]
     Z = SimpleSparsePolynomialZonotope(N[2, 0], N[1 2; 2 2.0], [1 4; 1 2])
     @test_throws ErrorException convert(HPolytope, Z)
     @test_throws ErrorException convert(HPolytope{N,Vector{N}}, Z)
+    P = convert(HPolytope, EmptySet{N}(2))
+    @test P isa HPolytope{N} && dim(P) == 2 && isempty(P)
 
     # -----
     # V-rep
