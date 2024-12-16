@@ -405,3 +405,16 @@ for B in (:Ball1, :BallInf)
         end
     end
 end
+
+@commutative function minkowski_sum(∅::EmptySet, X::LazySet)
+    return _minkowski_sum_emptyset(∅, X)
+end
+
+# disambiguation
+for T in [:ZeroSet]
+    @eval begin
+        @commutative function minkowski_sum(∅::EmptySet, X::$T)
+            return _minkowski_sum_emptyset(∅, X)
+        end
+    end
+end

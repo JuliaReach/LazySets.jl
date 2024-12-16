@@ -67,13 +67,21 @@ set `X`.
     return distance(element(S), X; p=p)
 end
 
+@commutative function distance(∅::EmptySet, X::LazySet; p::Real=2.0)
+    return _distance_emptyset(∅, X; p=p)
+end
+
 # disambiguation
 function distance(S1::AbstractSingleton, S2::AbstractSingleton; p::Real=2.0)
     return distance(element(S1), element(S2); p=p)
 end
-function distance(S::AbstractSingleton, H::AbstractHyperrectangle; p::Real=2.0)
+@commutative function distance(S::AbstractSingleton, H::AbstractHyperrectangle; p::Real=2.0)
     return distance(element(S), H; p=p)
 end
-function distance(H::AbstractHyperrectangle, S::AbstractSingleton; p::Real=2.0)
-    return distance(element(S), H; p=p)
+for T in [:AbstractHyperrectangle, :AbstractSingleton]
+    @eval begin
+        @commutative function distance(∅::EmptySet, X::$T; p::Real=2.0)
+            return _distance_emptyset(∅, X; p=p)
+        end
+    end
 end

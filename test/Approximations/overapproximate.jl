@@ -8,7 +8,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # overapproximating a set of type T1 with an unsupported type T2 is the
     # identity if T1 = T2
-    @test_throws MethodError overapproximate(ZeroSet{N}(2), EmptySet)
+    @test_throws AssertionError overapproximate(ZeroSet{N}(2), EmptySet)
     e = EmptySet{N}(2)
     @test overapproximate(e, EmptySet) == overapproximate(e, 1e-3) ==
           overapproximate(e, Hyperrectangle) == overapproximate(e) == e

@@ -9,6 +9,12 @@ EmptySet
 ∅
 ```
 
+## Conversion
+
+```julia
+convert(::Type{EmptySet}, ::LazySet)
+```
+
 ## Operations
 
 ```@docs
@@ -27,6 +33,7 @@ Undocumented implementations:
 * [`an_element`](@ref an_element(::LazySet))
 * [`area`](@ref area(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
+* `copy(::Type{EmptySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`dim`](@ref dim(::LazySet))
 * [`high`](@ref high(::LazySet))
@@ -43,6 +50,7 @@ Undocumented implementations:
 * [`radius`](@ref radius(::LazySet, ::Real=Inf))
 * [`rectify`](@ref rectify(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
+* [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`surface`](@ref surface(::LazySet))
 * [`vertices_list`](@ref vertices_list(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
@@ -51,6 +59,8 @@ Undocumented implementations:
 * [`∈`](@ref ∈(::AbstractVector, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
+* [`project`](@ref project(::LazySet, ::AbstractVector))
+* [`permute`](@ref permute(::LazySet, ::AbstractVector))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
 * [`scale`](@ref scale(::Real, ::LazySet))
@@ -59,10 +69,14 @@ Undocumented implementations:
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
-* [`intersection`](@ref isequivalent(::LazySet, ::LazySet))
+* [`difference`](@ref difference(::LazySet, ::LazySet))
+* [`distance`](@ref distance(::LazySet, ::LazySet; ::Real=2.0))
+* [`intersection`](@ref intersection(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 * [`⊆`](@ref ⊆(::LazySet, ::LazySet))
+* [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
+* [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets
@@ -78,6 +92,7 @@ Inherited from [`LazySet`](@ref):
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
+* [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))

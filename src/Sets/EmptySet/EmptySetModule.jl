@@ -12,13 +12,15 @@ using ReachabilityBase.Require: require
 @reexport import ..API: an_element, area, complement, diameter, dim,
                         exponential_map, high, ∈, is_interior_point, isbounded,
                         isboundedtype, isconvextype, isempty, isoperationtype,
-                        isuniversal, linear_map, low, norm, project, radius,
-                        rand, rectify, reflect, scale, scale!, ρ, σ, surface,
-                        translate, translate!, vertices, vertices_list, volume,
-                        cartesian_product, convex_hull, intersection, ≈,
-                        isdisjoint, ⊆
+                        isuniversal, linear_map, low, norm, permute, project,
+                        radius, rand, rectify, reflect, sample, scale, scale!,
+                        ρ, σ, surface, translate, translate!, vertices,
+                        vertices_list, volume, cartesian_product, convex_hull,
+                        difference, distance, intersection, ≈, isdisjoint, ⊆,
+                        linear_combination, minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius
 import ..LazySets: plot_recipe
+import Base: convert, copy
 @reexport using ..API
 
 export EmptySet, ∅
@@ -43,6 +45,8 @@ include("radius.jl")
 include("rand.jl")
 include("rectify.jl")
 include("reflect.jl")
+include("sample.jl")
+include("surface.jl")
 include("vertices_list.jl")
 include("vertices.jl")
 include("volume.jl")
@@ -50,20 +54,28 @@ include("exponential_map.jl")
 include("in.jl")
 include("is_interior_point.jl")
 include("linear_map.jl")
+include("permute.jl")
 include("project.jl")
 include("scale.jl")
 include("support_function.jl")
 include("support_vector.jl")
-include("surface.jl")
 include("translate.jl")
 include("cartesian_product.jl")
 include("convex_hull.jl")
+include("difference.jl")
+include("distance.jl")
 include("intersection.jl")
 include("isapprox.jl")
 include("isdisjoint.jl")
 include("issubset.jl")
+include("linear_combination.jl")
+include("minkowski_difference.jl")
+include("minkowski_sum.jl")
 
 include("chebyshev_center_radius.jl")
+
+include("convert.jl")
+include("copy.jl")
 
 """
     plot_recipe(∅::EmptySet{N}, [ε]=zero(N)) where {N}
