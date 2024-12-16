@@ -6,7 +6,8 @@ for N in [Float64, Rational{Int}, Float32]
     # random polytopes
     @test_throws ArgumentError rand(HPolytope; N=N, dim=1, num_vertices=3)
     @test_broken rand(HPolytope; N=N, dim=1, num_vertices=0)
-    rand(VPolytope)
+    p = rand(VPolytope; N=N, num_vertices=0)
+    @test p isa VPolytope{N} && length(p.vertices) == 0
 
     # -----
     # H-rep
@@ -359,6 +360,10 @@ for N in [Float64, Float32]
     else
         @test_throws AssertionError rand(HPolytope; N=N, dim=3)
     end
+    p = rand(VPolytope; N=N)
+    @test p isa VPolytope{N} && dim(p) == 2
+    p = rand(VPolytope; N=N, num_vertices=5)
+    @test p isa VPolytope{N} && length(p.vertices) <= 5
 
     # normalization
     p1 = HPolytope([HalfSpace(N[1e5], N(3e5)), HalfSpace(N[-2e5], N(4e5))])
