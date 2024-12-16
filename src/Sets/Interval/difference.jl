@@ -1,7 +1,7 @@
 """
 # Extended help
 
-    difference(X::Interval{N}, Y::Interval) where {N}
+    difference(X::Interval, Y::Interval)
 
 ### Output
 
@@ -49,7 +49,7 @@ julia> difference(Y, Z)
 UnionSet{Float64, Interval{Float64}, Interval{Float64}}(Interval{Float64}([1, 2]), Interval{Float64}([3, 4]))
 ```
 """
-function difference(X::Interval{N}, Y::Interval) where {N}
+function difference(X::Interval, Y::Interval)
     Z = intersection(X, Y)
     if isempty(Z)
         return X
@@ -63,6 +63,7 @@ function difference(X::Interval{N}, Y::Interval) where {N}
         if flat_left && flat_right
             require(@__MODULE__, :LazySets; fun_name="difference")
 
+            N = promote_type(eltype(X), eltype(Y))
             return EmptySet{N}(1)
         elseif flat_left && !flat_right
             return R

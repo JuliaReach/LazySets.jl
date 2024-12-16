@@ -50,7 +50,7 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetricPolytope))
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetricPolytope, ::Int))
-* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N})
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope, ::Bool=false))
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`isempty`](@ref isempty(::AbstractZonotope))

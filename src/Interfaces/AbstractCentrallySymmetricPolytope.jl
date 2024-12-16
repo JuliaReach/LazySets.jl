@@ -88,8 +88,7 @@ function isempty(::AbstractCentrallySymmetricPolytope)
 end
 
 """
-    isuniversal(S::AbstractCentrallySymmetricPolytope{N},
-                [witness]::Bool=false) where {N}
+    isuniversal(S::AbstractCentrallySymmetricPolytope, [witness]::Bool=false)
 
 Check whether a centrally symmetric, polytopic set is universal.
 
@@ -109,9 +108,9 @@ Centrally symmetric, polytopic sets are bounded.
 A witness is obtained by computing the support vector in direction
 `d = [1, 0, …, 0]` and adding `d` on top.
 """
-function isuniversal(S::AbstractCentrallySymmetricPolytope{N},
-                     witness::Bool=false) where {N}
+function isuniversal(S::AbstractCentrallySymmetricPolytope, witness::Bool=false)
     if witness
+        N = eltype(S)
         d = SingleEntryVector{N}(1, dim(S))
         w = σ(d, S) + d
         return (false, w)

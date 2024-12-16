@@ -33,7 +33,7 @@ chebyshev_center_radius(::Interval)
 isflat(::Interval)
 ngens(::Interval)
 radius_hyperrectangle(::Interval)
-radius_hyperrectangle(::Interval{N}, ::Int) where {N}
+radius_hyperrectangle(::Interval, ::Int)
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -57,7 +57,7 @@ rectify(::LazySet)
 CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
-rectify(::Interval{N}) where {N}
+rectify(::Interval)
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -106,7 +106,7 @@ difference(::LazySet, ::LazySet)
 CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
-difference(::Interval{N}, ::Interval) where {N}
+difference(::Interval, ::Interval)
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -209,7 +209,7 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope{N}, ::Bool=false) where {N})
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope, ::Bool=false))
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`order`](@ref order(::AbstractZonotope))
