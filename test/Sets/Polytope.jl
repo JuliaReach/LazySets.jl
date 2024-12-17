@@ -5,7 +5,8 @@ global test_suite_polyhedra
 for N in [Float64, Rational{Int}, Float32]
     # random polytopes
     @test_throws ArgumentError rand(HPolytope; N=N, dim=1, num_vertices=3)
-    @test_broken rand(HPolytope; N=N, dim=1, num_vertices=0)
+    p = rand(HPolytope; N=N, dim=1, num_vertices=0)
+    @test p isa HPolytope{N} && dim(p) == 1 && isempty(p)
     p = rand(VPolytope; N=N, num_vertices=0)
     @test p isa VPolytope{N} && length(p.vertices) == 0
 
@@ -190,6 +191,8 @@ for N in [Float64, Rational{Int}, Float32]
     Z = SimpleSparsePolynomialZonotope(N[2, 0], N[1 2; 2 2.0], [1 4; 1 2])
     @test_throws ErrorException convert(HPolytope, Z)
     @test_throws ErrorException convert(HPolytope{N,Vector{N}}, Z)
+    P = convert(HPolytope, EmptySet{N}(2))
+    @test P isa HPolytope{N} && dim(P) == 2 && isempty(P)
 
     # -----
     # V-rep
@@ -346,12 +349,14 @@ end
 # tests that only work with Float64 and Float32
 for N in [Float64, Float32]
     # rand
-    @test_broken rand(HPolytope; N=N, dim=2, num_vertices=0)  # TODO fix
-    @test_broken rand(HPolytope; N=N, dim=3, num_vertices=0)  # TODO fix
+    p = rand(HPolytope; N=N, dim=2, num_vertices=0)
+    @test p isa HPolytope{N} && dim(p) == 2 && isempty(p)
+    p = rand(HPolytope; N=N, dim=3, num_vertices=0)
+    @test p isa HPolytope{N} && dim(p) == 3 && isempty(p)
     p = rand(HPolytope; N=N, num_vertices=1)
-    @test p isa HPolytope{N} && dim(p) == 2
+    @test p isa HPolytope{N} && dim(p) == 2 && !isempty(p)
     p = rand(HPolytope; N=N, dim=1)
-    @test p isa HPolytope{N} && dim(p) == 1  # TODO fix
+    @test p isa HPolytope{N} && dim(p) == 1
     p = rand(HPolytope; N=N, dim=2)
     @test p isa HPolytope{N} && dim(p) == 2
     if test_suite_polyhedra

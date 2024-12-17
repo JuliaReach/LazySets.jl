@@ -1339,3 +1339,18 @@ function _high_1d(P::AbstractPolyhedron{N}) where {N}
     end
     return h
 end
+
+# create n+1 contradicting constraints
+# n times ⋀_i x_i ≤ 0
+# 1 times ∑_i x_i ≥ 1
+function _infeasible_constraints_list(n::Int; N=Float64)
+    c_sum = HalfSpace(fill(N(-1), n), N(-1))  # ∑_i x_i ≥ 1
+    clist = Vector{typeof(c_sum)}(undef, n + 1)
+    @inbounds for i in 1:n
+        a = zeros(N, n)
+        a[i] = one(N)
+        clist[i] = HalfSpace(a, N(0))  # x_i ≤ 0
+    end
+    @inbounds clist[n + 1] = c_sum
+    return clist
+end
