@@ -1,21 +1,9 @@
 """
+# Extended help
+
     rand(::Type{Ball1}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
         )
-
-Create a random ball in the 1-norm.
-
-### Input
-
-- `Ball1` -- type for dispatch
-- `N`     -- (optional, default: `Float64`) numeric type
-- `dim`   -- (optional, default: 2) dimension
-- `rng`   -- (optional, default: `GLOBAL_RNG`) random number generator
-- `seed`  -- (optional, default: `nothing`) seed for reseeding
-
-### Output
-
-A random ball in the 1-norm.
 
 ### Algorithm
 

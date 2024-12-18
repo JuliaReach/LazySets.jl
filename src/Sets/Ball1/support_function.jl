@@ -1,16 +1,7 @@
 """
+# Extended help
+
     ρ(d::AbstractVector, B::Ball1)
-
-Evaluate the support function of a ball in the 1-norm in the given direction.
-
-### Input
-
-- `d` -- direction
-- `B` -- ball in the 1-norm
-
-### Output
-
-Evaluation of the support function in the given direction.
 
 ### Algorithm
 

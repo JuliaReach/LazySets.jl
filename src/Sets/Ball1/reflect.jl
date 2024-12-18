@@ -1,16 +1,7 @@
 """
+# Extended help
+
     reflect(B::Ball1)
-
-Concrete reflection of a ball in the 1-norm `B`, resulting in the reflected set
-`-B`.
-
-### Input
-
-- `B` -- ball in the 1-norm
-
-### Output
-
-The `Ball1` representing `-B`.
 
 ### Algorithm
 

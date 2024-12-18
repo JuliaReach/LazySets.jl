@@ -1,15 +1,7 @@
 """
+# Extended help
+
     constraints_list(P::Ball1)
-
-Return the list of constraints of a ball in the 1-norm.
-
-### Input
-
-- `B` -- ball in the 1-norm
-
-### Output
-
-The list of constraints of the ball.
 
 ### Notes
 
