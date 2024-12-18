@@ -1,16 +1,7 @@
 """
+# Extended help
+
     reflect(B::Ballp)
-
-Concrete reflection of a ball in the p-norm `B`, resulting in the reflected set
-`-B`.
-
-### Input
-
-- `B` -- ball in the p-norm
-
-### Output
-
-The `Ballp` representing `-B`.
 
 ### Algorithm
 

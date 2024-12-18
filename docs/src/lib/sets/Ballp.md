@@ -11,7 +11,6 @@ Ballp
 ## Operations
 
 ```@docs
-center(::Ballp)
 rand(::Type{Ballp})
 reflect(::Ballp)
 translate!(::Ballp, ::AbstractVector)
@@ -22,6 +21,7 @@ CurrentModule = LazySets.API
 ```
 
 Undocumented implementations:
+* [`center`](@ref center(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 ```@meta
