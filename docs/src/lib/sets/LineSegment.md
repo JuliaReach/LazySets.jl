@@ -6,17 +6,94 @@ CurrentModule = LazySets.LineSegmentModule
 
 ```@docs
 LineSegment
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+an_element(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 an_element(::LineSegment)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+constraints_list(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 constraints_list(::LineSegment)
 generators(::LineSegment)
 genmat(::LineSegment)
 halfspace_left(::LineSegment)
 halfspace_right(::LineSegment)
 ngens(::LineSegment)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 rand(::Type{LineSegment})
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+∈(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 ∈(::AbstractVector, ::LineSegment)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+σ(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 σ(::AbstractVector, ::LineSegment)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+translate(::LazySet, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 translate(::LineSegment, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+intersection(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 intersection(::LineSegment, ::LineSegment)
 isdisjoint(::LineSegment, ::LineSegment)
 ```
