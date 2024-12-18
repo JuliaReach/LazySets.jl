@@ -13,11 +13,7 @@ Singleton
 ```@docs
 element(::Singleton)
 rand(::Type{Singleton})
-rectify(S::Singleton)
 singleton_list(::Singleton)
-linear_map(::AbstractMatrix, ::Singleton)
-permute(::Singleton, ::AbstractVector{Int})
-project(::Singleton, ::AbstractVector{Int})
 translate!(::Singleton, ::AbstractVector)
 ```
 
@@ -25,7 +21,13 @@ translate!(::Singleton, ::AbstractVector)
 CurrentModule = LazySets.API
 ```
 
+Undocumented implementations:
+
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`rectify`](@ref rectify(::LazySet))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
+* [`permute`](@ref permute(::LazySet, ::AbstractVector{Int})))
+* [`project`](@ref project(::LazySet, ::AbstractVector{Int})))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
 
 ```@meta
