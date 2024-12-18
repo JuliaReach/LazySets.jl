@@ -10,9 +10,40 @@ Ballp
 
 ## Operations
 
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.BallpModule
+```
 ```@docs
 rand(::Type{Ballp})
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+reflect(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.BallpModule
+```
+```@docs
 reflect(::Ballp)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+translate!(::LazySet, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.BallpModule
+```
+```@docs
 translate!(::Ballp, ::AbstractVector)
 ```
 
