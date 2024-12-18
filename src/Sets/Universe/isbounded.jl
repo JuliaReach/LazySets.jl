@@ -1,16 +1,3 @@
-"""
-    isbounded(U::Universe)
-
-Check whether a universe is bounded.
-
-### Input
-
-- `U` -- universe
-
-### Output
-
-`false`.
-"""
-function isbounded(U::Universe)
+function isbounded(::Universe)
     return false
 end

@@ -12,25 +12,10 @@ Universe
 
 ```@docs
 an_element(::Universe{N}) where {N}
-complement(::Universe{N}) where {N}
 constrained_dimensions(::Universe)
-constraints(::Universe{N}) where {N}
-constraints_list(::Universe{N}) where {N}
-diameter(::Universe, ::Real=Inf)
-dim(::Universe)
-isbounded(::Universe)
-isempty(::Universe)
-isuniversal(::Universe{N}, ::Bool=false) where {N}
-norm(::Universe, ::Real=Inf)
-radius(::Universe, ::Real=Inf)
 rand(::Type{Universe})
-reflect(::Universe)
-∈(::AbstractVector, ::Universe)
-permute(::Universe, ::AbstractVector{Int})
 ρ(::AbstractVector, ::Universe)
 σ(::AbstractVector, ::Universe)
-translate(::Universe, ::AbstractVector)
-translate!(::Universe, ::AbstractVector)
 ```
 
 ```@meta
@@ -39,12 +24,27 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 
+* [`complement`](@ref complement(::LazySet))
+* [`constraints_list`](@ref constraints_list(::LazySet))
+* [`constraints`](@ref constraints(::LazySet))
 * `copy(::Universe)`
+* [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
+* [`dim`](@ref dim(::LazySet))
+* [`isbounded`](@ref isbounded(::LazySet))
 * [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
+* [`isempty`](@ref isempty(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`isuniversal`](@ref isuniversal(::LazySet, ::Bool=false))
+* [`norm`](@ref norm(::LazySet, ::Real=Inf))
+* [`radius`](@ref radius(::LazySet, ::Real=Inf))
+* [`reflect`](@ref reflect(::LazySet))
+* [`∈`](@ref ∈(::AbstractVector, ::LazySet))
+* [`permute`](@ref permute(::LazySet, ::AbstractVector))
 * [`project`](@ref project(::LazySet, ::AbstractVector))
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
+* [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`intersection`](@ref intersection(::LazySet, ::LazySet))
 
