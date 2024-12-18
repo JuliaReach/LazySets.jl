@@ -12,8 +12,41 @@ Singleton
 
 ```@docs
 element(::Singleton)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.SingletonModule
+```
+```@docs
 rand(::Type{Singleton})
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs; canonical=false
+singleton_list(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.SingletonModule
+```
+```@docs
 singleton_list(::Singleton)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+translate!(::LazySet, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.SingletonModule
+```
+```@docs
 translate!(::Singleton, ::AbstractVector)
 ```
 
