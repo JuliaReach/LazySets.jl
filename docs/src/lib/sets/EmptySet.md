@@ -19,7 +19,29 @@ convert(::Type{EmptySet}, ::LazySet)
 
 ```@docs
 chebyshev_center_radius(::EmptySet; kwargs...)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+complement(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.EmptySetModule
+```
+```@docs
 complement(::EmptySet)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{<:LazySet})
+```
+```@meta
+CurrentModule = LazySets.EmptySetModule
+```
+```@docs
 rand(::Type{EmptySet})
 plot_recipe(::EmptySet{N}, ::Any=zero(N)) where {N}
 ```
@@ -33,7 +55,7 @@ Undocumented implementations:
 * [`an_element`](@ref an_element(::LazySet))
 * [`area`](@ref area(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
-* `copy(::Type{EmptySet})`
+* `copy(::EmptySet)`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`dim`](@ref dim(::LazySet))
 * [`high`](@ref high(::LazySet))
@@ -59,8 +81,8 @@ Undocumented implementations:
 * [`∈`](@ref ∈(::AbstractVector, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
-* [`project`](@ref project(::LazySet, ::AbstractVector))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector))
+* [`project`](@ref project(::LazySet, ::AbstractVector))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
 * [`scale`](@ref scale(::Real, ::LazySet))
@@ -75,6 +97,7 @@ Undocumented implementations:
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 * [`⊆`](@ref ⊆(::LazySet, ::LazySet))
+* [`linear_combination`](@ref linear_combination(::LazySet, ::LazySet))
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 * [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
 
