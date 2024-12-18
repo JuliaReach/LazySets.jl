@@ -1,16 +1,7 @@
 """
+# Extended help
+
     ∈(x::AbstractVector, E::Ellipsoid)
-
-Check whether a given point is contained in an ellipsoid.
-
-### Input
-
-- `x` -- point/vector
-- `E` -- ellipsoid
-
-### Output
-
-`true` iff `x ∈ E`.
 
 ### Algorithm
 

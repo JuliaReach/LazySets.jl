@@ -11,14 +11,12 @@ Ellipsoid
 ## Operations
 
 ```@docs
-center(::Ellipsoid)
 rand(::Type{Ellipsoid})
 shape_matrix(::Ellipsoid)
 ∈(::AbstractVector, ::Ellipsoid)
 ρ(::AbstractVector, ::Ellipsoid)
 σ(::AbstractVector, ::Ellipsoid)
 linear_map(::AbstractMatrix, ::Ellipsoid)
-translate!(::Ellipsoid, ::AbstractVector)
 ```
 
 ```@meta
@@ -26,8 +24,10 @@ CurrentModule = LazySets.API
 ```
 
 Undocumented implementations:
+* [`center`](@ref center(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
+* [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 
 ```@meta
 CurrentModule = LazySets
