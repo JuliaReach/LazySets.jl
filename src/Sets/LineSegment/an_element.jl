@@ -1,15 +1,11 @@
 """
+# Extended help
+
     an_element(L::LineSegment)
 
-Return some element of a 2D line segment.
+### Algorithm
 
-### Input
-
-- `L` -- 2D line segment
-
-### Output
-
-The first vertex of the line segment.
+The output is the first vertex of the line segment.
 """
 function an_element(L::LineSegment)
     return L.p

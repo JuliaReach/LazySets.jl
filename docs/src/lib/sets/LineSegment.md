@@ -7,19 +7,15 @@ CurrentModule = LazySets.LineSegmentModule
 ```@docs
 LineSegment
 an_element(::LineSegment)
-center(::LineSegment)
 constraints_list(::LineSegment)
-dim(::LineSegment)
 generators(::LineSegment)
 genmat(::LineSegment)
 halfspace_left(::LineSegment)
 halfspace_right(::LineSegment)
 ngens(::LineSegment)
 rand(::Type{LineSegment})
-vertices_list(::LineSegment)
 ∈(::AbstractVector, ::LineSegment)
 σ(::AbstractVector, ::LineSegment)
-ρ(::AbstractVector, ::LineSegment)
 translate(::LineSegment, ::AbstractVector)
 intersection(::LineSegment, ::LineSegment)
 isdisjoint(::LineSegment, ::LineSegment)
@@ -30,7 +26,11 @@ CurrentModule = LazySets.API
 ```
 
 Undocumented implementations:
+* [`center`](@ref center(::LazySet))
+* [`dim`](@ref dim(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`vertices_list`](@ref vertices_list(::LazySet))
+* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets
@@ -79,7 +79,6 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`volume`](@ref volume(::AbstractPolytope))
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
-* [`center`](@ref center(::AbstractCentrallySymmetricPolytope, ::Int))
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetricPolytope))
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetricPolytope, ::Int))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))

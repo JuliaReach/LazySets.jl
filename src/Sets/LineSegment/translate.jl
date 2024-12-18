@@ -1,16 +1,7 @@
 """
+# Extended help
+
     translate(L::LineSegment, v::AbstractVector)
-
-Translate (i.e., shift) a 2D line segment by a given vector.
-
-### Input
-
-- `L` -- 2D line segment
-- `v` -- translation vector
-
-### Output
-
-A translated line segment.
 
 ### Algorithm
 
