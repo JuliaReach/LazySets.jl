@@ -10,11 +10,53 @@ Universe
 
 ## Operations
 
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+an_element(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.UniverseModule
+```
 ```@docs
 an_element(::Universe{N}) where {N}
 constrained_dimensions(::Universe)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.UniverseModule
+```
+```@docs
 rand(::Type{Universe})
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+ρ(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.UniverseModule
+```
+```@docs
 ρ(::AbstractVector, ::Universe)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+σ(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.UniverseModule
+```
+```@docs
 σ(::AbstractVector, ::Universe)
 ```
 
