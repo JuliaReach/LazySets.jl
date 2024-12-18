@@ -1,26 +1,15 @@
 """
+# Extended help
+
     sample(B::Ball2{N}, [nsamples]::Int;
            [rng]::AbstractRNG=GLOBAL_RNG,
            [seed]::Union{Int, Nothing}=nothing) where {N}
 
-Return samples from a uniform distribution on the given ball in the 2-norm.
-
-### Input
-
-- `B`        -- ball in the 2-norm
-- `nsamples` -- number of random samples
-- `rng`      -- (optional, default: `GLOBAL_RNG`) random number generator
-- `seed`     -- (optional, default: `nothing`) seed for reseeding
-
-### Output
-
-A linear array of `nsamples` elements drawn from a uniform distribution in `B`.
-
 ### Algorithm
 
 Random sampling with uniform distribution in `B` is computed using Muller's method
-of normalized Gaussians. This function requires the package `Distributions`.
-See `_sample_unit_nball_muller!` for implementation details.
+of normalized Gaussians. This method requires the package `Distributions`.
+See [`_sample_unit_nball_muller!`](@ref) for implementation details.
 """
 function sample(B::Ball2{N}, nsamples::Int;
                 rng::AbstractRNG=GLOBAL_RNG,

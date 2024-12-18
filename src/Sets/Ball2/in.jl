@@ -1,16 +1,7 @@
 """
+# Extended help
+
     ∈(x::AbstractVector, B::Ball2)
-
-Check whether a given point is contained in a ball in the 2-norm.
-
-### Input
-
-- `x` -- point/vector
-- `B` -- ball in the 2-norm
-
-### Output
-
-`true` iff ``x ∈ B``.
 
 ### Notes
 

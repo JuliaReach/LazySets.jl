@@ -11,7 +11,6 @@ Ball2
 ## Operations
 
 ```@docs
-center(::Ball2)
 chebyshev_center_radius(::Ball2)
 rand(::Type{Ball2})
 reflect(::Ball2)
@@ -31,6 +30,7 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 * [`area`](@ref area(::LazySet))
+* [`center`](@ref center(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`scale`](@ref scale(::Real, ::LazySet))
