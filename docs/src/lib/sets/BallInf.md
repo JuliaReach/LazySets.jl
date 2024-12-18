@@ -11,7 +11,6 @@ BallInf
 ## Operations
 
 ```@docs
-center(::BallInf)
 isflat(::BallInf)
 ngens(::BallInf)
 radius(::BallInf, ::Real=Inf)
@@ -21,7 +20,6 @@ rand(::Type{BallInf})
 reflect(::BallInf)
 volume(::BallInf)
 ρ(::AbstractVector, ::BallInf)
-σ(::AbstractVector, ::BallInf)
 translate!(::BallInf, ::AbstractVector)
 ```
 
@@ -31,6 +29,7 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 * [`area`](@ref area(::LazySet))
+* [`center`](@ref center(::LazySet))
 * [`high`](@ref high(::LazySet))
 * [`high`](@ref high(::LazySet, ::Int))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
@@ -38,6 +37,7 @@ Undocumented implementations:
 * [`low`](@ref low(::LazySet, ::Int))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`scale`](@ref scale(::Real, ::LazySet))
+* [`σ`](@ref σ(::AbstractVector, ::LazySet))
 * [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
 ```@meta
 CurrentModule = LazySets

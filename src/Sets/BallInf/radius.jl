@@ -1,16 +1,7 @@
 """
+# Extended help
+
     radius(B::BallInf, [p]::Real=Inf)
-
-Return the radius of a ball in the infinity norm.
-
-### Input
-
-- `B` -- ball in the infinity norm
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the radius.
 
 ### Notes
 

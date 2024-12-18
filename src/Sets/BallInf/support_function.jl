@@ -1,25 +1,15 @@
 const BALLINF_THRESHOLD_ρ = 30  # threshold value in `ρ`
 
 """
+# Extended help
+
     ρ(d::AbstractVector, B::BallInf)
-
-Evaluate the support function of a ball in the infinity norm in the given
-direction.
-
-### Input
-
-- `d` -- direction
-- `B` -- ball in the infinity norm
-
-### Output
-
-Evaluation of the support function in the given direction.
 
 ### Algorithm
 
 Let ``B`` be a ball in the infinity norm with center ``c`` and radius ``r`` and
 let ``d`` be the direction of interest.
-For balls with dimensions less than ``$BALLINF_THRESHOLD_ρ`` we use the
+For balls with dimensions less than ``$BALLINF_THRESHOLD_ρ``, we use the
 implementation for `AbstractHyperrectangle`, tailored to a `BallInf`, which
 computes
 
@@ -29,7 +19,7 @@ computes
 
 where ``\\textrm{sgn}(α) = 1`` if ``α ≥ 0`` and ``\\textrm{sgn}(α) = -1`` if ``α < 0``.
 
-For balls of higher dimension we instead exploit that for a support vector
+For balls of higher dimension, we instead exploit that for a support vector
 ``v = σ(d, B) = c + \\textrm{sgn}(d) · (r, …, r)ᵀ`` we have
 
 ```math

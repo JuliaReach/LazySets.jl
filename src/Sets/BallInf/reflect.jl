@@ -1,16 +1,7 @@
 """
+# Extended help
+
     reflect(B::BallInf)
-
-Concrete reflection of a ball in the infinity norm `B`, resulting in the
-reflected set `-B`.
-
-### Input
-
-- `B` -- ball in the infinity norm
-
-### Output
-
-The `BallInf` representing `-B`.
 
 ### Algorithm
 
