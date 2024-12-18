@@ -13,13 +13,79 @@ BallInf
 ```@docs
 isflat(::BallInf)
 ngens(::BallInf)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+radius(::LazySet, ::Real=Inf)
+```
+```@meta
+CurrentModule = LazySets.BallInfModule
+```
+```@docs
 radius(::BallInf, ::Real=Inf)
 radius_hyperrectangle(::BallInf)
 radius_hyperrectangle(::BallInf, ::Int)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.BallInfModule
+```
+```@docs
 rand(::Type{BallInf})
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+reflect(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.BallInfModule
+```
+```@docs
 reflect(::BallInf)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+volume(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.BallInfModule
+```
+```@docs
 volume(::BallInf)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+ρ(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.BallInfModule
+```
+```@docs
 ρ(::AbstractVector, ::BallInf)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+translate!(::LazySet, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.BallInfModule
+```
+```@docs
 translate!(::BallInf, ::AbstractVector)
 ```
 
