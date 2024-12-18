@@ -13,6 +13,17 @@ ZeroSet
 ```@docs
 element(::ZeroSet{N}) where {N}
 element(::ZeroSet{N}, ::Int) where {N}
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.ZeroSetModule
+```
+```@docs
 rand(::Type{ZeroSet})
 ```
 
