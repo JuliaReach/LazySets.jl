@@ -1,16 +1,7 @@
 """
+# Extended help
+
     ρ(d::AbstractVector, B::Ball2)
-
-Return the support function of a 2-norm ball in the given direction.
-
-### Input
-
-- `d` -- direction
-- `B` -- ball in the 2-norm
-
-### Output
-
-The support function in the given direction.
 
 ### Algorithm
 

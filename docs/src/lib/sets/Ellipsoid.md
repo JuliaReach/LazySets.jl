@@ -10,15 +10,66 @@ Ellipsoid
 
 ## Operations
 
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.EllipsoidModule
+```
 ```@docs
-center(::Ellipsoid)
 rand(::Type{Ellipsoid})
 shape_matrix(::Ellipsoid)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+∈(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.EllipsoidModule
+```
+```@docs
 ∈(::AbstractVector, ::Ellipsoid)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+ρ(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.EllipsoidModule
+```
+```@docs
 ρ(::AbstractVector, ::Ellipsoid)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+σ(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.EllipsoidModule
+```
+```@docs
 σ(::AbstractVector, ::Ellipsoid)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+linear_map(::AbstractMatrix, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.EllipsoidModule
+```
+```@docs
 linear_map(::AbstractMatrix, ::Ellipsoid)
-translate!(::Ellipsoid, ::AbstractVector)
 ```
 
 ```@meta
@@ -26,8 +77,10 @@ CurrentModule = LazySets.API
 ```
 
 Undocumented implementations:
+* [`center`](@ref center(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
+* [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 
 ```@meta
 CurrentModule = LazySets

@@ -1,21 +1,7 @@
 """
+# Extended help
+
     ⊆(B1::Ball2, B2::Ball2, [witness]::Bool=false)
-
-Check whether a ball in the 2-norm is contained in another ball in the 2-norm,
-and if not, optionally compute a witness.
-
-### Input
-
-- `B1` -- inner ball in the 2-norm
-- `B2` -- outer ball in the 2-norm
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``B1 ⊆ B2``
-* If `witness` option is activated:
-  * `(true, [])` iff ``B1 ⊆ B2``
-  * `(false, v)` iff ``B1 ⊈ B2`` and ``v ∈ B1 ∖ B2``
 
 ### Algorithm
 

@@ -1,16 +1,7 @@
 """
+# Extended help
+
     ∈(x::AbstractVector, L::LineSegment)
-
-Check whether a given point is contained in a 2D line segment.
-
-### Input
-
-- `x` -- point/vector
-- `L` -- 2D line segment
-
-### Output
-
-`true` iff ``x ∈ L``.
 
 ### Algorithm
 

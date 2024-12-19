@@ -1,16 +1,7 @@
 """
+# Extended help
+
     σ(d::AbstractVector, L::LineSegment)
-
-Return the support vector of a 2D line segment in a given direction.
-
-### Input
-
-- `d` -- direction
-- `L` -- 2D line segment
-
-### Output
-
-The support vector in the given direction.
 
 ### Algorithm
 

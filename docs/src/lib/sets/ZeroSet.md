@@ -11,16 +11,20 @@ ZeroSet
 ## Operations
 
 ```@docs
-dim(::ZeroSet)
 element(::ZeroSet{N}) where {N}
 element(::ZeroSet{N}, ::Int) where {N}
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.ZeroSetModule
+```
+```@docs
 rand(::Type{ZeroSet})
-rectify(::ZeroSet)
-reflect(::ZeroSet)
-∈(::AbstractVector, ::ZeroSet)
-linear_map(::AbstractMatrix, ::ZeroSet)
-ρ(::AbstractVector, ::ZeroSet)
-translate(::ZeroSet, ::AbstractVector)
 ```
 
 ```@meta
@@ -28,9 +32,16 @@ CurrentModule = LazySets.API
 ```
 
 Undocumented implementations:
+* [`dim`](@ref dim(::LazySet))
+* [`reflect`](@ref reflect(::LazySet))
+* [`rectify`](@ref rectify(::LazySet))
+* [`∈`](@ref ∈(::AbstractVector, ::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{<:LazySet}))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
+* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
 
 ```@meta

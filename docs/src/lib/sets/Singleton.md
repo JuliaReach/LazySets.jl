@@ -12,12 +12,41 @@ Singleton
 
 ```@docs
 element(::Singleton)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.SingletonModule
+```
+```@docs
 rand(::Type{Singleton})
-rectify(S::Singleton)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs; canonical=false
+singleton_list(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.SingletonModule
+```
+```@docs
 singleton_list(::Singleton)
-linear_map(::AbstractMatrix, ::Singleton)
-permute(::Singleton, ::AbstractVector{Int})
-project(::Singleton, ::AbstractVector{Int})
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+translate!(::LazySet, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.SingletonModule
+```
+```@docs
 translate!(::Singleton, ::AbstractVector)
 ```
 
@@ -25,7 +54,13 @@ translate!(::Singleton, ::AbstractVector)
 CurrentModule = LazySets.API
 ```
 
+Undocumented implementations:
+
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`rectify`](@ref rectify(::LazySet))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
+* [`permute`](@ref permute(::LazySet, ::AbstractVector{Int})))
+* [`project`](@ref project(::LazySet, ::AbstractVector{Int})))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
 
 ```@meta

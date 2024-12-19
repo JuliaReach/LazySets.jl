@@ -1,16 +1,7 @@
 """
+# Extended help
+
     ρ(d::AbstractVector, U::Universe)
-
-Return the support function of a universe.
-
-### Input
-
-- `d` -- direction
-- `U` -- universe
-
-### Output
-
-The support function in the given direction.
 
 ### Algorithm
 

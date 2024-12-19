@@ -10,10 +10,40 @@ Ballp
 
 ## Operations
 
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.BallpModule
+```
 ```@docs
-center(::Ballp)
 rand(::Type{Ballp})
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+reflect(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.BallpModule
+```
+```@docs
 reflect(::Ballp)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+translate!(::LazySet, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.BallpModule
+```
+```@docs
 translate!(::Ballp, ::AbstractVector)
 ```
 
@@ -22,6 +52,7 @@ CurrentModule = LazySets.API
 ```
 
 Undocumented implementations:
+* [`center`](@ref center(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 ```@meta

@@ -1,16 +1,7 @@
 """
+# Extended help
+
     σ(d::AbstractVector, E::Ellipsoid)
-
-Return the support vector of an ellipsoid in a given direction.
-
-### Input
-
-- `d` -- direction
-- `E` -- ellipsoid
-
-### Output
-
-The support vector in the given direction.
 
 ### Algorithm
 

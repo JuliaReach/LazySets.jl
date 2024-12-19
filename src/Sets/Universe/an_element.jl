@@ -1,15 +1,11 @@
 """
+# Extended help
+
     an_element(U::Universe{N}) where {N}
 
-Return some element of a universe.
+### Algorithm
 
-### Input
-
-- `U` -- universe
-
-### Output
-
-The origin.
+The output is the origin.
 """
 function an_element(U::Universe{N}) where {N}
     return zeros(N, dim(U))

@@ -1,16 +1,7 @@
 """
+# Extended help
+
     linear_map(M::AbstractMatrix, E::Ellipsoid)
-
-Concrete linear map of an ellipsoid.
-
-### Input
-
-- `M` -- matrix
-- `x` -- ellipsoid
-
-### Output
-
-An ellipsoid.
 
 ### Algorithm
 

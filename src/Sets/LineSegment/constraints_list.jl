@@ -1,15 +1,7 @@
 """
+# Extended help
+
     constraints_list(L::LineSegment)
-
-Return a list of constraints defining a 2D line segment in 2D.
-
-### Input
-
-- `L` -- 2D line segment
-
-### Output
-
-A vector of constraints defining the line segment.
 
 ### Algorithm
 

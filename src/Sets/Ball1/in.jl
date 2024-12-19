@@ -1,17 +1,13 @@
 """
-    ∈(x::AbstractVector, B::Ball1, [failfast]::Bool=false)
+# Extended help
 
-Check whether a given point is contained in a ball in the 1-norm.
+    ∈(x::AbstractVector, B::Ball1, [failfast]::Bool=false)
 
 ### Input
 
 - `x` -- point/vector
 - `B` -- ball in the 1-norm
 - `failfast` -- (optional, default: `false`) optimization for negative answer
-
-### Output
-
-`true` iff ``x ∈ B``.
 
 ### Notes
 

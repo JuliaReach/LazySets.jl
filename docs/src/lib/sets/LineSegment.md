@@ -6,21 +6,94 @@ CurrentModule = LazySets.LineSegmentModule
 
 ```@docs
 LineSegment
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+an_element(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 an_element(::LineSegment)
-center(::LineSegment)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+constraints_list(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 constraints_list(::LineSegment)
-dim(::LineSegment)
 generators(::LineSegment)
 genmat(::LineSegment)
 halfspace_left(::LineSegment)
 halfspace_right(::LineSegment)
 ngens(::LineSegment)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 rand(::Type{LineSegment})
-vertices_list(::LineSegment)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+∈(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 ∈(::AbstractVector, ::LineSegment)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+σ(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 σ(::AbstractVector, ::LineSegment)
-ρ(::AbstractVector, ::LineSegment)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+translate(::LazySet, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 translate(::LineSegment, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+intersection(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 intersection(::LineSegment, ::LineSegment)
 isdisjoint(::LineSegment, ::LineSegment)
 ```
@@ -30,7 +103,11 @@ CurrentModule = LazySets.API
 ```
 
 Undocumented implementations:
+* [`center`](@ref center(::LazySet))
+* [`dim`](@ref dim(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`vertices_list`](@ref vertices_list(::LazySet))
+* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets
@@ -79,7 +156,6 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`volume`](@ref volume(::AbstractPolytope))
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
-* [`center`](@ref center(::AbstractCentrallySymmetricPolytope, ::Int))
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetricPolytope))
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetricPolytope, ::Int))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))

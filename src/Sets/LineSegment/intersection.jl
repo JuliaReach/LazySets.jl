@@ -1,27 +1,22 @@
 """
+# Extended help
+
     intersection(LS1::LineSegment, LS2::LineSegment)
-
-Compute the intersection of two line segments.
-
-### Input
-
-- `LS1` -- line segment
-- `LS2` -- line segment
 
 ### Output
 
-A singleton, line segment, or the empty set depending on the result of the
+A `Singleton`, a `LineSegment`, or an `EmptySet` depending on the result of the
 intersection.
 
 ### Notes
 
-- If the line segments cross, or are parallel and have one point in common,
+- If the line segments cross, or are parallel and have a single point in common,
   that point is returned.
 
 - If the line segments are parallel and have a line segment in common, that
   segment is returned.
 
-- Otherwise, if there is no intersection, an empty set is returned.
+- Otherwise, there is no intersection and the empty set is returned.
 """
 function intersection(LS1::LineSegment, LS2::LineSegment)
     require(@__MODULE__, :LazySets; fun_name="intersection")

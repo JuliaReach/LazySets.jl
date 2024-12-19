@@ -11,17 +11,126 @@ Ball2
 ## Operations
 
 ```@docs
-center(::Ball2)
 chebyshev_center_radius(::Ball2)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.Ball2Module
+```
+```@docs
 rand(::Type{Ball2})
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+reflect(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.Ball2Module
+```
+```@docs
 reflect(::Ball2)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+volume(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.Ball2Module
+```
+```@docs
 volume(::Ball2)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+∈(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.Ball2Module
+```
+```@docs
 ∈(::AbstractVector, ::Ball2)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+sample(::LazySet, ::Int)
+```
+```@meta
+CurrentModule = LazySets.Ball2Module
+```
+```@docs
 sample(::Ball2{N}, ::Int) where {N}
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+ρ(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.Ball2Module
+```
+```@docs
 ρ(::AbstractVector, ::Ball2)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+σ(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.Ball2Module
+```
+```@docs
 σ(::AbstractVector, ::Ball2)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+translate!(::LazySet, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.Ball2Module
+```
+```@docs
 translate!(::Ball2, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+isdisjoint(::LazySet, ::LazySet, ::Bool=false)
+```
+```@meta
+CurrentModule = LazySets.Ball2Module
+```
+```@docs
 isdisjoint(::Ball2, ::Ball2, ::Bool=false)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+⊆(::LazySet, ::LazySet, ::Bool=false)
+```
+```@meta
+CurrentModule = LazySets.Ball2Module
+```
+```@docs
 ⊆(::Ball2, ::Ball2, ::Bool=false)
 ```
 
@@ -31,6 +140,7 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 * [`area`](@ref area(::LazySet))
+* [`center`](@ref center(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`scale`](@ref scale(::Real, ::LazySet))

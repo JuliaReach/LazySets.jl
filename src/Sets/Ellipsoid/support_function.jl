@@ -1,16 +1,7 @@
 """
+# Extended help
+
     ρ(d::AbstractVector, E::Ellipsoid)
-
-Return the support function of an ellipsoid in a given direction.
-
-### Input
-
-- `d` -- direction
-- `E` -- ellipsoid
-
-### Output
-
-The support function of the ellipsoid in the given direction.
 
 ### Algorithm
 

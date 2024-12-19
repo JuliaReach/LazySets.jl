@@ -1,17 +1,9 @@
 const BALLINF_THRESHOLD_VOLUME = 50  # threshold value in `volume`
 
 """
+# Extended help
+
     volume(B::BallInf)
-
-Return the volume of a ball in the infinity norm.
-
-### Input
-
-- `B` -- ball in the infinity norm
-
-### Output
-
-The volume of ``B``.
 
 ### Algorithm
 

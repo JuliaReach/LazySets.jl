@@ -1,15 +1,7 @@
 """
+# Extended help
+
     vertices_list(B::Ball1)
-
-Return the list of vertices of a ball in the 1-norm.
-
-### Input
-
-- `B` -- ball in the 1-norm
-
-### Output
-
-A list containing the vertices of the ball in the 1-norm.
 
 ### Notes
 

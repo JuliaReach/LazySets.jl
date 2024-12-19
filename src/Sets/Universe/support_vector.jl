@@ -1,12 +1,7 @@
 """
+# Extended help
+
     σ(d::AbstractVector, U::Universe)
-
-Return the support vector of a universe.
-
-### Input
-
-- `d` -- direction
-- `U` -- universe
 
 ### Output
 
