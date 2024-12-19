@@ -27,17 +27,17 @@ This interface defines the following functions:
 center(::AbstractSingleton)
 center(::AbstractSingleton, ::Int)
 element(::AbstractSingleton, ::Int)
-generators(::AbstractSingleton{N}) where {N}
-genmat(::AbstractSingleton{N}) where {N}
+generators(::AbstractSingleton)
+genmat(::AbstractSingleton)
 high(::AbstractSingleton)
 high(::AbstractSingleton, ::Int)
 low(::AbstractSingleton)
 low(::AbstractSingleton, ::Int)
 ngens(::AbstractSingleton)
-radius_hyperrectangle(::AbstractSingleton{N}) where {N}
-radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N}
+radius_hyperrectangle(::AbstractSingleton)
+radius_hyperrectangle(::AbstractSingleton, ::Int)
 reflect(::AbstractSingleton)
-vertices(::AbstractSingleton{N}) where {N}
+vertices(::AbstractSingleton)
 vertices_list(::AbstractSingleton)
 ∈(::AbstractVector, ::AbstractSingleton)
 ρ(::AbstractVector, ::AbstractSingleton)

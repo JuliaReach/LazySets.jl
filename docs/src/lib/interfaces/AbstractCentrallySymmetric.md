@@ -41,7 +41,7 @@ extrema(::AbstractCentrallySymmetric)
 extrema(::AbstractCentrallySymmetric, ::Int)
 isbounded(::AbstractCentrallySymmetric)
 isempty(::AbstractCentrallySymmetric)
-isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N}
+isuniversal(::AbstractCentrallySymmetric, ::Bool=false)
 ```
 
 ## Implementations

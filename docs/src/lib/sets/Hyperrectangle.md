@@ -50,7 +50,7 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N})
+* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
 * [`generators`](@ref generators(::AbstractHyperrectangle))

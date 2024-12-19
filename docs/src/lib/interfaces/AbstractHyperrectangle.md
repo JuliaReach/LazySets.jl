@@ -26,7 +26,7 @@ This interface defines the following functions:
 
 ```@docs
 □(c, r)
-constraints_list(::AbstractHyperrectangle{N}) where {N}
+constraints_list(::AbstractHyperrectangle)
 extrema(::AbstractHyperrectangle)
 extrema(::AbstractHyperrectangle, ::Int)
 generators(::AbstractHyperrectangle)

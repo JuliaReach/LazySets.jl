@@ -55,5 +55,5 @@ Inherited from [`AbstractPolyhedron`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N})
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope, ::Bool=false))
 * [`volume`](@ref volume(::AbstractPolytope))

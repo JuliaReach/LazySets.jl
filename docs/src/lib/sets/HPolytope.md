@@ -47,5 +47,5 @@ CurrentModule = LazySets
 ```
 
 Inherited from [`AbstractPolytope`](@ref):
-* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N})
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope, ::Bool=false))
 * [`volume`](@ref volume(::AbstractPolytope))

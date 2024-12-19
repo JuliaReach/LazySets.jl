@@ -283,7 +283,7 @@ function vertices_list(H::AbstractHyperrectangle; kwargs...)
 end
 
 """
-    constraints_list(H::AbstractHyperrectangle{N}) where {N}
+    constraints_list(H::AbstractHyperrectangle)
 
 Return the list of constraints of a hyperrectangular set.
 
@@ -295,7 +295,7 @@ Return the list of constraints of a hyperrectangular set.
 
 A list of ``2n`` linear constraints, where ``n`` is the dimension of `H`.
 """
-function constraints_list(H::AbstractHyperrectangle{N}) where {N}
+function constraints_list(H::AbstractHyperrectangle)
     return _constraints_list_hyperrectangle(H)
 end
 

@@ -35,7 +35,7 @@ This interface defines the following functions:
 ```@docs
 isbounded(::AbstractPolytope)
 isempty(::AbstractPolytope)
-isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N}
+isuniversal(::AbstractPolytope, ::Bool=false)
 volume(::AbstractPolytope)
 ```
 

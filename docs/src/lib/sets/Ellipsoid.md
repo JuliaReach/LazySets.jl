@@ -126,4 +126,4 @@ CurrentModule = LazySets.API
 CurrentModule = LazySets
 ```
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
-* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N})
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric, ::Bool=false))
