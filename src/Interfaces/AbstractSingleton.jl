@@ -63,7 +63,7 @@ function element(S::AbstractSingleton, i::Int)
 end
 
 """
-    radius_hyperrectangle(S::AbstractSingleton{N}, i::Int) where {N}
+    radius_hyperrectangle(S::AbstractSingleton, i::Int)
 
 Return the box radius of a set with a single value in a given dimension.
 
@@ -76,13 +76,14 @@ Return the box radius of a set with a single value in a given dimension.
 
 Zero.
 """
-function radius_hyperrectangle(S::AbstractSingleton{N}, i::Int) where {N}
+function radius_hyperrectangle(S::AbstractSingleton, i::Int)
     @boundscheck _check_bounds(S, i)
+    N = eltype(S)
     return zero(N)
 end
 
 """
-    radius_hyperrectangle(S::AbstractSingleton{N}) where {N}
+    radius_hyperrectangle(S::AbstractSingleton)
 
 Return the box radius of a set with a single value in every dimension.
 
@@ -94,7 +95,8 @@ Return the box radius of a set with a single value in every dimension.
 
 The zero vector.
 """
-function radius_hyperrectangle(S::AbstractSingleton{N}) where {N}
+function radius_hyperrectangle(S::AbstractSingleton)
+    N = eltype(S)
     return zeros(N, dim(S))
 end
 
@@ -173,7 +175,7 @@ function low(S::AbstractSingleton, i::Int)
 end
 
 """
-   genmat(S::AbstractSingleton{N}) where {N}
+   genmat(S::AbstractSingleton)
 
 Return the (empty) generator matrix of a set with a single value.
 
@@ -185,12 +187,13 @@ Return the (empty) generator matrix of a set with a single value.
 
 A matrix with no columns representing the generators of `S`.
 """
-function genmat(S::AbstractSingleton{N}) where {N}
+function genmat(S::AbstractSingleton)
+    N = eltype(S)
     return Matrix{N}(undef, dim(S), 0)
 end
 
 """
-    generators(S::AbstractSingleton{N}) where {N}
+    generators(S::AbstractSingleton)
 
 Return an (empty) iterator over the generators of a set with a single value.
 
@@ -202,7 +205,8 @@ Return an (empty) iterator over the generators of a set with a single value.
 
 An empty iterator.
 """
-function generators(S::AbstractSingleton{N}) where {N}
+function generators(S::AbstractSingleton)
+    N = eltype(S)
     return EmptyIterator{Vector{N}}()
 end
 
@@ -260,7 +264,7 @@ function center(S::AbstractSingleton, i::Int)
 end
 
 """
-    vertices(S::AbstractSingleton{N}) where {N}
+    vertices(S::AbstractSingleton)
 
 Construct an iterator over the vertices of a set with a single value.
 
@@ -272,7 +276,7 @@ Construct an iterator over the vertices of a set with a single value.
 
 An iterator with a single value.
 """
-function vertices(S::AbstractSingleton{N}) where {N}
+function vertices(S::AbstractSingleton)
     return SingletonIterator(element(S))
 end
 

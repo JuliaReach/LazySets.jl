@@ -20,7 +20,7 @@ an_element(::LazySet)
 CurrentModule = LazySets.UniverseModule
 ```
 ```@docs
-an_element(::Universe{N}) where {N}
+an_element(::Universe)
 constrained_dimensions(::Universe)
 ```
 ```@meta

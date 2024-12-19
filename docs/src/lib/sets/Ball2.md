@@ -71,7 +71,7 @@ sample(::LazySet, ::Int)
 CurrentModule = LazySets.Ball2Module
 ```
 ```@docs
-sample(::Ball2{N}, ::Int) where {N}
+sample(::Ball2, ::Int)
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -187,7 +187,7 @@ CurrentModule = LazySets.API
 CurrentModule = LazySets
 ```
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
-* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N})
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric, ::Bool=false))
 
 Inherited from [`AbstractBallp`](@ref):
 * [`high`](@ref high(::AbstractBallp, ::Int))

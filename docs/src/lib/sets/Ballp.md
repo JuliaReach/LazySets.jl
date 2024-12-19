@@ -91,7 +91,7 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractCentrallySymmetric}))
 * [`isconvextype`](@ref isconvextype(::Type{AbstractCentrallySymmetric}))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
-* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric{N}, ::Bool=false) where {N})
+* [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric, ::Bool=false))
 
 Inherited from [`AbstractBallp`](@ref):
 * [`low`](@ref low(::AbstractBallp, ::Int))

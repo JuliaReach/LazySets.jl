@@ -148,7 +148,7 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`center`](@ref center(::LazySet, ::Int))
 * [`dim`](@ref dim(::AbstractCentrallySymmetricPolytope))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))
-* [`isuniversal`](@ref isuniversal(::AbstractPolytope{N}, ::Bool=false) where {N})
+* [`isuniversal`](@ref isuniversal(::AbstractPolytope, ::Bool=false))
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`order`](@ref order(::AbstractZonotope))
@@ -163,7 +163,7 @@ CurrentModule = LazySets.API
 ```@meta
 CurrentModule = LazySets
 ```
-* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle{N}) where {N})
+* [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
 * [`generators`](@ref generators(::AbstractHyperrectangle))

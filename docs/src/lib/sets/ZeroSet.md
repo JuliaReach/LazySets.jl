@@ -11,8 +11,8 @@ ZeroSet
 ## Operations
 
 ```@docs
-element(::ZeroSet{N}) where {N}
-element(::ZeroSet{N}, ::Int) where {N}
+element(::ZeroSet)
+element(::ZeroSet, ::Int)
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -99,17 +99,17 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`center`](@ref center(::AbstractSingleton))
 * [`center`](@ref center(::AbstractSingleton, ::Int))
 * [`constraints_list`](@ref constraints_list(::AbstractSingleton))
-* [`generators`](@ref generators(::AbstractSingleton{N}) where {N})
-* [`genmat`](@ref genmat(::AbstractSingleton{N}) where {N})
+* [`generators`](@ref generators(::AbstractSingleton))
+* [`genmat`](@ref genmat(::AbstractSingleton))
 * [`high`](@ref high(::AbstractSingleton))
 * [`high`](@ref high(::AbstractSingleton, ::Int))
 * [`isconvextype`](@ref isconvextype(::Type{AbstractSingleton}))
 * [`low`](@ref low(::AbstractSingleton))
 * [`low`](@ref low(::AbstractSingleton, ::Int))
 * [`ngens`](@ref ngens(::AbstractSingleton))
-* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}) where {N})
-* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton{N}, ::Int) where {N})
-* [`vertices`](@ref vertices(::AbstractSingleton{N}) where {N})
+* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton))
+* [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton, ::Int))
+* [`vertices`](@ref vertices(::AbstractSingleton))
 * [`vertices`](@ref vertices(::AbstractSingleton))
 * [`vertices_list`](@ref vertices_list(::AbstractSingleton))
 * [`σ`](@ref σ(::AbstractVector, ::AbstractSingleton))

@@ -76,7 +76,7 @@ function isempty(P::AbstractPolytope)
 end
 
 """
-    isuniversal(P::AbstractPolytope{N}, [witness]::Bool=false) where {N}
+    isuniversal(P::AbstractPolytope, [witness]::Bool=false)
 
 Check whether a polytopic set is universal.
 
@@ -96,10 +96,11 @@ Check whether a polytopic set is universal.
 A witness is produced using `isuniversal(H)` where `H` is the first linear
 constraint of `P`.
 """
-function isuniversal(P::AbstractPolytope{N}, witness::Bool=false) where {N}
+function isuniversal(P::AbstractPolytope, witness::Bool=false)
     if witness
         constraints = constraints_list(P)
         if isempty(constraints)
+            N = eltype(P)
             return (true, N[])  # special case for polytopes without constraints
         end
         return isuniversal(constraints[1], true)

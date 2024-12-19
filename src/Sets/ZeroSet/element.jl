@@ -1,5 +1,5 @@
 """
-    element(Z::ZeroSet{N}) where {N}
+    element(Z::ZeroSet)
 
 Return the element of a zero set.
 
@@ -11,12 +11,13 @@ Return the element of a zero set.
 
 The element of the zero set, i.e., a zero vector.
 """
-function element(Z::ZeroSet{N}) where {N}
+function element(Z::ZeroSet)
+    N = eltype(Z)
     return zeros(N, Z.dim)
 end
 
 """
-    element(Z::ZeroSet{N}, ::Int) where {N}
+    element(Z::ZeroSet, i::Int)
 
 Return the i-th entry of the element of a zero set.
 
@@ -29,6 +30,7 @@ Return the i-th entry of the element of a zero set.
 
 The i-th entry of the element of the zero set, i.e., 0.
 """
-function element(Z::ZeroSet{N}, ::Int) where {N}
+function element(Z::ZeroSet, ::Int)
+    N = eltype(Z)
     return zero(N)
 end

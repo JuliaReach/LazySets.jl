@@ -99,8 +99,7 @@ function isempty(::AbstractCentrallySymmetric)
 end
 
 """
-    isuniversal(S::AbstractCentrallySymmetric{N},
-                [witness]::Bool=false) where {N}
+    isuniversal(S::AbstractCentrallySymmetric, [witness]::Bool=false)
 
 Check whether a centrally symmetric set is universal.
 
@@ -120,9 +119,9 @@ Centrally symmetric sets are bounded.
 A witness is obtained by computing the support vector in direction
 `d = [1, 0, …, 0]` and adding `d` on top.
 """
-function isuniversal(S::AbstractCentrallySymmetric{N},
-                     witness::Bool=false) where {N}
+function isuniversal(S::AbstractCentrallySymmetric, witness::Bool=false)
     if witness
+        N = eltype(S)
         d = SingleEntryVector{N}(1, dim(S))
         w = σ(d, S) + d
         return (false, w)
