@@ -1,7 +1,7 @@
 """
     chebyshev_center_radius(∅::EmptySet; [kwargs]...)
 
-Compute the [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
+Compute a [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
 and the corresponding radius of an empty set.
 
 ### Input

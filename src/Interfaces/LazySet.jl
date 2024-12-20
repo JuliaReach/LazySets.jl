@@ -1272,7 +1272,7 @@ and the corresponding radius of a polytopic set.
 ### Output
 
 The pair `(c, r)` where `c` is a Chebyshev center of `P` and `r` is the radius
-of the largest ball with center `c` enclosed by `P`.
+of the largest Euclidean ball with center `c` enclosed by `P`.
 
 ### Notes
 
