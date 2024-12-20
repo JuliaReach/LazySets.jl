@@ -7,11 +7,9 @@ Abstract type for centrally symmetric compact convex sets.
 
 ### Notes
 
-Every concrete `AbstractCentrallySymmetric` must define the following functions:
+Every concrete `AbstractCentrallySymmetric` must define the following function:
 
 - `center(::AbstractCentrallySymmetric)` -- return the center point
-- `center(::AbstractCentrallySymmetric, i::Int)` -- return the center point at
-                                                    index `i`
 
 The subtypes of `AbstractCentrallySymmetric`:
 

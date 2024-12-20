@@ -95,7 +95,13 @@ Inherited from [`AbstractPolyhedron`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-* [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolytope}))
+```@meta
+CurrentModule = LazySets.API
+```
+* [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
+```@meta
+CurrentModule = LazySets
+```
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
@@ -105,12 +111,17 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`order`](@ref order(::AbstractZonotope))
+* [`remove_redundant_generators`](@ref remove_redundant_generators(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))
+* [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
+* [`split`](@ref split(::AbstractZonotope, ::Int))
+* [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`area`](@ref area(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
+* [`isflat`](@ref isflat(::AbstractHyperrectangle))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 * [`volume`](@ref volume(::AbstractHyperrectangle))
@@ -124,7 +135,13 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`genmat`](@ref genmat(::AbstractSingleton))
 * [`high`](@ref high(::AbstractSingleton))
 * [`high`](@ref high(::AbstractSingleton, ::Int))
-* [`isboundedtype`](@ref isboundedtype(::Type{AbstractSingleton}))
+```@meta
+CurrentModule = LazySets.API
+```
+* [`isconvextype`](@ref isconvextype(::Type{LazySet}))
+```@meta
+CurrentModule = LazySets
+```
 * [`low`](@ref low(::AbstractSingleton))
 * [`low`](@ref low(::AbstractSingleton, ::Int))
 * [`ngens`](@ref ngens(::AbstractSingleton))
