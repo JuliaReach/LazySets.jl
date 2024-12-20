@@ -101,8 +101,14 @@ Inherited from [`AbstractPolyhedron`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-* [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolytope}))
-* [`isconvextype`](@ref isconvextype(::Type{AbstractPolytope}))
+```@meta
+CurrentModule = LazySets.API
+```
+* [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
+* [`isconvextype`](@ref isconvextype(::Type{LazySet}))
+```@meta
+CurrentModule = LazySets
+```
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolytope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolytope, ::Bool=false))

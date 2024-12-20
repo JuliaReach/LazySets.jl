@@ -127,7 +127,6 @@ Inherited from [`LazySet`](@ref):
 * [`low`](@ref low(::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
-* [`reflect`](@ref reflect(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`surface`](@ref surface(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
@@ -151,8 +150,14 @@ Inherited from [`AbstractPolyhedron`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-* [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolytope}))
-* [`isconvextype`](@ref isconvextype(::Type{AbstractPolytope}))
+```@meta
+CurrentModule = LazySets.API
+```
+* [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
+* [`isconvextype`](@ref isconvextype(::Type{LazySet}))
+```@meta
+CurrentModule = LazySets
+```
 * [`volume`](@ref volume(::AbstractPolytope))
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
@@ -164,8 +169,12 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 Inherited from [`AbstractZonotope`](@ref):
 * [`order`](@ref order(::AbstractZonotope))
 * [`reflect`](@ref reflect(::AbstractZonotope))
+* [`remove_redundant_generators`](@ref remove_redundant_generators(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
+* [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
+* [`split`](@ref split(::AbstractZonotope, ::Int))
+* [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 * [`cartesian_product`](@ref cartesian_product(::AbstractZonotope, ::AbstractZonotope))
 * [`minkowski_difference`](@ref minkowski_difference(::AbstractZonotope, ::AbstractZonotope))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractZonotope, ::AbstractZonotope))

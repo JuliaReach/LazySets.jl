@@ -25,7 +25,6 @@ CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
 center(::LazySet)
-center(::LazySet, ::Int)
 ```
 ```@meta
 CurrentModule = LazySets

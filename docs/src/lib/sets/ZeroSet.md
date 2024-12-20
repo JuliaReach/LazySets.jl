@@ -84,12 +84,17 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 
 Inherited from [`AbstractZonotope`](@ref):
 * [`order`](@ref order(::AbstractZonotope))
+* [`remove_redundant_generators`](@ref remove_redundant_generators(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))
+* [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
+* [`split`](@ref split(::AbstractZonotope, ::Int))
+* [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`area`](@ref area(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
+* [`isflat`](@ref isflat(::AbstractHyperrectangle))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 * [`volume`](@ref volume(::AbstractHyperrectangle))
