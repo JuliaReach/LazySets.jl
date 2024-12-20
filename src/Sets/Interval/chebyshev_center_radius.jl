@@ -1,7 +1,7 @@
 """
     chebyshev_center_radius(x::Interval; [kwargs]...)
 
-Compute the [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
+Compute a [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
 and the corresponding radius of an interval.
 
 ### Input
@@ -12,7 +12,7 @@ and the corresponding radius of an interval.
 ### Output
 
 The pair `(c, r)` where `c` is the Chebyshev center of `x` and `r` is the radius
-of the largest ball with center `c` enclosed by `x`.
+of the largest Euclidean ball with center `c` enclosed by `x`.
 
 ### Notes
 
