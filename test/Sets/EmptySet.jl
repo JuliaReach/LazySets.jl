@@ -129,7 +129,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test res isa Vector{T} && isempty(res)
 
     # surface
-    res = area(E)
+    res = surface(E)
     @test res isa N && res == N(0)
 
     # vertices_list
@@ -299,6 +299,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test B ⊈ E
     res, w = ⊆(B, E, true)
     @test !res && w isa Vector{N} && length(w) == 2 && w ∉ E && w ∈ B
+    @test Pe ⊆ E
+    res, w = ⊆(Pe, E, true)
+    @test res && w isa Vector{N} && w == N[]
 
     # linear_combination
     @test_throws AssertionError linear_combination(E, EmptySet{N}(3))
