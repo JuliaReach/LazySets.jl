@@ -1,22 +1,8 @@
 """
+# Extended help
+
     rand(::Type{Zonotope}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
-
-Create a random zonotope.
-
-### Input
-
-- `Zonotope`       -- type for dispatch
-- `N`              -- (optional, default: `Float64`) numeric type
-- `dim`            -- (optional, default: 2) dimension
-- `rng`            -- (optional, default: `GLOBAL_RNG`) random number generator
-- `seed`           -- (optional, default: `nothing`) seed for reseeding
-- `num_generators` -- (optional, default: `-1`) number of generators of the
-                      zonotope (see the comment below)
-
-### Output
-
-A random zonotope.
 
 ### Algorithm
 

@@ -1,17 +1,12 @@
 """
+# Extended help
+
     scale!(α::Real, Z::Zonotope)
 
-Concrete scaling of a zonotope modifying `Z` in-place.
+### Algorithm
 
-### Input
-
-- `α` -- scalar
-- `Z` -- zonotope
-
-### Output
-
-The zonotope obtained by applying the numerical scale to the center and
-generators of ``Z``.
+The result is obtained by applying the numerical scale to the center and
+generators.
 """
 function scale!(α::Real, Z::Zonotope)
     Z.center .*= α
