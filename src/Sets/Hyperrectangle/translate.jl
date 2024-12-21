@@ -1,7 +1,7 @@
 """
-    translate(H::Hyperrectangle, v::AbstractVector; [share]::Bool=false)
+# Extended help
 
-Translate (i.e., shift) a hyperrectangle by a given vector.
+    translate(H::Hyperrectangle, v::AbstractVector; [share]::Bool=false)
 
 ### Input
 
@@ -10,17 +10,9 @@ Translate (i.e., shift) a hyperrectangle by a given vector.
 - `share` -- (optional, default: `false`) flag for sharing unmodified parts of
              the original set representation
 
-### Output
-
-A translated hyperrectangle.
-
 ### Notes
 
 The radius vector is shared with the original hyperrectangle if `share == true`.
-
-### Algorithm
-
-We add the vector to the center of the hyperrectangle.
 """
 function translate(H::Hyperrectangle, v::AbstractVector; share::Bool=false)
     @assert length(v) == dim(H) "cannot translate a $(dim(H))-dimensional " *
