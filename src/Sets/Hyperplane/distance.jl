@@ -14,7 +14,7 @@ Euclidean norm.
 A scalar representing the distance between point `x` and hyperplane `H`.
 """
 @commutative function distance(x::AbstractVector, H::Hyperplane)
-    N = promotetype(eltype(x), eltype(H))
+    N = promote_type(eltype(x), eltype(H))
     a, b = _normalize_halfspace(H, N(2))
     return abs(dot(x, a) - b)
 end
