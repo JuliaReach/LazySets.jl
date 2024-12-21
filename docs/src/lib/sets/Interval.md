@@ -12,8 +12,8 @@ Interval
 
 ```julia
 convert(::Type{Interval}, ::LazySet)
-convert(::Type{IA.Interval}, ::LazySet)
-convert(::Type{Interval}, ::IA.Interval)
+convert(::Type{IntervalArithmetic.Interval}, ::LazySet)
+convert(::Type{Interval}, ::IntervalArithmetic.Interval)
 ```
 
 ## Operations
@@ -224,5 +224,5 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 Some additional functionality is available for `IntervalArithmetic.Interval`s:
 
 ```@docs
-fast_interval_pow(::IA.Interval, ::Int)
+fast_interval_pow(::IntervalArithmetic.Interval, ::Int)
 ```
