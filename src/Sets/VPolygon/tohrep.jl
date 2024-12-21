@@ -24,7 +24,7 @@ function tohrep(P::VPolygon{N}, ::Type{HPOLYGON}=HPolygon) where {N,HPOLYGON<:Ab
     n = length(vl)
     if n == 0
         # no vertex
-        return EmptySet{N}(2)
+        constraints_list = _infeasible_constraints_list(2; N=N)
     elseif n == 1
         # only one vertex -> use function for singletons
         require(@__MODULE__, :LazySets; fun_name="convert")

@@ -460,7 +460,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # empty VPolygon: conversion to hrep
-    @test tohrep(VPolygon{N}()) isa EmptySet{N}
+    P = tohrep(VPolygon{N}())
+    @test P isa HPolygon{N} && isempty(P)
 
     # test VPolygon constructor given the matrix of vertices
     m = N[4 0; 6 2; 4 4]'
