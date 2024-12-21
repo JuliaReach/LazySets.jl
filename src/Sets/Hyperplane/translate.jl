@@ -1,18 +1,7 @@
 """
+# Extended help
+
     translate(H::Hyperplane, v::AbstractVector; share::Bool=false)
-
-Translate (i.e., shift) a hyperplane by a given vector.
-
-### Input
-
-- `H`     -- hyperplane
-- `v`     -- translation vector
-- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
-             the original set representation
-
-### Output
-
-A translated hyperplane.
 
 ### Notes
 

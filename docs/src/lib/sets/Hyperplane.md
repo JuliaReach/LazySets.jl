@@ -8,38 +8,182 @@ CurrentModule = LazySets.HyperplaneModule
 Hyperplane
 ```
 
+## Conversion
+
+The following method requires the [`SymEngine`](https://github.com/symengine/SymEngine.jl) package.
+
+```@docs
+LazySets.convert(::Type{Hyperplane{N}}, ::Expr; vars::Vector{Basic}=Basic[]) where {N}
+```
+
 ## Operations
 
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+an_element(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.HyperplaneModule
+```
 ```@docs
 an_element(::Hyperplane)
 constrained_dimensions(::Hyperplane)
-constraints_list(::Hyperplane)
-dim(::Hyperplane)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+isbounded(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.HyperplaneModule
+```
+```@docs
 isbounded(::Hyperplane)
-isempty(::Hyperplane)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+isuniversal(::LazySet)
+```
+```@meta
+CurrentModule = LazySets.HyperplaneModule
+```
+```@docs
 isuniversal(::Hyperplane, ::Bool=false)
 normalize(::Hyperplane{N}, p::Real=N(2)) where {N}
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.HyperplaneModule
+```
+```@docs
 rand(::Type{Hyperplane})
-distance(::AbstractVector, ::Hyperplane{N}) where {N}
+distance(::AbstractVector, ::Hyperplane)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+∈(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.HyperplaneModule
+```
+```@docs
 ∈(::AbstractVector, ::Hyperplane)
 project(::AbstractVector, ::Hyperplane)
 reflect(::AbstractVector, ::Hyperplane)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+ρ(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.HyperplaneModule
+```
+```@docs
 ρ(::AbstractVector, ::Hyperplane)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+σ(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.HyperplaneModule
+```
+```@docs
 σ(::AbstractVector, ::Hyperplane)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+translate(::LazySet, ::AbstractVector)
+```
+```@meta
+CurrentModule = LazySets.HyperplaneModule
+```
+```@docs
 translate(::Hyperplane, ::AbstractVector)
 ```
+
+```@meta
+CurrentModule = LazySets.API
+```
+
+Undocumented implementations:
+
+* [`constraints_list`](@ref constraints_list(::LazySet))
+* [`dim`](@ref dim(::LazySet))
+* [`isempty`](@ref isempty(::LazySet))
+* [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
+* [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets
 ```
 
 Inherited from [`LazySet`](@ref):
-* [`diameter`](@ref diameter(::LazySet, ::Real))
-* [`high`](@ref high(::LazySet))
-* [`low`](@ref low(::LazySet))
-* [`norm`](@ref norm(::LazySet, ::Real))
-* [`radius`](@ref radius(::LazySet, ::Real))
+* [`area`](@ref area(::LazySet))
+* [`complement`](@ref complement(::LazySet))
+* [`concretize`](@ref concretize(::LazySet))
+* [`constraints`](@ref constraints(::LazySet))
+* [`convex_hull`](@ref convex_hull(::LazySet))
+* `copy(::Type{LazySet})`
+* [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
+* [`eltype`](@ref eltype(::Type{<:LazySet}))
+* [`eltype`](@ref eltype(::LazySet))
+* [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
+* [`isoperation`](@ref isoperation(::LazySet))
+* [`norm`](@ref norm(::LazySet, ::Real=Inf))
+* [`radius`](@ref radius(::LazySet, ::Real=Inf))
+* [`rectify`](@ref rectify(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
+* [`singleton_list`](@ref singleton_list(::LazySet))
+* [`surface`](@ref surface(::LazySet))
+* [`vertices`](@ref vertices(::LazySet))
+* [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
+* [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
+* [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
+* [`sample`](@ref sample(::LazySet, ::Int=1))
+* [`scale`](@ref scale(::Real, ::LazySet))
+* [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
+* [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
+* [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
+* [`≈`](@ref ≈(::LazySet, ::LazySet))
+* [`==`](@ref ==(::LazySet, ::LazySet))
+* [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
+* [`⊂`](@ref ⊂(::LazySet, ::LazySet))
+* [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
+
+Inherited from [`ConvexSet`](@ref):
+* [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
-* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractPolyhedron))
+* [`extrema`](@ref extrema(::AbstractPolyhedron))
+* [`extrema`](@ref extrema(::AbstractPolyhedron, ::Int))
+* [`high`](@ref high(::AbstractPolyhedron))
+* [`high`](@ref high(::AbstractPolyhedron, ::Int))
+* [`isconvextype`](@ref isconvextype(::Type{AbstractPolyhedron}))
+* [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
+* [`low`](@ref low(::AbstractPolyhedron))
+* [`low`](@ref low(::AbstractPolyhedron, ::Int))
+* [`vertices_list`](@ref vertices_list(::AbstractPolyhedron))
+* [`intersection`](@ref intersection(::AbstractPolyhedron, ::AbstractPolyhedron))
+* [`⊆`](@ref ⊆(::LazySet, ::AbstractPolyhedron))
+* [`minkowski_sum`](@ref minkowski_sum(::AbstractPolyhedron, ::AbstractPolyhedron))

@@ -1,16 +1,3 @@
-"""
-    constraints_list(H::Hyperplane)
-
-Return the list of constraints of a hyperplane.
-
-### Input
-
-- `H` -- hyperplane
-
-### Output
-
-A list containing two half-spaces.
-"""
 function constraints_list(H::Hyperplane)
     return _constraints_list_hyperplane(H.a, H.b)
 end

@@ -64,7 +64,6 @@ LazySets._is_linear_combination
 LazySets._ishalfspace
 LazySets._ishyperplanar
 LazySets.convert(::Type{HalfSpace{N}}, ::Expr; vars::Vector{Basic}=Basic[]) where {N}
-LazySets.convert(::Type{Hyperplane{N}}, ::Expr; vars::Vector{Basic}=Basic[]) where {N}
 ```
 
 ## Functions for numbers
@@ -76,7 +75,6 @@ sign_cadlag
 ## Other functions
 
 ```@docs
-_an_element_helper_hyperplane
 binary_search_constraints
 get_constrained_lowdimset
 get_radius!
