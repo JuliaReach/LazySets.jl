@@ -36,7 +36,7 @@ high(::AbstractHyperrectangle, ::Int)
 isflat(::AbstractHyperrectangle)
 low(::AbstractHyperrectangle)
 low(::AbstractHyperrectangle, ::Int)
-ngens(::AbstractHyperrectangle{N}) where {N}
+ngens(::AbstractHyperrectangle)
 norm(::AbstractHyperrectangle, ::Real=Inf)
 radius(::AbstractHyperrectangle, ::Real=Inf)
 radius_hyperrectangle(::AbstractHyperrectangle, ::Int)
@@ -46,7 +46,7 @@ vertices_list(::AbstractHyperrectangle)
 volume(::AbstractHyperrectangle)
 distance(::AbstractVector, ::AbstractHyperrectangle{N}; ::Real=N(2)) where {N}
 ∈(::AbstractVector, ::AbstractHyperrectangle)
-split(::AbstractHyperrectangle{N}, ::AbstractVector{Int}) where {N}
+split(::AbstractHyperrectangle, ::AbstractVector{Int})
 ρ(::AbstractVector, ::AbstractHyperrectangle)
 σ(::AbstractVector, ::AbstractHyperrectangle)
 ```

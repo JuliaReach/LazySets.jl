@@ -183,7 +183,7 @@ function generators(H::AbstractHyperrectangle)
 end
 
 """
-    ngens(H::AbstractHyperrectangle{N}) where {N}
+    ngens(H::AbstractHyperrectangle)
 
 Return the number of generators of a hyperrectangular set.
 
@@ -199,7 +199,8 @@ The number of generators.
 
 A hyperrectangular set has one generator for each non-flat dimension.
 """
-function ngens(H::AbstractHyperrectangle{N}) where {N}
+function ngens(H::AbstractHyperrectangle)
+    N = eltype(H)
     return sum(i -> radius_hyperrectangle(H, i) > zero(N), 1:dim(H))
 end
 
@@ -650,8 +651,7 @@ function isflat(H::AbstractHyperrectangle)
 end
 
 """
-    split(H::AbstractHyperrectangle{N},
-          num_blocks::AbstractVector{Int}) where {N}
+    split(H::AbstractHyperrectangle, num_blocks::AbstractVector{Int})
 
 Partition a hyperrectangular set into uniform sub-hyperrectangles.
 
@@ -664,8 +664,7 @@ Partition a hyperrectangular set into uniform sub-hyperrectangles.
 
 A list of `Hyperrectangle`s.
 """
-function split(H::AbstractHyperrectangle{N},
-               num_blocks::AbstractVector{Int}) where {N}
+function split(H::AbstractHyperrectangle, num_blocks::AbstractVector{Int})
     @assert length(num_blocks) == dim(H) "the number of blocks " *
                                          "($(length(num_blocks))) must be specified in each dimension ($(dim(H)))"
     R = radius_hyperrectangle(H)
@@ -676,6 +675,7 @@ function split(H::AbstractHyperrectangle{N},
     total_number = 1
     lo = low(H)
     hi = high(H)
+    N = eltype(H)
 
     # precompute center points in each dimension
     centers = Vector{StepRangeLen{N}}(undef, dim(H))
