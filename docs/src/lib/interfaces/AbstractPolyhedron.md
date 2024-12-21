@@ -34,7 +34,7 @@ This interface defines the following functions:
 an_element(::AbstractPolyhedron{N}) where {N}
 constrained_dimensions(::AbstractPolyhedron)
 isbounded(::AbstractPolyhedron{N}) where {N}
-isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N}
+isuniversal(::AbstractPolyhedron, ::Bool=false)
 vertices_list(::AbstractPolyhedron)
 ∈(::AbstractVector, ::AbstractPolyhedron)
 project(::AbstractPolyhedron{N}, ::AbstractVector{Int}) where {N}

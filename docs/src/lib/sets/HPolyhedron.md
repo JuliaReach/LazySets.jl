@@ -58,6 +58,6 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`an_element`](@ref an_element(::AbstractPolyhedron))
 * [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron))
 * [`isbounded`](@ref isbounded(::AbstractPolyhedron{N}) where {N})
-* [`isuniversal`](@ref isuniversal(::AbstractPolyhedron{N}, ::Bool=false) where {N})
+* [`isuniversal`](@ref isuniversal(::AbstractPolyhedron, ::Bool=false))
 * [`vertices_list`](@ref vertices_list(::AbstractPolyhedron, ::Bool=false))
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractPolyhedron))

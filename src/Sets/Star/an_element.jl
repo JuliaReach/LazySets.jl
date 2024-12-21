@@ -1,15 +1,7 @@
 """
+# Extended help
+
     an_element(X::Star)
-
-Return some element of a star.
-
-### Input
-
-- `X` -- star
-
-### Output
-
-An element of the star.
 
 ### Algorithm
 

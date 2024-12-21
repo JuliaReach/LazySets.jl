@@ -1,17 +1,7 @@
 """
+# Extended help
+
     vertices_list(X::Star; apply_convex_hull::Bool=true)
-
-Return the list of vertices of a star.
-
-### Input
-
-- `X`                 -- star
-- `apply_convex_hull` -- (optional, default: `true`) if `true`, apply the convex
-                         hull operation to the list of vertices of the star
-
-### Output
-
-A list of vertices.
 
 ### Algorithm
 

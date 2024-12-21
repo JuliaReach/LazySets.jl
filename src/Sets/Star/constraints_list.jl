@@ -1,15 +1,7 @@
 """
+# Extended help
+
     constraints_list(X::Star)
-
-Return the list of constraints of a star.
-
-### Input
-
-- `X` -- star
-
-### Output
-
-The list of constraints of the star.
 
 ### Algorithm
 
