@@ -1,21 +1,8 @@
 """
+# Extended help
+
     rand(::Type{Star}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
-
-Create a random star.
-
-### Input
-
-- `Star` -- type for dispatch
-- `N`    -- (optional, default: `Float64`) numeric type
-- `dim`  -- (optional, default: 2) dimension
-- `rng`  -- (optional, default: `GLOBAL_RNG`) random number generator
-- `seed` -- (optional, default: `nothing`) seed for reseeding
-- `P`    -- (optional, default: `nothing`) predicate
-
-### Output
-
-A random star.
 
 ### Algorithm
 

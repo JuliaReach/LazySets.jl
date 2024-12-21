@@ -62,7 +62,7 @@ function ∈(x::AbstractVector, P::AbstractPolyhedron)
 end
 
 """
-    isuniversal(P::AbstractPolyhedron{N}, [witness]::Bool=false) where {N}
+    isuniversal(P::AbstractPolyhedron, [witness]::Bool=false)
 
 Check whether a polyhedron is universal.
 
@@ -85,9 +85,10 @@ Check whether a polyhedron is universal.
 A witness is produced using `isuniversal(H)` where `H` is the first linear
 constraint of `P`.
 """
-function isuniversal(P::AbstractPolyhedron{N}, witness::Bool=false) where {N}
+function isuniversal(P::AbstractPolyhedron, witness::Bool=false)
     c = constraints(P)
     if isempty(c)
+        N = eltype(P)
         return witness ? (true, N[]) : true
     else
         return witness ? isuniversal(first(c), true) : false
