@@ -125,7 +125,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # singleton_list
     res = singleton_list(E)
-    T = VERSION < v"1.7" ? Singleton : Singleton{N, Vector{N}}
+    T = VERSION < v"1.7" ? Singleton : Singleton{N,Vector{N}}
     @test res isa Vector{T} && isempty(res)
 
     # surface
