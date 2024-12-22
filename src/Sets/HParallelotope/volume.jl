@@ -1,15 +1,7 @@
 """
+# Extended help
+
     volume(P::HParallelotope)
-
-Return the volume of a parallelotope in constraint representation.
-
-### Input
-
-- `P` -- parallelotope in constraint representation
-
-### Output
-
-The volume.
 
 ### Algorithm
 

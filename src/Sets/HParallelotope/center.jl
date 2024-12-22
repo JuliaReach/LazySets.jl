@@ -1,15 +1,7 @@
 """
+# Extended help
+
     center(P::HParallelotope)
-
-Return the center of a parallelotope in constraint representation.
-
-### Input
-
-- `P` -- parallelotope in constraint representation
-
-### Output
-
-The center of the parallelotope.
 
 ### Algorithm
 
