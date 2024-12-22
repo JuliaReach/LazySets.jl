@@ -491,33 +491,8 @@ for ST in [:AbstractPolyhedron]
     end
 end
 
-function isdisjoint(hp1::Hyperplane, hp2::Hyperplane, witness::Bool=false)
-    return _isdisjoint_hyperplane_hyperplane(hp1, hp2, witness)
-end
-
 @commutative function isdisjoint(hp::Hyperplane, L::Line2D, witness::Bool=false)
     return _isdisjoint_hyperplane_hyperplane(hp, L, witness)
-end
-
-function _isdisjoint_hyperplane_hyperplane(hp1::Union{Hyperplane,Line2D},
-                                           hp2::Union{Hyperplane,Line2D},
-                                           witness::Bool=false)
-    if isequivalent(hp1, hp2)
-        res = false
-        if witness
-            w = an_element(hp1)
-        end
-    else
-        cap = intersection(hp1, hp2)
-        res = cap isa EmptySet
-        if !res && witness
-            w = an_element(cap)
-        end
-    end
-    if res
-        return _witness_result_empty(witness, true, hp1, hp2)
-    end
-    return witness ? (false, w) : false
 end
 
 function _isdisjoint_halfspace(hs::HalfSpace, X::LazySet, witness::Bool=false)

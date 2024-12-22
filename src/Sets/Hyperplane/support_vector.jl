@@ -1,12 +1,7 @@
 """
+# Extended help
+
     σ(d::AbstractVector, H::Hyperplane)
-
-Return a support vector of a hyperplane.
-
-### Input
-
-- `d` -- direction
-- `H` -- hyperplane
 
 ### Output
 

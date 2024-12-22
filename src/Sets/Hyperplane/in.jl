@@ -1,16 +1,7 @@
 """
+# Extended help
+
     ∈(x::AbstractVector, H::Hyperplane)
-
-Check whether a given point is contained in a hyperplane.
-
-### Input
-
-- `x` -- point/vector
-- `H` -- hyperplane
-
-### Output
-
-`true` iff ``x ∈ H``.
 
 ### Algorithm
 
