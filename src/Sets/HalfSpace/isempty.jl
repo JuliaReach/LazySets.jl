@@ -1,16 +1,3 @@
-"""
-    isempty(hs::HalfSpace)
-
-Check if a half-space is empty.
-
-### Input
-
-- `hs` -- half-space
-
-### Output
-
-`false`.
-"""
-function isempty(hs::HalfSpace)
+function isempty(::HalfSpace)
     return false
 end

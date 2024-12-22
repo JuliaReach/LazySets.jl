@@ -44,12 +44,12 @@ include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
 
-include("constrained_dimensions.jl")
 include("halfspace_left.jl")
 include("halfspace_right.jl")
-include("iscomplement.jl")
+include("constrained_dimensions.jl")
 include("ishalfspace.jl")
 include("normalize.jl")
+include("iscomplement.jl")
 
 include("convert.jl")
 

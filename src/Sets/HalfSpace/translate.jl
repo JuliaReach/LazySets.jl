@@ -1,22 +1,11 @@
 """
+# Extended help
+
     translate(hs::HalfSpace, v::AbstractVector; [share]::Bool=false)
-
-Translate (i.e., shift) a half-space by a given vector.
-
-### Input
-
-- `hs`    -- half-space
-- `v`     -- translation vector
-- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
-             the original set representation
-
-### Output
-
-A translated half-space.
 
 ### Notes
 
-The normal vectors of the half-space (vector `a` in `a⋅x ≤ b`) is shared with
+The normal vector of the half-space (vector `a` in `a⋅x ≤ b`) is shared with
 the original half-space if `share == true`.
 
 ### Algorithm

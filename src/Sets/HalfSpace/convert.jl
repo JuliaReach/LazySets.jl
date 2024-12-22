@@ -10,15 +10,15 @@ function load_SymEngine_convert_HalfSpace()
         using ..LazySets: _parse_linear_expression
 
         """
-            convert(::Type{HalfSpace{N}}, expr::Expr; vars=nothing) where {N}
+            convert(::Type{HalfSpace{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
 
         Return a `LazySet.HalfSpace` given a symbolic expression that represents a half-space.
 
         ### Input
 
         - `expr` -- a symbolic expression
-        - `vars` -- (optional, default: `nothing`): set of variables with respect to which
-                    the gradient is taken; if nothing, it takes the free symbols in the given expression
+        - `vars` -- (optional, default: `nothing`): set of variables with respect to which the
+                    gradient is taken; if empty, we take the free symbols in the given expression
 
         ### Output
 

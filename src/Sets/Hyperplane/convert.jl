@@ -4,15 +4,15 @@ function load_SymEngine_convert_Hyperplane()
         using ..LazySets: _parse_linear_expression
 
         """
-            convert(::Type{Hyperplane{N}}, expr::Expr; vars=nothing) where {N}
+            convert(::Type{Hyperplane{N}}, expr::Expr; vars=Vector{Basic}=Basic[]) where {N}
 
         Return a `LazySet.Hyperplane` given a symbolic expression that represents a hyperplane.
 
         ### Input
 
         - `expr` -- a symbolic expression
-        - `vars` -- (optional, default: `nothing`): set of variables with respect to which
-                    the gradient is taken; if nothing, it takes the free symbols in the given expression
+        - `vars` -- (optional, default: `Basic[]`): set of variables with respect to which the
+                    gradient is taken; if empty, we take the free symbols in the given expression
 
         ### Output
 
