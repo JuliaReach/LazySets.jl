@@ -32,6 +32,7 @@ CurrentModule = LazySets.API
 ```
 
 Undocumented implementations:
+* `copy(::Type{ZeroSet})`
 * [`dim`](@ref dim(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
 * [`rectify`](@ref rectify(::LazySet))
@@ -98,6 +99,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 * [`volume`](@ref volume(::AbstractHyperrectangle))
+* [`project`](@ref project(::AbstractHyperrectangle, ::AbstractVector{Int}))
 * [`difference`](@ref difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 
 Inherited from [`AbstractSingleton`](@ref):

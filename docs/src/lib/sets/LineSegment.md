@@ -119,6 +119,7 @@ Inherited from [`LazySet`](@ref):
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
+* `copy(::Type{LazySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
@@ -172,6 +173,7 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`remove_redundant_generators`](@ref remove_redundant_generators(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
+* [`project`](@ref project(::AbstractZonotope, ::AbstractVector{Int}))
 * [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
 * [`split`](@ref split(::AbstractZonotope, ::Int))
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))

@@ -101,7 +101,9 @@ CurrentModule = LazySets
 Inherited from [`LazySet`](@ref):
 
 * [`area`](@ref area(::LazySet))
+* [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
+* [`constraints`](@ref constraints(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
 * `copy(::Type{LazySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
@@ -113,13 +115,13 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real=Inf))
 * [`rectify`](@ref rectify(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
-* [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`surface`](@ref surface(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
 * [`volume`](@ref volume(::LazySet))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
+* [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
@@ -144,7 +146,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`isuniversal`](@ref isuniversal(::AbstractPolyhedron, ::Bool=false))
 * [`low`](@ref low(::AbstractPolyhedron))
 * [`low`](@ref low(::AbstractPolyhedron, ::Int))
-* [`project`](@ref project(::AbstractPolyhedron, ::AbstractVector))
+* [`project`](@ref project(::AbstractPolyhedron, ::AbstractVector{Int}))
 * [`intersection`](@ref intersection(::AbstractPolyhedron, ::AbstractPolyhedron))
 * [`isdisjoint`](@ref isdisjoint(::AbstractPolyhedron, ::AbstractPolyhedron))
 * [`⊆`](@ref ⊆(::AbstractPolyhedron, ::AbstractPolyhedron))

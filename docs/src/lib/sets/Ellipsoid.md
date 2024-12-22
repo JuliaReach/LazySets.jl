@@ -78,6 +78,7 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 * [`center`](@ref center(::LazySet))
+* `copy(::Type{EmptySet})`
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
@@ -100,6 +101,7 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
+* [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`sample`](@ref sample(::LazySet, ::Int))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
