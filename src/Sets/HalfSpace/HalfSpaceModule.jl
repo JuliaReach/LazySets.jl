@@ -14,9 +14,10 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, complement, constraints_list, dim,
                         isbounded, isempty, isoperationtype, isuniversal, rand,
-                        distance, ∈, permute, project, ρ, σ, translate
+                        distance, ∈, permute, project, ρ, σ, translate,
+                        isdisjoint
 @reexport import ..LazySets: constrained_dimensions, normalize
-import ..LazySets: _ishalfspace, _linear_map_hrep_helper
+import ..LazySets: _ishalfspace, _linear_map_hrep_helper, _witness_result_empty
 import ..Base: convert
 @reexport using ..API
 
@@ -43,6 +44,7 @@ include("project.jl")
 include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
+include("isdisjoint.jl")
 
 include("halfspace_left.jl")
 include("halfspace_right.jl")

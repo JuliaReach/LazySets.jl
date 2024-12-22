@@ -134,6 +134,17 @@ CurrentModule = LazySets.HalfSpaceModule
 ```@docs
 translate(::HalfSpace, ::AbstractVector)
 iscomplement(::HalfSpace, ::HalfSpace)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+isdisjoint(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets.HalfSpaceModule
+```
+```@docs
 isdisjoint(::HalfSpace, ::HalfSpace)
 ```
 
