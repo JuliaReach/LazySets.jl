@@ -145,6 +145,7 @@ Undocumented implementations:
 * [`center`](@ref center(::LazySet, ::Int))
 * [`complement`](@ref complement(::LazySet))
 * [`constraints_list`](@ref constraints_list(::LazySet))
+* `copy(::Type{LazySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`dim`](@ref dim(::LazySet))
 * [`extrema`](@ref extrema(::LazySet))

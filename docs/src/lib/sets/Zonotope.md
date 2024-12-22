@@ -83,7 +83,7 @@ CurrentModule = LazySets
 ```@meta
 CurrentModule = LazySets.API
 ```
-* [`permute`](@ref permute(::LazySet, ::AbstractVector))
+* [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 ```@meta
 CurrentModule = LazySets
 ```
@@ -101,7 +101,9 @@ CurrentModule = LazySets
 
 Inherited from [`LazySet`](@ref):
 * [`area`](@ref area(::LazySet))
+* [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
+* [`constraints`](@ref constraints(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
 * `copy(::Type{LazySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -111,13 +113,13 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`rectify`](@ref rectify(::LazySet))
-* [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`surface`](@ref surface(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
+* [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
@@ -159,7 +161,7 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`vertices_list`](@ref vertices_list(::AbstractZonotope))
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
-* [`project`](@ref project(::AbstractZonotope, ::AbstractVector))
+* [`project`](@ref project(::AbstractZonotope, ::AbstractVector{Int}))
 * [`ρ`](@ref ρ(::AbstractVector, ::AbstractZonotope))
 * [`σ`](@ref σ(::AbstractVector, ::AbstractZonotope))
 * [`cartesian_product`](@ref cartesian_product(::AbstractZonotope, ::AbstractZonotope))

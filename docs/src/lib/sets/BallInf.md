@@ -114,6 +114,7 @@ CurrentModule = LazySets
 Inherited from [`LazySet`](@ref):
 * [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
+* `copy(::Type{LazySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`constraints`](@ref constraints(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))

@@ -62,7 +62,7 @@ CurrentModule = LazySets
 CurrentModule = LazySets.API
 ```
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
-* [`permute`](@ref permute(::LazySet, ::AbstractVector))
+* [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
@@ -73,20 +73,22 @@ CurrentModule = LazySets
 ```
 
 Inherited from [`LazySet`](@ref):
+* [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
+* [`constraints`](@ref constraints(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
 * `copy(::Type{LazySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
-* [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`surface`](@ref surface(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
+* [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
@@ -143,7 +145,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`volume`](@ref volume(::AbstractHyperrectangle))
 * [`distance`](@ref distance(::AbstractVector, ::AbstractHyperrectangle{N}; ::Real=N(2)) where {N})
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractHyperrectangle))
-* [`project`](@ref project(::AbstractHyperrectangle, ::AbstractVector))
+* [`project`](@ref project(::AbstractHyperrectangle, ::AbstractVector{Int}))
 * [`split`](@ref split(::AbstractHyperrectangle, ::AbstractVector{Int}))
 * [`ρ`](@ref ρ(::AbstractVector, ::AbstractHyperrectangle))
 * [`σ`](@ref σ(::AbstractVector, ::AbstractHyperrectangle))
