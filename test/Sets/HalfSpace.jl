@@ -170,6 +170,16 @@ for N in [Float64, Rational{Int}, Float32]
     # permute
     H = HalfSpace(N[1, -2], N(3))
     @test permute(H, 1:2) == H && permute(H, [2, 1]) == HalfSpace(N[-2, 1], N(3))
+
+    # isdisjoint
+    H1 = HalfSpace(N[1], N(0))
+    H2 = HalfSpace(N[-1], N(-1))
+    @test isdisjoint(H1, H2)
+    res, w = isdisjoint(H1, H2, true)
+    @test res && w isa Vector{N} && w == N[]
+    @test !isdisjoint(H1, H1)
+    res, w = isdisjoint(H1, H1, true)
+    @test !res && w isa Vector{N} && w ∈ H1
 end
 
 # tests that only work with Float64 and Float32

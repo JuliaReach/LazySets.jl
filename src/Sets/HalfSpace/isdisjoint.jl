@@ -50,7 +50,7 @@ function isdisjoint(H1::HalfSpace, H2::HalfSpace, witness::Bool=false)
     v = zeros(N, length(a1))
     for i in eachindex(a1)
         a_sum_i = a1[i] + a2[i]
-        if a_sum[i] != 0
+        if !iszero(a_sum_i)
             v[i] = (H1.b + H2.b) / a_sum_i
             break
         end
