@@ -1,15 +1,7 @@
 """
+# Extended help
+
     genmat(P::HParallelotope)
-
-Return the generator matrix of a parallelotope in constraint representation.
-
-### Input
-
-- `P` -- parallelotope in constraint representation
-
-### Output
-
-A matrix where each column represents one generator of the parallelotope `P`.
 
 ### Algorithm
 

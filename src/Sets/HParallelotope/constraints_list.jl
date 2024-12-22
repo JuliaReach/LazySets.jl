@@ -1,16 +1,3 @@
-"""
-    constraints_list(P::HParallelotope)
-
-Return the list of constraints of a parallelotope in constraint representation.
-
-### Input
-
-- `P` -- parallelotope in constraint representation
-
-### Output
-
-The list of constraints of `P`.
-"""
 function constraints_list(P::HParallelotope)
     D, c = P.directions, P.offset
     N, VN = _parameters(P)
@@ -18,7 +5,7 @@ function constraints_list(P::HParallelotope)
 end
 
 # reason: `Documenter` cannot annotate `constraints_list` with type parameters
-function _parameters(P::HParallelotope{N,VN}) where {N,VN}
+function _parameters(::HParallelotope{N,VN}) where {N,VN}
     return (N, VN)
 end
 
