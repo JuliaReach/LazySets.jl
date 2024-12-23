@@ -1,18 +1,7 @@
 """
+# Extended help
+
     translate(L::Line2D, v::AbstractVector; [share]::Bool=false)
-
-Translate (i.e., shift) a 2D line by a given vector.
-
-### Input
-
-- `L`     -- 2D line
-- `v`     -- translation vector
-- `share` -- (optional, default: `false`) flag for sharing unmodified parts of
-             the original set representation
-
-### Output
-
-A translated line.
 
 ### Notes
 
