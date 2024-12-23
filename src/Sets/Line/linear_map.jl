@@ -1,12 +1,7 @@
 """
+# Extended help
+
     linear_map(M::AbstractMatrix, L::Line)
-
-Concrete linear map of a line.
-
-### Input
-
-- `M` -- matrix
-- `L` -- line
 
 ### Output
 
