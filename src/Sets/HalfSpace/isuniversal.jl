@@ -1,17 +1,7 @@
 """
+# Extended help
+
     isuniversal(hs::HalfSpace, [witness]::Bool=false)
-
-Check whether a half-space is universal.
-
-### Input
-
-- `P`       -- half-space
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `false`
-* If `witness` option is activated: `(false, v)` where ``v ∉ P``
 
 ### Algorithm
 

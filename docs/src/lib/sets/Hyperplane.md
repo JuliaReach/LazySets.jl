@@ -120,6 +120,10 @@ CurrentModule = LazySets.HyperplaneModule
 translate(::Hyperplane, ::AbstractVector)
 ```
 
+```@docs
+HyperplaneModule._ishyperplanar
+```
+
 ```@meta
 CurrentModule = LazySets.API
 ```

@@ -1,17 +1,7 @@
 """
+# Extended help
+
     project(H::HalfSpace, block::AbstractVector{Int}; [kwargs...])
-
-Concrete projection of a half-space.
-
-### Input
-
-- `H`     -- half-space
-- `block` -- block structure, a vector with the dimensions of interest
-
-### Output
-
-A set representing the projection of the half-space `H` on the dimensions
-specified by `block`.
 
 ### Algorithm
 
@@ -72,10 +62,11 @@ julia> project(H, [1])
 Universe{Float64}(1)
 ```
 """
-function project(H::HalfSpace{N}, block::AbstractVector{Int}; kwargs...) where {N}
+function project(H::HalfSpace, block::AbstractVector{Int}; kwargs...)
     if constrained_dimensions(H) ⊆ block
         return HalfSpace(H.a[block], H.b)
     else
+        N = eltype(H)
         return Universe{N}(length(block))
     end
 end

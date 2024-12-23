@@ -1,16 +1,12 @@
 """
+# Extended help
+
     complement(H::HalfSpace)
 
-Return the complement of a half-space.
+### Algorithm
 
-### Input
-
-- `H` -- half-space
-
-### Output
-
-The half-space that is complementary to `H`. If ``H: ⟨ a, x ⟩ ≤ b``,
-then this function returns the half-space ``H′: ⟨ a, x ⟩ ≥ b``.
+The result is the complementary half-space to `H`. If ``H: ⟨ a, x ⟩ ≤ b``,
+then this method returns the half-space ``H′: ⟨ a, x ⟩ ≥ b``.
 (Note that complementarity is understood in a relaxed sense, since the
 intersection of ``H`` and ``H′`` is non-empty).
 """

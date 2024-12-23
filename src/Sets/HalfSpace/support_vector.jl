@@ -1,12 +1,7 @@
 """
+# Extended help
+
     σ(d::AbstractVector, hs::HalfSpace)
-
-Return the support vector of a half-space in a given direction.
-
-### Input
-
-- `d`  -- direction
-- `hs` -- half-space
 
 ### Output
 

@@ -1,5 +1,5 @@
 """
-    iscomplement(H1::HalfSpace{N}, H2::HalfSpace) where {N}
+    iscomplement(H1::HalfSpace, H2::HalfSpace)
 
 Check if two half-spaces complement each other.
 
@@ -13,7 +13,9 @@ Check if two half-spaces complement each other.
 `true` iff `H1` and `H2` are complementary, i.e., have opposite normal
 directions and identical boundaries (defining hyperplanes).
 """
-function iscomplement(H1::HalfSpace{N}, H2::HalfSpace) where {N}
+function iscomplement(H1::HalfSpace, H2::HalfSpace)
+    N = promote_type(eltype(H1), eltype(H2))
+
     # check that the half-spaces have converse directions
     res, factor = ismultiple(H1.a, H2.a)
     if !res || !_leq(factor, zero(N))
