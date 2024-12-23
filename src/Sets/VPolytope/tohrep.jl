@@ -1,6 +1,5 @@
 """
-    tohrep(P::VPolytope{N};
-           [backend]=default_polyhedra_backend(P)) where {N}
+    tohrep(P::VPolytope; [backend]=default_polyhedra_backend(P))
 
 Transform a polytope in vertex representation to a polytope in constraint
 representation.
@@ -22,8 +21,7 @@ A `HPolytope` as the constraint representation of `P`.
 The conversion may not preserve the numeric type (e.g., with `N == Float32`)
 depending on the backend.
 """
-function tohrep(P::VPolytope{N};
-                backend=default_polyhedra_backend(P)) where {N}
+function tohrep(P::VPolytope; backend=default_polyhedra_backend(P))
     @assert !isempty(P.vertices) "cannot convert an empty polytope in vertex " *
                                  "representation to constraint representation"
     require(@__MODULE__, :LazySets; fun_name="tohrep")

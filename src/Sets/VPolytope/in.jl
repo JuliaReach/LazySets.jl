@@ -1,19 +1,13 @@
 """
+# Extended help
+
     ∈(x::AbstractVector{N}, P::VPolytope{N};
       solver=default_lp_solver(N)) where {N}
 
-Check whether a given point is contained in a polytope in vertex representation.
-
 ### Input
 
-- `x`      -- point/vector
-- `P`      -- polytope in vertex representation
 - `solver` -- (optional, default: `default_lp_solver(N)`) the backend used to
               solve the linear program
-
-### Output
-
-`true` iff ``x ∈ P``.
 
 ### Algorithm
 

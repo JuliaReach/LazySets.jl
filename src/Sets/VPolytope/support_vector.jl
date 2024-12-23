@@ -1,17 +1,7 @@
 """
+# Extended help
+
     σ(d::AbstractVector, P::VPolytope)
-
-Return a support vector of a polytope in vertex representation in a given
-direction.
-
-### Input
-
-- `d` -- direction
-- `P` -- polytope in vertex representation
-
-### Output
-
-A support vector in the given direction.
 
 ### Algorithm
 
