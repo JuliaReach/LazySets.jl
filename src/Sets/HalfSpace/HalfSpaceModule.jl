@@ -2,7 +2,8 @@ module HalfSpaceModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolyhedron, LazySet, AbstractLinearMapAlgorithm
+using ..LazySets: AbstractPolyhedron, LazySet, AbstractLinearMapAlgorithm,
+                  _witness_result_empty
 import LinearAlgebra
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
@@ -17,7 +18,7 @@ using ReachabilityBase.Require: require
                         distance, ∈, permute, project, ρ, σ, translate,
                         isdisjoint
 @reexport import ..LazySets: constrained_dimensions, normalize
-import ..LazySets: _ishalfspace, _linear_map_hrep_helper, _witness_result_empty
+import ..LazySets: _ishalfspace, _linear_map_hrep_helper
 import ..Base: convert
 @reexport using ..API
 
