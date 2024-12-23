@@ -5,17 +5,17 @@ using Reexport, Requires
 using ..LazySets: AbstractPolyhedron, AbstractLinearMapAlgorithm,
                   _constraints_list_hyperplane, _intersection_line2d,
                   _linear_map_hrep, _non_element_halfspace,
-                  _σ_hyperplane_halfspace
+                  _σ_hyperplane_halfspace, _witness_result_empty
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
-using ReachabilityBase.Arrays: nonzero_indices
+using ReachabilityBase.Arrays: nonzero_indices, right_turn
 using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Comparison: _isapprox
+using ReachabilityBase.Comparison: isapproxzero, _isapprox
 using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
                         isoperationtype, isuniversal, rand, ∈, project, σ,
-                        translate, intersection
+                        translate, intersection, isdisjoint
 @reexport import ..LazySets: constrained_dimensions
 import ..LazySets: _linear_map_hrep_helper
 @reexport using ..API
@@ -38,6 +38,7 @@ include("project.jl")
 include("support_vector.jl")
 include("translate.jl")
 include("intersection.jl")
+include("isdisjoint.jl")
 
 include("constrained_dimensions.jl")
 

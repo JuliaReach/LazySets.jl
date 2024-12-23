@@ -83,7 +83,6 @@ CurrentModule = LazySets.Line2DModule
 ```
 ```@docs
 intersection(::Line2D, ::Line2D)
-isdisjoint(::Line2D, ::Line2D)
 ```
 
 ```@meta
@@ -98,6 +97,7 @@ Undocumented implementations:
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
+* [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets

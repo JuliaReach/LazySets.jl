@@ -966,40 +966,6 @@ for ST in [:AbstractPolyhedron, :AbstractSingleton, :HalfSpace, :Hyperplane,
     end
 end
 
-"""
-    isdisjoint(L1::Line2D, L2::Line2D, [witness]::Bool=false)
-
-Check whether two two-dimensional lines do not intersect, and otherwise
-optionally compute a witness.
-
-### Input
-
-- `L1`      -- two-dimensional line
-- `L2`      -- two-dimensional line
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``L1 ∩ L2 = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``L1 ∩ L2 = ∅``
-  * `(false, v)` iff ``L1 ∩ L2 ≠ ∅`` and ``v ∈ L1 ∩ L2``
-"""
-function isdisjoint(L1::Line2D, L2::Line2D, witness::Bool=false)
-    disjoint = _isdisjoint(L1, L2)
-    if disjoint
-        return _witness_result_empty(witness, true, L1, L2)
-    end
-    return witness ? (false, an_element(intersection(L1, L2))) : false
-end
-
-# the lines do not intersect <=> det is zero and they are not identical
-function _isdisjoint(L1::Line2D, L2::Line2D)
-    det = right_turn(L1.a, L2.a)
-    disjoint = isapproxzero(det) && !isapprox(L1.b, L2.b)
-    return disjoint
-end
-
 for ST in [:AbstractZonotope, :AbstractSingleton]
     @eval @commutative function isdisjoint(C::CartesianProduct{N,<:LazySet,<:Universe},
                                            Z::$(ST)) where {N}
