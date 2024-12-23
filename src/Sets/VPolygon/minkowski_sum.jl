@@ -1,16 +1,7 @@
 """
+# Extended help
+
     minkowski_sum(P::VPolygon, Q::VPolygon)
-
-The Minkowski Sum of two polygons in vertex representation.
-
-### Input
-
-- `P` -- polygon in vertex representation
-- `Q` -- polygon in vertex representation
-
-### Output
-
-A polygon in vertex representation.
 
 ### Algorithm
 

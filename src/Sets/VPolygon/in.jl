@@ -1,16 +1,7 @@
 """
+# Extended help
+
     ∈(x::AbstractVector, P::VPolygon)
-
-Check whether a given point is contained in a polygon in vertex representation.
-
-### Input
-
-- `x` -- point/vector
-- `P` -- polygon in vertex representation
-
-### Output
-
-`true` iff ``x ∈ P``.
 
 ### Algorithm
 
