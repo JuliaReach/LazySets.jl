@@ -1,11 +1,7 @@
 """
+# Extended help
+
     constraints_list(L::Line)
-
-Return the list of constraints of a line.
-
-### Input
-
-- `L` -- line
 
 ### Output
 

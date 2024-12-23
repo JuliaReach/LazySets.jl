@@ -1,16 +1,7 @@
 """
+# Extended help
+
     ∈(x::AbstractVector, L::Line)
-
-Check whether a given point is contained in a line.
-
-### Input
-
-- `x` -- point/vector
-- `L` -- line
-
-### Output
-
-`true` iff `x ∈ L`.
 
 ### Algorithm
 
