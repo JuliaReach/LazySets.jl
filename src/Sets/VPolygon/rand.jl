@@ -2,24 +2,15 @@
 const DEFAULT_RAND_VERTEX_RANGE = 3:10
 
 """
+# Extended help
+
     rand(::Type{VPolygon}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
-Create a random polygon in vertex representation.
-
 ### Input
 
-- `VPolygon`     -- type for dispatch
-- `N`            -- (optional, default: `Float64`) numeric type
-- `dim`          -- (optional, default: 2) dimension
-- `rng`          -- (optional, default: `GLOBAL_RNG`) random number generator
-- `seed`         -- (optional, default: `nothing`) seed for reseeding
 - `num_vertices` -- (optional, default: `-1`) number of vertices of the
                     polygon (see comment below)
-
-### Output
-
-A random polygon in vertex representation.
 
 ### Notes
 

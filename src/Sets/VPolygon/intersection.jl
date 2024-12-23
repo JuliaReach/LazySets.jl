@@ -1,14 +1,7 @@
 """
+# Extended help
+
     intersection(P1::VPolygon, P2::VPolygon; apply_convex_hull::Bool=true)
-
-Compute the intersection of two polygons in vertex representation.
-
-### Input
-
-- `P1` -- polygon in vertex representation
-- `P2` -- polygon in vertex representation
-- `apply_convex_hull` -- (default, optional: `true`) if `false`, skip the
-                         computation of the convex hull of the resulting polygon
 
 ### Output
 

@@ -4,18 +4,12 @@
 const BINARY_OR_BRUTE_FORCE = 10
 
 """
+# Extended help
+
     σ(d::AbstractVector, P::VPolygon)
-
-Return a support vector of a polygon in a given direction.
-
-### Input
-
-- `d` -- direction
-- `P` -- polygon in vertex representation
 
 ### Output
 
-A support vector in the given direction.
 If the direction has norm zero, the first vertex is returned.
 
 ### Algorithm

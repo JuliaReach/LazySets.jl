@@ -1,11 +1,7 @@
 """
+# Extended help
+
     an_element(P::VPolygon)
-
-Return some element of a polygon in vertex representation.
-
-### Input
-
-- `P` -- polygon in vertex representation
 
 ### Output
 
