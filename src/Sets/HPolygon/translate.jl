@@ -1,19 +1,12 @@
 """
-    translate(v::AbstractVector, P::HPolygon; [share]::Bool=false)
+# Extended help
 
-Translate (i.e., shift) a polygon in constraint representation by a given
-vector.
+    translate(v::AbstractVector, P::HPolygon; [share]::Bool=false)
 
 ### Input
 
-- `P`     -- polygon in constraint representation
-- `v`     -- translation vector
 - `share` -- (optional, default: `false`) flag for sharing unmodified parts of
              the original set representation
-
-### Output
-
-A translated polygon in constraint representation.
 
 ### Notes
 

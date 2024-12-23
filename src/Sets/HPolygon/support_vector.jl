@@ -1,19 +1,16 @@
 """
+# Extended help
+
     σ(d::AbstractVector, P::HPolygon;
       [linear_search]::Bool=(length(P.constraints) < $BINARY_SEARCH_THRESHOLD))
 
-Return a support vector of a polygon in a given direction.
-
 ### Input
 
-- `d`             -- direction
-- `P`             -- polygon in constraint representation
 - `linear_search` -- (optional, default: see below) flag for controlling whether
                      to perform a linear search or a binary search
 
 ### Output
 
-The support vector in the given direction.
 The result is always one of the vertices; in particular, if the direction has
 norm zero, any vertex is returned.
 

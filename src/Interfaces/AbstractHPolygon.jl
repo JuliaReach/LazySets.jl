@@ -89,9 +89,9 @@ function normalize(P::AbstractHPolygon{N}, p::Real=N(2)) where {N}
 end
 
 """
-    vertices_list(P::AbstractHPolygon{N};
+    vertices_list(P::AbstractHPolygon;
                   apply_convex_hull::Bool=true,
-                  check_feasibility::Bool=true) where {N}
+                  check_feasibility::Bool=true)
 
 Return the list of vertices of a polygon in constraint representation.
 
@@ -140,10 +140,11 @@ polygon were actually feasible (i.e., they pointed in the *right* direction).
 For this we compute the *average* of all vertices and check membership in each
 constraint.
 """
-function vertices_list(P::AbstractHPolygon{N};
+function vertices_list(P::AbstractHPolygon;
                        apply_convex_hull::Bool=true,  # see docstring and #1405
-                       check_feasibility::Bool=true) where {N}
+                       check_feasibility::Bool=true)
     n = length(P.constraints)
+    N = eltype(P)
     points = Vector{Vector{N}}(undef, n)
     if n == 0
         return points
