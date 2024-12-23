@@ -3,7 +3,8 @@ module HyperplaneModule
 using Reexport, Requires
 
 using ..LazySets: AbstractPolyhedron, AbstractLinearMapAlgorithm,
-                  _linear_map_hrep, _non_element_halfspace, _normalize_halfspace
+                  _linear_map_hrep, _non_element_halfspace,
+                  _normalize_halfspace, _witness_result_empty
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: nonzero_indices
@@ -16,8 +17,7 @@ using ReachabilityBase.Require: require
                         isoperationtype, isuniversal, rand, reflect, distance,
                         ∈, project, ρ, σ, translate, isdisjoint
 @reexport import ..LazySets: constrained_dimensions, ishyperplanar, normalize
-import ..LazySets: _ishyperplanar, _linear_map_hrep_helper,
-                   _witness_result_empty
+import ..LazySets: _ishyperplanar, _linear_map_hrep_helper
 import ..Base: convert
 @reexport using ..API
 
