@@ -26,7 +26,7 @@ rand(::Type{HPOLYGON}) where {HPOLYGON<:AbstractHPolygon}
 remove_redundant_constraints!(::AbstractHPolygon)
 tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
 tovrep(::AbstractHPolygon)
-vertices_list(::AbstractHPolygon{N}) where {N}
+vertices_list(::AbstractHPolygon)
 addconstraint!(::AbstractHPolygon, ::HalfSpace)
 addconstraint!(::Vector{LC}, ::HalfSpace) where {LC<:HalfSpace}
 ∈(::AbstractVector, ::AbstractHPolygon)
