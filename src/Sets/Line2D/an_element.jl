@@ -1,15 +1,7 @@
 """
+# Extended help
+
     an_element(L::Line2D)
-
-Return some element of a 2D line.
-
-### Input
-
-- `L` -- 2D line
-
-### Output
-
-An element on the line.
 
 ### Algorithm
 

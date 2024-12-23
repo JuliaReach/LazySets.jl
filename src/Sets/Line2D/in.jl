@@ -1,16 +1,7 @@
 """
+# Extended help
+
     ∈(x::AbstractVector, L::Line2D)
-
-Check whether a given point is contained in a 2D line.
-
-### Input
-
-- `x` -- point/vector
-- `L` -- 2D line
-
-### Output
-
-`true` iff `x ∈ L`.
 
 ### Algorithm
 

@@ -1,12 +1,7 @@
 """
+# Extended help
+
     intersection(L1::Line2D, L2::Line2D)
-
-Compute the intersection of two two-dimensional lines.
-
-### Input
-
-- `L1` -- line
-- `L2` -- line
 
 ### Output
 
