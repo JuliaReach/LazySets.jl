@@ -1,17 +1,11 @@
 """
-    cartesian_product(P1::VPolytope, P2::VPolytope; [backend]=nothing)
+# Extended help
 
-Compute the Cartesian product of two polytopes in vertex representation.
+    cartesian_product(P1::VPolytope, P2::VPolytope; [backend]=nothing)
 
 ### Input
 
-- `P1`      -- polytope in vertex representation
-- `P2`      -- polytope in vertex representation
 - `backend` -- (optional, default: `nothing`) backend for polyhedral computation
-
-### Output
-
-The `VPolytope` obtained by the concrete Cartesian product of `P1` and `P2`.
 
 ### Notes
 

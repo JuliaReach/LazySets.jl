@@ -1,18 +1,12 @@
 """
-    linear_map(M::AbstractMatrix, P::VPolytope; [apply_convex_hull]::Bool=false)
+# Extended help
 
-Concrete linear map of a polytope in vertex representation.
+    linear_map(M::AbstractMatrix, P::VPolytope; [apply_convex_hull]::Bool=false)
 
 ### Input
 
-- `M` -- matrix
-- `P` -- polytope in vertex representation
 - `apply_convex_hull` -- (optional, default: `false`) flag for applying a convex
                          hull to eliminate redundant vertices
-
-### Output
-
-A polytope in vertex representation.
 
 ### Algorithm
 
