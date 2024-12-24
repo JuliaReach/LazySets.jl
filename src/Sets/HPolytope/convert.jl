@@ -1,21 +1,3 @@
-"""
-    convert(::Type{HPolytope}, X::LazySet)
-
-Convert a polytopic set to a polytope in constraint representation.
-
-### Input
-
-- `HPolytope` -- target type
-- `X`         -- polytopic set
-
-### Output
-
-The given polytope represented as a polytope in constraint representation.
-
-### Algorithm
-
-This method uses `constraints_list`.
-"""
 function convert(::Type{HPolytope}, X::LazySet)
     if !isboundedtype(typeof(X)) || !ispolyhedral(X)
         error("conversion to `HPolytope` requires a polytopic set")

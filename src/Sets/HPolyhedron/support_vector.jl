@@ -1,23 +1,19 @@
 """
+# Extended help
+
     σ(d::AbstractVector{M}, P::HPoly{N};
       solver=default_lp_solver(M, N) where {M, N}
 
-Return a support vector of a polyhedron in constraint representation in a given
-direction.
-
 ### Input
 
-- `d`      -- direction
-- `P`      -- polyhedron in constraint representation
 - `solver` -- (optional, default: `default_lp_solver(M, N)`) the backend used to
               solve the linear program
 
 ### Output
 
-The support vector in the given direction.
-If a polytope is unbounded in the given direction, we throw an error.
-If a polyhedron is unbounded in the given direction, the result contains `±Inf`
-entries.
+If `P` is unbounded in the given direction, there are two cases:
+- If `P` is an `HPolytope`, we throw an error.
+- If `P` is an `HPolyedron`, the result contains `±Inf` entries.
 """
 function σ(d::AbstractVector{M}, P::HPoly{N};
            solver=default_lp_solver(M, N)) where {M,N}
