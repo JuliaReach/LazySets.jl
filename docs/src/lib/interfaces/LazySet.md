@@ -69,7 +69,7 @@ isfeasible
 norm(::LazySet, ::Real=Inf)
 radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)
-isempty(::LazySet{N}, ::Bool=false) where {N}
+isempty(::LazySet, ::Bool=false)
 linear_map(::AbstractMatrix, ::LazySet; kwargs...)
 linear_map(::Number, ::LazySet; kwargs...)
 affine_map(::Any, ::LazySet, ::AbstractVector)
@@ -85,10 +85,10 @@ area(::LazySet)
 concretize(::LazySet)
 complement(::LazySet)
 polyhedron(::LazySet)
-project(::LazySet, ::AbstractVector{Int}, ::Nothing=nothing, ::Int=dim(S))
-project(::LazySet, ::AbstractVector{Int}, ::Type{TS}, ::Int=dim(S)) where {TS<:LazySet}
-project(::LazySet, ::AbstractVector{Int}, ::Pair{T, N}, ::Int=dim(S)) where {T<:UnionAll, N<:Real}
-project(::LazySet, ::AbstractVector{Int}, ::Real, ::Int=dim(S))
+project(::LazySet, ::AbstractVector{Int}, ::Nothing=nothing, ::Int=dim(X))
+project(::LazySet, ::AbstractVector{Int}, ::Type{<:LazySet}, ::Int=dim(X))
+project(::LazySet, ::AbstractVector{Int}, ::Pair{<:UnionAll,<:Real}, ::Int=dim(X))
+project(::LazySet, ::AbstractVector{Int}, ::Real, ::Int=dim(X))
 rectify(::LazySet, ::Bool=false)
 permute
 rationalize(::Type{T}, ::LazySet{<:AbstractFloat}, ::Real) where {T<:Integer}
@@ -96,19 +96,10 @@ singleton_list(::LazySet)
 constraints(::LazySet)
 vertices(::LazySet)
 delaunay
-chebyshev_center_radius(::LazySet{N}) where {N}
+chebyshev_center_radius(::LazySet)
 scale(::Real, ::LazySet)
 translate(::LazySet, ::AbstractVector)
 plot_recipe(::LazySet, ::Any)
-```
-
-The following methods are also defined for `LazySet` but cannot be documented
-due to a bug in the documentation package.
-
-```@docs
-low(::ConvexSet{N}, ::Int) where {N}
-high(::ConvexSet{N}, ::Int) where {N}
-an_element(::ConvexSet{N}) where {N}
 ```
 
 ## Support function and support vector

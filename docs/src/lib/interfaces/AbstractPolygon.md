@@ -35,7 +35,7 @@ The following helper functions are used for sorting directions:
 LazySets.jump2pi
 ⪯(::AbstractVector, ::AbstractVector)
 LazySets._leq_trig(::AbstractVector{N}, ::AbstractVector{N}) where {N<:AbstractFloat}
-LazySets.quadrant(::AbstractVector{N}) where {N}
+LazySets.quadrant(::AbstractVector)
 ```
 
 ## Implementations

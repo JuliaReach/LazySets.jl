@@ -1091,8 +1091,8 @@ end
 end
 
 """
-    project(X::LazySet, block::AbstractVector{Int}, set_type::Type{T},
-            [n]::Int=dim(X); [kwargs...]) where {T<:LazySet}
+    project(X::LazySet, block::AbstractVector{Int}, set_type::Type{<:LazySet},
+            [n]::Int=dim(X); [kwargs...])
 
 Project a set to a given block and set type, possibly involving an
 overapproximation.
@@ -1116,16 +1116,16 @@ coordinates and zero otherwise.
 2. Overapproximate the projected set using `overapproximate` and `set_type`.
 """
 @inline function project(X::LazySet, block::AbstractVector{Int},
-                         set_type::Type{T}, n::Int=dim(X);
-                         kwargs...) where {T<:LazySet}
+                         set_type::Type{<:LazySet}, n::Int=dim(X);
+                         kwargs...)
     lm = project(X, block, LinearMap, n)
     return overapproximate(lm, set_type)
 end
 
 """
     project(X::LazySet, block::AbstractVector{Int},
-            set_type_and_precision::Pair{T, N}, [n]::Int=dim(X);
-            [kwargs...]) where {T<:UnionAll, N<:Real}
+            set_type_and_precision::Pair{<:UnionAll,<:Real}, [n]::Int=dim(X);
+            [kwargs...])
 
 Project a set to a given block and set type with a certified error bound.
 
@@ -1153,8 +1153,8 @@ coordinates and zero otherwise.
 2. Overapproximate the projected set with the given error bound `ε`.
 """
 @inline function project(X::LazySet, block::AbstractVector{Int},
-                         set_type_and_precision::Pair{T,N}, n::Int=dim(X);
-                         kwargs...) where {T<:UnionAll,N<:Real}
+                         set_type_and_precision::Pair{<:UnionAll,<:Real}, n::Int=dim(X);
+                         kwargs...)
     set_type, ε = set_type_and_precision
     @assert length(block) == 2 && set_type == HPolygon "currently only 2D HPolygon " *
                                                        "projection is supported"
@@ -1252,10 +1252,9 @@ function rationalize(::Type{T}, X::AbstractVector{<:LazySet{<:AbstractFloat}},
 end
 
 """
-    chebyshev_center_radius(P::LazySet{N};
+    chebyshev_center_radius(P::LazySet;
                             [backend]=default_polyhedra_backend(P),
-                            [solver]=default_lp_solver_polyhedra(N; presolve=true)
-                           ) where {N}
+                            [solver]=default_lp_solver_polyhedra(eltype(P); presolve=true))
 
 Compute a [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
 and the corresponding radius of a polytopic set.
@@ -1283,9 +1282,9 @@ In general, the center of such a ball is not unique, but the radius is.
 
 We call `Polyhedra.chebyshevcenter`.
 """
-function chebyshev_center_radius(P::LazySet{N};
+function chebyshev_center_radius(P::LazySet;
                                  backend=default_polyhedra_backend(P),
-                                 solver=default_lp_solver_polyhedra(N; presolve=true)) where {N}
+                                 solver=default_lp_solver_polyhedra(eltype(P); presolve=true))
     require(@__MODULE__, :Polyhedra; fun_name="chebyshev_center")
     if !ispolyhedral(P) && !isboundedtype(typeof(P))
         error("can only compute a Chebyshev center for polytopes")
@@ -1372,9 +1371,9 @@ function load_polyhedra_lazyset()  # function to be loaded by Requires
 end  # quote / load_polyhedra_lazyset()
 
 """
-    isempty(P::LazySet{N}, witness::Bool=false;
+    isempty(P::LazySet, witness::Bool=false;
             [use_polyhedra_interface]::Bool=false, [solver]=nothing,
-            [backend]=nothing) where {N}
+            [backend]=nothing)
 
 Check whether a polyhedral set is empty.
 
@@ -1385,7 +1384,7 @@ Check whether a polyhedral set is empty.
 - `use_polyhedra_interface` -- (optional, default: `false`) if `true`, we use
                the `Polyhedra` interface for the emptiness test
 - `solver`  -- (optional, default: `nothing`) LP-solver backend; uses
-               `default_lp_solver(N)` if not provided
+               `default_lp_solver` if not provided
 - `backend` -- (optional, default: `nothing`) backend for polyhedral
                computations in `Polyhedra`; uses `default_polyhedra_backend(P)`
                if not provided
@@ -1411,11 +1410,11 @@ The algorithm sets up a feasibility LP for the constraints of `P`.
 If `use_polyhedra_interface` is `true`, we call `Polyhedra.isempty`.
 Otherwise, we set up the LP internally.
 """
-function isempty(P::LazySet{N},  # type parameter must be present for Documenter
+function isempty(P::LazySet,
                  witness::Bool=false;
                  use_polyhedra_interface::Bool=false,
                  solver=nothing,
-                 backend=nothing) where {N}
+                 backend=nothing)
     @assert ispolyhedral(P) "this algorithm requires a polyhedral set"
     clist = constraints_list(P)
     if length(clist) < 2

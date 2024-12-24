@@ -146,7 +146,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`extrema`](@ref extrema(::AbstractPolyhedron, ::Int))
 * [`high`](@ref high(::AbstractPolyhedron))
 * [`high`](@ref high(::AbstractPolyhedron, ::Int))
-* [`isbounded`](@ref isbounded(::AbstractPolyhedron{N}) where {N})
+* [`isbounded`](@ref isbounded(::AbstractPolyhedron))
 * [`isconvextype`](@ref isconvextype(::Type{AbstractPolyhedron}))
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
 * [`isuniversal`](@ref isuniversal(::AbstractPolyhedron, ::Bool=false))

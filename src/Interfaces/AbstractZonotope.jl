@@ -83,8 +83,7 @@ A generator matrix of `Z`.
 function genmat(::AbstractZonotope) end
 
 """
-    genmat_fallback(Z::AbstractZonotope{N};
-                    [gens]=generators(Z), [ngens]=nothing) where {N}
+    genmat_fallback(Z::AbstractZonotope; [gens]=generators(Z), [ngens]=nothing)
 
 Fallback definition of `genmat` for zonotopic sets.
 
@@ -105,9 +104,9 @@ Passing the number of generators (`ngens`) is more efficient, since otherwise
 the generators have to be obtained from the iterator (`gens`) and stored in an
 intermediate vector until the final result matrix can be allocated.
 """
-function genmat_fallback(Z::AbstractZonotope{N};
-                         gens=generators(Z), ngens=nothing) where {N}
+function genmat_fallback(Z::AbstractZonotope; gens=generators(Z), ngens=nothing)
     if isempty(gens)
+        N = eltype(Z)
         return Matrix{N}(undef, dim(Z), 0)
     elseif isnothing(ngens)
         return _genmat_fallback_generic(Z, gens)
@@ -116,7 +115,7 @@ function genmat_fallback(Z::AbstractZonotope{N};
     end
 end
 
-function _genmat_fallback_generic(Z::AbstractZonotope{N}, gens) where {N}
+function _genmat_fallback_generic(Z::AbstractZonotope, gens)
     gens = collect(gens)
     return _genmat_fallback_ngens(Z, gens, length(gens))
 end
@@ -459,9 +458,8 @@ function _vertices_list_zonotope_2D_positive(c::AbstractVector{N}, G::AbstractMa
     return vlist
 end
 
-function _vertices_list_zonotope_iterative(c::VN, G::MN;
-                                           apply_convex_hull::Bool) where {N,VN<:AbstractVector{N},
-                                                                           MN<:AbstractMatrix{N}}
+function _vertices_list_zonotope_iterative(c::VN, G::AbstractMatrix{N};
+                                           apply_convex_hull::Bool) where {N,VN<:AbstractVector{N}}
     p = size(G, 2)
     vlist = Vector{VN}()
     sizehint!(vlist, 2^p)
@@ -474,10 +472,9 @@ function _vertices_list_zonotope_iterative(c::VN, G::MN;
 end
 
 # special case 2D zonotope of order 1/2
-function _vertices_list_zonotope_2D_order_one_half(c::VN, G::MN;
+function _vertices_list_zonotope_2D_order_one_half(c::VN, G::AbstractMatrix{N};
                                                    apply_convex_hull::Bool) where {N,
-                                                                                   VN<:AbstractVector{N},
-                                                                                   MN}
+                                                                                   VN<:AbstractVector{N}}
     vlist = Vector{VN}(undef, 2)
     g = view(G, :, 1)
     @inbounds begin
@@ -488,10 +485,9 @@ function _vertices_list_zonotope_2D_order_one_half(c::VN, G::MN;
 end
 
 # special case 2D zonotope of order 1
-function _vertices_list_zonotope_2D_order_one(c::VN, G::MN;
+function _vertices_list_zonotope_2D_order_one(c::VN, G::AbstractMatrix{N};
                                               apply_convex_hull::Bool) where {N,
-                                                                              VN<:AbstractVector{N},
-                                                                              MN}
+                                                                              VN<:AbstractVector{N}}
     vlist = Vector{VN}(undef, 4)
     a = [one(N), one(N)]
     b = [one(N), -one(N)]
@@ -528,11 +524,11 @@ function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N};
     return vertices_list(translate(reduce(minkowski_sum, polygons), c))
 end
 
-@inline function _angles(point::AbstractVector{N}) where {N}
+@inline function _angles(point::AbstractVector)
     return (atand(point[2], point[1]) + 360) % 360
 end
 
-function _single_quadrant_vertices_enum(G::AbstractMatrix{N}, sorted::Bool=false) where {N}
+function _single_quadrant_vertices_enum(G::AbstractMatrix, sorted::Bool=false)
     if !sorted
         G = sortslices(G; dims=2, by=_angles)
     end
@@ -567,7 +563,7 @@ end
 end
 
 """
-    constraints_list(Z::AbstractZonotope{N}) where {N<:AbstractFloat}
+    constraints_list(Z::AbstractZonotope{<:AbstractFloat})
 
 Return a list of constraints defining a zonotopic set.
 
@@ -600,7 +596,7 @@ zonotope to the non-flat dimensions and extend the result later.
 [1] Althoff, Stursberg, Buss. *Computing Reachable Sets of Hybrid Systems Using
 a Combination of Zonotopes and Polytopes*. 2009.
 """
-function constraints_list(Z::AbstractZonotope{N}) where {N<:AbstractFloat}
+function constraints_list(Z::AbstractZonotope{<:AbstractFloat})
     return _constraints_list_zonotope(Z)
 end
 
