@@ -94,9 +94,11 @@ Inherited from [`LazySet`](@ref):
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
 * [`high`](@ref high(::LazySet))
+* [`high`](@ref high(::LazySet, ::Int))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`low`](@ref low(::LazySet))
+* [`low`](@ref low(::LazySet, ::Int))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
@@ -107,10 +109,6 @@ Inherited from [`LazySet`](@ref):
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
-
-Inherited from [`ConvexSet`](@ref):
-* [`high`](@ref high(::ConvexSet, ::Int))
-* [`low`](@ref low(::ConvexSet, ::Int))
 
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetric))
