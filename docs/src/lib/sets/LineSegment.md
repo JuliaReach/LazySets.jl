@@ -123,9 +123,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
-* [`high`](@ref high(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
-* [`low`](@ref low(::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`singleton_list`](@ref singleton_list(::LazySet))
@@ -142,12 +140,14 @@ Inherited from [`LazySet`](@ref):
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 
 Inherited from [`ConvexSet`](@ref):
-* [`high`](@ref high(::ConvexSet, ::Int))
-* [`low`](@ref low(::ConvexSet, ::Int))
 * [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
+* [`high`](@ref high(::AbstractPolyhedron))
+* [`high`](@ref high(::AbstractPolyhedron, ::Int))
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
+* [`low`](@ref low(::AbstractPolyhedron))
+* [`low`](@ref low(::AbstractPolyhedron, ::Int))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

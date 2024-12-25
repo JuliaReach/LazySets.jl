@@ -429,9 +429,9 @@ function addconstraint!(P::AbstractHPolygon, constraint::HalfSpace;
 end
 
 """
-    addconstraint!(constraints::Vector{LC}, new_constraint::HalfSpace;
+    addconstraint!(constraints::Vector{<:HalfSpace}, new_constraint::HalfSpace;
                    [linear_search]::Bool=length(P.constraints) < $BINARY_SEARCH_THRESHOLD,
-                   [prune]::Bool=true) where {LC<:HalfSpace}
+                   [prune]::Bool=true)
 
 Add a linear constraint to a sorted vector of constrains, keeping the
 constraints sorted by their normal directions.
@@ -452,9 +452,9 @@ If `prune` is active, we check if the new constraint is redundant.
 If the constraint is not redundant, we perform the same check to the left and to
 the right until we find the first constraint that is not redundant.
 """
-function addconstraint!(constraints::Vector{LC}, new_constraint::HalfSpace;
+function addconstraint!(constraints::Vector{<:HalfSpace}, new_constraint::HalfSpace;
                         linear_search::Bool=length(constraints) < BINARY_SEARCH_THRESHOLD,
-                        prune::Bool=true) where {LC<:HalfSpace}
+                        prune::Bool=true)
     m = length(constraints)
     k = m
     if k > 0

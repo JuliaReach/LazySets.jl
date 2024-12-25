@@ -28,7 +28,7 @@ tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon}
 tovrep(::AbstractHPolygon)
 vertices_list(::AbstractHPolygon)
 addconstraint!(::AbstractHPolygon, ::HalfSpace)
-addconstraint!(::Vector{LC}, ::HalfSpace) where {LC<:HalfSpace}
+addconstraint!(::Vector{<:HalfSpace}, ::HalfSpace)
 ∈(::AbstractVector, ::AbstractHPolygon)
 isredundant(::HalfSpace, ::HalfSpace, ::HalfSpace)
 ```

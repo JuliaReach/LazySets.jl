@@ -27,9 +27,9 @@ This interface defines the following functions:
 
 ```@docs
 constraints_list(::AbstractZonotope)
-constraints_list(::AbstractZonotope{N}; ::Bool=true) where {N<:AbstractFloat}
+constraints_list(::AbstractZonotope{<:AbstractFloat}; ::Bool=true)
 generators_fallback(::AbstractZonotope)
-genmat_fallback(::AbstractZonotope{N}) where {N}
+genmat_fallback(::AbstractZonotope)
 ngens(::AbstractZonotope)
 order(::AbstractZonotope)
 reflect(::AbstractZonotope)

@@ -31,13 +31,13 @@ CurrentModule = LazySets
 This interface defines the following functions:
 
 ```@docs
-an_element(::AbstractPolyhedron{N}) where {N}
+an_element(::AbstractPolyhedron)
 constrained_dimensions(::AbstractPolyhedron)
-isbounded(::AbstractPolyhedron{N}) where {N}
+isbounded(::AbstractPolyhedron)
 isuniversal(::AbstractPolyhedron, ::Bool=false)
 vertices_list(::AbstractPolyhedron)
 ∈(::AbstractVector, ::AbstractPolyhedron)
-project(::AbstractPolyhedron{N}, ::AbstractVector{Int}) where {N}
+project(::AbstractPolyhedron, ::AbstractVector{Int})
 LazySets._isbounded_stiemke
 LazySets._linear_map_polyhedron
 ```
@@ -53,9 +53,9 @@ Some common functions to work with linear constraints:
 
 ```@docs
 constraints_list(::AbstractMatrix, ::AbstractVector)
-tosimplehrep(::AbstractVector{LC}) where {N, LC<:HalfSpace{N}}
-remove_redundant_constraints(::AbstractVector{S}) where {S<:HalfSpace}
-remove_redundant_constraints!(::AbstractVector{S}) where {S<:HalfSpace}
+tosimplehrep(::AbstractVector{<:HalfSpace})
+remove_redundant_constraints(::AbstractVector{<:HalfSpace})
+remove_redundant_constraints!(::AbstractVector{<:HalfSpace})
 ```
 
 Plotting (bounded) polyhedra is available, too:

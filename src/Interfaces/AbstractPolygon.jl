@@ -107,7 +107,7 @@ julia> jump2pi(0.5)
 end
 
 """
-    quadrant(w::AbstractVector{N}) where {N}
+    quadrant(w::AbstractVector)
 
 Compute the quadrant where the direction `w` belongs.
 
@@ -134,7 +134,8 @@ The idea is to encode the following logic function:
 This function is inspired from AGPX's answer in:
 [Sort points in clockwise order?](https://stackoverflow.com/a/46635372)
 """
-@inline function quadrant(w::AbstractVector{N}) where {N}
+@inline function quadrant(w::AbstractVector)
+    N = eltype(w)
     dwx = w[1] >= zero(N) ? 1 : 0
     dwy = w[2] >= zero(N) ? 1 : 0
     return (1 - dwx) + (1 - dwy) + ((dwx & (1 - dwy)) << 1)
