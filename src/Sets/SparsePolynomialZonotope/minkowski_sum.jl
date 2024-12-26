@@ -1,16 +1,7 @@
 """
+# Extended help
+
     minkowski_sum(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
-
-Compute the Minkowski sum of two sparse polyomial zonotopes.
-
-### Input
-
-- `P1` -- sparse polynomial zonotope
-- `P2` -- sparse polynomial zonotope
-
-### Output
-
-The Minkowski sum of `P1` and `P2`.
 
 ### Algorithm
 
