@@ -1,18 +1,8 @@
 """
+# Extended help
+
     linear_combination(P1::SimpleSparsePolynomialZonotope,
                        P2::SimpleSparsePolynomialZonotope)
-
-Compute the linear combination of two simple sparse polynomial zonotopes.
-
-### Input
-
-- `P1` -- simple sparse polynomial zonotope
-- `P2` -- simple sparse polynomial zonotope
-
-### Output
-
-A `SimpleSparsePolynomialZonotope` representing the linear combination of `P1`
-and `P2`.
 
 ### Notes
 

@@ -1,15 +1,7 @@
 """
+# Extended help
+
     ngens(P::SimpleSparsePolynomialZonotope)
-
-Return the number of generators of a simple sparse polynomial zonotope.
-
-### Input
-
-- `P` -- simple sparse polynomial zonotope
-
-### Output
-
-The number of generators of `P`.
 
 ### Notes
 

@@ -1,6 +1,5 @@
 """
-    quadratic_map(Q::Vector{MT}, S::SimpleSparsePolynomialZonotope)
-        where {N, MT<:AbstractMatrix{N}}
+    quadratic_map(Q::Vector{<:AbstractMatrix}, S::SimpleSparsePolynomialZonotope)
 
 Return the quadratic map of a simple sparse polynomial zonotope.
 
@@ -23,8 +22,7 @@ representation for reachability analysis*. 2021
 [2] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
 verification of cyber-physical systems*. 2021.
 """
-function quadratic_map(Q::Vector{MT},
-                       S::SimpleSparsePolynomialZonotope) where {N,MT<:AbstractMatrix{N}}
+function quadratic_map(Q::Vector{<:AbstractMatrix}, S::SimpleSparsePolynomialZonotope)
     m = length(Q)
     c = center(S)
     h = ngens(S)
@@ -54,9 +52,8 @@ function quadratic_map(Q::Vector{MT},
 end
 
 """
-    quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope,
+    quadratic_map(Q::Vector{<:AbstractMatrix}, S1::SimpleSparsePolynomialZonotope,
                   S2::SimpleSparsePolynomialZonotope)
-        where {N, MT<:AbstractMatrix{N}}
 
 Return the quadratic map of two simple sparse polynomial zonotopes.
 The quadratic map is the set
@@ -82,8 +79,8 @@ This method implements Proposition 3.1.30 in [1].
 [1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
 verification of cyber-physical systems*. 2021.
 """
-function quadratic_map(Q::Vector{MT}, S1::SimpleSparsePolynomialZonotope,
-                       S2::SimpleSparsePolynomialZonotope) where {N,MT<:AbstractMatrix{N}}
+function quadratic_map(Q::Vector{<:AbstractMatrix}, S1::SimpleSparsePolynomialZonotope,
+                       S2::SimpleSparsePolynomialZonotope)
     @assert nparams(S1) == nparams(S2)
 
     c1 = center(S1)
