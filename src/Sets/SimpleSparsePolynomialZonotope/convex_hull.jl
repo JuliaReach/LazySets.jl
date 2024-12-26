@@ -1,11 +1,7 @@
 """
+# Extended help
+
     convex_hull(P::SimpleSparsePolynomialZonotope)
-
-Compute the convex hull of a simple sparse polynomial zonotope.
-
-### Input
-
-- `P` -- simple sparse polynomial zonotope
 
 ### Output
 
@@ -16,19 +12,14 @@ function convex_hull(P::SimpleSparsePolynomialZonotope)
 end
 
 """
+# Extended help
+
     convex_hull(P1::SimpleSparsePolynomialZonotope,
                 P2::SimpleSparsePolynomialZonotope)
 
-Compute the convex hull of two simple sparse polynomial zonotopes.
-
-### Input
-
-- `P1` : simple sparse polynomial zonotopes
-- `P2` : simple sparse polynomial zonotopes
-
 ### Output
 
-Tightest convex simple sparse polynomial zonotope containing `P1` and `P2`.
+The tightest convex simple sparse polynomial zonotope containing `P1` and `P2`.
 """
 function convex_hull(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
     return linear_combination(linear_combination(P1, P1), linear_combination(P2, P2))

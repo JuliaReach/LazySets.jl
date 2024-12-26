@@ -1,26 +1,10 @@
 """
+# Extended help
+
     rand(::Type{SimpleSparsePolynomialZonotope};
          [N]::Type{<:Real}=Float64, [dim]::Int=2, [nparams]::Int=2,
          [maxdeg]::Int=3, [num_generators]::Int=-1,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
-
-Create a random simple sparse polynomial zonotope.
-
-### Input
-
-- `Zonotope`       -- type for dispatch
-- `N`              -- (optional, default: `Float64`) numeric type
-- `dim`            -- (optional, default: 2) dimension
-- `nparams`        -- (optional, default: 2) number of parameters
-- `maxdeg`         -- (optional, default: 3) maximum degree for each parameter
-- `rng`            -- (optional, default: `GLOBAL_RNG`) random number generator
-- `seed`           -- (optional, default: `nothing`) seed for reseeding
-- `num_generators` -- (optional, default: `-1`) number of generators of the
-                      zonotope (see comment below)
-
-### Output
-
-A random simple sparse polynomial zonotope.
 
 ### Algorithm
 

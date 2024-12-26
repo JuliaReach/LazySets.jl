@@ -68,7 +68,6 @@ Inherited from [`LazySet`](@ref):
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
-
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
@@ -81,7 +80,6 @@ Inherited from [`LazySet`](@ref):
 * [`linear_combination`](@ref linear_combination(::LazySet, ::LazySet))
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 * [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
-
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
