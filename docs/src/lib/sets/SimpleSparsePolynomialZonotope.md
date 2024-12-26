@@ -194,5 +194,5 @@ Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`order`](@ref order(::AbstractPolynomialZonotope))
 
 Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
-* [`ngens_dep`](@ref ngens_dep(::AbstractPolynomialZonotope))
-* [`nparams`](@ref nparams(::AbstractPolynomialZonotope))
+* [`ngens_dep`](@ref ngens_dep(::AbstractSparsePolynomialZonotope))
+* [`nparams`](@ref nparams(::AbstractSparsePolynomialZonotope))

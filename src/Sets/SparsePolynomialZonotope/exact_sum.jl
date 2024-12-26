@@ -1,16 +1,7 @@
 """
+# Extended help
+
     exact_sum(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
-
-Compute the exact sum of sparse polyomial zonotopes ``P₁`` and ``P₂``.
-
-### Input
-
-- `P1` -- sparse polynomial zonotope
-- `P2` -- sparse polynomial zonotope
-
-### Output
-
-A `SparsePolynomialZonotope` representing the exact sum ``P₁ ⊞ P₂``.
 
 ### Algorithm
 

@@ -1,20 +1,8 @@
 """
+# Extended help
+
     reduce_order(P::SparsePolynomialZonotope, r::Real,
                  [method]::AbstractReductionMethod=GIR05())
-
-Overapproximate the sparse polynomial zonotope by another sparse polynomial
-zonotope with order at most `r`.
-
-### Input
-
-- `P`       -- sparse polynomial zonotope
-- `r`       -- maximum order of the resulting sparse polynomial zonotope (≥ 1)
-- `method`  -- (optional default [`GIR05`](@ref)) algorithm used internally for
-               the order reduction of a (normal) zonotope
-
-### Output
-
-A sparse polynomial zonotope with order at most `r`.
 
 ### Notes
 

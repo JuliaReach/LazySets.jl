@@ -1,15 +1,7 @@
 """
+# Extended help
+
     remove_redundant_generators(S::SparsePolynomialZonotope)
-
-Remove redundant generators from `S`.
-
-### Input
-
-- `S` -- sparse polynomial zonotope
-
-### Output
-
-A new sparse polynomial zonotope where redundant generators have been removed.
 
 ## Notes
 

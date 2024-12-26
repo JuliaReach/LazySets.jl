@@ -1,16 +1,7 @@
 """
+# Extended help
+
     cartesian_product(P1::SparsePolynomialZonotope, P2::SparsePolynomialZonotope)
-
-Compute the Cartesian product of two sparse polynomial zonotopes.
-
-### Input
-
-- `P1` -- sparse polynomial zonotope
-- `P2` -- sparse polynomial zonotope
-
-### Output
-
-The Cartesian product of `P1` and `P2`.
 
 ### Algorithm
 
