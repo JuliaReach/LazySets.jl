@@ -567,7 +567,7 @@ function _linear_map_polyhedron(M::AbstractMatrix,
                                 elimination_method=nothing)
     N = promote_type(eltype(M), eltype(P))
     N != eltype(P) && error("conversion between numeric types of polyhedra not " *
-                     "implemented yet (see #1181)")
+                            "implemented yet (see #1181)")
     if eltype(M) != eltype(P)
         M = N.(M)
     end
