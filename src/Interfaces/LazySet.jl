@@ -1245,12 +1245,6 @@ function rationalize(::Type{T}, X::LazySet{N}; tol::Real=eps(N)) where {T<:Integ
     return rationalize(T, X, tol)
 end
 
-# vectors of sets
-function rationalize(::Type{T}, X::AbstractVector{<:LazySet{<:AbstractFloat}},
-                     tol::Real) where {T<:Integer}
-    return rationalize.(Ref(T), X, Ref(tol))
-end
-
 """
     chebyshev_center_radius(P::LazySet;
                             [backend]=default_polyhedra_backend(P),
