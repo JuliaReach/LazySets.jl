@@ -12,7 +12,7 @@ HPolyhedron
 
 ```julia
 convert(::Type{HPolyhedron}, ::LazySet)
-convert(::Type{HPolyhedron}, ::HRep)
+convert(::Type{HPolyhedron}, ::Polyhedra.HRep)
 ```
 
 ## Operations

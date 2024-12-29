@@ -765,7 +765,7 @@ function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron, algo::Linear
                                             default_lp_solver_polyhedra(N))
 
     # TODO: take constraints directly -- see #1988
-    return constraints_list(HPolyhedron(Peli_block))
+    return constraints_list(convert(HPolyhedron, Peli_block))
 end
 
 @inline function _preallocate_constraints(constraints::Vector{<:HalfSpace{N}}) where {N}
