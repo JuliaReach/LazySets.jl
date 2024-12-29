@@ -631,7 +631,7 @@ function intersection(P1::Union{VPolygon,VPolytope},
     if isempty(Pint)
         return EmptySet{N}(n)
     end
-    return VPolytope(Pint)
+    return convert(VPolytope, Pint)
 end
 
 """

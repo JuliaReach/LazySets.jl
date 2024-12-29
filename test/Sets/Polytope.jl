@@ -253,9 +253,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws AssertionError extrema(p2, 1)
 
     if test_suite_polyhedra
-        V = VPolytope(polyhedron(p))
-
         # conversion to and from Polyhedra's VRep data structure
+        V = convert(VPolytope, polyhedron(p))
         vl = vertices_list(V)
         @test length(p.vertices) == length(vl) && vl ⊆ p.vertices
 

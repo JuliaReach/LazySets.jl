@@ -313,11 +313,11 @@ function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
                                 apply_convex_hull::Bool=true, backend=nothing,
                                 solver=nothing) where {N,VT<:AbstractVector{N}}
     n, m = length(vlist1), length(vlist2)
-    Vout = Vector{VT}()
-    sizehint!(Vout, n * m)
+    vlist_out = Vector{VT}()
+    sizehint!(vlist_out, n * m)
     for vi in vlist1
         for vj in vlist2
-            push!(Vout, vi + vj)
+            push!(vlist_out, vi + vj)
         end
     end
     if apply_convex_hull
@@ -326,9 +326,9 @@ function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
             backend = default_polyhedra_backend_nd(N)
             solver = default_lp_solver_polyhedra(N)
         end
-        convex_hull!(Vout; backend=backend, solver=solver)
+        convex_hull!(vlist_out; backend=backend, solver=solver)
     end
-    return Vout
+    return vlist_out
 end
 
 """
