@@ -18,7 +18,7 @@ using ReachabilityBase.Require: require
                         vertices_list, volume, cartesian_product, convex_hull,
                         difference, distance, intersection, ≈, isdisjoint, ⊆,
                         linear_combination, minkowski_difference, minkowski_sum
-@reexport import ..LazySets: chebyshev_center_radius
+@reexport import ..LazySets: chebyshev_center_radius, rationalize
 import ..LazySets: plot_recipe
 import Base: convert, copy
 @reexport using ..API
@@ -47,6 +47,7 @@ include("rectify.jl")
 include("reflect.jl")
 include("sample.jl")
 include("surface.jl")
+include("rationalize.jl")
 include("vertices_list.jl")
 include("vertices.jl")
 include("volume.jl")

@@ -326,6 +326,11 @@ end
 for N in [Float64, Float32]
     E = EmptySet{N}(2)
 
+    # rationalize
+    E2 = rationalize(E)
+    @test E2 isa EmptySet{Rational{Int}} && dim(E2) == 2
+    @test_throws MethodError rationalize(E2)
+
     # is_interior_point
     @test_throws AssertionError is_interior_point(N[0], E)
     @test !is_interior_point(N[0, 0], E)
