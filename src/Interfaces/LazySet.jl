@@ -186,7 +186,7 @@ isconvextype(::Type{<:LazySet}) = false
 # Polyhedra backend (fallback method)
 function default_polyhedra_backend(P::LazySet{N}) where {N}
     require(@__MODULE__, :Polyhedra; fun_name="default_polyhedra_backend")
-    if LazySets.dim(P) == 1
+    if dim(P) == 1
         return default_polyhedra_backend_1d(N)
     else
         return default_polyhedra_backend_nd(N)
@@ -735,7 +735,7 @@ function plot_recipe(X::LazySet, ε)
     @assert isconvextype(typeof(X)) "can only plot convex sets"
 
     if dim(X) == 1
-        Y = convert(LazySets.Interval, X)
+        Y = convert(Interval, X)
     elseif dim(X) == 2
         Y = overapproximate(X, ε)
     else

@@ -12,9 +12,9 @@ for N in [Float64]
     P3 = VPolygon([N[0, -1], N[2, 1]])
 
     # Test rand samples are contained in the set
-    p1 = LazySets.sample(P1)
+    p1 = sample(P1)
     @test p1 ∈ P1
-    p1_samples = LazySets.sample(P1, 100)
+    p1_samples = sample(P1, 100)
     @test sum(p1_samples .∈ Ref(P1)) == length(p1_samples)
 
     # default distribution
@@ -24,14 +24,14 @@ for N in [Float64]
     # random-walk sampler
     for P in [P1, P2, P3]
         for sampler in [LazySets.RandomWalkSampler(true), LazySets.RandomWalkSampler(false)]
-            p_samples = LazySets.sample(P, 100; sampler=sampler)
+            p_samples = sample(P, 100; sampler=sampler)
             @test all(v ∈ P for v in p_samples)
         end
     end
 
     # random-walk sampler
     for P in [P1, P2, P3]
-        p_samples = LazySets.sample(P, 100; sampler=LazySets.CombinedSampler())
+        p_samples = sample(P, 100; sampler=LazySets.CombinedSampler())
         @test all(v ∈ P for v in p_samples)
     end
 

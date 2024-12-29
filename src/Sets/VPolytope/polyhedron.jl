@@ -32,7 +32,7 @@ function load_Polyhedra_polyhedron()
         point has (relative) dimension zero, and a line segment has (relative) dimension
         one.
 
-        In this library, `LazySets.dim` always returns the ambient dimension of the set,
+        In this library, `dim` always returns the ambient dimension of the set,
         such that a line segment in two dimensions has dimension two. However,
         `Polyhedra.dim` will assign a dimension equal to one to a line segment
         because it uses a different convention.

@@ -148,7 +148,7 @@ end
 overapproximate(∅::EmptySet, args...; kwargs...) = ∅
 
 # disambiguation
-for ST in LazySets.subtypes(LazySet, true)
+for ST in subtypes(LazySet, true)
     if ST == HPolygon  # must be defined separately below with extra argument
         continue
     end
