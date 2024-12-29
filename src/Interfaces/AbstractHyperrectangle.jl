@@ -591,24 +591,7 @@ function project(H::AbstractHyperrectangle, block::AbstractVector{Int};
     return Hyperrectangle(πc, πr; check_bounds=false)
 end
 
-"""
-    distance(x::AbstractVector, H::AbstractHyperrectangle{N};
-             [p]::Real=N(2)) where {N}
-
-Compute the distance between a point `x` and a hyperrectangular set `H` with
-respect to the given `p`-norm.
-
-### Input
-
-- `x` -- point/vector
-- `H` -- hyperrectangular set
-
-### Output
-
-A scalar representing the distance between point `x` and hyperrectangle `H`.
-"""
-@commutative function distance(x::AbstractVector, H::AbstractHyperrectangle{N};
-                               p::Real=N(2)) where {N}
+@commutative function distance(x::AbstractVector, H::AbstractHyperrectangle; p::Real=2)
     @assert length(x) == dim(H) "a vector of length $(length(x)) is " *
                                 "incompatible with a set of dimension $(dim(H))"
 
@@ -631,6 +614,7 @@ A scalar representing the distance between point `x` and hyperrectangle `H`.
 
     if !outside
         # point is inside
+        N = promote_type(eltype(x), eltype(H))
         return zero(N)
     end
 

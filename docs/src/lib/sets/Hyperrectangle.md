@@ -146,7 +146,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`reflect`](@ref reflect(::AbstractHyperrectangle))
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle))
 * [`volume`](@ref volume(::AbstractHyperrectangle))
-* [`distance`](@ref distance(::AbstractVector, ::AbstractHyperrectangle{N}; ::Real=N(2)) where {N})
+* [`distance`](@ref distance(::AbstractVector, ::AbstractHyperrectangle))
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractHyperrectangle))
 * [`project`](@ref project(::AbstractHyperrectangle, ::AbstractVector{Int}))
 * [`split`](@ref split(::AbstractHyperrectangle, ::AbstractVector{Int}))

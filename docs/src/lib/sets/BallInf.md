@@ -166,6 +166,7 @@ Inherited from [`AbstractZonotope`](@ref):
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle))
+* [`distance`](@ref distance(::AbstractVector, ::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
