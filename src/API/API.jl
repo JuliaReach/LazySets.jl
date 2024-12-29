@@ -64,6 +64,7 @@ include("Unary/vertices.jl")
 include("Unary/volume.jl")
 
 include("Mixed/affine_map.jl")
+include("Mixed/distance.jl")
 include("Mixed/exponential_map.jl")
 include("Mixed/in.jl")
 include("Mixed/is_interior_point.jl")

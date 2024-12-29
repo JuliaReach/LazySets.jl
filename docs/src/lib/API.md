@@ -62,6 +62,7 @@ volume(::LazySet)
 
 ```@docs
 affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector)
+distance(::AbstractVector, ::LazySet)
 exponential_map(::AbstractMatrix, ::LazySet)
 ∈(::AbstractVector, ::LazySet)
 is_interior_point(::AbstractVector, ::LazySet)
