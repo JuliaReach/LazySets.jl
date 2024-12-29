@@ -48,7 +48,6 @@ CurrentModule = LazySets.LineModule
 ```
 ```@docs
 rand(::Type{Line})
-distance(::AbstractVector, ::Line; ::Real=2.0)
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -86,6 +85,7 @@ Undocumented implementations:
 * [`isbounded`](@ref isbounded(::LazySet))
 * [`isempty`](@ref isempty(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`distance`](@ref distance(::AbstractVector, ::LazySet))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
