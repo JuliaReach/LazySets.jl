@@ -186,11 +186,15 @@ Inherited from [`LazySet`](@ref):
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
+* [`rationalize`](@ref rationalize(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int))
 * [`==`](@ref ==(::LazySet, ::LazySet))
+
+Inherited from [`LazySet`](@ref) but does not apply:
+* [`triangulate`](@ref triangulate(::LazySet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))

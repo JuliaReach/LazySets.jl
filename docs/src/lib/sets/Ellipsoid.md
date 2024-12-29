@@ -88,6 +88,7 @@ CurrentModule = LazySets
 ```
 
 Inherited from [`LazySet`](@ref):
+* [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
@@ -101,6 +102,8 @@ Inherited from [`LazySet`](@ref):
 * [`low`](@ref low(::LazySet, ::Int))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
+* [`rationalize`](@ref rationalize(::LazySet))
+* [`triangulate`](@ref triangulate(::LazySet))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))

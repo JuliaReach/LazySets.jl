@@ -113,9 +113,13 @@ Inherited from [`LazySet`](@ref):
 * [`extrema`](@ref extrema(::LazySet, ::Int))
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
+* [`rationalize`](@ref rationalize(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
+
+Inherited from [`LazySet`](@ref) but does not apply:
+* [`triangulate`](@ref triangulate(::LazySet))

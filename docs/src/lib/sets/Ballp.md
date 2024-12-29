@@ -63,6 +63,7 @@ CurrentModule = LazySets
 * [`radius_ball`](@ref radius_ball(::LazySet))
 
 Inherited from [`LazySet`](@ref):
+* [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
 * `copy(::Type{LazySet})`
@@ -75,10 +76,12 @@ Inherited from [`LazySet`](@ref):
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
+* [`rationalize`](@ref rationalize(::LazySet))
 * [`rectify`](@ref rectify(::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
+* [`triangulate`](@ref triangulate(::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))

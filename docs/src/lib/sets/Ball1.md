@@ -118,6 +118,7 @@ CurrentModule = LazySets
 
 Inherited from [`LazySet`](@ref):
 * [`area`](@ref area(::LazySet))
+* [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
 * [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
@@ -128,9 +129,11 @@ Inherited from [`LazySet`](@ref):
 * [`eltype`](@ref eltype(::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
+* [`rationalize`](@ref rationalize(::LazySet))
 * [`rectify`](@ref rectify(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`surface`](@ref surface(::LazySet))
+* [`triangulate`](@ref triangulate(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
