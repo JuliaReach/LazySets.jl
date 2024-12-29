@@ -76,6 +76,7 @@ Undocumented implementations:
 * [`vertices_list`](@ref vertices_list(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
 * [`volume`](@ref volume(::LazySet))
+* [`distance`](@ref distance(::AbstractVector, ::LazySet))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`∈`](@ref ∈(::AbstractVector, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
