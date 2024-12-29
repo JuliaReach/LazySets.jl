@@ -1,3 +1,10 @@
+function linear_combination(X::LazySet, Y::LazySet)
+    if isconvextype(typeof(X)) && isconvextype(typeof(Y))
+        return _linear_combination_convex(X, Y)
+    end
+    throw(ArgumentError("the linear combination of non-convex sets is not implemented"))
+end
+
 function linear_combination(X::ConvexSet, Y::ConvexSet)
     return _linear_combination_convex(X, Y)
 end
