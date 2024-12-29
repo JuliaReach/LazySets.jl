@@ -30,6 +30,7 @@ for N in [Float64, Rational{Int}, Float32]
     # area
     res = area(E)
     @test res isa N && res == N(0)
+    @test_throws AssertionError area(EmptySet{N}(3))
 
     # complement
     U = complement(E)
