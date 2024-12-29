@@ -370,5 +370,5 @@ Return the linear map of a lazy affine map.
 A set corresponding to the linear map of the lazy affine map of a set.
 """
 function linear_map(M::AbstractMatrix, am::AbstractAffineMap)
-    return translate(linear_map(M * matrix(am), set(am)), M * vector(am))
+    return affine_map(M * matrix(am), set(am), M * vector(am))
 end
