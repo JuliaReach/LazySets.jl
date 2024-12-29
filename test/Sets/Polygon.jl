@@ -541,6 +541,12 @@ for N in [Float64, Float32, Rational{Int}]
     Q = VPolygon(M)
     @test Q == VPolygon(Vs) == P
     @test eltype(Q.vertices) == eltype(Vs)
+
+    # linear_combination with empty argument
+    Q = VPolygon{N}()
+    for R in (linear_combination(P, Q), linear_combination(Q, P))
+        @test isempty(R) && R isa LazySet{N} && dim(R) == 2
+    end
 end
 
 for N in [Float64, Float32]
