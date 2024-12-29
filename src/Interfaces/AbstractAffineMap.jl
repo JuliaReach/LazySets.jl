@@ -78,75 +78,26 @@ The set of `X` before applying the map.
 function set(::AbstractAffineMap) end
 
 isoperationtype(::Type{<:AbstractAffineMap}) = true
+
 isconvextype(::Type{<:AbstractAffineMap{N,S}}) where {N,S} = isconvextype(S)
+
 ispolyhedral(am::AbstractAffineMap) = ispolyhedral(set(am))
 
-"""
-    dim(am::AbstractAffineMap)
-
-Return the dimension of an affine map.
-
-### Input
-
-- `am` -- affine map
-
-### Output
-
-The ambient dimension of an affine map.
-"""
 function dim(am::AbstractAffineMap)
     return length(vector(am))
 end
 
-"""
-    σ(d::AbstractVector, am::AbstractAffineMap)
-
-Return a support vector of an affine map.
-
-### Input
-
-- `d`  -- direction
-- `am` -- affine map
-
-### Output
-
-A support vector in the given direction.
-"""
 function σ(d::AbstractVector, am::AbstractAffineMap)
     A = matrix(am)
     return A * σ(At_mul_B(A, d), set(am)) + vector(am)
 end
 
-"""
-    ρ(d::AbstractVector, am::AbstractAffineMap)
-
-Evaluate the support function of an affine map.
-
-### Input
-
-- `d`  -- direction
-- `am` -- affine map
-
-### Output
-
-The evaluation of the support function in the given direction.
-"""
 function ρ(d::AbstractVector, am::AbstractAffineMap)
     return ρ(At_mul_B(matrix(am), d), set(am)) + dot(d, vector(am))
 end
 
 """
-    an_element(am::AbstractAffineMap)
-
-Return some element of an affine map.
-
-### Input
-
-- `am` -- affine map
-
-### Output
-
-An element of the affine map.
+# Extended help
 
 ### Algorithm
 
@@ -157,36 +108,27 @@ function an_element(am::AbstractAffineMap)
 end
 
 """
+# Extended help
+
     isempty(am::AbstractAffineMap)
 
-Check whether an affine map is empty.
+### Algorithm
 
-### Input
-
-- `am` -- affine map
-
-### Output
-
-`true` iff the wrapped set is empty.
+The result is `true` iff the wrapped set is empty.
 """
 function isempty(am::AbstractAffineMap)
     return isempty(set(am))
 end
 
 """
-    isbounded(am::AbstractAffineMap; cond_tol::Number=DEFAULT_COND_TOL)
+# Extended help
 
-Check whether an affine map is bounded.
+    isbounded(am::AbstractAffineMap; cond_tol::Number=DEFAULT_COND_TOL)
 
 ### Input
 
-- `am`       -- affine map
 - `cond_tol` -- (optional) tolerance of matrix condition (used to check whether
                 the matrix is invertible)
-
-### Output
-
-`true` iff the affine map is bounded.
 
 ### Algorithm
 
@@ -208,18 +150,9 @@ function isbounded(am::AbstractAffineMap; cond_tol::Number=DEFAULT_COND_TOL)
 end
 
 """
+# Extended help
+
     ∈(x::AbstractVector, am::AbstractAffineMap)
-
-Check whether a given point is contained in the affine map of a convex set.
-
-### Input
-
-- `x`  -- point/vector
-- `am` -- affine map of a convex set
-
-### Output
-
-`true` iff ``x ∈ am``.
 
 ### Algorithm
 
@@ -259,17 +192,9 @@ function ∈(x::AbstractVector, am::AbstractAffineMap)
 end
 
 """
+# Extended help
+
     center(am::AbstractAffineMap)
-
-Return the center of an affine map of a centrally-symmetric set.
-
-### Input
-
-- `cp` -- affine map of a centrally-symmetric set
-
-### Output
-
-The center of the affine map.
 
 ### Algorithm
 
@@ -280,20 +205,15 @@ function center(am::AbstractAffineMap)
 end
 
 """
-    vertices_list(am::AbstractAffineMap; [apply_convex_hull]::Bool)
+# Extended help
 
-Return the list of vertices of a (polytopic) affine map.
+    vertices_list(am::AbstractAffineMap; [apply_convex_hull]::Bool=true)
 
 ### Input
 
-- `am`                -- affine map of a polytopic set
 - `apply_convex_hull` -- (optional, default: `true`) if `true`, apply the convex
                          hull operation to the list of vertices transformed by
                          the affine map
-
-### Output
-
-A list of vertices.
 
 ### Algorithm
 
@@ -328,17 +248,9 @@ function vertices_list(am::AbstractAffineMap; apply_convex_hull::Bool=true)
 end
 
 """
+# Extended help
+
     constraints_list(am::AbstractAffineMap)
-
-Return the list of constraints of a (polyhedral) affine map.
-
-### Input
-
-- `am` -- affine map of a polyhedral set
-
-### Output
-
-The list of constraints of the affine map.
 
 ### Notes
 
@@ -347,28 +259,14 @@ We assume that the underlying set `X` is polyhedral, i.e., offers a method
 
 ### Algorithm
 
-This implementation uses the method to compute the list of constraints of the
-translation of a lazy linear map.
+This implementation uses the `constraints_list` method to compute the list of
+constraints of the translation of a lazy [`LinearMap`](@ref).
 """
 function constraints_list(am::AbstractAffineMap)
     return _constraints_list_translation(LinearMap(matrix(am), set(am)),
                                          vector(am))
 end
 
-"""
-    linear_map(M::AbstractMatrix, am::AbstractAffineMap)
-
-Return the linear map of a lazy affine map.
-
-### Input
-
-- `M`  -- matrix
-- `am` -- affine map
-
-### Output
-
-A set corresponding to the linear map of the lazy affine map of a set.
-"""
 function linear_map(M::AbstractMatrix, am::AbstractAffineMap)
     return translate(linear_map(M * matrix(am), set(am)), M * vector(am))
 end
