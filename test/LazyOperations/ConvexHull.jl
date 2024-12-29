@@ -159,4 +159,11 @@ for N in [Float64, Rational{Int}, Float32]
                             [N[1, 1], N[1, -1], N[-1, 1], N[-1, -1],
                              N[1, 2], N[1, 0], N[2, 1], N[0, 1]])
     end
+
+    # linear_combination with empty argument
+    for X in (Chull, CHarr)
+        for Y in (linear_combination(X, e), linear_combination(e, X))
+            @test isempty(Y) && Y isa LazySet{N} && dim(Y) == 2
+        end
+    end
 end
