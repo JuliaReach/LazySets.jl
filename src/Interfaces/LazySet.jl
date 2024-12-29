@@ -1333,21 +1333,28 @@ function load_polyhedra_lazyset()  # function to be loaded by Requires
         """
             triangulate(X::LazySet)
 
-        Triangulate a three-dimensional polyhedral set.
+        Triangulate the faces of a three-dimensional polytopic set.
 
         ### Input
 
-        - `X` -- three-dimensional polyhedral set
+        - `X` -- three-dimensional polytopic set
 
         ### Output
 
         A tuple `(p, c)` where `p` is a matrix, with each column containing a point, and
         `c` is a list of 3-tuples containing the indices of the points in each triangle.
+
+        ### Notes
+
+        This function triangulates all faces of a 3D polytope. The result is a list of (flat)
+        triangles in 3D which describe the boundary of `X`.
+
+        `X` must contain at least three vertices.
         """
         function triangulate(X::LazySet)
             dim(X) == 3 || throw(ArgumentError("the dimension of the set should be " *
                                                "three, got $(dim(X))"))
-            @assert ispolyhedral(X) "triangulation requires a polyhedral set"
+            @assert ispolyhedral(X) && isbounded(X) "triangulation requires a polytopic set"
 
             P = polyhedron(X)
             mes = Mesh(P)
