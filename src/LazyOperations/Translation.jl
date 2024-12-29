@@ -351,13 +351,13 @@ The type of the result depends on the type of the set wrapped by `tr`.
 
 ### Algorithm
 
-We compute `translate(linear_map(M, tr.X), M * tr.v)`.
+We compute `affine_map(M, tr.X, M * tr.v)`.
 """
 function linear_map(M::AbstractMatrix, tr::Translation)
     @assert dim(tr) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
                                   "applied to a set of dimension $(dim(tr))"
 
-    return translate(linear_map(M, tr.X), M * tr.v)
+    return affine_map(M, tr.X, M * tr.v)
 end
 
 function concretize(tr::Translation)

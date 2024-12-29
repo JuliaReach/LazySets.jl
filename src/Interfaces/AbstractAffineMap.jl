@@ -268,5 +268,5 @@ function constraints_list(am::AbstractAffineMap)
 end
 
 function linear_map(M::AbstractMatrix, am::AbstractAffineMap)
-    return translate(linear_map(M * matrix(am), set(am)), M * vector(am))
+    return affine_map(M * matrix(am), set(am), M * vector(am))
 end
