@@ -22,6 +22,6 @@ function rand(::Type{Star};
     if isnothing(P)
         P = rand(HPolytope; N=N, dim=dim, rng=rng, seed=seed)
     end
-    V = randn(rng, N, dim, LazySets.dim(P))
+    V = randn(rng, N, dim, StarModule.dim(P))
     return Star(c, V, P)
 end

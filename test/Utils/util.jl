@@ -56,7 +56,7 @@ for N in [Float64, Rational{Int}, Float32]
           dot(x2, A * y2) == N(12)
 
     x = N[0, 1, -1]
-    @test LazySets.rectify(x) == N[0, 1, 0]
+    @test rectify(x) == N[0, 1, 0]
 
     # approximate permutation check
     v1 = [N[1, 2], N[2, 3], N[3, 4]]
