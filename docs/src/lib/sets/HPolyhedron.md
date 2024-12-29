@@ -131,7 +131,6 @@ Inherited from [`LazySet`](@ref):
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`difference`](@ref difference(::LazySet, ::LazySet))
-* [`distance`](@ref distance(::LazySet, ::LazySet; ::Real=2.0))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
