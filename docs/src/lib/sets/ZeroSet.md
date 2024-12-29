@@ -58,8 +58,10 @@ Inherited from [`LazySet`](@ref):
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
+* [`rationalize`](@ref rationalize(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`surface`](@ref surface(::LazySet))
+* [`triangulate`](@ref triangulate(::LazySet))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
@@ -105,6 +107,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 Inherited from [`AbstractSingleton`](@ref):
 * [`center`](@ref center(::AbstractSingleton))
 * [`center`](@ref center(::AbstractSingleton, ::Int))
+* [`chebyshev_center_radius`](@ref chebyshev_center_radius(::AbstractSingleton))
 * [`constraints_list`](@ref constraints_list(::AbstractSingleton))
 * [`generators`](@ref generators(::AbstractSingleton))
 * [`genmat`](@ref genmat(::AbstractSingleton))
