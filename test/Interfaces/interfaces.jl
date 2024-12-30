@@ -5,6 +5,9 @@
 # dimension
 @test check_method_implementation(LazySet, dim, Function[S -> (S{Float64},)])
 
+# concretize
+@test check_method_implementation(LazySet, concretize, Function[S -> (S{Float64},)])
+
 # --- ConvexSet ---
 
 # support vector
