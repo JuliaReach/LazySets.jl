@@ -1669,3 +1669,6 @@ function vertices_list_1d(X::LazySet)
     l, h = extrema(X, 1)
     return _isapprox(l, h) ? [[l]] : [[l], [h]]
 end
+
+# internal function to detect parametric set types
+isparametrictype(::Type{<:LazySet}) = false
