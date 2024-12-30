@@ -1,3 +1,14 @@
+# distance point <-> set
+
+@commutative function distance(x::AbstractVector, ∅::EmptySet; p::Real=2)
+    @assert length(x) == dim(∅) "incompatible dimensions $(length(x)) and $(dim(∅))"
+
+    N = promote_type(eltype(x), eltype(∅))
+    return N(Inf)
+end
+
+# distance set <-> set
+
 function distance(∅₁::EmptySet, ∅₂::EmptySet; p::Real=2.0)
     return _distance_emptyset(∅₁, ∅₂; p=p)
 end

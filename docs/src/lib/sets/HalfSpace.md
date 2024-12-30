@@ -72,7 +72,6 @@ CurrentModule = LazySets.HalfSpaceModule
 ```
 ```@docs
 rand(::Type{HalfSpace})
-distance(::AbstractVector, ::HalfSpace)
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -165,6 +164,7 @@ Undocumented implementations:
 * [`isbounded`](@ref isbounded(::LazySet))
 * [`isempty`](@ref isempty(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`distance`](@ref distance(::AbstractVector, ::LazySet))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 
 ```@meta
