@@ -22,8 +22,8 @@ constraints_list(::CartesianProduct)
 vertices_list(::CartesianProduct)
 linear_map(::AbstractMatrix, ::CartesianProduct)
 volume(::CartesianProduct)
-project(::CartesianProduct{N, IT, HT}, ::AbstractVector{Int}) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
-project(::CartesianProduct{N, IT, ZT}, ::AbstractVector{Int}) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
+project(::CartesianProduct{N,<:Interval,<:AbstractHyperrectangle}, ::AbstractVector{Int}) where {N}
+project(::CartesianProduct{N,<:Interval,<:AbstractZonotope}, ::AbstractVector{Int}) where {N}
 project(::CartesianProduct{N,<:Interval,<:Union{VPolygon,VPolytope}}, ::AbstractVector{Int}) where {N}
 ```
 Inherited from [`LazySet`](@ref):
@@ -54,7 +54,7 @@ array(::CartesianProductArray)
 volume(::CartesianProductArray)
 block_structure(::CartesianProductArray)
 block_to_dimension_indices(::CartesianProductArray, vars::Vector{Int})
-substitute_blocks(::CartesianProductArray{N}, ::CartesianProductArray{N}, ::Vector{Tuple{Int,Int}}) where {N}
+substitute_blocks(::CartesianProductArray, ::CartesianProductArray, ::Vector{Tuple{Int,Int}})
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))

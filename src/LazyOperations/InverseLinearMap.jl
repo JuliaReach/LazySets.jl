@@ -76,8 +76,8 @@ struct InverseLinearMap{N,S<:LazySet{N},NM,MAT<:AbstractMatrix{NM}} <: AbstractA
 end
 
 # convenience constructor from a UniformScaling
-function InverseLinearMap(M::UniformScaling{N}, X::LazySet;
-                          check_invertibility::Bool=false) where {N}
+function InverseLinearMap(M::UniformScaling, X::LazySet;
+                          check_invertibility::Bool=false)
     return InverseLinearMap(M.λ, X; check_invertibility=check_invertibility)
 end
 

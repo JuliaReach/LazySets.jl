@@ -9,9 +9,9 @@ Rectification
 set(::Rectification)
 dim(::Rectification)
 σ(::AbstractVector, ::Rectification)
-σ(::AbstractVector, ::Rectification{N, <:AbstractHyperrectangle{N}}) where {N}
-σ(::AbstractVector, ::Rectification{N, <:CartesianProduct{N}}) where {N}
-σ(::AbstractVector, ::Rectification{N, <:CartesianProductArray{N}}) where {N}
+σ(::AbstractVector, ::Rectification{N, <:AbstractHyperrectangle}) where {N}
+σ(::AbstractVector, ::Rectification{N, <:CartesianProduct}) where {N}
+σ(::AbstractVector, ::Rectification{N, <:CartesianProductArray}) where {N}
 ρ(::AbstractVector, ::Rectification)
 an_element(::Rectification)
 ∈(::AbstractVector, ::Rectification)

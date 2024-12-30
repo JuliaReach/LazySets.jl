@@ -101,7 +101,7 @@ function ResetMap(∅::EmptySet{N}, resets::Dict{Int,N}) where {N}
 end
 
 """
-    matrix(rm::ResetMap{N}) where {N}
+    matrix(rm::ResetMap)
 
 Return the ``A`` matrix of the affine map ``A x + b, x ∈ X`` represented by a
 reset map.
@@ -120,7 +120,8 @@ reset map.
 We construct the identity matrix and set all entries in the reset dimensions to
 zero.
 """
-function matrix(rm::ResetMap{N}) where {N}
+function matrix(rm::ResetMap)
+    N = eltype(rm)
     n = dim(rm)
     v = ones(N, n)
     for i in keys(rm.resets)
@@ -332,7 +333,7 @@ function constraints_list(rm::ResetMap)
     return constraints
 end
 
-function constraints_list(rm::ResetMap{N,S}) where {N,S<:AbstractHyperrectangle}
+function constraints_list(rm::ResetMap{N,<:AbstractHyperrectangle}) where {N}
     H = rm.X
     n = dim(H)
     constraints = Vector{HalfSpace{N,SingleEntryVector{N}}}(undef, 2 * n)

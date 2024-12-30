@@ -235,8 +235,7 @@ function constraints_list(ms::MinkowskiSum)
 end
 
 """
-    ∈(x::AbstractVector, ms::MinkowskiSum{N, S1, S2})
-        where {N, S1<:AbstractSingleton}
+    ∈(x::AbstractVector, ms::MinkowskiSum{N,<:AbstractSingleton}) where {N}
 
 Check whether a given point is contained in the Minkowski sum of a singleton
 and another set.
@@ -255,8 +254,7 @@ and another set.
 Note that ``x ∈ (S ⊕ P)``, where ``S = \\{s\\}``  is a singleton set and
 ``P`` is a set, if and only if ``(x-s) ∈ P``.
 """
-function ∈(x::AbstractVector,
-           ms::MinkowskiSum{N,S1}) where {N,S1<:AbstractSingleton}
+function ∈(x::AbstractVector, ms::MinkowskiSum{N,<:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 

@@ -11,9 +11,9 @@ Intersection
 ∩(::LazySet, ::LazySet)
 dim(::Intersection)
 ρ(::AbstractVector, ::Intersection)
-ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:LazySet{N}, S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
-ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
-ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
+ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:LazySet, S2<:Union{HalfSpace, Hyperplane, Line2D}}
+ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:LazySet, S2<:AbstractPolyhedron}
+ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:AbstractPolyhedron, S2<:AbstractPolyhedron}
 σ(::AbstractVector, ::Intersection)
 isbounded(::Intersection)
 isempty(::Intersection)
