@@ -9,8 +9,7 @@ CurrentModule = LazySets
 
 # [Centrally symmetric sets (AbstractCentrallySymmetric)](@id def_AbstractCentrallySymmetric)
 
-Centrally symmetric sets such as balls of different norms are characterized by a
-center.
+Centrally symmetric convex sets such as balls of different norms are characterized by a center.
 Note that there is a special interface combination
 [Centrally symmetric polytope](@ref def_AbstractCentrallySymmetricPolytope).
 
@@ -18,7 +17,7 @@ Note that there is a special interface combination
 AbstractCentrallySymmetric
 ```
 
-This interface requires to implement the following functions:
+This interface requires to implement the following function:
 
 ```@meta
 CurrentModule = LazySets.API
@@ -26,22 +25,121 @@ CurrentModule = LazySets.API
 ```@docs; canonical=false
 center(::LazySet)
 ```
+
+This interface defines the following functions:
+
+```@docs; canonical=false
+an_element(::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+an_element(::AbstractCentrallySymmetric)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+extrema(::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+extrema(::AbstractCentrallySymmetric)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+extrema(::LazySet, ::Int)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+extrema(::AbstractCentrallySymmetric, ::Int)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+isuniversal(::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+isuniversal(::AbstractCentrallySymmetric, ::Bool=false)
+```
+
+```@meta
+CurrentModule = LazySets.API
+```
+
+Undocumented implementations:
+
+* [`center`](@ref center(::LazySet, ::Int))
+* [`dim`](@ref dim(::LazySet))
+* [`isbounded`](@ref isbounded(::LazySet))
+* [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
+* [`isempty`](@ref isempty(::LazySet))
+
 ```@meta
 CurrentModule = LazySets
 ```
 
-This interface defines the following functions:
+Inherited from [`LazySet`](@ref):
+* [`area`](@ref area(::LazySet))
+* [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
+* [`complement`](@ref complement(::LazySet))
+* [`concretize`](@ref concretize(::LazySet))
+* [`constraints`](@ref constraints(::LazySet))
+* [`convex_hull`](@ref convex_hull(::LazySet))
+* `copy(::Type{LazySet})`
+* [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
+* [`eltype`](@ref eltype(::Type{<:LazySet}))
+* [`eltype`](@ref eltype(::LazySet))
+* [`high`](@ref high(::LazySet))
+* [`high`](@ref high(::LazySet, ::Int))
+* [`isoperation`](@ref isoperation(::LazySet))
+* [`ispolyhedral`](@ref ispolyhedral(::LazySet))
+* [`low`](@ref low(::LazySet))
+* [`low`](@ref low(::LazySet, ::Int))
+* [`norm`](@ref norm(::LazySet, ::Real=Inf))
+* [`radius`](@ref radius(::LazySet, ::Real=Inf))
+* [`rationalize`](@ref rationalize(::LazySet))
+* [`rectify`](@ref rectify(::LazySet))
+* [`reflect`](@ref reflect(::LazySet))
+* [`singleton_list`](@ref singleton_list(::LazySet))
+* [`surface`](@ref surface(::LazySet))
+* [`triangulate`](@ref triangulate(::LazySet))
+* [`vertices`](@ref vertices(::LazySet))
+* [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
+* [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
+* [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
+* [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
+* [`sample`](@ref sample(::LazySet, ::Int=1))
+* [`scale`](@ref scale(::Real, ::LazySet))
+* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
+* [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
+* [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
+* [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
+* [`≈`](@ref ≈(::LazySet, ::LazySet))
+* [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
+* [`==`](@ref ==(::LazySet, ::LazySet))
+* [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
+* [`⊂`](@ref ⊂(::LazySet, ::LazySet))
+* [`⊆`](@ref ⊆(::LazySet, ::LazySet))
+* [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
+* [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
 
-```@docs
-an_element(::AbstractCentrallySymmetric)
-dim(::AbstractCentrallySymmetric)
-center(::AbstractCentrallySymmetric, ::Int)
-extrema(::AbstractCentrallySymmetric)
-extrema(::AbstractCentrallySymmetric, ::Int)
-isbounded(::AbstractCentrallySymmetric)
-isempty(::AbstractCentrallySymmetric)
-isuniversal(::AbstractCentrallySymmetric, ::Bool=false)
-```
+Inherited from [`ConvexSet`](@ref):
+* [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))
+* [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 ## Implementations
 

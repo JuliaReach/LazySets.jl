@@ -22,52 +22,24 @@ julia> subtypes(AbstractCentrallySymmetric)
 """
 abstract type AbstractCentrallySymmetric{N} <: ConvexSet{N} end
 
-"""
-    dim(S::AbstractCentrallySymmetric)
-
-Return the ambient dimension of a centrally symmetric set.
-
-### Input
-
-- `S` -- centrally symmetric set
-
-### Output
-
-The ambient dimension of the set.
-"""
 @inline function dim(S::AbstractCentrallySymmetric)
     return length(center(S))
 end
 
+# a set with a unique center must be bounded
 function isboundedtype(::Type{<:AbstractCentrallySymmetric})
     return true
 end
 
-"""
-    isbounded(S::AbstractCentrallySymmetric)
-
-Check whether a centrally symmetric set is bounded.
-
-### Input
-
-- `S` -- centrally symmetric set
-
-### Output
-
-`true` (since a set with a unique center must be bounded).
-"""
+# a set with a unique center must be bounded
 function isbounded(::AbstractCentrallySymmetric)
     return true
 end
 
 """
+# Extended help
+
     an_element(S::AbstractCentrallySymmetric)
-
-Return some element of a centrally symmetric set.
-
-### Input
-
-- `S` -- centrally symmetric set
 
 ### Output
 
@@ -77,41 +49,17 @@ function an_element(S::AbstractCentrallySymmetric)
     return center(S)
 end
 
-"""
-    isempty(S::AbstractCentrallySymmetric)
-
-Check whether a centrally symmetric set is empty.
-
-### Input
-
-- `S` -- centrally symmetric set
-
-### Output
-
-`false`.
-"""
 function isempty(::AbstractCentrallySymmetric)
     return false
 end
 
 """
+# Extended help
+
     isuniversal(S::AbstractCentrallySymmetric, [witness]::Bool=false)
-
-Check whether a centrally symmetric set is universal.
-
-### Input
-
-- `S`       -- centrally symmetric set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `false`
-* If `witness` option is activated: `(false, v)` where ``v ∉ S``
 
 ### Algorithm
 
-Centrally symmetric sets are bounded.
 A witness is obtained by computing the support vector in direction
 `d = [1, 0, …, 0]` and adding `d` on top.
 """
@@ -126,37 +74,14 @@ function isuniversal(S::AbstractCentrallySymmetric, witness::Bool=false)
     end
 end
 
-"""
-    center(H::AbstractCentrallySymmetric, i::Int)
-
-Return the center of a centrally symmetric set along a given dimension.
-
-### Input
-
-- `S` -- centrally symmetric set
-- `i` -- dimension of interest
-
-### Output
-
-The center along the given dimension.
-"""
 @inline function center(S::AbstractCentrallySymmetric, i::Int)
     return center(S)[i]
 end
 
 """
+# Extended help
+
     extrema(S::AbstractCentrallySymmetric)
-
-Return two vectors with the lowest and highest coordinate of a centrally
-symmetric set.
-
-### Input
-
-- `S` -- centrally symmetric set
-
-### Output
-
-Two vectors with the lowest and highest coordinates of `S`.
 
 ### Notes
 
@@ -176,20 +101,9 @@ function extrema(S::AbstractCentrallySymmetric)
 end
 
 """
+# Extended help
+
     extrema(S::AbstractCentrallySymmetric, i::Int)
-
-Return the lower and higher coordinate of a centrally symmetric set in a given
-dimension.
-
-### Input
-
-- `S` -- centrally symmetric set
-- `i` -- dimension of interest
-
-### Output
-
-The lower and higher coordinate of the centrally symmetric set in the given
-dimension.
 
 ### Notes
 
