@@ -2,7 +2,7 @@ module ZonotopeModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractZonotope, generators_fallback
+using ..LazySets: AbstractZonotope, generators_fallback, _scale_copy_inplace
 using LinearAlgebra: mul!
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: ismultiple, remove_zero_columns, to_matrix,
@@ -11,7 +11,7 @@ using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
 @reexport import ..API: center, high, isoperationtype, low, rand,
-                        permute, scale!, translate!
+                        permute, scale, scale!, translate!
 @reexport import ..LazySets: generators, genmat, ngens, reduce_order,
                              remove_redundant_generators, togrep
 import Base: convert
