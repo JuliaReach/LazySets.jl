@@ -46,6 +46,10 @@ for N in [Float64, Rational{Int}, Float32]
     # constraints
     @test_throws MethodError constraints(E)  # TODO this should maybe change
 
+    # convex_hull (unary)
+    E2 = convex_hull(E)
+    @test E2 isa EmptySet{N} && dim(E2) == 2
+
     # copy
     E2 = copy(E)
     @test E2 isa EmptySet{N} && dim(E2) == 2
@@ -209,9 +213,7 @@ for N in [Float64, Rational{Int}, Float32]
         @test X isa EmptySet{N} && dim(X) == 5
     end
 
-    # convex_hull
-    E2 = convex_hull(E)
-    @test E2 isa EmptySet{N} && dim(E2) == 2
+    # convex_hull (binary)
     @test_throws AssertionError convex_hull(E, EmptySet{N}(3))
     E2 = convex_hull(E, E)
     @test E2 isa EmptySet{N} && dim(E2) == 2
