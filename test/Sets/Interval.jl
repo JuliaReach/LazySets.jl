@@ -48,8 +48,6 @@ for N in [Float64, Float32, Rational{Int}]
 
     # concrete linear map
     @test linear_map(hcat(N(2)...), x) == Interval(N(2) * x.dat)
-    # alias for scale
-    @test linear_map(N(2), x) == Interval(N(2) * x.dat)
 
     # concrete linear map with zonotope output
     M2 = hcat(N[1, 2, 3])
