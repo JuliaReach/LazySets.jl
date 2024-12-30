@@ -181,15 +181,26 @@ FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
 """
 function remove_redundant_constraints!(constraints::AbstractVector{<:HalfSpace};
                                        backend=nothing)
-    if isempty(constraints)
+    if length(constraints) <= 1
         return true
     end
+
     N = eltype(first(constraints))
     if isnothing(backend)
         backend = default_lp_solver(N)
     end
     A, b = tosimplehrep(constraints)
-    m, n = size(A)
+    m = size(A, 1)
+
+    if length(constraints) == 2
+        # the main algorithm does not work for two constraints; hence, we treat this case separately
+        α = A[1, :]
+        lp = linprog(-α, A, '<', b, -Inf, Inf, backend)
+        if is_lp_infeasible(lp.status)
+            return false
+        end
+    end
+
     non_redundant_indices = 1:m
 
     i = 1  # counter over reduced (= non-redundant) constraints

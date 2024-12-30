@@ -369,10 +369,16 @@ for N in [Float64]
         P = HPolyhedron([HalfSpace(N[1], N(0)), HalfSpace(N[1], N(1))])
         Q = remove_redundant_constraints(P)
         @test length(P.constraints) == 2 && length(Q.constraints) == 1
-        # removing redundant constraints from an empty polyhedron
+        # removing redundant constraints from an infeasible polyhedron
         P = HPolyhedron([HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1)), HalfSpace(N[-1], N(-1))])
         Q = remove_redundant_constraints(P)
         @test Q isa EmptySet{N} && dim(Q) == 1
+        @test remove_redundant_constraints!(P)
+        # removing redundant constraints from an infeasible polyhedron with two constraints
+        P = HPolyhedron([HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1))])
+        Q = remove_redundant_constraints(P)
+        @test Q isa EmptySet{N} && dim(Q) == 1
+        @test remove_redundant_constraints!(P)
 
         # checking for empty intersection (also test symmetric calls)
         P = convert(HPolytope, BallInf(zeros(N, 2), N(1)))
