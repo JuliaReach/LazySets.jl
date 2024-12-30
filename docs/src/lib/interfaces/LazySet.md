@@ -413,7 +413,6 @@ CurrentModule = LazySets
 ```
 ```@docs
 linear_map(::AbstractMatrix, ::LazySet; kwargs...)
-linear_map(::Number, ::LazySet; kwargs...)
 project(::LazySet, ::AbstractVector{Int}, ::Nothing=nothing, ::Int=dim(X))
 project(::LazySet, ::AbstractVector{Int}, ::Type{<:LazySet}, ::Int=dim(X))
 project(::LazySet, ::AbstractVector{Int}, ::Pair{<:UnionAll,<:Real}, ::Int=dim(X))
