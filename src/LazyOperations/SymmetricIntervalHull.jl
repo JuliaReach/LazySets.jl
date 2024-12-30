@@ -128,7 +128,7 @@ function radius_hyperrectangle(sih::SymmetricIntervalHull)
 end
 
 """
-    center(sih::SymmetricIntervalHull{N}, i::Int) where {N}
+    center(sih::SymmetricIntervalHull, i::Int)
 
 Return the center along a given dimension of the symmetric interval hull of a
 set.
@@ -142,13 +142,14 @@ set.
 
 The center along a given dimension of the symmetric interval hull of a set.
 """
-@inline function center(sih::SymmetricIntervalHull{N}, i::Int) where {N}
+@inline function center(sih::SymmetricIntervalHull, i::Int)
     @boundscheck _check_bounds(sih, i)
+    N = eltype(sih)
     return zero(N)
 end
 
 """
-    center(sih::SymmetricIntervalHull{N}) where {N}
+    center(sih::SymmetricIntervalHull)
 
 Return the center of the symmetric interval hull of a set.
 
@@ -160,7 +161,8 @@ Return the center of the symmetric interval hull of a set.
 
 The origin.
 """
-function center(sih::SymmetricIntervalHull{N}) where {N}
+function center(sih::SymmetricIntervalHull)
+    N = eltype(sih)
     return zeros(N, dim(sih))
 end
 
@@ -240,7 +242,7 @@ function ρ(d::SingleEntryVector, sih::SymmetricIntervalHull)
 end
 
 """
-    get_radius!(sih::SymmetricIntervalHull{N}, i::Int) where {N}
+    get_radius!(sih::SymmetricIntervalHull, i::Int)
 
 Compute the radius of the symmetric interval hull of a set in a given dimension.
 
@@ -257,7 +259,8 @@ The radius of the symmetric interval hull of a set in a given dimension.
 
 We ask for the `extrema` of the underlying set in dimension `i`.
 """
-function get_radius!(sih::SymmetricIntervalHull{N}, i::Int) where {N}
+function get_radius!(sih::SymmetricIntervalHull, i::Int)
+    N = eltype(sih)
     if sih.cache[i] == -one(N)
         # compute the radius
         l, h = extrema(sih.X, i)

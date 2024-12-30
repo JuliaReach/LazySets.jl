@@ -175,8 +175,7 @@ function σ(d::AbstractVector, R::Rectification)
 end
 
 """
-    σ(d::AbstractVector,
-      R::Rectification{N, <:AbstractHyperrectangle{N}}) where {N}
+    σ(d::AbstractVector, R::Rectification{N, <:AbstractHyperrectangle}) where {N}
 
 Return a support vector of the rectification of a hyperrectangular set.
 
@@ -194,13 +193,12 @@ A support vector in the given direction.
 Let ``R(·)`` be the rectification of a vector respectively a set, and let ``H``
 be a hyperrectangle. Then ``σ_{R(H)}(d) = R(σ_{H}(d))``.
 """
-function σ(d::AbstractVector,
-           R::Rectification{N,<:AbstractHyperrectangle{N}}) where {N}
+function σ(d::AbstractVector, R::Rectification{N,<:AbstractHyperrectangle}) where {N}
     return rectify(σ(d, R.X))
 end
 
 """
-    σ(d::AbstractVector, R::Rectification{N, <:CartesianProduct{N}}) where {N}
+    σ(d::AbstractVector, R::Rectification{N, <:CartesianProduct}) where {N}
 
 Return a support vector of the rectification of a Cartesian product of two sets.
 
@@ -229,7 +227,7 @@ We can just query a support vector for ``R(X)`` and ``R(Y)`` recursively:
 concatenates vectors ``x`` and ``y``.
 """
 function σ(d::AbstractVector,
-           R::Rectification{N,<:CartesianProduct{N}}) where {N}
+           R::Rectification{N,<:CartesianProduct}) where {N}
     X, Y = first(R.X), second(R.X)
     n1 = dim(X)
     return vcat(σ(d[1:n1], Rectification(X)), σ(d[(n1 + 1):end], Rectification(Y)))
@@ -237,7 +235,7 @@ end
 
 """
     σ(d::AbstractVector,
-      R::Rectification{N, <:CartesianProductArray{N}}) where {N}
+      R::Rectification{N, <:CartesianProductArray}) where {N}
 
 Return a support vector of the rectification of a Cartesian product of a
 finite number of sets.
@@ -267,7 +265,7 @@ We can just query a support vector for each subspace recursively:
 where ``x × y`` concatenates vectors ``x`` and ``y``.
 """
 function σ(d::AbstractVector,
-           R::Rectification{N,<:CartesianProductArray{N}}) where {N}
+           R::Rectification{N,<:CartesianProductArray}) where {N}
     svec = similar(d)
     i = 1
     for X in R.X
@@ -450,8 +448,8 @@ function isboundedtype(::Type{<:Rectification{N,S}}) where {N,S}
 end
 
 """
-    to_union_of_projections(R::Rectification{N},
-                            [concrete_intersection]::Bool=false) where {N}
+    to_union_of_projections(R::Rectification,
+                            [concrete_intersection]::Bool=false) where
 
 Compute an equivalent union of projections from a rectification.
 
@@ -499,9 +497,10 @@ The result can be one of three cases depending on the wrapped set ``X``, namely
   either positive or negative, or
 * a `UnionSetArray` of `LinearMap`s (projections) otherwise.
 """
-function to_union_of_projections(R::Rectification{N},
+function to_union_of_projections(R::Rectification,
                                  concrete_intersection::Bool=false;
-                                 filter_empty_sets::Bool=true) where {N}
+                                 filter_empty_sets::Bool=true)
+    N = eltype(R)
     n = dim(R.X)
 
     negative_dimensions, mixed_dimensions, mixed_dimensions_enumeration = compute_negative_and_mixed_dimensions(R.X,

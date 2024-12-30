@@ -609,9 +609,9 @@ function block_to_dimension_indices(cpa::CartesianProductArray{N}) where {N}
 end
 
 """
-    substitute_blocks(low_dim_cpa::CartesianProductArray{N},
-                      orig_cpa::CartesianProductArray{N},
-                      blocks::Vector{Tuple{Int, Int}}) where {N}
+    substitute_blocks(low_dim_cpa::CartesianProductArray,
+                      orig_cpa::CartesianProductArray,
+                      blocks::Vector{Tuple{Int, Int}})
 
 Return a Cartesian product of a finite number of sets (CPA) obtained by merging
 an original CPA with a low-dimensional CPA, which represents the updated subset
@@ -628,9 +628,10 @@ of variables in the specified blocks.
 
 The merged Cartesian product.
 """
-function substitute_blocks(low_dim_cpa::CartesianProductArray{N},
-                           orig_cpa::CartesianProductArray{N},
-                           blocks::Vector{Tuple{Int,Int}}) where {N}
+function substitute_blocks(low_dim_cpa::CartesianProductArray,
+                           orig_cpa::CartesianProductArray,
+                           blocks::Vector{Tuple{Int,Int}})
+    N = promote_type(eltype(low_dim_cpa), eltype(orig_cpa))
     array = Vector{LazySet{N}}(undef, length(orig_cpa.array))
     index = 1
     for bi in eachindex(orig_cpa.array)

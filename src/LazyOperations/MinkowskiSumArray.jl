@@ -122,8 +122,7 @@ function σ(d::AbstractVector, msa::MinkowskiSumArray)
     return _σ_msum_array(d, msa.array)
 end
 
-@inline function _σ_msum_array(d::AbstractVector{N},
-                               array::AbstractVector{<:LazySet}) where {N}
+@inline function _σ_msum_array(d::AbstractVector, array::AbstractVector{<:LazySet})
     return sum(σ(d, Xi) for Xi in array)
 end
 

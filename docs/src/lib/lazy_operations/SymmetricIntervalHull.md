@@ -9,8 +9,8 @@ SymmetricIntervalHull
 ⊡
 dim(::SymmetricIntervalHull)
 σ(::AbstractVector, ::SymmetricIntervalHull)
-center(::SymmetricIntervalHull{N}, ::Int) where {N}
-center(::SymmetricIntervalHull{N}) where {N}
+center(::SymmetricIntervalHull, ::Int)
+center(::SymmetricIntervalHull)
 radius_hyperrectangle(::SymmetricIntervalHull)
 radius_hyperrectangle(::SymmetricIntervalHull, ::Int)
 ```

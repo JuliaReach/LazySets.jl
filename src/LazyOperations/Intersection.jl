@@ -335,8 +335,8 @@ end
 """
     ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
       algorithm::String="line_search", kwargs...
-     ) where {N, S1<:LazySet{N},
-                 S2<:Union{HalfSpace{N}, Hyperplane{N}, Line2D{N}}}
+     ) where {N, S1<:LazySet,
+                 S2<:Union{HalfSpace, Hyperplane, Line2D}}
 
 Evaluate the support function of the intersection of a compact set and a
 half-space/hyperplane/line in a given direction.
@@ -393,22 +393,22 @@ For additional information we refer to:
 """
 function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
            algorithm::String="line_search",
-           kwargs...) where {N,S1<:LazySet{N},
-                             S2<:Union{HalfSpace{N},Hyperplane{N},Line2D{N}}}
+           kwargs...) where {N,S1<:LazySet,
+                             S2<:Union{HalfSpace,Hyperplane,Line2D}}
     return ρ_helper(d, cap, algorithm; kwargs...)
 end
 
 # symmetric method
 function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
            algorithm::String="line_search",
-           kwargs...) where {N,S1<:Union{HalfSpace{N},Hyperplane{N},Line2D{N}},
-                             S2<:LazySet{N}}
+           kwargs...) where {N,S1<:Union{HalfSpace,Hyperplane,Line2D},
+                             S2<:LazySet}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
 """
     ρ(d::AbstractVector, cap::Intersection{N, S1, S2};
-      kwargs...) where {N, S1<:LazySet{N}, S2<:AbstractPolyhedron{N}}
+      kwargs...) where {N, S1<:LazySet, S2<:AbstractPolyhedron}
 
 Return an upper bound on the support function of the intersection between a
 compact set and a polyhedron along a given direction.
@@ -440,24 +440,24 @@ This algorithm is inspired from [1].
 This method relies on the `constraints_list` of the polyhedron.
 """
 function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           kwargs...) where {N,S1<:LazySet{N},S2<:AbstractPolyhedron{N}}
+           kwargs...) where {N,S1<:LazySet,S2<:AbstractPolyhedron}
     return ρ_helper(d, cap; kwargs...)
 end
 
 # symmetric method
 function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           kwargs...) where {N,S1<:AbstractPolyhedron{N},S2<:LazySet{N}}
+           kwargs...) where {N,S1<:AbstractPolyhedron,S2<:LazySet}
     return ρ_helper(d, swap(cap); kwargs...)
 end
 
 # disambiguation
 function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           kwargs...) where {N,S1<:AbstractPolytope{N},S2<:AbstractPolyhedron{N}}
+           kwargs...) where {N,S1<:AbstractPolytope,S2<:AbstractPolyhedron}
     return ρ_helper(d, cap; kwargs...)
 end
 
 function ρ_helper(d::AbstractVector, cap::Intersection{N,S1,S2};
-                  kwargs...) where {N,S1<:LazySet{N},S2<:AbstractPolyhedron{N}}
+                  kwargs...) where {N,S1<:LazySet,S2<:AbstractPolyhedron}
     if !use_precise_ρ(cap)
         use_simple_method = true
     else
@@ -479,7 +479,7 @@ end
 
 """
     ρ(d::AbstractVector, cap::Intersection{N, S1, S2}; kwargs...
-     ) where {N, S1<:AbstractPolyhedron{N}, S2<:AbstractPolyhedron{N}}
+     ) where {N, S1<:AbstractPolyhedron, S2<:AbstractPolyhedron}
 
 Evaluate the support function of the intersection between two polyhedral sets.
 
@@ -500,47 +500,47 @@ We combine the constraints of the two polyhedra to a new `HPolyhedron`, for
 which we then evaluate the support function.
 """
 function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           kwargs...) where {N,S1<:AbstractPolyhedron{N},S2<:AbstractPolyhedron{N}}
+           kwargs...) where {N,S1<:AbstractPolyhedron,S2<:AbstractPolyhedron}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # disambiguation
 function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
            algorithm::String="line_search",
-           kwargs...) where {N,S1<:AbstractPolytope{N},
-                             S2<:Union{HalfSpace{N},Hyperplane{N},Line2D{N}}}
+           kwargs...) where {N,S1<:AbstractPolytope,
+                             S2<:Union{HalfSpace,Hyperplane,Line2D}}
     return ρ_helper(d, cap, algorithm; kwargs...)
 end
 
 # symmetric method
 function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
            algorithm::String="line_search",
-           kwargs...) where {N,S1<:Union{HalfSpace{N},Hyperplane{N},Line2D{N}},
-                             S2<:AbstractPolytope{N}}
+           kwargs...) where {N,S1<:Union{HalfSpace,Hyperplane,Line2D},
+                             S2<:AbstractPolytope}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
 # disambiguation
 function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
            algorithm::String="line_search",
-           kwargs...) where {N,S1<:AbstractPolyhedron{N},
-                             S2<:Union{HalfSpace{N},Hyperplane{N},Line2D{N}}}
+           kwargs...) where {N,S1<:AbstractPolyhedron,
+                             S2<:Union{HalfSpace,Hyperplane,Line2D}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # symmetric method
 function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
            algorithm::String="line_search",
-           kwargs...) where {N,S1<:Union{HalfSpace{N},Hyperplane{N},Line2D{N}},
-                             S2<:AbstractPolyhedron{N}}
+           kwargs...) where {N,S1<:Union{HalfSpace,Hyperplane,Line2D},
+                             S2<:AbstractPolyhedron}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # disambiguation
 function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
            algorithm::String="line_search",
-           kwargs...) where {N,S1<:Union{HalfSpace{N},Hyperplane{N},Line2D{N}},
-                             S2<:Union{HalfSpace{N},Hyperplane{N},Line2D{N}}}
+           kwargs...) where {N,S1<:Union{HalfSpace,Hyperplane,Line2D},
+                             S2<:Union{HalfSpace,Hyperplane,Line2D}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
@@ -811,16 +811,16 @@ julia> v[1]
 1.0
 ```
 """
-function _line_search(ℓ, X::S, H::Union{<:HalfSpace,<:Hyperplane,<:Line2D};
-                      kwargs...) where {S<:LazySet}
+function _line_search(ℓ, X::LazySet, H::Union{<:HalfSpace,<:Hyperplane,<:Line2D};
+                      kwargs...)
     return _line_search_optim(ℓ, X, H; kwargs...)
 end
 
 function load_optim_intersection()
     return quote
-        function _line_search_optim(ℓ, X::S, H::Union{<:HalfSpace,<:Hyperplane,<:Line2D};
-                                    kwargs...) where {S<:LazySet}
-            if !isconvextype(S)
+        function _line_search_optim(ℓ, X::LazySet, H::Union{<:HalfSpace,<:Hyperplane,<:Line2D};
+                                    kwargs...)
+            if !isconvextype(typeof(X))
                 throw(ArgumentError("the first set in the intersection must be convex"))
             end
 
@@ -864,11 +864,11 @@ function load_optim_intersection()
 end  # quote / load_optim_intersection
 
 """
-    _projection(ℓ, X, H::Union{Hyperplane{N}, Line2D{N}};
+    _projection(ℓ, X::LazySet, H::Union{Hyperplane, Line2D};
                 [lazy_linear_map]=false,
                 [lazy_2d_intersection]=true,
                 [algorithm_2d_intersection]=nothing,
-                [kwargs...]) where {N}
+                [kwargs...])
 
 Given a convex set ``X`` and a hyperplane ``H = \\{x: n ⋅ x = γ \\}``, calculate
 the support function of the intersection between the rank-2 projection
@@ -918,15 +918,16 @@ used for that: if not given, the default support-function algorithm is used
 [1] C. Le Guernic. *Reachability Analysis of Hybrid Systems with Linear
 Continuous Dynamics*, PhD thesis.
 """
-function _projection(ℓ, X::S, H::Union{Hyperplane{N},Line2D{N}};
+function _projection(ℓ, X::LazySet, H::Union{Hyperplane,Line2D};
                      lazy_linear_map=false,
                      lazy_2d_intersection=true,
                      algorithm_2d_intersection=nothing,
-                     kwargs...) where {N,S<:LazySet}
-    if !isconvextype(S)
+                     kwargs...)
+    if !isconvextype(typeof(X))
         throw(ArgumentError("the first set in the intersection must be convex"))
     end
 
+    N = promote_type(eltype(X), eltype(H))
     n = H.a                  # normal vector to the hyperplane
     γ = H.b                  # displacement of the hyperplane
     Πnℓ = vcat(n', ℓ')       # projection map

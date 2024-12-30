@@ -478,8 +478,8 @@ function Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N}
 end
 
 """
-    project(S::LazySet{N}, block::AbstractVector{Int}, set_type::Type{LM},
-            [n]::Int=dim(S); [kwargs...]) where {N, LM<:LinearMap}
+    project(S::LazySet, block::AbstractVector{Int}, set_type::Type{<:LinearMap},
+            [n]::Int=dim(S); [kwargs...])
 
 Project a high-dimensional set to a given block by using a lazy linear map.
 
@@ -494,9 +494,10 @@ Project a high-dimensional set to a given block by using a lazy linear map.
 
 A lazy `LinearMap` representing the projection of the set `S` to block `block`.
 """
-@inline function project(S::LazySet{N}, block::AbstractVector{Int},
-                         set_type::Type{LM}, n::Int=dim(S);
-                         kwargs...) where {N,LM<:LinearMap}
+@inline function project(S::LazySet, block::AbstractVector{Int},
+                         set_type::Type{<:LinearMap}, n::Int=dim(S);
+                         kwargs...)
+    N = eltype(S)
     M = projection_matrix(block, n, N)
     return M * S
 end

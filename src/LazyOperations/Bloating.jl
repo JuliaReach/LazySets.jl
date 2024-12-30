@@ -57,7 +57,7 @@ function dim(B::Bloating)
 end
 
 # helper function to compute the bloating ball
-function _bloating_ball(B::Bloating{N}) where {N}
+function _bloating_ball(B::Bloating)
     return _bloating_ball(B.ε, B.p, dim(B))
 end
 

@@ -399,8 +399,9 @@ function project(cp::CartesianProduct, block::AbstractVector{Int}; kwargs...)
 end
 
 """
-    project(cp::CartesianProduct{N, IT, HT}, block::AbstractVector{Int};
-            [kwargs...]) where {N, IT<:Interval, HT<:AbstractHyperrectangle{N}}
+    project(cp::CartesianProduct{N,<:Interval,<:AbstractHyperrectangle},
+            block::AbstractVector{Int};
+            [kwargs...]) where {N}
 
 Concrete projection of the Cartesian product of an interval and a
 hyperrectangular set.
@@ -415,8 +416,9 @@ hyperrectangular set.
 A hyperrectangle representing the projection of the Cartesian product `cp` on
 the dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N,IT,HT}, block::AbstractVector{Int};
-                 kwargs...) where {N,IT<:Interval,HT<:AbstractHyperrectangle{N}}
+function project(cp::CartesianProduct{N,<:Interval,<:AbstractHyperrectangle},
+                 block::AbstractVector{Int};
+                 kwargs...) where {N}
     I = cp.X
     H = cp.Y
     block_vec = collect(block)
@@ -432,8 +434,9 @@ function project(cp::CartesianProduct{N,IT,HT}, block::AbstractVector{Int};
 end
 
 """
-    project(cp::CartesianProduct{N, IT, ZT}, block::AbstractVector{Int};
-            [kwargs...]) where {N, IT<:Interval, ZT<:AbstractZonotope{N}}
+    project(cp::CartesianProduct{N,<:Interval,<:AbstractZonotope},
+            block::AbstractVector{Int};
+            [kwargs...]) where {N}
 
 Concrete projection of the Cartesian product of an interval and a zonotopic set.
 
@@ -447,8 +450,9 @@ Concrete projection of the Cartesian product of an interval and a zonotopic set.
 A zonotope representing the projection of the Cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N,IT,ZT}, block::AbstractVector{Int};
-                 kwargs...) where {N,IT<:Interval,ZT<:AbstractZonotope{N}}
+function project(cp::CartesianProduct{N,<:Interval,<:AbstractZonotope},
+                 block::AbstractVector{Int};
+                 kwargs...) where {N}
     block_vec = collect(block)
     Z = cp.Y
     if 1 ∉ block_vec

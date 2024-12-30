@@ -15,7 +15,7 @@ an_element(::LinearMap)
 vertices_list(::LinearMap)
 constraints_list(::LinearMap)
 linear_map(::AbstractMatrix, ::LinearMap)
-project(S::LazySet{N}, ::AbstractVector{Int}, ::Type{LM}, ::Int=dim(S)) where {N, LM<:LinearMap}
+project(S::LazySet, ::AbstractVector{Int}, ::Type{<:LinearMap}, ::Int=dim(S))
 ```
 Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
