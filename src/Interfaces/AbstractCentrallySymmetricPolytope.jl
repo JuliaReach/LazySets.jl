@@ -11,15 +11,9 @@ Such a type combination is necessary as long as Julia does not support
 ### Notes
 
 Every concrete `AbstractCentrallySymmetricPolytope` must define the following
-methods:
+method, in addition to the `AbstractPolytope` methods:
 
-- from `AbstractCentrallySymmetric`:
-  - `center(::AbstractCentrallySymmetricPolytope)` -- return the center point
-  - `center(::AbstractCentrallySymmetricPolytope, i::Int)` -- return the center
-                                                              point at index `i`
-- from `AbstractPolytope`:
-  - `vertices_list(::AbstractCentrallySymmetricPolytope)` -- return a list of
-                                                             all vertices
+- `center(::AbstractCentrallySymmetricPolytope)` -- return the center point
 
 The subtypes of `AbstractCentrallySymmetricPolytope` (including abstract
 interfaces):

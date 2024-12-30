@@ -27,10 +27,8 @@
 
 for T in (AbstractCentrallySymmetric, AbstractCentrallySymmetricPolytope)
     # center
-    @test check_method_implementation(AbstractCentrallySymmetric, center,
+    @test check_method_implementation(T, center,
                                       Function[S -> (S{Float64},)])
-    @test check_method_implementation(AbstractCentrallySymmetric, center,
-                                      Function[S -> (S{Float64}, Int64)])
 end
 
 # --- AbstractZonotope ---
@@ -44,22 +42,15 @@ end
 
 # --- AbstractHyperrectangle ---
 
-# radius_hyperrectangle (2x)
+# radius_hyperrectangle
 @test check_method_implementation(AbstractHyperrectangle, radius_hyperrectangle,
-                                  Function[S -> (S{Float64},)])
-@test check_method_implementation(AbstractHyperrectangle, radius_hyperrectangle,
-                                  Function[S -> (S{Float64}, Int)])
-# isflat
-@test check_method_implementation(AbstractHyperrectangle, isflat,
                                   Function[S -> (S{Float64},)])
 
 # --- AbstractSingleton ---
 
-# element (2x)
+# element
 @test check_method_implementation(AbstractSingleton, element,
                                   Function[S -> (S{Float64},)])
-@test check_method_implementation(AbstractSingleton, element,
-                                  Function[S -> (S{Float64}, Int)])
 
 # --- AbstractPolygon ---
 
@@ -86,9 +77,46 @@ end
 @test check_method_implementation(AbstractAffineMap, set,
                                   Function[S -> (S{Float64},)])
 
+# --- AbstractBallp ---
+
+# ball_norm
+@test check_method_implementation(AbstractBallp, LazySets.ball_norm,
+                                  Function[S -> (S{Float64},)])
+# radius_ball
+@test check_method_implementation(AbstractBallp, LazySets.radius_ball,
+                                  Function[S -> (S{Float64},)])
+
+# --- AbstractArraySet ---
+
+for T in Base.uniontypes(LazySets.AbstractArraySet)
+    # array
+    @test check_method_implementation(T, array,
+                                      Function[S -> (S{Float64},)])
+end
+
 # --- AbstractPolynomialZonotope ---
 
+# center
 @test check_method_implementation(AbstractPolynomialZonotope, center,
                                   Function[S -> (S{Float64},)])
-@test check_method_implementation(AbstractPolynomialZonotope, order,
+# polynomial_order
+@test check_method_implementation(AbstractPolynomialZonotope, polynomial_order,
+                                  Function[S -> (S{Float64},)])
+# ngens_dep
+@test check_method_implementation(AbstractPolynomialZonotope, ngens_dep,
+                                  Function[S -> (S{Float64},)])
+# ngens_indep
+@test check_method_implementation(AbstractPolynomialZonotope, ngens_indep,
+                                  Function[S -> (S{Float64},)])
+
+# --- AbstractSparsePolynomialZonotope ---
+
+# expmat
+@test check_method_implementation(AbstractSparsePolynomialZonotope, expmat,
+                                  Function[S -> (S{Float64},)])
+# genmat_dep
+@test check_method_implementation(AbstractSparsePolynomialZonotope, genmat_dep,
+                                  Function[S -> (S{Float64},)])
+# genmat_indep
+@test check_method_implementation(AbstractSparsePolynomialZonotope, genmat_indep,
                                   Function[S -> (S{Float64},)])
