@@ -2,16 +2,16 @@ module HyperrectangleModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractHyperrectangle, _ρ_sev_hyperrectangle,
-                  _σ_sev_hyperrectangle
+using ..LazySets: AbstractHyperrectangle, _scale_copy_inplace,
+                  _ρ_sev_hyperrectangle, _σ_sev_hyperrectangle
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: SingleEntryVector
 using ReachabilityBase.Comparison: isapproxzero
 using ReachabilityBase.Distribution: reseed!
 using SparseArrays: SparseVector, findnz, sparse
 
-@reexport import ..API: center, isoperationtype, rand, permute, scale!, ρ, σ,
-                        translate, translate!
+@reexport import ..API: center, isoperationtype, rand, permute, scale, scale!,
+                        ρ, σ, translate, translate!
 @reexport import ..LazySets: genmat, radius_hyperrectangle, □
 import ..LazySets: _genmat_static
 import Base: convert
