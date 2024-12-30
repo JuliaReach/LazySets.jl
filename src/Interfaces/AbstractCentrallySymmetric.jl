@@ -22,8 +22,6 @@ julia> subtypes(AbstractCentrallySymmetric)
 """
 abstract type AbstractCentrallySymmetric{N} <: ConvexSet{N} end
 
-isconvextype(::Type{<:AbstractCentrallySymmetric}) = true
-
 """
     dim(S::AbstractCentrallySymmetric)
 
