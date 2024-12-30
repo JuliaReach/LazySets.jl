@@ -118,7 +118,10 @@ function order(P::AbstractPolynomialZonotope)
 end
 
 isconvextype(::Type{<:AbstractPolynomialZonotope}) = false
+
 isboundedtype(::Type{<:AbstractPolynomialZonotope}) = true
+
+isparametrictype(::Type{<:AbstractPolynomialZonotope}) = true
 
 """
     dim(PZ::AbstractPolynomialZonotope)
