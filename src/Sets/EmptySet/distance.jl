@@ -5,5 +5,7 @@ end
 function _distance_emptyset(∅::EmptySet, X::LazySet; p::Real=2.0)
     @assert dim(∅) == dim(X) "the dimensions of the given sets should match, " *
                              "but they are $(dim(∅)) and $(dim(X)), respectively"
-    throw(ArgumentError("the distance to an empty set is undefined"))
+
+    N = promote_type(eltype(∅), eltype(X))
+    return N(Inf)
 end
