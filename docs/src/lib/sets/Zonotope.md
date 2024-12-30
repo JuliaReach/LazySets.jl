@@ -88,6 +88,13 @@ CurrentModule = LazySets.API
 CurrentModule = LazySets
 ```
 * [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
+```@meta
+CurrentModule = LazySets.API
+```
+* [`scale`](@ref scale(::Real, ::LazySet))
+```@meta
+CurrentModule = LazySets
+```
 * [`split`](@ref split(::AbstractZonotope, ::Int))
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 ```@meta
@@ -125,7 +132,6 @@ Inherited from [`LazySet`](@ref):
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
-* [`scale`](@ref scale(::Real, ::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
