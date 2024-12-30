@@ -230,7 +230,8 @@ for N in [Float64, Rational{Int}, Float32]
     @test E2 isa BallInf{N} && E2 == B
 
     # distance
-    @test_throws ArgumentError distance(E, E)
+    res = distance(E, E)
+    @test res isa N && res == N(Inf)
     E2 = EmptySet{N}(3)
     @test_throws AssertionError distance(E, E2)
     @test_throws AssertionError distance(E2, E)
