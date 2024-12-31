@@ -5,8 +5,6 @@ export constrained_dimensions,
        addconstraint!,
        ishyperplanar
 
-isconvextype(::Type{<:AbstractPolyhedron}) = true
-
 ispolyhedral(::AbstractPolyhedron) = true
 
 """

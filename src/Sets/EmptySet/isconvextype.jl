@@ -1,1 +1,0 @@
-isconvextype(::Type{<:EmptySet}) = true

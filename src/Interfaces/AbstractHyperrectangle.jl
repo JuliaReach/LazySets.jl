@@ -100,8 +100,6 @@ The function symbol can be typed via `\\square<tab>`.
 """
 function □(c, r) end
 
-isconvextype(::Type{<:AbstractHyperrectangle}) = true
-
 """
    genmat(H::AbstractHyperrectangle)
 

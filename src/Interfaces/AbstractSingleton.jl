@@ -26,8 +26,6 @@ julia> subtypes(AbstractSingleton)
 """
 abstract type AbstractSingleton{N} <: AbstractHyperrectangle{N} end
 
-isconvextype(::Type{<:AbstractSingleton}) = true
-
 """
     element(S::AbstractSingleton)
 

@@ -31,8 +31,6 @@ properties:
 """
 abstract type AbstractPolytope{N} <: AbstractPolyhedron{N} end
 
-isconvextype(::Type{<:AbstractPolytope}) = true
-
 function isboundedtype(::Type{<:AbstractPolytope})
     return true
 end

@@ -61,8 +61,6 @@ const ⊡ = SymmetricIntervalHull
 
 isoperationtype(::Type{<:SymmetricIntervalHull}) = true
 
-isconvextype(::Type{<:SymmetricIntervalHull}) = true
-
 """
     SymmetricIntervalHull(∅::EmptySet)
 
