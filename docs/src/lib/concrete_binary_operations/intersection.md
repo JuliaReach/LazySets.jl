@@ -16,7 +16,6 @@ intersection(::Interval, ::HalfSpace)
 intersection(::Interval, ::Hyperplane)
 intersection(::Interval, ::LazySet)
 intersection(::AbstractHPolygon, ::AbstractHPolygon)
-intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N}
 intersection(::Union{VPolygon,VPolytope}, ::Union{VPolygon,VPolytope})
 intersection(::UnionSet, ::LazySet)
 intersection(::UnionSetArray, ::LazySet)

@@ -101,7 +101,6 @@ CurrentModule = LazySets
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-
 vertices_list(::LazySet)
 ```
 ```@meta

@@ -3,7 +3,7 @@ export AbstractPolyhedron
 """
     AbstractPolyhedron{N} <: ConvexSet{N}
 
-Abstract type for compact convex polyhedral sets.
+Abstract type for closed convex polyhedral sets.
 
 ### Notes
 
