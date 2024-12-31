@@ -101,6 +101,7 @@ Inherited from [`LazySet`](@ref):
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 
 Inherited from [`ConvexSet`](@ref):
+* [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))
 * [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
@@ -135,7 +136,6 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
 * [`high`](@ref high(::AbstractHyperrectangle))
 * [`high`](@ref high(::AbstractHyperrectangle, ::Int))
-* [`isconvextype`](@ref isconvextype(::Type{AbstractHyperrectangle}))
 * [`isflat`](@ref isflat(::Hyperrectangle))
 * [`low`](@ref low(::AbstractHyperrectangle))
 * [`low`](@ref low(::AbstractHyperrectangle, ::Int))

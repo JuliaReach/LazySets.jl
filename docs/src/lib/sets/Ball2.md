@@ -174,6 +174,10 @@ Inherited from [`LazySet`](@ref):
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 
+Inherited from [`ConvexSet`](@ref):
+* [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))
+* [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
+
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetric))
 * [`center`](@ref center(::AbstractCentrallySymmetric, ::Int))
@@ -181,14 +185,7 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetric))
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetric, ::Int))
 * [`isbounded`](@ref isbounded(::AbstractCentrallySymmetric))
-```@meta
-CurrentModule = LazySets.API
-```
-* [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
-* [`isconvextype`](@ref isconvextype(::Type{LazySet}))
-```@meta
-CurrentModule = LazySets
-```
+* [`isboundedtype`](@ref isboundedtype(::Type{AbstractCentrallySymmetric}))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
 * [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric, ::Bool=false))
 

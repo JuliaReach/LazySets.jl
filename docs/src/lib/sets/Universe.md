@@ -94,22 +94,6 @@ Undocumented implementations:
 CurrentModule = LazySets
 ```
 
-Inherited from [`AbstractPolyhedron`](@ref):
-* [`extrema`](@ref extrema(::LazySet))
-* [`extrema`](@ref extrema(::LazySet, ::Int))
-* [`high`](@ref high(::AbstractPolyhedron))
-* [`high`](@ref high(::AbstractPolyhedron, ::Int))
-* [`isconvextype`](@ref isconvextype(::Type{<:AbstractPolyhedron}))
-* [`ispolyhedral`](@ref ispolyhedral(::LazySet))
-* [`low`](@ref low(::AbstractPolyhedron))
-* [`low`](@ref low(::AbstractPolyhedron, ::Int))
-* [`vertices_list`](@ref vertices_list(::AbstractPolyhedron))
-* [`vertices`](@ref vertices(::AbstractPolyhedron))
-* [`minkowski_sum`](@ref minkowski_sum(::AbstractPolyhedron, ::AbstractPolyhedron))
-
-Inherited from [`ConvexSet`](@ref):
-* [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
-
 Inherited from [`LazySet`](@ref):
 * [`area`](@ref area(::LazySet))
 * [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
@@ -137,3 +121,19 @@ Inherited from [`LazySet`](@ref):
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
+
+Inherited from [`ConvexSet`](@ref):
+* [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))
+* [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
+
+Inherited from [`AbstractPolyhedron`](@ref):
+* [`extrema`](@ref extrema(::LazySet))
+* [`extrema`](@ref extrema(::LazySet, ::Int))
+* [`high`](@ref high(::AbstractPolyhedron))
+* [`high`](@ref high(::AbstractPolyhedron, ::Int))
+* [`ispolyhedral`](@ref ispolyhedral(::LazySet))
+* [`low`](@ref low(::AbstractPolyhedron))
+* [`low`](@ref low(::AbstractPolyhedron, ::Int))
+* [`vertices_list`](@ref vertices_list(::AbstractPolyhedron))
+* [`vertices`](@ref vertices(::AbstractPolyhedron))
+* [`minkowski_sum`](@ref minkowski_sum(::AbstractPolyhedron, ::AbstractPolyhedron))

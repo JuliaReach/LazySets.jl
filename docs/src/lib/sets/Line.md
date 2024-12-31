@@ -133,6 +133,7 @@ Inherited from [`LazySet`](@ref):
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 
 Inherited from [`ConvexSet`](@ref):
+* [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))
 * [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
@@ -140,7 +141,6 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`extrema`](@ref extrema(::AbstractPolyhedron, ::Int))
 * [`high`](@ref high(::AbstractPolyhedron))
 * [`high`](@ref high(::AbstractPolyhedron, ::Int))
-* [`isconvextype`](@ref isconvextype(::Type{AbstractPolyhedron}))
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
 * [`low`](@ref low(::AbstractPolyhedron))
 * [`low`](@ref low(::AbstractPolyhedron, ::Int))

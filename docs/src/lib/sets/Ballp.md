@@ -86,6 +86,10 @@ Inherited from [`LazySet`](@ref):
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 
+Inherited from [`ConvexSet`](@ref):
+* [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))
+* [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
+
 Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetric))
 * [`center`](@ref center(::AbstractCentrallySymmetric, ::Int))
@@ -94,7 +98,6 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetric, ::Int))
 * [`isbounded`](@ref isbounded(::AbstractCentrallySymmetric))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractCentrallySymmetric}))
-* [`isconvextype`](@ref isconvextype(::Type{AbstractCentrallySymmetric}))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetric))
 * [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetric, ::Bool=false))
 
@@ -104,7 +107,4 @@ Inherited from [`AbstractBallp`](@ref):
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractBallp))
 * [`ρ`](@ref ρ(::AbstractVector, ::AbstractBallp))
 * [`σ`](@ref σ(::AbstractVector, ::AbstractBallp))
-```@meta
-CurrentModule = LazySets.API
-```
-* [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
+* [`minkowski_sum`](@ref minkowski_sum(::AbstractBallp, ::AbstractBallp))

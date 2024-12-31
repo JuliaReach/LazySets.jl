@@ -84,6 +84,7 @@ Inherited from [`LazySet`](@ref):
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 
 Inherited from [`ConvexSet`](@ref):
+* [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))
 * [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
@@ -106,7 +107,6 @@ Inherited from [`AbstractPolytope`](@ref):
 
 Inherited from [`AbstractPolygon`](@ref):
 * [`dim`](@ref dim(::AbstractPolygon))
-* [`isconvextype`](@ref isconvextype(::Type{AbstractPolygon}))
 * [`volume`](@ref volume(::AbstractPolygon))
 
 Inherited from [`AbstractHPolygon`](@ref):
