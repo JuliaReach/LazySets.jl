@@ -153,6 +153,7 @@ Inherited from [`LazySet`](@ref):
 * [`high`](@ref high(::LazySet))
 * [`high`](@ref high(::LazySet, ::Int))
 * [`isbounded`](@ref isbounded(::LazySet))
+* [`isconvextype`](@ref isconvextype(::Type{AbstractPolynomialZonotope}))
 * [`isempty`](@ref isempty(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
@@ -188,7 +189,6 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolynomialZonotope}))
-* [`isconvextype`](@ref isconvextype(::Type{AbstractPolynomialZonotope}))
 * [`order`](@ref order(::AbstractPolynomialZonotope))
 
 Inherited from [`AbstractSparsePolynomialZonotope`](@ref):

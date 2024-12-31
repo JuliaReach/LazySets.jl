@@ -16,4 +16,3 @@ forming the basis, and a predicate ``P : ℝ^n → \\{⊤, ⊥\\}`` such that
 abstract type AbstractStar{N} <: LazySet{N} end
 
 isoperationtype(::Type{<:AbstractStar}) = false
-isconvextype(::Type{<:AbstractStar}) = false

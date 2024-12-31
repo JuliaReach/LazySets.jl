@@ -62,7 +62,6 @@ Undocumented implementations:
 * [`high`](@ref high(::LazySet, ::Int))
 * [`isbounded`](@ref isbounded(::LazySet))
 * [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
-* [`isconvextype`](@ref isconvextype(::Type{LazySet}))
 * [`isempty`](@ref isempty(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`isuniversal`](@ref isuniversal(::LazySet, ::Bool=false))
@@ -123,3 +122,6 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`LazySet`](@ref) but does not apply:
 * [`triangulate`](@ref triangulate(::LazySet))
+
+Inherited from [`ConvexSet`](@ref):
+* [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))

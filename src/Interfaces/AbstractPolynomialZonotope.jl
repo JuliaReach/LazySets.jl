@@ -117,7 +117,6 @@ function order(P::AbstractPolynomialZonotope)
     return ngens(P) // dim(P)
 end
 
-isconvextype(::Type{<:AbstractPolynomialZonotope}) = false
 isboundedtype(::Type{<:AbstractPolynomialZonotope}) = true
 
 """

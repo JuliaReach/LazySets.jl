@@ -11,13 +11,13 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, area, complement, diameter, dim,
                         exponential_map, high, ∈, is_interior_point, isbounded,
-                        isboundedtype, isconvextype, isempty, isoperationtype,
-                        isuniversal, linear_map, low, norm, permute, project,
-                        radius, rand, rectify, reflect, sample, scale, scale!,
-                        ρ, σ, surface, translate, translate!, vertices,
-                        vertices_list, volume, cartesian_product, convex_hull,
-                        difference, distance, intersection, ≈, isdisjoint, ⊆,
-                        linear_combination, minkowski_difference, minkowski_sum
+                        isboundedtype, isempty, isoperationtype, isuniversal,
+                        linear_map, low, norm, permute, project, radius, rand,
+                        rectify, reflect, sample, scale, scale!, ρ, σ, surface,
+                        translate, translate!, vertices, vertices_list, volume,
+                        cartesian_product, convex_hull, difference, distance,
+                        intersection, ≈, isdisjoint, ⊆, linear_combination,
+                        minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, rationalize
 import ..LazySets: plot_recipe
 import Base: convert, copy
@@ -35,7 +35,6 @@ include("dim.jl")
 include("high.jl")
 include("isbounded.jl")
 include("isboundedtype.jl")
-include("isconvextype.jl")
 include("isempty.jl")
 include("isoperationtype.jl")
 include("isuniversal.jl")

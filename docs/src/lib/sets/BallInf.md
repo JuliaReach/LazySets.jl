@@ -137,7 +137,8 @@ Inherited from [`LazySet`](@ref):
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 
-Inherited from [`LazySet`](@ref):
+Inherited from [`ConvexSet`](@ref):
+* [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))
 * [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
@@ -145,13 +146,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-```@meta
-CurrentModule = LazySets.API
-```
-* [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
-```@meta
-CurrentModule = LazySets
-```
+* [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolytope}))
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
@@ -175,13 +170,6 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
-```@meta
-CurrentModule = LazySets.API
-```
-* [`isconvextype`](@ref isconvextype(::Type{LazySet}))
-```@meta
-CurrentModule = LazySets
-```
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`rectify`](@ref rectify(::AbstractHyperrectangle))
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle))

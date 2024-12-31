@@ -31,7 +31,6 @@ struct ConvexHullArray{N,S<:LazySet{N}} <: ConvexSet{N}
 end
 
 isoperationtype(::Type{<:ConvexHullArray}) = true
-isconvextype(::Type{<:ConvexHullArray}) = true
 
 # constructor for an empty hull with optional size hint and numeric type
 function ConvexHullArray(n::Int=0, N::Type=Float64)

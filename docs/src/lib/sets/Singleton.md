@@ -91,6 +91,7 @@ Inherited from [`LazySet`](@ref):
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 
 Inherited from [`ConvexSet`](@ref):
+* [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))
 * [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
@@ -98,13 +99,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
-```@meta
-CurrentModule = LazySets.API
-```
 * [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
-```@meta
-CurrentModule = LazySets
-```
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
@@ -139,13 +134,6 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`genmat`](@ref genmat(::AbstractSingleton))
 * [`high`](@ref high(::AbstractSingleton))
 * [`high`](@ref high(::AbstractSingleton, ::Int))
-```@meta
-CurrentModule = LazySets.API
-```
-* [`isconvextype`](@ref isconvextype(::Type{LazySet}))
-```@meta
-CurrentModule = LazySets
-```
 * [`low`](@ref low(::AbstractSingleton))
 * [`low`](@ref low(::AbstractSingleton, ::Int))
 * [`ngens`](@ref ngens(::AbstractSingleton))

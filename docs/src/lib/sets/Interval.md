@@ -200,13 +200,8 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
 
 Inherited from [`ConvexSet`](@ref):
-```@meta
-CurrentModule = LazySets.API
-```
-* [`linear_combination`](@ref linear_combination(::LazySet, ::LazySet))
-```@meta
-CurrentModule = LazySets
-```
+* [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))
+* [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
@@ -223,7 +218,6 @@ Inherited from [`AbstractZonotope`](@ref):
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
-* [`isconvextype`](@ref isconvextype(::Type{<:AbstractHyperrectangle}))
 * [`cartesian_product`](@ref cartesian_product(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 
 Some additional functionality is available for `IntervalArithmetic.Interval`s:

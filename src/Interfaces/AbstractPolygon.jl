@@ -55,8 +55,6 @@ A polygon in vertex representation.
 """
 function tovrep(::AbstractPolygon) end
 
-isconvextype(::Type{<:AbstractPolygon}) = true
-
 """
     dim(P::AbstractPolygon)
 

@@ -126,8 +126,9 @@ Inherited from [`LazySet`](@ref):
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 
-Inherited from [`AbstractPolyhedron`](@ref):
-* [`linear_combination`](@ref linear_combination(::AbstractPolyhedron, ::AbstractPolyhedron))
+Inherited from [`ConvexSet`](@ref):
+* [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))
+* [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`high`](@ref high(::AbstractPolyhedron))
@@ -140,7 +141,6 @@ Inherited from [`AbstractPolyhedron`](@ref):
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolytope}))
-* [`isconvextype`](@ref isconvextype(::Type{AbstractPolytope}))
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
