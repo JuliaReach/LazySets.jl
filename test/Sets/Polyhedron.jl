@@ -354,15 +354,6 @@ for N in [Float64]
         Ar, br = tosimplehrep(p1)
         @test Ar == A[1:2, :] && br == b[1:2]
 
-        # removing redundant constraints from a list of constraints
-        constraints = [HalfSpace(N[1], N(1)), HalfSpace(N[1], N(0))]
-        constraints2 = remove_redundant_constraints(constraints)
-        result = remove_redundant_constraints!(constraints)
-        @test result
-        @test ispermutation(constraints, constraints2)
-        constraints = [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1)), HalfSpace(N[-1], N(-1))]
-        result = remove_redundant_constraints!(constraints)
-        @test !result
         # removing redundant constraints does not alter the original polyhedron
         P = HPolyhedron([HalfSpace(N[1], N(0)), HalfSpace(N[1], N(1))])
         Q = remove_redundant_constraints(P)

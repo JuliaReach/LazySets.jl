@@ -73,6 +73,8 @@ CurrentModule = LazySets.HalfSpaceModule
 ```
 ```@docs
 rand(::Type{HalfSpace})
+remove_redundant_constraints(::AbstractVector{<:HalfSpace})
+remove_redundant_constraints!(::AbstractVector{<:HalfSpace})
 tosimplehrep(::AbstractVector{<:HalfSpace})
 distance(::AbstractVector, ::HalfSpace)
 ```

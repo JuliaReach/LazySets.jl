@@ -188,6 +188,16 @@ for N in [Float64, Rational{Int}, Float32]
     clist = [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1))]  # x <= 0 && x >= 1
     res, w = isfeasible(clist, true)
     @test !isfeasible(clist) && !res && w isa Vector{N} && isempty(w)
+
+    # remove_redundant_constraints from a list of constraints
+    clist = [HalfSpace(N[1], N(1)), HalfSpace(N[1], N(0))]
+    clist2 = remove_redundant_constraints(clist)
+    res = remove_redundant_constraints!(clist)
+    @test res
+    @test clist == clist2
+    clist = [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1)), HalfSpace(N[-1], N(-1))]
+    res = remove_redundant_constraints!(clist)
+    @test !res
 end
 
 # tests that only work with Float64 and Float32

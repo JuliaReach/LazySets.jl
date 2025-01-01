@@ -142,8 +142,6 @@ Some common functions to work with linear constraints:
 
 ```@docs
 constraints_list(::AbstractMatrix, ::AbstractVector)
-remove_redundant_constraints(::AbstractVector{<:HalfSpace})
-remove_redundant_constraints!(::AbstractVector{<:HalfSpace})
 ```
 
 Plotting polyhedra is available too:
