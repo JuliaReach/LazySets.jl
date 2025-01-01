@@ -65,7 +65,7 @@ isboundedtype(::Type{<:LazySet})
 isbounded(::LazySet)
 _isbounded_unit_dimensions(::LazySet)
 ispolyhedral(::LazySet)
-isfeasible
+isfeasible(::AbstractMatrix, ::AbstractVector, ::Bool=false)
 norm(::LazySet, ::Real=Inf)
 radius(::LazySet, ::Real=Inf)
 diameter(::LazySet, ::Real=Inf)

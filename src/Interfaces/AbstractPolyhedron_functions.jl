@@ -8,28 +8,6 @@ export constrained_dimensions,
 ispolyhedral(::AbstractPolyhedron) = true
 
 """
-    constraints_list(A::AbstractMatrix{N}, b::AbstractVector)
-
-Convert a matrix-vector representation to a linear-constraint representation.
-
-### Input
-
-- `A` -- matrix
-- `b` -- vector
-
-### Output
-
-A list of linear constraints.
-"""
-function constraints_list(A::AbstractMatrix, b::AbstractVector)
-    m = size(A, 1)
-    @assert m == length(b) "a matrix with $m rows is incompatible with a " *
-                           "vector of length $(length(b))"
-
-    return [HalfSpace(A[i, :], b[i]) for i in 1:m]
-end
-
-"""
 # Extended help
 
     ∈(x::AbstractVector, P::AbstractPolyhedron)
@@ -69,168 +47,6 @@ function isuniversal(P::AbstractPolyhedron, witness::Bool=false)
         return witness ? (true, N[]) : true
     else
         return witness ? isuniversal(first(c), true) : false
-    end
-end
-
-"""
-    tosimplehrep(constraints::AbstractVector{<:HalfSpace}; [n]::Int=0)
-
-Return the simple H-representation ``Ax ≤ b`` from a list of linear constraints.
-
-### Input
-
-- `constraints` -- a list of linear constraints
-- `n`           -- (optional; default: `0`) dimension of the constraints
-
-### Output
-
-The tuple `(A, b)` where `A` is the matrix of normal directions and `b` is the
-vector of offsets.
-
-### Notes
-
-The parameter `n` can be used to create a matrix with no constraints but a
-non-zero dimension.
-"""
-function tosimplehrep(constraints::AbstractVector{<:HalfSpace}; n::Int=0)
-    N = eltype(eltype(constraints))
-    m = length(constraints)
-    if m == 0
-        A = Matrix{N}(undef, 0, n)
-        b = Vector{N}(undef, 0)
-        return (A, b)
-    end
-    if n <= 0
-        n = dim(first(constraints))
-    end
-    A = zeros(N, m, n)
-    b = zeros(N, m)
-    @inbounds begin
-        for (i, Pi) in enumerate(constraints)
-            A[i, :] = Pi.a
-            b[i] = Pi.b
-        end
-    end
-    return (A, b)
-end
-
-"""
-    remove_redundant_constraints!(constraints::AbstractVector{<:HalfSpace};
-                                  [backend]=nothing)
-
-Remove the redundant constraints of a given list of linear constraints; the list
-is updated in-place.
-
-### Input
-
-- `constraints` -- list of constraints
-- `backend`     -- (optional, default: `nothing`) the backend used to solve the
-                   linear program
-### Output
-
-`true` if the removal was successful and the list of constraints `constraints`
-is modified by removing the redundant constraints, and `false` only if the
-constraints are infeasible.
-
-### Notes
-
-Note that the result may be `true` even if the constraints are infeasible.
-For example, ``x ≤ 0 && x ≥ 1`` will return `true` without removing any
-constraint.
-To check if the constraints are infeasible, use
-`isempty(HPolyhedron(constraints))`.
-
-If `backend` is `nothing`, it defaults to `default_lp_solver(N)`.
-
-### Algorithm
-
-If there are `m` constraints in `n` dimensions, this function checks one by one
-if each of the `m` constraints is implied by the remaining ones.
-
-To check if the `k`-th constraint is redundant, an LP is formulated using the
-constraints that have not yet been removed.
-If, at an intermediate step, it is detected that a subgroup of the constraints
-is infeasible, this function returns `false`.
-If the calculation finished successfully, this function returns `true`.
-
-For details, see [Fukuda's Polyhedra
-FAQ](https://www.cs.mcgill.ca/~fukuda/soft/polyfaq/node24.html).
-"""
-function remove_redundant_constraints!(constraints::AbstractVector{<:HalfSpace};
-                                       backend=nothing)
-    if isempty(constraints)
-        return true
-    end
-    N = eltype(first(constraints))
-    if isnothing(backend)
-        backend = default_lp_solver(N)
-    end
-    A, b = tosimplehrep(constraints)
-    m, n = size(A)
-    non_redundant_indices = 1:m
-
-    i = 1  # counter over reduced (= non-redundant) constraints
-
-    for j in 1:m  # loop over original constraints
-        α = A[j, :]
-        Ar = A[non_redundant_indices, :]
-        br = b[non_redundant_indices]
-        @assert br[i] == b[j]
-        br[i] += one(N)
-        lp = linprog(-α, Ar, '<', br, -Inf, Inf, backend)
-        if is_lp_infeasible(lp.status)
-            # the polyhedron is empty
-            return false
-        elseif is_lp_optimal(lp.status)
-            objval = -lp.objval
-            if _leq(objval, b[j])
-                # the constraint is redundant
-                non_redundant_indices = setdiff(non_redundant_indices, j)
-            else
-                # the constraint is not redundant
-                i += 1
-            end
-        else
-            error("LP is not optimal; the status of the LP is $(lp.status)")
-        end
-    end
-
-    deleteat!(constraints, setdiff(1:m, non_redundant_indices))
-    return true
-end
-
-"""
-    remove_redundant_constraints(constraints::AbstractVector{<:HalfSpace};
-                                 backend=nothing)
-
-Remove the redundant constraints of a given list of linear constraints.
-
-### Input
-
-- `constraints` -- list of constraints
-- `backend`     -- (optional, default: `nothing`) the backend used to solve the
-                   linear program
-### Output
-
-The list of constraints with the redundant ones removed, or an empty list if the
-constraints are infeasible.
-
-### Notes
-
-If `backend` is `nothing`, it defaults to `default_lp_solver(N)`.
-
-### Algorithm
-
-See `remove_redundant_constraints!(::AbstractVector{<:HalfSpace})` for
-details.
-"""
-function remove_redundant_constraints(constraints::AbstractVector{<:HalfSpace};
-                                      backend=nothing)
-    constraints_copy = copy(constraints)
-    if remove_redundant_constraints!(constraints_copy; backend=backend)
-        return constraints_copy
-    else  # the constraints are infeasible
-        return Vector{eltype(constraints)}(undef, 0)
     end
 end
 
@@ -932,7 +748,7 @@ feasible solution: ``\\min∥y∥_1`` subject to ``A^Ty=0`` and ``y≥1``.
 function _isbounded_stiemke(constraints::AbstractVector{<:HalfSpace{N}};
                             solver=default_lp_solver(N),
                             check_nonempty::Bool=true) where {N}
-    if check_nonempty && _isempty_polyhedron_lp(constraints; solver=solver)
+    if check_nonempty && _isinfeasible(constraints; solver=solver)
         return true
     end
 
@@ -1136,15 +952,32 @@ function _project_polyhedron(P::LazySet, block; kwargs...)
     return constraints_list(πP)
 end
 
-function _isempty_polyhedron_lp(constraints::AbstractVector{<:HalfSpace},
-                                witness::Bool=false; solver=nothing)
-    # the caller should verify that there is at least one constraint
-    A, b = tosimplehrep(constraints)
-    return _isempty_polyhedron_lp(A, b, witness; solver=solver)
-end
+"""
+    isfeasible(A::AbstractMatrix, b::AbstractVector, [witness]::Bool=false;
+               [solver]=nothing)
 
-function _isempty_polyhedron_lp(A::AbstractMatrix, b::AbstractVector,
-                                witness::Bool=false; solver=nothing)
+Check for feasibility of linear constraints given in matrix-vector form.
+
+### Input
+
+- `A`       -- constraints matrix
+- `b`       -- constraints vector
+- `witness` -- (optional; default: `false`) flag for witness production
+- `solver`  -- (optional; default: `nothing`) LP solver
+
+### Output
+
+If `witness` is `false`, the result is a `Bool`.
+
+If `witness` is `true`, the result is a pair `(res, w)` where `res` is a `Bool`
+and `w` is a witness point/vector.
+
+### Algorithm
+
+This implementation solves the corresponding feasibility linear program.
+"""
+function isfeasible(A::AbstractMatrix, b::AbstractVector, witness::Bool=false;
+                    solver=nothing)
     N = promote_type(eltype(A), eltype(b))
     # feasibility LP
     lbounds, ubounds = -Inf, Inf
@@ -1155,40 +988,21 @@ function _isempty_polyhedron_lp(A::AbstractMatrix, b::AbstractVector,
     end
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
     if is_lp_optimal(lp.status)
-        return witness ? (false, lp.sol) : false
+        return witness ? (true, lp.sol) : true
     elseif is_lp_infeasible(lp.status)
-        return witness ? (true, N[]) : true
+        return witness ? (false, N[]) : false
     end
     return error("LP returned status $(lp.status) unexpectedly")
 end
 
-"""
-    isfeasible(constraints::AbstractVector{<:HalfSpace}, [witness]::Bool=false;
-               [solver]=nothing)
-
-Check for feasibility of a list of linear constraints.
-
-### Input
-
-- `constraints` -- list of linear constraints
-- `witness`     -- (optional; default: `false`) flag for witness production
-- `solver`      -- (optional; default: `nothing`) LP solver
-
-### Output
-
-`true` if the linear constraints are feasible, and `false` otherwise.
-
-### Algorithm
-
-This implementation solves the corresponding feasibility linear program.
-"""
-function isfeasible(constraints::AbstractVector{<:HalfSpace},
-                    witness::Bool=false; solver=nothing)
+# convenience function to invert the result of `isfeasible` while still including the witness result
+function _isinfeasible(constraints::AbstractVector{<:HalfSpace},
+                       witness::Bool=false; solver=nothing)
     if witness
-        result, w = _isempty_polyhedron_lp(constraints, witness; solver=solver)
-        return !result, w
+        res, w = isfeasible(constraints, witness; solver=solver)
+        return !res, w
     else
-        return !_isempty_polyhedron_lp(constraints, witness; solver=solver)
+        return !isfeasible(constraints, witness; solver=solver)
     end
 end
 

@@ -47,6 +47,8 @@ CurrentModule = LazySets.HalfSpaceModule
 ```@docs
 complement(::HalfSpace)
 constrained_dimensions(::HalfSpace)
+constraints_list(::AbstractMatrix, ::AbstractVector)
+isfeasible(::AbstractVector{<:HalfSpace}, ::Bool=false)
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -72,6 +74,9 @@ CurrentModule = LazySets.HalfSpaceModule
 ```
 ```@docs
 rand(::Type{HalfSpace})
+remove_redundant_constraints(::AbstractVector{<:HalfSpace})
+remove_redundant_constraints!(::AbstractVector{<:HalfSpace})
+tosimplehrep(::AbstractVector{<:HalfSpace})
 distance(::AbstractVector, ::HalfSpace)
 ```
 ```@meta

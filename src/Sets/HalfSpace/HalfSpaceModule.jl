@@ -3,6 +3,7 @@ module HalfSpaceModule
 using Reexport, Requires
 
 using ..LazySets: AbstractPolyhedron, LazySet, AbstractLinearMapAlgorithm,
+                  default_lp_solver, is_lp_infeasible, is_lp_optimal, linprog,
                   _witness_result_empty
 import LinearAlgebra
 using LinearAlgebra: dot
@@ -17,7 +18,9 @@ using ReachabilityBase.Require: require
                         isbounded, isempty, isoperationtype, isuniversal, rand,
                         distance, ∈, permute, project, ρ, σ, translate,
                         isdisjoint
-@reexport import ..LazySets: constrained_dimensions, normalize
+@reexport import ..LazySets: constrained_dimensions, isfeasible, normalize,
+                             remove_redundant_constraints,
+                             remove_redundant_constraints!, tosimplehrep
 import ..LazySets: _ishalfspace, _linear_map_hrep_helper
 import ..Base: convert
 @reexport using ..API
@@ -34,9 +37,12 @@ include("constraints_list.jl")
 include("dim.jl")
 include("isbounded.jl")
 include("isempty.jl")
+include("isfeasible.jl")
 include("isoperationtype.jl")
 include("isuniversal.jl")
 include("rand.jl")
+include("remove_redundant_constraints.jl")
+include("tosimplehrep.jl")
 include("distance.jl")
 include("in.jl")
 include("linear_map.jl")

@@ -105,11 +105,9 @@ for N in [Float64, Rational{Int}, Float32]
         P = convert(HPolyhedron, H)
         @test length(vertices_list(P)) == 4
 
-        # checking for emptiness/feasibility
+        # checking for emptiness
         P = HPolyhedron([LinearConstraint(N[1, 0], N(0))])    # x <= 0
         @test !isempty(P)
-        result, w = isfeasible(P.constraints, true)
-        @test isfeasible(P.constraints) && result && w ∈ P
 
         # concrete linear map with non-invertible matrix
         if N == Float64
@@ -356,15 +354,6 @@ for N in [Float64]
         Ar, br = tosimplehrep(p1)
         @test Ar == A[1:2, :] && br == b[1:2]
 
-        # removing redundant constraints from a list of constraints
-        constraints = [HalfSpace(N[1], N(1)), HalfSpace(N[1], N(0))]
-        constraints2 = remove_redundant_constraints(constraints)
-        result = remove_redundant_constraints!(constraints)
-        @test result
-        @test ispermutation(constraints, constraints2)
-        constraints = [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1)), HalfSpace(N[-1], N(-1))]
-        result = remove_redundant_constraints!(constraints)
-        @test !result
         # removing redundant constraints does not alter the original polyhedron
         P = HPolyhedron([HalfSpace(N[1], N(0)), HalfSpace(N[1], N(1))])
         Q = remove_redundant_constraints(P)
