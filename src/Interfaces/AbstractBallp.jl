@@ -92,19 +92,9 @@ function _high_AbstractBallp(B::LazySet, i::Int)
 end
 
 """
+# Extended help
+
     σ(d::AbstractVector, B::AbstractBallp)
-
-Return the support vector of a ball in the p-norm in a given direction.
-
-### Input
-
-- `d` -- direction
-- `B` -- ball in the p-norm
-
-### Output
-
-The support vector in the given direction.
-If the direction has norm zero, the center of the ball is returned.
 
 ### Algorithm
 
@@ -124,6 +114,8 @@ the support vector of ``\\mathcal{B}_p^n(c, r)`` is
 ```
 where ``v_i = c_i + r\\frac{|d_i|^q}{d_i}`` if ``d_i ≠ 0`` and ``v_i = 0``
 otherwise, for all ``i = 1, …, n``.
+
+If the direction has norm zero, the center of the ball is returned.
 """
 function σ(d::AbstractVector, B::AbstractBallp)
     p = ball_norm(B)
@@ -143,18 +135,9 @@ function σ(d::AbstractVector, B::AbstractBallp)
 end
 
 """
+# Extended help
+
     ρ(d::AbstractVector, B::AbstractBallp)
-
-Evaluate the support function of a ball in the p-norm in the given direction.
-
-### Input
-
-- `d` -- direction
-- `B` -- ball in the p-norm
-
-### Output
-
-Evaluation of the support function in the given direction.
 
 ### Algorithm
 
@@ -172,18 +155,9 @@ function ρ(d::AbstractVector, B::AbstractBallp)
 end
 
 """
+# Extended help
+
     ∈(x::AbstractVector, B::AbstractBallp)
-
-Check whether a given point is contained in a ball in the p-norm.
-
-### Input
-
-- `x` -- point/vector
-- `B` -- ball in the p-norm
-
-### Output
-
-`true` iff ``x ∈ B``.
 
 ### Notes
 
