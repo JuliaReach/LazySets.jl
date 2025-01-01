@@ -15,13 +15,6 @@ A polygon is a two-dimensional polytope.
 AbstractPolygon
 ```
 
-This interface requires to implement the following functions:
-
-```@docs
-tohrep(::AbstractPolygon)
-tovrep(::AbstractPolygon)
-```
-
 This interface defines the following functions:
 
 ```@docs

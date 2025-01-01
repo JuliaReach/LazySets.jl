@@ -1513,18 +1513,46 @@ function scale(α::Real, X::LazySet)
     return Y
 end
 
-function tohrep(X::LazySet)
-    @assert ispolyhedral(X) "cannot compute the constraint representation " *
+"""
+    tohrep(P::LazySet)
+
+Convert a polyhedral set to constraint representation.
+
+### Input
+
+- `P` -- polyhedral set
+
+### Output
+
+An `HPolyhedron` if `P` is bounded (via `isboundedtype`) or an `HPolytope`
+otherwise.
+"""
+function tohrep(P::LazySet)
+    @assert ispolyhedral(P) "cannot compute the constraint representation " *
                             "of non-polyhedral sets"
 
-    return HPolyhedron(constraints_list(X))
+    T = isboundedtype(typeof(P)) ? HPolytope : HPolyhedron
+    return HPolyhedron(constraints_list(P))
 end
 
-function tovrep(X::LazySet)
-    @assert ispolyhedral(X) "cannot compute the vertex representation of " *
-                            "non-polyhedral sets"
+"""
+    tovrep(P::LazySet)
 
-    return VPolytope(vertices_list(X))
+Convert a polytopic set to vertex representation.
+
+### Input
+
+- `P` -- polytopic set
+
+### Output
+
+A `VPolytope`.
+"""
+function tovrep(P::LazySet)
+    @assert ispolyhedral(P) && isbounded(P) "cannot compute the vertex representation of " *
+                                            "non-polytopic sets"
+
+    return VPolytope(vertices_list(P))
 end
 
 # The default implementation throws an error because Julia's default behavior
