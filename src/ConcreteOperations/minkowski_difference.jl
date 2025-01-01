@@ -2,12 +2,12 @@
     minkowski_difference(P::LazySet, Q::LazySet)
 
 Concrete Minkowski difference (geometric difference) of a polytopic set and a
-compact convex set.
+compact set.
 
 ### Input
 
 - `P` -- polytopic set
-- `Q` -- compact convex set that is subtracted from `P`
+- `Q` -- compact set that is subtracted from `P`
 
 ### Output
 
@@ -25,15 +25,20 @@ This method implements Theorem 2.3 in [1]:
 
 Suppose ``P`` is a polyhedron
 ```math
-P = \\{z ∈ ℝ^n: sᵢᵀz ≤ rᵢ,~i = 1, …, N\\}.
+P = \\{z ∈ ℝ^n: sᵢᵀz ≤ rᵢ,~i = 1, …, k\\}.
 ```
 where ``sᵢ ∈ ℝ^n, sᵢ ≠ 0``, and ``rᵢ ∈ ℝ``.
-Assume ``ρ(sᵢ,Q)`` is defined for ``i = 1, …, N``.
+Assume ``ρ(sᵢ,Q)`` is defined for ``i = 1, …, k``.
 Then the Minkowski difference is
 
 ```math
-\\{z ∈ ℝ^n: sᵢᵀz ≤ rᵢ - ρ(sᵢ,Q),~i = 1, …, N\\}.
+\\{z ∈ ℝ^n: sᵢᵀz ≤ rᵢ - ρ(sᵢ,Q),~i = 1, …, k\\}.
 ```
+
+While the algorithm applies the support function to `Q`, we have that
+``P ⊖ Q = P ⊖ \\text{CH}(Q)`` whenever `P` is convex, where CH denotes the
+convex hull. Hence, if `Q` is not convex by type information, we wrap it in a
+lazy `ConvexHull`.
 
 [1] Ilya Kolmanovsky and Elmer G. Gilbert (1997). *Theory and computation
 of disturbance invariant sets for discrete-time linear systems.*
@@ -45,6 +50,10 @@ function minkowski_difference(P::LazySet, Q::LazySet)
                             "is polyhedral; try overapproximating with an `HPolyhedron`"
     @assert isbounded(Q) "this implementation requires that the second " *
                          "argument is bounded, but it is not"
+
+    if !isconvextype(typeof(Q))
+        Q = ConvexHull(Q)
+    end
 
     A, b = tosimplehrep(P)
     g_PminusQ = [b[i] - ρ(A[i, :], Q) for i in eachindex(b)]
