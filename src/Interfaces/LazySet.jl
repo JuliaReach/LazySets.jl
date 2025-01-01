@@ -1432,7 +1432,7 @@ function isempty(P::LazySet,
         return _isempty_polyhedron_polyhedra(P, witness; solver=solver,
                                              backend=backend)
     else
-        return _isempty_polyhedron_lp(clist, witness; solver=solver)
+        return _isinfeasible(clist, witness; solver=solver)
     end
 end
 
@@ -1443,8 +1443,7 @@ function _isempty_polyhedron(P::LazySet{N}, witness::Bool=false;
         return _isempty_polyhedron_polyhedra(P, witness; solver=solver,
                                              backend=backend)
     else
-        return _isempty_polyhedron_lp(constraints_list(P), witness;
-                                      solver=solver)
+        return _isinfeasible(constraints_list(P), witness; solver=solver)
     end
 end
 

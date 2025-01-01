@@ -932,7 +932,7 @@ feasible solution: ``\\min∥y∥_1`` subject to ``A^Ty=0`` and ``y≥1``.
 function _isbounded_stiemke(constraints::AbstractVector{<:HalfSpace{N}};
                             solver=default_lp_solver(N),
                             check_nonempty::Bool=true) where {N}
-    if check_nonempty && _isempty_polyhedron_lp(constraints; solver=solver)
+    if check_nonempty && _isinfeasible(constraints; solver=solver)
         return true
     end
 
@@ -1136,15 +1136,32 @@ function _project_polyhedron(P::LazySet, block; kwargs...)
     return constraints_list(πP)
 end
 
-function _isempty_polyhedron_lp(constraints::AbstractVector{<:HalfSpace},
-                                witness::Bool=false; solver=nothing)
-    # the caller should verify that there is at least one constraint
-    A, b = tosimplehrep(constraints)
-    return _isempty_polyhedron_lp(A, b, witness; solver=solver)
-end
+"""
+    isfeasible(A::AbstractMatrix, b::AbstractVector, [witness]::Bool=false;
+               [solver]=nothing)
 
-function _isempty_polyhedron_lp(A::AbstractMatrix, b::AbstractVector,
-                                witness::Bool=false; solver=nothing)
+Check for feasibility of linear constraints given in matrix-vector form.
+
+### Input
+
+- `A`       -- constraints matrix
+- `b`       -- constraints vector
+- `witness` -- (optional; default: `false`) flag for witness production
+- `solver`  -- (optional; default: `nothing`) LP solver
+
+### Output
+
+If `witness` is `false`, the result is a `Bool`.
+
+If `witness` is `true`, the result is a pair `(res, w)` where `res` is a `Bool`
+and `w` is a witness point/vector.
+
+### Algorithm
+
+This implementation solves the corresponding feasibility linear program.
+"""
+function isfeasible(A::AbstractMatrix, b::AbstractVector, witness::Bool=false;
+                    solver=nothing)
     N = promote_type(eltype(A), eltype(b))
     # feasibility LP
     lbounds, ubounds = -Inf, Inf
@@ -1155,9 +1172,9 @@ function _isempty_polyhedron_lp(A::AbstractMatrix, b::AbstractVector,
     end
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
     if is_lp_optimal(lp.status)
-        return witness ? (false, lp.sol) : false
+        return witness ? (true, lp.sol) : true
     elseif is_lp_infeasible(lp.status)
-        return witness ? (true, N[]) : true
+        return witness ? (false, N[]) : false
     end
     return error("LP returned status $(lp.status) unexpectedly")
 end
@@ -1176,19 +1193,31 @@ Check for feasibility of a list of linear constraints.
 
 ### Output
 
-`true` if the linear constraints are feasible, and `false` otherwise.
+If `witness` is `false`, the result is a `Bool`.
+
+If `witness` is `true`, the result is a pair `(res, w)` where `res` is a `Bool`
+and `w` is a witness point/vector.
 
 ### Algorithm
 
-This implementation solves the corresponding feasibility linear program.
+This implementation converts the constraints to matrix-vector form via
+`tosimplehrep` and then calls `isfeasible` on the result.
 """
 function isfeasible(constraints::AbstractVector{<:HalfSpace},
                     witness::Bool=false; solver=nothing)
+    # the caller should verify that there is at least one constraint
+    A, b = tosimplehrep(constraints)
+    return isfeasible(A, b, witness; solver=solver)
+end
+
+# convenience function to invert the result of `isfeasible` while still including the witness result
+function _isinfeasible(constraints::AbstractVector{<:HalfSpace},
+                       witness::Bool=false; solver=nothing)
     if witness
-        result, w = _isempty_polyhedron_lp(constraints, witness; solver=solver)
-        return !result, w
+        res, w = isfeasible(constraints, witness; solver=solver)
+        return !res, w
     else
-        return !_isempty_polyhedron_lp(constraints, witness; solver=solver)
+        return !isfeasible(constraints, witness; solver=solver)
     end
 end
 
