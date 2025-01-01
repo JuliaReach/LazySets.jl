@@ -100,7 +100,6 @@ plot1
 ```@docs
 ⊆(::LazySet, ::LazySet, ::Bool=false)
 ⊆(::LazySet, ::AbstractHyperrectangle, ::Bool=false)
-⊆(::AbstractPolytope, ::LazySet, ::Bool=false)
 ⊆(::AbstractPolytope, ::AbstractHyperrectangle, ::Bool=false)
 ⊆(::AbstractZonotope, ::AbstractHyperrectangle)
 ⊆(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
