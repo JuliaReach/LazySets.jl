@@ -53,6 +53,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test !isempty(am)
     @test isempty(AffineMap(M, EmptySet{N}(2), v))
 
+    # isuniversal
+    @test !isuniversal(am)
+    U = Universe{N}(3)
+    M = N[1 0 0; 0 0 0; 0 0 1]
+    @test !isuniversal(M * U + v)
+    M = N[1 2 3; -1 -2 -3; 0 0 1]
+    @test isuniversal(M * U + v)
+
     # containment
     L = LineSegment(N[1, 0], N[2, 0])
     b2 = N[1, 0]
