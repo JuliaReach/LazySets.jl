@@ -109,6 +109,18 @@ CurrentModule = LazySets
 ```@docs
 vertices_list(::AbstractAffineMap)
 ```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+volume(::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+volume(::AbstractAffineMap)
+```
 
 ```@meta
 CurrentModule = LazySets.API
