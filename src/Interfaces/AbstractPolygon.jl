@@ -20,19 +20,6 @@ julia> subtypes(AbstractPolygon)
 """
 abstract type AbstractPolygon{N} <: AbstractPolytope{N} end
 
-"""
-    dim(P::AbstractPolygon)
-
-Return the ambient dimension of a convex polygon.
-
-### Input
-
-- `P` -- convex polygon
-
-### Output
-
-The ambient dimension of the polygon, which is 2.
-"""
 @inline function dim(::AbstractPolygon)
     return 2
 end
@@ -175,23 +162,6 @@ function _leq_trig(u::AbstractVector{N}, v::AbstractVector{N}) where {N<:Abstrac
     return jump2pi(atan(u[2], u[1])) <= jump2pi(atan(v[2], v[1]))
 end
 
-"""
-    volume(P::AbstractPolygon)
-
-Compute the volume of a convex polygon.
-
-### Input
-
-- `P` -- convex polygon
-
-### Output
-
-A number representing the volume of `P`.
-
-### Notes
-
-In 2D the volume is equivalent to the area.
-"""
 function volume(P::AbstractPolygon)
     return area(P)
 end
