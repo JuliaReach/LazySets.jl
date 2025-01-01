@@ -1,18 +1,7 @@
 """
+# Extended help
+
     difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
-
-Compute the set difference between two hyperrectangular sets.
-
-### Input
-
-- `X` -- first hyperrectangular set
-- `Y` -- second hyperrectangular set
-
-The set difference is defined as:
-
-```math
-    X ∖ Y = \\{x: x ∈ X \\text{ and } x ∉ Y \\}
-```
 
 ### Output
 

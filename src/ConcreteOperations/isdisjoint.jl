@@ -1,21 +1,7 @@
 """
+# Extended help
+
     isdisjoint(X::LazySet, Y::LazySet, [witness]::Bool=false)
-
-Check whether two sets do not intersect, and otherwise optionally compute a
-witness.
-
-### Input
-
-- `X`       -- set
-- `Y`       -- set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``X ∩ Y = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``X ∩ Y = ∅``
-  * `(false, v)` iff ``X ∩ Y ≠ ∅`` and ``v ∈ X ∩ Y``
 
 ### Algorithm
 
@@ -61,24 +47,10 @@ function isdisjoint(X::IA.IntervalBox, Y::LazySet, witness::Bool=false)
 end
 
 """
+# Extended help
+
     isdisjoint(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
                [witness]::Bool=false)
-
-Check whether two hyperrectangular sets do not intersect, and otherwise
-optionally compute a witness.
-
-### Input
-
-- `H1`      -- hyperrectangular set
-- `H2`      -- hyperrectangular set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``H1 ∩ H2 = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``H1 ∩ H2 = ∅``
-  * `(false, v)` iff ``H1 ∩ H2 ≠ ∅`` and ``v ∈ H1 ∩ H2``
 
 ### Algorithm
 
@@ -132,27 +104,13 @@ function _isdisjoint_singleton(S::AbstractSingleton, X::LazySet,
 end
 
 """
+# Extended help
+
     isdisjoint(X::LazySet, S::AbstractSingleton, [witness]::Bool=false)
-
-Check whether a set and a set with a single value do not intersect, and
-otherwise optionally compute a witness.
-
-### Input
-
-- `X`       -- set
-- `S`       -- set with a single value
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``S ∩ X = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``S ∩ X = ∅``
-  * `(false, v)` iff ``S ∩ X ≠ ∅`` and `v` = `element(S)` ``∈ S ∩ X``
 
 ### Algorithm
 
-``S ∩ X = ∅`` iff `element(S)` ``∉ X``.
+Let ``S = \\{s\\}``. Then ``S ∩ X = ∅`` iff ``s ∉ X``.
 """
 @commutative function isdisjoint(X::LazySet, S::AbstractSingleton,
                                  witness::Bool=false)
@@ -170,24 +128,9 @@ for ST in [:AbstractPolyhedron, :AbstractZonotope, :AbstractHyperrectangle,
 end
 
 """
-    isdisjoint(S1::AbstractSingleton, S2::AbstractSingleton,
-               [witness]::Bool=false)
+# Extended help
 
-Check whether two sets with a single value do not intersect, and otherwise
-optionally compute a witness.
-
-### Input
-
-- `S1` -- set with a single value
-- `S2` -- set with a single value
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``S1 ∩ S2 = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``S1 ∩ S2 = ∅``
-  * `(false, v)` iff ``S1 ∩ S2 ≠ ∅`` and `v` = `element(S1)` ``∈ S1 ∩ S2``
+    isdisjoint(S1::AbstractSingleton, S2::AbstractSingleton, [witness]::Bool=false)
 
 ### Algorithm
 
@@ -201,23 +144,9 @@ function isdisjoint(S1::AbstractSingleton, S2::AbstractSingleton,
 end
 
 """
+# Extended help
+
     isdisjoint(Z::AbstractZonotope, H::Hyperplane, [witness]::Bool=false)
-
-Check whether a zonotopic set and a hyperplane do not intersect, and otherwise
-optionally compute a witness.
-
-### Input
-
-- `Z`       -- zonotopic set
-- `H`       -- hyperplane
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``Z ∩ H = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``Z ∩ H = ∅``
-  * `(false, v)` iff ``Z ∩ H ≠ ∅`` and ``v ∈ Z ∩ H``
 
 ### Algorithm
 
@@ -265,26 +194,15 @@ function _isdisjoint(Z::AbstractZonotope, H::Union{Hyperplane,Line2D},
 end
 
 """
+# Extended help
+
     isdisjoint(Z1::AbstractZonotope, Z2::AbstractZonotope,
                [witness]::Bool=false; [solver]=nothing)
 
-Check whether two zonotopic sets do not intersect, and otherwise optionally
-compute a witness.
-
 ### Input
 
-- `Z1`      -- zonotopic set
-- `Z2`      -- zonotopic set
-- `witness` -- (optional, default: `false`) compute a witness if activated
 - `solver`  -- (optional, default: `nothing`) the backend used to solve the
                linear program
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``Z1 ∩ Z2 = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``Z1 ∩ Z2 = ∅``
-  * `(false, v)` iff ``Z1 ∩ Z2 ≠ ∅`` and ``v ∈ Z1 ∩ Z2``
 
 ### Algorithm
 
@@ -318,23 +236,9 @@ function isdisjoint(Z1::AbstractZonotope, Z2::AbstractZonotope,
 end
 
 """
+# Extended help
+
     isdisjoint(L1::LineSegment, L2::LineSegment, [witness]::Bool=false)
-
-Check whether two line segments do not intersect, and otherwise optionally
-compute a witness.
-
-### Input
-
-- `L1`      -- line segment
-- `L2`      -- line segment
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``L1 ∩ L2 = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``L1 ∩ L2 = ∅``
-  * `(false, v)` iff ``L1 ∩ L2 ≠ ∅`` and ``v ∈ L1 ∩ L2``
 
 ### Algorithm
 
@@ -436,23 +340,13 @@ function _isdisjoint_hyperplane(hp::Union{Hyperplane,Line2D}, X::LazySet,
 end
 
 """
+# Extended help
+
     isdisjoint(X::LazySet, hp::Hyperplane, [witness]::Bool=false)
 
-Check whether a convex set an a hyperplane do not intersect, and otherwise
-optionally compute a witness.
+### Notes
 
-### Input
-
-- `X`       -- convex set
-- `hp`      -- hyperplane
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``X ∩ hp = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``X ∩ hp = ∅``
-  * `(false, v)` iff ``X ∩ hp ≠ ∅`` and ``v ∈ X ∩ hp``
+This implementation assumes that the set `X` is convex.
 
 ### Algorithm
 
@@ -507,23 +401,9 @@ function _isdisjoint_halfspace(hs::HalfSpace, X::LazySet, witness::Bool=false)
 end
 
 """
+# Extended help
+
     isdisjoint(X::LazySet, hs::HalfSpace, [witness]::Bool=false)
-
-Check whether a set an a half-space do not intersect, and otherwise optionally
-compute a witness.
-
-### Input
-
-- `X`       -- set
-- `hs`      -- half-space
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``X ∩ hs = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``X ∩ hs = ∅``
-  * `(false, v)` iff ``X ∩ hs ≠ ∅`` and ``v ∈ X ∩ hs``
 
 ### Algorithm
 
@@ -548,29 +428,18 @@ for ST in [:AbstractPolyhedron, :AbstractZonotope, :Hyperplane, :Line2D,
 end
 
 """
+# Extended help
+
     isdisjoint(P::AbstractPolyhedron, X::LazySet, [witness]::Bool=false;
                [solver]=nothing, [algorithm]="exact")
 
-Check whether a polyhedral set and another set do not intersect, and otherwise
-optionally compute a witness.
-
 ### Input
 
-- `P`         -- polyhedral set
-- `X`         -- set (see the Notes section below)
-- `witness`   -- (optional, default: `false`) compute a witness if activated
 - `solver`    -- (optional, default: `nothing`) the backend used to solve the
                  linear program
 - `algorithm` -- (optional, default: `"exact"`) algorithm keyword, one of:
                  * `"exact" (exact, uses a feasibility LP)
                  * `"sufficient" (sufficient, uses half-space checks)
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``P ∩ X = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``P ∩ X = ∅``
-  * `(false, v)` iff ``P ∩ X ≠ ∅`` and ``v ∈ P ∩ X``
 
 ### Notes
 
@@ -634,42 +503,10 @@ function isdisjoint(X::AbstractPolyhedron, P::AbstractPolyhedron, witness::Bool=
     return _isdisjoint_polyhedron(P, X, witness)
 end
 
-"""
-    isdisjoint(U::UnionSet, X::LazySet, [witness]::Bool=false)
-
-Check whether a union of two sets and another set do not intersect, and
-otherwise optionally compute a witness.
-
-### Input
-
-- `U`       -- union of two sets
-- `X`       -- set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-`true` iff ``\\text{U} ∩ X = ∅``.
-"""
 @commutative function isdisjoint(U::UnionSet, X::LazySet, witness::Bool=false)
     return _isdisjoint_union(U, X, witness)
 end
 
-"""
-    isdisjoint(U::UnionSetArray, X::LazySet, [witness]::Bool=false)
-
-Check whether a union of a finite number of sets and another set do not
-intersect, and otherwise optionally compute a witness.
-
-### Input
-
-- `U`       -- union of a finite number of sets
-- `X`       -- set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-`true` iff ``\\text{U} ∩ X = ∅``.
-"""
 @commutative function isdisjoint(U::UnionSetArray, X::LazySet,
                                  witness::Bool=false)
     return _isdisjoint_union(U, X, witness)
@@ -714,22 +551,6 @@ function isdisjoint(U1::UnionSetArray, U2::UnionSetArray, witness::Bool=false)
     return _isdisjoint_union(U1, U2, witness)
 end
 
-"""
-    isdisjoint(U::Universe, X::LazySet, [witness]::Bool=false)
-
-Check whether a universe and another set do not intersect, and otherwise
-optionally compute a witness.
-
-### Input
-
-- `U`       -- universe
-- `X`       -- set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-`true` iff ``X ≠ ∅``.
-"""
 @commutative function isdisjoint(U::Universe, X::LazySet, witness::Bool=false)
     return _isdisjoint_universe(U, X, witness)
 end
@@ -759,23 +580,9 @@ function isdisjoint(U::Universe, ::Universe, witness::Bool=false)
 end
 
 """
+# Extended help
+
     isdisjoint(C::Complement, X::LazySet, [witness]::Bool=false)
-
-Check whether the complement of a set and another set do not intersect, and
-otherwise optionally compute a witness.
-
-### Input
-
-- `C`       -- complement of a set
-- `X`       -- set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``X ∩ C = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``X ∩ C = ∅``
-  * `(false, v)` iff ``X ∩ C ≠ ∅`` and ``v ∈ X ∩ C``
 
 ### Algorithm
 
@@ -806,24 +613,16 @@ function isdisjoint(C1::Complement, C2::Complement, witness::Bool=false)
 end
 
 """
+# Extended help
+
     isdisjoint(cpa::CartesianProductArray, P::AbstractPolyhedron,
                [witness]::Bool=false)
 
-Check whether a polytopic Cartesian product array and a polyhedral set do not
-intersect, and otherwise optionally compute a witness.
+### Notes
 
-### Input
+This implementation assumes that the sets in the Cartesian product `cpa` are polyhedral.
 
 - `cpa`     -- Cartesian products of a finite number of polytopes
-- `P`       -- polyhedral set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``\\text{cpa} ∩ P = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``\\text{cpa} ∩ P = ∅``
-  * `(false, v)` iff ``\\text{cpa} ∩ P ≠ ∅`` and ``v ∈ \\text{cpa} ∩ P``
 
 ### Algorithm
 
@@ -856,24 +655,10 @@ for ST in [:Hyperplane, :Line2D]
 end
 
 """
+# Extended help
+
     isdisjoint(X::CartesianProductArray, Y::CartesianProductArray,
                [witness]::Bool=false)
-
-Check whether two Cartesian products of a finite number of sets with the same
-block structure do not intersect, and otherwise optionally compute a witness.
-
-### Input
-
-- `X`       -- Cartesian products of a finite number of sets
-- `Y`       -- Cartesian products of a finite number of sets
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``X ∩ Y = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``X ∩ Y = ∅``
-  * `(false, v)` iff ``X ∩ Y ≠ ∅`` and ``v ∈ X ∩ Y``
 
 ### Notes
 
@@ -900,25 +685,10 @@ function isdisjoint(X::CartesianProductArray, Y::CartesianProductArray,
 end
 
 """
+# Extended help
+
     isdisjoint(cpa::CartesianProductArray, H::AbstractHyperrectangle,
                [witness]::Bool=false)
-
-Check whether a Cartesian product of a finite number of sets and a
-hyperrectangular set do not intersect, and otherwise optionally compute a
-witness.
-
-### Input
-
-- `cpa`     -- Cartesian product of a finite number of sets
-- `H`       -- hyperrectangular set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``cpa ∩ H = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``cpa ∩ H = ∅``
-  * `(false, v)` iff ``cpa ∩ H ≠ ∅`` and ``v ∈ cpa ∩ H``
 
 ### Algorithm
 

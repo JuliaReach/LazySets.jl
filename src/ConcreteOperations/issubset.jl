@@ -15,6 +15,10 @@ end
 ⊆(X::IA.IntervalBox, Y::LazySet) = ⊆(convert(Hyperrectangle, X), Y)
 
 """
+# Extended help
+
+    ⊆(X::LazySet, Y::LazySet, witness::Bool=false)
+
 ### Algorithm
 
 The default implementation assumes that `Y` is polyhedral, i.e., that
@@ -31,23 +35,9 @@ function ⊆(X::LazySet, Y::LazySet, witness::Bool=false)
 end
 
 """
+# Extended help
+
     ⊆(S::LazySet, H::AbstractHyperrectangle, [witness]::Bool=false)
-
-Check whether a set is contained in a hyperrectangular set, and if not,
-optionally compute a witness.
-
-### Input
-
-- `S` -- inner set
-- `H` -- outer hyperrectangular set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``S ⊆ H``
-* If `witness` option is activated:
-  * `(true, [])` iff ``S ⊆ H``
-  * `(false, v)` iff ``S ⊈ H`` and ``v ∈ S ∖ H``
 
 ### Algorithm
 
@@ -87,24 +77,10 @@ function ⊆(P::AbstractPolytope, H::AbstractHyperrectangle, witness::Bool=false
 end
 
 """
+# Extended help
+
     ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
       [witness]::Bool=false)
-
-Check whether a given hyperrectangular set is contained in another
-hyperrectangular set, and if not, optionally compute a witness.
-
-### Input
-
-- `H1` -- inner hyperrectangular set
-- `H2` -- outer hyperrectangular set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``H1 ⊆ H2``
-* If `witness` option is activated:
-  * `(true, [])` iff ``H1 ⊆ H2``
-  * `(false, v)` iff ``H1 ⊈ H2`` and ``v ∈ H1 ∖ H2``
 
 ### Algorithm
 
@@ -307,25 +283,6 @@ for ST in [:AbstractPolytope, :AbstractHyperrectangle, :LineSegment]
     end
 end
 
-"""
-    ⊆(S::AbstractSingleton, X::LazySet, [witness]::Bool=false)
-
-Check whether a given set with a single value is contained in another set, and
-if not, optionally compute a witness.
-
-### Input
-
-- `S`       -- inner set with a single value
-- `X`       -- outer set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``S ⊆ X``
-* If `witness` option is activated:
-  * `(true, [])` iff ``S ⊆ X``
-  * `(false, v)` iff ``S ⊈ X`` and ``v ∈ S ∖ X``
-"""
 function ⊆(S::AbstractSingleton, X::LazySet, witness::Bool=false)
     return _issubset_singleton(S, X, witness)
 end
@@ -344,50 +301,12 @@ for ST in [:AbstractHyperrectangle, :AbstractPolyhedron, :UnionSetArray,
     end
 end
 
-"""
-    ⊆(S1::AbstractSingleton, S2::AbstractSingleton, witness::Bool=false)
-
-Check whether a given set with a single value is contained in another set with a
-single value, and if not, optionally compute a witness.
-
-### Input
-
-- `S1` -- inner set with a single value
-- `S2` -- outer set with a single value
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``S1 ⊆ S2`` iff ``S1 == S2``
-* If `witness` option is activated:
-  * `(true, [])` iff ``S1 ⊆ S2``
-  * `(false, v)` iff ``S1 ⊈ S2`` and ``v ∈ S1 ∖ S2``
-"""
 function ⊆(S1::AbstractSingleton, S2::AbstractSingleton, witness::Bool=false)
     s1 = element(S1)
     result = _isapprox(s1, element(S2))
     return _witness_result_empty(witness, result, S1, S2, s1)
 end
 
-"""
-    ⊆(B::Union{Ball2, Ballp}, S::AbstractSingleton, witness::Bool=false)
-
-Check whether a ball in the 2-norm or p-norm is contained in a set with a single
-value, and if not, optionally compute a witness.
-
-### Input
-
-- `B` -- inner ball in the 2-norm or p-norm
-- `S` -- outer set with a single value
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``B ⊆ S``
-* If `witness` option is activated:
-  * `(true, [])` iff ``B ⊆ S``
-  * `(false, v)` iff ``B ⊈ S`` and ``v ∈ B ∖ S``
-"""
 function ⊆(B::Union{Ball2,Ballp}, S::AbstractSingleton, witness::Bool=false)
     result = isapproxzero(B.radius) && _isapprox(B.center, element(S))
     if result
@@ -407,23 +326,9 @@ function ⊆(B::Union{Ball2,Ballp}, S::AbstractSingleton, witness::Bool=false)
 end
 
 """
+# Extended help
+
     ⊆(L::LineSegment, S::LazySet, witness::Bool=false)
-
-Check whether a line segment is contained in a convex set, and if not,
-optionally compute a witness.
-
-### Input
-
-- `L` -- inner line segment
-- `S` -- outer convex set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``L ⊆ S``
-* If `witness` option is activated:
-  * `(true, [])` iff ``L ⊆ S``
-  * `(false, v)` iff ``L ⊈ S`` and ``v ∈ L ∖ S``
 
 ### Algorithm
 
@@ -599,22 +504,15 @@ function _issubset_interval!(x::Interval{N}, intervals, witness) where {N}
 end
 
 """
+# Extended help
+
     ⊆(X::LazySet{N}, U::UnionSetArray, witness::Bool=false;
       filter_redundant_sets::Bool=true) where {N}
 
-Check whether a set is contained in a union of a finite number of sets.
-
 ### Input
 
-- `X`       -- inner set
-- `U`       -- outer union of a finite number of sets
-- `witness` -- (optional, default: `false`) compute a witness if activated
 - `filter_redundant_sets` -- (optional, default: `true`) ignore sets in `U` that
                do not intersect with `X`
-
-### Output
-
-`true` iff ``X ⊆ U``.
 
 ### Algorithm
 
@@ -754,47 +652,26 @@ for ST in [:AbstractPolytope, :UnionSet, :UnionSetArray, :AbstractSingleton, :Li
 end
 
 """
+# Extended help
+
     ⊆(U::UnionSet, X::LazySet, [witness]::Bool=false)
 
-Check whether a union of two convex sets is contained in another set.
+### Notes
 
-### Input
-
-- `U`       -- inner union of two convex sets
-- `X`       -- outer set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``\\text{U} ⊆ X``
-* If `witness` option is activated:
-  * `(true, [])` iff ``\\text{U} ⊆ X``
-  * `(false, v)` iff ``\\text{U} \\not\\subseteq X`` and
-    ``v ∈ \\text{U} ∖ X``
+This implementation assumes that the sets in the union `U` are convex.
 """
 function ⊆(U::UnionSet, X::LazySet, witness::Bool=false)
     return _issubset_union_in_set(U, X, witness)
 end
 
 """
+# Extended help
+
     ⊆(U::UnionSetArray, X::LazySet, [witness]::Bool=false)
 
-Check whether a union of a finite number of convex sets is contained in another
-set.
+### Notes
 
-### Input
-
-- `U`       -- inner union of a finite number of convex sets
-- `X`       -- outer set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``\\text{U} ⊆ X``
-* If `witness` option is activated:
-  * `(true, [])` iff ``\\text{U} ⊆ X``
-  * `(false, v)` iff ``\\text{U} \\not\\subseteq X`` and
-    ``v ∈ \\text{U} ∖ X``
+This implementation assumes that the sets in the union `U` are convex.
 """
 function ⊆(U::UnionSetArray, X::LazySet, witness::Bool=false)
     return _issubset_union_in_set(U, X, witness)
@@ -830,22 +707,6 @@ for ST in [:AbstractHyperrectangle, :AbstractPolyhedron, :UnionSet,
     end
 end
 
-"""
-    ⊆(X::LazySet, U::Universe, [witness]::Bool=false)
-
-Check whether a set is contained in a universe.
-
-### Input
-
-- `X`       -- inner set
-- `U`       -- outer universe
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true`
-* If `witness` option is activated: `(true, [])`
-"""
 function ⊆(X::LazySet, U::Universe, witness::Bool=false)
     return _issubset_universe(X, U, witness)
 end
@@ -861,24 +722,9 @@ for ST in [:AbstractPolytope, :AbstractZonotope, :AbstractHyperrectangle,
 end
 
 """
+# Extended help
+
     ⊆(U::Universe, X::LazySet, [witness]::Bool=false)
-
-Check whether a universe is contained in another set, and otherwise optionally
-compute a witness.
-
-### Input
-
-- `U`       -- inner universe
-- `X`       -- outer set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``U ⊆ X``
-* If `witness` option is activated:
-  * `(true, [])` iff ``U ⊆ X``
-  * `(false, v)` iff ``U \\not\\subseteq X`` and
-    ``v ∈ U ∖ X``
 
 ### Algorithm
 
@@ -900,24 +746,9 @@ for ST in [:AbstractPolyhedron, :AbstractPolytope, :AbstractHyperrectangle,
 end
 
 """
+# Extended help
+
     ⊆(X::LazySet, C::Complement, [witness]::Bool=false)
-
-Check whether a set is contained in the complement of another set, and otherwise
-optionally compute a witness.
-
-### Input
-
-- `X`       -- inner set
-- `C`       -- outer complement of a set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``X ⊆ C``
-* If `witness` option is activated:
-  * `(true, [])` iff ``X ⊆ C``
-  * `(false, v)` iff ``X \\not\\subseteq C`` and
-    ``v ∈ X ∖ C``
 
 ### Algorithm
 
@@ -937,27 +768,15 @@ for ST in [:AbstractPolytope, :LineSegment, :UnionSet, :UnionSetArray]
 end
 
 """
+# Extended help
+
     ⊆(X::CartesianProduct, Y::CartesianProduct, [witness]::Bool=false;
       check_block_equality::Bool=true)
 
-Check whether a Cartesian product of two sets is contained in another Cartesian
-product of two sets, and otherwise optionally compute a witness.
-
 ### Input
 
-- `X`       -- inner Cartesian product of two sets
-- `Y`       -- outer Cartesian product of two sets
-- `witness` -- (optional, default: `false`) compute a witness if activated
 - `check_block_equality` -- (optional, default: `true`) flag for checking that
                             the block structure of the two sets is identical
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``X ⊆ Y``
-* If `witness` option is activated:
-  * `(true, [])` iff ``X ⊆ Y``
-  * `(false, v)` iff ``X \\not\\subseteq Y`` and
-    ``v ∈ X ∖ Y``
 
 ### Notes
 
@@ -1006,28 +825,15 @@ function ⊆(X::CartesianProduct, Y::CartesianProduct, witness::Bool=false;
 end
 
 """
+# Extended help
+
     ⊆(X::CartesianProductArray, Y::CartesianProductArray, [witness]::Bool=false;
       check_block_equality::Bool=true)
 
-Check whether a Cartesian product of finitely many sets is contained in another
-Cartesian product of finitely many sets, and otherwise optionally compute a
-witness.
-
 ### Input
 
-- `X`       -- inner Cartesian product of finitely many sets
-- `Y`       -- outer Cartesian product of finitely many sets
-- `witness` -- (optional, default: `false`) compute a witness if activated
 - `check_block_equality` -- (optional, default: `true`) flag for checking that
                              the block structure of the two sets is identical
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``X ⊆ Y``
-* If `witness` option is activated:
-  * `(true, [])` iff ``X ⊆ Y``
-  * `(false, v)` iff ``X \\not\\subseteq Y`` and
-    ``v ∈ X ∖ Y``
 
 ### Notes
 
@@ -1075,20 +881,9 @@ function ⊆(X::CartesianProductArray, Y::CartesianProductArray,
 end
 
 """
+# Extended help
+
     ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, [witness]::Bool=false)
-
-Check whether a zonotopic set is contained in a hyperrectangular set.
-
-### Input
-
-- `Z`       -- inner zonotopic set
-- `H`       -- outer hyperrectangular set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-               (currently not supported)
-
-### Output
-
-`true` iff ``Z ⊆ H``.
 
 ### Algorithm
 

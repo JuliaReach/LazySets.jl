@@ -3,11 +3,19 @@ Pages = ["cartesian_product.md"]
 Depth = 3
 ```
 
+# Cartesian Product
+
+```@meta
+CurrentModule = LazySets.API
+```
+
+```@docs; canonical=false
+cartesian_product(::LazySet, ::LazySet)
+```
+
 ```@meta
 CurrentModule = LazySets
 ```
-
-# Cartesian Product
 
 ```@docs
 cartesian_product(::LazySet, ::LazySet)

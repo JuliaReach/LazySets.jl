@@ -3,11 +3,19 @@ Pages = ["minkowski_sum.md"]
 Depth = 3
 ```
 
+# Minkowski Sum
+
+```@meta
+CurrentModule = LazySets.API
+```
+
+```@docs; canonical=false
+minkowski_sum(::LazySet, ::LazySet)
+```
+
 ```@meta
 CurrentModule = LazySets
 ```
-
-# Minkowski Sum
 
 ```@docs
 minkowski_sum(::LazySet, ::LazySet)

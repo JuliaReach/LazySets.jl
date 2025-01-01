@@ -145,7 +145,7 @@ isdisjoint(::LazySet, ::LazySet)
 CurrentModule = LazySets.HalfSpaceModule
 ```
 ```@docs
-isdisjoint(::HalfSpace, ::HalfSpace)
+isdisjoint(::HalfSpace, ::HalfSpace, ::Bool=false)
 ```
 
 ```@docs

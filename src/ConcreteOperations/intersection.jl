@@ -11,21 +11,6 @@ for T in [:LazySet, :AbstractSingleton, :Interval, :Universe, :LinearMap,
     end
 end
 
-"""
-    intersection(S::AbstractSingleton, X::LazySet)
-
-Compute the intersection of a set with a single point with another set.
-
-### Input
-
-- `S` -- set with a single point
-- `X` -- set
-
-### Output
-
-If the sets intersect, the result is `S`.
-Otherwise, the result is the empty set.
-"""
 @commutative function intersection(S::AbstractSingleton, X::LazySet)
     return _intersection_singleton(S, X)
 end
@@ -65,22 +50,6 @@ end
 _to_Line2D(L::Line2D) = L
 _to_Line2D(H::HalfSpace) = Line2D(H.a, H.b)
 
-"""
-    intersection(LS::LineSegment, L2::Line2D)
-
-Compute the intersection of a line segment and a line in two dimensions.
-
-### Input
-
-- `LS` -- line segment
-- `L2` -- two-dimensional line
-
-### Output
-
-If the sets do not intersect, the result is the empty set.
-Otherwise the result is the singleton or line segment that describes the
-intersection.
-"""
 @commutative function intersection(LS::LineSegment, L2::Line2D)
     # cast LS as line
     L1 = Line2D(LS.p, LS.q)
@@ -226,21 +195,6 @@ function _intersection_interval_halfspace(lo, hi, a, b, N)
     return (true, hi, lo)
 end
 
-"""
-    intersection(X::Interval, hp::Hyperplane)
-
-Compute the intersection of an interval and a hyperplane.
-
-### Input
-
-- `X`  -- interval
-- `hp` -- hyperplane
-
-### Output
-
-If the sets do not intersect, the result is the empty set.
-Otherwise the result is the singleton that describes the intersection.
-"""
 @commutative function intersection(X::Interval, hp::Hyperplane)
     @assert dim(hp) == 1 "cannot take the intersection between an interval " *
                          "and a $(dim(hp))-dimensional hyperplane"
@@ -635,14 +589,9 @@ function intersection(P1::Union{VPolygon,VPolytope},
 end
 
 """
+# Extended help
+
     intersection(cup::UnionSet, X::LazySet)
-
-Compute the intersection of a union of two sets and another set.
-
-### Input
-
-- `cup` -- union of two sets
-- `X`   -- set
 
 ### Output
 
@@ -663,20 +612,6 @@ end
 @commutative intersection(L::LinearMap, cup::UnionSet) = _intersection_us(cup, L)
 intersection(cup1::UnionSet, cup2::UnionSet) = _intersection_us(cup1, cup2)
 
-"""
-    intersection(cup::UnionSetArray, X::LazySet)
-
-Compute the intersection of a union of a finite number of sets and another set.
-
-### Input
-
-- `cup` -- union of a finite number of sets
-- `X`   -- set
-
-### Output
-
-The union of the pairwise intersections, expressed as a `UnionSetArray`.
-"""
 @commutative function intersection(cup::UnionSetArray, X::LazySet)
     return _intersection_usa(cup, X)
 end
@@ -709,21 +644,6 @@ end
 end
 intersection(cup1::UnionSetArray, cup2::UnionSetArray) = _intersection_usa(cup1, cup2)
 
-"""
-    intersection(L::LinearMap, X::LazySet)
-
-Compute the intersection of a lazy linear map and a set.
-
-### Input
-
-- `L` -- linear map
-- `X` -- set
-
-### Output
-
-The set obtained by the computing the concrete linear map `L.M * L.X` and
-intersecting with `X`.
-"""
 @commutative function intersection(L::LinearMap, X::LazySet)
     return intersection(linear_map(L.M, L.X), X)
 end
@@ -734,21 +654,7 @@ function intersection(L1::LinearMap, L2::LinearMap)
 end
 @commutative intersection(S::AbstractSingleton, L::LinearMap) = _intersection_singleton(S, L)
 
-"""
-    intersection(U::Universe, X::LazySet)
-
-Compute the intersection of a universe and a set.
-
-### Input
-
-- `U` -- universe
-- `X` -- set
-
-### Output
-
-The set `X`.
-"""
-@commutative function intersection(U::Universe, X::LazySet)
+@commutative function intersection(::Universe, X::LazySet)
     return X
 end
 
@@ -762,18 +668,9 @@ end
 @commutative intersection(U::Universe, cup::UnionSetArray) = cup
 
 """
+# Extended help
+
     intersection(P::AbstractPolyhedron, rm::ResetMap)
-
-Compute the intersection of a polyhedral set and a polyhedral reset map.
-
-### Input
-
-- `P`  -- polyhedral set
-- `rm` -- polyhedral reset map
-
-### Output
-
-A polyhedron.
 
 ### Notes
 
@@ -1008,20 +905,6 @@ function _intersection_star!(c, V, P::Union{HPoly,HPolygon,HPolygonOpt}, H::Half
     return addconstraint!(P, H′)
 end
 
-"""
-    intersection(X::Star, H::HalfSpace)
-
-Compute the intersection between a star and a half-space.
-
-### Input
-
-- `X` -- star
-- `H` -- half-space
-
-### Output
-
-A star set representing the intersection between a star and a half-space.
-"""
 @commutative function intersection(X::Star, H::HalfSpace)
     c = center(X)
     V = basis(X)

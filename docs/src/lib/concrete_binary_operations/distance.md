@@ -3,13 +3,18 @@ Pages = ["distance.md"]
 Depth = 3
 ```
 
+# Distance
+
+```@meta
+CurrentModule = LazySets.API
+```
+
+```@docs; canonical=false
+distance(::LazySet, ::LazySet)
+```
+
 ```@meta
 CurrentModule = LazySets
 ```
 
-# Distance
-
-```@docs
-distance(::AbstractSingleton, ::LazySet; ::Real=2.0)
-distance(::AbstractHyperrectangle, ::AbstractHyperrectangle; ::Real=2.0)
-```
+Currently, there are no specialized docstrings for this function.

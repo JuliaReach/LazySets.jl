@@ -1,4 +1,8 @@
 """
+# Extended help
+
+    isequivalent(X::LazySet, Y::LazySet)
+
 ### Algorithm
 
 The default implementation first checks `X ≈ Y`, which returns `true` if and

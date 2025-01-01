@@ -1,24 +1,3 @@
-"""
-    distance(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle;
-             [p]::Real=2)
-
-Compute the standard distance between two hyperrectangular sets, defined as
-
-```math
-    \\inf_{x ∈ H_1, y ∈ H_2} \\{ d(x, y) \\}.
-```
-
-### Input
-
-- `H1` -- hyperrectangular set
-- `H2` -- hyperrectangular set
-- `p`  -- (optional; default: `2`) value of the ``p``-norm
-
-### Output
-
-The distance, which is zero if the sets intersect and otherwise the ``p``-norm
-of the shortest line segment between any pair of points.
-"""
 function distance(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle;
                   p::Real=2)
     n = dim(H1)
@@ -45,24 +24,6 @@ function distance(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle;
     return norm(d, p)
 end
 
-"""
-    distance(S::AbstractSingleton, X::LazySet; [p]::Real=2.0)
-
-Compute the distance between the singleton `S` and the set `X` with respect to
-the given `p`-norm.
-
-### Input
-
-- `S` -- singleton, i.e., a set with one element
-- `X` -- set
-- `p` -- (optional, default: `2.0`) the `p`-norm used; `p = 2.0` corresponds to
-         the usual Euclidean norm
-
-### Output
-
-A scalar representing the distance between the element wrapped by `S` and the
-set `X`.
-"""
 @commutative function distance(S::AbstractSingleton, X::LazySet; p::Real=2.0)
     return distance(element(S), X; p=p)
 end
