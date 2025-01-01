@@ -47,6 +47,7 @@ CurrentModule = LazySets.HalfSpaceModule
 ```@docs
 complement(::HalfSpace)
 constrained_dimensions(::HalfSpace)
+constraints_list(::AbstractMatrix, ::AbstractVector)
 isfeasible(::AbstractVector{<:HalfSpace}, ::Bool=false)
 ```
 ```@meta

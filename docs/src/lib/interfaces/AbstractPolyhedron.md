@@ -138,12 +138,6 @@ addconstraint!(::AbstractPolyhedron, ::HalfSpace)
 ishyperplanar(::AbstractPolyhedron)
 ```
 
-Some common functions to work with linear constraints:
-
-```@docs
-constraints_list(::AbstractMatrix, ::AbstractVector)
-```
-
 Plotting polyhedra is available too:
 
 ```@docs
