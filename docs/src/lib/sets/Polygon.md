@@ -33,7 +33,6 @@ Inherited from [`LazySet`](@ref):
 * [`an_element`](@ref an_element(::LazySet))
 * [`area`](@ref area(::LazySet))
 * [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
-* [`center`](@ref center(::LazySet))
 * [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
