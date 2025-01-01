@@ -17,7 +17,8 @@ using ReachabilityBase.Require: require
                         isbounded, isempty, isoperationtype, isuniversal, rand,
                         distance, ∈, permute, project, ρ, σ, translate,
                         isdisjoint
-@reexport import ..LazySets: constrained_dimensions, normalize
+@reexport import ..LazySets: constrained_dimensions, isfeasible, normalize,
+                             tosimplehrep
 import ..LazySets: _ishalfspace, _linear_map_hrep_helper
 import ..Base: convert
 @reexport using ..API
@@ -34,9 +35,11 @@ include("constraints_list.jl")
 include("dim.jl")
 include("isbounded.jl")
 include("isempty.jl")
+include("isfeasible.jl")
 include("isoperationtype.jl")
 include("isuniversal.jl")
 include("rand.jl")
+include("tosimplehrep.jl")
 include("distance.jl")
 include("in.jl")
 include("linear_map.jl")

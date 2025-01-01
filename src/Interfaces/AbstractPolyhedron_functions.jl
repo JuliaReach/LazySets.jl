@@ -73,48 +73,6 @@ function isuniversal(P::AbstractPolyhedron, witness::Bool=false)
 end
 
 """
-    tosimplehrep(constraints::AbstractVector{<:HalfSpace}; [n]::Int=0)
-
-Return the simple H-representation ``Ax ≤ b`` from a list of linear constraints.
-
-### Input
-
-- `constraints` -- a list of linear constraints
-- `n`           -- (optional; default: `0`) dimension of the constraints
-
-### Output
-
-The tuple `(A, b)` where `A` is the matrix of normal directions and `b` is the
-vector of offsets.
-
-### Notes
-
-The parameter `n` can be used to create a matrix with no constraints but a
-non-zero dimension.
-"""
-function tosimplehrep(constraints::AbstractVector{<:HalfSpace}; n::Int=0)
-    N = eltype(eltype(constraints))
-    m = length(constraints)
-    if m == 0
-        A = Matrix{N}(undef, 0, n)
-        b = Vector{N}(undef, 0)
-        return (A, b)
-    end
-    if n <= 0
-        n = dim(first(constraints))
-    end
-    A = zeros(N, m, n)
-    b = zeros(N, m)
-    @inbounds begin
-        for (i, Pi) in enumerate(constraints)
-            A[i, :] = Pi.a
-            b[i] = Pi.b
-        end
-    end
-    return (A, b)
-end
-
-"""
     remove_redundant_constraints!(constraints::AbstractVector{<:HalfSpace};
                                   [backend]=nothing)
 
@@ -1177,37 +1135,6 @@ function isfeasible(A::AbstractMatrix, b::AbstractVector, witness::Bool=false;
         return witness ? (false, N[]) : false
     end
     return error("LP returned status $(lp.status) unexpectedly")
-end
-
-"""
-    isfeasible(constraints::AbstractVector{<:HalfSpace}, [witness]::Bool=false;
-               [solver]=nothing)
-
-Check for feasibility of a list of linear constraints.
-
-### Input
-
-- `constraints` -- list of linear constraints
-- `witness`     -- (optional; default: `false`) flag for witness production
-- `solver`      -- (optional; default: `nothing`) LP solver
-
-### Output
-
-If `witness` is `false`, the result is a `Bool`.
-
-If `witness` is `true`, the result is a pair `(res, w)` where `res` is a `Bool`
-and `w` is a witness point/vector.
-
-### Algorithm
-
-This implementation converts the constraints to matrix-vector form via
-`tosimplehrep` and then calls `isfeasible` on the result.
-"""
-function isfeasible(constraints::AbstractVector{<:HalfSpace},
-                    witness::Bool=false; solver=nothing)
-    # the caller should verify that there is at least one constraint
-    A, b = tosimplehrep(constraints)
-    return isfeasible(A, b, witness; solver=solver)
 end
 
 # convenience function to invert the result of `isfeasible` while still including the witness result

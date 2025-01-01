@@ -180,6 +180,14 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isdisjoint(H1, H1)
     res, w = isdisjoint(H1, H1, true)
     @test !res && w isa Vector{N} && w ∈ H1
+
+    # isfeasible
+    clist = [HalfSpace(N[1], N(0))]  # x <= 0
+    res, w = isfeasible(clist, true)
+    @test isfeasible(clist) && res && w ∈ clist[1]
+    clist = [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1))]  # x <= 0 && x >= 1
+    res, w = isfeasible(clist, true)
+    @test !isfeasible(clist) && !res && w isa Vector{N} && isempty(w)
 end
 
 # tests that only work with Float64 and Float32
