@@ -30,18 +30,9 @@ function constraints_list(A::AbstractMatrix, b::AbstractVector)
 end
 
 """
+# Extended help
+
     ∈(x::AbstractVector, P::AbstractPolyhedron)
-
-Check whether a given point is contained in a polyhedron.
-
-### Input
-
-- `x` -- point/vector
-- `P` -- polyhedron
-
-### Output
-
-`true` iff ``x ∈ P``.
 
 ### Algorithm
 
@@ -60,21 +51,9 @@ function ∈(x::AbstractVector, P::AbstractPolyhedron)
 end
 
 """
+# Extended help
+
     isuniversal(P::AbstractPolyhedron, [witness]::Bool=false)
-
-Check whether a polyhedron is universal.
-
-### Input
-
-- `P`       -- polyhedron
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `true` iff ``P`` is universal
-* If `witness` option is activated:
-  * `(true, [])` iff ``P`` is universal
-  * `(false, v)` iff ``P`` is not universal and ``v ∉ P``
 
 ### Algorithm
 
