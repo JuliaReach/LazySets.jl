@@ -95,7 +95,7 @@ CurrentModule = LazySets.LineSegmentModule
 ```
 ```@docs
 intersection(::LineSegment, ::LineSegment)
-isdisjoint(::LineSegment, ::LineSegment)
+isdisjoint(::LineSegment, ::LineSegment, ::Bool=false)
 ```
 
 ```@meta
