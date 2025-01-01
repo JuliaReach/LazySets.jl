@@ -159,6 +159,7 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`volume`](@ref volume(::AbstractPolytope))
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
+* [`center`](@ref center(::AbstractCentrallySymmetric, ::Int))
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetricPolytope))
 * [`extrema`](@ref extrema(::AbstractCentrallySymmetricPolytope, ::Int))
 * [`isempty`](@ref isempty(::AbstractCentrallySymmetricPolytope))

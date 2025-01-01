@@ -31,7 +31,6 @@ CurrentModule = LazySets
 Inherited from [`LazySet`](@ref):
 * [`an_element`](@ref an_element(::LazySet))
 * [`area`](@ref area(::LazySet))
-* [`center`](@ref center(::LazySet))
 * [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
 * [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
