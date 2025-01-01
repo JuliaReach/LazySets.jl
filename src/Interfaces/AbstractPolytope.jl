@@ -35,35 +35,14 @@ function isboundedtype(::Type{<:AbstractPolytope})
     return true
 end
 
-"""
-    isbounded(P::AbstractPolytope)
-
-Check whether a polytopic set is bounded.
-
-### Input
-
-- `P` -- polytopic set
-
-### Output
-
-`true` (since a polytopic set must be bounded).
-"""
 function isbounded(::AbstractPolytope)
     return true
 end
 
 """
+# Extended help
+
     isempty(P::AbstractPolytope)
-
-Check whether a polytopic set is empty.
-
-### Input
-
-- `P` -- polytopic set
-
-### Output
-
-`true` if the given polytopic set contains no vertices, and `false` otherwise.
 
 ### Algorithm
 
@@ -74,20 +53,9 @@ function isempty(P::AbstractPolytope)
 end
 
 """
+# Extended help
+
     isuniversal(P::AbstractPolytope, [witness]::Bool=false)
-
-Check whether a polytopic set is universal.
-
-### Input
-
-- `P`       -- polytopic set
-- `witness` -- (optional, default: `false`) compute a witness if activated
-
-### Output
-
-* If `witness` option is deactivated: `false`
-* If `witness` option is activated: `(false, v)` where ``v ∉ P`` unless the list
-  of constraints is empty (which should not happen for a normal polytope)
 
 ### Algorithm
 
@@ -144,21 +112,16 @@ function _linear_map_hrep_helper(M::AbstractMatrix, P::AbstractPolytope,
 end
 
 """
-    volume(P::AbstractPolytope; backend=default_polyhedra_backend(P))
+# Extended help
 
-Compute the volume of a polytopic set.
+    volume(P::AbstractPolytope; backend=default_polyhedra_backend(P))
 
 ### Input
 
-- `P`       -- polytopic set
 - `backend` -- (optional, default: `default_polyhedra_backend(P)`) the backend
                for polyhedral computations; see [Polyhedra's
                documentation](https://juliapolyhedra.github.io/) for further
                information
-
-### Output
-
-The volume of `P`.
 
 ### Algorithm
 

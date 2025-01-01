@@ -139,17 +139,13 @@ function ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
 end
 
 """
+# Extended help
+
     ⊆(P::AbstractPolytope, S::LazySet, [witness]::Bool=false;
       [algorithm]="constraints")
 
-Check whether a polytopic set is contained in a convex set, and if not,
-optionally compute a witness.
-
 ### Input
 
-- `P` -- inner polytopic set
-- `S` -- outer convex set
-- `witness`   -- (optional, default: `false`) compute a witness if activated
 - `algorithm` -- (optional, default: `"constraints"`) algorithm for the
                  inclusion check; available options are:
 
@@ -159,12 +155,9 @@ optionally compute a witness.
     * `"vertices"`, using the list of vertices of `P` and membership evaluations
       of `S`
 
-### Output
+### Notes
 
-* If `witness` option is deactivated: `true` iff ``P ⊆ S``
-* If `witness` option is activated:
-  * `(true, [])` iff ``P ⊆ S``
-  * `(false, v)` iff ``P ⊈ S`` and ``v ∈ P ∖ S``
+`S` is assumed to be convex, which is asserted via `isconvextype`.
 
 ### Algorithm
 
