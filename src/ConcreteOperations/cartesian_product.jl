@@ -157,18 +157,9 @@ function cartesian_product(U::Universe, H::HalfSpace)
 end
 
 """
+# Extended help
+
     cartesian_product(SPZ::SparsePolynomialZonotope, Z::AbstractZonotope)
-
-Compute the Cartesian product of a sparse polynomial zonotope and a zonotopic set.
-
-### Input
-
-- `SPZ` -- sparse polynomial zonotope
-- `Z`   -- zonotopic set
-
-### Output
-
-The Cartesian product of `SPZ` and `Z`.
 
 ### Algorithm
 

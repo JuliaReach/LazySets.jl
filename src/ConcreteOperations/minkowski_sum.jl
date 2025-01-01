@@ -6,8 +6,8 @@ Compute the Minkowski sum of two polyhedral sets.
 
 ### Input
 
-- `P`         -- set
-- `Q`         -- set
+- `P`         -- polyhedral set
+- `Q`         -- polyhedral set
 - `backend`   -- (optional, default: `nothing`) polyhedral computations backend
 - `algorithm` -- (optional, default: `nothing`) algorithm to eliminate
                  variables; available options are `Polyhedra.FourierMotzkin`,
@@ -173,18 +173,9 @@ function _minkowski_sum_hrep(A::AbstractMatrix, b::AbstractVector,
 end
 
 """
+# Extended help
+
     minkowski_sum(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
-
-Concrete Minkowski sum of a pair of hyperrectangular sets.
-
-### Input
-
-- `H1` -- hyperrectangular set
-- `H2` -- hyperrectangular set
-
-### Output
-
-A `Hyperrectangle` corresponding to the Minkowski sum of `H1` and `H2`.
 
 ### Algorithm
 
@@ -197,18 +188,9 @@ function minkowski_sum(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
 end
 
 """
+# Extended help
+
     minkowski_sum(Z1::AbstractZonotope, Z2::AbstractZonotope)
-
-Concrete Minkowski sum of a pair of zonotopic sets.
-
-### Input
-
-- `Z1` -- zonotopic set
-- `Z2` -- zonotopic set
-
-### Output
-
-A `Zonotope` corresponding to the Minkowski sum of `Z1` and `Z2`.
 
 ### Algorithm
 
@@ -222,18 +204,9 @@ function minkowski_sum(Z1::AbstractZonotope, Z2::AbstractZonotope)
 end
 
 """
+# Extended help
+
     minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
-
-Concrete Minkowski sum of a pair of singletons.
-
-### Input
-
-- `X` -- singleton
-- `Y` -- singleton
-
-### Output
-
-A singleton
 
 ### Algorithm
 
@@ -332,19 +305,18 @@ function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
 end
 
 """
+# Extended help
+
     minkowski_sum(PZ::DensePolynomialZonotope, Z::AbstractZonotope)
-
-Compute the Minkowski sum of a polynomial zonotope and a zonotopic set.
-
-### Input
-
-- `PZ` -- polynomial zonotope
-- `Z`  -- zonotopic set
 
 ## Output
 
-A polynomial zonotope whose center is the sum of the centers of `PZ` and `Z`
-and whose generators are the concatenation of the generators of `PZ` and `Z`.
+A `DensePolynomialZonotope`.
+
+### Algorithm
+
+The polynomial zonotope's center is the sum of the centers of `PZ` and `Z`, and
+its generators are the concatenation of the generators of `PZ` and `Z`.
 """
 @commutative function minkowski_sum(PZ::DensePolynomialZonotope,
                                     Z::AbstractZonotope)

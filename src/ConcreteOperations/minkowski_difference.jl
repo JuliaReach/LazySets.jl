@@ -64,19 +64,13 @@ for ST in [:LazySet, :AbstractZonotope, :AbstractHyperrectangle]
 end
 
 """
+# Extended help
+
     minkowski_difference(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
-
-Compute the Minkowski difference of two hyperrectangular sets.
-
-### Input
-
-- `H1` -- hyperrectangular set
-- `H2` -- hyperrectangular set
 
 ### Output
 
-A `Hyperrectangle` that corresponds to the Minkowski difference of `H1` minus
-`H2`, or an `EmptySet` if the difference is empty.
+A `Hyperrectangle`, or an `EmptySet` if the difference is empty.
 """
 function minkowski_difference(H1::AbstractHyperrectangle,
                               H2::AbstractHyperrectangle)
@@ -95,22 +89,17 @@ function minkowski_difference(H1::AbstractHyperrectangle,
 end
 
 """
+# Extended help
+
     minkowski_difference(Z1::AbstractZonotope, Z2::AbstractZonotope)
-
-Compute the Minkowski difference of two zonotopic sets.
-
-### Input
-
-- `Z1` -- zonotopic set
-- `Z2` -- zonotopic set
 
 ### Output
 
-An `HPolytope` that corresponds to the Minkowski difference of `Z1` minus `Z2`.
+An `HPolytope`.
 
 ### Algorithm
 
-For one-dimensional sets, we use a simple algorithm for intervals.
+For one-dimensional sets, this method implements a simple algorithm for intervals.
 For two-dimensional sets, this method implements Proposition 6 in [1].
 For higher-dimensional sets, this method implements Theorem 3 in [1].
 

@@ -97,6 +97,18 @@ plot1
 
 ## Methods
 
+```@meta
+CurrentModule = LazySets.API
+```
+
+```@docs; canonical=false
+⊆(::LazySet, ::LazySet)
+```
+
+```@meta
+CurrentModule = LazySets
+```
+
 ```@docs
 ⊆(::LazySet, ::LazySet, ::Bool=false)
 ⊆(::LazySet, ::AbstractHyperrectangle, ::Bool=false)
@@ -105,17 +117,13 @@ plot1
 ⊆(::AbstractZonotope, ::AbstractHyperrectangle)
 ⊆(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
 ⊆(::LazySet, ::AbstractPolyhedron, ::Bool=false)
-⊆(::AbstractSingleton, ::LazySet, ::Bool=false)
 ⊆(::AbstractSingleton, ::AbstractHyperrectangle, ::Bool=false)
-⊆(::AbstractSingleton, ::AbstractSingleton, ::Bool=false)
-⊆(::Union{Ball2, Ballp}, ::AbstractSingleton, ::Bool=false)
 ⊆(::LineSegment, ::LazySet, ::Bool=false)
 ⊆(::LineSegment, ::AbstractHyperrectangle, ::Bool=false)
 ⊆(::Interval, ::UnionSet, ::Bool=false)
 ⊆(::LazySet, ::EmptySet, ::Bool=false)
 ⊆(::UnionSet, ::LazySet, ::Bool=false)
 ⊆(::UnionSetArray, ::LazySet, ::Bool=false)
-⊆(::LazySet, ::Universe, ::Bool=false)
 ⊆(::Universe, ::LazySet, ::Bool=false)
 ⊆(::LazySet, ::Complement, ::Bool=false)
 ⊆(::CartesianProduct, ::CartesianProduct, ::Bool=false)
@@ -126,6 +134,18 @@ plot1
 
 ## Strict subset check
 
+```@meta
+CurrentModule = LazySets.API
+```
+
+```@docs; canonical=false
+⊂(::LazySet, ::LazySet)
+```
+
+```@meta
+CurrentModule = LazySets
+```
+
 ```@docs
-⊂
+⊂(::LazySet, ::LazySet)
 ```

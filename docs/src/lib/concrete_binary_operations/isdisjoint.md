@@ -75,6 +75,18 @@ plot1
 
 ## Methods
 
+```@meta
+CurrentModule = LazySets.API
+```
+
+```@docs; canonical=false
+isdisjoint(::LazySet, ::LazySet)
+```
+
+```@meta
+CurrentModule = LazySets
+```
+
 ```@docs
 isdisjoint(::LazySet, ::LazySet, ::Bool=false)
 isdisjoint(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
@@ -84,15 +96,10 @@ isdisjoint(::AbstractZonotope, ::Hyperplane, ::Bool=false)
 isdisjoint(::LineSegment, ::LineSegment, ::Bool=false)
 isdisjoint(::LazySet, ::Hyperplane, ::Bool=false)
 isdisjoint(::LazySet, ::HalfSpace, ::Bool=false)
-isdisjoint(::HalfSpace, ::HalfSpace, ::Bool=false)
 isdisjoint(::AbstractPolyhedron, ::LazySet, ::Bool=false)
-isdisjoint(::UnionSet, ::LazySet, ::Bool=false)
-isdisjoint(::UnionSetArray, ::LazySet, ::Bool=false)
-isdisjoint(::Universe, ::LazySet, ::Bool=false)
 isdisjoint(::Complement, ::LazySet, ::Bool=false)
 isdisjoint(::AbstractZonotope, ::AbstractZonotope, ::Bool=false)
 isdisjoint(::CartesianProductArray, ::AbstractPolyhedron, ::Bool=false)
 isdisjoint(::CartesianProductArray, ::CartesianProductArray, ::Bool=false)
 isdisjoint(::CartesianProductArray, ::AbstractHyperrectangle, ::Bool=false)
-isdisjoint(::Line2D, ::Line2D, ::Bool=false)
 ```

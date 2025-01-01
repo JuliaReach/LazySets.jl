@@ -3,11 +3,19 @@ Pages = ["difference.md"]
 Depth = 3
 ```
 
+# Set difference
+
+```@meta
+CurrentModule = LazySets.API
+```
+
+```@docs; canonical=false
+difference(::LazySet, ::LazySet)
+```
+
 ```@meta
 CurrentModule = LazySets
 ```
-
-# Set difference
 
 ```@docs
 difference(::AbstractHyperrectangle, ::AbstractHyperrectangle)
