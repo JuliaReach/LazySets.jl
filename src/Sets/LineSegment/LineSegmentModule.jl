@@ -2,7 +2,7 @@ module LineSegmentModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractZonotope, right_turn
+using ..LazySets: AbstractZonotope, right_turn, _witness_result_empty
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: _isapprox, isapproxzero, _leq
@@ -12,7 +12,7 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, center, constraints_list, dim,
                         isoperationtype, rand, vertices_list, ∈, scale!, ρ, σ,
-                        translate, intersection
+                        translate, intersection, isdisjoint
 @reexport import ..LazySets: generators, genmat, ngens, halfspace_left,
                              halfspace_right
 @reexport using ..API
@@ -34,6 +34,7 @@ include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
 include("intersection.jl")
+include("isdisjoint.jl")
 
 include("generators.jl")
 include("genmat.jl")
