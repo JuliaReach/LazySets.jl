@@ -23,6 +23,7 @@ CurrentModule = LazySets.API
 
 * [`dim`](@ref dim(::LazySet))
 * [`volume`](@ref volume(::LazySet))
+* [`intersection`](@ref intersection(::LazySet, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets
@@ -62,7 +63,6 @@ Inherited from [`LazySet`](@ref):
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
-* [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
@@ -83,8 +83,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`low`](@ref low(::AbstractPolyhedron, ::Int))
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractPolyhedron))
 * [`project`](@ref project(::AbstractPolyhedron, ::AbstractVector{Int}))
-* [`minkowski_sum`](@ref minkowski_sum(::AbstractPolyhedron, ::AbstractPolyhedron))
-* [`intersection`](@ref intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N})
+* [`isdisjoint`](@ref isdisjoint(::AbstractPolyhedron, ::AbstractPolyhedron))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::LazySet))
@@ -92,6 +91,7 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`isempty`](@ref isempty(::LazySet, ::Bool=false))
 * [`isuniversal`](@ref isuniversal(::LazySet, ::Bool=false))
 * [`⊆`](@ref ⊆(::AbstractPolytope, ::LazySet, ::Bool=false))
+* [`minkowski_sum`](@ref minkowski_sum(::AbstractPolytope, ::AbstractPolytope))
 
 The following helper functions are used for sorting directions:
 
