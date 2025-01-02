@@ -31,7 +31,6 @@ See [`Zonotope`](@ref) for a standard implementation of this interface.
 Every concrete `AbstractZonotope` must define the following functions:
 
 - `generators(::AbstractZonotope)` -- return an iterator over the generators
-
 - `genmat(::AbstractZonotope)` -- return a generator matrix
 
 Since the functions `genmat` and `generators` can be defined in terms of each
@@ -204,18 +203,9 @@ function order(Z::AbstractZonotope)
 end
 
 """
+# Extended help
+
     ρ(d::AbstractVector, Z::AbstractZonotope)
-
-Evaluate the support function of a zonotopic set in a given direction.
-
-### Input
-
-- `d` -- direction
-- `Z` -- zonotopic set
-
-### Output
-
-The evaluation of the support function in the given direction.
 
 ### Algorithm
 
@@ -229,18 +219,12 @@ function ρ(d::AbstractVector, Z::AbstractZonotope)
 end
 
 """
+# Extended help
+
     σ(d::AbstractVector, Z::AbstractZonotope)
 
-Return a support vector of a zonotopic set in a given direction.
+### Notes
 
-### Input
-
-- `d` -- direction
-- `Z` -- zonotopic set
-
-### Output
-
-A support vector in the given direction.
 If the direction has norm zero, the vertex with ``ξ_i = 1 \\ \\ ∀ i = 1,…, p``
 is returned.
 """
@@ -250,20 +234,14 @@ function σ(d::AbstractVector, Z::AbstractZonotope)
 end
 
 """
-    ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
+# Extended help
 
-Check whether a given point is contained in a zonotopic set.
+    ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
 
 ### Input
 
-- `x`      -- point/vector
-- `Z`      -- zonotopic set
 - `solver` -- (optional, default: `nothing`) the backend used to solve the
               linear program
-
-### Output
-
-`true` iff ``x ∈ Z``.
 
 ### Examples
 
@@ -314,22 +292,20 @@ function ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
 end
 
 """
+# Extended help
+
     linear_map(M::AbstractMatrix, Z::AbstractZonotope)
-
-Concrete linear map of a zonotopic set.
-
-### Input
-
-- `M` -- matrix
-- `Z` -- zonotopic set
 
 ### Output
 
-The zonotope obtained by applying the linear map.
+A `Zonotope`.
 
 ### Algorithm
 
 We apply the linear map to the center and the generators.
+
+If the map has outpu dimension 1, a specialized algorithm ensures that the
+resulting zonotope only has a single generator.
 """
 function linear_map(M::AbstractMatrix, Z::AbstractZonotope)
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
@@ -360,19 +336,14 @@ function _linear_map_zonotope_nD(M::AbstractMatrix, Z::LazySet)
 end
 
 """
-    vertices_list(Z::AbstractZonotope; [apply_convex_hull]::Bool=true)
+# Extended help
 
-Return a list of the vertices of a zonotopic set.
+    vertices_list(Z::AbstractZonotope; [apply_convex_hull]::Bool=true)
 
 ### Input
 
-- `Z`                 -- zonotopic set
 - `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
                          computation with the convex hull of the points
-
-### Output
-
-A list of the vertices.
 
 ### Algorithm
 
@@ -536,17 +507,9 @@ function _single_quadrant_vertices_enum(G::AbstractMatrix, sorted::Bool=false)
 end
 
 """
+# Extended help
+
     constraints_list(P::AbstractZonotope)
-
-Return a list of constraints defining a zonotopic set.
-
-### Input
-
-- `Z` -- zonotopic set
-
-### Output
-
-A list of constraints of the zonotopic set.
 
 ### Algorithm
 
@@ -563,17 +526,9 @@ end
 end
 
 """
+# Extended help
+
     constraints_list(Z::AbstractZonotope{<:AbstractFloat})
-
-Return a list of constraints defining a zonotopic set.
-
-### Input
-
-- `Z` -- zonotopic set
-
-### Output
-
-A list of constraints of the zonotopic set.
 
 ### Notes
 
@@ -1037,17 +992,9 @@ function load_reduce_order_static()
 end # quote / load_reduce_order_static
 
 """
+# Extended help
+
     reflect(Z::AbstractZonotope)
-
-Concrete reflection of a zonotopic set `Z`, resulting in the reflected set `-Z`.
-
-### Input
-
-- `Z` -- zonotopic set
-
-### Output
-
-A `Zonotope` representing `-Z`.
 
 ### Algorithm
 
