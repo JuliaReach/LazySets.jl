@@ -283,7 +283,8 @@ function box_approximation(P::Union{VPolytope,VPolygon})
 end
 
 # centrally-symmetric sets only require n support-function evaluations
-function box_approximation(X::AbstractCentrallySymmetric{N}) where {N}
+function box_approximation(X::ACS)
+    N = eltype(X)
     n = dim(X)
     c = center(X)
     r = Vector{N}(undef, n)
