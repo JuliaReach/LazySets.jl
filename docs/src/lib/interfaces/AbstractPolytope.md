@@ -127,7 +127,6 @@ Inherited from [`LazySet`](@ref):
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 * [`⊆`](@ref ⊆(::LazySet, ::LazySet))
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
-* [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
 
 Inherited from [`ConvexSet`](@ref):
 * [`isconvextype`](@ref isconvextype(::Type{LazySet}))
@@ -144,6 +143,8 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`low`](@ref low(::AbstractPolyhedron, ::Int))
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractPolyhedron))
 * [`project`](@ref project(::AbstractPolyhedron, ::AbstractVector{Int}))
+* [`minkowski_sum`](@ref minkowski_sum(::AbstractPolyhedron, ::AbstractPolyhedron))
+* [`intersection`](@ref intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N})
 
 Some common functions implemented by several subtypes:
 
