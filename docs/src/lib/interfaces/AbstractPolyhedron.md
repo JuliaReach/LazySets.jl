@@ -79,6 +79,7 @@ Undocumented implementations:
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
 * [`low`](@ref low(::LazySet))
 * [`low`](@ref low(::LazySet, ::Int))
+* [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets
@@ -119,7 +120,6 @@ Inherited from [`LazySet`](@ref):
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
-* [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
