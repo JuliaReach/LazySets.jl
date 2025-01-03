@@ -17,7 +17,4 @@ minkowski_difference(::LazySet, ::LazySet)
 CurrentModule = LazySets
 ```
 
-```@docs
-minkowski_difference(::AbstractZonotope, ::AbstractZonotope)
-minkowski_difference(::AbstractHyperrectangle, ::AbstractHyperrectangle)
-```
+Currently, there are no specialized docstrings for this function.

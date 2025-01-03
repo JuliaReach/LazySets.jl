@@ -88,14 +88,12 @@ CurrentModule = LazySets
 ```
 
 ```@docs
-isdisjoint(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
 isdisjoint(::LazySet, ::AbstractSingleton, ::Bool=false)
 isdisjoint(::AbstractZonotope, ::Hyperplane, ::Bool=false)
 isdisjoint(::LazySet, ::Hyperplane, ::Bool=false)
 isdisjoint(::LazySet, ::HalfSpace, ::Bool=false)
 isdisjoint(::AbstractPolyhedron, ::LazySet, ::Bool=false)
 isdisjoint(::Complement, ::LazySet, ::Bool=false)
-isdisjoint(::AbstractZonotope, ::AbstractZonotope, ::Bool=false)
 isdisjoint(::CartesianProductArray, ::AbstractPolyhedron, ::Bool=false)
 isdisjoint(::CartesianProductArray, ::CartesianProductArray, ::Bool=false)
 isdisjoint(::CartesianProductArray, ::AbstractHyperrectangle, ::Bool=false)

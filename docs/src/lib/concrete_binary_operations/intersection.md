@@ -18,7 +18,6 @@ CurrentModule = LazySets
 ```
 
 ```@docs
-intersection(::AbstractHyperrectangle, ::AbstractHyperrectangle)
 intersection(::Interval, ::HalfSpace)
 intersection(::Interval, ::LazySet)
 intersection(::AbstractHPolygon, ::AbstractHPolygon)

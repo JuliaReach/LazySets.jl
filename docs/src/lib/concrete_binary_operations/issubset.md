@@ -113,7 +113,6 @@ CurrentModule = LazySets
 ⊆(::LazySet, ::AbstractHyperrectangle, ::Bool=false)
 ⊆(::AbstractPolytope, ::AbstractHyperrectangle, ::Bool=false)
 ⊆(::AbstractZonotope, ::AbstractHyperrectangle)
-⊆(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
 ⊆(::LazySet, ::AbstractPolyhedron, ::Bool=false)
 ⊆(::AbstractSingleton, ::AbstractHyperrectangle, ::Bool=false)
 ⊆(::LineSegment, ::LazySet, ::Bool=false)

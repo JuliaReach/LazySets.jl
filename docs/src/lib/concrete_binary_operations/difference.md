@@ -17,6 +17,4 @@ difference(::LazySet, ::LazySet)
 CurrentModule = LazySets
 ```
 
-```@docs
-difference(::AbstractHyperrectangle, ::AbstractHyperrectangle)
-```
+Currently, there are no specialized docstrings for this function.

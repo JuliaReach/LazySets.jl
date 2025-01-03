@@ -145,6 +145,78 @@ CurrentModule = LazySets
 ```@docs
 σ(::AbstractVector, ::AbstractHyperrectangle)
 ```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+difference(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+difference(::AbstractHyperrectangle, ::AbstractHyperrectangle)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+intersection(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+intersection(::AbstractHyperrectangle, ::AbstractHyperrectangle)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+isdisjoint(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+isdisjoint(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+⊆(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+⊆(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+minkowski_difference(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+minkowski_difference(::AbstractHyperrectangle, ::AbstractHyperrectangle)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+minkowski_sum(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+minkowski_sum(::AbstractHyperrectangle, ::AbstractHyperrectangle)
+```
 
 ```@meta
 CurrentModule = LazySets.API
@@ -170,13 +242,7 @@ CurrentModule = LazySets.API
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
-* [`difference`](@ref difference(::LazySet, ::LazySet))
 * [`distance`](@ref distance(::LazySet, ::LazySet; ::Real=2.0))
-* [`intersection`](@ref intersection(::LazySet, ::LazySet))
-* [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
-* [`⊆`](@ref ⊆(::LazySet, ::LazySet))
-* [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
-* [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets
