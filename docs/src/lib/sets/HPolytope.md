@@ -21,6 +21,7 @@ HPolytope
 
 ```julia
 convert(::Type{HPolytope}, ::LazySet)
+convert(::Type{HPolytope}, ::Polyhedra.HRep)
 ```
 
 ## Operations

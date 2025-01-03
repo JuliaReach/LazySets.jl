@@ -44,5 +44,5 @@ function remove_redundant_vertices(P::VPolytope; backend=nothing, solver=nothing
     else
         Polyhedra.removevredundancy!(Q; ztol=_ztol(N))
     end
-    return VPolytope(Q)
+    return convert(VPolytope, Q)
 end

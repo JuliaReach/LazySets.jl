@@ -68,7 +68,7 @@ p = polyhedron(H, CDDLib.Library())
 On the other hand, a `LazySets.HPolytope` object can be constructed from `p`:
 
 ```@example concrete_polyhedra
-x = HPolytope(p)
+x = convert(HPolytope, p)
 x.constraints
 ```
 

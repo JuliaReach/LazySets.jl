@@ -29,5 +29,5 @@ function _cartesian_product_vrep(P1, P2; backend1=nothing, backend2=nothing)
     P1′ = LazySets.polyhedron(P1; backend=backend1)
     P2′ = LazySets.polyhedron(P2; backend=backend2)
     Pout = Polyhedra.vcartesianproduct(P1′, P2′)
-    return VPolytope(Pout)
+    return convert(VPolytope, Pout)
 end

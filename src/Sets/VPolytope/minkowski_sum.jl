@@ -31,8 +31,8 @@ function minkowski_sum(P1::VPolytope, P2::VPolytope;
 
     vlist1 = vertices_list(P1)
     vlist2 = vertices_list(P2)
-    Vout = _minkowski_sum_vrep_nd(vlist1, vlist2;
-                                  apply_convex_hull=apply_convex_hull,
-                                  backend=backend, solver=solver)
-    return VPolytope(Vout)
+    vlist_out = _minkowski_sum_vrep_nd(vlist1, vlist2;
+                                       apply_convex_hull=apply_convex_hull,
+                                       backend=backend, solver=solver)
+    return VPolytope(vlist_out)
 end

@@ -13,6 +13,9 @@ VPolytope
 ```@docs
 convert(::Type{VPolytope}, ::LazySet)
 ```
+```julia
+convert(::Type{VPolytope}, ::Polyhedra.VRep)
+```
 
 ## Operations
 
