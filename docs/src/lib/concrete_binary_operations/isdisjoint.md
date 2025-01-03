@@ -91,7 +91,6 @@ CurrentModule = LazySets
 isdisjoint(::LazySet, ::LazySet, ::Bool=false)
 isdisjoint(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
 isdisjoint(::LazySet, ::AbstractSingleton, ::Bool=false)
-isdisjoint(::AbstractSingleton, ::AbstractSingleton, ::Bool=false)
 isdisjoint(::AbstractZonotope, ::Hyperplane, ::Bool=false)
 isdisjoint(::LazySet, ::Hyperplane, ::Bool=false)
 isdisjoint(::LazySet, ::HalfSpace, ::Bool=false)
