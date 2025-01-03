@@ -28,6 +28,12 @@ CachedPair
 implementing_sets
 ```
 
+## Polyhedra
+
+```@docs
+isfeasible(::AbstractMatrix, ::AbstractVector, ::Bool=false)
+```
+
 ## File formats
 
 ```@docs

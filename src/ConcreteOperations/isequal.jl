@@ -1,4 +1,8 @@
 """
+# Extended help
+
+    ==(X::LazySet, Y::LazySet)
+
 ### Algorithm
 
 The default implementation recursively compares the fields of `X` and `Y` until

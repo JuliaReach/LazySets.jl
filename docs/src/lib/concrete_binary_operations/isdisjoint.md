@@ -88,7 +88,6 @@ CurrentModule = LazySets
 ```
 
 ```@docs
-isdisjoint(::LazySet, ::LazySet, ::Bool=false)
 isdisjoint(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
 isdisjoint(::LazySet, ::AbstractSingleton, ::Bool=false)
 isdisjoint(::AbstractZonotope, ::Hyperplane, ::Bool=false)

@@ -18,6 +18,5 @@ CurrentModule = LazySets
 ```
 
 ```@docs
-cartesian_product(::LazySet, ::LazySet)
 cartesian_product(::SparsePolynomialZonotope, ::AbstractZonotope)
 ```
