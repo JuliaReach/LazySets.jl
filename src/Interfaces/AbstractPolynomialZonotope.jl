@@ -15,11 +15,8 @@ Polynomial zonotopes are in general non-convex. They are always bounded.
 Every concrete `AbstractPolynomialZonotope` must define the following functions:
 
 - `center(::AbstractPolynomialZonotope)` -- return the center
-
 - `polynomial_order(::AbstractPolynomialZonotope)` -- return the polynomial order
-
 - `ngens_dep` -- return the number of dependent generators
-
 - `ngens_indep` -- return the number of independent generators
 
 The subtypes of `AbstractPolynomialZonotope` (including abstract interfaces):
@@ -119,17 +116,4 @@ end
 
 isboundedtype(::Type{<:AbstractPolynomialZonotope}) = true
 
-"""
-    dim(PZ::AbstractPolynomialZonotope)
-
-Return the ambient dimension of a polynomial zonotope.
-
-### Input
-
-- `PZ` -- polynomial zonotope
-
-### Output
-
-An integer representing the ambient dimension of the polynomial zonotope.
-"""
 dim(PZ::AbstractPolynomialZonotope) = length(center(PZ))
