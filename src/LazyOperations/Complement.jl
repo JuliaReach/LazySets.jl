@@ -158,3 +158,7 @@ end
 function translate(C::Complement, x::AbstractVector)
     return Complement(translate(C.X, x))
 end
+
+function concretize(C::Complement)
+    return complement(concretize(C.X))
+end

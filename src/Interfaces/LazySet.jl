@@ -1018,6 +1018,9 @@ override this behavior, typically by recursively calling `concretize` on the
 set arguments.
 """
 function concretize(X::LazySet)
+    if isoperationtype(typeof(X))
+        throw(ArgumentError("concretizing $(typeof(X)) is not implemented"))
+    end
     return X
 end
 

@@ -51,6 +51,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test complement(H) == HalfSpace(N[-1, 0], N(-1))
     @test constraints_list(Complement(H)) == [HalfSpace(N[-1, 0], N(-1))]
 
+    # concretize
+    @test concretize(Complement(H)) == HalfSpace(N[-1, 0], N(-1))
+
     # boundedness
     @test isboundedtype(typeof(Complement(Universe{N}(2))))
     @test !isboundedtype(typeof(Complement(EmptySet{N}(2))))

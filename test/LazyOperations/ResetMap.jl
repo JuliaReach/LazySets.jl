@@ -66,11 +66,16 @@ for N in [Float64, Rational{Int}, Float32]
 
     # constraints list of a lazy set
     if test_suite_polyhedra && N == Float64
-        rm = ResetMap(b, r)
         rm_id = ResetMap(Matrix(one(N) * I, 3, 3) * b, r)
         X = HPolytope(constraints_list(rm))
         Y = HPolytope(constraints_list(rm_id))
         @test isequivalent(X, Y)
+    end
+
+    # concretize
+    Z = concretize(rm)
+    if test_suite_polyhedra
+        @test isequivalent(Z, VPolytope([N[4, 1, 0], N[4, 3, 0]]))
     end
 end
 

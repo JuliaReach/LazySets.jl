@@ -39,6 +39,10 @@ end
 isoperationtype(::Type{<:Bloating}) = true
 isconvextype(::Type{Bloating{N,S}}) where {N,S} = isconvextype(S)
 
+function concretize(B::Bloating{N}) where {N}
+    return minkowski_sum(concretize(B.X), Ballp(B.p, zeros(N, dim(B)), B.ε))
+end
+
 """
     dim(B::Bloating)
 
