@@ -141,6 +141,12 @@ Inherited from [`ConvexSet`](@ref):
 * [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))
 * [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
+## Convenience functions
+
+```@docs
+○(c, a)
+```
+
 ## Implementations
 
 * [Euclidean-norm ball (Ball2)](@ref def_Ball2)
