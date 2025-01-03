@@ -10,6 +10,9 @@ Abstract type for sparse polynomial zonotope sets.
 
 ### Notes
 
+See [`SparsePolynomialZonotope`](@ref) for a standard implementation of this
+interface.
+
 Every concrete `AbstractSparsePolynomialZonotope` must define the following functions:
 
 - `expmat(::AbstractSparsePolynomialZonotope)` -- return the exponent matrix (sparse PZ only)

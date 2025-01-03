@@ -7,6 +7,8 @@ Abstract type for closed convex polyhedral sets.
 
 ### Notes
 
+See [`HPolyhedron`](@ref) for a standard implementation of this interface.
+
 Every concrete `AbstractPolyhedron` must define the following functions:
 
 - `constraints_list(::AbstractPolyhedron)` -- return a list of all facet constraints

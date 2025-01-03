@@ -9,6 +9,9 @@ Abstract type for compact convex polytopic sets.
 
 ### Notes
 
+See [`HPolytope`](@ref) or [`VPolytope`](@ref) for standard implementations of
+this interface.
+
 Every concrete `AbstractPolytope` must define the following method:
 
 - `vertices_list(::AbstractPolytope)` -- return a list of all vertices

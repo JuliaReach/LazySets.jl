@@ -8,6 +8,8 @@ Abstract type for sets with a single value.
 
 ### Notes
 
+See [`Singleton`](@ref) for a standard implementation of this interface.
+
 Every concrete `AbstractSingleton` must define the following function:
 
 - `element(::AbstractSingleton)` -- return the single element

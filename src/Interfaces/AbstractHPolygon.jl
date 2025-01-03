@@ -15,6 +15,9 @@ Abstract type for polygons in constraint representation.
 
 ### Notes
 
+See [`HPolygon`](@ref) or [`VPolygon`](@ref) for standard implementations of
+this interface.
+
 All subtypes must satisfy the invariant that constraints are sorted
 counter-clockwise.
 
