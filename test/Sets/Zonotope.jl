@@ -112,6 +112,10 @@ for N in [Float64, Rational{Int}, Float32]
     M = N[-1 1;]
     Z6 = linear_map(M, Z3)
     @test ngens(Z6) == 1 && genmat(Z6) == hcat(N[4])
+    # ... unless the map is zero
+    M = N[0 0;]
+    Z7 = linear_map(M, Z3)
+    @test ngens(Z7) == 0 && genmat(Z7) == Matrix{N}(undef, 1, 0)
 
     # in-place linear map
     Zin = convert(Zonotope, BallInf(zeros(N, 2), N(1)))
