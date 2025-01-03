@@ -127,15 +127,6 @@ for ST in [:AbstractPolyhedron, :AbstractZonotope, :AbstractHyperrectangle,
     end
 end
 
-"""
-# Extended help
-
-    isdisjoint(S1::AbstractSingleton, S2::AbstractSingleton, [witness]::Bool=false)
-
-### Algorithm
-
-``S1 ∩ S2 = ∅`` iff ``S1 ≠ S2``.
-"""
 function isdisjoint(S1::AbstractSingleton, S2::AbstractSingleton,
                     witness::Bool=false)
     s1 = element(S1)

@@ -235,6 +235,7 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`togrep`](@ref togrep(::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
 * [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
+* [`split`](@ref split(::AbstractZonotope, ::Int))
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 
 ## Implementations

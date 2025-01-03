@@ -203,15 +203,6 @@ function minkowski_sum(Z1::AbstractZonotope, Z2::AbstractZonotope)
     return Zonotope(cnew, Gnew)
 end
 
-"""
-# Extended help
-
-    minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
-
-### Algorithm
-
-The singleton obtained by summing the elements in `X` and `Y`.
-"""
 function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
     @assert dim(X) == dim(Y) "expected that the singletons have the same " *
                              "dimension, but they are $(dim(X)) and $(dim(Y)) respectively"
