@@ -79,6 +79,7 @@ include("Mixed/translate!.jl")
 include("Mixed/translate.jl")
 
 include("Binary/cartesian_product.jl")
+include("Binary/convex_hull.jl")
 include("Binary/difference.jl")
 include("Binary/distance.jl")
 include("Binary/exact_sum.jl")
