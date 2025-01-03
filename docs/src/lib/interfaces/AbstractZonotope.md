@@ -117,6 +117,42 @@ CurrentModule = LazySets
 ```@docs
 σ(::AbstractVector, ::AbstractZonotope)
 ```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+isdisjoint(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+isdisjoint(::AbstractZonotope, ::AbstractZonotope, ::Bool=false)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+minkowski_difference(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+minkowski_difference(::AbstractZonotope, ::AbstractZonotope)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+minkowski_sum(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+minkowski_sum(::AbstractZonotope, ::AbstractZonotope)
+```
 
 ```@meta
 CurrentModule = LazySets.API
@@ -126,9 +162,6 @@ Undocumented implementations:
 
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
-* [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
-* [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
-* [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets
