@@ -10,6 +10,9 @@ Abstract type for polynomial zonotope sets.
 
 ### Notes
 
+See [`DensePolynomialZonotope`](@ref) for a standard implementation of this
+interface.
+
 Polynomial zonotopes are in general non-convex. They are always bounded.
 
 Every concrete `AbstractPolynomialZonotope` must define the following functions:
