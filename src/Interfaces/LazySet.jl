@@ -17,23 +17,23 @@ Abstract type for the set types in LazySets.
 `LazySet` types should be parameterized with a type `N`, typically `N<:Real`,
 for using different numeric types.
 
-Every concrete `LazySet` must define the following method:
+Every `LazySet` must implement the following function:
 
 - `dim(X::LazySet)` -- the ambient dimension of `X`
 
-While not strictly required, it is useful to define the following method:
+While not strictly required, it is useful to implement the following function:
 
 - `σ(d::AbstractVector, X::LazySet)` -- the support vector of `X` in a given
     direction `d`
 
-The method
+Implementing the function
 
 - `ρ(d::AbstractVector, X::LazySet)` -- the support function of `X` in a given
     direction `d`
 
 is optional because there is a fallback implementation relying on `σ`.
 However, for potentially unbounded sets (which includes most lazy set types)
-this fallback cannot be used and an explicit method must be implemented.
+this fallback cannot be used and an explicit implementation should be provided.
 
 The subtypes of `LazySet` (including abstract interfaces):
 
