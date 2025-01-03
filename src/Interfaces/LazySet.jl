@@ -8,7 +8,7 @@ export LazySet,
        flatten
 
 """
-    LazySet{N}
+    LazySet{N} <: API.LazySet
 
 Abstract type for the set types in LazySets.
 
@@ -124,7 +124,7 @@ Zonotope
 
 ```
 """
-abstract type LazySet{N} end
+abstract type LazySet{N} <: API.LazySet end
 
 """
     ○(c, a)
