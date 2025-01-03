@@ -20,11 +20,10 @@ Every concrete `AbstractHyperrectangle` must define the following functions:
 - `radius_hyperrectangle(::AbstractHyperrectangle)` -- return the
     hyperrectangle's radius, which is a full-dimensional vector
 
-The following functions are then automatically defined:
+Among other functions, the following functions are then automatically defined:
 
 - `isflat(::AbstractHyperrectangle)` -- check whether the hyperrectangle's
     radius is zero in some dimension
-
 - `radius_hyperrectangle(::AbstractHyperrectangle, i::Int)` -- return the
     hyperrectangle's radius in the `i`-th dimension
 
@@ -100,19 +99,6 @@ The function symbol can be typed via `\\square<tab>`.
 """
 function □(c, r) end
 
-"""
-   genmat(H::AbstractHyperrectangle)
-
-Return the generator matrix of a hyperrectangular set.
-
-### Input
-
-- `H` -- hyperrectangular set
-
-### Output
-
-A matrix where each column represents one generator of `H`.
-"""
 function genmat(H::AbstractHyperrectangle)
     gens = generators(H)
     return genmat_fallback(H; gens=gens, ngens=length(gens))
@@ -163,35 +149,14 @@ function Base.iterate(it::HyperrectangleGeneratorIterator{<:AH},
     return (g, state)
 end
 
-"""
-    generators(H::AbstractHyperrectangle)
-
-Return an iterator over the generators of a hyperrectangular set.
-
-### Input
-
-- `H` -- hyperrectangular set
-
-### Output
-
-An iterator over the generators of `H`.
-"""
 function generators(H::AbstractHyperrectangle)
     return HyperrectangleGeneratorIterator(H)
 end
 
 """
+# Extended help
+
     ngens(H::AbstractHyperrectangle)
-
-Return the number of generators of a hyperrectangular set.
-
-### Input
-
-- `H` -- hyperrectangular set
-
-### Output
-
-The number of generators.
 
 ### Algorithm
 
@@ -203,17 +168,12 @@ function ngens(H::AbstractHyperrectangle)
 end
 
 """
+# Extended help
+
     vertices_list(H::AbstractHyperrectangle; kwargs...)
 
-Return the list of vertices of a hyperrectangular set.
+### Notes
 
-### Input
-
-- `H` -- hyperrectangular set
-
-### Output
-
-A list of vertices.
 Zeros in the radius are correctly handled, i.e., the result does not contain any
 duplicate vertices.
 
@@ -282,13 +242,9 @@ function vertices_list(H::AbstractHyperrectangle; kwargs...)
 end
 
 """
+# Extended help
+
     constraints_list(H::AbstractHyperrectangle)
-
-Return the list of constraints of a hyperrectangular set.
-
-### Input
-
-- `H` -- hyperrectangular set
 
 ### Output
 
@@ -310,18 +266,11 @@ function _constraints_list_hyperrectangle(H::LazySet{N}) where {N}
 end
 
 """
+# Extended help
+
     σ(d::AbstractVector, H::AbstractHyperrectangle)
 
-Return a support vector of a hyperrectangular set in a given direction.
-
-### Input
-
-- `d` -- direction
-- `H` -- hyperrectangular set
-
-### Output
-
-A support vector in the given direction.
+### Notes
 
 If the direction vector is zero in dimension ``i``, the result will have the
 center's coordinate in that dimension. For instance, for the two-dimensional
@@ -353,20 +302,6 @@ function _σ_sev_hyperrectangle(d::SingleEntryVector, H::AbstractHyperrectangle)
     return s
 end
 
-"""
-    ρ(d::AbstractVector, H::AbstractHyperrectangle)
-
-Evaluate the support function of a hyperrectangular set in a given direction.
-
-### Input
-
-- `d` -- direction
-- `H` -- hyperrectangular set
-
-### Output
-
-The evaluation of the support function in the given direction.
-"""
 function ρ(d::AbstractVector, H::AbstractHyperrectangle)
     @assert length(d) == dim(H) "a $(length(d))-dimensional vector is " *
                                 "incompatible with a $(dim(H))-dimensional set"
@@ -394,21 +329,9 @@ function _ρ_sev_hyperrectangle(d::SingleEntryVector, H::AbstractHyperrectangle)
 end
 
 """
+# Extended help
+
     norm(H::AbstractHyperrectangle, [p]::Real=Inf)
-
-Return the norm of a hyperrectangular set.
-
-The norm of a hyperrectangular set is defined as the norm of the enclosing ball
-of the given ``p``-norm, of minimal volume, that is centered in the origin.
-
-### Input
-
-- `H` -- hyperrectangular set
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the norm.
 
 ### Algorithm
 
@@ -446,22 +369,13 @@ function norm(H::AbstractHyperrectangle, p::Real=Inf)
 end
 
 """
+# Extended help
+
     radius(H::AbstractHyperrectangle, [p]::Real=Inf)
-
-Return the radius of a hyperrectangular set.
-
-### Input
-
-- `H` -- hyperrectangular set
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-A real number representing the radius.
 
 ### Notes
 
-The radius is defined as the radius of the enclosing ball of the given
+The result is defined as the radius of the enclosing ball of the given
 ``p``-norm of minimal volume with the same center.
 It is the same for all corners of a hyperrectangular set.
 """
@@ -470,18 +384,9 @@ function radius(H::AbstractHyperrectangle, p::Real=Inf)
 end
 
 """
+# Extended help
+
     ∈(x::AbstractVector, H::AbstractHyperrectangle)
-
-Check whether a given point is contained in a hyperrectangular set.
-
-### Input
-
-- `x` -- point/vector
-- `H` -- hyperrectangular set
-
-### Output
-
-`true` iff ``x ∈ H``.
 
 ### Algorithm
 
@@ -502,93 +407,22 @@ function ∈(x::AbstractVector, H::AbstractHyperrectangle)
     return true
 end
 
-"""
-    high(H::AbstractHyperrectangle)
-
-Return the higher coordinates of a hyperrectangular set.
-
-### Input
-
-- `H` -- hyperrectangular set
-
-### Output
-
-A vector with the higher coordinates of the hyperrectangular set.
-"""
 function high(H::AbstractHyperrectangle)
     return center(H) .+ radius_hyperrectangle(H)
 end
 
-"""
-    high(H::AbstractHyperrectangle, i::Int)
-
-Return the higher coordinate of a hyperrectangular set in a given dimension.
-
-### Input
-
-- `H` -- hyperrectangular set
-- `i` -- dimension of interest
-
-### Output
-
-The higher coordinate of the hyperrectangular set in the given dimension.
-"""
 function high(H::AbstractHyperrectangle, i::Int)
     return center(H, i) + radius_hyperrectangle(H, i)
 end
 
-"""
-    low(H::AbstractHyperrectangle)
-
-Return the lower coordinates of a hyperrectangular set.
-
-### Input
-
-- `H` -- hyperrectangular set
-
-### Output
-
-A vector with the lower coordinates of the hyperrectangular set.
-"""
 function low(H::AbstractHyperrectangle)
     return center(H) .- radius_hyperrectangle(H)
 end
 
-"""
-    low(H::AbstractHyperrectangle, i::Int)
-
-Return the lower coordinate of a hyperrectangular set in a given dimension.
-
-### Input
-
-- `H` -- hyperrectangular set
-- `i` -- dimension of interest
-
-### Output
-
-The lower coordinate of the hyperrectangular set in the given dimension.
-"""
 function low(H::AbstractHyperrectangle, i::Int)
     return center(H, i) - radius_hyperrectangle(H, i)
 end
 
-"""
-    extrema(H::AbstractHyperrectangle)
-
-Return the lower and higher coordinates of a hyperrectangular set.
-
-### Input
-
-- `H` -- hyperrectangular set
-
-### Output
-
-The lower and higher coordinates of the set.
-
-### Notes
-
-The result is equivalent to `(low(H), high(H))`.
-"""
 function extrema(H::AbstractHyperrectangle)
     c = center(H)
     r = radius_hyperrectangle(H)
@@ -597,25 +431,6 @@ function extrema(H::AbstractHyperrectangle)
     return (l, h)
 end
 
-"""
-    extrema(H::AbstractHyperrectangle, i::Int)
-
-Return the lower and higher coordinate of a hyperrectangular set in a given
-dimension.
-
-### Input
-
-- `H` -- hyperrectangular set
-- `i` -- dimension of interest
-
-### Output
-
-The lower and higher coordinate of the set in the given dimension.
-
-### Notes
-
-The result is equivalent to `(low(H, i), high(H, i))`.
-"""
 function extrema(H::AbstractHyperrectangle, i::Int)
     c = center(H, i)
     r = radius_hyperrectangle(H, i)
@@ -733,34 +548,22 @@ function split(H::AbstractHyperrectangle{N},
 end
 
 """
+# Extended help
+
     rectify(H::AbstractHyperrectangle)
-
-Concrete rectification of a hyperrectangular set.
-
-### Input
-
-- `H` -- hyperrectangular set
 
 ### Output
 
-The `Hyperrectangle` that corresponds to the rectification of `H`.
+A `Hyperrectangle`.
 """
 function rectify(H::AbstractHyperrectangle)
     return Hyperrectangle(; low=rectify(low(H)), high=rectify(high(H)))
 end
 
 """
+# Extended help
+
     volume(H::AbstractHyperrectangle)
-
-Return the volume of a hyperrectangular set.
-
-### Input
-
-- `H` -- hyperrectangular set
-
-### Output
-
-The volume of ``H``.
 
 ### Algorithm
 
@@ -835,18 +638,13 @@ A scalar representing the distance between point `x` and hyperrectangle `H`.
 end
 
 """
+# Extended help
+
     reflect(H::AbstractHyperrectangle)
-
-Concrete reflection of a hyperrectangular set `H`, resulting in the reflected
-set `-H`.
-
-### Input
-
-- `H` -- hyperrectangular set
 
 ### Output
 
-A `Hyperrectangle` representing `-H`.
+A `Hyperrectangle`.
 
 ### Algorithm
 
