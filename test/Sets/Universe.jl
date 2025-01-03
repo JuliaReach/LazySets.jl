@@ -130,6 +130,9 @@ for N in [Float64, Rational{Int}, Float32]
     scale!(N(1), U2)
     @test U2 == U
     @test_throws ArgumentError scale!(N(0), U2)
+
+    # an_element default implementation
+    @test_throws ArgumentError LazySets._an_element_lazySet(U)
 end
 
 # default Float64 constructor
