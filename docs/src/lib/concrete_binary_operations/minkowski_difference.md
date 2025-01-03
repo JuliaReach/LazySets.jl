@@ -18,7 +18,6 @@ CurrentModule = LazySets
 ```
 
 ```@docs
-minkowski_difference(::LazySet, ::LazySet)
 minkowski_difference(::AbstractZonotope, ::AbstractZonotope)
 minkowski_difference(::AbstractHyperrectangle, ::AbstractHyperrectangle)
 ```

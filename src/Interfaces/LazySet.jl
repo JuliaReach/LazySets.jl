@@ -148,6 +148,10 @@ A `Ellipsoid`s or `Ball2`s depending on the type of `a`.
 function ○(c, a) end
 
 """
+# Extended help
+
+    isconvextype(::Type{<:LazySet})
+
 ### Algorithm
 
 The default implementation returns `false`. All set types that can determine
@@ -217,6 +221,10 @@ function _low_vlist(vlist::AbstractVector{<:AbstractVector{N}}, i::Int) where {N
 end
 
 """
+# Extended help
+
+    low(X::LazySet)
+
 ### Algorithm
 
 The default implementation applies `low` in each dimension.
@@ -260,6 +268,10 @@ function _high_vlist(vlist::AbstractVector{<:AbstractVector{N}}, i::Int) where {
 end
 
 """
+# Extended help
+
+    high(X::LazySet)
+
 ### Algorithm
 
 The default implementation applies `high` in each dimension.
@@ -280,6 +292,10 @@ function _high_vlist(X::LazySet)
 end
 
 """
+# Extended help
+
+    extrema(X::LazySet, i::Int)
+
 ### Algorithm
 
 The default implementation computes the extrema via `low` and `high`.
@@ -315,6 +331,10 @@ function _extrema_vlist(vlist::AbstractVector{<:AbstractVector{N}}, i::Int) wher
 end
 
 """
+# Extended help
+
+    extrema(X::LazySet)
+
 ### Algorithm
 
 The default implementation computes the extrema via `low` and `high`.
@@ -377,13 +397,9 @@ function plot_vlist(X::S, ε::Real) where {S<:LazySet}
 end
 
 """
+# Extended help
+
     convex_hull(X::LazySet; kwargs...)
-
-Compute the convex hull of a polytopic set.
-
-### Input
-
-- `X` -- polytopic set
 
 ### Output
 
@@ -407,20 +423,34 @@ function _convex_hull_polytopes(X; kwargs...)
 end
 
 """
+# Extended help
+
+    eltype(::Type{<:LazySet{N}}) where {N}
+
 ### Algorithm
 
-The default implementation assumes that the first type parameter is `N`.
+The default implementation assumes that the first type parameter is the numeric
+type.
 """
 eltype(::Type{<:LazySet{N}}) where {N} = N
 
 """
+# Extended help
+
+    eltype(::LazySet{N}) where {N}
+
 ### Algorithm
 
-The default implementation assumes that the first type parameter is `N`.
+The default implementation assumes that the first type parameter is the numeric
+type.
 """
 eltype(::LazySet{N}) where {N} = N
 
 """
+# Extended help
+
+    ρ(d::AbstractVector, X::LazySet)
+
 ### Algorithm
 
 The default implementation computes a support vector via `σ`.
@@ -430,6 +460,10 @@ function ρ(d::AbstractVector, X::LazySet)
 end
 
 """
+# Extended help
+
+    isboundedtype(::Type{<:LazySet})
+
 ### Notes
 
 Note that some sets may still represent an unbounded set even though their type
@@ -446,19 +480,14 @@ function isboundedtype(::Type{<:LazySet})
 end
 
 """
-    isbounded(X::LazySet; [algorithm]="support_function")
+# Extended help
 
-Check whether a set is bounded.
+    isbounded(X::LazySet; [algorithm]="support_function")
 
 ### Input
 
-- `X`         -- set
 - `algorithm` -- (optional, default: `"support_function"`) algorithm choice,
                  possible options are `"support_function"` and `"stiemke"`
-
-### Output
-
-`true` iff the set is bounded.
 
 ### Algorithm
 
@@ -502,6 +531,10 @@ function _isbounded_unit_dimensions(X::LazySet)
 end
 
 """
+# Extended help
+
+    ispolyhedral(::LazySet)
+
 ### Algorithm
 
 The default implementation returns `false`. All set types that can determine the
@@ -512,6 +545,10 @@ function ispolyhedral(::LazySet)
 end
 
 """
+# Extended help
+
+    norm(X::LazySet, [p]::Real=Inf)
+
 ### Algorithm
 
 The default implementation handles the case `p == Inf` using `extrema`.
@@ -530,6 +567,10 @@ function norm(X::LazySet, p::Real=Inf)
 end
 
 """
+# Extended help
+
+    radius(X::LazySet, [p]::Real=Inf)
+
 ### Algorithm
 
 The default implementation handles the case `p == Inf` using
@@ -544,6 +585,10 @@ function radius(X::LazySet, p::Real=Inf)
 end
 
 """
+# Extended help
+
+    diameter(X::LazySet, [p]::Real=Inf)
+
 ### Algorithm
 
 The default implementation applies the function `radius` and doubles the result.
@@ -553,6 +598,10 @@ function diameter(X::LazySet, p::Real=Inf)
 end
 
 """
+# Extended help
+
+    translate(X::LazySet, v::AbstractVector)
+
 ### Algorithm
 
 The default implementation calls `translate!` on a copy of `X`.
@@ -564,6 +613,10 @@ function translate(X::LazySet, v::AbstractVector)
 end
 
 """
+# Extended help
+
+    affine_map(M, X::LazySet, v::AbstractVector; [kwargs]...)
+
 ### Algorithm
 
 The default implementation applies the functions `linear_map` and `translate`.
@@ -573,6 +626,10 @@ function affine_map(M, X::LazySet, v::AbstractVector; kwargs...)
 end
 
 """
+# Extended help
+
+    exponential_map(M::AbstractMatrix, X::LazySet)
+
 ### Algorithm
 
 The default implementation applies the functions `exp` and `linear_map`.
@@ -585,6 +642,10 @@ function exponential_map(M::AbstractMatrix, X::LazySet)
 end
 
 """
+# Extended help
+
+    an_element(X::LazySet)
+
 ### Algorithm
 
 The default implementation computes a support vector along direction
@@ -635,13 +696,9 @@ This fallback implementation relies on `constraints_list(S)`.
 tosimplehrep(S::LazySet) = tosimplehrep(constraints_list(S))
 
 """
+# Extended help
+
     reflect(P::LazySet)
-
-Concrete reflection of a set `P`, resulting in the reflected set `-P`.
-
-### Input
-
-- `P` -- polyhedral set
 
 ### Output
 
@@ -673,6 +730,10 @@ function reflect(P::LazySet)
 end
 
 """
+# Extended help
+
+    is_interior_point(v::AbstractVector{<:Real}, X::LazySet; [kwargs]...)
+
 ### Algorithm
 
 The default implementation determines `v ∈ interior(X)` with error tolerance
@@ -781,6 +842,10 @@ function _plot_recipe_3d_polytope(P::LazySet, N=eltype(P))
 end
 
 """
+# Extended help
+
+    isoperation(X::LazySet)
+
 ### Algorithm
 
 The default implementation checks whether the set type of the input is an
@@ -815,6 +880,10 @@ function isoperationtype(::LazySet)
 end
 
 """
+# Extended help
+
+    surface(X::LazySet)
+
 ### Algorithm
 
 The default implementation applies `area` for two-dimensional sets.
@@ -829,17 +898,9 @@ function surface(X::LazySet)
 end
 
 """
+# Extended help
+
     area(X::LazySet)
-
-Compute the area of a two-dimensional polytopic set.
-
-### Input
-
-- `X` -- two-dimensional polytopic set
-
-### Output
-
-A number representing the area of `X`.
 
 ### Notes
 
@@ -946,6 +1007,10 @@ function singleton_list(P::LazySet)
 end
 
 """
+# Extended help
+
+    concretize(X::LazySet)
+
 ### Algorithm
 
 The default implementation returns `X`. All relevant lazy set types should
@@ -957,6 +1022,10 @@ function concretize(X::LazySet)
 end
 
 """
+# Extended help
+
+    constraints(X::LazySet)
+
 ### Algorithm
 
 The default implementation computes all constraints via `constraints_list`.
@@ -970,6 +1039,10 @@ function _constraints_fallback(X::LazySet)
 end
 
 """
+# Extended help
+
+    vertices(X::LazySet)
+
 ### Algorithm
 
 The default implementation computes all vertices via `vertices_list`.
@@ -1043,6 +1116,10 @@ function load_delaunay_MiniQhull()
 end  # load_delaunay_MiniQhull
 
 """
+# Extended help
+
+    complement(X::LazySet)
+
 ### Algorithm
 
 The default implementation assumes that `X` is polyhedral and returns a
@@ -1199,6 +1276,10 @@ The target set type is chosen automatically.
 end
 
 """
+# Extended help
+
+    rectify(X::LazySet, [concrete_intersection]::Bool=false)
+
 ### Algorithm
 
 For each dimension in which `X` is both positive and negative, we split `X` into
@@ -1378,15 +1459,14 @@ function load_polyhedra_lazyset()  # function to be loaded by Requires
 end  # quote / load_polyhedra_lazyset()
 
 """
+# Extended help
+
     isempty(P::LazySet, witness::Bool=false;
             [use_polyhedra_interface]::Bool=false, [solver]=nothing,
             [backend]=nothing)
 
-Check whether a polyhedral set is empty.
-
 ### Input
 
-- `P`       -- polyhedral set
 - `witness` -- (optional, default: `false`) compute a witness if activated
 - `use_polyhedra_interface` -- (optional, default: `false`) if `true`, we use
                the `Polyhedra` interface for the emptiness test
@@ -1396,14 +1476,9 @@ Check whether a polyhedral set is empty.
                computations in `Polyhedra`; uses `default_polyhedra_backend(P)`
                if not provided
 
-### Output
-
-* If `witness` option is deactivated: `true` iff ``P = ∅``
-* If `witness` option is activated:
-  * `(true, [])` iff ``P = ∅``
-  * `(false, v)` iff ``P ≠ ∅`` and ``v ∈ P``
-
 ### Notes
+
+This implementation assumes that `P` is polyhedral.
 
 The default value of the `backend` is set internally and depends on whether the
 `use_polyhedra_interface` option is set.
@@ -1472,18 +1547,14 @@ function _isempty_polyhedron_polyhedra(P::LazySet{N}, witness::Bool=false;
 end
 
 """
+# Extended help
+
     linear_map(M::AbstractMatrix, P::LazySet; kwargs...)
 
-Concrete linear map of a polyhedral set.
+### Algorithm
 
-### Input
-
-- `M` -- matrix
-- `P` -- polyhedral set
-
-### Output
-
-A set representing the concrete linear map.
+The default implementation assumes that `P` is polyhedral and applies an
+algorithm based on the set type (see [`_linear_map_polyhedron`](@ref)).
 """
 function linear_map(M::AbstractMatrix, P::LazySet; kwargs...)
     if ispolyhedral(P)
@@ -1503,6 +1574,10 @@ function linear_map(a::Number, X::LazySet; kwargs...)
 end
 
 """
+# Extended help
+
+    scale(α::Real, X::LazySet)
+
 ### Algorithm
 
 The default implementation calls `scale!` on a copy of `X`.
