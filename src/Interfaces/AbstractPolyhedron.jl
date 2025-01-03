@@ -78,7 +78,6 @@ function _linear_map_hrep_helper(M::AbstractMatrix, P::LazySet,
 end
 
 # internal functions; defined here due to optional dependencies and submodules
-function isfeasible end
 function remove_redundant_constraints end
 function remove_redundant_constraints! end
 function _ishalfspace end
