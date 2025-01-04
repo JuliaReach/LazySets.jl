@@ -66,8 +66,8 @@ function _convex_hull_set(vlist; n::Int=(isempty(vlist) ? -1 : length(vlist[1]))
 end
 
 """
-    convex_hull(points::Vector{VN}; [algorithm]=nothing, [backend]=nothing,
-                [solver]=nothing) where {N, VN<:AbstractVector{N}}
+    convex_hull(points::Vector{<:AbstractVector}; [algorithm]=nothing,
+                [backend]=nothing, [solver]=nothing)
 
 Compute the convex hull of a list of points.
 
@@ -111,7 +111,7 @@ The higher-dimensional case is treated using the concrete polyhedra library
 
 ### Notes
 
-For the in-place version use `convex_hull!` instead of `convex_hull`.
+For the in-place version use [`convex_hull!(::Vector{<:AbstractVector})`](@ref).
 
 ### Examples
 
@@ -126,14 +126,34 @@ julia> typeof(hull)
 Vector{Vector{Float64}} (alias for Array{Array{Float64, 1}, 1})
 ```
 """
-function convex_hull(points::Vector{VN}; algorithm=nothing, backend=nothing,
-                     solver=nothing) where {N,VN<:AbstractVector{N}}
+function convex_hull(points::Vector{<:AbstractVector}; algorithm=nothing,
+                     backend=nothing, solver=nothing)
     return convex_hull!(copy(points); algorithm=algorithm, backend=backend,
                         solver=solver)
 end
 
-function convex_hull!(points::Vector{VN}; algorithm=nothing, backend=nothing,
-                      solver=nothing) where {N,VN<:AbstractVector{N}}
+"""
+    convex_hull!(points::Vector{<:AbstractVector}; [algorithm]=nothing,
+                 [backend]=nothing, [solver]=nothing)
+
+Compute the convex hull of a list of points in-place.
+
+### Input
+
+- `points`    -- list of points (modified in-place)
+- `algorithm` -- (optional, default: `nothing`) the convex-hull algorithm; see
+                 below for valid options
+- `backend`   -- (optional, default: `nothing`) polyhedral computation backend
+                 for higher-dimensional point sets
+- `solver`    -- (optional, default: `nothing`) the linear-programming solver
+                 used in the backend
+
+### Notes
+
+See [`convex_hull(::Vector{<:AbstractVector})`](@ref) for more details.
+"""
+function convex_hull!(points::Vector{<:AbstractVector}; algorithm=nothing,
+                      backend=nothing, solver=nothing)
     m = length(points)
 
     # zero or one point

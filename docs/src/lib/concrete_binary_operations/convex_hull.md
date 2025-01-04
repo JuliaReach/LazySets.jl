@@ -10,6 +10,7 @@ CurrentModule = LazySets
 # Convex Hull
 
 ```@docs
-convex_hull(::Vector{VN}) where {N, VN<:AbstractVector{N}}
+convex_hull(::Vector{<:AbstractVector})
+convex_hull!(::Vector{<:AbstractVector})
 monotone_chain!
 ```
