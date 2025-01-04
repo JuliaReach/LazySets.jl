@@ -60,3 +60,8 @@ end
 @validate_commutative function linear_combination(U::Universe, X::ConvexSet)
     return _linear_combination_universe(U, X)
 end
+
+@validate_commutative function linear_combination(Z::AbstractZonotope,
+                                                  P::AbstractPolynomialZonotope)
+    return linear_combination(convert(SparsePolynomialZonotope, Z), P)
+end

@@ -221,15 +221,30 @@ for N in @tN([Float64, Float32, Rational{Int}])
     res = linear_map(MZ, P)
     @test res == linear_map(N[1 1; -1 1], P)
 
-    #case: error 
+    # case: error
     P_err = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], hcat(N[0, 1]), [2 1; 0 1; 1 0], [1, 2, 3])
     @test_throws ErrorException linear_map(MZ, P_err)
 
     #MZP linear map
     MZ2 = MatrixZonotope(N[1.1 0.9; -1.1 1.1], [N[1.1 -0.1; 0.9 2.1]])
-    res = linear_map(MZ * MZ2, P)  
+    res = linear_map(MZ * MZ2, P)
     P_in = linear_map(MZ2, P)
     @test res == linear_map(MZ, P_in)
+
+    # Example 3.1.29 from thesis
+    PZ1 = SparsePolynomialZonotope(N[-5, 0], N[2 0 2; 0 2 2], Matrix{N}(undef, 2, 0), [1 0 1; 0 1 1])
+    PZ2 = SparsePolynomialZonotope(N[3, 3], N[1 -2 2; 2 3 1], hcat(N[1//2; 0]), [1 0 2; 0 1 1])
+    PZ_lc = linear_combination(PZ1, PZ2)
+    # no reasonable tests available here
+    @test PZ_lc isa SimpleSparsePolynomialZonotope{N}
+    @test center(PZ_lc) == N[-1, 3//2]
+    PZ_ch = convex_hull(PZ1, PZ2)
+    # no reasonable tests available here
+    @test PZ_ch isa SimpleSparsePolynomialZonotope{N}
+    @test center(PZ_ch) == N[-1, 3//2]
+    # mixed linear_combination
+    PZ_lc = linear_combination(PZ1, ZeroSet{N}(2))
+    @test PZ_lc isa SimpleSparsePolynomialZonotope{N}
 end
 
 for N in @tN([Float64, Float32])
@@ -304,67 +319,50 @@ let
     c = [0.0, 0]
     G = [-1.0 -2.0 -1.0 2.0 0.01 0.4
          1.0 0.0 -1.0 1.0 0.2 0.0]
-
     GI = [0.2 0.01
           0.02 -0.4]
-
     E = [1 0 1 2 2 0
          0 1 1 0 0 2
          0 0 0 0 1 2]
-
     P = SparsePolynomialZonotope(c, G, GI, E)
     Pred = reduce_order(P, 3)
-
     @test center(Pred) == [0.2, 0]
     @test genmat_dep(Pred) == [-1 -2 -1 2;
                                1 0 -1 1]
-
     @test genmat_indep(Pred) ≈ [0.42 0; 0 0.62]
-
     @test expmat(Pred) == [1 0 1 2; 0 1 1 0]
     @test indexvector(Pred) == [1, 2]
-
     @test order(P) == 4
     for r in 4:8
         @test reduce_order(P, r) == P
     end
 
     # merge_id
-    #case 0: dimensions mismatch
+    # case 0: dimensions mismatch
     id1 = [1, 2, 3]
     id2 = [1, 2]
     E = rand(Int, 2, 2)
     @test_throws ArgumentError merge_id(id1, id2, E, E)
-
-    #case 1: identical IDs
+    # case 1: identical IDs
     id = [10, 20, 30]
     E1 = rand(Int, 3, 4)
     E2 = rand(Int, 3, 2)
-
     Ē₁, Ē₂, idx = merge_id(id, id, E1, E2)
-
     @test idx == id
     @test Ē₁ === E1
     @test Ē₂ === E2
-
     # case 2: IDs with overlap
     E1 = [1 2; 1 0]
     id1 = [1, 2]
-
     E2 = [1 0 1; 3 2 0]
     id2 = [2, 3]
-
     Ē₁, Ē₂, idx = merge_id(id1, id2, E1, E2)
-
     @test idx == [1, 2, 3]
     @test Ē₁ == [1 2; 1 0; 0 0]
     @test Ē₂ == [0 0 0; 1 0 1; 3 2 0]
-
-    #case 3: different IDs
+    # case 3: different IDs
     id2 = [3, 4]
-
     Ē₁, Ē₂, idx = merge_id(id1, id2, E1, E2)
-
     @test idx == [1, 2, 3, 4]
     @test Ē₁ == [1 2; 1 0; 0 0; 0 0]
     @test Ē₂ == [0 0 0; 0 0 0; 1 0 1; 3 2 0]
