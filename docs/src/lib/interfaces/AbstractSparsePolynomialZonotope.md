@@ -85,6 +85,7 @@ Inherited from [`LazySet`](@ref):
 * [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):
+* [`center`](@ref center(::AbstractPolynomialZonotope, ::Int))
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolynomialZonotope}))
 * [`ngens`](@ref ngens(::AbstractPolynomialZonotope))

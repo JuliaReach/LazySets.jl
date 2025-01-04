@@ -43,6 +43,7 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 
+* [`center`](@ref center(::LazySet, ::Int))
 * [`dim`](@ref dim(::LazySet))
 * [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
 
