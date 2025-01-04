@@ -485,3 +485,16 @@ end
 @commutative function convex_hull(X::LazySet, ∅::EmptySet)
     return EmptySetModule._convex_hull_emptyset(∅, X)
 end
+
+"""
+# Extended help
+
+    convex_hull(PZ1::AbstractPolynomialZonotope, PZ2::AbstractPolynomialZonotope)
+
+### Output
+
+The tightest convex polynomial zonotope containing `P1` and `P2`.
+"""
+function convex_hull(PZ1::AbstractPolynomialZonotope, PZ2::AbstractPolynomialZonotope)
+    return linear_combination(convex_hull(PZ1), convex_hull(PZ2))
+end

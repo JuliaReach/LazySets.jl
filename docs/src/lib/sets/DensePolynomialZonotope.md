@@ -37,7 +37,6 @@ Inherited from [`LazySet`](@ref):
 * [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
-* [`convex_hull`](@ref convex_hull(::LazySet))
 * `copy(::Type{LazySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
@@ -70,7 +69,6 @@ Inherited from [`LazySet`](@ref):
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
-* [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
@@ -84,9 +82,11 @@ Inherited from [`LazySet`](@ref):
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`center`](@ref center(::AbstractPolynomialZonotope, ::Int))
+* [`convex_hull`](@ref convex_hull(::AbstractPolynomialZonotope))
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolynomialZonotope}))
 * [`isempty`](@ref isempty(::AbstractPolynomialZonotope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolynomialZonotope))
 * [`ngens`](@ref ngens(::AbstractPolynomialZonotope))
 * [`order`](@ref dim(::AbstractPolynomialZonotope))
+* [`convex_hull`](@ref convex_hull(::AbstractPolynomialZonotope, ::AbstractPolynomialZonotope))
