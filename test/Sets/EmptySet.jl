@@ -54,6 +54,9 @@ for N in [Float64, Rational{Int}, Float32]
     E2 = copy(E)
     @test E2 isa EmptySet{N} && dim(E2) == 2
 
+    # delaunay
+    @test_throws ErrorException delaunay(E)
+
     # diameter
     @test_throws ArgumentError diameter(E)  # TODO this should maybe change
     # res = diameter(E)
@@ -108,6 +111,9 @@ for N in [Float64, Rational{Int}, Float32]
     # res = norm(E)
     # @test res isa N && res == N(0)
 
+    # polyhedron
+    @test_throws MethodError polyhedron(E)  # TODO this should maybe change
+
     # radius
     @test_throws ArgumentError radius(E)  # TODO this should maybe change
     # res = radius(E)
@@ -136,6 +142,9 @@ for N in [Float64, Rational{Int}, Float32]
     # surface
     res = surface(E)
     @test res isa N && res == N(0)
+
+    # tosimplehrep
+    @test_throws MethodError tosimplehrep(E)  # TODO this should maybe change
 
     # vertices_list
     vs = vertices_list(E)
