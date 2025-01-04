@@ -329,6 +329,12 @@ for N in [Float64, Float32]
     # overapproximation with HPolyhedron
     H = HalfSpace(N[1, 0], N(1))
     @test overapproximate(H, HPolyhedron, BoxDirections{N}(2)) == HPolyhedron([H])
+
+    # Example 3.1.29 from thesis
+    PZ1 = SparsePolynomialZonotope(N[-5, 0], N[2 0 2; 0 2 2], Matrix{N}(undef, 2, 0), [1 0 1; 0 1 1])
+    PZ2 = SparsePolynomialZonotope(N[3, 3], N[1 -2 2; 2 3 1], hcat(N[1//2; 0]), [1 0 2; 0 1 1])
+    PZ = overapproximate(CH(PZ1, PZ2), SparsePolynomialZonotope)
+    @test center(PZ) == N[-1, 3//2]   # no reasonable tests available here
 end
 
 for N in [Float64]
