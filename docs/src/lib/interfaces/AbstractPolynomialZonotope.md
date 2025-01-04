@@ -35,6 +35,7 @@ This interface defines the following functions:
 ```@docs
 ngens(::AbstractPolynomialZonotope)
 order(::AbstractPolynomialZonotope)
+convex_hull(::AbstractPolynomialZonotope, ::AbstractPolynomialZonotope)
 ```
 
 ```@meta
@@ -44,6 +45,7 @@ CurrentModule = LazySets.API
 Undocumented implementations:
 
 * [`center`](@ref center(::LazySet, ::Int))
+* [`convex_hull`](@ref convex_hull(::LazySet))
 * [`dim`](@ref dim(::LazySet))
 * [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
 * [`isempty`](@ref isempty(::LazySet))
@@ -60,7 +62,6 @@ Inherited from [`LazySet`](@ref):
 * [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
-* [`convex_hull`](@ref convex_hull(::LazySet))
 * `copy(::Type{LazySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
@@ -95,7 +96,6 @@ Inherited from [`LazySet`](@ref):
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
-* [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))

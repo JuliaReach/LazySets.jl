@@ -130,3 +130,7 @@ dim(PZ::AbstractPolynomialZonotope) = length(center(PZ))
 isempty(PZ::AbstractPolynomialZonotope) = false
 
 isuniversal(PZ::AbstractPolynomialZonotope) = false
+
+function convex_hull(PZ::AbstractPolynomialZonotope)
+    return convex_hull(convert(SimpleSparsePolynomialZonotope, PZ))
+end
