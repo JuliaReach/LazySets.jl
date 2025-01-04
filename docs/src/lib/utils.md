@@ -7,6 +7,7 @@ CurrentModule = LazySets
 ## Array set types
 
 ```@docs
+flatten
 neutral
 absorbing
 ```
