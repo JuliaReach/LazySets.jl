@@ -86,6 +86,7 @@ CurrentModule = LazySets.API
 Undocumented implementations:
 
 * [`center`](@ref center(::LazySet))
+* [`center`](@ref center(::LazySet, ::Int))
 * [`dim`](@ref dim(::LazySet))
 * [`isempty`](@ref isempty(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
