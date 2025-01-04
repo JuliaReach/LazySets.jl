@@ -132,5 +132,14 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ArgumentError scale!(N(0), U2)
 end
 
+for N in [Float64, Float32]
+    U = Universe{N}(2)
+
+    # rationalize
+    U2 = rationalize(U)
+    @test U2 isa Universe{Rational{Int}} && dim(U2) == 2
+    @test_throws MethodError rationalize(U2)
+end
+
 # default Float64 constructor
 @test Universe(2) == Universe{Float64}(2)

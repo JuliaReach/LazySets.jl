@@ -14,7 +14,7 @@ using ReachabilityBase.Require: require
                         reflect, ∈, permute, project, scale, scale!, ρ, σ,
                         translate, translate!, cartesian_product, intersection
 @reexport import ..LazySets: constrained_dimensions, linear_map_inverse,
-                             tosimplehrep
+                             rationalize, tosimplehrep
 import Base: copy
 @reexport using ..API
 
@@ -37,6 +37,7 @@ include("isuniversal.jl")
 include("norm.jl")
 include("radius.jl")
 include("rand.jl")
+include("rationalize.jl")
 include("reflect.jl")
 include("in.jl")
 include("permute.jl")
