@@ -138,10 +138,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Uarr = UnionSetArray([EmptySet{N}(2), B1])
     @test an_element(Uarr) ∈ Uarr
 
-    # boundedness of unbounded unions
-    @test !isbounded(UXY) && !isboundedtype(typeof(UXY))
+    # boundedness of unions with unbounded type
+    @test isbounded(UXY) && !isboundedtype(typeof(UXY))
     Uarr = UnionSetArray([X, B1])
-    @test !isbounded(Uarr) && !isboundedtype(typeof(Uarr))
+    @test isbounded(Uarr) && !isboundedtype(typeof(Uarr))
 
     # ispolyhedral
     @test_throws ArgumentError ispolyhedral(UXY)
