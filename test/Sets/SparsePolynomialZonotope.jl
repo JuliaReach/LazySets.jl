@@ -153,6 +153,9 @@ for N in [Float64, Float32, Rational{Int}]
     # no reasonable tests available here
     @test PZ_ch isa SimpleSparsePolynomialZonotope{N}
     @test center(PZ_ch) == N[-1, 3//2]
+    # mixed linear_combination
+    PZ_lc = linear_combination(PZ1, ZeroSet{N}(2))
+    @test PZ_lc isa SimpleSparsePolynomialZonotope{N}
 end
 
 for N in [Float64]

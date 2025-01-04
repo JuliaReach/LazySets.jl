@@ -36,3 +36,7 @@ function linear_combination(P1::AbstractPolynomialZonotope,
     SSPZ2 = convert(SimpleSparsePolynomialZonotope, P2)
     return linear_combination(SSPZ1, SSPZ2)
 end
+
+@commutative function linear_combination(Z::AbstractZonotope, P::AbstractPolynomialZonotope)
+    return linear_combination(convert(SparsePolynomialZonotope, Z), P)
+end
