@@ -124,3 +124,7 @@ end
 isboundedtype(::Type{<:AbstractPolynomialZonotope}) = true
 
 dim(PZ::AbstractPolynomialZonotope) = length(center(PZ))
+
+isempty(PZ::AbstractPolynomialZonotope) = false
+
+isuniversal(PZ::AbstractPolynomialZonotope) = false
