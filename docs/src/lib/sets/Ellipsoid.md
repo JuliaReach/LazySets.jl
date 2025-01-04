@@ -78,7 +78,6 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 * [`center`](@ref center(::LazySet))
-* `copy(::Type{EmptySet})`
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
@@ -91,6 +90,8 @@ Inherited from [`LazySet`](@ref):
 * [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
+* `copy(::Type{LazySet})`
+* [`delaunay`](@ref delaunay(::LazySet))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
@@ -101,6 +102,7 @@ Inherited from [`LazySet`](@ref):
 * [`low`](@ref low(::LazySet))
 * [`low`](@ref low(::LazySet, ::Int))
 * [`norm`](@ref norm(::LazySet, ::Real))
+* [`polyhedron`](@ref polyhedron(::LazySet))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`rationalize`](@ref rationalize(::LazySet))
 * [`triangulate`](@ref triangulate(::LazySet))
@@ -108,6 +110,7 @@ Inherited from [`LazySet`](@ref):
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`sample`](@ref sample(::LazySet, ::Int))
+* [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
