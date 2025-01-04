@@ -221,6 +221,11 @@ for N in @tN([Float64, Float32])
     @test LazySets._isbounded_unit_dimensions(p_univ)
     @test LazySets._isbounded_unit_dimensions(p)
     @test !LazySets._isbounded_unit_dimensions(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
+    # quick tests with low number of constraints
+    P = HPolyhedron([HalfSpace(N[1, 0, 0], N(0)), HalfSpace(N[-1, 0, 0], N(-1))])
+    @test isbounded(P)
+    P = HPolyhedron([HalfSpace(N[1, 0, 0], N(0)), HalfSpace(N[0, 1, 0], N(0))])
+    @test !isbounded(P)
 
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         H = Hyperrectangle(N[1, 1], N[2, 2])
