@@ -50,6 +50,7 @@ Undocumented implementations:
 * [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
 * [`isempty`](@ref isempty(::LazySet))
 * [`isuniversal`](@ref isuniversal(::LazySet))
+* [`linear_combination`](@ref linear_combination(::LazySet, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets

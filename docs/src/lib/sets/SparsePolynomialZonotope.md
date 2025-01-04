@@ -139,7 +139,6 @@ Inherited from [`LazySet`](@ref):
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 * [`⊆`](@ref ⊆(::LazySet, ::LazySet))
-* [`linear_combination`](@ref linear_combination(::LazySet, ::LazySet))
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):
@@ -152,6 +151,7 @@ Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`ngens`](@ref ngens(::AbstractPolynomialZonotope))
 * [`order`](@ref order(::AbstractPolynomialZonotope))
 * [`convex_hull`](@ref convex_hull(::AbstractPolynomialZonotope, ::AbstractPolynomialZonotope))
+* [`linear_combination`](@ref linear_combination(::AbstractPolynomialZonotope, ::AbstractPolynomialZonotope))
 
 Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`ngens_dep`](@ref ngens_dep(::AbstractSparsePolynomialZonotope))

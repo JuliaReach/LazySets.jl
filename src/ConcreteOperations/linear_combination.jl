@@ -29,3 +29,10 @@ end
 @commutative function linear_combination(∅::EmptySet, X::ConvexSet)
     return _linear_combination_emptyset(∅, X)
 end
+
+function linear_combination(P1::AbstractPolynomialZonotope,
+                            P2::AbstractPolynomialZonotope)
+    SSPZ1 = convert(SimpleSparsePolynomialZonotope, P1)
+    SSPZ2 = convert(SimpleSparsePolynomialZonotope, P2)
+    return linear_combination(SSPZ1, SSPZ2)
+end
