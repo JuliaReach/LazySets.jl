@@ -49,6 +49,7 @@ IntersectionCache
 
 ```@docs
 IntersectionArray
+Intersection!
 ∩(::LazySet, ::LazySet...)
 dim(::IntersectionArray)
 σ(::AbstractVector, ::IntersectionArray)
