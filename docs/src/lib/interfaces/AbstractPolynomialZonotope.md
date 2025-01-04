@@ -46,6 +46,8 @@ Undocumented implementations:
 * [`center`](@ref center(::LazySet, ::Int))
 * [`dim`](@ref dim(::LazySet))
 * [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
+* [`isempty`](@ref isempty(::LazySet))
+* [`isuniversal`](@ref isuniversal(::LazySet))
 
 ```@meta
 CurrentModule = LazySets
@@ -68,7 +70,6 @@ Inherited from [`LazySet`](@ref):
 * [`high`](@ref high(::LazySet))
 * [`high`](@ref high(::LazySet, ::Int))
 * [`isbounded`](@ref isbounded(::LazySet))
-* [`isempty`](@ref isempty(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
 * [`low`](@ref low(::LazySet))
