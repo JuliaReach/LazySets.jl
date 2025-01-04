@@ -1,3 +1,8 @@
+"""
+    LazySets
+
+Scalable symbolic-numeric set computations in Julia.
+"""
 module LazySets
 
 using Reexport
