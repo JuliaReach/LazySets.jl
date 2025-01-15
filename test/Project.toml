@@ -32,7 +32,7 @@ WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
 
 [compat]
 Aqua = "0.8.9"
-CDDLib = "0.6 - 0.9"
+CDDLib = "0.6 - 0.10"
 Distributions = "0.19 - 0.25"
 Expokit = "0.2"
 ExponentialUtilities = "1"
