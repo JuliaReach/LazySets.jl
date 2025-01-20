@@ -545,7 +545,7 @@ A `VPolytope`.
 ### Notes
 
 If `prunefunc` is `nothing`, this implementation sets it to
-`(X -> removevredundancy!(X; ztol=_ztol(eltype(P1))))`.
+`(X -> removevredundancy!(X; tol=_ztol(eltype(P1))))`.
 """
 function intersection(P1::Union{VPolygon,VPolytope},
                       P2::Union{VPolygon,VPolytope};
@@ -578,7 +578,7 @@ function intersection(P1::Union{VPolygon,VPolytope},
 
     N = promote_type(eltype(P1), eltype(P2))
     if isnothing(prunefunc)
-        prunefunc = (X -> removevredundancy!(X; ztol=_ztol(N)))
+        prunefunc = (X -> _removevredundancy!(X; N=N))
     end
     prunefunc(Pint)
 

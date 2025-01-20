@@ -5,7 +5,8 @@ using Reexport, Requires
 using ..LazySets: AbstractPolytope, LazySet, AbstractLinearMapAlgorithm,
                   default_polyhedra_backend, vertices_list_1d,
                   _infeasible_constraints_list, _linear_map_hrep,
-                  _minkowski_sum_hrep_preprocess, _normal_Vector
+                  _minkowski_sum_hrep_preprocess, _normal_Vector,
+                  _removevredundancy!
 using ..HalfSpaceModule: HalfSpace
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!

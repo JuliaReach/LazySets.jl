@@ -52,7 +52,7 @@ function vertices_list(P::HPolytope; backend=nothing, prune::Bool=true)
     end
     Q = Polyhedra.polyhedron(P; backend=backend)
     if prune
-        Polyhedra.removevredundancy!(Q; ztol=_ztol(N))
+        _removevredundancy!(Q; N=N)
     end
     return collect(Polyhedra.points(Q))
 end

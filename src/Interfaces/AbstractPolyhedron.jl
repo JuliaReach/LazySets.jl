@@ -77,13 +77,14 @@ function _linear_map_hrep_helper(M::AbstractMatrix, P::LazySet,
     return HPolyhedron(constraints)
 end
 
-# internal functions; defined here due to dependency SymEngine and submodules
+# internal functions; defined here due to optional dependencies and submodules
 function isfeasible end
 function remove_redundant_constraints end
 function remove_redundant_constraints! end
 function _ishalfspace end
 function _ishyperplanar end
 function _parse_linear_expression end
+function _removevredundancy! end
 
 # To account for the compilation order, other functions are defined in the file
 # AbstractPolyhedron_functions.jl
