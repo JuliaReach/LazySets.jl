@@ -38,4 +38,6 @@ function _is_polyhedra_backend(backend::Polyhedra.Library)
 end
 
 eval(load_polyhedra_mesh())
-eval(load_polyhedra_lazyset())
+eval(load_Polyhedra_polyhedron())
+
+include("init_GeometryBasics.jl")

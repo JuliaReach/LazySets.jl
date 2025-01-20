@@ -3,6 +3,8 @@ function __init__()
     @require Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f" include("Initialization/init_Distributions.jl")
     @require Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4" include("Initialization/init_Expokit.jl")
     @require ExponentialUtilities = "d4d017d3-3776-5f7e-afef-a10c40355c18" include("Initialization/init_ExponentialUtilities.jl")
+    # the includes for `GeometryBasics` are loaded when `Polyhedra` is loaded
+    @require GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326" (nothing,)
     @require Ipopt = "b6b21f68-93f8-5de0-b562-5493be1d77c9" (nothing,)
     @require Javis = "78b212ba-a7f9-42d4-b726-60726080707e" include("Initialization/init_Javis.jl")
     @require Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a" include("Initialization/init_Makie.jl")

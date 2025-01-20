@@ -1376,7 +1376,7 @@ function chebyshev_center_radius(P::LazySet;
     return c, r
 end
 
-function load_polyhedra_lazyset()  # function to be loaded by Requires
+function load_Polyhedra_polyhedron()
     return quote
         # see the interface file init_Polyhedra.jl for the imports
 
@@ -1410,7 +1410,11 @@ function load_polyhedra_lazyset()  # function to be loaded by Requires
             A, b = tosimplehrep(P)
             return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
         end
+    end
+end  # quote / load_Polyhedra_polyhedron()
 
+function load_Polyhedra_GeometryBasics_triangulate()
+    return quote
         """
             triangulate(X::LazySet)
 
@@ -1439,8 +1443,8 @@ function load_polyhedra_lazyset()  # function to be loaded by Requires
 
             P = polyhedron(X)
             mes = Mesh(P)
-            coords = Polyhedra.GeometryBasics.coordinates(mes)
-            connec = Polyhedra.GeometryBasics.faces(mes)
+            coords = GeometryBasics.coordinates(mes)
+            connec = GeometryBasics.faces(mes)
 
             ntriangles = length(connec)
             npoints = length(coords)
@@ -1456,7 +1460,7 @@ function load_polyhedra_lazyset()  # function to be loaded by Requires
             return points, connec_tup
         end
     end
-end  # quote / load_polyhedra_lazyset()
+end  # quote / load_Polyhedra_GeometryBasics_triangulate()
 
 """
 # Extended help
