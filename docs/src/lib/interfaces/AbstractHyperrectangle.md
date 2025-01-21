@@ -118,7 +118,6 @@ CurrentModule = LazySets
 ```
 ```@docs
 volume(::AbstractHyperrectangle)
-distance(::AbstractVector, ::AbstractHyperrectangle{N}; ::Real=N(2)) where {N}
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -239,6 +238,7 @@ CurrentModule = LazySets.API
 * [`high`](@ref high(::LazySet, ::Int))
 * [`low`](@ref low(::LazySet))
 * [`low`](@ref low(::LazySet, ::Int))
+* [`distance`](@ref distance(::AbstractVector, ::LazySet; ::Real=2))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))

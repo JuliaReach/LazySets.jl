@@ -67,7 +67,6 @@ CurrentModule = LazySets.HyperplaneModule
 ```
 ```@docs
 rand(::Type{Hyperplane})
-distance(::AbstractVector, ::Hyperplane)
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -134,6 +133,7 @@ Undocumented implementations:
 * [`dim`](@ref dim(::LazySet))
 * [`isempty`](@ref isempty(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`distance`](@ref distance(::AbstractVector, ::LazySet; ::Real=2))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 

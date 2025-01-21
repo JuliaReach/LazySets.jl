@@ -77,7 +77,6 @@ rand(::Type{HalfSpace})
 remove_redundant_constraints(::AbstractVector{<:HalfSpace})
 remove_redundant_constraints!(::AbstractVector{<:HalfSpace})
 tosimplehrep(::AbstractVector{<:HalfSpace})
-distance(::AbstractVector, ::HalfSpace)
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -170,6 +169,7 @@ Undocumented implementations:
 * [`isbounded`](@ref isbounded(::LazySet))
 * [`isempty`](@ref isempty(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`distance`](@ref distance(::AbstractVector, ::LazySet; ::Real=2))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 
 ```@meta
