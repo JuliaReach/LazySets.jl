@@ -40,10 +40,10 @@ end
         @test isnothing(f(X, n))
     end
     v = [1]
-    for f in (permute, project, translate!, translate)
+    for f in (distance, permute, project, translate!, translate)
         @test isnothing(f(X, v))
     end
-    for f in (is_interior_point, ∈, support_function, ρ, support_vector, σ)
+    for f in (distance, is_interior_point, ∈, support_function, ρ, support_vector, σ)
         @test isnothing(f(v, X))
     end
     M = hcat(1)

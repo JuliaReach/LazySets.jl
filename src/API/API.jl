@@ -12,6 +12,7 @@ import Random: rand
 import LinearAlgebra: norm
 import SparseArrays: permute
 import ReachabilityBase.Arrays: distance, rectify
+import ReachabilityBase.Commutative: @commutative
 
 export
 # unary set operations
@@ -21,11 +22,11 @@ export
       low, norm, radius, rectify, reflect, surface, vertices_list, vertices,
       volume,
 # mixed set operations (typically with vectors or matrices)
-      affine_map, exponential_map, is_interior_point, linear_map, permute,
-      project, sample, scale!, scale, support_function, ρ, support_vector, σ,
-      translate!, translate,
+      affine_map, distance, exponential_map, is_interior_point, linear_map,
+      permute, project, sample, scale!, scale, support_function, ρ,
+      support_vector, σ, translate!, translate,
 # binary set operations
-      cartesian_product, difference, distance, exact_sum, intersection,
+      cartesian_product, difference, exact_sum, intersection,
       is_intersection_empty, isequivalent, ⊂, linear_combination,
       minkowski_difference, pontryagin_difference, minkowski_sum
 
@@ -64,6 +65,7 @@ include("Unary/vertices.jl")
 include("Unary/volume.jl")
 
 include("Mixed/affine_map.jl")
+include("Mixed/distance.jl")
 include("Mixed/exponential_map.jl")
 include("Mixed/in.jl")
 include("Mixed/is_interior_point.jl")
