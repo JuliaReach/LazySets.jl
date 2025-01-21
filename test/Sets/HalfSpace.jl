@@ -215,12 +215,15 @@ for N in [Float64, Float32]
     # point outside
     x = N[2, 0]
     @test distance(x, H) == distance(H, x) ≈ distance(x, y; p=N(2))
+    @test distance(x, H; p=N(1)) == distance(H, x; p=N(1)) ≈ distance(x, y; p=N(1))
     # point at the border
     x = N[1, 1]
     @test distance(x, H) == distance(H, x) ≈ distance(x, y; p=N(2))
+    @test distance(x, H; p=N(1)) == distance(H, x; p=N(1)) ≈ distance(x, y; p=N(1))
     # point strictly inside
     x = N[0, 2]
     @test distance(x, H) == distance(H, x) == N(0)
+    @test distance(x, H; p=N(1)) == distance(H, x; p=N(1)) == N(0)
 end
 
 for N in [Float64]
