@@ -34,7 +34,7 @@ end
 """
     plot3d(S::LazySet; [backend]=default_polyhedra_backend(S), [alpha]=1.0,
            [color]=:blue, [colormap]=:viridis, [colorrange]=nothing,
-           [interpolate]=false, [linewidth]=1, [overdraw]=false, [shading]=true,
+           [interpolate]=false, [overdraw]=false, [shading]=true,
            [transparency]=true, [visible]=true)
 
 Plot a three-dimensional set using `Makie`.
@@ -58,8 +58,6 @@ Plot a three-dimensional set using `Makie`.
                     `colormap`
 - `interpolate`  -- (optional, default: `false`) a boolean for heatmap and
                     images; toggles color interpolation between nearby pixels
-- `linewidth`    -- (optional, default: `1`) a number that specifies the width
-                    of the line in `line` and `linesegments` plots
 - `overdraw`     -- (optional, default: `false`)
 - `shading`      -- (optional, default: `true`) a boolean that toggles shading
                     (for meshes)
@@ -113,7 +111,7 @@ julia> plot3d!(10 * rand(Hyperrectangle, dim=3), color=:red)
 """
 function plot3d(S::LazySet; backend=default_polyhedra_backend(S), alpha=1.0,
                 color=:blue, colormap=:viridis, colorrange=nothing,
-                interpolate=false, linewidth=1, overdraw=false, shading=true,
+                interpolate=false, overdraw=false, shading=true,
                 transparency=true, visible=true)
     require(@__MODULE__, [:Makie, :Polyhedra]; fun_name="plot3d")
 
@@ -123,13 +121,13 @@ function plot3d(S::LazySet; backend=default_polyhedra_backend(S), alpha=1.0,
     P_poly_mesh = _plot3d_helper(S, backend)
     return mesh(P_poly_mesh; alpha=alpha, color=color, colormap=colormap,
                 colorrange=colorrange, interpolate=interpolate,
-                linewidth=linewidth, transparency=transparency, visible=visible)
+                transparency=transparency, visible=visible)
 end
 
 """
     plot3d!(S::LazySet; backend=default_polyhedra_backend(S), [alpha]=1.0,
            [color]=:blue, [colormap]=:viridis, [colorrange]=nothing,
-           [interpolate]=false, [linewidth]=1, [overdraw]=false, [shading]=true,
+           [interpolate]=false, [overdraw]=false, [shading]=true,
            [transparency]=true, [visible]=true)
 
 Plot a three-dimensional set using Makie.
@@ -146,7 +144,7 @@ See the documentation of `plot3d` for examples.
 """
 function plot3d!(S::LazySet; backend=default_polyhedra_backend(S), alpha=1.0,
                  color=:blue, colormap=:viridis, colorrange=nothing,
-                 interpolate=false, linewidth=1, overdraw=false, shading=true,
+                 interpolate=false, overdraw=false, shading=true,
                  transparency=true, visible=true)
     require(@__MODULE__, [:Makie, :Polyhedra]; fun_name="plot3d!")
 
@@ -156,6 +154,5 @@ function plot3d!(S::LazySet; backend=default_polyhedra_backend(S), alpha=1.0,
     P_poly_mesh = _plot3d_helper(S, backend)
     return mesh!(P_poly_mesh; alpha=alpha, color=color, colormap=colormap,
                  colorrange=colorrange, interpolate=interpolate,
-                 linewidth=linewidth, transparency=transparency,
-                 visible=visible)
+                 transparency=transparency, visible=visible)
 end
