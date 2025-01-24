@@ -37,5 +37,20 @@ function _is_polyhedra_backend(backend::Polyhedra.Library)
     return true
 end
 
+# in v0.8.0, `Polyhedra` renamed the kwarg `ztol` to `tol`
+@static if hasmethod(Polyhedra.detecthlinearity, (Polyhedra.HRepresentation, Any), (:ztol,))
+    function _removevredundancy!(X; N)
+        return removevredundancy!(X; ztol=_ztol(N))
+    end
+else
+    @assert hasmethod(Polyhedra.detecthlinearity, (Polyhedra.HRepresentation, Any), (:tol,))
+
+    function _removevredundancy!(X; N)
+        return removevredundancy!(X; tol=_ztol(N))
+    end
+end
+
 eval(load_polyhedra_mesh())
-eval(load_polyhedra_lazyset())
+eval(load_Polyhedra_polyhedron())
+
+include("init_GeometryBasics.jl")
