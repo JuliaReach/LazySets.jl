@@ -319,7 +319,7 @@ The idea is to solve the univariate optimization problem `ρ(di, X ∩ Hi)` for
 each half-space of the set `P` and then take the minimum.
 This gives an overapproximation of the exact support function.
 
-This algorithm is inspired from [1].
+This algorithm is inspired from [Frehse012](@citet).
 
 ### Notes
 
@@ -327,9 +327,6 @@ This method relies on having available the `constraints_list` of the polyhedron
 `P`.
 
 This method may return a non-empty set even if the original set is empty.
-
-[1] G. Frehse, R. Ray. *Flowpipe-Guard Intersection for Reachability
-Computations with Support Functions*. ADHS 2012.
 """
 function overapproximate(cap::Intersection{N,  # TODO use better mechanism to detect polyhedral set
                                            <:LazySet,
@@ -463,11 +460,7 @@ An overapproximation of the given zonotopic set using a parallelotope.
 
 ### Algorithm
 
-The algorithm is based on Proposition 8 discussed in Section 5 of [1].
-
-[1] Althoff, M., Stursberg, O., & Buss, M. (2010). *Computing reachable sets of
-hybrid systems using a combination of zonotopes and polytopes*. Nonlinear
-analysis: hybrid systems, 4(2), 233-249.
+The algorithm is based on Proposition 8 discussed in [AlthoffSB10; Section 5](@citet).
 """
 function overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope},
                          indices=1:dim(Z))
@@ -513,10 +506,7 @@ otherwise the result is an `HPolyhedron`.
 
 ### Algorithm
 
-This function implements [Algorithm 8.1, 1].
-
-[1] Colas Le Guernic. *Reachability Analysis of Hybrid Systems with Linear
-continuous dynamics* (Doctoral dissertation). 2009.
+This function implements [LeGuernic09; Algorithm 8.1](@citet).
 """
 function overapproximate(X::Intersection{N,<:AbstractZonotope,<:Hyperplane},
                          dirs::AbstractDirections) where {N}
@@ -582,11 +572,7 @@ polynomial zonotope.
 
 ### Algorithm
 
-This method implements Proposition 13 of [1].
-
-[1] N. Kochdumper and M. Althoff. *Sparse Polynomial Zonotopes: A Novel Set
-Representation for Reachability Analysis*. Transactions on Automatic Control
-2021.
+This method implements [KochdumperA21; Proposition 13](@citet).
 """
 function overapproximate(QM::QuadraticMap{N,<:SparsePolynomialZonotope},
                          ::Type{<:SparsePolynomialZonotope}) where {N}

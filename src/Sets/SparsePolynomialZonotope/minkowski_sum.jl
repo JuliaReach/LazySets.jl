@@ -5,10 +5,7 @@
 
 ### Algorithm
 
-See Proposition 3.1.19 in [1].
-
-[1] Kochdumper. *Extensions of polynomial zonotopes and their application to
-    verification of cyber-physical systems.* PhD diss., TU Munich, 2022.
+See [Kochdumper21a; Proposition 3.1.19](@citet).
 """
 function minkowski_sum(P1::SparsePolynomialZonotope,
                        P2::SparsePolynomialZonotope)

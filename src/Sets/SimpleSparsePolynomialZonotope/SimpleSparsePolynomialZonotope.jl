@@ -25,14 +25,8 @@ is the exponent matrix with matrix elements ``E_{k, i}``.
 
 ### Notes
 
-Sparse polynomial zonotopes were introduced in [1]. The *simple* variation
-was defined in [2].
-
-- [1] N. Kochdumper and M. Althoff. *Sparse Polynomial Zonotopes: A Novel Set
-Representation for Reachability Analysis*. Transactions on Automatic Control,
-2021.
-- [2] N. Kochdumper. *Challenge Problem 5: Polynomial Zonotopes in Julia.*
-JuliaReach and JuliaIntervals Days 3, 2021.
+Sparse polynomial zonotopes were introduced in [KochdumperA21](@citet).
+The *simple* variant was defined in [Kochdumper21b].
 """
 struct SimpleSparsePolynomialZonotope{N,VN<:AbstractVector{N},
                                       MN<:AbstractMatrix{N},

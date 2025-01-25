@@ -225,17 +225,11 @@ combination of its vertices, i.e., ``p = ∑_{i} v_i α_i`` for some
 (non-negative) coefficients ``\\{α_i\\}_i`` that add up to 1.
 The algorithm chooses a random convex combination (the ``α_i``).
 To produce this combination, we apply the finite-difference operator on a sorted
-uniform sample over ``[0, 1]``; the method can be found in [1] and [2].
+uniform sample over ``[0, 1]``; the method can be found in [Rubin81](@citet) and
+[this StackExchange post](https://cs.stackexchange.com/a/3229).
 
 If `variant == true`, we start from a random vertex and then repeatedly walk
 toward a random vertex inside the polytope.
-
-### References
-
-[1] *Rubin, Donald B. The Bayesian bootstrap. The annals of statistics (1981):
-130-134.*
-
-[2] [StackExchange post](https://cs.stackexchange.com/a/3229)
 """
 struct RandomWalkSampler <: AbstractSampler
     variant::Bool
@@ -604,8 +598,8 @@ The modified vector `D`.
 
 ### Algorithm
 
-This function implements Muller's method of normalized Gaussians [1] to
-uniformly sample over the ``n``-dimensional sphere ``S^n`` (which is the
+This function implements Muller's method of normalized Gaussians [Muller59](@citet)
+to uniformly sample over the ``n``-dimensional sphere ``S^n`` (which is the
 bounding surface of the ``n``-dimensional unit ball).
 
 Given ``n`` canonical Gaussian random variables ``Z₁, Z₂, …, Z_n``, the
@@ -615,9 +609,6 @@ distribution of the vectors
 \\dfrac{1}{α}\\left(z₁, z₂, …, z_n\\right)^T,
 ```
 where ``α := \\sqrt{z₁² + z₂² + … + z_n²}``, is uniform over ``S^n``.
-
-[1] Muller, Mervin E. *A note on a method for generating points uniformly on
-    n-dimensional spheres.* Communications of the ACM 2.4 (1959): 19-20.
 """
 function _sample_unit_nsphere_muller!(D::Vector{Vector{N}}, n::Int, p::Int;
                                       rng::AbstractRNG=GLOBAL_RNG,

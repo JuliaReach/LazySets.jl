@@ -202,6 +202,8 @@ each direction of the constraints of ``P``.
 
 For witness generation, we use a support vector in the first direction where the
 above check fails.
+
+See [WetzlingerKBA23; Proposition 7](@citet).
 """
 function ⊆(X::LazySet, P::AbstractPolyhedron, witness::Bool=false)
     if !isconvextype(typeof(X))
@@ -210,10 +212,8 @@ function ⊆(X::LazySet, P::AbstractPolyhedron, witness::Bool=false)
     return _issubset_constraints_list(X, P, witness)
 end
 
-# S ⊆ P where P = ⟨Cx ≤ d⟩  iff  y ≤ d where y is the upper corner of box(C*S)
-#
-# see Proposition 7 in Wetzlinger, Kochdumper, Bak, Althoff: *Fully-automated verification
-# of linear systems using inner- and outer-approximations of reachable sets*. 2022.
+# S ⊆ P where P = ⟨Cx ≤ d⟩  iff  y ≤ d where y is the upper corner of box(C*S).
+# See [WetzlingerKBA23; Proposition 7](@citet).
 function _issubset_in_polyhedron_high(S::LazySet, P::LazySet, witness::Bool=false)
     @assert dim(S) == dim(P)
 
@@ -233,8 +233,7 @@ function ⊆(Z::AbstractZonotope, P::AbstractPolyhedron, witness::Bool=false)
     return _issubset_zonotope_in_polyhedron(Z, P, witness)
 end
 
-# implements Proposition 7 in Wetzlinger, Kochdumper, Bak, Althoff: *Fully-automated verification
-# of linear systems using inner- and outer-approximations of reachable sets*. 2022.
+# See [WetzlingerKBA23; Proposition 7](@citet).
 function _issubset_zonotope_in_polyhedron(Z::AbstractZonotope, P::LazySet,
                                           witness::Bool=false)
     @assert dim(Z) == dim(P)
@@ -887,10 +886,7 @@ end
 
 ### Algorithm
 
-The algorithm is based on Lemma 3.1 in [1].
-
-[1] Mitchell, I. M., Budzis, J., & Bolyachevets, A. *Invariant, viability and
-discriminating kernel under-approximation via zonotope scaling*. HSCC 2019.
+The algorithm is based on [MitchellBB19; Lemma 3.1](@citet).
 """
 function ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, witness::Bool=false)
     c = center(Z)

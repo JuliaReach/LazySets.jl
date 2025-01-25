@@ -50,7 +50,7 @@ The modified vector `D`.
 
 ### Algorithm
 
-This function implements Muller's method of normalized Gaussians [1] to
+This function implements Muller's method of normalized Gaussians [Muller59](@citet) to
 uniformly sample from the interior of the unit ball.
 
 Given ``n`` Gaussian random variables ``Z₁, Z₂, …, Z_n`` and a uniformly
@@ -62,9 +62,6 @@ of the vectors
 ```
 where ``α := \\sqrt{z₁² + z₂² + … + z_n²}``, is uniform over the
 ``n``-dimensional unit ball.
-
-[1] Muller, Mervin E. *A note on a method for generating points uniformly on
-    n-dimensional spheres.* Communications of the ACM 2.4 (1959): 19-20.
 """
 function _sample_unit_nball_muller!(D::Vector{<:Vector}, n::Int, p::Int;
                                     rng::AbstractRNG=GLOBAL_RNG,

@@ -21,8 +21,7 @@ for N in [Float64, Float32, Rational{Int}]
     D = minkowski_difference(H1, H2)
     @test D isa EmptySet{N} && dim(D) == 2
 
-    # zonotopes in 2D (taken from Fig. 2 in [1])
-    # [1] M. Althoff: *On computing the Minkowski difference of zonotopes*. 2022
+    # zonotopes in 2D (taken from [Althoff15; Fig. 2 in the 2022 version](@citet))
     Zm = Zonotope(N[1, 1], N[1 0 1; 0 1 1])
 
     if N isa AbstractFloat

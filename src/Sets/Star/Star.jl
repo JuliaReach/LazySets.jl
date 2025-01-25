@@ -33,6 +33,9 @@ We remark that a `Star` is mathematically equivalent to the affine map of the
 polyhedral set `P`, with the transformation matrix and translation vector being
 `V` and `c`, respectively.
 
+Star sets as defined here were introduced in [DuggiralaV16](@citet); see also
+[BakD17](@citet) for a preliminary definition.
+
 ### Examples
 
 This example is drawn from Example 1 in [2]. Consider the two-dimensional plane
@@ -81,23 +84,6 @@ In this case, the generalized star ``S`` above is equivalent to the rectangle
 ```math
     T = \\{(x, y) ∈ ℝ^2 : (2 ≤ x ≤ 4) ∧ (2 ≤ y ≤ 4) \\}
 ```
-
-### References
-
-Star sets as defined here were introduced in [1]; see also [2] for a preliminary
-definition. For applications in reachability analysis of neural networks, see
-[3].
-
-- [1] Duggirala, P. S., and Mahesh V. *Parsimonious, simulation based verification of linear systems.*
-      International Conference on Computer Aided Verification. Springer, Cham, 2016.
-
-- [2] Bak S, Duggirala PS. *Simulation-equivalent reachability of large linear systems with inputs.*
-      In International Conference on Computer Aided Verification
-      2017 Jul 24 (pp. 401-420). Springer, Cham.
-
-- [3] Tran, H. D., Lopez, D. M., Musau, P., Yang, X., Nguyen, L. V., Xiang, W., & Johnson, T. T. (2019, October).
-      *Star-based reachability analysis of deep neural networks.*
-      In International Symposium on Formal Methods (pp. 670-686). Springer, Cham.
 """
 struct Star{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N},PT<:AbstractPolyhedron{N}} <:
        AbstractPolyhedron{N}

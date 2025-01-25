@@ -25,10 +25,7 @@ The extremal vertices can be computed as the solution of the ``n``-dimensional
 linear systems of equations ``D x = v_i`` where for each ``i = 1, …, n``,
 ``v_i = [-c_{n+1}, …, c_i, …, -c_{2n}]``.
 
-We refer to [1, Section 3.2.1] for details.
-
-[1] Tommaso Dreossi, Thao Dang, and Carla Piazza. *Reachability computation for
-polynomial dynamical systems.* Formal Methods in System Design 50.1 (2017): 1-38.
+We refer to [DreossiDP17; Section 3.2.1](@citet) for details.
 """
 function extremal_vertices(P::HParallelotope{N,VN}) where {N,VN}
     D, c = P.directions, P.offset

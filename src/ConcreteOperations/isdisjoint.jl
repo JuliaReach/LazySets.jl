@@ -197,14 +197,11 @@ end
 
 ### Algorithm
 
-The algorithm is taken from [1].
+The algorithm is taken from [GuibasNZ03](@citet).
 
 ``Z1 ∩ Z2 = ∅`` iff ``c_1 - c_2 ∉ Z(0, (g_1, g_2))`` where ``c_i`` and ``g_i``
 are the center and generators of zonotope `Zi` and ``Z(c, g)`` represents the
 zonotope with center ``c`` and generators ``g``.
-
-[1] L. J. Guibas, A. T. Nguyen, L. Zhang: *Zonotopes as bounding volumes*. SODA
-2003.
 """
 function isdisjoint(Z1::AbstractZonotope, Z2::AbstractZonotope,
                     witness::Bool=false; solver=nothing)
@@ -672,9 +669,7 @@ for ST in [:AbstractZonotope, :AbstractSingleton]
     end
 end
 
-# see Proposition 8 in Wetzlinger, Kochdumper, Bak, Althoff: * Fully-automated
-# verification of linear systems using inner- and outer-approximations of
-# reachable sets*. 2022.
+# See [WetzlingerKBA23; Proposition 8](@citet).
 @commutative function isdisjoint(Z::AbstractZonotope, P::AbstractPolyhedron,
                                  witness::Bool=false; solver=nothing)
     n = dim(Z)

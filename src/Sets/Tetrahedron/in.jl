@@ -6,9 +6,7 @@
 ### Algorithm
 
 For each plane of the tetrahedron, we check if the point `x` is on the same side as the remaining vertex.
-We need to check this for each plane [1].
-
-[1] https://stackoverflow.com/questions/25179693/how-to-check-whether-the-point-is-in-the-tetrahedron-or-not
+[We need to check this for each plane](https://stackoverflow.com/questions/25179693/how-to-check-whether-the-point-is-in-the-tetrahedron-or-not).
 """
 function ∈(x::AbstractVector, T::Tetrahedron)
     v = T.vertices

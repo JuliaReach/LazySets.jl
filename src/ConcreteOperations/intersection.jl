@@ -945,11 +945,7 @@ between the given sets is not empty.
 
 ### Algorithm
 
-This function implements [Algorithm 8.2, 1].
-
-[1] *Colas Le Guernic. Reachability Analysis of Hybrid Systems with Linear
-Continuous Dynamics. Computer Science [cs]. Université Joseph-Fourier - Grenoble
-I, 2009. English. fftel-00422569v2f*
+This function implements [LeGuernic09; Algorithm 8.2](@citet).
 """
 function _bound_intersect_2D(Z::Zonotope, L::Line2D)
     c = center(Z)

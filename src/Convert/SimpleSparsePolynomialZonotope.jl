@@ -14,10 +14,7 @@ A simple sparse polynomial zonotope.
 
 ### Algorithm
 
-This method implements Proposition 3 in [1].
-
-[1] Kochdumper, Althoff. *Sparse polynomial zonotopes - a novel set
-representation for reachability analysis*. 2021
+This method implements [KochdumperA21; Proposition 3](@citet).
 """
 function Base.convert(::Type{SimpleSparsePolynomialZonotope}, Z::AbstractZonotope)
     c = center(Z)
@@ -43,10 +40,7 @@ A simple sparse polynomial zonotope.
 
 ### Algorithm
 
-The method implements Proposition 3.1.4 from [1].
-
-[1] Kochdumper, Niklas. *Extensions of polynomial zonotopes and their application to
-verification of cyber-physical systems.* PhD diss., Technische Universität München, 2022.
+The method implements [Kochdumper21a; Proposition 3.1.4](@citet).
 """
 function Base.convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::SparsePolynomialZonotope)
     c = center(SPZ)

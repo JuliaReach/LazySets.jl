@@ -14,13 +14,8 @@ The quadratic map of `P` represented as a simple sparse polynomial zonotope.
 
 ### Algorithm
 
-This method implements Proposition 12 in [1].
-See also Proposition 3.1.30 in [2].
-
-[1] N. Kochdumper, M. Althoff. *Sparse polynomial zonotopes: A novel set
-representation for reachability analysis*. 2021
-[2] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
-verification of cyber-physical systems*. 2021.
+This method implements [KochdumperA21; Proposition 12](@citet).
+See also [Kochdumper21a; Proposition 3.1.30](@citet).
 """
 function quadratic_map(Q::Vector{<:AbstractMatrix}, S::SimpleSparsePolynomialZonotope)
     m = length(Q)
@@ -74,10 +69,7 @@ a simple sparse polynomial zonotope.
 
 ### Algorithm
 
-This method implements Proposition 3.1.30 in [1].
-
-[1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
-verification of cyber-physical systems*. 2021.
+This method implements [Kochdumper21a; Proposition 3.1.30](@citet).
 """
 function quadratic_map(Q::Vector{<:AbstractMatrix}, S1::SimpleSparsePolynomialZonotope,
                        S2::SimpleSparsePolynomialZonotope)
