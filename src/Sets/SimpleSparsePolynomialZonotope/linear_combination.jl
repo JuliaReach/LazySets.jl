@@ -6,10 +6,7 @@
 
 ### Notes
 
-This method implements the algorithm described in Proposition 3.1.25 of [1].
-
-[1] N. Kochdumper. *Extensions of polynomial zonotopes and their application to
-verification of cyber-physical systems*. 2021.
+This method implements the algorithm described in [Kochdumper21a; Proposition 3.1.25](@citet).
 """
 function linear_combination(P1::SimpleSparsePolynomialZonotope,
                             P2::SimpleSparsePolynomialZonotope)

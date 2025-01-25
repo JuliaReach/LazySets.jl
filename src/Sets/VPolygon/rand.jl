@@ -21,11 +21,8 @@ For a negative value we choose a random number in the range
 ### Algorithm
 
 We follow the idea described [here](https://stackoverflow.com/a/47358689) based
-on [1]. There is also a nice video available
+on [Valtr95](@citet). There is also a nice video available
 [here](http://cglab.ca/~sander/misc/ConvexGeneration/convex.html).
-
-[1] Pavel Valtr: *Probability that n random points are in convex position*.
-Discret. Comput. Geom. 1995.
 """
 function rand(::Type{VPolygon};
               N::Type{<:Real}=Float64,

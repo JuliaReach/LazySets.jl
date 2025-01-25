@@ -34,10 +34,7 @@ storing a unique identifier for each dependent factor ``αₖ``.
 
 ### Notes
 
-Sparse polynomial zonotopes were introduced in [1].
-
-- [1] N. Kochdumper and M. Althoff. *Sparse Polynomial Zonotopes: A Novel Set Representation for Reachability Analysis*.
-      Transactions on Automatic Control, 2021.
+Sparse polynomial zonotopes were introduced in [KochdumperA21](@citet).
 """
 struct SparsePolynomialZonotope{N,
                                 VN<:AbstractVector{N},

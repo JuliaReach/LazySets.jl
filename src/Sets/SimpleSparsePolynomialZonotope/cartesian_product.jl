@@ -6,11 +6,7 @@
 
 ### Algorithm
 
-This method implements Proposition 3.1.22 in [1].
-
-[1] Kochdumper, Niklas. *Extensions of polynomial zonotopes and their application
-    to verification of cyber-physical systems.* PhD diss., Technische Universität
-    München, 2022.
+This method implements [Kochdumper21a; Proposition 3.1.22](@citet).
 """
 function cartesian_product(P1::SimpleSparsePolynomialZonotope,
                            P2::SimpleSparsePolynomialZonotope)

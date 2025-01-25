@@ -731,7 +731,7 @@ This computation can be avoided using the `check_nonempty` flag.
 
 ### Algorithm
 
-The algorithm is based on Stiemke's theorem of alternatives, see, e.g., [1].
+The algorithm is based on Stiemke's theorem of alternatives, see, e.g., [Mangasarian94](@citet).
 
 Let the polyhedron ``P`` be given in constraint form ``Ax ≤ b``. We assume that
 the polyhedron is non-empty.
@@ -741,9 +741,6 @@ Proposition 1. If ``\\ker(A)≠\\{0\\}``, then ``P`` is unbounded.
 Proposition 2. Assume that ``ker(A)={0}`` and ``P`` is non-empty.
 Then ``P`` is bounded if and only if the following linear program admits a
 feasible solution: ``\\min∥y∥_1`` subject to ``A^Ty=0`` and ``y≥1``.
-
-[1] Mangasarian, Olvi L. *Nonlinear programming.*
-    Society for Industrial and Applied Mathematics, 1994.
 """
 function _isbounded_stiemke(constraints::AbstractVector{<:HalfSpace{N}};
                             solver=default_lp_solver(N),

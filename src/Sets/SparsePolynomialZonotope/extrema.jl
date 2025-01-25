@@ -8,9 +8,7 @@ function extrema(P::SparsePolynomialZonotope; algorithm::String="zonotope")
     end
 end
 
-# Proposition 1 from [1]
-# [1] Kochdumper et al.: *Open- and closed-loop neural network verification
-#     using polynomial zonotopes*. NFM 2023.
+# See [KochdumperSAB23; Proposition 1](@citet).
 function _extrema_polyzono_zonotope(P::SparsePolynomialZonotope{N}) where {N}
     G = genmat_dep(P)
     E = expmat(P)

@@ -6,15 +6,12 @@
 ### Algorithm
 
 The algorithm is inspired from [here](https://stackoverflow.com/a/565282), which
-again is the special 2D case of a 3D algorithm from [1].
+itself is the special 2D case of a 3D algorithm from [Goldman90](@citet).
 
 We first check if the two line segments are parallel, and if so, if they are
 collinear. In the latter case, we check membership of any of the end points in
 the other line segment. Otherwise the lines are not parallel, so we can solve an
 equation of the intersection point, if it exists.
-
-[1] Ronald Goldman. *Intersection of two lines in three-space*. Graphics Gems
-1990.
 """
 function isdisjoint(L1::LineSegment, L2::LineSegment, witness::Bool=false)
     r = L1.q - L1.p

@@ -6,10 +6,7 @@
 
 ### Notes
 
-This method implements the algorithm described in Proposition 3.1.39 of [1].
-
-[1] Kochdumper, Niklas. *Extensions of polynomial zonotopes and their application to verification of cyber-physical systems.*
-    PhD diss., Technische Universität München, 2022.
+This method implements the algorithm described in [Kochdumper21a; Proposition 3.1.39](@citet).
 """
 function reduce_order(P::SparsePolynomialZonotope, r::Real,
                       method::AbstractReductionMethod=GIR05())
