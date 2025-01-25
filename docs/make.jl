@@ -35,7 +35,7 @@ makedocs(; sitename="LazySets.jl",
                              "Parallel Approximations" => "man/parallel_approximations.md",
                              "Lazy Intersections" => "man/lazy_intersections.md"
                              #
-                            ],
+                             ],
                 "Library" => ["API" => "lib/API.md",
                               "Set Interfaces" => [
                                                    #
@@ -56,7 +56,7 @@ makedocs(; sitename="LazySets.jl",
                                                    "lib/interfaces/AbstractSparsePolynomialZonotope.md",
                                                    "lib/interfaces/AbstractBallp.md"
                                                    #
-                                                  ],
+                                                   ],
                               "Sets" => [
                                          #
                                          "Ball1" => "lib/sets/Ball1.md",
@@ -90,7 +90,7 @@ makedocs(; sitename="LazySets.jl",
                                          "ZeroSet" => "lib/sets/ZeroSet.md",
                                          "Zonotope" => "lib/sets/Zonotope.md"
                                          #
-                                        ],
+                                         ],
                               "Lazy Operations" => [
                                                     #
                                                     "AffineMap" => "lib/lazy_operations/AffineMap.md",
@@ -110,7 +110,7 @@ makedocs(; sitename="LazySets.jl",
                                                     "Translation" => "lib/lazy_operations/Translation.md",
                                                     "UnionSet" => "lib/lazy_operations/UnionSet.md"
                                                     #
-                                                   ],
+                                                    ],
                               "Concrete Binary Operations" => [
                                                                #
                                                                "lib/concrete_binary_operations/overview.md",
@@ -124,7 +124,7 @@ makedocs(; sitename="LazySets.jl",
                                                                "lib/concrete_binary_operations/isdisjoint.md",
                                                                "lib/concrete_binary_operations/issubset.md"
                                                                #
-                                                              ],
+                                                               ],
                               "Conversions between set representations" => "lib/conversion.md",
                               "Approximations" => [
                                                    #
@@ -138,11 +138,11 @@ makedocs(; sitename="LazySets.jl",
                                                    "lib/approximations/decompose.md",
                                                    "lib/approximations/hausdorff_distance.md"
                                                    #
-                                                  ],
+                                                   ],
                               "Utilities" => "lib/utils.md",
                               "Parallel" => "lib/parallel.md"
                               #
-                             ],
+                              ],
                 "About" => "about.md",
                 "Bibliography" => "bibliography.md"
                 #
