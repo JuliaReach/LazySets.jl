@@ -14,7 +14,7 @@ Type that represents a polynomial zonotope.
 
 ### Notes
 
-Polynomial zonotopes were introduced in [1] and have been applied as non-convex
+Polynomial zonotopes were introduced in [Althoff13](@citet) and have been applied as non-convex
 set representation to the reachability problem of nonlinear ODEs.
 
 Mathematically, a polynomial zonotope is defined as the tuple ``(c, E, F, G)``,
@@ -60,10 +60,6 @@ The polynomial zonotope ``(c, E, F, G)`` defines the set:
 ```
 where the number of factors in the final product, ``β_j β_k ⋯ β_m``, corresponds
 to the polynomial order ``η``.
-
-[1] M. Althoff in *Reachability analysis of nonlinear systems using conservative
-    polynomialization and non-convex sets*, Hybrid Systems: Computation and
-    Control, 2013, pp. 173-182.
 """
 struct DensePolynomialZonotope{N,VT,VMT,MT} <: AbstractPolynomialZonotope{N}
     c::VT

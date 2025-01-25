@@ -76,7 +76,7 @@ and `Q`.
 ### Algorithm
 
 This function implements the concrete Minkowski sum by projection and variable
-elimination as detailed in [1]. The idea is that if we write ``P`` and ``Q`` in
+elimination as detailed in [Kvasnica05](@citet). The idea is that if we write ``P`` and ``Q`` in
 *simple H-representation*, that is, ``P = \\{x ∈ ℝ^n : Ax ≤ b \\}``
 and ``Q = \\{x ∈ ℝ^n : Cx ≤ d \\}``, then their Minkowski sum can be
 seen as the projection onto the first ``n``-dimensional coordinates of the
@@ -103,8 +103,6 @@ itself uses `CDDLib` for variable elimination. The available algorithms are:
                                    to it
 
 - `Polyhedra.ProjectGenerators` -- projection by computing the V-representation
-
-[1] Kvasnica, Michal. "Minkowski addition of convex polytopes." (2005): 1-10.
 """
 function minkowski_sum(P::AbstractPolyhedron, Q::AbstractPolyhedron;
                        backend=nothing, algorithm=nothing, prune=true)
@@ -325,9 +323,7 @@ for T in [:LazySet, :AbstractPolyhedron, :AbstractPolytope, :AbstractZonotope,
     end
 end
 
-# See Proposition 3.1.19 in [1].
-# [1] Kochdumper. *Extensions of polynomial zonotopes and their application to
-#     verification of cyber-physical systems.* PhD diss., TU Munich, 2022.
+# See [Kochdumper21a; Proposition 3.1.19](@citet).
 @commutative function minkowski_sum(PZ::SparsePolynomialZonotope, Z::AbstractZonotope)
     c = center(PZ) + center(Z)
     G = genmat_dep(PZ)

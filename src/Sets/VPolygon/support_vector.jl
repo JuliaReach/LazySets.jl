@@ -21,9 +21,7 @@ The brute-force search compares the projection of each vector along the given
 direction and runs in ``O(n)`` where ``n`` is the number of vertices.
 The binary search runs in ``O(log n)`` and we follow
 [this implementation](http://geomalgorithms.com/a14-_extreme_pts.html#polyMax_2D())
-based on an algorithm described in [1].
-
-[1] Joseph O'Rourke, *Computational Geometry in C (2nd Edition)*.
+based on an algorithm described in [ORourke98](@citet).
 """
 function σ(d::AbstractVector, P::VPolygon)
     @assert !isempty(P.vertices) "the polygon has no vertices"

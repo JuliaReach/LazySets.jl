@@ -16,10 +16,7 @@ The base vertex of `P`.
 Intuitively, the base vertex is the point from which we get the relative
 positions of all the other points.
 The base vertex can be computed as the solution of the ``n``-dimensional linear
-system ``D_i x = c_{n+i}`` for ``i = 1, …, n``, see [1, Section 3.2.1].
-
-[1] Dreossi, Tommaso, Thao Dang, and Carla Piazza. *Reachability computation for
-polynomial dynamical systems.* Formal Methods in System Design 50.1 (2017): 1-38.
+system ``D_i x = c_{n+i}`` for ``i = 1, …, n``, see [DreossiDP17; Section 3.2.1](@citet).
 """
 function base_vertex(P::HParallelotope)
     D, c = P.directions, P.offset

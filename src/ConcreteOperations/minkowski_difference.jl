@@ -21,7 +21,7 @@ is bounded.
 
 ### Algorithm
 
-This method implements Theorem 2.3 in [1]:
+This method implements [KolmanovskyG98; Theorem 2.3](@citet):
 
 Suppose ``P`` is a polyhedron
 ```math
@@ -34,11 +34,6 @@ Then the Minkowski difference is
 ```math
 \\{z ∈ ℝ^n: sᵢᵀz ≤ rᵢ - ρ(sᵢ,Q),~i = 1, …, N\\}.
 ```
-
-[1] Ilya Kolmanovsky and Elmer G. Gilbert (1997). *Theory and computation
-of disturbance invariant sets for discrete-time linear systems.*
-[Mathematical Problems in Engineering Volume 4, Issue 4, Pages
-317-367.](http://dx.doi.org/10.1155/S1024123X98000866)
 """
 function minkowski_difference(P::LazySet, Q::LazySet)
     @assert ispolyhedral(P) "this implementation requires that the first argument " *
@@ -100,10 +95,8 @@ An `HPolytope`.
 ### Algorithm
 
 For one-dimensional sets, this method implements a simple algorithm for intervals.
-For two-dimensional sets, this method implements Proposition 6 in [1].
-For higher-dimensional sets, this method implements Theorem 3 in [1].
-
-[1] M. Althoff: *On computing the Minkowski difference of zonotopes*. 2022.
+For two-dimensional sets, this method implements [Althoff15; Proposition 6](@citet).
+For higher-dimensional sets, this method implements [Althoff15; Theorem 3](@citet).
 """
 function minkowski_difference(Z1::AbstractZonotope, Z2::AbstractZonotope)
     n = dim(Z1)
@@ -129,8 +122,7 @@ function _minkowski_difference_1d(Z1::AbstractZonotope, Z2::AbstractZonotope)
     return Zonotope([c], hcat([(c - l) / 2]))
 end
 
-# implements Proposition 6 in [1]
-# [1] M. Althoff: *On computing the Minkowski difference of zonotopes*. 2022.
+# See [Althoff15; Proposition 6](@citet).
 function _minkowski_difference_2d(Zm::AbstractZonotope, Zs::AbstractZonotope)
     N = promote_type(eltype(Zm), eltype(Zs))
     Gm = genmat(Zm)
@@ -169,6 +161,7 @@ function _minkowski_difference_2d(Zm::AbstractZonotope, Zs::AbstractZonotope)
     return Zonotope(c, G)
 end
 
+# See [Althoff15; Theorem 3](@citet).
 function _minkowski_difference_nd(Z1::AbstractZonotope, Z2::AbstractZonotope)
     Gm = genmat(Z1)
     n, p = size(Gm)

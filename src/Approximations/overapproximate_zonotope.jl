@@ -46,7 +46,7 @@ incomparable.
 
 ##### 'mean' method
 
-If `algorithm == "mean"`, we choose the method proposed in [1].
+If `algorithm == "mean"`, we choose the method proposed in [Girard05](@citet).
 The convex hull of two zonotopic sets ``Z₁`` and ``Z₂`` of the same order,
 which we write
 
@@ -65,11 +65,11 @@ If the zonotope order is not the same, this algorithm calls
 
 It should be noted that the output zonotope is not necessarily the minimal
 enclosing zonotope, which is in general expensive to obtain in high dimensions.
-This is further investigated in [2].
+This is further investigated in [GuibasNZ03](@citet).
 
 ##### 'join' method
 
-If `algorithm == "join"`, we choose the method proposed in [3, Definition 1].
+If `algorithm == "join"`, we choose the method proposed in [GhorbalGP09; Definition 1](@citet).
 The convex hull ``X`` of two zonotopic sets ``Z₁`` and ``Z₂`` is
 overapproximated by a zonotope ``Z₃`` such that the box approximation of ``X``
 is identical with the box approximation of ``Z₃``.
@@ -98,17 +98,6 @@ The following formula defines the sum of all those generators.
 
 where ``c`` is the center of the new zonotope and the ``g``s are the generators
 constructed in the first phase.
-
-##### References
-
-[1] *Reachability of Uncertain Linear Systems Using Zonotopes*. A. Girard.
-    HSCC 2005.
-
-[2] *Zonotopes as bounding volumes*. L. J. Guibas, A. T. Nguyen, L. Zhang.
-    SODA 2003.
-
-[3] *The zonotope abstract domain Taylor1+*. K. Ghorbal, E. Goubault, S. Putot.
-    CAV 2009.
 """
 function overapproximate(X::ConvexHull{N,<:AbstractZonotope,<:AbstractZonotope},
                          ::Type{<:Zonotope}; algorithm="mean") where {N}
@@ -327,11 +316,7 @@ A zonotope.
 
 ### Algorithm
 
-This method implements Proposition 1 in [1].
-
-[1] M. Althoff in *Reachability analysis of nonlinear systems using conservative
-    polynomialization and non-convex sets*, Hybrid Systems: Computation and
-    Control, 2013, pp. 173-182.
+This method implements [Althoff13; Proposition 1](@citet).
 """
 function overapproximate(P::DensePolynomialZonotope, ::Type{<:Zonotope})
     η = polynomial_order(P)
@@ -697,7 +682,7 @@ function load_intervalmatrices_overapproximation()
 
         ### Algorithm
 
-        This implementation uses the method proposed in [1].
+        This implementation uses the method proposed in [AlthoffSB07](@citet).
 
         Given an interval matrix ``M = \\tilde{M} + ⟨-\\hat{M},\\hat{M}⟩`` (split into a
         conventional matrix and a symmetric interval matrix) and a zonotope
@@ -709,9 +694,6 @@ function load_intervalmatrices_overapproximation()
             v_j = \\begin{cases} 0 & i ≠ j \\\\
                   \\hat{M}_j (|c| + ∑_{k=1}^m |g_k|) & i = j. \\end{cases}
         ```
-
-        [1] Althoff, Stursberg, Buss. *Reachability analysis of linear systems with
-        uncertain parameters and inputs*. CDC 2007.
         """
         function overapproximate(lm::LinearMap{N,<:AbstractZonotope,NM,
                                                <:AbstractIntervalMatrix{NM}},
@@ -826,8 +808,8 @@ We preprocess the directions in that respect.
 ### Algorithm
 
 We solve a linear program parametric in the vertices ``v_j`` of `X` and the
-directions ``d_k`` in `dir` presented in Section 4.2 in [1], adapting the
-notation to the one used in this library.
+directions ``d_k`` in `dir` presented in Section 4.2 in [GuibasNZ03](@citet),
+adapting the notation to the one used in this library.
 
 ```math
     \\min ∑_{k=1}^l α_k \\
@@ -840,10 +822,7 @@ notation to the one used in this library.
 The resulting zonotope has center `c` and generators `α_k · d_k`.
 
 Note that the first type of side constraints is vector-based and that the
-nonnegativity constraints (last type) are not stated explicitly in [1].
-
-[1] *Zonotopes as bounding volumes*. L. J. Guibas, A. T. Nguyen, L. Zhang.
-    SODA 2003.
+nonnegativity constraints (last type) are not stated explicitly in [GuibasNZ03](@cite).
 """
 function _overapproximate_zonotope_vrep(X::LazySet{N},
                                         dir::AbstractDirections;
@@ -949,10 +928,7 @@ zonotopes, and finally converts the Cartesian product of the sets to a zonotope.
 
 ### Algorithm
 
-The implementation is based on Section 8.2.4 in [1].
-
-[1] Le Guernic, C. *Reachability analysis of hybrid systems with linear
-continuous dynamics* (Doctoral dissertation). 2009.
+The implementation is based on [LeGuernic09; Section 8.2.4](@citet).
 """
 function _overapproximate_zonotope_cpa(X::LazySet, dir::AbstractDirections)
     n = dim(X)
@@ -1005,10 +981,7 @@ A zonotope overapproximation of the set obtained by rectifying `Z`.
 
 ### Algorithm
 
-This method implements [Theorem 3.1, 1].
-
-[1] Singh, G., Gehr, T., Mirman, M., Püschel, M., & Vechev, M. *Fast and
-effective robustness certification*. NeurIPS 2018.
+This method implements [SinghGMPV18; Theorem 3.1](@citet).
 """
 function overapproximate(r::Rectification{N,<:AbstractZonotope},
                          ::Type{<:Zonotope}) where {N}
@@ -1123,10 +1096,7 @@ Mathematically, a quadratic map of a zonotope with matrices ``Q`` is defined as:
 
 ### Algorithm
 
-This method implements [Lemma 1, 1].
-
-[1] Matthias Althoff and Bruce H. Krogh. *Avoiding geometric intersection
-operations in reachability analysis of hybrid systems*. HSCC 2012.
+This method implements [AlthoffK12; Lemma 1](@citet).
 """
 function overapproximate(QM::QuadraticMap{N,<:AbstractZonotope},
                          ::Type{<:Zonotope}) where {N}
@@ -1179,11 +1149,7 @@ A zonotope overapproximating the intersection.
 
 ### Algorithm
 
-This method implements Algorithm 3 in [1].
-
-[1] Moussa Maïga, Nacim Ramdani, Louise Travé-Massuyès, Christophe Combastel:
-*A CSP versus a zonotope-based method for solving guard set intersection in
-nonlinear hybrid reachability*. Mathematics in Computer Science (8) 2014.
+This method implements [MaigaRTC14; Algorithm 3](@citet).
 """
 function overapproximate(X::Intersection{N,<:AbstractZonotope,<:Hyperplane},
                          ::Type{<:Zonotope}) where {N}

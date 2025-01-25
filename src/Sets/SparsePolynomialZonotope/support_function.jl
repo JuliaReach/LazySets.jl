@@ -18,10 +18,7 @@ An overapproximation of the support function in the given direction.
 
 ### Algorithm
 
-This method implements Proposition 3.1.16 in [1].
-
-[1] Kochdumper, Niklas. *Extensions of polynomial zonotopes and their application to verification of cyber-physical systems.*
-    PhD diss., Technische Universität München, 2022.
+This method implements [Kochdumper21a; Proposition 3.1.16](@citet).
 """
 function ρ(d::AbstractVector, P::SparsePolynomialZonotope;
            enclosure_method=nothing)

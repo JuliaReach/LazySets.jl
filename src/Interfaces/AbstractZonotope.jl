@@ -540,16 +540,13 @@ If this assumption is not given, the implementation tries to work around.
 
 ### Algorithm
 
-We follow the algorithm presented in [1]. Three cases are not covered by that
+We follow the algorithm presented in [AlthoffSB10](@citet). Three cases are not covered by that
 algorithm, so we handle them separately. The first case is zonotopes in one
 dimension. The second case is that there are fewer generators than dimensions,
 ``p < n``, or the generator matrix is not full rank, in which case we fall back
 to the (slower) computation based on the vertex representation. The third case
 is that the zonotope is flat in some dimensions, in which case we project the
 zonotope to the non-flat dimensions and extend the result later.
-
-[1] Althoff, Stursberg, Buss. *Computing Reachable Sets of Hybrid Systems Using
-a Combination of Zonotopes and Polytopes*. 2009.
 """
 function constraints_list(Z::AbstractZonotope{<:AbstractFloat})
     return _constraints_list_zonotope(Z)
@@ -661,8 +658,8 @@ their union is `Z` and their intersection is possibly non-empty.
 
 ### Algorithm
 
-This function implements [Prop. 3, 1], which we state next. The zonotopic set
-``Z = ⟨c, g^{(1, …, p)}⟩`` is split into:
+This function implements [AlthoffSB08; Prop. 3](@citet), which we state next.
+The zonotopic set ``Z = ⟨c, g^{(1, …, p)}⟩`` is split into:
 
 ```math
 Z₁ = ⟨c - \\frac{1}{2}g^{(j)}, (g^{(1, …,j-1)}, \\frac{1}{2}g^{(j)}, g^{(j+1, …, p)})⟩ \\\\
@@ -673,9 +670,6 @@ such that ``Z₁ ∪ Z₂ = Z`` and ``Z₁ ∩ Z₂ = Z^*``, where
 ```math
 Z^* = ⟨c, (g^{(1,…,j-1)}, g^{(j+1,…, p)})⟩.
 ```
-
-[1] Althoff, M., Stursberg, O., & Buss, M. *Reachability analysis of nonlinear
-systems with uncertain parameters using conservative linearization*. CDC 2008.
 """
 function split(Z::AbstractZonotope, j::Int)
     return _split(convert(Zonotope, Z), j)
@@ -796,30 +790,21 @@ abstract type AbstractReductionMethod end
 """
     GIR05 <: AbstractReductionMethod
 
-Zonotope order-reduction method from [1].
-
-- [1] A. Girard. *Reachability of Uncertain Linear Systems Using Zonotopes*.
-HSCC 2005.
+Zonotope order-reduction method from [Girard05](@citet).
 """
 struct GIR05 <: AbstractReductionMethod end
 
 """
     COMB03 <: AbstractReductionMethod
 
-Zonotope order-reduction method from [1].
-
-- [1] C. Combastel. *A state bounding observer based on zonotopes*. ECC 2003.
+Zonotope order-reduction method from [Combastel03](@citet).
 """
 struct COMB03 <: AbstractReductionMethod end
 
 """
     ASB10 <: AbstractReductionMethod
 
-Zonotope order-reduction method from [1].
-
-- [1] Althoff, M., Stursberg, O., & Buss, M. *Computing reachable sets of hybrid
-systems using a combination of zonotopes and polytopes*. Nonlinear analysis:
-hybrid systems 2010.
+Zonotope order-reduction method from [AlthoffSB10](@citet).
 """
 struct ASB10 <: AbstractReductionMethod end
 
@@ -855,16 +840,8 @@ julia> subtypes(AbstractReductionMethod)
 See the documentation of each algorithm for references. These methods split the
 given zonotopic set `Z` into two zonotopes, `K` and `L`, where `K` contains the
 most "representative" generators and `L` contains the generators that are
-reduced, `Lred`, using a box overapproximation. We follow the notation from [1].
-See also [2].
-
-- [1] Yang, X., & Scott, J. K. *A comparison of zonotope order reduction
-techniques*. Automatica 2018.
-- [2] Kopetzki, A. K., Schürmann, B., & Althoff, M. *Methods for order reduction
-of zonotopes*. CDC 2017.
-- [3] Althoff, M., Stursberg, O., & Buss, M. *Computing reachable sets of hybrid
-systems using a combination of zonotopes and polytopes*. Nonlinear analysis:
-hybrid systems 2010.
+reduced, `Lred`, using a box overapproximation. We follow the notation from
+[YangS18](@citet). See also [KopetzkiSA17](@citet).
 """
 function reduce_order(Z::AbstractZonotope, r::Real,
                       method::AbstractReductionMethod=GIR05())

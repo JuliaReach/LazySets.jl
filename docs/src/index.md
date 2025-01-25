@@ -57,8 +57,7 @@ where ``CH`` is the convex hull operator, ``⊕`` denotes Minkowski sum, ``\math
 is a ball in the infinity norm centered at zero and radius ``1.2``, and ``B`` is a
 linear map of the appropriate dimensions.
 This equation typically arises in the study of discrete approximation models for
-reachability of continuous systems, see for example
-[SpaceEx: Scalable verification of hybrid systems](https://github.com/JuliaReach/Reachability.jl/wiki/References#frehse2011spaceex).
+reachability of continuous systems, see for example [FrehseGDCRLRGDM11](@citet).
 
 For concreteness, we take ``A`` to be a random matrix with probability ``1\%`` of
 any entry being nonzero.
@@ -135,9 +134,8 @@ We can visualize the result using `plot`, as shown below (left-most plot).
 In the second and third plots, we have used a refined method that allows to
 specify a prescribed accuracy for the projection (in terms of the
 [Hausdorff distance](https://en.wikipedia.org/wiki/Hausdorff_distance)).
-For the theoretical background, see
-[this reference](https://github.com/JuliaReach/Reachability.jl/wiki/References#polyhedral-approximations).
 It can be passed as a second argument to `overapproximate`.
+For the theoretical background, see the section on [Polyhedral Approximations](@ref).
 
 |Error tol.|time (s)|memory (MB)|
 |------|------|------|

@@ -14,10 +14,7 @@ A sparse polynomial zonotope.
 
 ### Algorithm
 
-The method implements Proposition 3.1.9 from [1].
-
-[1] Kochdumper, Niklas. *Extensions of polynomial zonotopes and their application to
-verification of cyber-physical systems.* PhD diss., Technische Universität München, 2022.
+The method implements [Kochdumper21a; Proposition 3.1.19](@citet).
 """
 function convert(::Type{SparsePolynomialZonotope}, Z::AbstractZonotope{N}) where {N}
     c = center(Z)

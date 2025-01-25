@@ -383,13 +383,7 @@ The algorithms are based on solving the associated optimization problem
 where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
 ``D_h = \\{ λ : λ ∈ ℝ \\}`` if ``H`` is a hyperplane.
 
-For additional information we refer to:
-
-[1] G. Frehse, R. Ray. *Flowpipe-Guard Intersection for Reachability
-    Computations with Support Functions.*
-[2] C. Le Guernic. *Reachability Analysis of Hybrid Systems with Linear
-    Continuous Dynamics*, PhD thesis
-[3] T. Rockafellar, R. Wets. *Variational Analysis*.
+For additional information we refer to [Frehse012, LeGuernic09, RockafellarW98](@citet)
 """
 function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
            algorithm::String="line_search",
@@ -430,10 +424,7 @@ The idea is to solve the univariate optimization problem `ρ(di, X ∩ Hi)` for
 each half-space in the polyhedron and then take the minimum. This gives an
 overapproximation of the exact support value.
 
-This algorithm is inspired from [1].
-
-[1] G. Frehse, R. Ray. *Flowpipe-Guard Intersection for Reachability
-    Computations with Support Functions*.
+This algorithm is inspired from [Frehse012](@citet).
 
 ### Notes
 
@@ -897,12 +888,12 @@ The evaluation of the support function of ``X ∩ H`` along direction ``ℓ``.
 
 This projection method is based on Prop. 8.2, [1, page 103].
 
-In the original algorithm, Section 8.2 of [1], the linear map is performed
+In the original algorithm, [LeGuernic09; Section 8.2](@citet), the linear map is performed
 concretely and the intersection is performed lazily (these are the default
 options in this algorithm, but here the four combinations are available).
 If the set ``X`` is a zonotope, its concrete projection is again a zonotope
 (sometimes called "zonogon"). The intersection between this zonogon and the line
-can be taken efficiently in a lazy way (see Section 8.2.2 of [1]),
+can be taken efficiently in a lazy way (see [LeGuernic09; Section 8.2.2](@cite)),
 if one uses dispatch on `ρ(y_dir, Sℓ⋂Lγ; kwargs...)` given that `Sℓ` is itself
 a zonotope.
 
@@ -914,9 +905,6 @@ again for this second calculation. The option `algorithm_2d_intersection` is
 used for that: if not given, the default support-function algorithm is used
 (e.g., `"line_search"`). You can still pass additional arguments to the
 `"line_search"` backend through the `kwargs` arguments.
-
-[1] C. Le Guernic. *Reachability Analysis of Hybrid Systems with Linear
-Continuous Dynamics*, PhD thesis.
 """
 function _projection(ℓ, X::LazySet, H::Union{Hyperplane,Line2D};
                      lazy_linear_map=false,

@@ -75,12 +75,9 @@ Due to numerical issues, the result may be slightly outside the set.
 
 ### Algorithm
 
-The algorithm is taken from [1, Theorem 17] and solves a convex program (in fact
+The algorithm is taken from [Behroozi19; Theorem 17](@citet) and solves a convex program (in fact
 a linear program with nonlinear objective). (The objective is modified to an
 equivalent version due to solver issues.)
-
-[1] Mehdi Behroozi - *Largest inscribed rectangles in geometric convex sets.*
-arXiv:1905.13246.
 """
 function underapproximate(X::LazySet{N}, ::Type{<:Hyperrectangle};
                           solver=nothing) where {N}

@@ -36,21 +36,8 @@ default constructor thus checks these conditions, which can be deactivated by
 passing the argument `check_consistency=false`.
 
 For details as well as applications of parallelotopes in reachability analysis
-we refer to [1] and [2]. For conversions between set representations we refer to
-[3].
-
-### References
-
-[1] Tommaso Dreossi, Thao Dang, and Carla Piazza. *Reachability computation for
-polynomial dynamical systems.* Formal Methods in System Design 50.1 (2017): 1-38.
-
-[2] Tommaso Dreossi, Thao Dang, and Carla Piazza. *Parallelotope bundles for
-polynomial reachability.* Proceedings of the 19th International Conference on
-Hybrid Systems: Computation and Control. ACM, 2016.
-
-[3] Matthias Althoff, Olaf Stursberg, and Martin Buss. *Computing reachable sets
-of hybrid systems using a combination of zonotopes and polytopes.* Nonlinear
-analysis: hybrid systems 4.2 (2010): 233-249.
+we refer to [DreossiDP17](@citet) and [DreossiDP16](@citet). For conversions
+between set representations we refer to [AlthoffSB10](@citet).
 """
 struct HParallelotope{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N}} <: AbstractZonotope{N}
     directions::MN
