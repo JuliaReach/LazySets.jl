@@ -198,7 +198,7 @@ end
 
 function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N}
     # Algorithm: the function takes three points and uses the formula from here:
-    # https://stackoverflow.com/questions/2122305/convex-hull-of-4-points/2122620#2122620
+    # https://stackoverflow.com/a/2122620
     # to decide if the points are ordered in counter-clockwise order. The result
     # is saved in the 'turn' flag and returned in ccw fashion acting according
     # to 'turn'. For the cases where the points are collinear, we pass the
