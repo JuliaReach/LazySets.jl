@@ -143,8 +143,8 @@ makedocs(; sitename="LazySets.jl",
                               "Parallel" => "lib/parallel.md"
                               #
                               ],
-                "About" => "about.md",
-                "Bibliography" => "bibliography.md"
+                "Bibliography" => "bibliography.md",
+                "About" => "about.md"
                 #
                 ])
 

@@ -603,6 +603,63 @@ function overapproximate(QM::QuadraticMap{N,<:SparsePolynomialZonotope},
     return SparsePolynomialZonotope(cz, Ḡ[:, H], Gz, Ē[1:p, H], indexvector(PZ))
 end
 
+"""
+    overapproximate(P::VPolygon, ::Type{<:LinearMap{N,<:Hyperrectangle}}) where {N}
+
+Overapproximate polygon with minimal-area rotated hyperrectangle.
+
+### Input
+
+- `P`               -- polygon
+- `LinearMap{N,<:Hyperrectangle}` -- target type (a linear map of a hyperrectangle)
+
+### Output 
+
+A LinearMap of a Hyperrectangle that represents the minimal area rotated bounding rectangle
+of the polygon P.
+
+### Algorithm
+
+This method uses an approach described in [Finding Minimum Area Rectangle for Given Points](https://gis.stackexchange.com/questions/22895/finding-minimum-area-rectangle-for-given-points/22934)
+
+"""
+
+function overapproximate(P::VPolygon, ::Type{<:LinearMap{N,<:Hyperrectangle}}) where {N}
+    min_area = N(Inf)
+    vert_P = P.vertices
+    n = length(vert_P)
+
+    center = Vector{N}(undef, 2)
+    radius = Vector{N}(undef, 2)
+    R = Matrix{N}(undef, 2, 2) 
+
+    @inbounds for i in eachindex(vert_P)
+        a = vert_P[i]
+        next_idx = i % n + 1
+        b = vert_P[next_idx]
+        e = b - a
+        v′ = normalize(e)
+        w′ = [-v′[2], v′[1]]
+
+        min_x, max_x = extrema(dot(vertex, v′) for vertex in vert_P)
+        min_y, max_y = extrema(dot(vertex, w′) for vertex in vert_P)
+
+        current_area = (max_x - min_x) * (max_y - min_y)
+
+        if current_area < min_area
+            min_area = current_area
+            center .= ((max_x + min_x) / 2, (max_y + min_y) / 2)
+            radius .= ((max_x - min_x) / 2, (max_y - min_y) / 2)
+            R[:, 1] = v′
+            R[:, 2] = w′
+        end
+    end
+
+    min_rectangle = Hyperrectangle(center, radius)
+
+    return LinearMap(R, min_rectangle)
+end
+
 # function to be loaded by Requires
 function load_paving_overapproximation()
     return quote

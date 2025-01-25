@@ -241,8 +241,7 @@ julia> Inf * 0.0
 NaN
 ```
 
-See the discussion
-[here](https://math.stackexchange.com/questions/28940/why-is-infty-cdot-0-not-clearly-equal-to-0).
+See the discussion [here](https://math.stackexchange.com/q/28940).
 """
 function ρ(d::AbstractVector, rm::ResetMap)
     return dot_zero(d, σ(d, rm))
