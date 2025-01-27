@@ -137,6 +137,16 @@ for N in [Float64, Rational{Int}, Float32]
     @test overapproximate(Rectification(Z), Zonotope) == convert(Zonotope, Singleton(N[0, 0]))
     Z = Zonotope(N[-2, 2], N[1 1; 1 0])
     @test overapproximate(Rectification(Z), Zonotope) == Zonotope(N[0, 2], hcat(N[0, 1]))
+
+    # overapproximate polygon with minimal-area rotated hyperrectangle
+    P = VPolygon([N[1, 0], N[0, 1], N[-1, 0], N[0, -1]])
+    R = overapproximate(P, LinearMap{N, Hyperrectangle{N}})
+    @test set(R).center == N[0, 0]
+    @test set(R).radius == N[1 / √2, 1 / √2] 
+    @test R.M == N[-1/sqrt(2) -1/sqrt(2); 1/sqrt(2) -1/sqrt(2)] 
+    if N <: AbstractFloat
+        @test isequivalent(P, R)
+    end
 end
 
 # tests that do not work with Rational{Int}
