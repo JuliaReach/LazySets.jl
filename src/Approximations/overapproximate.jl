@@ -635,7 +635,7 @@ function overapproximate(P::VPolygon, ::Type{<:LinearMap{N,<:Hyperrectangle}}) w
 
     center = Vector{N}(undef, 2)
     radius = Vector{N}(undef, 2)
-    R = Matrix{N}(undef, 2, 2) 
+    R = Matrix{N}(undef, 2, 2)
 
     # iterate over all polygon edges
     @inbounds for i in eachindex(vert_P)

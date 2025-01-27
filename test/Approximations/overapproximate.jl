@@ -140,10 +140,10 @@ for N in [Float64, Rational{Int}, Float32]
 
     # overapproximate polygon with minimal-area rotated hyperrectangle
     P = VPolygon([N[1, 0], N[0, 1], N[-1, 0], N[0, -1]])
-    R = overapproximate(P, LinearMap{N, Hyperrectangle{N}})
+    R = overapproximate(P, LinearMap{N,Hyperrectangle{N}})
     @test set(R).center == N[0, 0]
-    @test set(R).radius == N[1 / √2, 1 / √2] 
-    @test R.M == N[-1/sqrt(2) -1/sqrt(2); 1/sqrt(2) -1/sqrt(2)] 
+    @test set(R).radius == N[1 / √2, 1 / √2]
+    @test R.M == N[-1/sqrt(2) -1/sqrt(2); 1/sqrt(2) -1/sqrt(2)]
     if N <: AbstractFloat
         @test isequivalent(P, R)
     end
