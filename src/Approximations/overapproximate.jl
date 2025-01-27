@@ -606,43 +606,49 @@ end
 """
     overapproximate(P::VPolygon, ::Type{<:LinearMap{N,<:Hyperrectangle}}) where {N}
 
-Overapproximate polygon with minimal-area rotated hyperrectangle.
+Overapproximate a convex polygon with a minimal-area rotated rectangle.
 
 ### Input
 
-- `P`               -- polygon
-- `LinearMap{N,<:Hyperrectangle}` -- target type (a linear map of a hyperrectangle)
+- `P` -- convex polygon
+- `LinearMap{N,<:Hyperrectangle}` -- target type
 
-### Output 
+### Output
 
-A LinearMap of a Hyperrectangle that represents the minimal area rotated bounding rectangle
-of the polygon P.
+A `LinearMap` of a `Hyperrectangle`.
 
 ### Algorithm
 
-This method uses an approach described in [Finding Minimum Area Rectangle for Given Points](https://gis.stackexchange.com/questions/22895/finding-minimum-area-rectangle-for-given-points/22934)
+This method follows an approach described in
+[this post](https://gis.stackexchange.com/a/22934), which itself is based on
+[this post](https://gis.stackexchange.com/a/22904).
 
+Generally, the idea is that the rotated rectangle must share at least one edge
+with the polygon. Thus, it suffices to try out finitely many rectangles. Some
+tricks from linear algebra allow to construct the corresponding rotations and
+rectangles elegantly.
 """
-
 function overapproximate(P::VPolygon, ::Type{<:LinearMap{N,<:Hyperrectangle}}) where {N}
     min_area = N(Inf)
     vert_P = P.vertices
-    n = length(vert_P)
+    m = length(vert_P)
 
     center = Vector{N}(undef, 2)
     radius = Vector{N}(undef, 2)
     R = Matrix{N}(undef, 2, 2) 
 
+    # iterate over all polygon edges
     @inbounds for i in eachindex(vert_P)
+        # edge (v_i, v_{i+1})
         a = vert_P[i]
-        next_idx = i % n + 1
+        next_idx = i % m + 1
         b = vert_P[next_idx]
         e = b - a
-        v′ = normalize(e)
-        w′ = [-v′[2], v′[1]]
+        v = normalize(e)
+        w = [-v[2], v[1]]
 
-        min_x, max_x = extrema(dot(vertex, v′) for vertex in vert_P)
-        min_y, max_y = extrema(dot(vertex, w′) for vertex in vert_P)
+        min_x, max_x = extrema(dot(vertex, v) for vertex in vert_P)
+        min_y, max_y = extrema(dot(vertex, w) for vertex in vert_P)
 
         current_area = (max_x - min_x) * (max_y - min_y)
 
@@ -650,8 +656,8 @@ function overapproximate(P::VPolygon, ::Type{<:LinearMap{N,<:Hyperrectangle}}) w
             min_area = current_area
             center .= ((max_x + min_x) / 2, (max_y + min_y) / 2)
             radius .= ((max_x - min_x) / 2, (max_y - min_y) / 2)
-            R[:, 1] = v′
-            R[:, 2] = w′
+            R[:, 1] = v
+            R[:, 2] = w
         end
     end
 
