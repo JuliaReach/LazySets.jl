@@ -84,6 +84,7 @@ translate!(::LazySet, ::AbstractVector)
 
 ```@docs
 cartesian_product(::LazySet, ::LazySet)
+convex_hull(::LazySet, ::LazySet)
 difference(::LazySet, ::LazySet)
 distance(::LazySet, ::LazySet)
 exact_sum(::LazySet, ::LazySet)
