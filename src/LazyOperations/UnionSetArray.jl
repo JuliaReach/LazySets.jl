@@ -18,6 +18,14 @@ struct UnionSetArray{N,S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
 end
 
+"""
+    UnionSet!(X, Y)
+
+Convenience function to compute the lazy union and modify `UnionSetArray`s
+in-place.
+"""
+function UnionSet! end
+
 isoperationtype(::Type{<:UnionSetArray}) = true
 isconvextype(::Type{<:UnionSetArray}) = false
 

@@ -38,6 +38,7 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 CartesianProductArray
+CartesianProduct!
 ×(::LazySet, ::LazySet...)
 *(::LazySet, ::LazySet...)
 dim(::CartesianProductArray)

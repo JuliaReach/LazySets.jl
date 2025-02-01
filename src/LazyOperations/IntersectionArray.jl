@@ -24,6 +24,14 @@ struct IntersectionArray{N,S<:LazySet{N}} <: LazySet{N}
 end
 
 """
+    Intersection!(X, Y)
+
+Convenience function to compute the lazy intersection and modify
+`IntersectionArray`s in-place.
+"""
+function Intersection! end
+
+"""
     ∩(X::LazySet, Xs::LazySet...)
     ∩(Xs::Vector{<:LazySet})
 
