@@ -1569,15 +1569,6 @@ function linear_map(M::AbstractMatrix, P::LazySet; kwargs...)
 end
 
 """
-    linear_map(a::Number, X::LazySet; kwargs...)
-
-Alias for `scale(a, X; kwargs...)`.
-"""
-function linear_map(a::Number, X::LazySet; kwargs...)
-    return scale(a, X; kwargs...)
-end
-
-"""
 # Extended help
 
     scale(α::Real, X::LazySet)
