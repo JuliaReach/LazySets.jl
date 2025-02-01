@@ -91,14 +91,14 @@ for N in [Float64, Rational{Int}, Float32]
 
     if test_suite_polyhedra
         # conversion to and from Polyhedra's HRep data structure
-        cl = constraints_list(HPolyhedron(polyhedron(p)))
+        cl = constraints_list(convert(HPolyhedron, polyhedron(p)))
         @test length(p.constraints) == length(cl)
         # filtering of trivial constraint
         P = Polyhedra.HalfSpace(N[0], N(1)) ∩ Polyhedra.HalfSpace(N[1], N(1))
-        @test HPolyhedron(P).constraints == [HalfSpace(N[1], N(1))]
+        @test convert(HPolyhedron, P).constraints == [HalfSpace(N[1], N(1))]
         # detection of invalid constraints
         P = Polyhedra.HalfSpace(N[0], N(1)) ∩ Polyhedra.HalfSpace(N[0], N(-1))
-        @test_throws AssertionError HPolyhedron(P)
+        @test_throws AssertionError convert(HPolyhedron, P)
 
         # convert hyperrectangle to a HPolyhedron
         H = Hyperrectangle(N[1, 1], N[2, 2])

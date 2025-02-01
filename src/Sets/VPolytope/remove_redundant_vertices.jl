@@ -44,5 +44,5 @@ function remove_redundant_vertices(P::VPolytope; backend=nothing, solver=nothing
     else
         _removevredundancy!(Q; N=N)
     end
-    return VPolytope(Q)
+    return convert(VPolytope, Q)
 end
