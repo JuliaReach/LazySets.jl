@@ -63,10 +63,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test translate(l2, N[0, 1]) == Line(N[0, 2], N[1, 0])
 
     # distance
-    distance(N[1, 0], l1) == N(1)
-    distance(l1, N[1, 0]) == N(1)
-    distance(Singleton(N[1, 0]), l1) == N(1)
-    distance(l1, Singleton(N[1, 0])) == N(1)
+    @test distance(N[1, 0], l1) == N(1)
+    @test distance(l1, N[1, 0]) == N(1)
+    @test distance(Singleton(N[1, 0]), l1) == N(1)
+    @test distance(l1, Singleton(N[1, 0])) == N(1)
+    @test_throws ArgumentError distance(N[1, 0], l1; p=N(1))
 
     # concrete linear map special case: singleton result
     l = Line(N[0, 2], N[1, 0])
