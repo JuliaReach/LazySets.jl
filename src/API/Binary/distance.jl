@@ -15,11 +15,11 @@ A real number representing the distance between `X` and `Y`.
 
 ### Notes
 
-The standard distance is zero if the sets intersect and otherwise the ``p``-norm
-of the shortest line segment between any pair of points. Formally,
+The standard distance is zero if the sets intersect, and infinite if one of the sets is empty.
+Otherwise, it is the ``p``-norm of the shortest line segment between any pair of points. Formally,
 
 ```math
-    \\inf_{x ∈ H_1, y ∈ H_2} \\{ d(x, y) \\}.
+    \\inf_{x ∈ X, y ∈ Y} \\{ d(x, y) \\}.
 ```
 """
 function distance(::LazySet, ::LazySet; p::Real=2) end

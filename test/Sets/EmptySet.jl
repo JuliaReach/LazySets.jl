@@ -165,6 +165,13 @@ for N in [Float64, Rational{Int}, Float32]
     E2 = affine_map(ones(N, 3, 2), E, N[1, 1, 3])
     @test E2 isa EmptySet{N} && dim(E2) == 3
 
+    # distance (between point and set)
+    @test_throws AssertionError distance(E, N[0])
+    x = N[0, 0]
+    for res in (distance(E, x), distance(x, E))
+        @test res isa N && res == N(Inf)
+    end
+
     # exponential_map / linear_map
     for f in (exponential_map, linear_map)
         @test_throws AssertionError f(ones(N, 2, 3), E)
@@ -240,7 +247,7 @@ for N in [Float64, Rational{Int}, Float32]
     E2 = difference(B, E)
     @test E2 isa BallInf{N} && E2 == B
 
-    # distance
+    # distance (between sets)
     res = distance(E, E)
     @test res isa N && res == N(Inf)
     E2 = EmptySet{N}(3)
