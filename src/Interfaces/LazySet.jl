@@ -1577,6 +1577,11 @@ function linear_map(a::Number, X::LazySet; kwargs...)
     return scale(a, X; kwargs...)
 end
 
+function linear_map(αI::UniformScaling, X::LazySet)
+    M = Diagonal(fill(αI.λ, dim(X)))
+    return linear_map(M, X)
+end
+
 """
 # Extended help
 
@@ -1584,9 +1589,13 @@ end
 
 ### Algorithm
 
-The default implementation calls `scale!` on a copy of `X`.
+The default implementation computes `linear_map` with the diagonal matrix ``α*I``.
 """
 function scale(α::Real, X::LazySet)
+    return linear_map(α*I, X)
+end
+
+function _scale_copy_inplace(α::Real, X::LazySet)
     Y = copy(X)
     scale!(α, Y)
     return Y
