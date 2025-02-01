@@ -74,6 +74,21 @@ for N in [Float64, Rational{Int}, Float32]
     @test N[0, 1, 5] ∈ M * L + b3
     @test N[0, 0, 0] ∉ M * L + b3
 
+    # volume
+    B = BallInf(N[0, 0], N(1))
+    v = N[-1, 0]
+    M = N[1 0; 0 1]
+    @test volume(M * B + v) == N(4)
+    M = N[1 2; 3 4]
+    @test volume(M * B + v) ≈ N(8)
+    M = N[-1 -2; -3 -4]
+    @test volume(M * B + v) ≈ N(8)
+    M = N[0 0; 0 0]
+    @test volume(M * B + v) == N(0)
+    M = N[0 0;]
+    @test_throws DimensionMismatch volume(M * B + N[1])
+
+
     # ==================================
     # Type-specific methods
     # ==================================
@@ -84,10 +99,8 @@ for N in [Float64, Rational{Int}, Float32]
     #@test am_tr isa Translation && am_tr.v == v
 
     # two-dimensional case
-    B2 = BallInf(zeros(N, 2), N(1))
     M = N[1 0; 0 2]
-    v = N[-1, 0]
-    am = AffineMap(M, B2, v)
+    am = AffineMap(M, B, v)
 
     # list of vertices check
     vlist = vertices_list(am)
@@ -98,7 +111,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test h ⊆ am && am ⊆ h
 
     # concretize
-    @test concretize(am) == affine_map(M, B2, v)
+    @test concretize(am) == affine_map(M, B, v)
 end
 
 # tests that only work with Float64 and Float32
