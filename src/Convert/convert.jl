@@ -80,7 +80,7 @@ for T in subtypes(AbstractHPolygon, true)
             @assert dim(X) == 2 "set must be two-dimensional for conversion, but it " *
                                 "has dimension $(dim(X))"
             if check_boundedness && !isbounded(X)
-                throw(ArgumentError("expected a bounded set for conversion to `$T`"))
+                throw(ArgumentError("expected a bounded set for conversion to `$($T)`"))
             end
             return $T(constraints_list(X); prune=prune)
         end
