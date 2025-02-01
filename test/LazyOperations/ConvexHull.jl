@@ -6,6 +6,12 @@ for N in [Float64, Rational{Int}, Float32]
     ch = ConvexHull(b1, b2)
     @test ch == CH(b1, b2)
 
+    # Universe is absorbing
+    U = Universe{N}(2)
+    @test CH(b1, U) == CH(U, b1) == CH(U, U) == U
+    cha = ConvexHullArray([b1, N(2) * b1, N(3) * b1])
+    @test CH(cha, U) == CH(U, cha) == U
+
     # swap
     ch2 = swap(ch)
     @test ch.X == ch2.Y && ch.Y == ch2.X

@@ -12,6 +12,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test ∩(B, H, B) == ∩([B, H, B]) == cap
     @test ∩(B) == B
 
+    # Universe is neutral
+    U = Universe{N}(2)
+    @test B ∩ U == U ∩ B == B
+    @test U ∩ U == U
+    ia = IntersectionArray([B, N(2) * B, N(3) * B])
+    @test ia ∩ U == U ∩ ia == ia
+
     # array interface
     @test array(I) == [B, H] && array(cap) == [B, H, B]
     @test I[1] == cap[1] == B

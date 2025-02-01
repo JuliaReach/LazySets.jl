@@ -14,6 +14,10 @@ for N in [Float64, Rational{Int}, Float32]
     # constructor without argument
     UnionSetArray()
 
+    # Universe is absorbing
+    U = Universe{N}(2)
+    @test B1 ∪ U == U ∪ B1 == U ∪ U == U
+
     # getindex & length
     @test Uarr[1] == B1 && Uarr[2] == B2
     @test length(Uarr) == 2
