@@ -24,9 +24,6 @@ radius_hyperrectangle(::AbstractHyperrectangle)
 
 This interface defines the following functions:
 
-```@docs
-□(c, r)
-```
 ```@meta
 CurrentModule = LazySets.API
 ```
@@ -306,6 +303,12 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
 * [`split`](@ref split(::AbstractZonotope, ::Int))
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
+
+## Convenience functions
+
+```@docs
+□(c, r)
+```
 
 ## Implementations
 
