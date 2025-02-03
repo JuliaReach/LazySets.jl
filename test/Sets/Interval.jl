@@ -1,28 +1,30 @@
-# Note: in pre-v1.1 versions, IntervalArithmetic always operated with Float64
 for N in [Float64, Float32, Rational{Int}]
-    # random interval
-    rand(Interval)
+    # default constructor from IntervalArithmetic.Interval
+    xIA = IA.interval(N(0), N(1))
+    x = Interval(xIA)
+    @test x isa Interval{N}
+    @test x.dat = xIA
 
-    # constructor from IntervalArithmetic.Interval
-    x = Interval(IA.interval(N(0), N(1)))
-
-    # constructor from a vector
-    x = Interval(N[0, 1])
+    # constructors from two numbers, from a vector, and with promotion
+    for y in (Interval(N(0), N(1)), Interval(N[0, 1]), Interval(0, N(1)))
+        @test y isa Interval{N} && y == x
+    end
 
     # constructor from a number
-    x = Interval(N(0))
-    @test x == Interval(N[0, 0])
-
-    # type-less constructor
-    x = Interval(N(0), N(1))
-
-    # constructor with promotion
-    y = Interval(0, N(1))
-    @test y == x
+    y = Interval(N(0))
+    @test y isa Interval{N} && y == Interval(N(0), N(0)])
 
     # unbounded intervals are caught
     @test_throws AssertionError Interval(-Inf, zero(N))
     @test_throws AssertionError Interval(zero(N), Inf)
+
+
+
+
+
+
+    # random interval
+    rand(Interval)
 
     @test dim(x) == 1
     @test center(x) == N[0.5]
@@ -340,4 +342,17 @@ for N in [Float64, Float32, Rational{Int}]
     @test distance(I1, I2) == distance(I2, I1) == N(1)
     I3 = Interval(N(1 // 2), N(2))
     @test distance(I1, I3) == distance(I2, I3) == distance(I1, I1) == N(0)
+end
+
+for N in [Float64, Float32]
+    E = EmptySet{N}(2)
+
+    # rationalize
+    E2 = rationalize(E)
+    @test E2 isa EmptySet{Rational{Int}} && dim(E2) == 2
+    @test_throws MethodError rationalize(E2)
+
+    # is_interior_point
+    @test_throws AssertionError is_interior_point(N[0], E)
+    @test !is_interior_point(N[0, 0], E)
 end
