@@ -1,122 +1,214 @@
-# Note: in pre-v1.1 versions, IntervalArithmetic always operated with Float64
+function isidentical(::Interval, ::Interval)
+    return false
+end
+
+function isidentical(X1::Interval{N}, X2::Interval{N}) where {N}
+    return X1.dat == X2.dat
+end
+
 for N in [Float64, Float32, Rational{Int}]
-    # random interval
-    rand(Interval)
+    # default constructor from IntervalArithmetic.Interval
+    itv = IA.interval(N(0), N(1))
+    X = Interval(itv)
+    @test X isa Interval{N} && X.dat == itv
 
-    # constructor from IntervalArithmetic.Interval
-    x = Interval(IA.interval(N(0), N(1)))
-
-    # constructor from a vector
-    x = Interval(N[0, 1])
+    # constructors from two numbers, from a vector, and with promotion
+    for Y in (Interval(N(0), N(1)), Interval(N[0, 1]), Interval(0, N(1)))
+        @test isidentical(Y, X)
+    end
 
     # constructor from a number
-    x = Interval(N(0))
-    @test x == Interval(N[0, 0])
-
-    # type-less constructor
-    x = Interval(N(0), N(1))
-
-    # constructor with promotion
-    y = Interval(0, N(1))
-    @test y == x
+    Y = Interval(N(0))
+    @test Y isa Interval{N} && Y == Interval(N(0), N(0))
 
     # unbounded intervals are caught
     @test_throws AssertionError Interval(-Inf, zero(N))
     @test_throws AssertionError Interval(zero(N), Inf)
 
-    @test dim(x) == 1
-    @test center(x) == N[0.5]
-    @test center(x, 1) == N(0.5)
-    @test_throws AssertionError center(x, 2)
-    @test min(x) == N(0) && max(x) == N(1)
-    v = vertices_list(x)
+    # convert
+    Y = Interval(N(-1), N(1))
+    Z = convert(Interval, Rectification(Y))
+    @test isidentical(Z, X)
+    Z = convert(Interval, Y + Y)
+    @test Z isa Interval{N} && Z == Interval(N(-2), N(2))
+
+    # an_element
+    x = an_element(X)
+    @test x isa Vector{N} && length(x) == 1 && x[1] isa N && N(0) <= x[1] <= N(1)
+
+    # area
+    @test_throws AssertionError area(X)
+
+    # chebyshev_center_radius
+    c, r = chebyshev_center_radius(X)
+    @test c isa Vector{N} && c == [N(1 // 2)]
+    @test r isa N && r == N(1 // 2)
+
+    # complement
+    Y = complement(X)
+    @test Y isa UnionSet{N} && length(Y) == 2
+    @test ispermutation(array(Y), [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1))])
+
+    # concretize
+    X2 = concretize(X)
+    @test isidentical(X, X2)
+
+    # constrained_dimensions
+    @test constrained_dimensions(X) == 1:1
+
+    # constraints_list
+    clist = constraints_list(X)
+    @test ispermutation(clist, [HalfSpace(N[1], N(1)), HalfSpace(N[-1], N(0))])
+
+    # constraints
+    clist2 = collect(constraints(X))
+    @test ispermutation(clist2, clist)
+
+    # convex_hull (unary)
+    X2 = convex_hull(X)
+    @test isidentical(X, X2)
+
+    # copy
+    X2 = copy(X)
+    @test isidentical(X, X2)
+
+    # diameter
+    for res in (diameter(X), diameter(X, Inf), diameter(X, 2))
+        @test res isa N && res == N(1)
+    end
+
+    # dim
+    @test dim(X) == 1
+
+    # eltype
+    @test eltype(X) == N
+    @test eltype(typeof(X)) == N
+
+    # extrema
+    res = extrema(X)
+    @test res isa Tuple{Vector{N}, Vector{N}} && res[1] == N[0] && res[2] == N[1]
+    res = extrema(X, 1)
+    @test res isa Tuple{N, N} && res[1] == N(0) && res[2] == N(1)
+    @test_throws AssertionError extrema(X, 2)
+
+    # high
+    res = high(X)
+    @test res isa Vector{N} && res == N[1]
+    res = high(X, 1)
+    @test res isa N && res == N(1)
+    @test_throws AssertionError high(X, 2)
+
+    # isbounded
+    @test isbounded(X)
+
+    # isboundedtype
+    @test isboundedtype(typeof(X))
+
+    # isconvextype
+    @test isconvextype(typeof(X))
+
+    # isempty
+    @test !isempty(X)
+
+    # isoperation
+    @test !isoperation(X)
+
+    # isoperationtype
+    @test !isoperationtype(typeof(X))
+
+    # ispolyhedral
+    @test ispolyhedral(X)
+
+    # isuniversal
+    res, w = isuniversal(X, true)
+    @test !isuniversal(X) && !res && w isa Vector{N} && w ∉ X
+
+    # low
+    res = low(X)
+    @test res isa Vector{N} && res == N[0]
+    res = low(X, 1)
+    @test res isa N && res == N(0)
+    @test_throws AssertionError low(X, 2)
+
+    # norm
+    res = norm(X)
+    @test res isa N && res == N(1)
+    @test norm(Interval(N(-2), N(1))) == N(2)
+
+    # polyhedron
+    if test_suite_polyhedra
+        Y = polyhedron(X)
+        @test Y isa Polyhedra.Interval{N}
+        @test ispermutation(Z.points.points, [[N(0)], [N(1)]])
+    end
+
+
+
+
+    # random interval
+    rand(Interval)
+
+    @test center(X) == N[0.5]
+    @test center(X, 1) == N(0.5)
+    @test_throws AssertionError center(X, 2)
+    @test min(X) == N(0) && max(X) == N(1)
+    v = vertices_list(X)
     @test N[0] in v && N[1] in v
 
     # vertices list for degenerate interval
     @test vertices_list(Interval(N(0), N(0))) == [[N(0)]]
 
-    # test interface method an_element and membership
-    @test an_element(x) ∈ x
     # number in interval is invalid
-    @test_throws MethodError N(1) ∈ x
+    @test_throws MethodError N(1) ∈ X
     # test containment
-    @test x ⊆ x
-    @test x ⊈ N(0.2) * x
-    @test x ⊆ N(2) * x
-    @test x ⊆ Interval(N(0), N(2))
-    @test x ⊈ Interval(N(-1), N(0.5))
+    @test X ⊆ X
+    @test X ⊈ N(0.2) * X
+    @test X ⊆ N(2) * X
+    @test X ⊆ Interval(N(0), N(2))
+    @test X ⊈ Interval(N(-1), N(0.5))
 
     # concrete linear map
-    @test linear_map(hcat(N(2)...), x) == Interval(N(2) * x.dat)
+    @test linear_map(hcat(N(2)...), X) == Interval(N(2) * X.dat)
 
     # concrete linear map with zonotope output
     M2 = hcat(N[1, 2, 3])
-    @test linear_map(M2, x) == Zonotope(N[0.5, 1.0, 1.5], [N[0.5, 1.0, 1.5]])
+    @test linear_map(M2, X) == Zonotope(N[0.5, 1.0, 1.5], [N[0.5, 1.0, 1.5]])
 
     # concrete scale of interval
-    @test scale(N(0.5), x) == Interval(N(0.5) * min(x), N(0.5) * max(x))
+    @test scale(N(0.5), X) == Interval(N(0.5) * min(X), N(0.5) * max(X))
 
     # radius_hyperrectangle
-    @test radius_hyperrectangle(x) == [N(0.5)]
-    @test radius_hyperrectangle(x, 1) == N(0.5)
-
-    # + operator = lazy Minkowski sum of intervals
-    y = Interval(N(-2), N(0.5))
-    m = x + y
-    @test m isa MinkowskiSum
-    @test dim(m) == 1
-    @test σ(N[1], m) == N[1.5]
-    @test σ(N[-1], m) == N[-2]
-    m = convert(Interval, m) # concretize into an interval
-    @test min(m) == N(-2) && max(m) == N(1.5)
-    v = vertices_list(m)
-    @test N[1.5] in v && N[-2] in v
+    @test radius_hyperrectangle(X) == [N(0.5)]
+    @test radius_hyperrectangle(X, 1) == N(0.5)
 
     # the concrete Minkowski sum of intervals returns an interval
-    @test minkowski_sum(x, y) == Interval(N(-2), N(1.5))
-
-    # ispolyhedral
-    @test ispolyhedral(x)
-
-    # isempty
-    @test !isempty(x)
-
-    # isuniversal
-    answer, w = isuniversal(x, true)
-    @test !isuniversal(x) && !answer && w ∉ x
+    @test minkowski_sum(X, Y) == Interval(N(-2), N(1.5))
 
     # translation
-    @test translate(x, N[2]) == Interval(N(2), N(3))
+    @test translate(X, N[2]) == Interval(N(2), N(3))
 
     # Minkowski sum (test that we get the same results as the concrete operation)
-    m = x ⊕ y
+    m = X ⊕ Y
     @test m isa MinkowskiSum
     @test dim(m) == 1
     @test σ(N[1], m) == N[1.5]
     @test σ(N[-1], m) == N[-2]
 
-    # boundedness
-    @test isbounded(x)
-
     # cartesian product
-    cp = x × y
+    cp = X × Y
     @test cp isa CartesianProduct
     @test dim(cp) == 2
 
     # conversion to hyperrectangle
-    h = convert(Hyperrectangle, x)
+    h = convert(Hyperrectangle, X)
     @test h isa Hyperrectangle && center(h) == radius_hyperrectangle(h) == N[0.5]
-
-    # diameter
-    x = Interval(N(1), N(3))
-    @test diameter(x) == diameter(x, Inf) == diameter(x, 2) == N(2)
 
     # split
     intervals = [Interval(N(1), N(3 // 2)), Interval(N(3 // 2), N(2)),
                  Interval(N(2), N(5 // 2)), Interval(N(5 // 2), N(3))]
-    @test split(x, 4) == split(x, [4]) == intervals
-    @test_throws AssertionError split(x, 0)
-    @test_throws AssertionError split(x, [4, 4])
+    @test split(X, 4) == split(X, [4]) == intervals
+    @test_throws AssertionError split(X, 0)
+    @test_throws AssertionError split(X, [4, 4])
 
     # concrete intersection
     A = Interval(N(5), N(7))
@@ -174,9 +266,9 @@ for N in [Float64, Float32, Rational{Int}]
     B3 = convert(Interval, B2)
     @test B3 == B
     # conversion from a non-convex set fails
-    U = UnionSet(Interval(1, 2), Interval(3, 4))
-    @test_throws AssertionError convert(Interval, U)
-    @test_throws AssertionError convert(IA.Interval, U)
+    Y = UnionSet(Interval(1, 2), Interval(3, 4))
+    @test_throws AssertionError convert(Interval, Y)
+    @test_throws AssertionError convert(IA.Interval, Y)
 
     # set difference
     A = Interval(N(5), N(8))
@@ -200,12 +292,12 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # rectification
-    x = Interval(N(-2), N(-1))
-    @test rectify(x) == Interval(N(0), N(0))
-    x = Interval(N(-2), N(2))
-    @test rectify(x) == Interval(N(0), N(2))
-    x = Interval(N(1), N(2))
-    @test rectify(x) == x
+    X = Interval(N(-2), N(-1))
+    @test rectify(X) == Interval(N(0), N(0))
+    X = Interval(N(-2), N(2))
+    @test rectify(X) == Interval(N(0), N(2))
+    X = Interval(N(1), N(2))
+    @test rectify(X) == X
 
     # list of vertices of IA types
     b = IntervalBox(IA.interval(0, 1), IA.interval(0, 1))
@@ -217,9 +309,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test is_cyclic_permutation(vlistI, [SA[N(0)], SA[N(1)]])
 
     # generators
-    @test ngens(x) == 1
-    @test collect(generators(x)) == [N[1 / 2]]
-    @test genmat(x) == hcat(N[1 / 2])
+    @test ngens(X) == 1
+    @test collect(generators(X)) == [N[1 / 2]]
+    @test genmat(X) == hcat(N[1 / 2])
     x_degenerate = Interval(N(1), N(1))
     @test ngens(x_degenerate) == 0
     gens = genmat(x_degenerate)
@@ -231,24 +323,20 @@ for N in [Float64, Float32, Rational{Int}]
     v1 = N[3 / 2]
     v2 = N[1]
     if N <: AbstractFloat
-        @test is_interior_point(v1, x) && !is_interior_point(v2, x)
+        @test is_interior_point(v1, X) && !is_interior_point(v2, X)
     else
-        @test_throws AssertionError is_interior_point(v1, x)
-        @test is_interior_point(v1, x; ε=1 // 100) && !is_interior_point(v2, x; ε=1 // 100)
+        @test_throws AssertionError is_interior_point(v1, X)
+        @test is_interior_point(v1, X; ε=1 // 100) && !is_interior_point(v2, X; ε=1 // 100)
     end
     # different numeric type
     v1 = Float16[3 / 2]
     if N <: AbstractFloat
         v2 = Float16[1]
-        @test is_interior_point(v1, x) && !is_interior_point(v2, x)
+        @test is_interior_point(v1, X) && !is_interior_point(v2, X)
     else
-        @test_throws ArgumentError is_interior_point(v1, x)
-        @test_throws ArgumentError is_interior_point(v1, x; ε=1 // 100)
+        @test_throws ArgumentError is_interior_point(v1, X)
+        @test_throws ArgumentError is_interior_point(v1, X; ε=1 // 100)
     end
-
-    # Chebyshev center
-    c, r = chebyshev_center_radius(x)
-    @test c == center(x) && r == N(1 // 2)
 
     # reflect
     @test reflect(Interval(N(1), N(2))) == Interval(N(-2), N(-1))
@@ -278,42 +366,25 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # permute
-    @test permute(x, [1]) == x
-    @test_throws AssertionError permute(x, Int[])
-    @test_throws AssertionError permute(x, Int[2])
-    @test_throws AssertionError permute(x, Int[1, 1])
+    @test permute(X, [1]) == X
+    @test_throws AssertionError permute(X, Int[])
+    @test_throws AssertionError permute(X, Int[2])
+    @test_throws AssertionError permute(X, Int[1, 1])
 
     # project
-    @test project(x, [1]) == x
-    @test_throws AssertionError project(x, Int[])
-    @test_throws AssertionError project(x, Int[2])
-    @test_throws AssertionError project(x, Int[1, 1])
+    @test project(X, [1]) == X
+    @test_throws AssertionError project(X, Int[])
+    @test_throws AssertionError project(X, Int[2])
+    @test_throws AssertionError project(X, Int[1, 1])
 
     # isapprox
-    @test x ≈ x ≈ translate(x, [1e-8])
-    @test !(x ≈ translate(x, [1e-4]))
+    @test X ≈ X ≈ translate(X, [1e-8])
+    @test !(X ≈ translate(X, [1e-4]))
 
     # convex_hull & linear_combination
     I1 = Interval(N(0), N(1))
     I2 = Interval(N(2), N(3))
     @test convex_hull(I1, I2) == linear_combination(I1, I2) == Interval(N(0), N(3))
-
-    # complement
-    C = complement(I2)
-    L = HalfSpace(N[1], N(2))
-    H = HalfSpace(N[-1], N(-3))
-    @test length(C) == 2 && ispermutation([C[1], C[2]], [L, H])
-
-    # low, high, extrema
-    @test extrema(I1) == (low(I1), high(I1)) == (N[0], N[1])
-    @test extrema(I1, 1) == (low(I1, 1), high(I1, 1)) == (N(0), N(1))
-    @test_throws AssertionError low(I1, 2)
-    @test_throws AssertionError high(I1, 2)
-    @test_throws AssertionError extrema(I1, 2)
-
-    # norm
-    @test norm(I1) == N(1)
-    @test norm(Interval(N(-2), N(1))) == N(2)
 
     # volume
     @test volume(I1) == 1
@@ -338,4 +409,17 @@ for N in [Float64, Float32, Rational{Int}]
     @test distance(I1, I2) == distance(I2, I1) == N(1)
     I3 = Interval(N(1 // 2), N(2))
     @test distance(I1, I3) == distance(I2, I3) == distance(I1, I1) == N(0)
+end
+
+for N in [Float64, Float32]
+    E = EmptySet{N}(2)
+
+    # rationalize
+    E2 = rationalize(E)
+    @test E2 isa EmptySet{Rational{Int}} && dim(E2) == 2
+    @test_throws MethodError rationalize(E2)
+
+    # is_interior_point
+    @test_throws AssertionError is_interior_point(N[0], E)
+    @test !is_interior_point(N[0, 0], E)
 end
