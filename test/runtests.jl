@@ -280,7 +280,7 @@ if test_suite_basic
         include("ConcreteOperations/interior.jl")
     end
     @testset "LazySets.intersection" begin
-        include("ConcreteOperations/isstrictsubset.jl")
+        include("ConcreteOperations/intersection.jl")
     end
     @testset "LazySets.isdisjoint" begin
         include("ConcreteOperations/isdisjoint.jl")
