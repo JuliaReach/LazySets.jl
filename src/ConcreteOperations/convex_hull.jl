@@ -197,7 +197,7 @@ function _two_points_2d!(points)
 end
 
 function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N}
-    # Algorithmmonotone_chain!: the function takes three points and uses the formula from here:
+    # Algorithm: the function takes three points and uses the formula from here:
     # https://stackoverflow.com/a/2122620
     # to decide if the points are ordered in counter-clockwise order. The result
     # is saved in the 'turn' flag and returned in ccw fashion acting according
