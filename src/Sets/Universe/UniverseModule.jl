@@ -13,8 +13,8 @@ using ReachabilityBase.Require: require
                         isoperationtype, isuniversal, norm, radius, rand,
                         reflect, ∈, permute, project, scale, scale!, ρ, σ,
                         translate, translate!, cartesian_product, intersection
-@reexport import ..LazySets: constrained_dimensions, linear_map_inverse,
-                             rationalize, tosimplehrep
+@reexport import ..LazySets: constrained_dimensions, delaunay,
+                             linear_map_inverse, rationalize, tosimplehrep
 import Base: copy
 @reexport using ..API
 
@@ -27,6 +27,7 @@ include("complement.jl")
 include("constraints.jl")
 include("constraints_list.jl")
 include("copy.jl")
+include("delaunay.jl")
 include("diameter.jl")
 include("dim.jl")
 include("isbounded.jl")
