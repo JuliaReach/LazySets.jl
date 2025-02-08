@@ -14,6 +14,12 @@ for N in [Float64, Rational{Int}, Float32]
           msa
     @test +(b1) == ⊕(b1) == b1
 
+    # Universe is absorbing
+    # U = Universe{N}(2)  # TODO requires #1099
+    # @test b1 ⊕ U == U ⊕ b1 == U ⊕ U == U
+    # msa = MinkowskiSumArray([b1, N(2) * b1, N(3) * b1])
+    # @test msa ⊕ U == U ⊕ msa == U
+
     # array interface
     @test array(ms) == [b1, b2] && array(msa) == [b1, b2, b1]
     @test ms[1] == msa[1] == b1
