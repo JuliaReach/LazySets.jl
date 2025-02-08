@@ -173,7 +173,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError vertices(U)
 
     # volume
-    @test_throws MethodError volume(U)  # TODO this should maybe change
+    x = volume(U)
+    @test x isa N && x == N(Inf)
 
     # affine_map
     @test_broken affine_map(ones(N, 2, 3), U, N[1, 1])  # TODO this should be caught earlier
