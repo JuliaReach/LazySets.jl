@@ -1,4 +1,4 @@
-function isidentical(::EmptySet{N1}, ::EmptySet{N2}) where {N1,N2}
+function isidentical(::EmptySet, ::EmptySet)
     return false
 end
 
