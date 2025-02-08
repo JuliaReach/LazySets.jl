@@ -72,9 +72,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(U, U2)
 
     # delaunay
-    if isdefined(@__MODULE__, :MiniQhull)  # TODO throwing an error should work without MiniQhull
-        @test_throws ArgumentError delaunay(U)
-    end
+    @test_throws ArgumentError delaunay(U)
 
     # diameter
     @test_throws ArgumentError diameter(U)
