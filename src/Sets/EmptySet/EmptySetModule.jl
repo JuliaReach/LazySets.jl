@@ -19,7 +19,8 @@ using ReachabilityBase.Require: require
                         cartesian_product, convex_hull, difference, distance,
                         intersection, ≈, isdisjoint, ⊆, linear_combination,
                         minkowski_difference, minkowski_sum
-@reexport import ..LazySets: chebyshev_center_radius, rationalize
+@reexport import ..LazySets: chebyshev_center_radius, constrained_dimensions,
+                             rationalize
 import ..LazySets: plot_recipe
 import Base: convert, copy
 @reexport using ..API
@@ -74,6 +75,7 @@ include("minkowski_difference.jl")
 include("minkowski_sum.jl")
 
 include("chebyshev_center_radius.jl")
+include("constrained_dimensions.jl")
 
 include("convert.jl")
 include("copy.jl")
