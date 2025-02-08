@@ -106,6 +106,9 @@ itself uses `CDDLib` for variable elimination. The available algorithms are:
 """
 function minkowski_sum(P::AbstractPolyhedron, Q::AbstractPolyhedron;
                        backend=nothing, algorithm=nothing, prune=true)
+    @assert dim(P) == dim(Q) "expected that the sets have the same dimension, " *
+                             "but they are $(dim(P)) and $(dim(Q)) respectively"
+
     return _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
 end
 
