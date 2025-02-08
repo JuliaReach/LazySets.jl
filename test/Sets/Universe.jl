@@ -1,8 +1,8 @@
-function isidentical(::Universe{N1}, ::Universe{N2}) where{N1,N2}
+function isidentical(::Universe, ::Universe)
     return false
 end
 
-function isidentical(U1::Universe{N}, U2::Universe{N}) where{N}
+function isidentical(U1::Universe{N}, U2::Universe{N}) where {N}
     return U1.dim == U2.dim
 end
 
@@ -35,6 +35,11 @@ for N in [Float64, Float32, Rational{Int}]
     # area
     @test_throws AssertionError area(U)
     @test_throws AssertionError area(U3)
+
+    # chebyshev_center_radius
+    if test_suite_polyhedra
+        @test_throws ErrorException chebyshev_center_radius(U)
+    end
 
     # complement
     E2 = complement(U)
@@ -391,11 +396,6 @@ for N in [Float64, Float32, Rational{Int}]
     # for E2 in (minkowski_difference(B, U), minkowski_difference(U, U))
     #     @test E2 isa EmptySet{N} && dim(E2) == 2
     # end
-
-    # chebyshev_center_radius
-    if test_suite_polyhedra
-        @test_throws ErrorException chebyshev_center_radius(U)
-    end
 end
 
 for N in [Float64, Float32]
