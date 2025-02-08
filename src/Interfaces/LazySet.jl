@@ -1566,6 +1566,9 @@ The default implementation assumes that `P` is polyhedral and applies an
 algorithm based on the set type (see [`_linear_map_polyhedron`](@ref)).
 """
 function linear_map(M::AbstractMatrix, P::LazySet; kwargs...)
+    @assert size(M, 2) == dim(P) "a linear map of size $(size(M)) cannot be " *
+                                 "applied to a set of dimension $(dim(P))"
+
     if ispolyhedral(P)
         return _linear_map_polyhedron(M, P; kwargs...)
     else

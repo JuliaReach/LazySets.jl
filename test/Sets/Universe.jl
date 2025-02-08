@@ -192,8 +192,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test N[0, 0] ∈ U
 
     # linear_map
-    @test_broken linear_map(ones(N, 2, 3), U)  # TODO this should become an AssertionError
-    # @test_throws AssertionError linear_map(ones(N, 2, 3), U)
+    @test_throws AssertionError linear_map(ones(N, 2, 3), U)
     @test_broken linear_map(ones(N, 2, 2), U)  # TODO this should work, even without Polyhedra
     # U2 = linear_map(ones(N, 2, 2), U)
     # @test_broken isidentical(U, U2)
