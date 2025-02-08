@@ -75,7 +75,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # diameter
-    @test_throws ErrorException diameter(U)  # TODO this should become an ArgumentError
+    @test_throws ArgumentError diameter(U)
 
     # dim
     @test dim(U) == 2
