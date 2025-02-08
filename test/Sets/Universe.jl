@@ -214,8 +214,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(U, U2)
 
     # project
-    @test_broken project(U, [1, -1]) isa AssertionError  # TODO this should change
-    @test_broken project(U, [1, 2, 3]) isa AssertionError  # TODO this should change
+    @test_throws AssertionError project(U, [1, -1])
+    @test_throws AssertionError project(U, [1, 2, 3])
     U2 = project(U, [2])
     @test U2 isa Universe{N} && dim(U2) == 1
 
