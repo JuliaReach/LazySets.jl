@@ -122,7 +122,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test low(U, 1) == N(-Inf)
 
     # norm
-    @test_throws ErrorException norm(U)  # TODO this should become an ArgumentError
+    @test_throws ArgumentError norm(U)
 
     # polyhedron
     if test_suite_polyhedra
