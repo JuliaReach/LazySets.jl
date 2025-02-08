@@ -198,7 +198,7 @@ for N in [Float64, Float32, Rational{Int}]
         E2 = f(ones(N, 2, 2), E)
         @test isidentical(E, E2)
     end
-    @test_broken exponential_map(ones(N, 3, 2), E) isa ArgumentError  # TODO rectangular matrix should not be accepted
+    @test_throws AssertionError exponential_map(ones(N, 3, 2), E)
     E2 = linear_map(ones(N, 3, 2), E)
     @test isidentical(E3, E2)
 
