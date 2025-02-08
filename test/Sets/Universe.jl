@@ -410,7 +410,7 @@ for N in [Float64, Float32]
     @test_throws AssertionError exponential_map(ones(N, 2, 3), U)
     U2 = exponential_map(ones(N, 2, 2), U)
     @test_broken isidentical(U, U2)  # TODO this should change
-    @test_broken exponential_map(ones(N, 3, 2), E) isa ArgumentError  # TODO rectangular matrix should not be accepted
+    @test_throws AssertionError exponential_map(ones(N, 3, 2), U)
 
     # is_interior_point
     @test_broken is_interior_point(N[0], U) isa ArgumentError  # TODO this should change (see `_issubset_universe` and `is_interior_point`)
