@@ -4,7 +4,9 @@ export LazySet,
        tosimplehrep,
        singleton_list,
        chebyshev_center_radius,
-       flatten
+       flatten,
+       delaunay,
+       triangulate
 
 """
     LazySet{N}
@@ -124,6 +126,14 @@ Zonotope
 ```
 """
 abstract type LazySet{N} end
+
+function delaunay(X)
+    require(@__MODULE__, :MiniQhull, fun_name="delaunay")
+end
+
+function triangulate(X)
+    require(@__MODULE__, :Polyhedra, fun_name="triangulate")
+end
 
 """
 # Extended help
@@ -1031,9 +1041,6 @@ end
 
 function load_delaunay_MiniQhull()
     return quote
-        import .MiniQhull: delaunay
-        export delaunay
-
         """
             delaunay(X::LazySet)
 
@@ -1083,7 +1090,7 @@ function load_delaunay_MiniQhull()
             m = length(vlist)
             coordinates = vcat(vlist...)
             flags = compute_triangles_3d ? "qhull Qt" : nothing
-            connectivity_matrix = delaunay(n, m, coordinates, flags)
+            connectivity_matrix = MiniQhull.delaunay(n, m, coordinates, flags)
             return vlist, connectivity_matrix
         end
     end
