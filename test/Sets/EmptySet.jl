@@ -306,8 +306,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isapprox
     @test E ≈ E
-    @test_broken !(E ≈ E3)  # TODO this should change
-    @test_broken !(E3 ≈ E)  # TODO this should change
+    @test !(E ≈ E3)
+    @test !(E3 ≈ E)
 
     # isdisjoint
     @test_throws AssertionError isdisjoint(E, E3)
