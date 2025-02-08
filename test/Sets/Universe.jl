@@ -208,8 +208,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(U3, U2)
 
     # permute
-    @test_broken permute(U, [1, -1]) isa AssertionError  # TODO this should change
-    @test_broken permute(U, [1, 2, 2]) isa AssertionError  # TODO this should change
+    @test_throws AssertionError permute(U, [1, -1])
+    @test_throws AssertionError permute(U, [1, 2, 2])
     U2 = permute(U, [2, 1])
     @test isidentical(U, U2)
 
