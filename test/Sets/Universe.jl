@@ -135,7 +135,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # radius
-    @test_throws ErrorException radius(U)  # TODO this should become an ArgumentError
+    @test_throws ArgumentError radius(U)
 
     # rand
     @test rand(Universe; N=N) isa Universe{N}
