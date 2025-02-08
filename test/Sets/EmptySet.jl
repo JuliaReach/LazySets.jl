@@ -75,9 +75,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(E, E2)
 
     # delaunay
-    if isdefined(@__MODULE__, :MiniQhull)  # TODO this should throw a normal error without MiniQhull
-        @test_broken delaunay(E)
-    end
+    @test_throws ArgumentError delaunay(E)
 
     # diameter
     res = diameter(E)

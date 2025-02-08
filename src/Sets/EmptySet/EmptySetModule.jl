@@ -20,7 +20,7 @@ using ReachabilityBase.Require: require
                         intersection, ≈, isdisjoint, ⊆, linear_combination,
                         minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, constrained_dimensions,
-                             rationalize
+                             delaunay, rationalize
 import ..LazySets: plot_recipe
 import Base: convert, copy
 @reexport using ..API
@@ -32,6 +32,7 @@ include("EmptySet.jl")
 include("an_element.jl")
 include("area.jl")
 include("complement.jl")
+include("delaunay.jl")
 include("diameter.jl")
 include("dim.jl")
 include("high.jl")
