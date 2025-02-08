@@ -54,6 +54,13 @@ Undocumented implementations:
 
 * [`an_element`](@ref an_element(::LazySet))
 * [`area`](@ref area(::LazySet))
+```@meta
+CurrentModule = LazySets
+```
+* [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolyhedron))
+```@meta
+CurrentModule = LazySets.API
+```
 * [`convex_hull`](@ref convex_hull(::LazySet))
 * `copy(::EmptySet)`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))

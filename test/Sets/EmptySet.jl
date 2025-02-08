@@ -43,6 +43,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test res isa N && res == N(0)
     @test_throws AssertionError area(E3)
 
+    # chebyshev_center_radius
+    @test_throws ArgumentError chebyshev_center_radius(E)
+
     # complement
     U = complement(E)
     @test U isa Universe{N} && dim(U) == 2
@@ -52,7 +55,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(E, E2)
 
     # constrained_dimensions
-    @test_broken constrained_dimensions(E)  # TODO implement
+    @test constrained_dimensions(E) == 1:2
 
     # constraints_list
     @test_throws MethodError constraints_list(E)  # TODO this should maybe change
@@ -366,9 +369,6 @@ for N in [Float64, Float32, Rational{Int}]
     end
     X = minkowski_difference(B, E)
     @test X isa BallInf{N} && X == B
-
-    # chebyshev_center_radius
-    @test_throws ArgumentError chebyshev_center_radius(E)
 end
 
 for N in [Float64, Float32]
