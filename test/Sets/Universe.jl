@@ -273,13 +273,11 @@ for N in [Float64, Float32, Rational{Int}]
 
     # convex_hull (binary)
     @test_throws AssertionError convex_hull(U, U3)
-    @test_broken convex_hull(U, U)  # TODO this should change
-    # U2 = convex_hull(U, U)
-    # @test isidentical(U, U2)
-    @test_broken convex_hull(U, Pnc)  # TODO this should change
-    # for X in (convex_hull(U, Pnc), convex_hull(Pnc, U))
-    #     @test X isa LazySet{N} && isequivalent(X, Pc)
-    # end
+    U2 = convex_hull(U, U)
+    @test isidentical(U, U2)
+    for U2 in (convex_hull(U, Pnc), convex_hull(Pnc, U), convex_hull(U, E), convex_hull(E, U))
+        @test isidentical(U, U2)
+    end
 
     # difference
     @test_throws AssertionError difference(B, U3)

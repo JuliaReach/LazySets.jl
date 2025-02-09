@@ -2,7 +2,7 @@ module UniverseModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolyhedron, default_polyhedra_backend
+using ..LazySets: LazySet, AbstractPolyhedron, default_polyhedra_backend
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator
@@ -13,7 +13,7 @@ using ReachabilityBase.Require: require
                         isoperationtype, isuniversal, norm, radius, rand,
                         reflect, volume, ∈, permute, project, scale, scale!, ρ,
                         σ, translate, translate!, cartesian_product,
-                        intersection
+                        convex_hull, intersection
 @reexport import ..LazySets: constrained_dimensions, linear_map_inverse,
                              rationalize, tosimplehrep
 import Base: copy
@@ -49,6 +49,7 @@ include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
 include("cartesian_product.jl")
+include("convex_hull.jl")
 include("intersection.jl")
 
 include("constrained_dimensions.jl")
