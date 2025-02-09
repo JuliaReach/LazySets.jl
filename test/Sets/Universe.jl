@@ -281,13 +281,16 @@ for N in [Float64, Float32, Rational{Int}]
 
     # difference
     @test_throws AssertionError difference(B, U3)
-    @test_broken difference(U3, B) isa AssertionError  # TODO this should change (fall back to `complement(B)`)
+    @test_throws AssertionError difference(U3, B)
     for E2 in (difference(U, U), difference(B, U))
         @test E2 isa EmptySet{N} && dim(E2) == 2
     end
-    @test_broken difference(U, B)  # TODO this should change (see above)
-    # x = difference(U, B)
-    # @test X isa UnionSetArray{N, HalfSpace{N,Vector{N}}} && length(array(X)) == 4
+    X = difference(U, B)
+    @test X isa UnionSetArray{N,<:HalfSpace} && length(array(X)) == 4 && X == complement(B)
+    U2 = difference(U, E)
+    @test isidentical(U, U2)
+    E2 = difference(E, U)
+    @test E2 isa EmptySet{N} && E2 == E
 
     # distance (between sets)
     @test_broken distance(U, U)  # TODO this should change

@@ -48,10 +48,12 @@ function difference(X::Interval{N}, H::HalfSpace) where {N}
     end
 end
 
-function difference(X::LazySet{N}, U::Universe) where {N}
-    n = dim(X)
-    @assert n == dim(U) "incompatible dimensions $n and $(dim(U))"
-    return EmptySet{N}(n)
+function difference(U::Universe, X::LazySet)
+    return _difference_universe(U, X)
+end
+
+function difference(X::LazySet, U::Universe)
+    return _difference_universe2(X, U)
 end
 
 function difference(∅::EmptySet, X::LazySet)
@@ -65,4 +67,7 @@ end
 # disambiguation
 function difference(∅::EmptySet, U::Universe)
     return _difference_emptyset(∅, U)
+end
+function difference(U::Universe, ∅::EmptySet)
+    return _difference_emptyset2(U, ∅)
 end
