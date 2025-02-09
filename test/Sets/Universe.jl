@@ -383,13 +383,11 @@ for N in [Float64, Float32, Rational{Int}]
     # minkowski_difference
     @test_throws AssertionError minkowski_difference(B, U3)
     @test_throws AssertionError minkowski_difference(U3, B)
-    U2 = minkowski_difference(U, B)
-    @test_broken isidentical(U, U2)  # TODO this should change
-    @test_broken minkowski_difference(B, U)  # TODO this should change
-    @test_broken minkowski_difference(U, U)  # TODO this should change
-    # for E2 in (minkowski_difference(B, U), minkowski_difference(U, U))
-    #     @test E2 isa EmptySet{N} && dim(E2) == 2
-    # end
+    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B))
+        @test isidentical(U, U2)
+    end
+    E2 = minkowski_difference(B, U)
+    @test E2 isa EmptySet{N} && dim(E2) == 2
 end
 
 for N in [Float64, Float32]
