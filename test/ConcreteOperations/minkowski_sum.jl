@@ -20,6 +20,19 @@ for N in [Float64, Float32, Rational{Int}]
     @test PZ == SparsePolynomialZonotope(N[6, 8], N[3 0; 0 4], N[7 0; 0 8], [1 0; 0 1], 1:2)
     PZ = minkowski_sum(H1, convert(SparsePolynomialZonotope, H2))
     @test PZ == SparsePolynomialZonotope(N[6, 8], N[7 0; 0 8], N[3 0; 0 4], [1 0; 0 1], 1:2)
+
+    # EmptySet / Universe
+    E = EmptySet{N}(2)
+    U = Universe{N}(2)
+    Z = ZeroSet{N}(2)
+    B = Ball1(N[0, 0], N(1))
+    for E2 in (minkowski_sum(E, U), minkowski_sum(U, E), minkowski_sum(E, Z), minkowski_sum(Z, E),
+               minkowski_sum(E, B), minkowski_sum(B, E))
+        @test E2 isa EmptySet{N} && E2 == E
+    end
+    for U2 in (minkowski_sum(U, Z), minkowski_sum(Z, U), minkowski_sum(U, B), minkowski_sum(B, U))
+        @test U2 isa Universe{N} && U2 == U
+    end
 end
 
 for N in [Float64, Float32]

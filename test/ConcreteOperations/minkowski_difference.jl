@@ -50,6 +50,17 @@ for N in [Float64, Float32, Rational{Int}]
     if N == Float64
         @test isequivalent(D, Zonotope(N[1, 1, 0], N[1/2 0 0; 0 1 0; 0 0 1]))
     end
+
+    # EmptySet / Universe
+    E = EmptySet{N}(2)
+    U = Universe{N}(2)
+    Z = ZeroSet{N}(2)
+    for E2 in (minkowski_difference(E, U), minkowski_difference(E, Z))
+        @test E2 isa EmptySet{N} && E2 == E
+    end
+    for U2 in (minkowski_difference(U, E), minkowski_difference(U, Z))
+        @test U2 isa Universe{N} && U2 == U
+    end
 end
 
 for N in [Float64]

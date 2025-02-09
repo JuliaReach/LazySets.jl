@@ -314,8 +314,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isdisjoint
     @test_throws AssertionError isdisjoint(E, E3)
-    @test isdisjoint(E, B) && isdisjoint(B, E) && isdisjoint(E, E)
-    for (res, w) in (isdisjoint(E, B, true), isdisjoint(B, E, true), isdisjoint(E, E, true))
+    @test isdisjoint(E, E) && isdisjoint(E, B) && isdisjoint(B, E)
+    for (res, w) in (isdisjoint(E, E, true), isdisjoint(E, B, true), isdisjoint(B, E, true))
         @test res && w isa Vector{N} && w == N[]
     end
 
