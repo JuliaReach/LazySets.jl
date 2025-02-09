@@ -400,11 +400,11 @@ for N in [Float64, Float32]
 
     # exponential_map
     @test_throws AssertionError exponential_map(ones(N, 2, 3), U)
+    @test_throws AssertionError exponential_map(ones(N, 3, 2), U)
     U2 = exponential_map(ones(N, 2, 2), U)
     @test_broken isidentical(U, U2)  # TODO this should change
-    @test_throws AssertionError exponential_map(ones(N, 3, 2), U)
 
     # is_interior_point
-    @test_broken is_interior_point(N[0], U) isa ArgumentError  # TODO this should change (see `_issubset_universe` and `is_interior_point`)
+    @test_throws AssertionError is_interior_point(N[0], U)
     @test is_interior_point(N[0, 0], U)
 end
