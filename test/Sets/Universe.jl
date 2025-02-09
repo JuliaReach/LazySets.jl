@@ -376,11 +376,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     # linear_combination
     @test_throws AssertionError linear_combination(U, U3)
-    @test_broken linear_combination(U, Pnc)  # TODO this should be possible
-    @test_broken linear_combination(Pnc, U)  # TODO this should be possible
-    # for U2 in (linear_combination(U, Pnc), linear_combination(Pnc, U))
-    #     @test isidentical(U, U2)
-    # end
+    for U2 in (linear_combination(U, Pnc), linear_combination(Pnc, U))
+        @test isidentical(U, U2)
+    end
 
     # minkowski_difference
     @test_throws AssertionError minkowski_difference(B, U3)  # TODO this works for the wrong reason

@@ -25,7 +25,17 @@ end
     return _linear_combination_emptyset(∅, X)
 end
 
+@commutative function linear_combination(U::Universe, X::LazySet)
+    return _linear_combination_universe(U, X)
+end
+
 # disambiguation
 @commutative function linear_combination(∅::EmptySet, X::ConvexSet)
     return _linear_combination_emptyset(∅, X)
+end
+@commutative function linear_combination(U::Universe, X::ConvexSet)
+    return _linear_combination_universe(U, X)
+end
+@commutative function linear_combination(∅::EmptySet, U::Universe)
+    return _linear_combination_emptyset(∅, U)
 end
