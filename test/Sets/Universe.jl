@@ -293,11 +293,14 @@ for N in [Float64, Float32, Rational{Int}]
     @test E2 isa EmptySet{N} && E2 == E
 
     # distance (between sets)
-    @test_broken distance(U, U)  # TODO this should change
-    # @test_throws AssertionError distance(U, U3)
-    # @test_throws AssertionError distance(U3, U)
-    # res = distance(U, U)
-    # @test res isa N && res == N(0)
+    @test_throws AssertionError distance(U, U3)
+    @test_throws AssertionError distance(U3, U)
+    for v in (distance(U, U), distance(U, B), distance(B, U))
+        @test v isa N && v == N(0)
+    end
+    for v in (distance(U, E), distance(E, U))
+        @test v isa N && v == N(Inf)
+    end
 
     # exact_sum / minkowski_sum
     # TODO this should work without Polyhedra

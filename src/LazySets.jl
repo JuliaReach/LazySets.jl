@@ -198,7 +198,8 @@ include("Sets/Tetrahedron/TetrahedronModule.jl")
 
 include("Sets/Universe/UniverseModule.jl")
 @reexport using ..UniverseModule: Universe
-using ..UniverseModule: _convex_hull_universe, _difference_universe, _difference_universe2
+using ..UniverseModule: _convex_hull_universe, _difference_universe, _difference_universe2,
+                        _distance_universe
 
 include("Sets/VPolygon/VPolygonModule.jl")
 @reexport using ..VPolygonModule: VPolygon
