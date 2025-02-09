@@ -622,6 +622,11 @@ end
 The default implementation applies the functions `linear_map` and `translate`.
 """
 function affine_map(M, X::LazySet, v::AbstractVector; kwargs...)
+    @assert size(M, 2) == dim(X) "an affine map of size $(size(M)) cannot be " *
+                                 "applied to a set of dimension $(dim(X))"
+    @assert size(M, 1) == length(v) "an affine map of sizes $(size(M)) and " *
+                                    "$(length(v)) is incompatible"
+
     return translate(linear_map(M, X; kwargs...), v)
 end
 
@@ -1561,6 +1566,9 @@ The default implementation assumes that `P` is polyhedral and applies an
 algorithm based on the set type (see [`_linear_map_polyhedron`](@ref)).
 """
 function linear_map(M::AbstractMatrix, P::LazySet; kwargs...)
+    @assert size(M, 2) == dim(P) "a linear map of size $(size(M)) cannot be " *
+                                 "applied to a set of dimension $(dim(P))"
+
     if ispolyhedral(P)
         return _linear_map_polyhedron(M, P; kwargs...)
     else

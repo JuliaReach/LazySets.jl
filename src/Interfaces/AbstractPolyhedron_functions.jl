@@ -365,9 +365,6 @@ function _linear_map_polyhedron(M::AbstractMatrix,
         M = N.(M)
     end
 
-    size(M, 2) != dim(P) && throw(ArgumentError("a linear map of size " *
-                                                "$(size(M)) cannot be applied to a set of dimension $(dim(P))"))
-
     got_algorithm = !isnothing(algorithm)
     got_inv = got_algorithm && (algorithm == "inv" || algorithm == "inverse")
     got_inv_right = got_algorithm && (algorithm ==

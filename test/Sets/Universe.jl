@@ -75,7 +75,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # diameter
-    @test_throws ErrorException diameter(U)  # TODO this should become an ArgumentError
+    @test_throws ArgumentError diameter(U)
 
     # dim
     @test dim(U) == 2
@@ -122,7 +122,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test low(U, 1) == N(-Inf)
 
     # norm
-    @test_throws ErrorException norm(U)  # TODO this should become an ArgumentError
+    @test_throws ArgumentError norm(U)
 
     # polyhedron
     if test_suite_polyhedra
@@ -135,7 +135,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # radius
-    @test_throws ErrorException radius(U)  # TODO this should become an ArgumentError
+    @test_throws ArgumentError radius(U)
 
     # rand
     @test rand(Universe; N=N) isa Universe{N}
@@ -173,11 +173,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError vertices(U)
 
     # volume
-    @test_throws MethodError volume(U)  # TODO this should maybe change
+    x = volume(U)
+    @test x isa N && x == N(Inf)
 
     # affine_map
-    @test_broken affine_map(ones(N, 2, 3), U, N[1, 1])  # TODO this should be caught earlier
-    @test_broken affine_map(ones(N, 2, 2), U, N[1])  # TODO this should be caught earlier and not require Polyhedra
+    @test_throws AssertionError affine_map(ones(N, 2, 3), U, N[1, 1])
+    @test_throws AssertionError affine_map(ones(N, 2, 2), U, N[1])
     if test_suite_polyhedra  # TODO this should work, even without Polyhedra
         @test_broken affine_map(ones(N, 2, 2), U, N[1, 1])
         # U2 = affine_map(ones(N, 2, 2), U, N[1, 1])
@@ -191,8 +192,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test N[0, 0] ∈ U
 
     # linear_map
-    @test_broken linear_map(ones(N, 2, 3), U)  # TODO this should become an AssertionError
-    # @test_throws AssertionError linear_map(ones(N, 2, 3), U)
+    @test_throws AssertionError linear_map(ones(N, 2, 3), U)
     @test_broken linear_map(ones(N, 2, 2), U)  # TODO this should work, even without Polyhedra
     # U2 = linear_map(ones(N, 2, 2), U)
     # @test_broken isidentical(U, U2)
@@ -208,14 +208,14 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(U3, U2)
 
     # permute
-    @test_broken permute(U, [1, -1]) isa AssertionError  # TODO this should change
-    @test_broken permute(U, [1, 2, 2]) isa AssertionError  # TODO this should change
+    @test_throws AssertionError permute(U, [1, -1])
+    @test_throws AssertionError permute(U, [1, 2, 2])
     U2 = permute(U, [2, 1])
     @test isidentical(U, U2)
 
     # project
-    @test_broken project(U, [1, -1]) isa AssertionError  # TODO this should change
-    @test_broken project(U, [1, 2, 3]) isa AssertionError  # TODO this should change
+    @test_throws AssertionError project(U, [1, -1])
+    @test_throws AssertionError project(U, [1, 2, 3])
     U2 = project(U, [2])
     @test U2 isa Universe{N} && dim(U2) == 1
 
