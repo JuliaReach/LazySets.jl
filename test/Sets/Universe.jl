@@ -303,21 +303,14 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # exact_sum / minkowski_sum
-    # TODO this should work without Polyhedra
-    if N <: AbstractFloat  # TODO this should work for Rational{Int}
-        for f in (exact_sum, minkowski_sum)
-            @test_throws AssertionError f(U, U3)
-            @test_throws AssertionError f(U3, U)
-            if test_suite_polyhedra
-                @test_broken f(U, U)  # TODO this should work, even without Polyhedra
-                for U2 in (f(U, B), f(B, U))
-                    @test U2 isa HPolyhedron
-                    if N != Float32
-                        @test U2 isa HPolyhedron{N}
-                        @test_broken isidentical(U, U2)
-                    end
-                end
-            end
+    for f in (exact_sum, minkowski_sum)
+        @test_throws AssertionError f(U, U3)
+        @test_throws AssertionError f(U3, U)
+        for U2 in (f(U, U), f(U, B), f(B, U))
+            @test isidentical(U, U2)
+        end
+        for E2 in (f(U, E), f(E, U))
+            @test E2 isa EmptySet{N} && E2 == E
         end
     end
 
