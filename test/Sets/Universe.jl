@@ -240,7 +240,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError scale!(N(0), U2)
 
     # support_function
-    @test_broken ρ(N[1], U) isa AssertionError  # TODO this should change
+    @test_throws AssertionError ρ(N[1], U)
     sf = ρ(N[-1, 2], U)
     @test sf isa N && sf == N(Inf)
     sf = ρ(N[2, 0], U)
@@ -248,7 +248,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test ρ(N[0, 0], U) == zero(N)
 
     # support_vector
-    @test_broken σ(N[1], U) isa AssertionError  # TODO this should change
+    @test_throws AssertionError σ(N[1], U)
     sv = σ(N[-1, 2], U)
     @test sv isa Vector{N} && sv == N[-Inf, Inf]
     sv = σ(N[2, 0], U)
