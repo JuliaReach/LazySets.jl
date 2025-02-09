@@ -327,7 +327,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test !(U ≈ U3) && !(U3 ≈ U)
 
     # isdisjoint
-    @test_broken isdisjoint(U, U3) isa AssertionError  # TODO this should change
+    @test_throws AssertionError isdisjoint(U, U3)
     @test isdisjoint(U, E) && isdisjoint(E, U)
     @test !isdisjoint(U, B) && !isdisjoint(B, U) && !isdisjoint(U, U)
     for (res, w) in (isdisjoint(U, B, true), isdisjoint(B, U, true))

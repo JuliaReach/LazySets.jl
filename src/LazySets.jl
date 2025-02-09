@@ -199,7 +199,8 @@ include("Sets/Tetrahedron/TetrahedronModule.jl")
 include("Sets/Universe/UniverseModule.jl")
 @reexport using ..UniverseModule: Universe
 using ..UniverseModule: _convex_hull_universe, _difference_universe, _difference_universe2,
-                        _distance_universe, _intersection_universe, _minkowski_sum_universe
+                        _distance_universe, _intersection_universe, _isdisjoint_universe,
+                        _minkowski_sum_universe
 
 include("Sets/VPolygon/VPolygonModule.jl")
 @reexport using ..VPolygonModule: VPolygon
