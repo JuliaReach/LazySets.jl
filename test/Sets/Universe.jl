@@ -220,12 +220,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test U2 isa Universe{N} && dim(U2) == 1
 
     # sample
-    @test_broken sample(U)  # TODO this should change
-    @test_broken sample(U, 2)  # TODO this should change
-    # x = sample(U)
-    # @test x isa Vector{N} && length(x) == 2
-    # samples = sample(U, 2)
-    # @test xs isa Vector{Vector{N}} && length(xs) == 2
+    x = sample(U)
+    @test x isa Vector{N} && length(x) == 2
+    xs = sample(U, 2)
+    @test xs isa Vector{Vector{N}} && length(xs) == 2
+    for x in xs
+        @test x isa Vector{N} && length(x) == 2
+    end
 
     # scale
     U2 = scale(N(2), U)
