@@ -350,8 +350,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test !isequivalent(U, B) && !isequivalent(B, U)
 
     # isstrictsubset
-    @test_broken B ⊂ U3 isa AssertionError  # TODO this should change
-    @test_broken U3 ⊂ B isa AssertionError  # TODO this should change
+    @test_throws AssertionError B ⊂ U3
+    @test_throws AssertionError U3 ⊂ B
     @test !(U ⊂ U)
     res, w = ⊂(U, U, true)
     @test !res && w isa Vector{N} && w == N[]
