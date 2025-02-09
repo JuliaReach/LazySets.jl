@@ -220,12 +220,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test U2 isa Universe{N} && dim(U2) == 1
 
     # sample
-    @test_broken sample(U)  # TODO this should change
-    @test_broken sample(U, 2)  # TODO this should change
-    # x = sample(U)
-    # @test x isa Vector{N} && length(x) == 2
-    # samples = sample(U, 2)
-    # @test xs isa Vector{Vector{N}} && length(xs) == 2
+    x = sample(U)
+    @test x isa Vector{N} && length(x) == 2
+    xs = sample(U, 2)
+    @test xs isa Vector{Vector{N}} && length(xs) == 2
+    for x in xs
+        @test x isa Vector{N} && length(x) == 2
+    end
 
     # scale
     U2 = scale(N(2), U)
@@ -239,7 +240,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError scale!(N(0), U2)
 
     # support_function
-    @test_broken ρ(N[1], U) isa AssertionError  # TODO this should change
+    @test_throws AssertionError ρ(N[1], U)
     sf = ρ(N[-1, 2], U)
     @test sf isa N && sf == N(Inf)
     sf = ρ(N[2, 0], U)
@@ -247,7 +248,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test ρ(N[0, 0], U) == zero(N)
 
     # support_vector
-    @test_broken σ(N[1], U) isa AssertionError  # TODO this should change
+    @test_throws AssertionError σ(N[1], U)
     sv = σ(N[-1, 2], U)
     @test sv isa Vector{N} && sv == N[-Inf, Inf]
     sv = σ(N[2, 0], U)
@@ -272,52 +273,49 @@ for N in [Float64, Float32, Rational{Int}]
 
     # convex_hull (binary)
     @test_throws AssertionError convex_hull(U, U3)
-    @test_broken convex_hull(U, U)  # TODO this should change
-    # U2 = convex_hull(U, U)
-    # @test isidentical(U, U2)
-    @test_broken convex_hull(U, Pnc)  # TODO this should change
-    # for X in (convex_hull(U, Pnc), convex_hull(Pnc, U))
-    #     @test X isa LazySet{N} && isequivalent(X, Pc)
-    # end
+    U2 = convex_hull(U, U)
+    @test isidentical(U, U2)
+    for U2 in (convex_hull(U, Pnc), convex_hull(Pnc, U), convex_hull(U, E), convex_hull(E, U))
+        @test isidentical(U, U2)
+    end
 
     # difference
     @test_throws AssertionError difference(B, U3)
-    @test_broken difference(U3, B) isa AssertionError  # TODO this should change (fall back to `complement(B)`)
+    @test_throws AssertionError difference(U3, B)
     for E2 in (difference(U, U), difference(B, U))
         @test E2 isa EmptySet{N} && dim(E2) == 2
     end
-    @test_broken difference(U, B)  # TODO this should change (see above)
-    # x = difference(U, B)
-    # @test X isa UnionSetArray{N, HalfSpace{N,Vector{N}}} && length(array(X)) == 4
+    X = difference(U, B)
+    @test X isa UnionSetArray{N,<:HalfSpace} && length(array(X)) == 4 && X == complement(B)
+    U2 = difference(U, E)
+    @test isidentical(U, U2)
+    E2 = difference(E, U)
+    @test E2 isa EmptySet{N} && E2 == E
 
     # distance (between sets)
-    @test_broken distance(U, U)  # TODO this should change
-    # @test_throws AssertionError distance(U, U3)
-    # @test_throws AssertionError distance(U3, U)
-    # res = distance(U, U)
-    # @test res isa N && res == N(0)
+    @test_throws AssertionError distance(U, U3)
+    @test_throws AssertionError distance(U3, U)
+    for v in (distance(U, U), distance(U, B), distance(B, U))
+        @test v isa N && v == N(0)
+    end
+    for v in (distance(U, E), distance(E, U))
+        @test v isa N && v == N(Inf)
+    end
 
     # exact_sum / minkowski_sum
-    # TODO this should work without Polyhedra
-    if N <: AbstractFloat  # TODO this should work for Rational{Int}
-        for f in (exact_sum, minkowski_sum)
-            @test_throws AssertionError f(U, U3)
-            @test_throws AssertionError f(U3, U)
-            if test_suite_polyhedra
-                @test_broken f(U, U)  # TODO this should work, even without Polyhedra
-                for U2 in (f(U, B), f(B, U))
-                    @test U2 isa HPolyhedron
-                    if N != Float32
-                        @test U2 isa HPolyhedron{N}
-                        @test_broken isidentical(U, U2)
-                    end
-                end
-            end
+    for f in (exact_sum, minkowski_sum)
+        @test_throws AssertionError f(U, U3)
+        @test_throws AssertionError f(U3, U)
+        for U2 in (f(U, U), f(U, B), f(B, U))
+            @test isidentical(U, U2)
+        end
+        for E2 in (f(U, E), f(E, U))
+            @test E2 isa EmptySet{N} && E2 == E
         end
     end
 
     # intersection
-    @test_broken intersection(U, U3) isa AssertionError  # TODO this should change
+    @test_throws AssertionError intersection(U, U3)
     U2 = intersection(U, U)
     @test isidentical(U, U2)
     for X in (intersection(U, B), intersection(B, U))
@@ -329,7 +327,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test !(U ≈ U3) && !(U3 ≈ U)
 
     # isdisjoint
-    @test_broken isdisjoint(U, U3) isa AssertionError  # TODO this should change
+    @test_throws AssertionError isdisjoint(U, U3)
     @test isdisjoint(U, E) && isdisjoint(E, U)
     @test !isdisjoint(U, B) && !isdisjoint(B, U) && !isdisjoint(U, U)
     for (res, w) in (isdisjoint(U, B, true), isdisjoint(B, U, true))
@@ -346,13 +344,14 @@ for N in [Float64, Float32, Rational{Int}]
     @test !(U == U3) && !(U3 == U)
 
     # isequivalent
+    @test_throws AssertionError isequivalent(U, U3)
+    @test_throws AssertionError isequivalent(U3, U)
     @test isequivalent(U, U)
-    @test_broken isequivalent(U, U3) isa AssertionError  # TODO this should change
-    @test_broken isequivalent(U3, U) isa AssertionError  # TODO this should change
+    @test !isequivalent(U, B) && !isequivalent(B, U)
 
     # isstrictsubset
-    @test_broken B ⊂ U3 isa AssertionError  # TODO this should change
-    @test_broken U3 ⊂ B isa AssertionError  # TODO this should change
+    @test_throws AssertionError B ⊂ U3
+    @test_throws AssertionError U3 ⊂ B
     @test !(U ⊂ U)
     res, w = ⊂(U, U, true)
     @test !res && w isa Vector{N} && w == N[]
@@ -364,9 +363,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test res && w isa Vector{N} && w ∉ B && w ∈ U
 
     # issubset
-    @test_broken B ⊆ U3 isa AssertionError  # TODO this should change
-    @test_broken U3 ⊆ B isa AssertionError  # TODO this should change
-    for X in (U, B, Pu)  # TODO remove `Pu` once the dimension check is in place
+    @test_throws AssertionError B ⊆ U3
+    @test_throws AssertionError U3 ⊆ B
+    for X in (U, B)
         @test X ⊆ U
         res, w = ⊆(X, U, true)
         @test res && w isa Vector{N} && w == N[]
@@ -374,28 +373,21 @@ for N in [Float64, Float32, Rational{Int}]
     @test U ⊈ B
     res, w = ⊆(U, B, true)
     @test !res && w isa Vector{N} && w ∉ B && w ∈ U
-    @test U ⊆ Pu  # TODO remove `Pu` once the dimension check is in place
-    res, w = ⊆(U, Pu, true)
-    @test res && w isa Vector{N} && w == N[]
 
     # linear_combination
     @test_throws AssertionError linear_combination(U, U3)
-    @test_broken linear_combination(U, Pnc)  # TODO this should be possible
-    @test_broken linear_combination(Pnc, U)  # TODO this should be possible
-    # for U2 in (linear_combination(U, Pnc), linear_combination(Pnc, U))
-    #     @test isidentical(U, U2)
-    # end
+    for U2 in (linear_combination(U, Pnc), linear_combination(Pnc, U))
+        @test isidentical(U, U2)
+    end
 
     # minkowski_difference
-    @test_throws AssertionError minkowski_difference(B, U3)  # TODO this works for the wrong reason
-    @test_broken minkowski_difference(U3, B) isa AssertionError  # TODO this should change
-    U2 = minkowski_difference(U, B)
-    @test_broken isidentical(U, U2)  # TODO this should change
-    @test_broken minkowski_difference(B, U)  # TODO this should change
-    @test_broken minkowski_difference(U, U)  # TODO this should change
-    # for E2 in (minkowski_difference(B, U), minkowski_difference(U, U))
-    #     @test E2 isa EmptySet{N} && dim(E2) == 2
-    # end
+    @test_throws AssertionError minkowski_difference(B, U3)
+    @test_throws AssertionError minkowski_difference(U3, B)
+    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B))
+        @test isidentical(U, U2)
+    end
+    E2 = minkowski_difference(B, U)
+    @test E2 isa EmptySet{N} && dim(E2) == 2
 end
 
 for N in [Float64, Float32]
@@ -408,11 +400,11 @@ for N in [Float64, Float32]
 
     # exponential_map
     @test_throws AssertionError exponential_map(ones(N, 2, 3), U)
+    @test_throws AssertionError exponential_map(ones(N, 3, 2), U)
     U2 = exponential_map(ones(N, 2, 2), U)
     @test_broken isidentical(U, U2)  # TODO this should change
-    @test_throws AssertionError exponential_map(ones(N, 3, 2), U)
 
     # is_interior_point
-    @test_broken is_interior_point(N[0], U) isa ArgumentError  # TODO this should change (see `_issubset_universe` and `is_interior_point`)
+    @test_throws AssertionError is_interior_point(N[0], U)
     @test is_interior_point(N[0, 0], U)
 end

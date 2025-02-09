@@ -654,18 +654,19 @@ function intersection(L1::LinearMap, L2::LinearMap)
 end
 @commutative intersection(S::AbstractSingleton, L::LinearMap) = _intersection_singleton(S, L)
 
-@commutative function intersection(::Universe, X::LazySet)
-    return X
+@commutative function intersection(U::Universe, X::LazySet)
+    return _intersection_universe(U, X)
 end
 
 # disambiguations
-@commutative intersection(U::Universe, P::AbstractPolyhedron) = P
-@commutative intersection(U::Universe, S::AbstractSingleton) = S
-@commutative intersection(U::Universe, X::Interval) = X
-@commutative intersection(U::Universe, L::LinearMap) = L
-@commutative intersection(U::Universe, X::Union{CartesianProduct,CartesianProductArray}) = X
-@commutative intersection(U::Universe, cup::UnionSet) = cup
-@commutative intersection(U::Universe, cup::UnionSetArray) = cup
+for T in [:AbstractPolyhedron, :AbstractSingleton, :Interval, :LinearMap, :UnionSet, :UnionSetArray,
+          :(Union{CartesianProduct,CartesianProductArray})]
+    @eval begin
+        @commutative function intersection(U::Universe, X::$T)
+            return _intersection_universe(U, X)
+        end
+    end
+end
 
 """
 # Extended help

@@ -466,17 +466,6 @@ end
     return _isdisjoint_universe(U, X, witness)
 end
 
-function _isdisjoint_universe(U::Universe, X::LazySet, witness)
-    @assert dim(X) == dim(U) "the dimensions of the given sets should match, " *
-                             "but they are $(dim(X)) and $(dim(U)), respectively"
-    result = isempty(X)
-    if result
-        return _witness_result_empty(witness, true, U, X)
-    else
-        return witness ? (false, an_element(X)) : false
-    end
-end
-
 # disambiguations
 for ST in [:AbstractPolyhedron, :AbstractZonotope, :AbstractSingleton,
            :HalfSpace, :Hyperplane, :Line2D, :CartesianProductArray, :UnionSet,
@@ -484,10 +473,6 @@ for ST in [:AbstractPolyhedron, :AbstractZonotope, :AbstractSingleton,
     @eval @commutative function isdisjoint(U::Universe, X::($ST), witness::Bool=false)
         return _isdisjoint_universe(U, X, witness)
     end
-end
-
-function isdisjoint(U::Universe, ::Universe, witness::Bool=false)
-    return witness ? (false, an_element(U)) : false
 end
 
 """

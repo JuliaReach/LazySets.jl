@@ -380,3 +380,19 @@ for T in [:ZeroSet]
         end
     end
 end
+
+@commutative function minkowski_sum(U::Universe, X::LazySet)
+    return _minkowski_sum_universe(U, X)
+end
+
+# disambiguation
+for T in [:AbstractPolyhedron, :ZeroSet]
+    @eval begin
+        @commutative function minkowski_sum(U::Universe, X::$T)
+            return _minkowski_sum_universe(U, X)
+        end
+    end
+end
+@commutative function minkowski_sum(∅::EmptySet, U::Universe)
+    return _minkowski_sum_emptyset(∅, U)
+end

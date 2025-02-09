@@ -54,6 +54,7 @@ LazySets.SingletonSampler
 LazySets.RejectionSampler
 LazySets.RandomWalkSampler
 LazySets.PolynomialZonotopeSampler
+LazySets.UniverseSampler
 ```
 
 ## Symbolics

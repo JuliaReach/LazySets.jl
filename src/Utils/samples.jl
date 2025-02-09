@@ -92,6 +92,7 @@ _default_sampler(::Hyperplane) = HyperplaneSampler()
 _default_sampler(::Line2D) = HyperplaneSampler()
 _default_sampler(::AbstractSingleton) = SingletonSampler()
 _default_sampler(::AbstractPolynomialZonotope) = PolynomialZonotopeSampler()
+_default_sampler(::Universe) = UniverseSampler()
 
 _rand(rng, U) = rand(rng, U)
 _rand(rng, U::AbstractVector) = rand.(Ref(rng), U)
@@ -571,6 +572,45 @@ function _add_generators!(x, P::DensePolynomialZonotope, U, rng)
     end
     return x
 end
+
+"""
+    UniverseSampler{D} <: AbstractSampler
+
+Type used for sampling from universal sets.
+
+### Fields
+
+- `distribution` -- (optional, default: `nothing`) distribution from which
+                    samples are drawn
+
+### Notes
+
+If `distribution` is `nothing` (default), the sampling algorithm uses a
+`DefaultUniform` over ``[-100, 100]^n``.
+"""
+struct UniverseSampler{D} <: AbstractSampler
+    distribution::D
+end
+
+function UniverseSampler()
+    return UniverseSampler(nothing)
+end
+
+function sample!(D::Vector{VN}, X::LazySet, sampler::UniverseSampler;
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
+    rng = reseed!(rng, seed)
+    U = sampler.distribution
+    if isnothing(U)
+        U = DefaultUniform(N(-100), N(100))
+    end
+    n = dim(X)
+    @inbounds for i in eachindex(D)
+        # sample a random point
+        D[i] = rand(rng, U, n)
+    end
+end
+
 
 # =============================
 # Code requiring Distributions

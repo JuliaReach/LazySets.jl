@@ -36,6 +36,8 @@ Then the Minkowski difference is
 ```
 """
 function minkowski_difference(P::LazySet, Q::LazySet)
+    @assert dim(P) == dim(Q) "the dimensions of the given sets should match, " *
+                             "but they are $(dim(P)) and $(dim(Q)), respectively"
     @assert ispolyhedral(P) "this implementation requires that the first argument " *
                             "is polyhedral; try overapproximating with an `HPolyhedron`"
     @assert isbounded(Q) "this implementation requires that the second " *
@@ -201,11 +203,28 @@ function minkowski_difference(X::LazySet, ∅::EmptySet)
     return _minkowski_difference_emptyset2(X, ∅)
 end
 
+function minkowski_difference(U::Universe, X::LazySet)
+    return _minkowski_difference_universe(U, X)
+end
+
+function minkowski_difference(X::LazySet, U::Universe)
+    return _minkowski_difference_universe2(X, U)
+end
+
 # disambiguation
+function minkowski_difference(∅::EmptySet, U::Universe)
+    return _minkowski_difference_emptyset(∅, U)
+end
+function minkowski_difference(U::Universe, ∅::EmptySet)
+    return _minkowski_difference_emptyset2(U, ∅)
+end
 for T in [:AbstractSingleton, :ZeroSet]
     @eval begin
         function minkowski_difference(∅::EmptySet, X::$T)
             return _minkowski_difference_emptyset(∅, X)
+        end
+        function minkowski_difference(U::Universe, X::$T)
+            return _minkowski_difference_universe(U, X)
         end
     end
 end
