@@ -706,20 +706,6 @@ for ST in [:AbstractHyperrectangle, :AbstractPolyhedron, :UnionSet,
     end
 end
 
-function ⊆(X::LazySet, U::Universe, witness::Bool=false)
-    return _issubset_universe(X, U, witness)
-end
-
-function _issubset_universe(X::LazySet, U::Universe, witness::Bool=false)
-    return _witness_result_empty(witness, true, X, U)
-end
-
-# disambiguations
-for ST in [:AbstractPolytope, :AbstractZonotope, :AbstractHyperrectangle,
-           :AbstractSingleton, :LineSegment, :EmptySet, :UnionSet, :UnionSetArray]
-    @eval ⊆(X::($ST), U::Universe, witness::Bool=false) = _issubset_universe(X, U, witness)
-end
-
 """
 # Extended help
 
@@ -729,19 +715,22 @@ end
 
 We fall back to `isuniversal(X)`.
 """
-function ⊆(::Universe, X::LazySet, witness::Bool=false)
-    return isuniversal(X, witness)
+function ⊆(U::Universe, X::LazySet, witness::Bool=false)
+    return _issubset_universe(U, X, witness)
 end
 
-# disambiguation
-function ⊆(U1::Universe, U2::Universe, witness::Bool=false)
-    return _issubset_universe(U1, U2, witness)
+function ⊆(X::LazySet, U::Universe, witness::Bool=false)
+    return _issubset_universe2(X, U, witness)
 end
 
 # disambiguations
 for ST in [:AbstractPolyhedron, :AbstractPolytope, :AbstractHyperrectangle,
            :AbstractSingleton, :EmptySet, :UnionSetArray, :Complement]
-    @eval ⊆(::Universe, X::($ST), witness::Bool=false) = isuniversal(X, witness)
+    @eval ⊆(U::Universe, X::($ST), witness::Bool=false) = _issubset_universe(U, X, witness)
+end
+for ST in [:AbstractPolytope, :AbstractZonotope, :AbstractHyperrectangle,
+           :AbstractSingleton, :LineSegment, :EmptySet, :UnionSet, :UnionSetArray]
+    @eval ⊆(X::($ST), U::Universe, witness::Bool=false) = _issubset_universe2(X, U, witness)
 end
 
 """

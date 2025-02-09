@@ -15,7 +15,7 @@ using ReachabilityBase.Require: require
                         reflect, volume, ∈, permute, project, scale, scale!, ρ,
                         σ, translate, translate!, cartesian_product,
                         convex_hull, difference, distance, intersection,
-                        isdisjoint, minkowski_sum
+                        isdisjoint, ⊆, minkowski_sum
 @reexport import ..LazySets: constrained_dimensions, linear_map_inverse,
                              rationalize, tosimplehrep
 import Base: copy
@@ -56,6 +56,7 @@ include("convex_hull.jl")
 include("difference.jl")
 include("distance.jl")
 include("intersection.jl")
+include("issubset.jl")
 include("minkowski_sum.jl")
 
 include("constrained_dimensions.jl")

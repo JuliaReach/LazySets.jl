@@ -363,9 +363,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test res && w isa Vector{N} && w ∉ B && w ∈ U
 
     # issubset
-    @test_broken B ⊆ U3 isa AssertionError  # TODO this should change
-    @test_broken U3 ⊆ B isa AssertionError  # TODO this should change
-    for X in (U, B, Pu)  # TODO remove `Pu` once the dimension check is in place
+    @test_throws AssertionError B ⊆ U3
+    @test_throws AssertionError U3 ⊆ B
+    for X in (U, B)
         @test X ⊆ U
         res, w = ⊆(X, U, true)
         @test res && w isa Vector{N} && w == N[]
@@ -373,9 +373,6 @@ for N in [Float64, Float32, Rational{Int}]
     @test U ⊈ B
     res, w = ⊆(U, B, true)
     @test !res && w isa Vector{N} && w ∉ B && w ∈ U
-    @test U ⊆ Pu  # TODO remove `Pu` once the dimension check is in place
-    res, w = ⊆(U, Pu, true)
-    @test res && w isa Vector{N} && w == N[]
 
     # linear_combination
     @test_throws AssertionError linear_combination(U, U3)
