@@ -381,8 +381,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # minkowski_difference
-    @test_throws AssertionError minkowski_difference(B, U3)  # TODO this works for the wrong reason
-    @test_broken minkowski_difference(U3, B) isa AssertionError  # TODO this should change
+    @test_throws AssertionError minkowski_difference(B, U3)
+    @test_throws AssertionError minkowski_difference(U3, B)
     U2 = minkowski_difference(U, B)
     @test_broken isidentical(U, U2)  # TODO this should change
     @test_broken minkowski_difference(B, U)  # TODO this should change

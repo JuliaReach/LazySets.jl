@@ -36,6 +36,8 @@ Then the Minkowski difference is
 ```
 """
 function minkowski_difference(P::LazySet, Q::LazySet)
+    @assert dim(P) == dim(Q) "the dimensions of the given sets should match, " *
+                             "but they are $(dim(P)) and $(dim(Q)), respectively"
     @assert ispolyhedral(P) "this implementation requires that the first argument " *
                             "is polyhedral; try overapproximating with an `HPolyhedron`"
     @assert isbounded(Q) "this implementation requires that the second " *
