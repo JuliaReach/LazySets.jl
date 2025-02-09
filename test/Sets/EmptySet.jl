@@ -17,6 +17,9 @@ end
 for N in [Float64, Float32, Rational{Int}]
     # auxiliary sets
     B = BallInf(ones(N, 2), N(1))
+    U = Universe{N}(2)
+    Z = ZeroSet{N}(2)
+    B1 = Ball1(ones(N, 2), N(1))
     Pe = HPolygon([HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(-1)),  # empty
                    HalfSpace(N[0, 1], N(0)), HalfSpace(N[0, -1], N(0))])
     Pnc = Polygon([N[0, 0], N[3, 0], N[1, 1], N[0, 3]])  # nonconvex
@@ -47,8 +50,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError chebyshev_center_radius(E)
 
     # complement
-    U = complement(E)
-    @test U isa Universe{N} && dim(U) == 2
+    U2 = complement(E)
+    @test U2 isa Universe{N} && dim(U2) == 2
 
     # concretize
     E2 = concretize(E)
@@ -195,6 +198,14 @@ for N in [Float64, Float32, Rational{Int}]
         @test res isa N && res == N(Inf)
     end
 
+    # distance (between two sets)
+    @test_throws AssertionError distance(E, E3)
+    @test_throws AssertionError distance(E3, E)
+    for v in (distance(E, E), distance(B1, E), distance(E, B1), distance(U, E), distance(E, U),
+              distance(E, B), distance(B, E), distance(E, Z), distance(Z, E))
+        @test v isa N && v == N(Inf)
+    end
+
     # exponential_map / linear_map
     for f in (exponential_map, linear_map)
         @test_throws AssertionError f(ones(N, 2, 3), E)
@@ -244,14 +255,14 @@ for N in [Float64, Float32, Rational{Int}]
 
     # support_function
     @test_throws AssertionError ρ(N[1], E)
-    for v in (N[-1, 2], N[2, 0], N[0, 0])
-        @test_throws ArgumentError ρ(v, E)
+    for x in (N[-1, 2], N[2, 0], N[0, 0])
+        @test_throws ArgumentError ρ(x, E)
     end
 
     # support_vector
     @test_throws AssertionError σ(N[1], E)
-    for v in (N[-1, 2], N[2, 0], N[0, 0])
-        @test_throws ArgumentError σ(v, E)
+    for x in (N[-1, 2], N[2, 0], N[0, 0])
+        @test_throws ArgumentError σ(x, E)
     end
 
     # translate
@@ -300,6 +311,10 @@ for N in [Float64, Float32, Rational{Int}]
             @test isidentical(E, E2)
         end
     end
+    for E2 in (minkowski_sum(E, U), minkowski_sum(U, E), minkowski_sum(E, Z), minkowski_sum(Z, E),
+               minkowski_sum(E, B), minkowski_sum(B, E))
+        @test E2 isa EmptySet{N} && E2 == E
+    end
 
     # intersection
     @test_throws AssertionError intersection(E, E3)
@@ -314,8 +329,10 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isdisjoint
     @test_throws AssertionError isdisjoint(E, E3)
-    @test isdisjoint(E, B) && isdisjoint(B, E) && isdisjoint(E, E)
-    for (res, w) in (isdisjoint(E, B, true), isdisjoint(B, E, true), isdisjoint(E, E, true))
+    @test isdisjoint(E, E) && isdisjoint(E, B) && isdisjoint(B, E) &&
+          isdisjoint(E, Pnc) && isdisjoint(Pnc, E)
+    for (res, w) in (isdisjoint(E, E, true), isdisjoint(E, B, true), isdisjoint(B, E, true),
+                     isdisjoint(E, Pnc, true), isdisjoint(Pnc, E, true))
         @test res && w isa Vector{N} && w == N[]
     end
 
@@ -344,28 +361,32 @@ for N in [Float64, Float32, Rational{Int}]
     # issubset
     @test_throws AssertionError B ⊆ E3
     @test_throws AssertionError E3 ⊆ B
-    for X in (E, B)
+    for X in (E, B, Pnc)
         @test E ⊆ X
         res, w = ⊆(E, X, true)
         @test res && w isa Vector{N} && w == N[]
     end
-    @test B ⊈ E
-    res, w = ⊆(B, E, true)
-    @test !res && w isa Vector{N} && w ∉ E && w ∈ B
+    @test B ⊈ E && Pnc ⊈ E
+    for X in (B, Pnc)
+        res, w = ⊆(X, E, true)
+        @test !res && w isa Vector{N} && w ∉ E && w ∈ X
+    end
     @test Pe ⊆ E
     res, w = ⊆(Pe, E, true)
     @test res && w isa Vector{N} && w == N[]
 
     # linear_combination
     @test_throws AssertionError linear_combination(E, E3)
-    for E2 in (linear_combination(E, Pnc), linear_combination(Pnc, E))
+    for E2 in (linear_combination(E, Pnc), linear_combination(Pnc, E),
+               linear_combination(E, U), linear_combination(U, E))
         @test isidentical(E, E2)
     end
 
     # minkowski_difference
     @test_throws AssertionError minkowski_difference(B, E3)
     @test_throws AssertionError minkowski_difference(E3, B)
-    for E2 in (minkowski_difference(E, E), minkowski_difference(E, B))
+    for E2 in (minkowski_difference(E, E), minkowski_difference(E, B),
+               minkowski_difference(E, U), minkowski_difference(E, Z))
         @test isidentical(E, E2)
     end
     X = minkowski_difference(B, E)

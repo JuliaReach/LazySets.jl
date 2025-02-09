@@ -270,6 +270,9 @@ if test_suite_basic
     @testset "LazySets.distance" begin
         include("ConcreteOperations/distance.jl")
     end
+    @testset "LazySets.exact_sum" begin
+        include("ConcreteOperations/exact_sum.jl")
+    end
     @testset "LazySets.Interior" begin
         include("ConcreteOperations/interior.jl")
     end

@@ -15,10 +15,12 @@ end
 
 for N in [Float64, Float32, Rational{Int}]
     # auxiliary sets
-    Pu = HPolyhedron{N}()
     B = BallInf(ones(N, 2), N(1))
-    Pnc = Polygon([N[0, 0], N[3, 0], N[1, 1], N[0, 3]])  # nonconvex
     E = EmptySet{N}(2)
+    Z = ZeroSet{N}(2)
+    Pnc = Polygon([N[0, 0], N[3, 0], N[1, 1], N[0, 3]])  # nonconvex
+    Pe = HPolygon([HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(-1)),  # empty
+                   HalfSpace(N[0, 1], N(0)), HalfSpace(N[0, -1], N(0))])
 
     # constructor
     U = Universe{N}(2)
@@ -50,8 +52,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(U, U2)
 
     # constrained_dimensions
-    v = constrained_dimensions(U)
-    @test v isa Vector{Int} && isempty(v)
+    x = constrained_dimensions(U)
+    @test x isa Vector{Int} && isempty(x)
 
     # constraints_list
     clist = constraints_list(U)
@@ -241,20 +243,20 @@ for N in [Float64, Float32, Rational{Int}]
 
     # support_function
     @test_throws AssertionError ρ(N[1], U)
-    sf = ρ(N[-1, 2], U)
-    @test sf isa N && sf == N(Inf)
-    sf = ρ(N[2, 0], U)
-    @test sf isa N && sf == N(Inf)
+    v = ρ(N[-1, 2], U)
+    @test v isa N && v == N(Inf)
+    v = ρ(N[2, 0], U)
+    @test v isa N && v == N(Inf)
     @test ρ(N[0, 0], U) == zero(N)
 
     # support_vector
     @test_throws AssertionError σ(N[1], U)
-    sv = σ(N[-1, 2], U)
-    @test sv isa Vector{N} && sv == N[-Inf, Inf]
-    sv = σ(N[2, 0], U)
-    @test sv isa Vector{N} && sv == N[Inf, 0]
-    sv = σ(N[0, 0], U)
-    @test sv isa Vector{N} && sv == N[0, 0]
+    x = σ(N[-1, 2], U)
+    @test x isa Vector{N} && x == N[-Inf, Inf]
+    x = σ(N[2, 0], U)
+    @test x isa Vector{N} && x == N[Inf, 0]
+    x = σ(N[0, 0], U)
+    @test x isa Vector{N} && x == N[0, 0]
 
     # translate
     @test_throws AssertionError translate(U, N[1])
@@ -295,10 +297,10 @@ for N in [Float64, Float32, Rational{Int}]
     # distance (between sets)
     @test_throws AssertionError distance(U, U3)
     @test_throws AssertionError distance(U3, U)
-    for v in (distance(U, U), distance(U, B), distance(B, U))
+    for v in (distance(U, U), distance(U, B), distance(B, U), distance(U, Z), distance(Z, U))
         @test v isa N && v == N(0)
     end
-    for v in (distance(U, E), distance(E, U))
+    for v in (distance(U, Pe), distance(Pe, U))
         @test v isa N && v == N(Inf)
     end
 
@@ -312,6 +314,13 @@ for N in [Float64, Float32, Rational{Int}]
         for E2 in (f(U, E), f(E, U))
             @test E2 isa EmptySet{N} && E2 == E
         end
+        for X in (f(U, Pe), f(Pe, U))
+            @test X isa HPolygon{N} && X == Pe
+        end
+    end
+    for U2 in (minkowski_sum(U, Z), minkowski_sum(Z, U), minkowski_sum(U, B), minkowski_sum(B, U),
+               minkowski_sum(U, Pnc), minkowski_sum(Pnc, U))
+        @test U2 isa Universe{N} && U2 == U
     end
 
     # intersection
@@ -321,6 +330,9 @@ for N in [Float64, Float32, Rational{Int}]
     for X in (intersection(U, B), intersection(B, U))
         @test X isa BallInf{N} && X == B
     end
+    for X in (intersection(U, Pnc), intersection(Pnc, U))
+        @test X isa Polygon{N} && X == Pnc
+    end
 
     # isapprox
     @test U ≈ U
@@ -328,15 +340,18 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isdisjoint
     @test_throws AssertionError isdisjoint(U, U3)
-    @test isdisjoint(U, E) && isdisjoint(E, U)
-    @test !isdisjoint(U, B) && !isdisjoint(B, U) && !isdisjoint(U, U)
-    for (res, w) in (isdisjoint(U, B, true), isdisjoint(B, U, true))
-        @test !res && w isa Vector{N} && w ∈ B && w ∈ U
-    end
+    @test !isdisjoint(U, U)
     res, w = isdisjoint(U, U, true)
     @test !res && w isa Vector{N} && w ∈ U
-    for (res, w) in (isdisjoint(U, E, true), isdisjoint(E, U, true))
+    @test isdisjoint(U, E) && isdisjoint(E, U) && isdisjoint(U, Pe) && isdisjoint(Pe, U)
+    for (res, w) in (isdisjoint(U, E, true), isdisjoint(E, U, true),
+                     isdisjoint(U, Pe, true), isdisjoint(Pe, U, true))
         @test res && w isa Vector{N} && w == N[]
+    end
+    @test !isdisjoint(U, B) && !isdisjoint(B, U) && !isdisjoint(U, Pnc) && !isdisjoint(Pnc, U)
+    # TODO add `isdisjoint(U, Pnc, true), isdisjoint(Pnc, U, true)` below once witness production is supported by Polygon
+    for (res, w) in (isdisjoint(U, B, true), isdisjoint(B, U, true))
+        @test !res && w isa Vector{N} && w ∈ B && w ∈ U
     end
 
     # isequal
@@ -365,29 +380,40 @@ for N in [Float64, Float32, Rational{Int}]
     # issubset
     @test_throws AssertionError B ⊆ U3
     @test_throws AssertionError U3 ⊆ B
-    for X in (U, B)
+    for X in (U, B, Pnc)
         @test X ⊆ U
         res, w = ⊆(X, U, true)
         @test res && w isa Vector{N} && w == N[]
     end
-    @test U ⊈ B
-    res, w = ⊆(U, B, true)
-    @test !res && w isa Vector{N} && w ∉ B && w ∈ U
+    for X in (B, Pnc)
+        @test U ⊈ X
+        if X === B  # TODO remove once witness production is supported for Polygon
+            res, w = ⊆(U, X, true)
+            @test !res && w isa Vector{N} && w ∉ X && w ∈ U
+        end
+    end
+    # TODO test with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
 
     # linear_combination
     @test_throws AssertionError linear_combination(U, U3)
-    for U2 in (linear_combination(U, Pnc), linear_combination(Pnc, U))
+    for U2 in (linear_combination(U, Pnc), linear_combination(Pnc, U),
+               linear_combination(U, B), linear_combination(B, U))
         @test isidentical(U, U2)
+    end
+    for E2 in (linear_combination(U, Pe), linear_combination(Pe, U))
+        @test E2 isa HPolygon{N} && E2 == Pe
     end
 
     # minkowski_difference
     @test_throws AssertionError minkowski_difference(B, U3)
     @test_throws AssertionError minkowski_difference(U3, B)
-    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B))
+    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B),
+               minkowski_difference(U, E), minkowski_difference(U, Z))
         @test isidentical(U, U2)
     end
     E2 = minkowski_difference(B, U)
     @test E2 isa EmptySet{N} && dim(E2) == 2
+    # TODO test with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
 end
 
 for N in [Float64, Float32]
