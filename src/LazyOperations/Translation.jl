@@ -384,3 +384,7 @@ end
 function translate(tr::Translation, x::AbstractVector)
     return Translation(translate(tr.X, x))
 end
+
+function isuniversal(tr::Translation)
+    return isuniversal(tr.X)
+end
