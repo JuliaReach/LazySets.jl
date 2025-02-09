@@ -63,6 +63,10 @@ for N in [Float64, Rational{Int}, Float32]
     # center
     @test center(tr) == center(B) + v
 
+    # isuniversal
+    @test !isuniversal(tr)
+    @test isuniversal(Translation(Universe{N}(2), v))
+
     # ==================================
     # Type-specific methods
     # ==================================
