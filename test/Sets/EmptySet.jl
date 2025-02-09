@@ -324,9 +324,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test !(E == E3) && !(E3 == E)
 
     # isequivalent
-    @test isequivalent(E, E)
     @test_throws AssertionError isequivalent(E, E3)
     @test_throws AssertionError isequivalent(E3, E)
+    @test isequivalent(E, E)
+    @test !isequivalent(E, B) && !isequivalent(B, E)
 
     # isstrictsubset
     @test_throws AssertionError B ⊂ E3

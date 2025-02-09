@@ -344,9 +344,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test !(U == U3) && !(U3 == U)
 
     # isequivalent
+    @test_throws AssertionError isequivalent(U, U3)
+    @test_throws AssertionError isequivalent(U3, U)
     @test isequivalent(U, U)
-    @test_broken isequivalent(U, U3) isa AssertionError  # TODO this should change
-    @test_broken isequivalent(U3, U) isa AssertionError  # TODO this should change
+    @test !isequivalent(U, B) && !isequivalent(B, U)
 
     # isstrictsubset
     @test_broken B ⊂ U3 isa AssertionError  # TODO this should change

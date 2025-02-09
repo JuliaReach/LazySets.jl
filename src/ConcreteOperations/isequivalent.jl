@@ -24,6 +24,9 @@ true
 ```
 """
 function isequivalent(X::LazySet, Y::LazySet)
+    @assert dim(X) == dim(Y) "the dimensions of the given sets should match, " *
+                             "but they are $(dim(X)) and $(dim(Y)), respectively"
+
     try  # TODO temporary try-catch construct until ≈ is fixed for all set types
         if X ≈ Y
             return true
