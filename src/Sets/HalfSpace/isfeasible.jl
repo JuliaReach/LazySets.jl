@@ -1,4 +1,3 @@
-
 """
     isfeasible(constraints::AbstractVector{<:HalfSpace}, [witness]::Bool=false;
                [solver]=nothing)
