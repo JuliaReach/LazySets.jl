@@ -12,6 +12,10 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test isbounded(P)
 
+    # isuniversal
+    @test !isuniversal(P)
+    @test_broken isuniversal(P, true)
+
     # support vector/function
     d = N[1, 1]
     @test σ(d, P) == N[2, 2]
