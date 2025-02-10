@@ -32,6 +32,10 @@ for N in [Float64, Float32]
     # center
     @test center(X) == center(B)
 
+    # concretize
+    B2 = Bloating(B, ε, N(Inf))
+    @test concretize(B2) == BallInf(N[0, 0], N(11 // 10))
+
     # tests for different norms
     for p in N[1, 2, Inf]
         B = BallInf(zeros(N, 2), N(1))

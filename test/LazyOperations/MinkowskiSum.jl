@@ -242,6 +242,10 @@ for N in [Float64, Rational{Int}, Float32]
     # isempty
     @test !isempty(cms)
 
+    # concretize
+    cms = CachedMinkowskiSumArray([B, B])
+    @test concretize(cms) == minkowski_sum(B, B)
+
     # ================
     # common functions
     # ================
