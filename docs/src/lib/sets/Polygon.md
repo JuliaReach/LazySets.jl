@@ -21,6 +21,7 @@ Undocumented implementations:
 * [`isconvextype`](@ref isconvextype(::Type{LazySet}))
 * [`isempty`](@ref isempty(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`isuniversal`](@ref isuniversal(::LazySet))
 * [`∈`](@ref ∈(::AbstractVector, ::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
