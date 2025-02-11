@@ -410,6 +410,10 @@ function _convex_hull_2d!(points::Vector{VN};
     end
 end
 
+_zero_abs(x::Number) = x
+
+_zero_abs(x::AbstractFloat) = x == -0.0 ? zero(x) : x
+
 """
     monotone_chain!(points::Vector{VN}; sort::Bool=true
                    ) where {N, VN<:AbstractVector{N}}
@@ -443,11 +447,6 @@ construct the convex hull of a set of ``n`` points in the plane in
 ``O(n \\log n)`` time. For further details see
 [Monotone chain](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain)
 """
-
-_zero_abs(x::Number) = x
-
-_zero_abs(x::AbstractFloat) = x == -0.0 ? zero(x) : x
-
 function monotone_chain!(points::Vector{VN}; sort::Bool=true) where {N,VN<:AbstractVector{N}}
     @inline function build_hull!(semihull, iterator, points)
         @inbounds for i in iterator
