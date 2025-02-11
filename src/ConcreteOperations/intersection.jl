@@ -4,13 +4,13 @@ export intersection!
     return _intersection_emptyset(∅, X)
 end
 
-# disambiguation
-for T in [:AbstractSingleton, :Interval, :Universe, :LinearMap, :UnionSet, :UnionSetArray]
-    @eval begin
-        @commutative function intersection(∅::EmptySet, X::$T)
-            return _intersection_emptyset(∅, X)
-        end
-    end
+function intersection(S1::AbstractSingleton, S2::AbstractSingleton)
+    N = promote_type(eltype(S1), eltype(S1))
+    return _isapprox(element(S1), element(S2)) ? S1 : EmptySet{N}(dim(S1))
+end
+
+@commutative function intersection(S::AbstractSingleton, H::AbstractHyperrectangle)
+    return _intersection_singleton(S, H)
 end
 
 @commutative function intersection(S::AbstractSingleton, X::LazySet)
@@ -22,12 +22,6 @@ function _intersection_singleton(S::AbstractSingleton, X)
                              "$(dim(S))-dimensional set and a $(dim(X))-dimensional set"
     N = promote_type(eltype(S), eltype(X))
     return element(S) ∈ X ? S : EmptySet{N}(dim(S))
-end
-
-# disambiguation
-function intersection(S1::AbstractSingleton, S2::AbstractSingleton)
-    N = promote_type(eltype(S1), eltype(S1))
-    return _isapprox(element(S1), element(S2)) ? S1 : EmptySet{N}(dim(S1))
 end
 
 # this method can also be called with `HalfSpace` arguments
@@ -107,11 +101,6 @@ function intersection(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
         end
     end
     return Hyperrectangle(; high=v_high, low=v_low)
-end
-
-# disambiguations
-@commutative function intersection(S::AbstractSingleton, H::AbstractHyperrectangle)
-    return _intersection_singleton(S, H)
 end
 
 """
@@ -249,19 +238,15 @@ function _intersection_interval(X::Interval, Y::LazySet)
     end
 end
 
-# disambiguations
-@commutative intersection(X::Interval, H::AbstractHyperrectangle) = _intersection_interval(X, H)
-@commutative intersection(X::Interval, S::AbstractSingleton) = _intersection_singleton(S, X)
-@commutative intersection(X::Interval, L::LinearMap) = _intersection_interval(X, L)
-
 # special case of an axis-aligned half-space and a hyperrectangular set
 @commutative function intersection(B::AbstractHyperrectangle,
-                                   H::HalfSpace{N,<:SingleEntryVector{N}}) where {N}
+                                   H::HalfSpace{<:Any,<:SingleEntryVector})
     n = dim(H)
     a = H.a
     b = H.b
     i = a.i
     ai = a.v
+    N = promote_type(eltype(B), eltype(H))
 
     if _isapprox(ai, zero(N))
         if _geq(b, zero(N))
@@ -291,16 +276,6 @@ end
 
         return Hyperrectangle(; low=v_low′, high=v_high′)
     end
-end
-
-# disambiguations
-@commutative function intersection(H::HalfSpace{N,<:SingleEntryVector{N}}, X::Interval) where {N}
-    return _intersection_interval(X, H)
-end
-@commutative intersection(S::AbstractSingleton, H::HalfSpace) = _intersection_singleton(S, H)
-@commutative function intersection(S::AbstractSingleton,
-                                   H::HalfSpace{N,<:SingleEntryVector{N}}) where {N}
-    return _intersection_singleton(S, H)
 end
 
 """
@@ -519,12 +494,6 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
     end
 end
 
-# disambiguations
-@commutative function intersection(S::AbstractSingleton, P::AbstractPolyhedron)
-    return _intersection_singleton(S, P)
-end
-@commutative intersection(X::Interval, P::AbstractPolyhedron) = _intersection_interval(X, P)
-
 """
     intersection(P1::Union{VPolygon, VPolytope}, P2::Union{VPolygon, VPolytope};
                  [backend]=nothing, [prunefunc]=nothing)
@@ -590,6 +559,8 @@ function intersection(P1::Union{VPolygon,VPolytope},
     return convert(VPolytope, Pint)
 end
 
+intersection(cup1::UnionSet, cup2::UnionSet) = _intersection_us(cup1, cup2)
+
 """
 # Extended help
 
@@ -608,11 +579,7 @@ function _intersection_us(cup::UnionSet, X::LazySet)
     return intersection(first(cup), X) ∪ intersection(second(cup), X)
 end
 
-# disambiguation
-@commutative intersection(S::AbstractSingleton, cup::UnionSet) = _intersection_singleton(S, cup)
-@commutative intersection(X::Interval, cup::UnionSet) = _intersection_interval(X, cup)
-@commutative intersection(L::LinearMap, cup::UnionSet) = _intersection_us(cup, L)
-intersection(cup1::UnionSet, cup2::UnionSet) = _intersection_us(cup1, cup2)
+intersection(cup1::UnionSetArray, cup2::UnionSetArray) = _intersection_usa(cup1, cup2)
 
 @commutative function intersection(cup::UnionSetArray, X::LazySet)
     return _intersection_usa(cup, X)
@@ -635,39 +602,16 @@ function _intersection_usa(cup::UnionSetArray, X::LazySet)
     end
 end
 
-# disambiguation
-@commutative function intersection(S::AbstractSingleton, cup::UnionSetArray)
-    return _intersection_singleton(S, cup)
+function intersection(L1::LinearMap, L2::LinearMap)
+    return intersection(linear_map(L1.M, L1.X), linear_map(L2.M, L2.X))
 end
-@commutative intersection(X::Interval, cup::UnionSetArray) = _intersection_usa(cup, X)
-@commutative intersection(L::LinearMap, cup::UnionSetArray) = _intersection_usa(cup, L)
-@commutative function intersection(cup1::UnionSet, cup2::UnionSetArray)
-    return _intersection_us(cup1, cup2)
-end
-intersection(cup1::UnionSetArray, cup2::UnionSetArray) = _intersection_usa(cup1, cup2)
 
 @commutative function intersection(L::LinearMap, X::LazySet)
     return intersection(linear_map(L.M, L.X), X)
 end
 
-# disambiguation
-function intersection(L1::LinearMap, L2::LinearMap)
-    return intersection(linear_map(L1.M, L1.X), linear_map(L2.M, L2.X))
-end
-@commutative intersection(S::AbstractSingleton, L::LinearMap) = _intersection_singleton(S, L)
-
 @commutative function intersection(U::Universe, X::LazySet)
     return _intersection_universe(U, X)
-end
-
-# disambiguations
-for T in [:AbstractPolyhedron, :AbstractSingleton, :Interval, :LinearMap, :UnionSet, :UnionSetArray,
-          :(Union{CartesianProduct,CartesianProductArray})]
-    @eval begin
-        @commutative function intersection(U::Universe, X::$T)
-            return _intersection_universe(U, X)
-        end
-    end
 end
 
 """
@@ -688,19 +632,6 @@ end
 @commutative function intersection(P::AbstractPolyhedron,
                                    rm::ResetMap{N,<:AbstractPolytope}) where {N}
     return intersection(P, HPolytope(constraints_list(rm)))
-end
-
-# disambiguation
-@commutative intersection(P::AbstractSingleton, rm::ResetMap) = _intersection_singleton(S, rm)
-@commutative function intersection(P::AbstractSingleton,
-                                   rm::ResetMap{N,<:AbstractPolytope}) where {N}
-    return _intersection_singleton(S, rm)
-end
-@commutative intersection(U::Universe, rm::ResetMap) = rm
-@commutative intersection(U::Universe, rm::ResetMap{N,<:AbstractPolytope}) where {N} = rm
-@commutative intersection(rm::ResetMap, X::Interval) = _intersection_interval(X, Y)
-@commutative function intersection(rm::ResetMap{N,<:AbstractPolytope}, X::Interval) where {N}
-    return _intersection_interval(X, Y)
 end
 
 """
@@ -789,8 +720,16 @@ minimal dimension.
 Finally, we convert ``Y`` to a polyhedron and intersect it with a suitable
 projection of `P`.
 """
-@commutative function intersection(cpa::Union{CartesianProduct,CartesianProductArray},
-                                   P::AbstractPolyhedron)
+@commutative function intersection(cpa::CartesianProductArray, P::AbstractPolyhedron)
+    return _intersection_cpa(cpa, P)
+end
+
+@commutative function intersection(cpa::CartesianProduct, P::AbstractPolyhedron)
+    return _intersection_cpa(cpa, P)
+end
+
+function _intersection_cpa(cpa::Union{CartesianProduct,CartesianProductArray},
+                           P::AbstractPolyhedron)
     # search for the indices of the block trisection into
     # "unconstrained | constrained | unconstrained" (the first and third section
     # may be empty)
@@ -836,15 +775,6 @@ function _intersection_polyhedron_constrained(X::LazySet, P::AbstractPolyhedron,
     T = isboundedtype(typeof(X)) ? HPolytope : HPolyhedron
     hpoly_low_dim = T(constraints_list(X))
     return cap_low_dim = intersection(hpoly_low_dim, project(P, constrained_dims))
-end
-
-# disambiguation
-@commutative function intersection(cpa::Union{CartesianProduct,CartesianProductArray},
-                                   S::AbstractSingleton)
-    return _intersection_singleton(S, cpa)
-end
-@commutative function intersection(cpa::Union{CartesianProduct,CartesianProductArray}, X::Interval)
-    return _intersection_interval(X, cpa)
 end
 
 """
@@ -977,4 +907,50 @@ function _bound_intersect_2D(Z::Zonotope, L::Line2D)
     end
     singleton = intersection(LineSegment(P, P + 2g(j)), L)
     return element(singleton)[2]
+end
+
+# ============== #
+# disambiguation #
+# ============== #
+
+for T in (:AbstractSingleton, :Interval, :Universe, :LinearMap, :UnionSet, :UnionSetArray)
+    @eval @commutative function intersection(∅::EmptySet, X::$T)
+        return _intersection_emptyset(∅, X)
+    end
+end
+
+for T in (:AbstractPolyhedron, :AbstractSingleton, :Interval, :LinearMap, :ResetMap,
+          :(ResetMap{<:Any,<:AbstractPolytope}), :CartesianProduct, :CartesianProductArray,
+          :UnionSet, :UnionSetArray)
+    @eval @commutative function intersection(U::Universe, X::$T)
+        return _intersection_universe(U, X)
+    end
+end
+
+for T in (:AbstractPolyhedron, :AbstractHyperrectangle, :(HalfSpace{<:Any,<:SingleEntryVector}),
+          :LinearMap, :ResetMap, :(ResetMap{<:Any,<:AbstractPolytope}), :CartesianProduct,
+          :CartesianProductArray, :UnionSet)
+    @eval @commutative function intersection(X::Interval, Y::($T))
+        return _intersection_interval(X, Y)
+    end
+end
+
+for T in (:AbstractPolyhedron, :Interval, :HalfSpace, :(HalfSpace{<:Any,<:SingleEntryVector}),
+          :LinearMap, :ResetMap, :(ResetMap{<:Any,<:AbstractPolytope}), :CartesianProduct,
+          :CartesianProductArray, :UnionSet, :UnionSetArray)
+    @eval @commutative function intersection(S::AbstractSingleton, X::($T))
+        return _intersection_singleton(S, X)
+    end
+end
+
+for T in (:LinearMap, :UnionSetArray)
+    @eval @commutative function intersection(cup::UnionSet, X::($T))
+        return _intersection_us(cup, X)
+    end
+end
+
+for T in (:Interval, :LinearMap)
+    @eval @commutative function intersection(cup::UnionSetArray, X::($T))
+        return _intersection_usa(cup, X)
+    end
 end

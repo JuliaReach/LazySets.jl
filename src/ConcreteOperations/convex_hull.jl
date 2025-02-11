@@ -490,7 +490,10 @@ end
     return _convex_hull_universe(U, X)
 end
 
-# disambiguation
+# ============== #
+# disambiguation #
+# ============== #
+
 @commutative function convex_hull(U::Universe, ∅::EmptySet)
     return _convex_hull_universe(U, ∅)
 end

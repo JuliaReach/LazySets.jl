@@ -25,7 +25,7 @@ intersection(::Union{VPolygon,VPolytope}, ::Union{VPolygon,VPolytope})
 intersection(::UnionSet, ::LazySet)
 intersection(::AbstractPolyhedron, ::ResetMap)
 intersection(::CartesianProductArray, ::CartesianProductArray)
-intersection(::Union{CartesianProduct,CartesianProductArray}, ::AbstractPolyhedron)
+intersection(::CartesianProductArray, ::AbstractPolyhedron)
 intersection(::AbstractZonotope{N}, ::HalfSpace{N}) where {N}
 intersection!(::Star, ::HalfSpace)
 LazySets._bound_intersect_2D(::Zonotope, ::Line2D)

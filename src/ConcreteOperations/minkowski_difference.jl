@@ -52,12 +52,12 @@ function minkowski_difference(P::LazySet, Q::LazySet)
     end
 end
 
-for ST in [:LazySet, :AbstractZonotope, :AbstractHyperrectangle]
+for T in (:LazySet, :AbstractZonotope, :AbstractHyperrectangle)
     # Minkowski difference with singleton is a translation
-    @eval minkowski_difference(X::($ST), S::AbstractSingleton) = translate(X, -element(S))
+    @eval minkowski_difference(X::($T), S::AbstractSingleton) = translate(X, -element(S))
 
     # Minkowski difference with ZeroSet is the identity
-    @eval minkowski_difference(X::($ST), ::ZeroSet) = X
+    @eval minkowski_difference(X::($T), ::ZeroSet) = X
 end
 
 """
@@ -211,20 +211,22 @@ function minkowski_difference(X::LazySet, U::Universe)
     return _minkowski_difference_universe2(X, U)
 end
 
-# disambiguation
-function minkowski_difference(∅::EmptySet, U::Universe)
-    return _minkowski_difference_emptyset(∅, U)
+# ============== #
+# disambiguation #
+# ============== #
+
+for T in (:AbstractSingleton, :ZeroSet, :Universe)
+    @eval function minkowski_difference(∅::EmptySet, X::($T))
+        return _minkowski_difference_emptyset(∅, X)
+    end
 end
+
+for T in (:AbstractSingleton, :ZeroSet)
+    @eval function minkowski_difference(U::Universe, X::$T)
+        return _minkowski_difference_universe(U, X)
+    end
+end
+
 function minkowski_difference(U::Universe, ∅::EmptySet)
     return _minkowski_difference_emptyset2(U, ∅)
-end
-for T in [:AbstractSingleton, :ZeroSet]
-    @eval begin
-        function minkowski_difference(∅::EmptySet, X::$T)
-            return _minkowski_difference_emptyset(∅, X)
-        end
-        function minkowski_difference(U::Universe, X::$T)
-            return _minkowski_difference_universe(U, X)
-        end
-    end
 end

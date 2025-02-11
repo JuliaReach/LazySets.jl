@@ -36,23 +36,24 @@ end
     return _distance_universe(U, X; p=p)
 end
 
-# disambiguation
+# ============== #
+# disambiguation #
+# ============== #
+
 function distance(S1::AbstractSingleton, S2::AbstractSingleton; p::Real=2.0)
     return distance(element(S1), element(S2); p=p)
 end
+
 @commutative function distance(S::AbstractSingleton, H::AbstractHyperrectangle; p::Real=2.0)
     return distance(element(S), H; p=p)
 end
-@commutative function distance(∅::EmptySet, U::Universe; p::Real=2.0)
-    return _distance_emptyset(∅, U; p=p)
-end
+
 @commutative function distance(U::Universe, S::AbstractSingleton; p::Real=2.0)
     return _distance_universe(U, S; p=p)
 end
-for T in [:AbstractHyperrectangle, :AbstractSingleton]
-    @eval begin
-        @commutative function distance(∅::EmptySet, X::($T); p::Real=2.0)
-            return _distance_emptyset(∅, X; p=p)
-        end
+
+for T in [:AbstractHyperrectangle, :AbstractSingleton, :Universe]
+    @eval @commutative function distance(∅::EmptySet, X::($T); p::Real=2.0)
+        return _distance_emptyset(∅, X; p=p)
     end
 end

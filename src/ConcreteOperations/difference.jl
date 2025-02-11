@@ -64,10 +64,14 @@ function difference(X::LazySet, ∅::EmptySet)
     return _difference_emptyset2(X, ∅)
 end
 
-# disambiguation
+# ============== #
+# disambiguation #
+# ============== #
+
 function difference(∅::EmptySet, U::Universe)
     return _difference_emptyset(∅, U)
 end
+
 function difference(U::Universe, ∅::EmptySet)
     return _difference_emptyset2(U, ∅)
 end
