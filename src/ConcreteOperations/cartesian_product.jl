@@ -156,6 +156,10 @@ function cartesian_product(U::Universe, H::HalfSpace)
     return HalfSpace(prepend_zeros(H.a, dim(U)), H.b)
 end
 
+@commutative function cartesian_product(∅::EmptySet, X::LazySet)
+    return _cartesian_product_emptyset(∅, X)
+end
+
 """
 # Extended help
 

@@ -206,19 +206,22 @@ for N in [Float64, Float32, Rational{Int}]
         @test v isa N && v == N(Inf)
     end
 
-    # exponential_map / linear_map
-    for f in (exponential_map, linear_map)
-        @test_throws AssertionError f(ones(N, 2, 3), E)
-        E2 = f(ones(N, 2, 2), E)
-        @test isidentical(E, E2)
-    end
+    # exponential_map
+    @test_throws AssertionError exponential_map(ones(N, 2, 3), E)
     @test_throws AssertionError exponential_map(ones(N, 3, 2), E)
-    E2 = linear_map(ones(N, 3, 2), E)
-    @test isidentical(E3, E2)
+    E2 = exponential_map(ones(N, 2, 2), E)
+    @test isidentical(E, E2)
 
     # in
     @test_throws AssertionError N[0] ∈ E
     @test N[0, 0] ∉ E
+
+    # linear_map
+    @test_throws AssertionError exponential_map(ones(N, 2, 3), E)
+    E2 = exponential_map(ones(N, 2, 2), E)
+    @test isidentical(E, E2)
+    E2 = linear_map(ones(N, 3, 2), E)
+    @test isidentical(E3, E2)
 
     # linear_map_inverse
     @test_broken LazySets.linear_map_inverse(ones(N, 2, 3), E)  # TODO this should maybe change
@@ -279,6 +282,9 @@ for N in [Float64, Float32, Rational{Int}]
     for E2 in (cartesian_product(E, E3), cartesian_product(E3, E))
         @test E2 isa EmptySet{N} && dim(E2) == 5
     end
+    for E2 in (cartesian_product(E, B), cartesian_product(B, E))
+        @test E2 isa EmptySet{N} && dim(E2) == 4
+    end
 
     # convex_hull (binary)
     @test_throws AssertionError convex_hull(E, E3)
@@ -291,11 +297,13 @@ for N in [Float64, Float32, Rational{Int}]
     # difference
     @test_throws AssertionError difference(B, E3)
     @test_throws AssertionError difference(E3, B)
-    for E2 in (difference(E, E), difference(E, B))
+    for E2 in (difference(E, E), difference(E, B), difference(E, U))
         @test isidentical(E, E2)
     end
     X = difference(B, E)
     @test X isa BallInf{N} && X == B
+    U2 = difference(U, E)
+    @test U2 isa Universe{N} && U2 == U
 
     # distance (between sets)
     @test_throws AssertionError distance(E, E3)
@@ -303,29 +311,23 @@ for N in [Float64, Float32, Rational{Int}]
     res = distance(E, E)
     @test res isa N && res == N(Inf)
 
-    # exact_sum / minkowski_sum
-    for f in (exact_sum, minkowski_sum)
-        @test_throws AssertionError f(E, E3)
-        @test_throws AssertionError f(E3, E)
-        for E2 in (f(E, E), f(E, B), f(B, E))
-            @test isidentical(E, E2)
-        end
-    end
-    for E2 in (minkowski_sum(E, U), minkowski_sum(U, E), minkowski_sum(E, Z), minkowski_sum(Z, E),
-               minkowski_sum(E, B), minkowski_sum(B, E))
-        @test E2 isa EmptySet{N} && E2 == E
+    # exact_sum
+    @test_throws AssertionError exact_sum(E, E3)
+    @test_throws AssertionError exact_sum(E3, E)
+    for E2 in (exact_sum(E, E), exact_sum(E, B), exact_sum(B, E))
+        @test isidentical(E, E2)
     end
 
     # intersection
     @test_throws AssertionError intersection(E, E3)
-    for E2 in (intersection(E, E), intersection(E, B), intersection(B, E))
+    for E2 in (intersection(E, E), intersection(E, B), intersection(B, E),
+               intersection(E, U), intersection(U, E), intersection(E, Z), intersection(Z, E),)
         @test isidentical(E, E2)
     end
 
     # isapprox
-    @test E ≈ E
-    @test !(E ≈ E3)
-    @test !(E3 ≈ E)
+    @test E ≈ EmptySet{N}(2)
+    @test !(E ≈ E3) && !(E3 ≈ E) && !(E ≈ Pe) && !(Pe ≈ E)
 
     # isdisjoint
     @test_throws AssertionError isdisjoint(E, E3)
@@ -337,8 +339,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # isequal
-    @test E == E
-    @test !(E == E3) && !(E3 == E)
+    @test E == EmptySet{N}(2)
+    @test E != E3 && E3 != E && E != B && B != E
 
     # isequivalent
     @test_throws AssertionError isequivalent(E, E3)
@@ -378,6 +380,7 @@ for N in [Float64, Float32, Rational{Int}]
     # linear_combination
     @test_throws AssertionError linear_combination(E, E3)
     for E2 in (linear_combination(E, Pnc), linear_combination(Pnc, E),
+               linear_combination(E, B), linear_combination(B, E),
                linear_combination(E, U), linear_combination(U, E))
         @test isidentical(E, E2)
     end
@@ -389,8 +392,19 @@ for N in [Float64, Float32, Rational{Int}]
                minkowski_difference(E, U), minkowski_difference(E, Z))
         @test isidentical(E, E2)
     end
+    U2 = minkowski_difference(U, E)
+    @test U2 isa Universe{N} && dim(U2) == 2
     X = minkowski_difference(B, E)
     @test X isa BallInf{N} && X == B
+
+    # minkowski_sum
+    @test_throws AssertionError minkowski_sum(E, E3)
+    @test_throws AssertionError minkowski_sum(E3, E)
+    for E2 in (minkowski_sum(E, E), minkowski_sum(E, B), minkowski_sum(B, E), minkowski_sum(U, E),
+               minkowski_sum(E, U), minkowski_sum(E, Z), minkowski_sum(Z, E), minkowski_sum(E, B),
+               minkowski_sum(B, E))
+        @test isidentical(E, E2)
+    end
 end
 
 for N in [Float64, Float32]

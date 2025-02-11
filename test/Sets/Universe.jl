@@ -289,10 +289,6 @@ for N in [Float64, Float32, Rational{Int}]
     end
     X = difference(U, B)
     @test X isa UnionSetArray{N,<:HalfSpace} && length(array(X)) == 4 && X == complement(B)
-    U2 = difference(U, E)
-    @test isidentical(U, U2)
-    E2 = difference(E, U)
-    @test E2 isa EmptySet{N} && E2 == E
 
     # distance (between sets)
     @test_throws AssertionError distance(U, U3)
@@ -304,23 +300,11 @@ for N in [Float64, Float32, Rational{Int}]
         @test v isa N && v == N(Inf)
     end
 
-    # exact_sum / minkowski_sum
-    for f in (exact_sum, minkowski_sum)
-        @test_throws AssertionError f(U, U3)
-        @test_throws AssertionError f(U3, U)
-        for U2 in (f(U, U), f(U, B), f(B, U))
-            @test isidentical(U, U2)
-        end
-        for E2 in (f(U, E), f(E, U))
-            @test E2 isa EmptySet{N} && E2 == E
-        end
-        for X in (f(U, Pe), f(Pe, U))
-            @test X isa HPolygon{N} && X == Pe
-        end
-    end
-    for U2 in (minkowski_sum(U, Z), minkowski_sum(Z, U), minkowski_sum(U, B), minkowski_sum(B, U),
-               minkowski_sum(U, Pnc), minkowski_sum(Pnc, U))
-        @test U2 isa Universe{N} && U2 == U
+    # exact_sum
+    @test_throws AssertionError exact_sum(U, U3)
+    @test_throws AssertionError exact_sum(U3, U)
+    for U2 in (exact_sum(U, U), exact_sum(U, B), exact_sum(B, U))
+        @test isidentical(U, U2)
     end
 
     # intersection
@@ -335,8 +319,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # isapprox
-    @test U ≈ U
-    @test !(U ≈ U3) && !(U3 ≈ U)
+    @test U ≈ Universe{N}(2)
+    @test !(U ≈ U3) && !(U3 ≈ U) && !(U ≈ B) && !(B ≈ U)
 
     # isdisjoint
     @test_throws AssertionError isdisjoint(U, U3)
@@ -355,8 +339,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # isequal
-    @test U == U
-    @test !(U == U3) && !(U3 == U)
+    @test U == Universe{N}(2)
+    @test U != U3 && U3 != U && U != B && B != U
 
     # isequivalent
     @test_throws AssertionError isequivalent(U, U3)
@@ -392,7 +376,7 @@ for N in [Float64, Float32, Rational{Int}]
             @test !res && w isa Vector{N} && w ∉ X && w ∈ U
         end
     end
-    # TODO test with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
+    # TODO test `U ⊆ X` with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
 
     # linear_combination
     @test_throws AssertionError linear_combination(U, U3)
@@ -407,13 +391,26 @@ for N in [Float64, Float32, Rational{Int}]
     # minkowski_difference
     @test_throws AssertionError minkowski_difference(B, U3)
     @test_throws AssertionError minkowski_difference(U3, B)
-    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B),
-               minkowski_difference(U, E), minkowski_difference(U, Z))
+    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B), minkowski_difference(U, Z))
         @test isidentical(U, U2)
     end
     E2 = minkowski_difference(B, U)
     @test E2 isa EmptySet{N} && dim(E2) == 2
-    # TODO test with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
+    # TODO test `minkowski_difference(X, U)` with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
+
+    # minkowski_sum
+    @test_throws AssertionError minkowski_sum(U, U3)
+    @test_throws AssertionError minkowski_sum(U3, U)
+    for U2 in (minkowski_sum(U, U), minkowski_sum(U, B), minkowski_sum(B, U))
+        @test isidentical(U, U2)
+    end
+    for X in (minkowski_sum(U, Pe), minkowski_sum(Pe, U))
+        @test X isa HPolygon{N} && X == Pe
+    end
+    for U2 in (minkowski_sum(U, Z), minkowski_sum(Z, U), minkowski_sum(U, B), minkowski_sum(B, U),
+               minkowski_sum(U, Pnc), minkowski_sum(Pnc, U))
+        @test U2 isa Universe{N} && U2 == U
+    end
 end
 
 for N in [Float64, Float32]
