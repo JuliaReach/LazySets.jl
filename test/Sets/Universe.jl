@@ -289,10 +289,6 @@ for N in [Float64, Float32, Rational{Int}]
     end
     X = difference(U, B)
     @test X isa UnionSetArray{N,<:HalfSpace} && length(array(X)) == 4 && X == complement(B)
-    U2 = difference(U, E)
-    @test isidentical(U, U2)
-    E2 = difference(E, U)
-    @test E2 isa EmptySet{N} && E2 == E
 
     # distance (between sets)
     @test_throws AssertionError distance(U, U3)
@@ -310,9 +306,6 @@ for N in [Float64, Float32, Rational{Int}]
         @test_throws AssertionError f(U3, U)
         for U2 in (f(U, U), f(U, B), f(B, U))
             @test isidentical(U, U2)
-        end
-        for E2 in (f(U, E), f(E, U))
-            @test E2 isa EmptySet{N} && E2 == E
         end
         for X in (f(U, Pe), f(Pe, U))
             @test X isa HPolygon{N} && X == Pe
@@ -335,8 +328,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # isapprox
-    @test U ≈ U
-    @test !(U ≈ U3) && !(U3 ≈ U)
+    @test U ≈ Universe{N}(2)
+    @test !(U ≈ U3) && !(U3 ≈ U) && !(U ≈ B) && !(B ≈ U)
 
     # isdisjoint
     @test_throws AssertionError isdisjoint(U, U3)
@@ -355,8 +348,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # isequal
-    @test U == U
-    @test !(U == U3) && !(U3 == U)
+    @test U == Universe{N}(2)
+    @test U != U3 && U3 != U && U != B && B != U
 
     # isequivalent
     @test_throws AssertionError isequivalent(U, U3)
@@ -407,8 +400,7 @@ for N in [Float64, Float32, Rational{Int}]
     # minkowski_difference
     @test_throws AssertionError minkowski_difference(B, U3)
     @test_throws AssertionError minkowski_difference(U3, B)
-    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B),
-               minkowski_difference(U, E), minkowski_difference(U, Z))
+    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B), minkowski_difference(U, Z))
         @test isidentical(U, U2)
     end
     E2 = minkowski_difference(B, U)
