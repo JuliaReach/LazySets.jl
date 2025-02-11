@@ -1,12 +1,14 @@
 export intersection!
 
-for T in [:LazySet, :AbstractSingleton, :Interval, :Universe, :LinearMap,
-          :UnionSet, :UnionSetArray]
+@commutative function intersection(∅::EmptySet, X::LazySet)
+    return _intersection_emptyset(∅, X)
+end
+
+# disambiguation
+for T in [:AbstractSingleton, :Interval, :Universe, :LinearMap, :UnionSet, :UnionSetArray]
     @eval begin
         @commutative function intersection(∅::EmptySet, X::$T)
-            @assert dim(∅) == dim(X) "cannot take the intersection between a " *
-                                     "$(dim(∅))-dimensional set and a $(dim(X))-dimensional set"
-            return ∅
+            return _intersection_emptyset(∅, X)
         end
     end
 end

@@ -122,8 +122,8 @@ include("Sets/Ellipsoid/EllipsoidModule.jl")
 include("Sets/EmptySet/EmptySetModule.jl")
 @reexport using ..EmptySetModule: EmptySet, ∅
 using ..EmptySetModule: _convex_hull_emptyset, _difference_emptyset, _difference_emptyset2,
-                        _distance_emptyset, _isdisjoint_emptyset, _issubset_emptyset,
-                        _issubset_emptyset2, _linear_combination_emptyset,
+                        _distance_emptyset, _intersection_emptyset, _isdisjoint_emptyset,
+                        _issubset_emptyset, _issubset_emptyset2, _linear_combination_emptyset,
                         _minkowski_difference_emptyset, _minkowski_difference_emptyset2,
                         _minkowski_sum_emptyset
 
