@@ -147,22 +147,6 @@ end
 # special case: overapproximation of empty set
 overapproximate(∅::EmptySet, args...; kwargs...) = ∅
 
-# disambiguation
-for ST in subtypes(LazySet, true)
-    if ST == HPolygon  # must be defined separately below with extra argument
-        continue
-    end
-    @eval overapproximate(∅::EmptySet, ::Type{<:$ST}) = ∅
-end
-overapproximate(∅::EmptySet, ::Type{<:LazySet}, args...; kwargs...) = ∅
-overapproximate(∅::EmptySet, ::Real) = ∅
-overapproximate(∅::EmptySet, ::Type{<:HPolygon}, ::Real=Inf; kwargs...) = ∅
-function overapproximate(∅::EmptySet, ::Type{<:Zonotope},
-                         ::Union{AbstractDirections,Type{<:AbstractDirections}};
-                         kwargs...)
-    return ∅
-end
-
 """
     overapproximate(X::LazySet{N}, dirs::AbstractDirections;
                     [prune]::Bool=true) where {N}
@@ -228,12 +212,6 @@ function overapproximate(X::LazySet, ::Type{<:HPolyhedron},
     return HPolyhedron(H)
 end
 
-# disambiguation
-overapproximate(∅::EmptySet, ::Type{<:HPolytope}, dirs::AbstractDirections;
-prune::Bool=true) = ∅
-overapproximate(∅::EmptySet, ::Type{<:HPolyhedron}, dirs::AbstractDirections;
-prune::Bool=true) = ∅
-
 """
     overapproximate(X::LazySet{N}, dirs::Type{<:AbstractDirections}) where {N}
 
@@ -253,10 +231,6 @@ function overapproximate(X::LazySet{N},
                          dirs::Type{<:AbstractDirections}; kwargs...) where {N}
     return overapproximate(X, dirs{N}(dim(X)); kwargs...)
 end
-
-# disambiguation
-overapproximate(∅::EmptySet, dirs::Type{<:AbstractDirections}; kwargs...) = ∅
-overapproximate(∅::EmptySet, dirs::AbstractDirections; prune::Bool=true) = ∅
 
 function overapproximate_cap_helper(X::LazySet,
                                     P::AbstractPolyhedron,  # polyhedron
@@ -343,43 +317,6 @@ function overapproximate(cap::Intersection{N,
                          dirs::AbstractDirections;
                          kwargs...) where {N}
     return overapproximate_cap_helper(second(cap), first(cap), dirs; kwargs...)
-end
-
-# disambiguation
-function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolyhedron,
-                                           <:AbstractPolyhedron},
-                         dirs::AbstractDirections;
-                         kwargs...) where {N}
-    # important: the result may not be a polytope!
-    return overapproximate_cap_helper(first(cap), second(cap), dirs; kwargs...)
-end
-
-# disambiguation
-function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolytope,
-                                           <:AbstractPolyhedron},
-                         dirs::AbstractDirections;
-                         kwargs...) where {N}
-    return overapproximate_cap_helper(first(cap), second(cap), dirs; kwargs...)
-end
-
-# symmetric method
-function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolyhedron,
-                                           <:AbstractPolytope},
-                         dirs::AbstractDirections;
-                         kwargs...) where {N}
-    return overapproximate_cap_helper(second(cap), first(cap), dirs; kwargs...)
-end
-
-# disambiguation
-function overapproximate(cap::Intersection{N,
-                                           <:AbstractPolytope,
-                                           <:AbstractPolytope},
-                         dirs::AbstractDirections;
-                         kwargs...) where {N}
-    return overapproximate_cap_helper(first(cap), second(cap), dirs; kwargs...)
 end
 
 """
@@ -710,3 +647,55 @@ function load_paving_overapproximation()
         end
     end
 end  # quote / load_paving_overapproximation
+
+# ============== #
+# disambiguation #
+# ============== #
+
+for ST in subtypes(LazySet, true)
+    if ST == HPolygon  # must be defined separately below with extra argument
+        continue
+    end
+    @eval overapproximate(∅::EmptySet, ::Type{<:$ST}) = ∅
+end
+
+overapproximate(∅::EmptySet, ::Type{<:LazySet}, args...; kwargs...) = ∅
+
+overapproximate(∅::EmptySet, ::Type{<:HPolygon}, ::Real=Inf; kwargs...) = ∅
+
+overapproximate(∅::EmptySet, ::Real) = ∅
+
+function overapproximate(∅::EmptySet, ::Type{<:Zonotope},
+                         ::Union{AbstractDirections,Type{<:AbstractDirections}};
+                         kwargs...)
+    return ∅
+end
+
+for T in (:HPolytope, :HPolyhedron)
+    @eval begin
+        function overapproximate(∅::EmptySet, ::Type{<:($T)},
+                                 dirs::AbstractDirections; prune::Bool=true)
+            return ∅
+        end
+    end
+end
+
+overapproximate(∅::EmptySet, dirs::Type{<:AbstractDirections}; kwargs...) = ∅
+
+overapproximate(∅::EmptySet, dirs::AbstractDirections; prune::Bool=true) = ∅
+
+for (T1, T2) in ((:AbstractPolyhedron, :AbstractPolyhedron),
+                 (:AbstractPolytope, :AbstractPolytope),
+                 (:AbstractPolytope, :AbstractPolyhedron))
+    @eval begin
+        function overapproximate(cap::Intersection{N,<:($T1),<:($T2)}, dirs::AbstractDirections;
+                                 kwargs...) where {N}
+            return overapproximate_cap_helper(first(cap), second(cap), dirs; kwargs...)
+        end
+    end
+end
+
+function overapproximate(cap::Intersection{N,<:AbstractPolyhedron,<:AbstractPolytope},
+                         dirs::AbstractDirections; kwargs...) where {N}
+    return overapproximate_cap_helper(second(cap), first(cap), dirs; kwargs...)
+end
