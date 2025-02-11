@@ -186,8 +186,8 @@ for N in [Float64, Rational{Int}]
     @test convex_hull(S, EmptySet{N}(1)) == convex_hull(EmptySet{N}(1), S) == S
     @test convex_hull(P, EmptySet{N}(2)) == convex_hull(EmptySet{N}(2), P) == Pc
 
-    v = [[-0.0, 2], [2.0, 0], [1.0, 0], [0.0, 1], [0.0, 1.5]]
-    v_ch = [[0.0, 1.0], [1.0, 0.0], [2.0, 0.0], [-0.0, 2.0]]
-
+    # see #3455
+    v = [N[-0.0, 2], N[0, 0], N[1, 0], N[0, 1], N[0, 3//2]]
+    v_ch = [N[0, 1], N[1, 0], N[2, 0], N[-0.0, 2]]
     @test convex_hull(v) == v_ch
 end
