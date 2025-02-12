@@ -410,6 +410,10 @@ function _convex_hull_2d!(points::Vector{VN};
     end
 end
 
+_zero_abs(x::Number) = x
+
+_zero_abs(x::AbstractFloat) = x == -0.0 ? zero(x) : x
+
 """
     monotone_chain!(points::Vector{VN}; sort::Bool=true
                    ) where {N, VN<:AbstractVector{N}}
@@ -457,8 +461,10 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true) where {N,VN<:Abstr
     end
 
     if sort
+        # _zero_abs is necessary because floating-point arithmetic distinguishes
+        # between 0.0 and -0.0, which leads to incorrect sorting (see #3455)
         # sort the points lexicographically
-        sort!(points; by=x -> (x[1], x[2]))
+        sort!(points; by=x -> (_zero_abs(x[1]), _zero_abs(x[2])))
     end
 
     # build lower hull
