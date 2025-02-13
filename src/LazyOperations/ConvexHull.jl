@@ -48,6 +48,9 @@ struct ConvexHull{N,S1<:LazySet{N},S2<:LazySet{N}} <: ConvexSet{N}
     end
 end
 
+# constructor with a single argument
+ConvexHull(X::LazySet) = ConvexHull(X, X)
+
 isoperationtype(::Type{<:ConvexHull}) = true
 concrete_function(::Type{<:ConvexHull}) = convex_hull
 

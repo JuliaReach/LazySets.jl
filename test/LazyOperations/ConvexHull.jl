@@ -5,6 +5,8 @@ for N in [Float64, Rational{Int}, Float32]
     # Test Construction
     ch = ConvexHull(b1, b2)
     @test ch == CH(b1, b2)
+    ch2 = ConvexHull(b1)
+    @test ch2 == CH(b1, b1)
 
     # Universe is absorbing
     U = Universe{N}(2)
