@@ -50,9 +50,6 @@ CurrentModule = LazySets
 
 ## Globally defined set functions and default implementations
 
-```@docs
-○(c, a)
-```
 ```@meta
 CurrentModule = LazySets.API
 ```
