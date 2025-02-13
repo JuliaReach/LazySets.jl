@@ -77,10 +77,11 @@ for N in [Float64, Float32, Rational{Int}]
     @test_broken isequivalent(Z1, Z2)
     @test Z1 ⊆ Z2 && center(Z1) == center(Z2)
 
+    # quadratic map
     S2 = SimpleSparsePolynomialZonotope(N[1 // 5, -3 // 5], N[1 0; 0 2//5], [1 0; 0 1])
     Q = [N[0 1; 1 0], N[-16//5 6//5; 6//5 0]]
-
     q1 = quadratic_map(Q, S2)
+    @test concretize(QuadraticMap(Q, S2)) == q1
     q2 = quadratic_map(Q, S2, S2)
 
     @test center(q1) == center(q2) ≈ N[-6 // 25, -52 // 125]

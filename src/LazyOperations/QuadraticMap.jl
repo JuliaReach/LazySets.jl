@@ -66,3 +66,7 @@ The ambient dimension of the quadratic map.
 function dim(qm::QuadraticMap)
     return dim(qm.X)
 end
+
+function concretize(qm::QuadraticMap)
+    return quadratic_map(qm.Q, concretize(qm.X))
+end

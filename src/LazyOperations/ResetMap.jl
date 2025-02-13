@@ -353,3 +353,7 @@ function constraints_list(rm::ResetMap{N,<:AbstractHyperrectangle}) where {N}
     end
     return constraints
 end
+
+function concretize(rm::ResetMap)
+    return affine_map(matrix(rm), concretize(set(rm)), vector(rm))
+end
