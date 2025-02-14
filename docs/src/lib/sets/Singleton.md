@@ -80,7 +80,6 @@ Inherited from [`LazySet`](@ref):
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`rationalize`](@ref rationalize(::LazySet))
-* [`surface`](@ref surface(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))

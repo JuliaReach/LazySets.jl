@@ -160,10 +160,6 @@ for N in [Float64, Float32, Rational{Int}]
     T = VERSION < v"1.7" ? Singleton : Singleton{N,Vector{N}}
     @test res isa Vector{T} && isempty(res)
 
-    # surface
-    res = surface(E)
-    @test res isa N && res == N(0)
-
     # tosimplehrep
     @test_throws MethodError tosimplehrep(E)  # TODO this should maybe change
 

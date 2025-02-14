@@ -131,7 +131,6 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`rationalize`](@ref rationalize(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
-* [`surface`](@ref surface(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))

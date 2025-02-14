@@ -871,24 +871,6 @@ end
 """
 # Extended help
 
-    surface(X::LazySet)
-
-### Algorithm
-
-The default implementation applies `area` for two-dimensional sets.
-"""
-function surface(X::LazySet)
-    if dim(X) == 2
-        return area(X)
-    else
-        throw(ArgumentError("the `surface` function is only implemented for two-dimensional " *
-                            "sets, but the given set is $(dim(X))-dimensional"))
-    end
-end
-
-"""
-# Extended help
-
     area(X::LazySet)
 
 ### Notes

@@ -334,18 +334,6 @@ CurrentModule = LazySets
 ```@docs
 reflect(::LazySet)
 singleton_list(::LazySet)
-```
-```@meta
-CurrentModule = LazySets.API
-```
-```@docs; canonical=false
-surface(::LazySet)
-```
-```@meta
-CurrentModule = LazySets
-```
-```@docs
-surface(::LazySet)
 triangulate(::LazySet)
 tohrep(::LazySet)
 tosimplehrep(::LazySet)
