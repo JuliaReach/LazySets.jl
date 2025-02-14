@@ -1,3 +1,4 @@
-function radius(::EmptySet, ::Real=Inf)
-    throw(ArgumentError("the radius of an empty set is undefined"))
+function radius(∅::EmptySet, ::Real=Inf)
+    N = eltype(∅)
+    return zero(N)
 end

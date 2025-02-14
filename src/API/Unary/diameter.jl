@@ -16,6 +16,6 @@ A real number representing the diameter.
 
 The diameter of a set is the maximum distance between any two elements of the
 set, or, equivalently, the diameter of the enclosing ball (of the given
-``p``-norm) of minimal volume with the same center.
+``p``-norm) of minimal volume.
 """
 function diameter(::LazySet, ::Real=Inf) end

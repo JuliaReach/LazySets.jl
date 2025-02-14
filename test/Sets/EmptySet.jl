@@ -80,9 +80,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # diameter
-    @test_throws ArgumentError diameter(E)  # TODO this should maybe change
-    # res = diameter(E)
-    # @test res isa N && res == N(0)
+    res = diameter(E)
+    @test res isa N && res == N(0)
 
     # dim
     @test dim(E) == 2
@@ -129,9 +128,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError low(E, 1)
 
     # norm
-    @test_throws ArgumentError norm(E)  # TODO this should maybe change
-    # res = norm(E)
-    # @test res isa N && res == N(0)
+    res = norm(E)
+    @test res isa N && res == N(0)
 
     # polyhedron
     if test_suite_polyhedra
@@ -139,9 +137,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # radius
-    @test_throws ArgumentError radius(E)  # TODO this should maybe change
-    # res = radius(E)
-    # @test res isa N && res == N(0)
+    res = radius(E)
+    @test res isa N && res == N(0)
 
     # rand
     E2 = rand(EmptySet; N=N)
