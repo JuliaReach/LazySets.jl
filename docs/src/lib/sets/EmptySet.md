@@ -79,7 +79,6 @@ CurrentModule = LazySets.API
 * [`rationalize`](@ref rationalize(::LazySet))
 * [`rectify`](@ref rectify(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
-* [`surface`](@ref surface(::LazySet))
 * [`vertices_list`](@ref vertices_list(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
 * [`volume`](@ref volume(::LazySet))

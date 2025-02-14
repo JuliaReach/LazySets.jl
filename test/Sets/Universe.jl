@@ -156,9 +156,6 @@ for N in [Float64, Float32, Rational{Int}]
     # singleton_list
     @test_throws ArgumentError singleton_list(U)
 
-    # surface
-    @test_throws AssertionError surface(U)
-
     # tosimplehrep
     C, d = tosimplehrep(U)
     @test C isa Matrix{N} && d isa Vector{N} && size(C) == (0, 2) && isempty(d)

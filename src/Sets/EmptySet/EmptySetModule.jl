@@ -14,7 +14,7 @@ using ReachabilityBase.Require: require
                         exponential_map, high, ∈, is_interior_point, isbounded,
                         isboundedtype, isempty, isoperationtype, isuniversal,
                         linear_map, low, norm, permute, project, radius, rand,
-                        rectify, reflect, sample, scale, scale!, ρ, σ, surface,
+                        rectify, reflect, sample, scale, scale!, ρ, σ,
                         translate, translate!, vertices, vertices_list, volume,
                         cartesian_product, convex_hull, difference, distance,
                         intersection, ≈, isdisjoint, ⊆, linear_combination,
@@ -47,7 +47,6 @@ include("rand.jl")
 include("rectify.jl")
 include("reflect.jl")
 include("sample.jl")
-include("surface.jl")
 include("rationalize.jl")
 include("vertices_list.jl")
 include("vertices.jl")

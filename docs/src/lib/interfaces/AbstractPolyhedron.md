@@ -107,7 +107,6 @@ Inherited from [`LazySet`](@ref):
 * [`rectify`](@ref rectify(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
-* [`surface`](@ref surface(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))

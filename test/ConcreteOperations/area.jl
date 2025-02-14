@@ -1,7 +1,6 @@
 for N in [Float64, Float32, Rational{Int}]
     # not implemented for dimension != 2
     p = BallInf(zeros(N, 3), N(1))
-    @test_throws ArgumentError surface(p)
     @test_throws AssertionError area(p)
 
     # sets with zero area
@@ -25,7 +24,4 @@ for N in [Float64, Float32, Rational{Int}]
 
     # non-convex polygon (via list of vertices)
     @test LazySets._area_polygon(vlist) ≈ N(30)
-
-    # test surface function, which falls back to the area function for 2D sets
-    @test surface(p) ≈ N(35)
 end
