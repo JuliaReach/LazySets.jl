@@ -1005,10 +1005,6 @@ end
 The default implementation computes all constraints via `constraints_list`.
 """
 function constraints(X::LazySet)
-    return _constraints_fallback(X)
-end
-
-function _constraints_fallback(X::LazySet)
     return constraints_list(X)
 end
 
@@ -1022,10 +1018,6 @@ end
 The default implementation computes all vertices via `vertices_list`.
 """
 function vertices(X::LazySet)
-    return _vertices_fallback(X)
-end
-
-function _vertices_fallback(X::LazySet)
     return vertices_list(X)
 end
 
