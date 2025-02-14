@@ -15,6 +15,18 @@ Every convex set in this library implements this interface.
 ConvexSet
 ```
 
+This interface requires to implement the following function:
+
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+σ(::AbstractVector, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+
 This interface defines the following functions (undocumented):
 
 ```@meta
