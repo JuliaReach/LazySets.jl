@@ -1,5 +1,13 @@
 # Overview
 
+```@meta
+CurrentModule = LazySets
+```
+
+```@docs
+LazySets
+```
+
 This section of the manual describes the interfaces for different set types.
 Every set that fits the description of an interface should also implement it.
 This helps in several ways:
