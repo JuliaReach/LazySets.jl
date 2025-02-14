@@ -738,6 +738,10 @@ rand(HPolygonOpt)
 @test HPolygonOpt() isa HPolygonOpt{Float64,Vector{Float64}}
 @test VPolygon() isa VPolygon{Float64}
 
+# construction from constraints of mixed numeric types
+P = HPolygon([HalfSpace([1.0, 1.0], 1.0), HalfSpace(Float16[1, 1], Float16(1))])
+@test P isa HPolygon{Float64}
+
 # isoperationtype
 @test !isoperationtype(HPolygon)
 @test !isoperationtype(HPolygonOpt)
