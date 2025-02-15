@@ -314,7 +314,7 @@ for N in [Float64, Float32, Rational{Int}]
     # intersection
     @test_throws AssertionError intersection(E, E3)
     for E2 in (intersection(E, E), intersection(E, B), intersection(B, E),
-               intersection(E, U), intersection(U, E), intersection(E, Z), intersection(Z, E),)
+               intersection(E, U), intersection(U, E), intersection(E, Z), intersection(Z, E))
         @test isidentical(E, E2)
     end
 
