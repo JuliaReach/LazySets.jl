@@ -166,6 +166,7 @@ for exp_backend in [ExponentialUtilities, Expokit]
 
         # concretize
         X = concretize(projmap)
-        @test X ≈ Zonotope(N[0.070904718, 0.6470451], N[0.00139082656 0.069513891; 0.026896709 0.6201484])
+        @test X ≈ Zonotope(N[0.070904718, 0.6470451],
+                           N[0.00139082656 0.069513891; 0.026896709 0.6201484])
     end
 end

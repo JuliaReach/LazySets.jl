@@ -893,14 +893,14 @@ for TU in (:UnionSet, :UnionSetArray)
 end
 
 for T in (:AbstractPolyhedron, :AbstractPolytope, :AbstractHyperrectangle,
-           :AbstractSingleton, :EmptySet, :UnionSetArray, :Complement)
+          :AbstractSingleton, :EmptySet, :UnionSetArray, :Complement)
     @eval function ⊆(U::Universe, X::($T), witness::Bool=false)
         return _issubset_universe(U, X, witness)
     end
 end
 
 for T in (:AbstractPolytope, :AbstractZonotope, :AbstractHyperrectangle,
-           :AbstractSingleton, :LineSegment, :EmptySet, :UnionSet, :UnionSetArray)
+          :AbstractSingleton, :LineSegment, :EmptySet, :UnionSet, :UnionSetArray)
     @eval function ⊆(X::($T), U::Universe, witness::Bool=false)
         return _issubset_universe2(X, U, witness)
     end

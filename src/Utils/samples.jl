@@ -611,7 +611,6 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::UniverseSampler;
     end
 end
 
-
 # =============================
 # Code requiring Distributions
 # =============================
