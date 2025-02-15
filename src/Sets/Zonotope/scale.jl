@@ -1,3 +1,7 @@
+function scale(α::Real, Z::Zonotope)
+    return _scale_copy_inplace(α, Z)
+end
+
 """
 # Extended help
 

@@ -2,7 +2,8 @@ module LineSegmentModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractZonotope, right_turn, _witness_result_empty
+using ..LazySets: AbstractZonotope, right_turn, _scale_copy_inplace,
+                  _witness_result_empty
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: _isapprox, isapproxzero, _leq
@@ -11,8 +12,8 @@ using ReachabilityBase.Iteration: EmptyIterator, SingletonIterator
 using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, center, constraints_list, dim,
-                        isoperationtype, rand, vertices_list, ∈, scale!, ρ, σ,
-                        translate, intersection, isdisjoint
+                        isoperationtype, rand, vertices_list, ∈, scale, scale!,
+                        ρ, σ, translate, intersection, isdisjoint
 @reexport import ..LazySets: generators, genmat, ngens, halfspace_left,
                              halfspace_right
 @reexport using ..API

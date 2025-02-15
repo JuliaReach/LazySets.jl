@@ -63,6 +63,7 @@ CurrentModule = LazySets.API
 ```
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
+* [`scale`](@ref scale(::Real, ::LazySet))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
@@ -94,7 +95,6 @@ Inherited from [`LazySet`](@ref):
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
-* [`scale`](@ref scale(::Real, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))

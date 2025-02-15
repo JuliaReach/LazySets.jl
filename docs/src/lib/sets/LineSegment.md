@@ -107,6 +107,8 @@ Undocumented implementations:
 * [`dim`](@ref dim(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`vertices_list`](@ref vertices_list(::LazySet))
+* [`scale`](@ref scale(::Real, ::LazySet))
+* [`scale!`](@ref scale!(::Real, ::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 
 ```@meta
@@ -138,7 +140,6 @@ Inherited from [`LazySet`](@ref):
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int))
-* [`scale`](@ref scale(::Real, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
