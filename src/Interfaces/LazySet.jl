@@ -1560,7 +1560,7 @@ end
 The default implementation computes `linear_map` with the diagonal matrix ``α*I``.
 """
 function scale(α::Real, X::LazySet)
-    return linear_map(α*I, X)
+    return linear_map(α * I, X)
 end
 
 function _scale_copy_inplace(α::Real, X::LazySet)
