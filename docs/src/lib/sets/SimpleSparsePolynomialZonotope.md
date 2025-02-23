@@ -84,18 +84,6 @@ CurrentModule = LazySets.SimpleSparsePolynomialZonotopeModule
 cartesian_product(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
 ```
 ```@meta
-CurrentModule = LazySets
-```
-```@docs; canonical=false
-convex_hull(::LazySet, ::LazySet)
-```
-```@meta
-CurrentModule = LazySets.SimpleSparsePolynomialZonotopeModule
-```
-```@docs
-convex_hull(::SimpleSparsePolynomialZonotope, ::SimpleSparsePolynomialZonotope)
-```
-```@meta
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
@@ -184,7 +172,6 @@ Inherited from [`LazySet`](@ref):
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 * [`⊆`](@ref ⊆(::LazySet, ::LazySet))
-* [`linear_combination`](@ref linear_combination(::LazySet, ::LazySet))
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):
@@ -194,6 +181,7 @@ Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`isempty`](@ref isempty(::AbstractPolynomialZonotope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolynomialZonotope))
 * [`order`](@ref order(::AbstractPolynomialZonotope))
+* [`convex_hull`](@ref convex_hull(::AbstractPolynomialZonotope, ::AbstractPolynomialZonotope))
 
 Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`ngens_dep`](@ref ngens_dep(::AbstractSparsePolynomialZonotope))
