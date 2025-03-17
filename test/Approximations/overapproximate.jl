@@ -147,6 +147,11 @@ for N in [Float64, Rational{Int}, Float32]
     if N <: AbstractFloat
         @test isequivalent(P, R)
     end
+
+    #overapproximate a SparsePolynomialZonotope with a VPolytope
+    S = SparsePolynomialZonotope(N[-0.5, -0.5], N[1. 1 1 1;1 0 -1 1], zeros(N, 2, 0), [1 0 1 2;0 1 1 0])
+    P = overapproximate(S, VPolytope)
+    @test ispermutation([N[-1.5, -2.5], N[2.5, -0.5], N[3.5, 0.5], N[-0.5, 2.5], N[-1.5, 1.5]], vertices_list(P))
 end
 
 # tests that do not work with Rational{Int}

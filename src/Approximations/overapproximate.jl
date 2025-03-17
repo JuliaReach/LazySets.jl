@@ -603,6 +603,84 @@ function overapproximate(P::VPolygon, ::Type{<:LinearMap{N,<:Hyperrectangle}}) w
     return LinearMap(R, min_rectangle)
 end
 
+"""
+    overapproximate(P::SparsePolynomialZonotope{N}, ::Type{<:VPolytope}) where {N}
+
+
+Overapproximate a sparse polynomial zonotope with a polytope in vertex representation.
+
+### Input
+
+- `P`         -- sparse polynomial zonotope
+- `VPolytope` -- target type
+
+### Output
+
+A `VPolytope` that overapproximates the sparse polynomial zonotope.
+
+### Algorithm
+
+This method implements [Kochdumper21a; Proposition 3.1.15](@citet).
+The idea is to split `P` into a linear and nonlinear part (such that `P = P₁ ⊕ P₂`). 
+The nonlinear part is enclosed by a zonotope. Then we combine the vertices
+of both sets and finally apply a convex-hull algorithm.
+"""
+function overapproximate(P::SparsePolynomialZonotope{N}, ::Type{<:VPolytope}) where {N}
+    c = center(P)
+    G = genmat_dep(P)
+    GI = genmat_indep(P)
+    E = expmat(P)
+    idx = P.idx
+
+    H = [j for j in 1:size(E, 2) if any(E[:, j] .> 1)]
+    K = setdiff(1:size(E, 2), H)
+
+    if !isempty(H)
+        SPZ₂ = SparsePolynomialZonotope(c, G[:, H], zeros(N, length(c), 0), E[:, H], idx)
+        Z = overapproximate(SPZ₂, Zonotope)
+        c_z = center(Z)
+        GI_mod = hcat(GI, genmat(Z))
+    else
+        c_z = c
+        GI_mod = GI
+    end
+
+    G_mod = G[:, K]
+    E_mod = E[:, K]
+    
+    # P̄ = SparsePolynomialZonotope(c_z, G_mod, GI_mod, E_mod, idx)
+    # Compute vertices of a Z-representation
+    p = size(E, 1)
+    dep_params = Iterators.product(fill([-one(N), one(N)], p)...)
+    indep_params = Iterators.product(fill([-one(N), one(N)], size(GI_mod, 2))...)
+
+    V = Vector{Vector{N}}()
+    for α in dep_params
+        dep_term = zeros(N, size(c))
+        for j in axes(G_mod, 2)
+            prod = one(N)
+            for k in 1:p
+                if E_mod[k, j] == 1
+                    prod *= α[k]
+                end
+            end
+            dep_term += prod * G_mod[:, j]
+        end
+        for β in indep_params
+            indep_term = zeros(N, size(c))
+            for j in axes(GI_mod, 2)
+                indep_term += β[j] * GI_mod[:, j]
+            end
+            point = c_z + dep_term + indep_term
+            push!(V, point)
+        end
+    end
+
+    convex_hull!(V)
+
+    return VPolytope(V)
+end
+
 # function to be loaded by Requires
 function load_paving_overapproximation()
     return quote
