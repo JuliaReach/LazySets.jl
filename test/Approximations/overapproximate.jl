@@ -539,4 +539,9 @@ for N in [Float64]
     R = overapproximate(Z ∩ H, Zonotope)
     R_exact = intersection(Z, H)
     @test R ⊆ Z && R_exact ⊆ R
+
+    #overapproximate a SparsePolynomialZonotope with a VPolytope
+    S = SparsePolynomialZonotope(N[2.0, 2.0], N[1.0 0.0; 1.0 1.0], zeros(N, 2, 0), [1 0; 0 1])
+    P = overapproximate(S, VPolytope)
+    @test [[3.0, 4.0],[1.0, 2.0],[1.0, 0.0],[3.0, 2.0]] == vertices_list(P)
 end

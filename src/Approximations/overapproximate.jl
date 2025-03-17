@@ -603,6 +603,55 @@ function overapproximate(P::VPolygon, ::Type{<:LinearMap{N,<:Hyperrectangle}}) w
     return LinearMap(R, min_rectangle)
 end
 
+"""
+    overapproximate(P::SparsePolynomialZonotope, ::Type{<:VPolytope})
+
+Overapproximate a sparse polynomial zonotope with VPolytope.
+
+### Input
+
+- `P`                       -- a sparse polynomial zonotope
+- `VPolytope` -- target type
+
+### Output
+
+A VPolytope overapproximating a sparse polynomial zonotope.
+
+### Algorithm
+
+This method implements [Kochdumper21a; Proposition 3.1.15](@citet).
+The idea is to split the the SPZ into linear and nonlinear  (Note that PZ = PZ₁ ⊕ PZ₂). 
+Nonlinear part is enclosed by a zonotope. Finally, combining the 2 parts gives out an 
+VPolytope approximation.
+"""
+function overapproximate(P::SparsePolynomialZonotope, ::Type{<:VPolytope})
+    c = center(P)
+    G = genmat_dep(P)
+    GI = genmat_indep(P)
+    E = expmat(P)
+    idx = P.idx
+
+    H = [i for i in 1:size(E, 2) if any(E[:, i] .> 1)]
+    K = setdiff(1:size(E, 2), H)
+
+    SPZ₁ = SparsePolynomialZonotope(zeros(length(c)), G[:, K], GI, E[:, K], idx)
+    SPZ₂ = SparsePolynomialZonotope(c, G[:, H], zeros(length(c), 0), E[:, H], idx)
+
+    """
+    SPZ₁ is a zonotope because it excludes generators with exponents >1, 
+    probably only retaining linear terms
+    """
+
+    Z₁ = overapproximate(SPZ₁, Zonotope)
+    Z₂ = overapproximate(SPZ₂, Zonotope)
+
+    Z = Z₁ ⊕ Z₂
+
+    V = vertices_list(Z)
+
+    return VPolytope(V)
+end
+
 # function to be loaded by Requires
 function load_paving_overapproximation()
     return quote
