@@ -74,9 +74,6 @@ for N in [Float64, Float32, Rational{Int}]
     E2 = copy(E)
     @test isidentical(E, E2)
 
-    # delaunay
-    @test_throws ArgumentError delaunay(E)
-
     # diameter
     res = diameter(E)
     @test res isa N && res == N(0)
@@ -157,6 +154,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     # tosimplehrep
     @test_throws MethodError tosimplehrep(E)  # TODO this should maybe change
+
+    # triangulate
+    @test_throws ArgumentError triangulate(E)
 
     # triangulate_faces
     if test_suite_polyhedra

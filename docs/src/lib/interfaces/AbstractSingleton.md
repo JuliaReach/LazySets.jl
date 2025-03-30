@@ -121,7 +121,6 @@ Inherited from [`LazySet`](@ref):
 * [`constraints`](@ref constraints(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
 * `copy(::Type{LazySet})`
-* [`delaunay`](@ref delaunay(::LazySet))
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
@@ -130,6 +129,7 @@ Inherited from [`LazySet`](@ref):
 * [`rationalize`](@ref rationalize(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
+* [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))

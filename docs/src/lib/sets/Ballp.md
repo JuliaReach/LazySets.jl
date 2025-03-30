@@ -67,7 +67,6 @@ Inherited from [`LazySet`](@ref):
 * [`concretize`](@ref concretize(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
 * `copy(::Type{LazySet})`
-* [`delaunay`](@ref delaunay(::LazySet))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
@@ -84,6 +83,7 @@ Inherited from [`LazySet`](@ref):
 * [`sample`](@ref sample(::LazySet, ::Int))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
+* [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))

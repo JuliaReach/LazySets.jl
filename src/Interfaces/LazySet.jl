@@ -5,7 +5,7 @@ export LazySet,
        singleton_list,
        chebyshev_center_radius,
        flatten,
-       delaunay,
+       triangulate,
        triangulate_faces
 
 """
@@ -127,8 +127,46 @@ Zonotope
 """
 abstract type LazySet{N} end
 
-function delaunay(X)
-    require(@__MODULE__, :MiniQhull, fun_name="delaunay")
+"""
+    triangulate(X::LazySet; [algorithm]::String="delaunay", [kwargs]...)
+
+Compute a triangulation of the given polytopic set.
+
+### Input
+
+- `X`         -- polytopic set
+- `algorithm` -- (optional; default: `delaunay`) string to choose the
+                 type of triangulation
+- `kwargs`    -- further keyword arguments passed to the algorithm
+
+### Output
+
+A union of polytopes in vertex representation.
+
+### Algorithm
+
+The algorithm is selected with the argument `algorithm`.
+
+- `"delaunay"`: This algorithm computes a Delaunay triangulation.
+
+This algorithm can receive another optional argument `compute_triangles_3d`,
+a Boolean flag that defaults to `false`. It is used to compute the 2D
+triangulation of a 3D set if `true`.
+
+The implementation requires the package
+[MiniQhull.jl](https://github.com/gridap/MiniQhull.jl), which uses the library
+[Qhull](http://www.qhull.org/).
+
+The algorithm works in arbitrary dimension and requires that the list of
+vertices of `X` can be obtained.
+"""
+function triangulate(X::LazySet; algorithm::String="delaunay", kwargs...)
+    if algorithm == "delaunay"
+        require(@__MODULE__, :MiniQhull, fun_name="triangulate")
+        return _triangulate_delaunay(X; kwargs...)
+    else
+        throw(ArgumentError("unknown algorithm $algorithm"))
+    end
 end
 
 function triangulate_faces(X)
@@ -809,7 +847,7 @@ function _plot_recipe_3d_polytope(P::LazySet, N=eltype(P))
     @assert ispolyhedral(P) && isboundedtype(typeof(P)) "3D plotting is " *
                                                         "only available for polytopes"
 
-    vlist, C = delaunay_vlist_connectivity(P; compute_triangles_3d=true)
+    vlist, C = triangulate_vlist_connectivity(P; compute_triangles_3d=true)
 
     m = length(vlist)
     if m == 0
@@ -1039,35 +1077,11 @@ function _vertices_fallback(X::LazySet)
     return vertices_list(X)
 end
 
-function load_delaunay_MiniQhull()
+function load_MiniQhull_triangulate()
     return quote
-        """
-            delaunay(X::LazySet)
-
-        Compute the Delaunay triangulation of the given polytopic set.
-
-        ### Input
-
-        - `X`                    -- polytopic set
-        - `compute_triangles_3d` -- (optional; default: `false`) flag to compute the 2D
-                                    triangulation of a 3D set
-
-        ### Output
-
-        A union of polytopes in vertex representation.
-
-        ### Notes
-
-        This implementation requires the package
-        [MiniQhull.jl](https://github.com/gridap/MiniQhull.jl), which uses the library
-        [Qhull](http://www.qhull.org/).
-
-        The method works in arbitrary dimension and the requirement is that the list of
-        vertices of `X` can be obtained.
-        """
-        function delaunay(X::LazySet; compute_triangles_3d::Bool=false)
-            vlist, connect_mat = delaunay_vlist_connectivity(X;
-                                                             compute_triangles_3d=compute_triangles_3d)
+        function _triangulate_delaunay(X::LazySet; compute_triangles_3d::Bool=false)
+            vlist, connect_mat = _delaunay_vlist_connectivity(X;
+                                                              compute_triangles_3d=compute_triangles_3d)
             nsimplices = size(connect_mat, 2)
             if compute_triangles_3d
                 simplices = [VPolytope(vlist[connect_mat[1:3, j]]) for j in 1:nsimplices]
@@ -1081,8 +1095,8 @@ function load_delaunay_MiniQhull()
         #
         # if the flag `compute_triangles_3d` is set, the resulting matrix still has four
         # rows, but the last row has no meaning
-        function delaunay_vlist_connectivity(X::LazySet;
-                                             compute_triangles_3d::Bool=false)
+        function _delaunay_vlist_connectivity(X::LazySet;
+                                              compute_triangles_3d::Bool=false)
             n = dim(X)
             @assert !compute_triangles_3d || n == 3 "the `compute_triangles_3d` " *
                                                     "option requires 3D inputs"
@@ -1094,7 +1108,7 @@ function load_delaunay_MiniQhull()
             return vlist, connectivity_matrix
         end
     end
-end  # load_delaunay_MiniQhull
+end  # load_MiniQhull_triangulate
 
 """
 # Extended help

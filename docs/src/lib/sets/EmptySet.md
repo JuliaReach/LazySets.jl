@@ -128,9 +128,9 @@ Inherited from [`LazySet`](@ref):
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 
 Inherited from [`LazySet`](@ref) but does not apply:
-* [`delaunay`](@ref delaunay(::LazySet))
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
+* [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))
 
 Inherited from [`ConvexSet`](@ref):

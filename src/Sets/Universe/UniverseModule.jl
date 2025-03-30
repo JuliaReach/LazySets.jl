@@ -17,8 +17,8 @@ using ReachabilityBase.Require: require
                         convex_hull, difference, distance, intersection,
                         isdisjoint, ⊆, linear_combination,
                         minkowski_difference, minkowski_sum
-@reexport import ..LazySets: constrained_dimensions, delaunay,
-                             linear_map_inverse, rationalize, tosimplehrep
+@reexport import ..LazySets: constrained_dimensions, linear_map_inverse,
+                             rationalize, tosimplehrep, triangulate
 import Base: copy
 @reexport using ..API
 
@@ -31,7 +31,6 @@ include("complement.jl")
 include("constraints.jl")
 include("constraints_list.jl")
 include("copy.jl")
-include("delaunay.jl")
 include("diameter.jl")
 include("dim.jl")
 include("isbounded.jl")
@@ -66,6 +65,7 @@ include("minkowski_sum.jl")
 include("constrained_dimensions.jl")
 include("linear_map_inverse.jl")
 include("tosimplehrep.jl")
+include("triangulate.jl")
 
 include("init.jl")
 
