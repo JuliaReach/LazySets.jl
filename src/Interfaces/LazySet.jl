@@ -6,7 +6,7 @@ export LazySet,
        chebyshev_center_radius,
        flatten,
        delaunay,
-       triangulate
+       triangulate_faces
 
 """
     LazySet{N}
@@ -131,8 +131,8 @@ function delaunay(X)
     require(@__MODULE__, :MiniQhull, fun_name="delaunay")
 end
 
-function triangulate(X)
-    require(@__MODULE__, :Polyhedra, fun_name="triangulate")
+function triangulate_faces(X)
+    require(@__MODULE__, :Polyhedra, fun_name="triangulate_faces")
 end
 
 """
@@ -1394,10 +1394,10 @@ function load_Polyhedra_polyhedron()
     end
 end  # quote / load_Polyhedra_polyhedron()
 
-function load_Polyhedra_GeometryBasics_triangulate()
+function load_Polyhedra_GeometryBasics_triangulate_faces()
     return quote
         """
-            triangulate(X::LazySet)
+            triangulate_faces(X::LazySet)
 
         Triangulate the faces of a three-dimensional polytopic set.
 
@@ -1417,7 +1417,7 @@ function load_Polyhedra_GeometryBasics_triangulate()
 
         `X` must contain at least three vertices.
         """
-        function triangulate(X::LazySet)
+        function triangulate_faces(X::LazySet)
             dim(X) == 3 || throw(ArgumentError("the dimension of the set should be " *
                                                "three, got $(dim(X))"))
             @assert ispolyhedral(X) && isbounded(X) "triangulation requires a polytopic set"
@@ -1441,7 +1441,7 @@ function load_Polyhedra_GeometryBasics_triangulate()
             return points, connec_tup
         end
     end
-end  # quote / load_Polyhedra_GeometryBasics_triangulate()
+end  # quote / load_Polyhedra_GeometryBasics_triangulate_faces()
 
 """
 # Extended help

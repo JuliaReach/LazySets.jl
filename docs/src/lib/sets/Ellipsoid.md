@@ -105,7 +105,7 @@ Inherited from [`LazySet`](@ref):
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`rationalize`](@ref rationalize(::LazySet))
-* [`triangulate`](@ref triangulate(::LazySet))
+* [`triangulate_faces`](@ref triangulate_faces(::LazySet))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))

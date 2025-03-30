@@ -158,9 +158,9 @@ for N in [Float64, Float32, Rational{Int}]
     C, d = tosimplehrep(U)
     @test C isa Matrix{N} && d isa Vector{N} && size(C) == (0, 2) && isempty(d)
 
-    # triangulate
+    # triangulate_faces
     if test_suite_polyhedra  # TODO this should work without Polyhedra
-        @test_throws AssertionError triangulate(U3)
+        @test_throws AssertionError triangulate_faces(U3)
     end
 
     # vertices_list

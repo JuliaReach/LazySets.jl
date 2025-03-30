@@ -168,7 +168,7 @@ Inherited from [`LazySet`](@ref):
 * [`rectify`](@ref rectify(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
-* [`triangulate`](@ref triangulate(::LazySet))
+* [`triangulate_faces`](@ref triangulate_faces(::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))

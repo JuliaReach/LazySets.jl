@@ -89,7 +89,7 @@ Inherited from [`LazySet`](@ref):
 * [`rationalize`](@ref rationalize(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
-* [`triangulate`](@ref triangulate(::LazySet))
+* [`triangulate_faces`](@ref triangulate_faces(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))

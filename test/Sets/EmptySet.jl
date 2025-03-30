@@ -158,9 +158,9 @@ for N in [Float64, Float32, Rational{Int}]
     # tosimplehrep
     @test_throws MethodError tosimplehrep(E)  # TODO this should maybe change
 
-    # triangulate
+    # triangulate_faces
     if test_suite_polyhedra
-        @test_throws AssertionError triangulate(E3)  # TODO this should maybe change
+        @test_throws AssertionError triangulate_faces(E3)  # TODO this should maybe change
     end
 
     # vertices_list
