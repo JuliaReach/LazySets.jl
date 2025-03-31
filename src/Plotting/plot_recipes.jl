@@ -379,8 +379,6 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
             elseif length(x) == 2
                 # flat line segment
                 linecolor --> DEFAULT_COLOR
-                markercolor --> DEFAULT_COLOR
-                markershape --> :circle
                 seriestype := :path
             else
                 seriestype := :shape
