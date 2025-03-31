@@ -151,7 +151,7 @@ for N in [Float64, Rational{Int}, Float32]
     #overapproximate a SparsePolynomialZonotope with a VPolytope
     S = SparsePolynomialZonotope(N[-0.5, -0.5], N[1. 1 1 1;1 0 -1 1], zeros(N, 2, 0), [1 0 1 2;0 1 1 0])
     P = overapproximate(S, VPolytope)
-    @test [N[-1.5, -2.5], N[2.5, -0.5], N[3.5, 0.5], N[-0.5, 2.5], N[-1.5, 1.5]] == vertices_list(P)
+    @test ispermutation([N[-1.5, -2.5], N[2.5, -0.5], N[3.5, 0.5], N[-0.5, 2.5], N[-1.5, 1.5]], vertices_list(P))
 end
 
 # tests that do not work with Rational{Int}
@@ -544,5 +544,4 @@ for N in [Float64]
     R = overapproximate(Z ∩ H, Zonotope)
     R_exact = intersection(Z, H)
     @test R ⊆ Z && R_exact ⊆ R
-
 end

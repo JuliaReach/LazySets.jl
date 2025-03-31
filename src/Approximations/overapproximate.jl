@@ -604,25 +604,26 @@ function overapproximate(P::VPolygon, ::Type{<:LinearMap{N,<:Hyperrectangle}}) w
 end
 
 """
-    overapproximate(P::SparsePolynomialZonotope, ::Type{<:VPolytope})
+    overapproximate(P::SparsePolynomialZonotope{N}, ::Type{<:VPolytope}) where {N}
 
-Overapproximate a sparse polynomial zonotope with VPolytope.
+
+Overapproximate a sparse polynomial zonotope with a polytope in vertex representation.
 
 ### Input
 
-- `P`                       -- a sparse polynomial zonotope
+- `P`         -- sparse polynomial zonotope
 - `VPolytope` -- target type
 
 ### Output
 
-A VPolytope that overapproximates the sparse polynomial zonotope.
+A `VPolytope` that overapproximates the sparse polynomial zonotope.
 
 ### Algorithm
 
 This method implements [Kochdumper21a; Proposition 3.1.15](@citet).
-The idea is to split the the SPZ into linear and nonlinear  (Note that PZ = PZ₁ ⊕ PZ₂). 
-Nonlinear part is enclosed by a zonotope. Adjusting the SPZ, the 2 parts gives out an 
-VPolytope approximation.
+The idea is to split `P` into a linear and nonlinear part (such that `P = P₁ ⊕ P₂`). 
+The nonlinear part is enclosed by a zonotope. Then we combine the vertices
+of both sets and finally apply a convex-hull algorithm.
 """
 function overapproximate(P::SparsePolynomialZonotope{N}, ::Type{<:VPolytope}) where {N}
     c = center(P)
@@ -638,11 +639,9 @@ function overapproximate(P::SparsePolynomialZonotope{N}, ::Type{<:VPolytope}) wh
         SPZ₂ = SparsePolynomialZonotope(c, G[:, H], zeros(N, length(c), 0), E[:, H], idx)
         Z = overapproximate(SPZ₂, Zonotope)
         c_z = center(Z)
-        G_z = genmat(Z)
-        GI_mod = hcat(GI, G_z)
+        GI_mod = hcat(GI, genmat(Z))
     else
         c_z = c
-        G_z = zeros(N, length(c), 0)
         GI_mod = GI
     end
 
