@@ -642,7 +642,7 @@ function overapproximate(P::SparsePolynomialZonotope{N}, ::Type{<:VPolytope}) wh
         GI_mod = hcat(GI, G_z)
     else
         c_z = c
-        G_z = zeros(length(c), 0)
+        G_z = zeros(N, length(c), 0)
         GI_mod = GI
     end
 
