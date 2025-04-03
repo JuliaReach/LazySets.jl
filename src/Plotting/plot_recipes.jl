@@ -373,14 +373,12 @@ julia> plot(B, 1e-2)  # faster but less accurate than the previous call
         else
             x, y = res
             if length(x) == 1 ||
-               (length(x) == 2 && norm([x[1], y[1]] - [x[2], y[2]]) ≈ 0)
+               (length(x) == 2 && isapproxzero(norm([x[1], y[1]] - [x[2], y[2]])))
                 # single point
                 seriestype := :scatter
             elseif length(x) == 2
                 # flat line segment
                 linecolor --> DEFAULT_COLOR
-                markercolor --> DEFAULT_COLOR
-                markershape --> :circle
                 seriestype := :path
             else
                 seriestype := :shape
