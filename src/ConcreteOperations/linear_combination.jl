@@ -42,3 +42,14 @@ end
 @commutative function linear_combination(U::Universe, X::ConvexSet)
     return _linear_combination_universe(U, X)
 end
+
+function linear_combination(P1::AbstractPolynomialZonotope,
+                            P2::AbstractPolynomialZonotope)
+    SSPZ1 = convert(SimpleSparsePolynomialZonotope, P1)
+    SSPZ2 = convert(SimpleSparsePolynomialZonotope, P2)
+    return linear_combination(SSPZ1, SSPZ2)
+end
+
+@commutative function linear_combination(Z::AbstractZonotope, P::AbstractPolynomialZonotope)
+    return linear_combination(convert(SparsePolynomialZonotope, Z), P)
+end
