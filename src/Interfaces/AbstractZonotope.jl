@@ -811,14 +811,20 @@ struct ASB10 <: AbstractReductionMethod end
 """
     JKS16 <: AbstractReductionMethod
 
-Zonotope order-reduction method from [SCOTT2016126](@citet).
-"""
-struct JKS16 <: AbstractReductionMethod 
+`JKS16` uses a greedy factorization and iterative generator reduction
 
+### Algorithm
+
+- The JKS16 method reorders the generator matrix using reduced row echelon form (rref) to form a `T`, 
+    then iteratively removes excess generators from `V` while updating `T`.
+- The default `JKS16()` uses `ϵ = 1e-6` (pivot threshold) and `δ = 1e-3` (volume threshold).
+Referenced from [SCOTT2016126](@citet).
+"""
+struct JKS16{N<:Number} <: AbstractReductionMethod 
     ϵ::N
     δ::N
 
-    JKS16(ϵ::N=1e-6, δ::N=1e-3) = new(ϵ, δ)
+    JKS16(ϵ::N=1e-6, δ::N=1e-3) where {N<:Number} = new{N}(ϵ, δ)
 end
 
 """
@@ -844,16 +850,18 @@ The available algorithms are:
 
 ```jldoctest; setup = :(using LazySets: subtypes, AbstractReductionMethod)
 julia> subtypes(AbstractReductionMethod)
-3-element Vector{Any}:
+4-element Vector{Any}:
  LazySets.ASB10
  LazySets.COMB03
  LazySets.GIR05
+ LazySets.JKS16
 ```
 
 See the documentation of each algorithm for references. These methods split the
 given zonotopic set `Z` into two zonotopes, `K` and `L`, where `K` contains the
 most "representative" generators and `L` contains the generators that are
-reduced, `Lred`, using a box overapproximation. We follow the notation from
+reduced, `Lred`, using a box overapproximation. This methodology varies slightly 
+for `JKS16` (for details, refer to the method). We follow the notation from
 [YangS18](@citet). See also [KopetzkiSA17](@citet).
 """
 function reduce_order(Z::AbstractZonotope, r::Real,
@@ -865,7 +873,10 @@ function reduce_order(Z::AbstractZonotope, r::Real,
 
     # if r is bigger than the order of Z => do not reduce
     (r * n >= p) && return Z
+    return _reduce_order_zonotope_common(Z, r, n, p, method)
+end
 
+function _reduce_order_zonotope_common(Z, r, n, p, method::Union{ASB10,COMB03,GIR05})
     c = center(Z)
     G = genmat(Z)
 
@@ -891,39 +902,7 @@ function reduce_order(Z::AbstractZonotope, r::Real,
     return Zonotope(c, Gred)
 end
 
-"""
-    reduce_order(Z::AbstractZonotope, r::Real,
-                 method::JKS16)
-
-Reduce the order of a zonotopic set by overapproximating it with a zonotope that has
-fewer generators, using the JKS16 method.
-
-### Input
-
-- `Z`      -- zonotopic set
-- `r`      -- desired order
-- `method` -- `JKS16` uses a greedy factorization and iterative generator reduction
-
-### Output
-
-A new zonotope with fewer generators, if possible.
-
-### Algorithm
-
-- The JKS16 method reorders the generator matrix using reduced row echelon form (rref) to form a `T`, 
-    then iteratively removes excess generators from `V` while updating `T`.
-- The default `JKS16()` uses `ϵ = 1e-6` (pivot threshold) and `δ = 1e-3` (volume threshold).
-Referenced from [SCOTT2016126](@citet).
-"""
-function reduce_order(Z::AbstractZonotope, r::Real, method::JKS16)
-    r >= 1 || throw(ArgumentError("the target order should be at least 1, " *
-                                  "but it is $r"))
-    n = dim(Z)
-    p = ngens(Z)
-
-    # if r is bigger than the order of Z => do not reduce
-    (r * n >= p) && return Z
-
+function _reduce_order_zonotope_common(Z, r, n, p, method::JKS16)
     c = center(Z)
     G = genmat(Z)
 
@@ -960,7 +939,7 @@ function reduce_order(Z::AbstractZonotope, r::Real, method::JKS16)
 end
 
 # reorder the generator matrix G
-function _factorG(G::AbstractMatrix, ϵ::N, δ::N)
+function _factorG(G::AbstractMatrix, ϵ::N, δ::N) where {N}
     G✶ = copy(G)
     n, ng = size(G)
 
