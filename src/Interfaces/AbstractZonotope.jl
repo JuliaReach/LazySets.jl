@@ -815,10 +815,10 @@ Zonotope order-reduction method from [SCOTT2016126](@citet).
 """
 struct JKS16 <: AbstractReductionMethod 
 
-    ϵ::N
-    δ::N
+    ϵ::Float64
+    δ::Float64
 
-    JKS16(ϵ::N=1e-6, δ::N=1e-3) = new(ϵ, δ)
+    JKS16(ϵ::Float64=1e-6, δ::Float64=1e-3) = new(ϵ, δ)
 end
 
 """
@@ -960,7 +960,7 @@ function reduce_order(Z::AbstractZonotope, r::Real, method::JKS16)
 end
 
 # reorder the generator matrix G
-function _factorG(G::AbstractMatrix, ϵ::N, δ::N)
+function _factorG(G::AbstractMatrix, ϵ::N, δ::N) where {N}
     G✶ = copy(G)
     n, ng = size(G)
 
