@@ -844,10 +844,11 @@ The available algorithms are:
 
 ```jldoctest; setup = :(using LazySets: subtypes, AbstractReductionMethod)
 julia> subtypes(AbstractReductionMethod)
-3-element Vector{Any}:
+4-element Vector{Any}:
  LazySets.ASB10
  LazySets.COMB03
  LazySets.GIR05
+ LazySets.JKS16
 ```
 
 See the documentation of each algorithm for references. These methods split the
