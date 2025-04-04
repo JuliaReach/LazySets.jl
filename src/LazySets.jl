@@ -290,7 +290,7 @@ include("ConcreteOperations/linear_combination.jl")
 include("ConcreteOperations/minkowski_difference.jl")
 include("ConcreteOperations/minkowski_sum.jl")
 include("Utils/samples.jl")
-
+include("ConcreteOperations/utils_concrete.jl")
 # =====================
 # Approximations module
 # =====================
