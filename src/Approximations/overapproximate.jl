@@ -647,7 +647,7 @@ function overapproximate(P::SparsePolynomialZonotope{N}, ::Type{<:VPolytope}) wh
 
     G_mod = G[:, K]
     E_mod = E[:, K]
-    
+
     # P̄ = SparsePolynomialZonotope(c_z, G_mod, GI_mod, E_mod, idx)
     # Compute vertices of a Z-representation
     p = size(E, 1)
