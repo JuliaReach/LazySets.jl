@@ -1,5 +1,5 @@
 import .Polyhedra: polyhedron
-export polyhedron, triangulate
+export polyhedron
 using .Polyhedra: HRep, VRep,
                   removehredundancy!, removevredundancy!
 

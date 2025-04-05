@@ -71,11 +71,6 @@ for N in [Float64, Float32, Rational{Int}]
     U2 = copy(U)
     @test isidentical(U, U2)
 
-    # delaunay
-    if isdefined(@__MODULE__, :MiniQhull)  # TODO throwing an error should work without MiniQhull
-        @test_throws ArgumentError delaunay(U)
-    end
-
     # diameter
     @test_throws ArgumentError diameter(U)
 
@@ -161,8 +156,11 @@ for N in [Float64, Float32, Rational{Int}]
     @test C isa Matrix{N} && d isa Vector{N} && size(C) == (0, 2) && isempty(d)
 
     # triangulate
+    @test_throws ArgumentError triangulate(U)
+
+    # triangulate_faces
     if test_suite_polyhedra  # TODO this should work without Polyhedra
-        @test_throws AssertionError triangulate(U3)
+        @test_throws AssertionError triangulate_faces(U3)
     end
 
     # vertices_list
