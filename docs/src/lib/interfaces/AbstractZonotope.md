@@ -243,7 +243,7 @@ LazySets.AbstractReductionMethod
 LazySets.ASB10
 LazySets.COMB03
 LazySets.GIR05
-LazySets.JSK16
+LazySets.JKS16
 ```
 
 ## Implementations
