@@ -860,7 +860,7 @@ julia> subtypes(AbstractReductionMethod)
 See the documentation of each algorithm for references. These methods split the
 given zonotopic set `Z` into two zonotopes, `K` and `L`, where `K` contains the
 most "representative" generators and `L` contains the generators that are
-reduced, `Lred`, using a box overapproximation. This methodology vaires slightly 
+reduced, `Lred`, using a box overapproximation. This methodology varies slightly 
 for `JKS16` (for details, refer to the method). We follow the notation from
 [YangS18](@citet). See also [KopetzkiSA17](@citet).
 """
