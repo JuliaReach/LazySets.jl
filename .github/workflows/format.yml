@@ -13,7 +13,7 @@ jobs:
       - name: Cache artifacts
         uses: julia-actions/cache@v2
       - name: Install JuliaFormatter and format
-        run: julia -e 'import Pkg; Pkg.add("JuliaFormatter"); using JuliaFormatter; format(".")'
+        run: julia -e 'import Pkg; Pkg.add(name="JuliaFormatter", version=v"1"); using JuliaFormatter; format(".")'
       - name: Create pull request
         id: cpr
         uses: peter-evans/create-pull-request@v7
