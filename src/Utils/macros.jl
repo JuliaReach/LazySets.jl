@@ -271,6 +271,11 @@ macro declare_array_version(SET, SETARR)
             return true
         end
 
+        # generates concrete_function for array version
+        function concrete_function(::Type{<:$SETARR})
+            return concrete_function($SET)
+        end
+
         # create function to flatten a lazy set operation
         function flatten(X::Union{<:$SET,<:$SETARR})
             arr = flatten!([], X, $SET)

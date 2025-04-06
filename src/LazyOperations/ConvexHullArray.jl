@@ -221,21 +221,12 @@ function ∈(x::AbstractVector, X::ConvexHullArray)
 end
 
 function concretize(cha::ConvexHullArray)
-    a = array(cha)
-    @assert !isempty(a) "an empty convex hull is not allowed"
+    a = array(cha)    
     if all(ispolyhedral, a)
         return _convex_hull_polytopes(cha)
     end
-
-    X = cha
-    @inbounds for (i, Y) in enumerate(a)
-        if i == 1
-            X = concretize(Y)
-        else
-            X = convex_hull(X, concretize(Y))
-        end
-    end
-    return X
+    
+    return _concretize_lazy_array(cha)
 end
 
 function translate(cha::ConvexHullArray, x::AbstractVector)

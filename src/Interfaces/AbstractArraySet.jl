@@ -37,3 +37,15 @@ function flatten!(arr, X, bin_op)
     end
     return arr
 end
+
+function _concretize_lazy_array(container::T) where {T<:LazySet}
+    arr = array(container)
+    @assert !isempty(arr) "$(concrete_function(T)) not supported on empty array"
+    
+    op = concrete_function(T)
+    X = concretize(first(arr))
+    @inbounds for Y in @view arr[2:end]
+        X = op(X, concretize(Y))
+    end
+    return X
+end
