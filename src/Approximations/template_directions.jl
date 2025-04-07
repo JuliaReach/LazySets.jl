@@ -576,34 +576,19 @@ LazySets.dim(bdd::BoxDiagDirections) = bdd.n
 isbounding(::Type{<:BoxDiagDirections}) = true
 isnormalized(::Type{<:BoxDiagDirections}) = false
 
+# delegator iterator 
 function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}) where {N}
-    return (ones(N, bdd.n), ones(N, bdd.n))
+    return iterate(_boxdiag_iterator(bdd))
 end
 
-function Base.iterate(bdd::BoxDiagDirections{N}, state::Vector{N}) where {N}
-    # continue with diagonal directions
-    i = 1
-    while i <= bdd.n && state[i] < 0
-        state[i] = -state[i]
-        i = i + 1
-    end
-    if i > bdd.n
-        if bdd.n == 1
-            # finish here to avoid duplicates
-            return nothing
-        else
-            # continue with box directions
-            return iterate(bdd, 1)
-        end
-    else
-        state[i] = -state[i]
-        return (copy(state), state)
-    end
+function Base.iterate(bdd::BoxDiagDirections{N}, state) where {N}
+    return iterate(_boxdiag_iterator(bdd), state)
 end
 
-function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}, state::Int) where {N}
-    # continue with box directions
-    return iterate(BoxDirections{N,Vector{N}}(bdd.n), state)
+function _boxdiag_iterator(bdd::BoxDiagDirections{N,VN}) where {N,VN}
+    dd = DiagDirections{N,VN}(bdd.n)
+    bd = BoxDirections{N,VN}(bdd.n)
+    return Iterators.flatten((dd, bd))
 end
 
 """
