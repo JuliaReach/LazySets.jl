@@ -25,3 +25,25 @@ for N in [Float64, Float32, Rational{Int}]
         end
     end
 end
+
+for N in [Float64, Float32]
+    # case 1: ellipse completely outside
+    R1 = Hyperrectangle(N[1.0, -1.0], N[2, 1])
+    El1 = Ellipsoid(N[5.0, 5.0], Matrix{N}(I, 2, 2))
+    @test isdisjoint(R1, El1)
+
+    # case 2: ellipse completely inside
+    R2 = Hyperrectangle(N[0.0, 0.0], N[4.0, 1.0])
+    El2 = Ellipsoid(N[1.0, 0.0], Matrix{N}(I, 2, 2))
+    @test !isdisjoint(R2, El2)
+
+    # case 3: ellipse overlapping
+    R3 = Hyperrectangle(N[0.0, 0.0], N[1.0, 1.0])
+    El3 = Ellipsoid(N[2.0, 0.0], Diagonal(N[2.0, 1.0]))
+    @test !isdisjoint(R3, El3)
+
+    # case 4: ellipse tangent in one point
+    R4 = Hyperrectangle(N[0.0, 0.0], N[1.0, 1.0])
+    El4 = Ellipsoid(N[2.0, 0.0], Diagonal(N[1.0, 1.0]))
+    @test !isdisjoint(R4, El4)
+end
