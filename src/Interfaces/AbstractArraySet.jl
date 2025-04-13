@@ -38,7 +38,7 @@ function flatten!(arr, X, bin_op)
     return arr
 end
 
-function _concretize_lazy_array(container::T) where {T<:LazySet}
+function _concretize_lazy_array(container::T) where {T<:AbstractArraySet}
     arr = array(container)
     @assert !isempty(arr) "`concretize` not supported on empty array"
     
