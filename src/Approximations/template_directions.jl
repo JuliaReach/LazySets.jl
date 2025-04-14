@@ -576,34 +576,35 @@ LazySets.dim(bdd::BoxDiagDirections) = bdd.n
 isbounding(::Type{<:BoxDiagDirections}) = true
 isnormalized(::Type{<:BoxDiagDirections}) = false
 
-# initial iteratipn
+# initial iteration
 function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}) where {N}
-    if bdd.n == 1
+    if bdd.n == 1   #special case: use BoxDirections directly
         bd = BoxDirections{N,Vector{N}}(bdd.n)
-        return iterate(bd)
+        i = iterate(bd)
+        return i === nothing ? nothing : (i[1], (bd, i[2]))
     else
         dd = DiagDirections{N}(bdd.n)
-        return iterate(dd)
+        i = iterate(dd)
+        return i === nothing ? nothing : (i[1], (dd, i[2]))
     end
 end
 
-# when the state is a vector we are in the diagonal phase
-function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}, state::Vector{N}) where {N}
-    # delegate to DiagDirections
-    dd = DiagDirections{N}(bdd.n)
-    result = iterate(dd, state)
-    if result === nothing
-        # switch to box directions
-        return bdd.n == 1 ? nothing : iterate(bdd, 1)
+# for the diagonal phase:
+function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}, state::Tuple{D, IS}) where {N, D<:DiagDirections, IS}
+    result = iterate(state[1], state[2])
+    if result !== nothing
+        return (result[1], (state[1], result[2]))
     else
-        return result
+        bd = BoxDirections{N,Vector{N}}(bdd.n)
+        i = iterate(bd)
+        return i === nothing ? nothing : (i[1], (bd, i[2]))
     end
 end
 
-# when the state is an integer we are in the box phase.
-function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}, state::Int) where {N}
-    bd = BoxDirections{N,Vector{N}}(bdd.n)
-    return iterate(bd, state)
+# for the box phase:
+function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}, state::Tuple{B, IS}) where {N, B<:BoxDirections, IS}
+    result = iterate(state[1], state[2])
+    return result === nothing ? nothing : (result[1], (state[1], result[2]))
 end
 
 """
