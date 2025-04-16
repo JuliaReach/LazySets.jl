@@ -222,14 +222,13 @@ function _minkowski_sum_vrep_2d(vlistP::AbstractVector{<:AbstractVector{N}},
         return _minkowski_sum_vrep_2d_singleton(vlistP, vlistQ)
     end
 
-    EAST = N[1, 0]
-    NORTH = N[0, 1]
     ORIGIN = N[0, 0]
     R = fill(ORIGIN, mP + mQ)
-    k = _σ_helper(EAST, vlistP)
-    j = _σ_helper(EAST, vlistQ)
+    k = argmin(vlistP)
+    j = argmin(vlistQ)
 
-    for i in eachindex(R)
+    i = 1
+    while i <= size(R, 1)
         P₁, P₂ = vlistP[mod1(k, mP)], vlistP[mod1(k + 1, mP)]
         P₁P₂ = P₂ - P₁
         Q₁, Q₂ = vlistQ[mod1(j, mQ)], vlistQ[mod1(j + 1, mQ)]
@@ -241,13 +240,20 @@ function _minkowski_sum_vrep_2d(vlistP::AbstractVector{<:AbstractVector{N}},
         elseif turn < 0
             j += 1
         elseif dot(P₁P₂, Q₁Q₂) < 0 # collinear and opposite direction
-            last_dir = (i == 1) ? NORTH : R[i] - R[i - 1]
+            if i == 1  # for the first iteration, we pick an orthogonal vector counterclockwise around R[1]
+                last_dir = copy(R[1])
+                last_dir[1] *= -1
+            else
+                last_dir = R[i] - R[i - 1]
+            end
+
             if dot(last_dir, P₁P₂) > 0
                 k += 1
             else
                 j += 1
             end
         else
+            pop!(R)
             k += 1
             j += 1
         end
