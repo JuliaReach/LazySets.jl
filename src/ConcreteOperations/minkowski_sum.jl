@@ -222,8 +222,9 @@ function _minkowski_sum_vrep_2d(vlistP::AbstractVector{<:AbstractVector{N}},
         return _minkowski_sum_vrep_2d_singleton(vlistP, vlistQ)
     end
 
-    ORIGIN = N[0, 0]
-    R = fill(ORIGIN, mP + mQ)
+    R = fill(N[0, 0], mP + mQ)
+    P₁P₂ = N[0, 0]
+    Q₁Q₂ = N[0, 0]
 
     # `_σ_helper(WEST, vlistP)` would be faster but if the direction is
     # orthogonal to a facet, it may return a pair of vertices (k, j) that is
@@ -238,10 +239,10 @@ function _minkowski_sum_vrep_2d(vlistP::AbstractVector{<:AbstractVector{N}},
     i = 1
     while i <= size(R, 1)
         P₁, P₂ = vlistP[mod1(k, mP)], vlistP[mod1(k + 1, mP)]
-        P₁P₂ = P₂ - P₁
+        @. P₁P₂ = P₂ - P₁
         Q₁, Q₂ = vlistQ[mod1(j, mQ)], vlistQ[mod1(j + 1, mQ)]
-        Q₁Q₂ = Q₂ - Q₁
-        R[i] = P₁ + Q₁
+        @. Q₁Q₂ = Q₂ - Q₁
+        @. R[i] = P₁ + Q₁
         turn = right_turn(P₁P₂, Q₁Q₂)
         if turn > 0
             k += 1
