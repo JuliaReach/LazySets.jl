@@ -222,28 +222,41 @@ function _minkowski_sum_vrep_2d(vlistP::AbstractVector{<:AbstractVector{N}},
         return _minkowski_sum_vrep_2d_singleton(vlistP, vlistQ)
     end
 
-    EAST = N[1, 0]
-    ORIGIN = N[0, 0]
-    R = fill(ORIGIN, mP + mQ)
-    k = _σ_helper(EAST, vlistP)
-    j = _σ_helper(EAST, vlistQ)
+    R = fill(N[0, 0], mP + mQ)
+    P₁P₂ = N[0, 0]
+    Q₁Q₂ = N[0, 0]
+
+    # `_σ_helper(WEST, vlistP)` would be faster but if the direction is
+    # orthogonal to a facet, it may return a pair of vertices (k, j) that
+    # added together is not a vertex of the Minkowski sum.
+
+    # Instead, argmin searches WEST and if two such vertices exist, it
+    # arbitrates between them by picking the one with the smallest x[2].
+    # This is guaranteed to be a vertex of the Minkowski sum.
+    k = argmin(vlistP)
+    j = argmin(vlistQ)
 
     i = 1
     while i <= size(R, 1)
-        P₁, P₂ = vlistP[(k - 1) % mP + 1], vlistP[(k % mP + 1)]
-        P₁P₂ = P₂ - P₁
-        Q₁, Q₂ = vlistQ[(j - 1) % mQ + 1], vlistQ[(j % mQ + 1)]
-        Q₁Q₂ = Q₂ - Q₁
+        P₁, P₂ = vlistP[mod1(k, mP)], vlistP[mod1(k + 1, mP)]
+        @. P₁P₂ = P₂ - P₁
+        Q₁, Q₂ = vlistQ[mod1(j, mQ)], vlistQ[mod1(j + 1, mQ)]
+        @. Q₁Q₂ = Q₂ - Q₁
         R[i] = P₁ + Q₁
-        turn = right_turn(P₁P₂, Q₁Q₂, ORIGIN)
+        turn = right_turn(P₁P₂, Q₁Q₂)
         if turn > 0
             k += 1
         elseif turn < 0
             j += 1
-        else
+        else  # collinear and same direction
+            # Increment both k and j, and Minkowski sum will have one less vertex.
             pop!(R)
             k += 1
             j += 1
+
+            # Note: collinear and opposite direction is not possible, as the
+            # the one of the two vertices would lie outside the respective polygons.
+            # This only holds for proper initialization and sorted vertices.
         end
         i += 1
     end
