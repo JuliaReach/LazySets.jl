@@ -41,7 +41,7 @@ end
 function _concretize_lazy_array(container::T) where {T<:AbstractArraySet}
     arr = array(container)
     @assert !isempty(arr) "`concretize` not supported on empty array"
-    
+
     op = concrete_function(T)
     X = concretize(first(arr))
     @inbounds for Y in @view arr[2:end]
