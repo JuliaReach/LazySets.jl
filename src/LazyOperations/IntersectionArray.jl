@@ -210,7 +210,7 @@ function constraints_list(ia::IntersectionArray)
 end
 
 function concretize(ia::IntersectionArray)
-    _concretize_lazy_array(ia)
+    return _concretize_lazy_array(ia)
 end
 
 function translate(ia::IntersectionArray, x::AbstractVector)
