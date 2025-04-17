@@ -227,8 +227,8 @@ function _minkowski_sum_vrep_2d(vlistP::AbstractVector{<:AbstractVector{N}},
     Q₁Q₂ = N[0, 0]
 
     # `_σ_helper(WEST, vlistP)` would be faster but if the direction is
-    # orthogonal to a facet, it may return a pair of vertices (k, j) that is
-    # not part of the Minkowski sum.
+    # orthogonal to a facet, it may return a pair of vertices (k, j) that
+    # added together is not a vertex of the Minkowski sum.
 
     # Instead, argmin searches WEST and if two such vertices exist, it
     # arbitrates between them by picking the one with the smallest x[2].
