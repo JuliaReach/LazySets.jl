@@ -9,7 +9,7 @@
 [paper-url]: https://doi.org/10.21105/jcon.00097
 [dev-img]: https://img.shields.io/badge/docs-latest-blue.svg
 [dev-url]: https://juliareach.github.io/LazySets.jl/dev/
-[ci-img]: https://github.com/JuliaReach/LazySets.jl/workflows/CI/badge.svg
+[ci-img]: https://github.com/JuliaReach/LazySets.jl/actions/workflows/test-master.yml/badge.svg
 [ci-url]: https://github.com/JuliaReach/LazySets.jl/actions/workflows/test-master.yml
 [cov-img]: https://codecov.io/github/JuliaReach/LazySets.jl/coverage.svg
 [cov-url]: https://app.codecov.io/github/JuliaReach/LazySets.jl
