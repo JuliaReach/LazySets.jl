@@ -511,13 +511,14 @@ Box-diagonal directions representation.
 
 Box-diagonal directions can be seen as the union of diagonal directions (all
 entries are ±1) and box directions (one entry is ±1, all other entries are 0).
-The iterator first enumerates all diagonal directions, and then all box
-directions. In dimension ``n``, there are in total ``2^n + 2n`` such directions.
+The iterator first enumerates all diagonal directions and then all box
+directions. In dimension ``n``, there are in total ``2^n + 2n`` such directions
+(exception: for ``n = 1``, there are ``2`` directions).
 
 ## Examples
 
 The template can be constructed by passing the dimension. For example, in
-dimension two:
+two dimensions:
 
 ```jldoctest dirs_BoxDiag
 julia> dirs = BoxDiagDirections(2)
@@ -576,35 +577,42 @@ LazySets.dim(bdd::BoxDiagDirections) = bdd.n
 isbounding(::Type{<:BoxDiagDirections}) = true
 isnormalized(::Type{<:BoxDiagDirections}) = false
 
-# initial iteration
+# first enumerate all DiagDirections, then all BoxDirections
+# the state is a pair `(D, S)`, where `D` is the type of directions and `S` is
+# the iteration state of the corresponding iterator; this avoids allocating the
+# iterators repeatedly
 function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}) where {N}
-    if bdd.n == 1   #special case: use BoxDirections directly
-        bd = BoxDirections{N,Vector{N}}(bdd.n)
-        i = iterate(bd)
-        return i === nothing ? nothing : (i[1], (bd, i[2]))
+    if bdd.n == 1
+        # special case: only two directions
+        return _iterate_directions(BoxDirections{N,Vector{N}}(bdd.n))
     else
-        dd = DiagDirections{N}(bdd.n)
-        i = iterate(dd)
-        return i === nothing ? nothing : (i[1], (dd, i[2]))
+        # start with DiagDirections iteration
+        return _iterate_directions(DiagDirections{N,Vector{N}}(bdd.n))
     end
 end
 
-# for the diagonal phase:
-function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}, state::Tuple{D, IS}) where {N, D<:DiagDirections, IS}
+# enumerate DiagDirections
+function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}},
+                      state::Tuple{<:DiagDirections,<:Any}) where {N}
     result = iterate(state[1], state[2])
-    if result !== nothing
+    if isnothing(result)
+        # continue enumerating BoxDirections
+        return _iterate_directions(BoxDirections{N,Vector{N}}(bdd.n))
+    else
         return (result[1], (state[1], result[2]))
-    else
-        bd = BoxDirections{N,Vector{N}}(bdd.n)
-        i = iterate(bd)
-        return i === nothing ? nothing : (i[1], (bd, i[2]))
     end
 end
 
-# for the box phase:
-function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}, state::Tuple{B, IS}) where {N, B<:BoxDirections, IS}
+# enumerate BoxDirections
+function Base.iterate(::BoxDiagDirections{N,Vector{N}},
+                      state::Tuple{<:BoxDirections,<:Any}) where {N}
     result = iterate(state[1], state[2])
-    return result === nothing ? nothing : (result[1], (state[1], result[2]))
+    return isnothing(result) ? nothing : (result[1], (state[1], result[2]))
+end
+
+function _iterate_directions(dirs::AbstractDirections)
+    result, state = iterate(dirs)
+    return (result, (dirs, state))
 end
 
 """
