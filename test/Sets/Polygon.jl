@@ -190,6 +190,15 @@ for N in [Float64, Float32, Rational{Int}]
                                     [N[2, -2], N[6, 0], N[8, 2],
                                      N[8, 4], N[6, 6], N[2, 8]])
 
+        P = VPolygon([N[0.0, 0.025], N[1.0, -0.125], N[1.1, 0.9],
+            N[1.1, 1.9], [0.1, 2.05], [0.0, 1.025]])
+        Q = VPolygon([N[0.0, 0.05], N[0.0, -0.025]])
+        PQ = minkowski_sum(P, Q)
+        @test is_cyclic_permutation(PQ.vertices,
+                                    [N[0.0, 0.0], N[1.0, -0.15], N[1.1, 0.875],
+                                     N[1.1, 1.95], [0.1, 2.1], [0.1, 2.1],
+                                     N[0.0, 1.075]])
+
         # test for different starting points in vertices_list of minkowski sum
         P = VPolygon([N[4, 0], N[6, 2], N[4, 4]])
         P2 = VPolygon([N[4, 4], N[4, 0], N[6, 2]])
