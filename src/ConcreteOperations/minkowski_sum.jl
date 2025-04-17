@@ -224,6 +224,14 @@ function _minkowski_sum_vrep_2d(vlistP::AbstractVector{<:AbstractVector{N}},
 
     ORIGIN = N[0, 0]
     R = fill(ORIGIN, mP + mQ)
+
+    # `_σ_helper(WEST, vlistP)` would be faster but if the direction is
+    # orthogonal to a facet, it may return a pair of vertices (k, j) that is
+    # not part of the Minkowski sum.
+
+    # Instead, argmin searches WEST and if two such vertices exist, it
+    # arbitrates between them by picking the one with the smallest x[2].
+    # This is guaranteed to be a vertex of the Minkowski sum.
     k = argmin(vlistP)
     j = argmin(vlistQ)
 
