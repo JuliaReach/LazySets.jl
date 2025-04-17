@@ -239,23 +239,15 @@ function _minkowski_sum_vrep_2d(vlistP::AbstractVector{<:AbstractVector{N}},
             k += 1
         elseif turn < 0
             j += 1
-        elseif dot(P₁P₂, Q₁Q₂) < 0 # collinear and opposite direction
-            if i == 1  # for the first iteration, we pick an orthogonal vector counterclockwise around R[1]
-                last_dir = copy(R[1])
-                last_dir[1] *= -1
-            else
-                last_dir = R[i] - R[i - 1]
-            end
-
-            if dot(last_dir, P₁P₂) > 0
-                k += 1
-            else
-                j += 1
-            end
-        else
+        else  # collinear and same direction
+            # Increment both k and j, and Minkowski sum will have one less vertex.
             pop!(R)
             k += 1
             j += 1
+
+            # Note: collinear and opposite direction is not possible, as the
+            # the one of the two vertices would lie outside the respective polygons.
+            # This only holds for proper initialization and sorted vertices.
         end
         i += 1
     end
