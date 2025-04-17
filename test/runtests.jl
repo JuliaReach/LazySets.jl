@@ -251,6 +251,9 @@ if test_suite_basic
     @testset "LazySets.CompactSet" begin
         include("Interfaces/CompactSet.jl")
     end
+    @testset "LazySets.LazySet" begin
+        include("Interfaces/LazySet.jl")
+    end
 
     # =======================
     # Concrete set operations
