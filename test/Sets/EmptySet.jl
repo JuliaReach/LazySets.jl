@@ -74,11 +74,6 @@ for N in [Float64, Float32, Rational{Int}]
     E2 = copy(E)
     @test isidentical(E, E2)
 
-    # delaunay
-    if isdefined(@__MODULE__, :MiniQhull)  # TODO this should throw a normal error without MiniQhull
-        @test_broken delaunay(E)
-    end
-
     # diameter
     res = diameter(E)
     @test res isa N && res == N(0)
@@ -161,8 +156,11 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws MethodError tosimplehrep(E)  # TODO this should maybe change
 
     # triangulate
+    @test_throws ArgumentError triangulate(E)
+
+    # triangulate_faces
     if test_suite_polyhedra
-        @test_throws AssertionError triangulate(E3)  # TODO this should maybe change
+        @test_throws AssertionError triangulate_faces(E3)  # TODO this should maybe change
     end
 
     # vertices_list

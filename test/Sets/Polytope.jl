@@ -713,12 +713,12 @@ end
 @test !isoperationtype(VPolytope)
 
 for N in [Float64, Rational{Int}]
-    # delaunay triangulation
+    # Delaunay triangulation
     vlist = [N[0, 0, 0], N[0, 0, 1], N[0, 1, 0], N[1, 0, 0]]  # tetrahedron
     V = VPolytope(vlist)
-    D = delaunay(V)
+    D = triangulate(V; algorithm="delaunay")
     @test length(D) == 1 && isequivalent(array(D)[1], V)
-    D = delaunay(V; compute_triangles_3d=true)
+    D = triangulate(V; algorithm="delaunay", compute_triangles_3d=true)
     @test length(D) == 4
     for P in array(D)
         @test isequivalent(P, VPolytope(vlist[[1, 2, 3]])) ||

@@ -214,10 +214,10 @@ for N in [Float64, Rational{Int}, Float32]
     b4 = BallInf(N[4, 3, 2, 1], N(2))
     @test project(b4, [2, 4]) == BallInf(N[3, 1], N(2))
 
-    # delaunay (does not work with Float32)
+    # triangulate (does not work with Float32)
     if N != Float32
         B = BallInf(ones(N, 2), N(1))
-        Y = delaunay(B)
+        Y = triangulate(B; algorithm="delaunay")
         @test Y isa UnionSetArray && length(array(Y)) == 2 &&
               array(Y)[1] isa VPolytope && array(Y)[2] isa VPolytope
         a = array(Y)

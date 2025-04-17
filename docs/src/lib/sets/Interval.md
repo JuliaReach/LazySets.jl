@@ -196,8 +196,8 @@ Inherited from [`LazySet`](@ref):
 * [`==`](@ref ==(::LazySet, ::LazySet))
 
 Inherited from [`LazySet`](@ref) but does not apply:
-* [`delaunay`](@ref delaunay(::LazySet))
 * [`triangulate`](@ref triangulate(::LazySet))
+* [`triangulate_faces`](@ref triangulate_faces(::LazySet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))

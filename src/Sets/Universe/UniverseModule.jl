@@ -18,7 +18,7 @@ using ReachabilityBase.Require: require
                         isdisjoint, ⊆, linear_combination,
                         minkowski_difference, minkowski_sum
 @reexport import ..LazySets: constrained_dimensions, linear_map_inverse,
-                             rationalize, tosimplehrep
+                             rationalize, tosimplehrep, triangulate
 import Base: copy
 @reexport using ..API
 
@@ -65,6 +65,7 @@ include("minkowski_sum.jl")
 include("constrained_dimensions.jl")
 include("linear_map_inverse.jl")
 include("tosimplehrep.jl")
+include("triangulate.jl")
 
 include("init.jl")
 

@@ -125,7 +125,7 @@ convex_hull(::LazySet; kwargs...)
 ```
 `copy(::Type{LazySet})`
 ```@docs
-delaunay(X::LazySet; ::Bool=false)
+triangulate(X::LazySet; ::String="delaunay")
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -334,7 +334,7 @@ CurrentModule = LazySets
 ```@docs
 reflect(::LazySet)
 singleton_list(::LazySet)
-triangulate(::LazySet)
+triangulate_faces(::LazySet)
 tohrep(::LazySet)
 tosimplehrep(::LazySet)
 tovrep(::LazySet)
