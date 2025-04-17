@@ -725,6 +725,45 @@ function load_paving_overapproximation()
     end
 end  # quote / load_paving_overapproximation
 
+"""
+# Extended help
+
+    overapproximate(CH::ConvexHull{N,<:SparsePolynomialZonotope,<:SparsePolynomialZonotope},
+                    ::Type{<:SparsePolynomialZonotope}) where {N}
+
+### Algorithm
+
+This method implements Proposition 3.1.28 in [1].
+
+[1] Kochdumper, Niklas. *Extensions of polynomial zonotopes and their application
+    to verification of cyber-physical systems.* PhD diss., Technische Universität
+    München, 2022.
+"""
+function overapproximate(CH::ConvexHull{N,<:AbstractSparsePolynomialZonotope,<:AbstractSparsePolynomialZonotope},
+                         ::Type{<:SparsePolynomialZonotope}) where {N}
+    PZ₁ = first(CH)
+    c₁ = center(PZ₁)
+    G₁ = genmat_dep(PZ₁)
+    GI₁ = genmat_indep(PZ₁)
+    E₁ = expmat(PZ₁)
+    PZ₂ = second(CH)
+    c₂ = center(PZ₂)
+    G₂ = genmat_dep(PZ₂)
+    GI₂ = genmat_indep(PZ₂)
+    E₂ = expmat(PZ₂)
+
+    # zonotope overapproximation of convex hull of zonotopes
+    cZ = zeros(N, dim(CH))
+    Z = overapproximate(ConvexHull(Zonotope(cZ, GI₁), Zonotope(cZ, GI₂)))
+
+    # exact convex hull of simple polynomial zonotopes
+    PZ₁_bar = SimpleSparsePolynomialZonotope(c₁, G₁, E₁)
+    PZ₂_bar = SimpleSparsePolynomialZonotope(c₂, G₂, E₂)
+    PZ_bar = convex_hull(PZ₁_bar, PZ₂_bar)
+
+    return SparsePolynomialZonotope(center(PZ_bar), genmat_dep(PZ_bar), genmat(Z), expmat(PZ_bar))
+end
+
 # ============== #
 # disambiguation #
 # ============== #
