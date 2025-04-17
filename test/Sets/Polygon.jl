@@ -191,12 +191,32 @@ for N in [Float64, Float32, Rational{Int}]
                                      N[8, 4], N[6, 6], N[2, 8]])
 
         P = VPolygon([N[0, -1], N[2, 0], N[1, 1], N[0, 1]], apply_convex_hull=false)
-        Q = VPolygon([N[0, 1], N[0, -1]], apply_convex_hull=false)
-        PQ = minkowski_sum(P, Q)
-        @test length(PQ.vertices) == 5
-        @test is_cyclic_permutation(PQ.vertices,
+        Q1 = VPolygon([N[0, 1], N[0, -1]], apply_convex_hull=false)
+        Q2 = VPolygon([N[0, 1], N[0, -1]], apply_convex_hull=false)
+        PQ1 = minkowski_sum(P, Q1)
+        PQ2 = minkowski_sum(P, Q2)
+        @test length(PQ1.vertices) == 5
+        @test is_cyclic_permutation(PQ1.vertices,
                                     [N[0, -2], N[2, -1], N[2, 1],
                                      N[1, 2], N[0, 2]])
+        @test length(PQ2.vertices) == 5
+        @test is_cyclic_permutation(PQ2.vertices,
+                                    [N[0, -2], N[2, -1], N[2, 1],
+                                    N[1, 2], N[0, 2]])
+
+        P = VPolygon([N[-1, -1], N[2, 0], N[2, 1], N[0, 1]], apply_convex_hull=false)
+        Q1 = VPolygon([N[0, 1], N[0, -1]], apply_convex_hull=false)
+        Q2 = VPolygon([N[0, -1], N[0, 1]], apply_convex_hull=false)
+        PQ1 = minkowski_sum(P, Q1)
+        PQ2 = minkowski_sum(P, Q2)
+        @test length(PQ1.vertices) == 5
+        @test is_cyclic_permutation(PQ1.vertices,
+                                    [N[-1, -2], N[2, -1], N[2, 2],
+                                    N[0, 2], N[-1, 0]])
+        @test length(PQ2.vertices) == 5
+        @test is_cyclic_permutation(PQ2.vertices,
+                                    [N[-1, -2], N[2, -1], N[2, 2],
+                                    N[0, 2], N[-1, 0]])
 
         # test for different starting points in vertices_list of minkowski sum
         P = VPolygon([N[4, 0], N[6, 2], N[4, 4]])
