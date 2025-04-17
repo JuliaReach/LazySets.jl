@@ -104,9 +104,14 @@ function is_tighter_same_dir_2D(c1::HalfSpace,
 end
 
 # TODO: after #2032, #2041 remove use of this function
-_normal_Vector(c::HalfSpace) = HalfSpace(convert(Vector, c.a), c.b)
-_normal_Vector(C::Vector{<:HalfSpace}) = [_normal_Vector(c) for c in C]
 _normal_Vector(P::LazySet) = _normal_Vector(constraints_list(P))
+_normal_Vector(c::HalfSpace) = HalfSpace(convert(Vector, c.a), c.b)
+_normal_Vector(C::Vector{<:HalfSpace{N}}) where {N} = [_normal_Vector(c) for c in C]
+
+function _normal_Vector(C::Vector{<:HalfSpace})
+    N = promote_type([eltype(c) for c in C]...)
+    return [HalfSpace(convert(Vector{N}, c.a), N(c.b)) for c in C]
+end
 
 include("init.jl")
 
