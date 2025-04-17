@@ -616,27 +616,30 @@ Overapproximate a sparse polynomial zonotope with a polytope in vertex represent
 
 ### Output
 
-A `VPolytope` that overapproximates the sparse polynomial zonotope.
+A `VPolytope`.
 
 ### Algorithm
 
 This method implements [Kochdumper21a; Proposition 3.1.15](@citet).
-The idea is to split `P` into a linear and nonlinear part (such that `P = P₁ ⊕ P₂`). 
+The idea is to split `P` into a linear and nonlinear part (such that `P = P₁ ⊕ P₂`).
 The nonlinear part is enclosed by a zonotope. Then we combine the vertices
 of both sets and finally apply a convex-hull algorithm.
 """
 function overapproximate(P::SparsePolynomialZonotope{N}, ::Type{<:VPolytope}) where {N}
+    n = dim(P)
     c = center(P)
     G = genmat_dep(P)
     GI = genmat_indep(P)
     E = expmat(P)
-    idx = P.idx
 
-    H = [j for j in 1:size(E, 2) if any(E[:, j] .> 1)]
-    K = setdiff(1:size(E, 2), H)
+    H = Int[]
+    K = Int[]
+    for j in 1:size(E, 2)
+        push!(any(E[:, j] .> 1) ? H : K, j)
+    end
 
     if !isempty(H)
-        SPZ₂ = SparsePolynomialZonotope(c, G[:, H], zeros(N, length(c), 0), E[:, H], idx)
+        SPZ₂ = SparsePolynomialZonotope(c, G[:, H], zeros(N, n, 0), E[:, H], P.idx)
         Z = overapproximate(SPZ₂, Zonotope)
         c_z = center(Z)
         GI_mod = hcat(GI, genmat(Z))
@@ -648,15 +651,15 @@ function overapproximate(P::SparsePolynomialZonotope{N}, ::Type{<:VPolytope}) wh
     G_mod = G[:, K]
     E_mod = E[:, K]
 
-    # P̄ = SparsePolynomialZonotope(c_z, G_mod, GI_mod, E_mod, idx)
-    # Compute vertices of a Z-representation
+    # conceptually: P̄ = SparsePolynomialZonotope(c_z, G_mod, GI_mod, E_mod)
+    # compute vertices of a Z-representation
     p = size(E, 1)
     dep_params = Iterators.product(fill([-one(N), one(N)], p)...)
-    indep_params = Iterators.product(fill([-one(N), one(N)], size(GI_mod, 2))...)
+    vlist_Z = vertices_list(Zonotope(zeros(N, n), GI_mod))
 
-    V = Vector{Vector{N}}()
+    vlist = Vector{Vector{N}}()
     for α in dep_params
-        dep_term = zeros(N, size(c))
+        dep_term = copy(c_z)
         for j in axes(G_mod, 2)
             prod = one(N)
             for k in 1:p
@@ -666,19 +669,15 @@ function overapproximate(P::SparsePolynomialZonotope{N}, ::Type{<:VPolytope}) wh
             end
             dep_term += prod * G_mod[:, j]
         end
-        for β in indep_params
-            indep_term = zeros(N, size(c))
-            for j in axes(GI_mod, 2)
-                indep_term += β[j] * GI_mod[:, j]
-            end
-            point = c_z + dep_term + indep_term
-            push!(V, point)
+        for p in vlist_Z
+            point = dep_term + p
+            push!(vlist, point)
         end
     end
 
-    convex_hull!(V)
+    convex_hull!(vlist)
 
-    return VPolytope(V)
+    return VPolytope(vlist)
 end
 
 # function to be loaded by Requires
