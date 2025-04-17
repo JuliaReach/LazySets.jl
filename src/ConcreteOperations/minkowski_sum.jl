@@ -242,7 +242,7 @@ function _minkowski_sum_vrep_2d(vlistP::AbstractVector{<:AbstractVector{N}},
         @. P₁P₂ = P₂ - P₁
         Q₁, Q₂ = vlistQ[mod1(j, mQ)], vlistQ[mod1(j + 1, mQ)]
         @. Q₁Q₂ = Q₂ - Q₁
-        @. R[i] = P₁ + Q₁
+        R[i] = P₁ + Q₁
         turn = right_turn(P₁P₂, Q₁Q₂)
         if turn > 0
             k += 1
