@@ -25,6 +25,14 @@ struct MinkowskiSumArray{N,S<:LazySet{N}} <: LazySet{N}
 end
 
 """
+    MinkowskiSum!(X, Y)
+
+Convenience function to compute the lazy Minkowski sum and modify
+`MinkowskiSumArray`s in-place.
+"""
+function MinkowskiSum! end
+
+"""
     +(X::LazySet, Xs::LazySet...)
     +(Xs::Vector{<:LazySet})
 

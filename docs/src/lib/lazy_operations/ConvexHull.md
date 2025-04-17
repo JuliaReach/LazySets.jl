@@ -30,6 +30,7 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 ConvexHullArray
 CHArray
+ConvexHull!
 dim(::ConvexHullArray)
 ρ(::AbstractVector, ::ConvexHullArray)
 σ(::AbstractVector, ::ConvexHullArray)

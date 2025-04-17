@@ -30,6 +30,14 @@ function CartesianProductArray(n::Int=0, N::Type=Float64)
 end
 
 """
+    CartesianProduct!(X, Y)
+
+Convenience function to compute the lazy Cartesian product and modify
+`CartesianProductArray`s in-place.
+"""
+function CartesianProduct! end
+
+"""
 ```
     *(X::LazySet, Xs::LazySet...)
     *(Xs::Vector{<:LazySet})

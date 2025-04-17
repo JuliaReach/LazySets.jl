@@ -30,6 +30,14 @@ struct ConvexHullArray{N,S<:LazySet{N}} <: ConvexSet{N}
     array::Vector{S}
 end
 
+"""
+    ConvexHull!(X, Y)
+
+Convenience function to compute the lazy convex hull and modify
+`ConvexHullArray`s in-place.
+"""
+function ConvexHull! end
+
 isoperationtype(::Type{<:ConvexHullArray}) = true
 
 # constructor for an empty hull with optional size hint and numeric type
