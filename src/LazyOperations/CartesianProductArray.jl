@@ -716,17 +716,7 @@ function project(cpa::CartesianProductArray, block::AbstractVector{Int};
 end
 
 function concretize(cpa::CartesianProductArray)
-    a = array(cpa)
-    @assert !isempty(a) "an empty Cartesian product is not allowed"
-    X = cpa
-    @inbounds for (i, Y) in enumerate(a)
-        if i == 1
-            X = concretize(Y)
-        else
-            X = cartesian_product(X, concretize(Y))
-        end
-    end
-    return X
+    return _concretize_lazy_array(cpa)
 end
 
 """
