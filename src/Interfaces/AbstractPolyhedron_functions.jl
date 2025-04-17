@@ -1,7 +1,6 @@
 export constrained_dimensions,
        remove_redundant_constraints,
        remove_redundant_constraints!,
-       isfeasible,
        addconstraint!,
        ishyperplanar
 
@@ -944,49 +943,6 @@ function _project_polyhedron(P::LazySet, block; kwargs...)
     M = projection_matrix(block, dim(P), N)
     πP = linear_map(M, P; kwargs...)
     return constraints_list(πP)
-end
-
-"""
-    isfeasible(A::AbstractMatrix, b::AbstractVector, [witness]::Bool=false;
-               [solver]=nothing)
-
-Check for feasibility of linear constraints given in matrix-vector form.
-
-### Input
-
-- `A`       -- constraints matrix
-- `b`       -- constraints vector
-- `witness` -- (optional; default: `false`) flag for witness production
-- `solver`  -- (optional; default: `nothing`) LP solver
-
-### Output
-
-If `witness` is `false`, the result is a `Bool`.
-
-If `witness` is `true`, the result is a pair `(res, w)` where `res` is a `Bool`
-and `w` is a witness point/vector.
-
-### Algorithm
-
-This implementation solves the corresponding feasibility linear program.
-"""
-function isfeasible(A::AbstractMatrix, b::AbstractVector, witness::Bool=false;
-                    solver=nothing)
-    N = promote_type(eltype(A), eltype(b))
-    # feasibility LP
-    lbounds, ubounds = -Inf, Inf
-    sense = '<'
-    obj = zeros(N, size(A, 2))
-    if isnothing(solver)
-        solver = default_lp_solver(N)
-    end
-    lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-    if is_lp_optimal(lp.status)
-        return witness ? (true, lp.sol) : true
-    elseif is_lp_infeasible(lp.status)
-        return witness ? (false, N[]) : false
-    end
-    return error("LP returned status $(lp.status) unexpectedly")
 end
 
 # convenience function to invert the result of `isfeasible` while still including the witness result
