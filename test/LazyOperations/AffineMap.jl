@@ -88,7 +88,6 @@ for N in [Float64, Rational{Int}, Float32]
     M = N[0 0;]
     @test_throws DimensionMismatch volume(M * B + N[1])
 
-
     # ==================================
     # Type-specific methods
     # ==================================
