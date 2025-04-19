@@ -170,7 +170,8 @@ function triangulate(X::LazySet; algorithm::String="delaunay", kwargs...)
 end
 
 function triangulate_faces(X)
-    return require(@__MODULE__, :Polyhedra; fun_name="triangulate_faces")
+    require(@__MODULE__, :Polyhedra; fun_name="triangulate_faces")
+    throw(ArgumentError("`triangulate_faces` not implemented for $(typeof(X))"))
 end
 
 """
