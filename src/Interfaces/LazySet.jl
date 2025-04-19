@@ -162,7 +162,7 @@ vertices of `X` can be obtained.
 """
 function triangulate(X::LazySet; algorithm::String="delaunay", kwargs...)
     if algorithm == "delaunay"
-        require(@__MODULE__, :MiniQhull, fun_name="triangulate")
+        require(@__MODULE__, :MiniQhull; fun_name="triangulate")
         return _triangulate_delaunay(X; kwargs...)
     else
         throw(ArgumentError("unknown algorithm $algorithm"))
@@ -170,7 +170,8 @@ function triangulate(X::LazySet; algorithm::String="delaunay", kwargs...)
 end
 
 function triangulate_faces(X)
-    require(@__MODULE__, :Polyhedra, fun_name="triangulate_faces")
+    require(@__MODULE__, :Polyhedra; fun_name="triangulate_faces")
+    throw(ArgumentError("`triangulate_faces` not implemented for $(typeof(X))"))
 end
 
 """

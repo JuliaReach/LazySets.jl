@@ -14,5 +14,5 @@ sorted in counter-clockwise fashion and has linear complexity ``O(m+n)``, where
 """
 function minkowski_sum(P::VPolygon, Q::VPolygon)
     R = _minkowski_sum_vrep_2d(P.vertices, Q.vertices)
-    return VPolygon(R, apply_convex_hull=false)
+    return VPolygon(R; apply_convex_hull=false)
 end
