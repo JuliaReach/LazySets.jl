@@ -42,11 +42,12 @@ The subtypes of `AbstractZonotope` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractZonotope)
-4-element Vector{Any}:
+5-element Vector{Any}:
  AbstractHyperrectangle
  HParallelotope
  LineSegment
  Zonotope
+ ZonotopeMD
 ```
 """
 abstract type AbstractZonotope{N} <: AbstractCentrallySymmetricPolytope{N} end
