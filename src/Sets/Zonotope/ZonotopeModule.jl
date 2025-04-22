@@ -56,5 +56,6 @@ include("ZonotopeMD/center.jl")
 include("ZonotopeMD/genmat.jl")
 include("ZonotopeMD/cartesian_product.jl")
 include("ZonotopeMD/ngens.jl")
+include("ZonotopeMD/isoperationtype.jl")
 
 end  # module

@@ -8,11 +8,20 @@ CurrentModule = LazySets.ZonotopeModule
 ZonotopeMD
 ```
 
+## Conversion
+
+```julia
+Zonotope(Z::ZonotopeMD)
+```
+
 ## Operations
 
 ```@docs
 genmat(::ZonotopeMD)
 cartesian_product(::ZonotopeMD, ::ZonotopeMD)
-center(::ZonotopeMD)
-ngens(::ZonotopeMD)
 ```
+
+Undocumented implementations:
+
+* [`center`](@ref center)
+* [`ngens`](@ref ngens)

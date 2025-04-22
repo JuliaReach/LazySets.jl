@@ -46,7 +46,7 @@ julia> center(Z)
 julia> genmat(Z)
 2×4 SparseArrays.SparseMatrixCSC{Float64, Int64} with 6 stored entries:
  1.0  2.0  0.1   ⋅ 
- 3.0  1.0   ⋅   0.1
+ 3.0  1.0   ⋅   0.2
 ```
 
 The generator matrix returned by `genmat` is the concatenation `[M D]`, where `D` is the diagonal matrix formed from `d`.
