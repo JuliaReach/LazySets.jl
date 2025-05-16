@@ -27,7 +27,7 @@ function load_staticarrays_directions()
 end  # quote / load_staticarrays_directions
 
 """
-    box_approximation(S::LazySet{N}) where {N}
+    box_approximation(S::LazySet)
 
 Overapproximate a set by a tight hyperrectangle.
 
@@ -48,7 +48,11 @@ An alias for this function is `interval_hull`.
 The center and radius of the hyperrectangle are obtained by averaging the low
 and high coordinates of `S` computed with the `extrema` function.
 """
-function box_approximation(S::LazySet{N}) where {N}
+function box_approximation(S::LazySet)
+    return _box_approximation_extrema(S)
+end
+
+function _box_approximation_extrema(S::LazySet{N}) where {N}
     n = dim(S)
     c = Vector{N}(undef, n)
     r = Vector{N}(undef, n)
@@ -71,6 +75,19 @@ function box_approximation(S::LazySet{N}) where {N}
         r[i] = ri
     end
     return Hyperrectangle(c, r)
+end
+
+function box_approximation(cap::Intersection{N,T1,T2}) where {N,T1,T2}
+    if ispolyhedral(cap.X) && ispolyhedral(cap.Y)
+        if isboundedtype(T1) || isboundedtype(T2)
+            S = convert(HPolytope, cap)
+        else
+            S = convert(HPolyhedron, cap)
+        end
+    else
+        S = cap
+    end
+    return _box_approximation_extrema(S)
 end
 
 """
