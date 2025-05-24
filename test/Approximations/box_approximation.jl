@@ -44,9 +44,9 @@ for N in [Float64, Rational{Int}, Float32]
     # box_approximation of lazy intersection
     # both arguments are bounded
     X = Ball1(zeros(N, 2), N(1))
-    Y = Ball1(N[1//2, 0], N(1))
+    Y = Ball1(N[1 // 2, 0], N(1))
     Z = box_approximation(X ∩ Y)
-    @test isequivalent(Z, Hyperrectangle(N[1//4, 0], N[3//4, 3//4]))
+    @test isequivalent(Z, Hyperrectangle(N[1 // 4, 0], N[3 // 4, 3 // 4]))
     # one argument is unbounded
     X = Hyperrectangle(N[0], N[1]) × Universe{N}(1)
     Y = Hyperrectangle(N[0, 0], N[1, 1])
