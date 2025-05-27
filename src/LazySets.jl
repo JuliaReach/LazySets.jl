@@ -218,7 +218,8 @@ include("Sets/Zonotope/ZonotopeModule.jl")
 @reexport using ..ZonotopeModule: Zonotope,
                                   remove_zero_generators,
                                   linear_map!,
-                                  split!
+                                  split!,
+                                  ZonotopeMD
 using ..ZonotopeModule: _split
 
 include("LazyOperations/UnionSet.jl")  # must come before IntervalModule
