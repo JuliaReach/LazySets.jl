@@ -1,4 +1,11 @@
 """
+    neutral(T::Type{<:LazySet})
+
+Get the neutral set type for a lazy binary operation, if any.
+"""
+function neutral end
+
+"""
     @neutral(SET, NEUT)
 
 Create methods to make a lazy set operation commutative with a given
@@ -67,6 +74,13 @@ macro neutral(SET, NEUT)
     end
     return nothing
 end
+
+"""
+    absorbing(T::Type{<:LazySet})
+
+Get the absorbing set type for a lazy binary operation, if any.
+"""
+function absorbing end
 
 """
     @absorbing(SET, ABS)

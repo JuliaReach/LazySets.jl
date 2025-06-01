@@ -34,6 +34,9 @@ Inherited from [`AbstractAffineMap`](@ref):
 SparseMatrixExp
 *(::SparseMatrixExp, ::LazySet)
 get_row(::SparseMatrixExp, ::Int)
+get_rows(::SparseMatrixExp, ::AbstractArray{Int})
+get_column(::SparseMatrixExp, ::Int)
+get_columns(::SparseMatrixExp, ::AbstractArray{Int})
 ```
 
 ## [Exponential projection map (ExponentialProjectionMap)](@id def_ExponentialProjectionMap)

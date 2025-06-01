@@ -86,6 +86,23 @@ function size(spmexp::SparseMatrixExp, ax::Int)
     return size(spmexp.M, ax)
 end
 
+"""
+    get_column(spmexp::SparseMatrixExp{N}, j::Int;
+               [backend]=get_exponential_backend()) where {N}
+
+Compute a single column of a sparse matrix exponential.
+
+### Input
+
+- `spmexp`  -- sparse matrix exponential
+- `j`       -- column index
+- `backend` -- (optional; default: `get_exponential_backend()`) exponentiation
+               backend
+
+### Output
+
+A column vector corresponding to the `j`th column of the matrix exponential.
+"""
 function get_column(spmexp::SparseMatrixExp{N}, j::Int;
                     backend=get_exponential_backend()) where {N}
     n = size(spmexp, 1)
@@ -94,6 +111,23 @@ function get_column(spmexp::SparseMatrixExp{N}, j::Int;
     return _expmv(backend, one(N), spmexp.M, aux)
 end
 
+"""
+    get_columns(spmexp::SparseMatrixExp{N}, J::AbstractArray;
+               [backend]=get_exponential_backend()) where {N}
+
+Compute multiple columns of a sparse matrix exponential.
+
+### Input
+
+- `spmexp`  -- sparse matrix exponential
+- `J`       -- list of column indices
+- `backend` -- (optional; default: `get_exponential_backend()`) exponentiation
+               backend
+
+### Output
+
+A matrix with one column vector for each entry in `J`.
+"""
 function get_columns(spmexp::SparseMatrixExp{N}, J::AbstractArray;
                      backend=get_exponential_backend()) where {N}
     n = size(spmexp, 1)
@@ -111,7 +145,7 @@ end
     get_row(spmexp::SparseMatrixExp{N}, i::Int;
             [backend]=get_exponential_backend()) where {N}
 
-Return a single row of a sparse matrix exponential.
+Compute a single row of a sparse matrix exponential.
 
 ### Input
 
@@ -138,6 +172,23 @@ function get_row(spmexp::SparseMatrixExp{N}, i::Int;
     return transpose(_expmv(backend, one(N), transpose(spmexp.M), aux))
 end
 
+"""
+    get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray;
+               [backend]=get_exponential_backend()) where {N}
+
+Compute multiple rows of a sparse matrix exponential.
+
+### Input
+
+- `spmexp`  -- sparse matrix exponential
+- `I`       -- list of row indices
+- `backend` -- (optional; default: `get_exponential_backend()`) exponentiation
+               backend
+
+### Output
+
+A transposed matrix with one (transposed) column vector for each entry in `I`.
+"""
 function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int};
                   backend=get_exponential_backend()) where {N}
     n = size(spmexp, 1)

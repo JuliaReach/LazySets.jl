@@ -33,6 +33,7 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 MinkowskiSumArray
+MinkowskiSum!
 ⊕(::LazySet, ::LazySet...)
 +(::LazySet, ::LazySet...)
 dim(::MinkowskiSumArray)
