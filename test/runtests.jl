@@ -150,6 +150,9 @@ if test_suite_basic
     @testset "LazySets.Zonotope" begin
         include("Sets/Zonotope.jl")
     end
+    @testset "LazySets.ZonotopeMD" begin
+        include("Sets/ZonotopeMD.jl")
+    end
     @testset "LazySets.ZeroSet" begin
         include("Sets/ZeroSet.jl")
     end

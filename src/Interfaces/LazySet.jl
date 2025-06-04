@@ -66,7 +66,7 @@ If we only consider *concrete* subtypes, then:
 julia> concrete_subtypes = subtypes(LazySet, true);
 
 julia> length(concrete_subtypes)
-53
+54
 
 julia> println.(concrete_subtypes);
 AffineMap
@@ -122,7 +122,7 @@ VPolygon
 VPolytope
 ZeroSet
 Zonotope
-
+ZonotopeMD
 ```
 """
 abstract type LazySet{N} end
