@@ -1,12 +1,12 @@
-
 """
     cartesian_product(Z1::ZonotopeMD, Z2::ZonotopeMD)
 
-Return the Cartesian product of two zonotopes in normal form (`ZonotopeMD`).
+Return the Cartesian product of two structured zonotopes.
 
 ### Input
 
-- `Z1`, `Z2` -- zonotopes in normal form (`ZonotopeMD`)
+- `Z1` -- structured zonotope
+- `Z2` -- structured zonotope
 
 ### Output
 

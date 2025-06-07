@@ -1,11 +1,11 @@
 """
    genmat(Z::ZonotopeMD)
 
-Return the generator matrix of a ZonotopeMD.
+Return the generator matrix of a structured zonotope.
 
 ### Input
 
-- `Z` -- zonotope in normal form
+- `Z` -- structured zonotope
 
 ### Output
 
