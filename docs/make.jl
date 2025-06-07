@@ -88,7 +88,8 @@ makedocs(; sitename="LazySets.jl",
                                          "VPolygon" => "lib/sets/VPolygon.md",
                                          "VPolytope" => "lib/sets/VPolytope.md",
                                          "ZeroSet" => "lib/sets/ZeroSet.md",
-                                         "Zonotope" => "lib/sets/Zonotope.md"
+                                         "Zonotope" => "lib/sets/Zonotope.md",
+                                         "ZonotopeMD" => "lib/sets/ZonotopeMD.md"
                                          #
                                          ],
                               "Lazy Operations" => [
