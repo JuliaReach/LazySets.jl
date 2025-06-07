@@ -73,7 +73,7 @@ true
 One can also convert back to a standard `Zonotope` if needed:
 
 ```jldoctest zonotopemd_label
-julia> Zstd = Zonotope(Z)
+julia> Zstd = convert(Zonotope, Z)
 Zonotope{Float64, Vector{Float64}, SparseArrays.SparseMatrixCSC{Float64, Int64}}([0.0, 0.0], sparse([1, 2, 1, 2, 1, 2], [1, 1, 2, 2, 3, 4], [1.0, 3.0, 2.0, 1.0, 0.1, 0.2], 2, 4))
 ```
 """

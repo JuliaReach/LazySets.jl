@@ -9,7 +9,6 @@ using SparseArrays: blockdiag, sparse, spdiagm
 @reexport import ..API: center, isoperationtype, cartesian_product
 @reexport import ..LazySets: genmat, ngens
 
-import Base: convert
 @reexport using ..API
 
 export ZonotopeMD
@@ -22,7 +21,5 @@ include("cartesian_product.jl")
 
 include("genmat.jl")
 include("ngens.jl")
-
-include("convert.jl")
 
 end  # module

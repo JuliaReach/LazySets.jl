@@ -8,12 +8,6 @@ CurrentModule = LazySets.ZonotopeMDModule
 ZonotopeMD
 ```
 
-## Conversion
-
-```julia
-Zonotope(Z::ZonotopeMD)
-```
-
 ## Operations
 
 ```@docs
