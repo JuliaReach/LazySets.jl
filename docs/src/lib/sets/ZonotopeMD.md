@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = LazySets.ZonotopeModule
+CurrentModule = LazySets.ZonotopeMDModule
 ```
 
 # [ZonotopeMD](@id def_ZonotopeMD)
