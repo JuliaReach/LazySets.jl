@@ -3,7 +3,7 @@ module ZonotopeMDModule
 using Reexport, Requires
 
 using ..LazySets: AbstractZonotope
-using LinearAlgebra: Diagonal, isdiag, diag
+using LinearAlgebra: isdiag, diag
 using SparseArrays: blockdiag, sparse, spdiagm
 
 @reexport import ..API: center, isoperationtype, cartesian_product
