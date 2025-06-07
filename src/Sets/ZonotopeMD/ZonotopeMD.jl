@@ -2,7 +2,7 @@
     ZonotopeMD{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N},DN<:AbstractVector{N}}
         <: AbstractZonotope{N}
 
-Type that represents a structured zonotope of order `k`.
+Type that represents a structured zonotope.
 
 ### Fields
 
@@ -12,9 +12,7 @@ Type that represents a structured zonotope of order `k`.
 
 ### Notes
 
-A zonotope is of order `k` if it has `n * k` generators in `ℝⁿ`, where `n` is the ambient dimension.
-
-A *structured* zonotope of order `k` is defined as the set
+A *structured* zonotope is defined as the set
 
 ```math
 Z = \\left\\{ x ∈ ℝ^n : x = c + Mξ + dIη, ~~ ξ ∈ [-1, 1]^m, ~~ η ∈ [-1, 1]^n \\right\\},
@@ -97,8 +95,7 @@ end
 function ZonotopeMD(center::VN, G::AbstractMatrix{N}) where {N,VN<:AbstractVector{N}}
     n, p = size(G)
     @assert length(center) == n "dimensions must match"
-    @assert p % n == 0 "the generator matrix must contain a multiple of n columns"
-    @assert p >= 2n "expected at least order 2 zonotope"
+    @assert p > n "expected at least order 2 zonotope"
 
     M = G[:, 1:(p - n)]
     D = G[:, (end - n + 1):end]
