@@ -96,6 +96,7 @@ end
 # constructor from generator matrix
 function ZonotopeMD(center::VN, G::AbstractMatrix{N}) where {N,VN<:AbstractVector{N}}
     n, p = size(G)
+    @assert length(center) == n "dimensions must match"
     @assert p % n == 0 "the generator matrix must contain a multiple of n columns"
     @assert p >= 2n "expected at least order 2 zonotope"
 
