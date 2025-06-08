@@ -1,17 +1,11 @@
 ```@meta
-CurrentModule = LazySets.ZonotopeModule
+CurrentModule = LazySets.ZonotopeMDModule
 ```
 
 # [ZonotopeMD](@id def_ZonotopeMD)
 
 ```@docs
 ZonotopeMD
-```
-
-## Conversion
-
-```julia
-Zonotope(Z::ZonotopeMD)
 ```
 
 ## Operations
@@ -21,7 +15,17 @@ genmat(::ZonotopeMD)
 cartesian_product(::ZonotopeMD, ::ZonotopeMD)
 ```
 
+```@meta
+CurrentModule = LazySets.API
+```
+
 Undocumented implementations:
 
-* [`center`](@ref center)
-* [`ngens`](@ref ngens)
+* [`center`](@ref center(::LazySet))
+```@meta
+CurrentModule = LazySets
+```
+* [`ngens`](@ref ngens(::AbstractZonotope))
+```@meta
+CurrentModule = LazySets.API
+```
