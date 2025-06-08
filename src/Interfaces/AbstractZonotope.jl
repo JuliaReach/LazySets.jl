@@ -810,6 +810,25 @@ Zonotope order-reduction method from [AlthoffSB10](@citet).
 struct ASB10 <: AbstractReductionMethod end
 
 """
+    JKS16 <: AbstractReductionMethod
+
+`JKS16` uses a greedy factorization and iterative generator reduction
+
+### Algorithm
+
+- The JKS16 method reorders the generator matrix using reduced row echelon form (rref) to form a `T`, 
+    then iteratively removes excess generators from `V` while updating `T`.
+- The default `JKS16()` uses `ϵ = 1e-6` (pivot threshold) and `δ = 1e-3` (volume threshold).
+Referenced from [SCOTT2016126](@citet).
+"""
+struct JKS16{N<:Number} <: AbstractReductionMethod 
+    ϵ::N
+    δ::N
+
+    JKS16(ϵ::N=1e-6, δ::N=1e-3) where {N<:Number} = new{N}(ϵ, δ)
+end
+
+"""
     reduce_order(Z::AbstractZonotope, r::Real,
                  [method]::AbstractReductionMethod=GIR05())
 
@@ -832,16 +851,18 @@ The available algorithms are:
 
 ```jldoctest; setup = :(using LazySets: subtypes, AbstractReductionMethod)
 julia> subtypes(AbstractReductionMethod)
-3-element Vector{Any}:
+4-element Vector{Any}:
  LazySets.ASB10
  LazySets.COMB03
  LazySets.GIR05
+ LazySets.JKS16
 ```
 
 See the documentation of each algorithm for references. These methods split the
 given zonotopic set `Z` into two zonotopes, `K` and `L`, where `K` contains the
 most "representative" generators and `L` contains the generators that are
-reduced, `Lred`, using a box overapproximation. We follow the notation from
+reduced, `Lred`, using a box overapproximation. This methodology varies slightly 
+for `JKS16` (for details, refer to the method). We follow the notation from
 [YangS18](@citet). See also [KopetzkiSA17](@citet).
 """
 function reduce_order(Z::AbstractZonotope, r::Real,
@@ -853,7 +874,10 @@ function reduce_order(Z::AbstractZonotope, r::Real,
 
     # if r is bigger than the order of Z => do not reduce
     (r * n >= p) && return Z
+    return _reduce_order_zonotope_common(Z, r, n, p, method)
+end
 
+function _reduce_order_zonotope_common(Z, r, n, p, method::Union{ASB10,COMB03,GIR05})
     c = center(Z)
     G = genmat(Z)
 
@@ -877,6 +901,138 @@ function reduce_order(Z::AbstractZonotope, r::Real,
     Gred = _hcat_KLred(G, view(indices, 1:m), Lred)
 
     return Zonotope(c, Gred)
+end
+
+function _reduce_order_zonotope_common(Z, r, n, p, method::JKS16)
+    c = center(Z)
+    G = genmat(Z)
+
+    G, G✶ = _factorG(G, method.ϵ, method.δ)
+
+    T = G[:, 1:n]
+    V = G[:, (n+1):end]
+    R = G✶[:, (n+1):end]
+
+    m = floor(Int, n * r)
+
+    while p > m
+        error_metric = [prod(1 .+ abs.(R[:, j])) - (1 + sum(abs.(R[:, j]))) 
+                  for j in 1:size(R, 2)]
+        
+        j_min = argmin(error_metric)
+
+        r_j = R[:, j_min]
+
+        V = V[:, [1:(j_min-1); (j_min+1):end]]
+        R = R[:, [1:(j_min-1); (j_min+1):end]]
+
+        diag_matrix = Diagonal(1 .+ abs.(r_j))
+        T = T * diag_matrix
+        if !isempty(R)
+            R = inv(diag_matrix) * R
+        end
+
+        p -= 1
+    end
+
+    G_red = hcat(T, V)
+    return Zonotope(c, G_red)
+end
+
+# reorder the generator matrix G
+function _factorG(G::AbstractMatrix, ϵ::N, δ::N) where {N}
+    G✶ = copy(G)
+    n, ng = size(G)
+
+    # rref with column swap
+    for k in 1:n
+        # normalize rows k:n
+        for i in k:n
+            row_norm = norm(G✶[i, :], 1)
+            if row_norm > ϵ
+                G✶[i, :] ./= row_norm
+            end
+        end
+
+        submatrix = G✶[k:n, k:ng]
+        max_val, idx = findmax(abs.(submatrix))
+        i_max = k + idx[1] - 1
+        j_max = k + idx[2] - 1
+
+        if abs(max_val) ≤ ϵ
+            break
+        end
+
+        # swap rows and columns
+        if i_max != k
+            G✶[[k, i_max], :] = G✶[[i_max, k], :]
+        end
+
+        if j_max != k
+            G[:, [k, j_max]] = G[:, [j_max, k]]
+            G✶[:, [k, j_max]] = G✶[:, [j_max, k]]
+        end
+
+        G✶ = _rref(G✶)
+    end
+
+    #  extra column swaps until all |g∗ij| ≤ 1 + δ
+    while true
+        (max_val, max_idx) = findmax(abs.(G✶))
+        (max_val ≤ 1 + δ) && break
+        k, j = Tuple(max_idx)
+
+        G[:,[k,j]] = G[:,[j,k]]
+        G✶[:,[k,j]] = G✶[:,[j,k]]
+
+        pivot = G✶[k,k]
+        for i in 1:n
+            i == k && continue
+            factor = G✶[i,k] / pivot
+            G✶[i,:] -= factor .* G✶[k,:]
+        end
+        G✶[k,:] ./= pivot
+    end
+
+    return G, G✶
+end
+
+# reduced row echelon (rref)
+function _rref(G::AbstractMatrix{N}) where {N}
+    A = copy(G)
+    nr, nc = size(A)
+    pivot = 1
+
+    for r in 1:nr
+        if pivot > nc
+            return A
+        end
+
+        i = r
+        while i ≤ nr && A[i, pivot] == 0
+            i += 1
+            if i > nr
+                i = r
+                pivot += 1
+                pivot > nc && return A
+            end
+        end
+
+        A[[i, r], :] = A[[r, i], :]
+
+        if A[r, pivot] != 0
+            A[r, :] ./= A[r, pivot]
+        end
+
+        for i in 1:nr
+            i == r && continue
+            A[i, :] -= A[i, pivot] * A[r, :]
+        end
+
+        pivot += 1
+    end
+
+    return A
 end
 
 # approximate with a box
