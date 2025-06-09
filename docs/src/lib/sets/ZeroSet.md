@@ -69,6 +69,7 @@ Inherited from [`LazySet`](@ref):
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int))
+* [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))

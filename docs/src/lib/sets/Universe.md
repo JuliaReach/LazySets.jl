@@ -89,6 +89,7 @@ Undocumented implementations:
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
+* [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`intersection`](@ref intersection(::LazySet, ::LazySet))
 
 ```@meta
@@ -114,7 +115,6 @@ Inherited from [`LazySet`](@ref):
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
-* [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 * [`⊆`](@ref ⊆(::LazySet, ::LazySet))

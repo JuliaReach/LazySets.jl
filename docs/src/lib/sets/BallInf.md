@@ -134,6 +134,7 @@ Inherited from [`LazySet`](@ref):
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
+* [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
