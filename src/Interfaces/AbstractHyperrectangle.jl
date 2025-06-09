@@ -574,14 +574,29 @@ function volume(H::AbstractHyperrectangle)
     return _volume_hyperrectangle(H)
 end
 
-function _volume_hyperrectangle(H::LazySet)
+function _volume_hyperrectangle(H)
     return mapreduce(x -> 2x, *, radius_hyperrectangle(H))
 end
 
+function _surface_area_hyperrectangle(H)
+    l, b, h = radius_hyperrectangle(H)
+    l *= 2
+    b *= 2
+    h *= 2
+    return 2 * (l * b + l * h + b * h)
+end
+
 function area(H::AbstractHyperrectangle)
-    @assert dim(H) == 2 "this function only applies to two-dimensional sets, " *
-                        "but the given set is $(dim(H))-dimensional"
-    return _volume_hyperrectangle(H)
+    n = dim(H)
+    @assert n ∈ (2, 3) "this function only applies to two-dimensional or " *
+                        "three-dimensional sets, but the given set is " *
+                        "$n-dimensional"
+
+    if n == 2
+        return _volume_hyperrectangle(H)
+    else
+        return _surface_area_hyperrectangle(H)
+    end
 end
 
 function project(H::AbstractHyperrectangle, block::AbstractVector{Int};

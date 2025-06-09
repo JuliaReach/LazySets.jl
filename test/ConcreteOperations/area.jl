@@ -1,7 +1,9 @@
 for N in [Float64, Float32, Rational{Int}]
-    # not implemented for dimension != 2
-    p = BallInf(zeros(N, 3), N(1))
-    @test_throws AssertionError area(p)
+    # not implemented for dimension other than 2 or 3
+    for d in (1, 4)
+        p = BallInf(zeros(N, d), N(1))
+        @test_throws AssertionError area(p)
+    end
 
     # sets with zero area
     p = Singleton(N[0, 1])

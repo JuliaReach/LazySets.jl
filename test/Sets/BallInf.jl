@@ -157,16 +157,15 @@ for N in [Float64, Rational{Int}, Float32]
 
     # area/volume
     B = BallInf(N[0, 0], N(1))
-    @test area(B) == volume(B) ≈ N(4)
+    @test area(B) == volume(B) == N(4)
+    B = BallInf(zeros(N, 3), N(2))
+    @test area(B) == N(96)
+    @test volume(B) == N(64)
     if N <: AbstractFloat
         B = BallInf(zeros(N, 100), N(1 / 2 + 1e-5))
         @test_throws AssertionError area(B)
         @test volume(B) ≈ N(1.0020019812942185)
     end
-
-    # area
-    B = BallInf(N[0, 0], N(1))
-    @test area(B) ≈ N(4)
 
     # concretize
     B = BallInf(N[0, 0], N(1))
