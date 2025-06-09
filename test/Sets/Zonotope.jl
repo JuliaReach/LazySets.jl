@@ -141,7 +141,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test ispermutation(collect(generators(Z)), [genmat(Z)[:, j] for j in 1:ngens(Z)])
 
     # test order reduction
-    for method in [LazySets.ASB10(), LazySets.COMB03(), LazySets.GIR05(), LazySets.JKS16()]
+    for method in [LazySets.ASB10(), LazySets.COMB03(), LazySets.GIR05(), LazySets.SRMB16()]
         Z = Zonotope(N[2, 1], N[-1//2 3//2 1//2 1; 1//2 3//2 1 1//2])
         Zred1 = reduce_order(Z, 1, method)
         @test ngens(Zred1) == 2
