@@ -17,9 +17,9 @@ The `VPolytope` obtained by the concrete convex hull of `P1` and `P2`.
 
 This function takes the union of the vertices of each polytope and then relies
 on a concrete convex-hull algorithm.
-For low dimensions, a specialized implementation for polygons is used.
-For higher dimensions, `convex_hull` relies on the polyhedral backend that can
-be specified using the `backend` keyword argument.
+
+The implementation relies on the polyhedral backend, which can be specified
+using the `backend` keyword argument.
 
 For performance reasons, it is suggested to use the `CDDLib.Library()` backend.
 """

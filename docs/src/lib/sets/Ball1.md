@@ -144,6 +144,7 @@ Inherited from [`LazySet`](@ref):
 * [`sample`](@ref sample(::LazySet, ::Int))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
+* [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
