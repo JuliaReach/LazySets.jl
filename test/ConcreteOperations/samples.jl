@@ -81,4 +81,22 @@ for N in [Float64]
     vs = vertices_list(H)
     @test all(vi ∈ vs for vi in v0)  # 0-faces are the vertices
     @test all(any(vi[i:i] ∈ project(H, [i]) for i in 1:2) for vi in v1)  # 1-faces are at the border
+
+    # SparsePolynomialZonotope
+    c  = N[1.0, 1.0]
+    G  = 0.1 * N[2.0 0.0 1.0;
+                 1.0 2.0 1.0]
+    GI = 0.1 * reshape(N[1.0, 0.5], 2, 1)
+    E  = [1 0 1;
+           0 1 3]
+    idx = [1, 2]
+    P4 = SparsePolynomialZonotope(c, G, GI, E, idx)
+
+    # test rand samples
+    sampler = LazySets.PolynomialZonotopeSampler()
+    pts = sample(P4, 100; sampler = sampler)
+    @test length(pts) == 100
+    @test_broken all(p ∈ P4 for p in pts)
+    P4z = overapproximate(P4, Zonotope)  # temporary sufficient test
+    @test all(p ∈ P4z for p in pts)
 end
