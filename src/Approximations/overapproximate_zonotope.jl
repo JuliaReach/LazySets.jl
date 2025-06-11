@@ -220,22 +220,32 @@ function _zonotope_overapprox(c, G, E)
 end
 
 """
-    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope})
+    overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope})
 
-Overapproximate a simple sparse polynomial zonotope with a zonotope.
+Overapproximate a sparse polynomial zonotope with a zonotope.
 
 ### Input
 
-- `P`         -- simple sparse polynomial zonotope
-- `Zonotope`  -- target set type
+- `P`        -- sparse polynomial zonotope
+- `Zonotope` -- target set type
 
 ### Output
 
 A zonotope.
+
+### Algorithm
+
+This method implements [Kochdumper21a; Proposition 3.1.14](@citet).
 """
-function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope})
-    cnew, Gnew = _zonotope_overapprox(center(P), genmat(P), expmat(P))
-    return Zonotope(cnew, Gnew)
+function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope})
+    cnew, Gnew = _zonotope_overapprox(center(P), genmat_dep(P), expmat(P))
+    if ngens_indep(P) > 0
+        Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
+        Z = remove_redundant_generators(Z)
+    else
+        Z = Zonotope(cnew, Gnew)
+    end
+    return Z
 end
 
 """
@@ -277,31 +287,6 @@ function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope},
         Gnew[:, j] .= r * g
     end
     return Zonotope(cnew, Gnew)
-end
-
-"""
-    overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope})
-
-Overapproximate a sparse polynomial zonotope with a zonotope.
-
-### Input
-
-- `P`        -- sparse polynomial zonotope
-- `Zonotope` -- target set type
-
-### Output
-
-A zonotope.
-
-### Algorithm
-
-This method implements [Kochdumper21a; Proposition 3.1.14](@citet).
-"""
-function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope})
-    cnew, Gnew = _zonotope_overapprox(center(P), genmat_dep(P), expmat(P))
-    Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
-    Zred = remove_redundant_generators(Z)
-    return Zred
 end
 
 """
