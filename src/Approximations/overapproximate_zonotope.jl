@@ -287,7 +287,7 @@ function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope}
     # handle independent generators
     if ngens_indep(P) > 0
         Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
-        remove_redundant_generators!(Z)
+        Z = remove_redundant_generators(Z)
     else
         Z = Zonotope(cnew, Gnew)
     end
