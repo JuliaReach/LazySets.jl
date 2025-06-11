@@ -96,6 +96,7 @@ _default_sampler(::Universe) = UniverseSampler()
 
 _rand(rng, U) = rand(rng, U)
 _rand(rng, U::AbstractVector) = rand.(Ref(rng), U)
+
 """
     RejectionSampler{D} <: AbstractSampler
 
@@ -573,15 +574,14 @@ function _add_generators!(x, P::DensePolynomialZonotope, U, rng)
 end
 
 function _add_generators!(x, P::AbstractSparsePolynomialZonotope, U, rng)
-    p = nparams(P) # number of dependent factors
-    q = ngens_indep(P) # number of independent generators
-
-    #dependent generators
+    # dependent generators
+    p = nparams(P)
     αₛ = rand(rng, U, p)
-    γₛ = [prod(αₛ .^ e) for e in eachcol(expmat(P))] #vector of monomial coefficients
+    γₛ = [prod(αₛ .^ e) for e in eachcol(expmat(P))]  # vector of monomial coefficients
     x .+= genmat_dep(P) * γₛ
 
     # independent generators
+    q = ngens_indep(P)
     βₛ = rand(rng, U, q)
     x .+= genmat_indep(P) * βₛ
 

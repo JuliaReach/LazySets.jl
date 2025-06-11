@@ -72,7 +72,7 @@ for N in [Float64]
     @test length(sample(P1, 10; include_vertices=false)) == 10
     @test length(sample(P1, 10; include_vertices=true)) == 42
 
-    # face sampling
+    # face sampler
     H = Hyperrectangle(N[1, 2], N[3, 4])
     v0 = sample(H, 10; sampler=LazySets.FaceSampler(0))
     v1 = sample(H, 10; sampler=LazySets.FaceSampler(1))
@@ -82,21 +82,21 @@ for N in [Float64]
     @test all(vi ∈ vs for vi in v0)  # 0-faces are the vertices
     @test all(any(vi[i:i] ∈ project(H, [i]) for i in 1:2) for vi in v1)  # 1-faces are at the border
 
-    # SparsePolynomialZonotope
-    c  = N[1.0, 1.0]
-    G  = 0.1 * N[2.0 0.0 1.0;
-                 1.0 2.0 1.0]
+    # AbstractSparsePolynomialZonotope sampler
+    c = N[1.0, 1.0]
+    G = 0.1 * N[2.0 0.0 1.0;
+                1.0 2.0 1.0]
     GI = 0.1 * reshape(N[1.0, 0.5], 2, 1)
-    E  = [1 0 1;
-           0 1 3]
+    E = [1 0 1;
+         0 1 3]
     idx = [1, 2]
-    P4 = SparsePolynomialZonotope(c, G, GI, E, idx)
-
-    # test rand samples
-    sampler = LazySets.PolynomialZonotopeSampler()
-    pts = sample(P4, 100; sampler = sampler)
-    @test length(pts) == 100
-    @test_broken all(p ∈ P4 for p in pts)
-    P4z = overapproximate(P4, Zonotope)  # temporary sufficient test
-    @test all(p ∈ P4z for p in pts)
+    SPZ = SparsePolynomialZonotope(c, G, GI, E, idx)
+    for P4 in (SPZ, convert(SimpleSparsePolynomialZonotope, SPZ))
+        sampler = LazySets.PolynomialZonotopeSampler()
+        pts = sample(P4, 100; sampler=sampler)
+        @test length(pts) == 100
+        @test_broken all(p ∈ P4 for p in pts)
+        P4z = overapproximate(P4, Zonotope)  # temporary sufficient test
+        @test all(p ∈ P4z for p in pts)
+    end
 end
