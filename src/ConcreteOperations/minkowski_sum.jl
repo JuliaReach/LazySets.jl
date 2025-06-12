@@ -343,6 +343,23 @@ end
     return SparsePolynomialZonotope(c, G, GI, E)
 end
 
+"""
+# Extended help
+
+    minkowski_sum(P1::AbstractSparsePolynomialZonotope, P2::AbstractSparsePolynomialZonotope)
+
+### Algorithm
+
+See [Kochdumper21a; Proposition 3.1.19](@citet).
+"""
+function minkowski_sum(P1::AbstractSparsePolynomialZonotope, P2::AbstractSparsePolynomialZonotope)
+    c = center(P1) + center(P2)
+    G = hcat(genmat_dep(P1), genmat_dep(P2))
+    GI = hcat(genmat_indep(P1), genmat_indep(P2))
+    E = cat(expmat(P1), expmat(P2); dims=(1, 2))
+    return SparsePolynomialZonotope(c, G, GI, E)
+end
+
 # Given two balls of the same p-norm, their Minkowski sum is again a p-norm ball,
 # which can be seen as follows:
 #

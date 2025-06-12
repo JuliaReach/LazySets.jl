@@ -57,18 +57,6 @@ CurrentModule = LazySets.SparsePolynomialZonotopeModule
 ```@docs
 exact_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 ```
-```@meta
-CurrentModule = LazySets.API
-```
-```@docs; canonical=false
-minkowski_sum(::LazySet, ::LazySet)
-```
-```@meta
-CurrentModule = LazySets.SparsePolynomialZonotopeModule
-```
-```@docs
-minkowski_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
-```
 
 ```@meta
 CurrentModule = LazySets.API
@@ -149,3 +137,4 @@ Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`ngens_indep`](@ref ngens_indep(::AbstractSparsePolynomialZonotope))
 * [`nparams`](@ref nparams(::AbstractSparsePolynomialZonotope))
 * [`cartesian_product`](@ref cartesian_product(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))
+* [`minkowski_sum`](@ref minkowski_sum(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))

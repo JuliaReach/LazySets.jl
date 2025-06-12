@@ -19,4 +19,5 @@ CurrentModule = LazySets
 
 ```@docs
 minkowski_sum(::DensePolynomialZonotope, ::AbstractZonotope)
+minkowski_sum(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope)
 ```
