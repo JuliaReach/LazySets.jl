@@ -3,16 +3,15 @@ module SparsePolynomialZonotopeModule
 using Reexport, Requires
 
 using ..LazySets: AbstractSparsePolynomialZonotope, AbstractReductionMethod,
-                  genmat, GIR05, order, _extrema_lowhigh,
-                  _remove_redundant_generators_polyzono
+                  genmat, GIR05, order, _remove_redundant_generators_polyzono
 import IntervalArithmetic as IA
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: remove_zero_columns
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
-@reexport import ..API: center, extrema, isoperationtype, rand, linear_map,
-                        scale, ρ, translate, exact_sum
+@reexport import ..API: center, isoperationtype, rand, linear_map, scale, ρ,
+                        translate, exact_sum
 @reexport import ..LazySets: expmat, genmat_dep, genmat_indep, ngens_dep,
                              ngens_indep, nparams, polynomial_order,
                              reduce_order, remove_redundant_generators
@@ -27,7 +26,6 @@ include("SparsePolynomialZonotope.jl")
 const SPZ = SparsePolynomialZonotope
 
 include("center.jl")
-include("extrema.jl")
 include("isoperationtype.jl")
 include("rand.jl")
 include("linear_map.jl")

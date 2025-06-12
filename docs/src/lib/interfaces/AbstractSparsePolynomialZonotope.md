@@ -29,6 +29,13 @@ nparams(::AbstractSparsePolynomialZonotope)
 
 Undocumented implementations:
 
+```@meta
+CurrentModule = LazySets.API
+```
+* [`extrema`](@ref extrema(::LazySet))
+```@meta
+CurrentModule = LazySets
+```
 * [`ngens_dep`](@ref ngens_dep(::AbstractPolynomialZonotope))
 * [`ngens_indep`](@ref ngens_indep(::AbstractPolynomialZonotope))
 

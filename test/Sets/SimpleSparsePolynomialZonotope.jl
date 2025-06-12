@@ -127,6 +127,15 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isoperationtype
     @test !isoperationtype(SimpleSparsePolynomialZonotope)
+
+    # extrema approximation
+    l1, u1 = extrema(S; algorithm="zonotope")
+    @test (l1, u1) == extrema(S)  # default algorithm
+    @test_throws ArgumentError extrema(S; algorithm="???")
+    H1 = Hyperrectangle(; low=l1, high=u1)
+    l2, u2 = extrema(S; algorithm="lowhigh")
+    H2 = Hyperrectangle(; low=l2, high=u2)
+    @test H2 ⊆ H1 == Hyperrectangle(N[3, 1], N[2, 3])
 end
 
 for Z in [rand(Zonotope), rand(Hyperrectangle)]
