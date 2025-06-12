@@ -56,6 +56,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test center(CPS) == N[2, 0, 2, 0]
     @test genmat(CPS) == N[1 2 0 0; 2 2 0 0; 0 0 1 2; 0 0 2 2.0]
     @test expmat(CPS) == [1 4 0 0; 1 2 0 0; 0 0 1 4; 0 0 1 2]
+    Z = overapproximate(S, Zonotope)
+    PZZ = cartesian_product(S, Z)
+    @test center(PZZ) == vcat(center(S), center(Z))
+    @test genmat_dep(PZZ) == vcat(genmat_dep(S), zeros(N, 2, 2))
+    @test genmat_indep(PZZ) == vcat(zeros(N, 2, 2), genmat(Z))
+    @test expmat(PZZ) == expmat(S)
 
     _c = N[2, 0]
     _g = N[0 0.5 1 0.5 1 0.5 1 -0.5 -1

@@ -163,13 +163,13 @@ end
 """
 # Extended help
 
-    cartesian_product(SPZ::SparsePolynomialZonotope, Z::AbstractZonotope)
+    cartesian_product(SPZ::AbstractSparsePolynomialZonotope, Z::AbstractZonotope)
 
 ### Algorithm
 
 This method implements [Kochdumper21a; Proposition 3.1.22](@citet).
 """
-@commutative function cartesian_product(SPZ::SparsePolynomialZonotope, Z::AbstractZonotope)
+@commutative function cartesian_product(SPZ::AbstractSparsePolynomialZonotope, Z::AbstractZonotope)
     c = vcat(center(SPZ), center(Z))
     G1 = genmat_dep(SPZ)
     G = vcat(G1, zeros(eltype(G1), size(G1)))
