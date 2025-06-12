@@ -65,6 +65,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test genmat_indep(TPZ) == genmat_indep(TPZ)
     @test expmat(TPZ) == expmat(TPZ)
 
+    # cartesian_product SPZ/SPZ
     CPPZ = cartesian_product(PZ, PZ2)
     @test center(CPPZ) == N[4, 4, 0, 0]
     @test genmat_dep(CPPZ) == N[2 1 2 0 0 0;
@@ -76,6 +77,12 @@ for N in [Float64, Float32, Rational{Int}]
                            0 1 1 0 0 0;
                            0 0 0 1 0 1;
                            0 0 0 0 1 3]
+    # cartesian_product mixed: SPZ/SSPZ
+    CPPZ2 = cartesian_product(PZ, convert(SimpleSparsePolynomialZonotope, PZ2))
+    @test CPPZ == CPPZ2
+    CPPZ2 = cartesian_product(convert(SimpleSparsePolynomialZonotope, PZ), PZ2)
+    @test center(CPPZ) == center(CPPZ2)  # the sets are equivalent, but this is hard to check
+    # cartesian_product SPZ/Z
     Z = overapproximate(PZ2, Zonotope)
     SSPZ2 = convert(SimpleSparsePolynomialZonotope, PZ2)
     dom2 = IntervalBox(IA.interval(N(-1), N(1)), IA.interval(N(-1), N(1)))
