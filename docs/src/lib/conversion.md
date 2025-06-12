@@ -39,7 +39,7 @@ convert(::Type{MinkowskiSumArray}, ::MinkowskiSum{N, ST, MinkowskiSumArray{N, ST
 convert(::Type{STAR}, ::AbstractPolyhedron{N}) where {N}
 convert(::Type{STAR}, ::Star)
 convert(::Type{SimpleSparsePolynomialZonotope}, ::AbstractZonotope)
-convert(::Type{SimpleSparsePolynomialZonotope}, ::SparsePolynomialZonotope)
+convert(::Type{SimpleSparsePolynomialZonotope}, ::AbstractSparsePolynomialZonotope)
 convert(::Type{SparsePolynomialZonotope}, ::AbstractZonotope{N}) where {N}
 convert(::Type{SparsePolynomialZonotope}, ::SimpleSparsePolynomialZonotope{N}) where {N}
 ```
