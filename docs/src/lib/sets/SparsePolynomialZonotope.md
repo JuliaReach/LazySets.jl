@@ -48,18 +48,6 @@ reduce_order(::SparsePolynomialZonotope, ::Real, ::AbstractReductionMethod=GIR05
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-cartesian_product(::LazySet, ::LazySet)
-```
-```@meta
-CurrentModule = LazySets.SparsePolynomialZonotopeModule
-```
-```@docs
-cartesian_product(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
-```
-```@meta
-CurrentModule = LazySets.API
-```
-```@docs; canonical=false
 exact_sum(::LazySet, ::LazySet)
 ```
 ```@meta
@@ -159,3 +147,4 @@ Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`ngens_dep`](@ref ngens_dep(::AbstractSparsePolynomialZonotope))
 * [`ngens_indep`](@ref ngens_indep(::AbstractSparsePolynomialZonotope))
 * [`nparams`](@ref nparams(::AbstractSparsePolynomialZonotope))
+* [`cartesian_product`](@ref cartesian_product(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))
