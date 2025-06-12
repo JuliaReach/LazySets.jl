@@ -64,7 +64,6 @@ CurrentModule = LazySets.API
 Undocumented implementations:
 
 * [`center`](@ref center(::LazySet))
-* [`extrema`](@ref extrema(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
@@ -125,6 +124,7 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`center`](@ref center(::AbstractPolynomialZonotope, ::Int))
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
+* [`extrema`](@ref extrema(::AbstractPolynomialZonotope))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolynomialZonotope}))
 * [`isempty`](@ref isempty(::AbstractPolynomialZonotope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolynomialZonotope))
