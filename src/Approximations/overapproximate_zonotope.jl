@@ -220,34 +220,40 @@ function _zonotope_overapprox(c, G, E)
 end
 
 """
-    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope})
+    overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope})
 
-Overapproximate a simple sparse polynomial zonotope with a zonotope.
+Overapproximate a sparse polynomial zonotope with a zonotope.
 
 ### Input
 
-- `P`         -- simple sparse polynomial zonotope
-- `Zonotope`  -- target set type
+- `P`        -- sparse polynomial zonotope
+- `Zonotope` -- target set type
 
 ### Output
 
 A zonotope.
 """
-function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope})
-    cnew, Gnew = _zonotope_overapprox(center(P), genmat(P), expmat(P))
-    return Zonotope(cnew, Gnew)
+function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope})
+    cnew, Gnew = _zonotope_overapprox(center(P), genmat_dep(P), expmat(P))
+    if ngens_indep(P) > 0
+        Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
+        Z = remove_redundant_generators(Z)
+    else
+        Z = Zonotope(cnew, Gnew)
+    end
+    return Z
 end
 
 """
-    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope},
+    overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope},
                     dom::IntervalBox)
 
-Overapproximate a simple sparse polynomial zonotope over the parameter domain
-`dom` with a zonotope.
+Overapproximate a sparse polynomial zonotope over the parameter domain `dom`
+with a zonotope.
 
 ### Input
 
-- `P`         -- simple sparse polynomial zonotope
+- `P`         -- sparse polynomial zonotope
 - `Zonotope`  -- target set type
 - `dom`       -- parameter domain, which should be a subset of `[-1, 1]^q`,
                  where `q = nparams(P)`
@@ -256,12 +262,13 @@ Overapproximate a simple sparse polynomial zonotope over the parameter domain
 
 A zonotope.
 """
-function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope},
+function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope},
                          dom::IA.IntervalBox)
     @assert dom ⊆ IA.IntervalBox(IA.interval(-1, 1), nparams(P)) "dom should " *
                                                                  "be a subset of [-1, 1]^q"
 
-    G = genmat(P)
+    # handle dependent generators
+    G = genmat_dep(P)
     E = expmat(P)
     cnew = copy(center(P))
     Gnew = similar(G)
@@ -276,28 +283,16 @@ function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope},
         cnew .+= m * g
         Gnew[:, j] .= r * g
     end
-    return Zonotope(cnew, Gnew)
-end
 
-"""
-    overapproximate(P::SparsePolynomialZonotope, ::Type{<:Zonotope})
+    # handle independent generators
+    if ngens_indep(P) > 0
+        Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
+        Z = remove_redundant_generators(Z)
+    else
+        Z = Zonotope(cnew, Gnew)
+    end
 
-Overapproximate a sparse polynomial zonotope with a zonotope.
-
-### Input
-
-- `P`        -- sparse polynomial zonotope
-- `Zonotope` -- target set type
-
-### Output
-
-A zonotope.
-"""
-function overapproximate(P::SparsePolynomialZonotope, ::Type{<:Zonotope})
-    cnew, Gnew = _zonotope_overapprox(center(P), genmat_dep(P), expmat(P))
-    Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
-    Zred = remove_redundant_generators(Z)
-    return Zred
+    return Z
 end
 
 """
