@@ -145,6 +145,12 @@ for N in [Float64, Float32, Rational{Int}]
         v2 = ρ(d, P; enclosure_method=RangeEnclosures.NaturalEnclosure())
         @test v <= v1 <= v2
     end
+
+    # translate
+    TPZ = translate(P, N[1, 2])
+    @test center(TPZ) == N[1, 2]
+    @test genmat_dep(TPZ) == genmat_dep(P)
+    @test expmat(TPZ) == expmat(P)
 end
 
 for Z in [rand(Zonotope), rand(Hyperrectangle)]

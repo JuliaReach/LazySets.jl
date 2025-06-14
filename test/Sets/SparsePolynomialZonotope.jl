@@ -61,9 +61,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     TPZ = translate(PZ, N[1, 2])
     @test center(TPZ) == N[5, 6]
-    @test genmat_dep(TPZ) == genmat_dep(TPZ)
-    @test genmat_indep(TPZ) == genmat_indep(TPZ)
-    @test expmat(TPZ) == expmat(TPZ)
+    @test genmat_dep(TPZ) == genmat_dep(PZ)
+    @test genmat_indep(TPZ) == genmat_indep(PZ)
+    @test expmat(TPZ) == expmat(PZ)
 
     # cartesian_product SPZ/SPZ
     CPPZ = cartesian_product(PZ, PZ2)

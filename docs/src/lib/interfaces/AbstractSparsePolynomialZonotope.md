@@ -43,6 +43,7 @@ CurrentModule = LazySets
 CurrentModule = LazySets.API
 ```
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 
 ```@meta
 CurrentModule = LazySets
@@ -86,7 +87,6 @@ Inherited from [`LazySet`](@ref):
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`scale`](@ref scale(::Real, ::LazySet))
-* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
