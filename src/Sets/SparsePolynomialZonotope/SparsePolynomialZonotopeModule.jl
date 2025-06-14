@@ -10,8 +10,7 @@ using ReachabilityBase.Arrays: remove_zero_columns
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
-@reexport import ..API: center, isoperationtype, rand, linear_map, ρ, translate,
-                        exact_sum
+@reexport import ..API: center, isoperationtype, rand, ρ, translate, exact_sum
 @reexport import ..LazySets: expmat, genmat_dep, genmat_indep, ngens_dep,
                              ngens_indep, nparams, polynomial_order,
                              reduce_order, remove_redundant_generators
@@ -28,7 +27,6 @@ const SPZ = SparsePolynomialZonotope
 include("center.jl")
 include("isoperationtype.jl")
 include("rand.jl")
-include("linear_map.jl")
 include("support_function.jl")
 include("translate.jl")
 include("exact_sum.jl")
