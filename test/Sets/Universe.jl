@@ -73,6 +73,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # diameter
     @test_throws ArgumentError diameter(U)
+    @test_throws ArgumentError diameter(U, Inf)
+    @test_throws ArgumentError diameter(U, 2)
 
     # dim
     @test dim(U) == 2
@@ -120,6 +122,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # norm
     @test_throws ArgumentError norm(U)
+    @test_throws ArgumentError norm(U, Inf)
+    @test_throws ArgumentError norm(U, 2)
 
     # polyhedron
     if test_suite_polyhedra
@@ -133,6 +137,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # radius
     @test_throws ArgumentError radius(U)
+    @test_throws ArgumentError radius(U, Inf)
+    @test_throws ArgumentError radius(U, 2)
 
     # rand
     @test rand(Universe; N=N) isa Universe{N}
@@ -184,9 +190,24 @@ for N in [Float64, Float32, Rational{Int}]
         # @test isidentical(U3, U2)
     end
 
+    # exponential_map
+    @test_throws AssertionError exponential_map(ones(N, 2, 3), U)
+    @test_throws AssertionError exponential_map(ones(N, 3, 2), U)
+
     # in
     @test_throws AssertionError N[0] ∈ U
     @test N[0, 0] ∈ U
+
+    # is_interior_point
+    @test_throws AssertionError is_interior_point(N[0], U)
+    if N <: AbstractFloat
+        @test is_interior_point(N[0, 0], U)
+    else
+        @test_throws AssertionError is_interior_point(N[0, 0], U)
+        @test is_interior_point(N[0, 0], U; ε=1 // 100)
+        # incompatible numeric type
+        @test_throws ArgumentError is_interior_point([0.0, 0.0], U)
+    end
 
     # linear_map
     @test_throws AssertionError linear_map(ones(N, 2, 3), U)
@@ -242,7 +263,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test v isa N && v == N(Inf)
     v = ρ(N[2, 0], U)
     @test v isa N && v == N(Inf)
-    @test ρ(N[0, 0], U) == zero(N)
+    @test ρ(N[0, 0], U) == N(0)
 
     # support_vector
     @test_throws AssertionError σ(N[1], U)
@@ -325,7 +346,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test isdisjoint(U, E) && isdisjoint(E, U) && isdisjoint(U, Pe) && isdisjoint(Pe, U)
     for (res, w) in (isdisjoint(U, E, true), isdisjoint(E, U, true),
                      isdisjoint(U, Pe, true), isdisjoint(Pe, U, true))
-        @test res && w isa Vector{N} && w == N[]
+        @test res && w isa Vector{N} && isempty(w)
     end
     @test !isdisjoint(U, B) && !isdisjoint(B, U) && !isdisjoint(U, Pnc) && !isdisjoint(Pnc, U)
     # TODO add `isdisjoint(U, Pnc, true), isdisjoint(Pnc, U, true)` below once witness production is supported by Polygon
@@ -348,10 +369,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError U3 ⊂ B
     @test !(U ⊂ U)
     res, w = ⊂(U, U, true)
-    @test !res && w isa Vector{N} && w == N[]
+    @test !res && w isa Vector{N} && isempty(w)
     @test !(U ⊂ B)
     res, w = ⊂(U, B, true)
-    @test !res && w isa Vector{N} && w == N[]
+    @test !res && w isa Vector{N} && isempty(w)
     @test B ⊂ U
     res, w = ⊂(B, U, true)
     @test res && w isa Vector{N} && w ∉ B && w ∈ U
@@ -362,13 +383,15 @@ for N in [Float64, Float32, Rational{Int}]
     for X in (U, B, Pnc)
         @test X ⊆ U
         res, w = ⊆(X, U, true)
-        @test res && w isa Vector{N} && w == N[]
+        @test res && w isa Vector{N} && isempty(w)
     end
     for X in (B, Pnc)
         @test U ⊈ X
-        if X === B  # TODO remove once witness production is supported for Polygon
+        if X === B  # TODO remove branching once witness production is supported for Polygon
             res, w = ⊆(U, X, true)
-            @test !res && w isa Vector{N} && w ∉ X && w ∈ U
+            @test !res && w isa Vector{N} && w ∈ U && w ∉ X
+        else
+            @test_broken ⊆(U, X, true)
         end
     end
     # TODO test `U ⊆ X` with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
@@ -386,9 +409,11 @@ for N in [Float64, Float32, Rational{Int}]
     # minkowski_difference
     @test_throws AssertionError minkowski_difference(B, U3)
     @test_throws AssertionError minkowski_difference(U3, B)
+    # Universe
     for U2 in (minkowski_difference(U, U), minkowski_difference(U, B), minkowski_difference(U, Z))
         @test isidentical(U, U2)
     end
+    # empty difference
     E2 = minkowski_difference(B, U)
     @test E2 isa EmptySet{N} && dim(E2) == 2
     # TODO test `minkowski_difference(X, U)` with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
@@ -417,12 +442,6 @@ for N in [Float64, Float32]
     @test_throws MethodError rationalize(U2)
 
     # exponential_map
-    @test_throws AssertionError exponential_map(ones(N, 2, 3), U)
-    @test_throws AssertionError exponential_map(ones(N, 3, 2), U)
     U2 = exponential_map(ones(N, 2, 2), U)
     @test_broken isidentical(U, U2)  # TODO this should change
-
-    # is_interior_point
-    @test_throws AssertionError is_interior_point(N[0], U)
-    @test is_interior_point(N[0, 0], U)
 end
