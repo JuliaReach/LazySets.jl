@@ -75,8 +75,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(E, E2)
 
     # diameter
-    res = diameter(E)
-    @test res isa N && res == N(0)
+    for res in (diameter(E), diameter(E, Inf), diameter(E, 2))
+        @test res isa N && res == N(0)
+    end
 
     # dim
     @test dim(E) == 2
