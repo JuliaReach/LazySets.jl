@@ -25,7 +25,7 @@ function Base.convert(::Type{SimpleSparsePolynomialZonotope}, Z::AbstractZonotop
 end
 
 """
-    convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::SparsePolynomialZonotope)
+    convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::AbstractSparsePolynomialZonotope)
 
 Convert a sparse polynomial zonotope to simple sparse polynomial zonotope.
 
@@ -42,7 +42,7 @@ A simple sparse polynomial zonotope.
 
 The method implements [Kochdumper21a; Proposition 3.1.4](@citet).
 """
-function Base.convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::SparsePolynomialZonotope)
+function Base.convert(::Type{SimpleSparsePolynomialZonotope}, SPZ::AbstractSparsePolynomialZonotope)
     c = center(SPZ)
     G = hcat(genmat_dep(SPZ), genmat_indep(SPZ))
     n = ngens_indep(SPZ)

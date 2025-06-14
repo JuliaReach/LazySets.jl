@@ -163,17 +163,35 @@ end
 """
 # Extended help
 
-    cartesian_product(SPZ::SparsePolynomialZonotope, Z::AbstractZonotope)
+    cartesian_product(SPZ::AbstractSparsePolynomialZonotope, Z::AbstractZonotope)
 
 ### Algorithm
 
 This method implements [Kochdumper21a; Proposition 3.1.22](@citet).
 """
-@commutative function cartesian_product(SPZ::SparsePolynomialZonotope, Z::AbstractZonotope)
+@commutative function cartesian_product(SPZ::AbstractSparsePolynomialZonotope, Z::AbstractZonotope)
     c = vcat(center(SPZ), center(Z))
     G1 = genmat_dep(SPZ)
     G = vcat(G1, zeros(eltype(G1), size(G1)))
     GI = cat(genmat_indep(SPZ), genmat(Z); dims=(1, 2))
     E = expmat(SPZ)
+    return SparsePolynomialZonotope(c, G, GI, E)
+end
+
+"""
+# Extended help
+
+    cartesian_product(P1::AbstractSparsePolynomialZonotope, P2::AbstractSparsePolynomialZonotope)
+
+### Algorithm
+
+This method implements [Kochdumper21a; Proposition 3.1.22](@citet).
+"""
+function cartesian_product(P1::AbstractSparsePolynomialZonotope,
+                           P2::AbstractSparsePolynomialZonotope)
+    c = vcat(center(P1), center(P2))
+    G = cat(genmat_dep(P1), genmat_dep(P2); dims=(1, 2))
+    GI = cat(genmat_indep(P1), genmat_indep(P2); dims=(1, 2))
+    E = cat(expmat(P1), expmat(P2); dims=(1, 2))
     return SparsePolynomialZonotope(c, G, GI, E)
 end

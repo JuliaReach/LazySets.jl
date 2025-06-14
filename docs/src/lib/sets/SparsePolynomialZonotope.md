@@ -42,19 +42,6 @@ CurrentModule = LazySets.SparsePolynomialZonotopeModule
 ```
 ```@docs
 reduce_order(::SparsePolynomialZonotope, ::Real, ::AbstractReductionMethod=GIR05())
-ρ(::AbstractVector, ::SparsePolynomialZonotope)
-```
-```@meta
-CurrentModule = LazySets.API
-```
-```@docs; canonical=false
-cartesian_product(::LazySet, ::LazySet)
-```
-```@meta
-CurrentModule = LazySets.SparsePolynomialZonotopeModule
-```
-```@docs
-cartesian_product(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -68,18 +55,6 @@ CurrentModule = LazySets.SparsePolynomialZonotopeModule
 ```@docs
 exact_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
 ```
-```@meta
-CurrentModule = LazySets.API
-```
-```@docs; canonical=false
-minkowski_sum(::LazySet, ::LazySet)
-```
-```@meta
-CurrentModule = LazySets.SparsePolynomialZonotopeModule
-```
-```@docs
-minkowski_sum(::SparsePolynomialZonotope, ::SparsePolynomialZonotope)
-```
 
 ```@meta
 CurrentModule = LazySets.API
@@ -88,10 +63,7 @@ CurrentModule = LazySets.API
 Undocumented implementations:
 
 * [`center`](@ref center(::LazySet))
-* [`extrema`](@ref extrema(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
-* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
-* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 
 ```@meta
 CurrentModule = LazySets
@@ -149,6 +121,7 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`center`](@ref center(::AbstractPolynomialZonotope, ::Int))
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
+* [`extrema`](@ref extrema(::AbstractPolynomialZonotope))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolynomialZonotope}))
 * [`isempty`](@ref isempty(::AbstractPolynomialZonotope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolynomialZonotope))
@@ -159,3 +132,8 @@ Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`ngens_dep`](@ref ngens_dep(::AbstractSparsePolynomialZonotope))
 * [`ngens_indep`](@ref ngens_indep(::AbstractSparsePolynomialZonotope))
 * [`nparams`](@ref nparams(::AbstractSparsePolynomialZonotope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractSparsePolynomialZonotope))
+* [`ρ`](@ref ρ(::AbstractVector, ::AbstractSparsePolynomialZonotope))
+* [`translate`](@ref translate(::AbstractSparsePolynomialZonotope, ::AbstractVector))
+* [`cartesian_product`](@ref cartesian_product(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))
+* [`minkowski_sum`](@ref minkowski_sum(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))
