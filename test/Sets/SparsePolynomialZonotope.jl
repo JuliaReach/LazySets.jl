@@ -13,8 +13,7 @@ for N in [Float64, Float32, Rational{Int}]
     E = [1 0 3; 0 1 1]
     PZ = SparsePolynomialZonotope(c, G, GI, E)
     # Example 3.1.21 from thesis
-    PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1; 1 2 1],
-                                   zeros(N, 2, 0), [1 0 1; 0 1 3])
+    PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1; 1 2 1], zeros(N, 2, 0), [1 0 1; 0 1 3])
 
     @test center(PZ) == c
     @test genmat_dep(PZ) == G

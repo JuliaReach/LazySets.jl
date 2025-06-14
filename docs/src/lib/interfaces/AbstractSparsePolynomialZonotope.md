@@ -25,6 +25,7 @@ This interface defines the following functions:
 
 ```@docs
 nparams(::AbstractSparsePolynomialZonotope)
+ρ(::AbstractVector, ::SparsePolynomialZonotope)
 ```
 
 Undocumented implementations:
@@ -85,7 +86,6 @@ Inherited from [`LazySet`](@ref):
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`scale`](@ref scale(::Real, ::LazySet))
-* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
