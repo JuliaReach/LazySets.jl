@@ -15,4 +15,4 @@ The index vector.
 
 The index vector contains positive integers for the dependent parameters.
 """
-indexvector(P::SPZ) = P.idx
+indexvector(P::SparsePolynomialZonotope) = P.idx

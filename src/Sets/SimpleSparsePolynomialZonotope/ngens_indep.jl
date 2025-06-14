@@ -1,1 +1,1 @@
-ngens_indep(::SSPZ) = 0
+ngens_indep(::SimpleSparsePolynomialZonotope) = 0
