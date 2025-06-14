@@ -127,14 +127,6 @@ CurrentModule = LazySets.API
 CurrentModule = LazySets
 ```
 * [`ngens_indep`](@ref ngens_indep(::AbstractPolynomialZonotope))
-```@meta
-CurrentModule = LazySets.API
-```
-* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
-
-```@meta
-CurrentModule = LazySets
-```
 
 Inherited from [`LazySet`](@ref):
 * [`an_element`](@ref an_element(::LazySet))
@@ -197,4 +189,5 @@ Inherited from [`AbstractPolynomialZonotope`](@ref):
 Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`ngens_dep`](@ref ngens_dep(::AbstractSparsePolynomialZonotope))
 * [`nparams`](@ref nparams(::AbstractSparsePolynomialZonotope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))

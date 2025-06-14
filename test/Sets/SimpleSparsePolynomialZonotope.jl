@@ -38,6 +38,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     LMS = linear_map(N[1 2; 3 4], S)
+    @test LMS isa SimpleSparsePolynomialZonotope{N}
     @test center(LMS) == N[2, 6]
     @test genmat(LMS) == N[5 6; 11 14]
     @test expmat(LMS) == expmat(S)
