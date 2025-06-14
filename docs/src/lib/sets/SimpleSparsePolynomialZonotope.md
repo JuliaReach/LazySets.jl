@@ -165,7 +165,6 @@ Inherited from [`LazySet`](@ref):
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`scale`](@ref scale(::Real, ::LazySet))
-* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
@@ -190,4 +189,5 @@ Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`nparams`](@ref nparams(::AbstractSparsePolynomialZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::AbstractSparsePolynomialZonotope))
+* [`translate`](@ref translate(::AbstractSparsePolynomialZonotope, ::AbstractVector))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))
