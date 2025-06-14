@@ -9,7 +9,7 @@ for N in [Float64, Float32, Rational{Int}]
     # direct construction via (center, M, d)
     c = [N(1), N(2)]
     M = [N(1) N(0); N(0) N(1)]
-    d = [N(1//10), N(2)]
+    d = [N(1 // 10), N(2)]
     Z = ZonotopeMD(c, M, d)
     @test Z isa ZonotopeMD{N}
     @test center(Z) == c
@@ -51,7 +51,7 @@ for N in [Float64, Float32, Rational{Int}]
     # direct construction via (center, M, d)
     c = [N(1), N(2)]
     M = [N(1) N(0) N(2) N(0); N(0) N(1) N(3) N(0)]
-    d = [N(1//10), N(2)]
+    d = [N(1 // 10), N(2)]
     Z = ZonotopeMD(c, M, d)
     @test Z isa ZonotopeMD{N}
     @test center(Z) == c
