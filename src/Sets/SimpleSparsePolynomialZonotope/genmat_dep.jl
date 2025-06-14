@@ -1,1 +1,1 @@
-genmat_dep(P::SSPZ) = P.G
+genmat_dep(P::SimpleSparsePolynomialZonotope) = P.G

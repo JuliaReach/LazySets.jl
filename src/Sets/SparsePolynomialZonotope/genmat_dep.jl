@@ -11,4 +11,4 @@ Return the matrix of dependent generators of a sparse polynomial zonotope.
 
 The matrix of dependent generators.
 """
-genmat_dep(P::SPZ) = P.G
+genmat_dep(P::SparsePolynomialZonotope) = P.G
