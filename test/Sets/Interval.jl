@@ -554,8 +554,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test U2 isa Universe{N} && dim(U2) == 1
 
     # minkowski_sum
-    @test_throws DimensionMismatch minkowski_sum(X, X2)
-    @test_throws DimensionMismatch minkowski_sum(X2, X)
+    @test_throws AssertionError minkowski_sum(X, X2)
+    @test_throws AssertionError minkowski_sum(X2, X)
     # Interval + Interval = Interval
     Y = minkowski_sum(X, X)
     Z = Interval(N(0), N(4))
