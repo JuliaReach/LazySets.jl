@@ -90,8 +90,8 @@ for N in [Float64]
     E = [1 0 1;
          0 1 3]
     idx = [1, 2]
-    SPZ = SparsePolynomialZonotope(c, G, GI, E, idx)
-    for P4 in (SPZ, convert(SimpleSparsePolynomialZonotope, SPZ))
+    P = SparsePolynomialZonotope(c, G, GI, E, idx)
+    for P4 in (P, convert(SimpleSparsePolynomialZonotope, P))
         sampler = LazySets.PolynomialZonotopeSampler()
         pts = sample(P4, 100; sampler=sampler)
         @test length(pts) == 100
