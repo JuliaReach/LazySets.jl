@@ -2,6 +2,12 @@ for N in [Float64, Rational{Int}, Float32]
     # random ball
     rand(BallInf)
 
+    # invalid inputs
+    @test_throws AssertionError BallInf(N[0], N(-1))
+    if N <: AbstractFloat
+        @test_throws AssertionError BallInf(N[0], N(NaN))
+    end
+
     # 1D BallInf
     b = BallInf(N[0], N(1))
     # Test Dimension

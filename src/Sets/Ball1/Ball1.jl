@@ -43,7 +43,7 @@ struct Ball1{N,VN<:AbstractVector{N}} <: AbstractCentrallySymmetricPolytope{N}
 
     # default constructor with domain constraint for radius
     function Ball1(center::VN, radius::N) where {N,VN<:AbstractVector{N}}
-        @assert radius >= zero(N) "the radius must not be negative"
+        @assert radius >= zero(N) "the radius must be nonnegative but is $radius"
         return new{N,VN}(center, radius)
     end
 end
