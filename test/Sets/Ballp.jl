@@ -2,6 +2,10 @@ for N in [Float64, Float32]
     # random ball
     rand(Ballp)
 
+    # invalid inputs
+    @test_throws AssertionError Ballp(N(3), N[0], N(-1))
+    @test_throws AssertionError Ballp(N(3), N[0], N(NaN))
+
     # 1D Ball3
     b = Ballp(N(3), N[0], N(1))
     # dimension
