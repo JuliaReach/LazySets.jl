@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:Ball2}) = false
+function isoperationtype(::Type{<:Ball2})
+    return false
+end

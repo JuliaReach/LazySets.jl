@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:Ballp}) = false
+function isoperationtype(::Type{<:Ballp})
+    return false
+end

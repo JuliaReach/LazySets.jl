@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:Tetrahedron}) = false
+function isoperationtype(::Type{<:Tetrahedron})
+    return false
+end

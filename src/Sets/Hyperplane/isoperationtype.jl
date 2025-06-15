@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:Hyperplane}) = false
+function isoperationtype(::Type{<:Hyperplane})
+    return false
+end

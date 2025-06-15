@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:Hyperrectangle}) = false
+function isoperationtype(::Type{<:Hyperrectangle})
+    return false
+end

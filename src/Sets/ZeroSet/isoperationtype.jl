@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:ZeroSet}) = false
+function isoperationtype(::Type{<:ZeroSet})
+    return false
+end

@@ -11,7 +11,11 @@ and `false` otherwise.
 * If `witness` is `true`, the result is `(true, [])` if the ambient dimension is
 one, and `(false, v)` where ``v ∉ P`` otherwise.
 """
-isuniversal(L::Line; witness::Bool=false) = isuniversal(L, Val(witness))
+function isuniversal(L::Line; witness::Bool=false)
+    return isuniversal(L, Val(witness))
+end
 
 # TODO implement case with witness
-isuniversal(L::Line, ::Val{false}) = dim(L) == 1
+function isuniversal(L::Line, ::Val{false})
+    return dim(L) == 1
+end

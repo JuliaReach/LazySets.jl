@@ -1,1 +1,3 @@
-isempty(::Line) = false
+function isempty(::Line)
+    return false
+end
