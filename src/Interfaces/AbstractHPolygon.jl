@@ -15,15 +15,14 @@ Abstract type for polygons in constraint representation.
 
 ### Notes
 
-See [`HPolygon`](@ref) or [`VPolygon`](@ref) for standard implementations of
-this interface.
+See [`HPolygon`](@ref) for a standard implementation of this interface.
 
 All subtypes must satisfy the invariant that constraints are sorted
 counter-clockwise.
 
 Every concrete `AbstractHPolygon` must have the following fields:
 
-- `constraints::Vector{HalfSpace{N, AbstractVector{N}}}` -- the constraints
+- `constraints::Vector{HalfSpace{N,AbstractVector{N}}}` -- constraints vector
 
 The subtypes of `AbstractHPolygon`:
 
