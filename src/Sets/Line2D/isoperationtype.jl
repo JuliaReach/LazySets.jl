@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:Line2D}) = false
+function isoperationtype(::Type{<:Line2D})
+    return false
+end

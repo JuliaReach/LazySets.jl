@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:Interval}) = false
+function isoperationtype(::Type{<:Interval})
+    return false
+end

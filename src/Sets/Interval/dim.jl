@@ -1,1 +1,3 @@
-dim(x::Interval) = 1
+function dim(::Interval)
+    return 1
+end

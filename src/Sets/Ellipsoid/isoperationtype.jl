@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:Ellipsoid}) = false
+function isoperationtype(::Type{<:Ellipsoid})
+    return false
+end

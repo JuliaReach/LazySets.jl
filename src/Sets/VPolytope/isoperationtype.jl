@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:VPolytope}) = false
+function isoperationtype(::Type{<:VPolytope})
+    return false
+end

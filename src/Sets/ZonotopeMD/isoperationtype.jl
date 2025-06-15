@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:ZonotopeMD}) = false
+function isoperationtype(::Type{<:ZonotopeMD})
+    return false
+end

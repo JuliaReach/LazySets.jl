@@ -1,1 +1,3 @@
-isbounded(::Line) = false
+function isbounded(::Line)
+    return false
+end

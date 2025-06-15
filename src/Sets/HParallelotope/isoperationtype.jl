@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:HParallelotope}) = false
+function isoperationtype(::Type{<:HParallelotope})
+    return false
+end
