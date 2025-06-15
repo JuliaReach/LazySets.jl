@@ -206,10 +206,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # radius
     for res in (radius(X), radius(X, Inf), radius(X, 2))
-        @test res == N(1)
-        if N <: AbstractFloat
-            @test res isa N
-        end
+        @test res isa N && res == N(1)
     end
 
     # radius_hyperrectangle

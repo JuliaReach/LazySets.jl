@@ -15,10 +15,10 @@ using ReachabilityBase.Require: require
 @reexport import ..API: affine_map, an_element, center, complement,
                         constraints_list, convex_hull, diameter, dim,
                         exponential_map, extrema, high, ∈, isoperationtype,
-                        linear_map, low, norm, permute, project, rand, rectify,
-                        reflect, scale, ρ, σ, translate, vertices_list, volume,
-                        difference, distance, intersection, ≈, isdisjoint,
-                        isequivalent, ⊂, ⊆, minkowski_difference,
+                        linear_map, low, norm, permute, project, radius, rand,
+                        rectify, reflect, scale, ρ, σ, translate, vertices_list,
+                        volume, difference, distance, intersection, ≈,
+                        isdisjoint, isequivalent, ⊂, ⊆, minkowski_difference,
                         minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens,
                              radius_hyperrectangle, split
