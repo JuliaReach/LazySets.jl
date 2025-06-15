@@ -87,7 +87,7 @@ A `Hyperrectangle`, or an `EmptySet` if the difference is empty.
 function minkowski_difference(H1::AbstractHyperrectangle,
                               H2::AbstractHyperrectangle)
     n = dim(H1)
-    @assert n == dim(H2) "incompatible dimensions"
+    @assert n == dim(H2) "incompatible dimensions $n and $(dim(H2))"
 
     N = promote_type(eltype(H1), eltype(H2))
     r = Vector{N}(undef, n)
