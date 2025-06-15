@@ -50,7 +50,7 @@ end
 
 function _issubset_in_hyperrectangle(S, H, witness)
     n = dim(S)
-    @assert n == dim(H)
+    @assert n == dim(H) "incompatible set dimensions $n and $(dim(H))"
     N = promote_type(eltype(S), eltype(H))
 
     for i in 1:n
@@ -84,7 +84,7 @@ end
 """
 function ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
            witness::Bool=false)
-    @assert dim(H1) == dim(H2)
+    @assert dim(H1) == dim(H2) "incompatible set dimensions $(dim(H1)) and $(dim(H2))"
     N = promote_type(eltype(H1), eltype(H2))
 
     @inbounds for i in 1:dim(H1)
@@ -137,7 +137,7 @@ Since ``S`` is convex, ``P ⊆ S`` iff ``v ∈ S`` for all vertices ``v`` of ``P
 """
 function ⊆(P::AbstractPolytope, S::LazySet, witness::Bool=false;
            algorithm=nothing)
-    @assert dim(P) == dim(S)
+    @assert dim(P) == dim(S) "incompatible set dimensions $(dim(P)) and $(dim(S))"
     if !isconvextype(typeof(S))
         error("an inclusion check for the given combination of set types is " *
               "not available")
@@ -210,7 +210,7 @@ end
 # S ⊆ P where P = ⟨Cx ≤ d⟩  iff  y ≤ d where y is the upper corner of box(C*S).
 # See [WetzlingerKBA23; Proposition 7](@citet).
 function _issubset_in_polyhedron_high(S::LazySet, P::LazySet, witness::Bool=false)
-    @assert dim(S) == dim(P)
+    @assert dim(S) == dim(P) "incompatible set dimensions $(dim(S)) and $(dim(P))"
 
     C, d = tosimplehrep(P)
     x = high(C * S)
@@ -231,7 +231,7 @@ end
 # See [WetzlingerKBA23; Proposition 7](@citet).
 function _issubset_zonotope_in_polyhedron(Z::AbstractZonotope, P::LazySet,
                                           witness::Bool=false)
-    @assert dim(Z) == dim(P)
+    @assert dim(Z) == dim(P) "incompatible set dimensions $(dim(Z)) and $(dim(P))"
 
     # corner case: no generator
     if ngens(Z) == 0
