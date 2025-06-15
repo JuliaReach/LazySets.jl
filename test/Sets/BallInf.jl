@@ -87,6 +87,9 @@ for N in [Float64, Rational{Int}, Float32]
     # boundedness
     @test isbounded(b)
 
+    # isoperationtype
+    @test !isoperationtype(typeof(b))
+
     # ispolyhedral
     @test ispolyhedral(b)
 
