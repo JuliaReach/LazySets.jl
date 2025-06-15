@@ -291,9 +291,13 @@ for N in [Float64, Rational{Int}, Float32]
     @test convert(IntervalBox, H) == B
 
     # conversion to and from IntervalArithmetic's Interval type
-    I = IA.interval(0, 1)
+    I = IA.interval(N(0), N(1))
     H = convert(Hyperrectangle, I)
     @test convert(IA.Interval, H) == I
+    # conversion from Interval
+    I = Interval(I)
+    H = convert(Hyperrectangle, I)
+    @test H isa Hyperrectangle{N} && center(H) == radius_hyperrectangle(H) == N[1 // 2]
 
     # conversion from other hyperrectangular sets
     H = Hyperrectangle(N[1], N[1])
