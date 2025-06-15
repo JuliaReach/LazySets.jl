@@ -63,10 +63,16 @@ end
 
 for T in (:LazySet, :AbstractZonotope, :AbstractHyperrectangle)
     # Minkowski difference with singleton is a translation
-    @eval minkowski_difference(X::($T), S::AbstractSingleton) = translate(X, -element(S))
+    @eval function minkowski_difference(X::($T), S::AbstractSingleton)
+        @assert dim(X) == dim(S) "incompatible set dimensions $(dim(X)) and $(dim(S))"
+        return translate(X, -element(S))
+    end
 
     # Minkowski difference with ZeroSet is the identity
-    @eval minkowski_difference(X::($T), ::ZeroSet) = X
+    @eval function minkowski_difference(X::($T), Z::ZeroSet)
+        @assert dim(X) == dim(Z) "incompatible set dimensions $(dim(X)) and $(dim(Z))"
+        return X
+    end
 end
 
 """
