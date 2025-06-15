@@ -115,6 +115,19 @@ for N in [Float64, Rational{Int}, Float32]
     # projecting a point onto a line
     L = Line2D(N[1, -1], N(0))  # x = y
     @test project(N[1, 0], L) ≈ N[1 // 2, 1 // 2]
+
+    # isdisjoint
+    L = Line2D(N[1, -1], N(0))  # x = y
+    L2 = Line2D(N[1, 1], N(0))  # x = -y
+    for Y in (L, L2)
+        @test !isdisjoint(L, Y)
+        res, w = isdisjoint(L, Y, true)
+        @test !res && w isa Vector{N} && w ∈ L && w ∈ Y
+    end
+    Y = Line2D(N[1, -1], N(1))  # x = y + 1
+    @test isdisjoint(L, Y)
+    res, w = isdisjoint(L, Y, true)
+    @test res && w isa Vector{N} && isempty(w)
 end
 
 # tests that only work with Float64 and Float32
