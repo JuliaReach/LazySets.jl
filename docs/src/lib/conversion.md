@@ -13,7 +13,7 @@ CurrentModule = LazySets
 ```
 
 ```@docs
-convert(::Type{Interval}, ::Rectification{N, IN}) where {N, IN<:Interval}
+convert(::Type{Interval}, ::Rectification{N,<:Interval}) where {N}
 convert(::Type{Interval}, ::MinkowskiSum{N, IT, IT}) where {N, IT<:Interval}
 convert(::Type{Hyperrectangle}, ::CartesianProduct{N, HN1, HN2}) where {N, HN1<:AbstractHyperrectangle, HN2<:AbstractHyperrectangle}
 convert(::Type{Hyperrectangle}, ::CartesianProductArray{N, HN}) where {N, HN<:AbstractHyperrectangle}
