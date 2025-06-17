@@ -105,6 +105,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isempty
     @test isempty(E)
+    @test_broken isempty(E, true)  # TODO this should change
 
     # isoperation
     @test !isoperation(E)

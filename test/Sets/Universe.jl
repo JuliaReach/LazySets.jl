@@ -102,6 +102,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isempty
     @test !isempty(U)
+    res, w = isempty(U, true)
+    @test !res && w isa Vector{N} && w ∈ U
 
     # isoperation
     @test !isoperation(U)

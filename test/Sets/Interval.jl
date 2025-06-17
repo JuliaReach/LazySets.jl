@@ -152,6 +152,13 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isempty
     @test !isempty(X)
+    res, w = isempty(X, true)
+    @test !res && w ∈ X
+    if N == Float64
+        @test w isa Vector{N}
+    else
+        @test_broken w isa Vector{N}  # TODO this should change
+    end
 
     # isflat
     ztol = LazySets._ztol(N)  # default absolute zero tolerance
