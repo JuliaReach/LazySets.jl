@@ -175,8 +175,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test ispolyhedral(X)
 
     # isuniversal
+    @test !isuniversal(X)
     res, w = isuniversal(X, true)
-    @test !isuniversal(X) && !res && w isa Vector{N} && w ∉ X
+    @test !res && w isa Vector{N} && w ∉ X
 
     # low
     res = low(X)
