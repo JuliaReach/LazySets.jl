@@ -105,6 +105,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isempty
     @test isempty(E)
+    @test_broken isempty(E, true)  # TODO this should change
 
     # isoperation
     @test !isoperation(E)
@@ -116,8 +117,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test !ispolyhedral(E)  # TODO this should maybe change
 
     # isuniversal
+    @test !isuniversal(E)
     res, w = isuniversal(E, true)
-    @test !isuniversal(E) && !res && w isa Vector{N} && w ∉ E
+    @test !res && w isa Vector{N} && w ∉ E
 
     # low
     @test_throws ArgumentError low(E)

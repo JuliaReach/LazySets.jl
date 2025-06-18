@@ -152,6 +152,13 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isempty
     @test !isempty(X)
+    res, w = isempty(X, true)
+    @test !res && w ∈ X
+    if N == Float64
+        @test w isa Vector{N}
+    else
+        @test_broken w isa Vector{N}  # TODO this should change
+    end
 
     # isflat
     ztol = LazySets._ztol(N)  # default absolute zero tolerance
@@ -168,8 +175,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test ispolyhedral(X)
 
     # isuniversal
+    @test !isuniversal(X)
     res, w = isuniversal(X, true)
-    @test !isuniversal(X) && !res && w isa Vector{N} && w ∉ X
+    @test !res && w isa Vector{N} && w ∉ X
 
     # low
     res = low(X)

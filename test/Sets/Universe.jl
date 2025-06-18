@@ -102,6 +102,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isempty
     @test !isempty(U)
+    res, w = isempty(U, true)
+    @test !res && w isa Vector{N} && w ∈ U
 
     # isoperation
     @test !isoperation(U)
@@ -113,8 +115,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test ispolyhedral(U)
 
     # isuniversal
+    @test isuniversal(U)
     res, w = isuniversal(U, true)
-    @test isuniversal(U) && res && w isa Vector{N} && isempty(w)
+    @test res && w isa Vector{N} && isempty(w)
 
     # low
     @test low(U) == N[-Inf, -Inf]
