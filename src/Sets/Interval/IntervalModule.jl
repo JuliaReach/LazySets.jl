@@ -78,47 +78,47 @@ include("split.jl")
 include("convert.jl")
 
 """
-    min(x::Interval)
+    min(X::Interval)
 
 Return the lower component of an interval.
 
 ### Input
 
-- `x` -- interval
+- `X` -- interval
 
 ### Output
 
 The lower (`lo`) component of the interval (a number).
 """
-function min(x::Interval)
-    return x.dat.lo
+function min(X::Interval)
+    return X.dat.lo
 end
 
 """
-    max(x::Interval)
+    max(X::Interval)
 
 Return the higher or upper component of an interval.
 
 ### Input
 
-- `x` -- interval
+- `X` -- interval
 
 ### Output
 
 The higher (`hi`) component of the interval (a number).
 """
-function max(x::Interval)
-    return x.dat.hi
+function max(X::Interval)
+    return X.dat.hi
 end
 
 """
-    plot_recipe(x::Interval{N}, [ε]=zero(N)) where {N}
+    plot_recipe(X::Interval{N}, [ε]=zero(N)) where {N}
 
 Convert an interval to a pair `(x, y)` of points for plotting.
 
 ### Input
 
-- `x` -- interval
+- `X` -- interval
 - `ε` -- (optional, default: `0`) ignored, used for dispatch
 
 ### Output
@@ -129,8 +129,8 @@ A pair `(x, y)` of two points that can be plotted.
 
 We consider the interval as a line segment with y coordinate equal to zero.
 """
-function plot_recipe(x::Interval{N}, ε=zero(N)) where {N}
-    return [min(x), max(x)], zeros(N, 2)
+function plot_recipe(X::Interval{N}, ε=zero(N)) where {N}
+    return [min(X), max(X)], zeros(N, 2)
 end
 
 include("init.jl")
