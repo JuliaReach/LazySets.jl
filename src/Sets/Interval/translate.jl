@@ -1,15 +1,15 @@
 """
 # Extended help
 
-    translate(x::Interval, v::AbstractVector)
+    translate(X::Interval, v::AbstractVector)
 
 ### Notes
 
 An in-place version is not available because the `IntervalArithmetic.Interval`
 type is immutable.
 """
-function translate(x::Interval, v::AbstractVector)
-    @assert length(v) == dim(x) "cannot translate a $(dim(x))-dimensional " *
+function translate(X::Interval, v::AbstractVector)
+    @assert length(v) == dim(X) "cannot translate a $(dim(X))-dimensional " *
                                 "set by a $(length(v))-dimensional vector"
-    return Interval(x.dat + @inbounds v[1])
+    return Interval(X.dat + @inbounds v[1])
 end

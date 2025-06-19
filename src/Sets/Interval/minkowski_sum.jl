@@ -1,3 +1,3 @@
-function minkowski_sum(x::Interval, y::Interval)
-    return Interval(x.dat + y.dat)
+function minkowski_sum(X::Interval, Y::Interval)
+    return Interval(X.dat + Y.dat)
 end
