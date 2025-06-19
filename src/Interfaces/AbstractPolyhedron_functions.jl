@@ -460,16 +460,14 @@ function _affine_map_inverse_hrep(A::AbstractMatrix, P::LazySet,
                                   b::Union{AbstractVector,Nothing}=nothing)
     C_leq_d = constraints_list(P)
     constraints_res = _preallocate_constraints(C_leq_d)
-    has_undefs = false
-    @inbounds for (i, c_leq_di) in enumerate(C_leq_d)
+    i = 1
+    @inbounds for c_leq_di in C_leq_d
         cinv = vec(At_mul_B(c_leq_di.a, A))
         rhs = isnothing(b) ? c_leq_di.b : c_leq_di.b - first(At_mul_B(c_leq_di.a, b))
         if iszero(cinv)
+            # constraint is redundant or infeasible
             N = eltype(cinv)
-            if zero(N) <= rhs
-                # constraint is redundant
-                has_undefs = true
-            else
+            if rhs < zero(N)
                 # constraint is infeasible
                 # return constraints representing empty set
                 a1 = zeros(N, length(cinv))
@@ -480,12 +478,11 @@ function _affine_map_inverse_hrep(A::AbstractMatrix, P::LazySet,
             end
         else
             constraints_res[i] = HalfSpace(cinv, rhs)
+            i += 1
         end
     end
-    if has_undefs  # there were redundant constraints, so remove them
-        constraints_res = [constraints_res[i]
-                           for i in eachindex(constraints_res)
-                           if isassigned(constraints_res, i)]
+    if i <= length(constraints_res)  # there were redundant constraints, so shorten vector
+        resize!(constraints_res, i - 1)
     end
     return constraints_res
 end
