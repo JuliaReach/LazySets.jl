@@ -14,6 +14,9 @@ for N in [Float64, Rational{Int}, Float32]
     # H-rep
     # -----
 
+    # empty polytope (considered illegal)
+    p_universal = HPolytope{N}()
+
     # constructor from matrix and vector
     A = [N(1) N(2); N(-1) N(1)]
     b = [N(1), N(2)]
@@ -54,6 +57,8 @@ for N in [Float64, Rational{Int}, Float32]
     # isuniversal
     answer, w = isuniversal(p, true)
     @test !isuniversal(p) && !answer && w ∉ p
+    @test !isuniversal(p_universal)
+    @test_throws ArgumentError isuniversal(p_universal, true)
 
     # membership
     @test N[5 / 4, 7 / 4] ∈ p
