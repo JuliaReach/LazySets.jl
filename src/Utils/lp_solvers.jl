@@ -76,7 +76,7 @@ function isfeasible(A::AbstractMatrix, b::AbstractVector, witness::Bool=false;
     if is_lp_optimal(lp.status)
         return witness ? (true, lp.sol) : true
     elseif is_lp_infeasible(lp.status)
-        return witness ? (false, N[]) : false
+        return _witness_result_empty(witness, false, N)
     end
     return error("LP returned status $(lp.status) unexpectedly")
 end

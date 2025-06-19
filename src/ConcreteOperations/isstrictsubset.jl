@@ -23,7 +23,7 @@ function ⊂(X::LazySet, Y::LazySet, witness::Bool=false)
                 return (true, w)
             end
         else
-            return (res, N[])
+            return (false, N[])
         end
     end
     return (X ⊆ Y) && !(Y ⊆ X)

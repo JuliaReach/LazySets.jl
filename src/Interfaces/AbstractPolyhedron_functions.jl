@@ -42,8 +42,7 @@ constraint of `P`.
 function isuniversal(P::AbstractPolyhedron, witness::Bool=false)
     c = constraints(P)
     if isempty(c)
-        N = eltype(P)
-        return witness ? (true, N[]) : true
+        return _witness_result_empty(witness, true, eltype(P))
     else
         return witness ? isuniversal(first(c), true) : false
     end
