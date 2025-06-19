@@ -59,7 +59,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isuniversal(p)
     res, w = isuniversal(p, true)
     @test !res && w ∉ p
-    @test isuniversal(p_univ) && isuniversal(p_univ, true) == (true, N[])
+    @test isuniversal(p_univ)
+    res, w = isuniversal(p_univ, true)
+    @test res && w == N[]
 
     # membership
     @test N[5 / 4, 7 / 4] ∈ p && N[4, 1] ∉ p

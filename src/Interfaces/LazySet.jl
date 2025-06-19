@@ -1538,7 +1538,7 @@ function _isempty_polyhedron_polyhedra(P::LazySet{N}, witness::Bool=false;
     end
 
     if result
-        return witness ? (true, N[]) : true
+        return _witness_result_empty(witness, true, N)
     elseif witness
         error("witness production is not supported yet")
     else
