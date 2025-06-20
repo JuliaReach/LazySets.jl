@@ -60,7 +60,15 @@ concrete_function(::Type{<:MinkowskiSum}) = minkowski_sum
 
 isconvextype(::Type{MinkowskiSum{N,S1,S2}}) where {N,S1,S2} = isconvextype(S1) && isconvextype(S2)
 
-ispolyhedral(ms::MinkowskiSum) = ispolyhedral(ms.X) && ispolyhedral(ms.Y)
+function ispolyhedraltype(::Type{<:MinkowskiSum{N,S1,S2}}) where {N,S1,S2}
+    return ispolyhedraltype(S1) && ispolyhedraltype(S2)
+end
+
+function ispolyhedral(ms::MinkowskiSum)
+    ispolyhedraltype(typeof(ms)) && return true
+
+    return ispolyhedral(ms.X) && ispolyhedral(ms.Y)
+end
 
 # ZeroSet is the neutral element for MinkowskiSum
 @neutral(MinkowskiSum, ZeroSet)
