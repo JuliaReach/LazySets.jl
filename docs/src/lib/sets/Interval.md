@@ -201,6 +201,7 @@ Inherited from [`LazySet`](@ref) but does not apply:
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
+* [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{AbstractPolyhedron}))
 
 Inherited from [`ConvexSet`](@ref):
 * [`isconvextype`](@ref isconvextype(::Type{ConvexSet}))

@@ -132,6 +132,7 @@ Undocumented implementations:
 * [`isconvextype`](@ref isconvextype(::Type{<:LazySet}))
 * [`isoperationtype`](@ref isoperationtype(::Type{<:LazySet}))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
+* [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{LazySet}))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
