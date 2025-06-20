@@ -77,6 +77,7 @@ Undocumented implementations:
 * [`high`](@ref high(::LazySet))
 * [`high`](@ref high(::LazySet, ::Int))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
+* [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{LazySet}))
 * [`low`](@ref low(::LazySet))
 * [`low`](@ref low(::LazySet, ::Int))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))

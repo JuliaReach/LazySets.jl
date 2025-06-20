@@ -1,7 +1,7 @@
 """
     isoperationtype(T::Type{<:LazySet})
 
-Check whether a set type is a (lazy) set operation.
+Check whether a set type only represents (lazy) set operations.
 
 ### Input
 
@@ -9,7 +9,7 @@ Check whether a set type is a (lazy) set operation.
 
 ### Output
 
-`true` iff the set type represents a set operation.
+`true` iff the set type only represents set operations.
 
 ### Notes
 
