@@ -444,8 +444,7 @@ end
 
 ### Algorithm
 
-The default implementation returns `false`. All set types representing
-polyhedral sets should override this behavior.
+The default implementation returns `false`.
 """
 function ispolyhedraltype(::Type{<:LazySet})
     return false
@@ -458,8 +457,7 @@ end
 
 ### Algorithm
 
-The default implementation returns `false`. All set types that can determine the
-polyhedral property should override this behavior.
+The default implementation checks `ispolyhedraltype(typeof(X))`.
 """
 function ispolyhedral(X::LazySet)
     return ispolyhedraltype(typeof(X))

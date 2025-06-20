@@ -4,8 +4,7 @@ export constrained_dimensions,
        addconstraint!,
        ishyperplanar
 
-
-ispolyhedraltype(::AbstractPolyhedron) = true
+ispolyhedraltype(::Type{<:AbstractPolyhedron}) = true
 
 """
 # Extended help

@@ -128,7 +128,15 @@ concrete_function(::Type{<:Intersection}) = intersection
 
 isconvextype(::Type{Intersection{N,S1,S2}}) where {N,S1,S2} = isconvextype(S1) && isconvextype(S2)
 
-ispolyhedral(cap::Intersection) = ispolyhedral(cap.X) && ispolyhedral(cap.Y)
+function ispolyhedraltype(::Type{<:Intersection{N,S1,S2}}) where {N,S1,S2}
+    return ispolyhedraltype(S1) && ispolyhedraltype(S2)
+end
+
+function ispolyhedral(cap::Intersection)
+    ispolyhedraltype(typeof(cap)) && return true
+
+    return ispolyhedral(cap.X) && ispolyhedral(cap.Y)
+end
 
 # Universe is the neutral element for Intersection
 @neutral(Intersection, Universe)
