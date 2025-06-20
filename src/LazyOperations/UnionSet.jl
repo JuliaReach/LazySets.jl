@@ -32,7 +32,9 @@ isoperationtype(::Type{<:UnionSet}) = true
 
 isconvextype(::Type{<:UnionSet}) = false
 
-ispolyhedral(U::UnionSet) = ispolyhedral(U.X) && ispolyhedral(U.Y)
+function ispolyhedral(::UnionSet)
+    throw(ArgumentError("this operation is not implemented"))
+end
 
 # EmptySet is the neutral element for UnionSet
 @neutral(UnionSet, EmptySet)
