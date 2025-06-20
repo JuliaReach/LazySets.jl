@@ -1486,7 +1486,7 @@ function tohrep(P::LazySet)
                             "of non-polyhedral sets"
 
     T = isboundedtype(typeof(P)) ? HPolytope : HPolyhedron
-    return HPolyhedron(constraints_list(P))
+    return T(constraints_list(P))
 end
 
 """
