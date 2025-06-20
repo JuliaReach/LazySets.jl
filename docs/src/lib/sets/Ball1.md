@@ -157,6 +157,7 @@ Inherited from [`ConvexSet`](@ref):
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
+* [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{AbstractPolyhedron}))
 * [`intersection`](@ref intersection(::AbstractPolyhedron, ::AbstractPolyhedron))
 * [`isdisjoint`](@ref isdisjoint(::AbstractPolyhedron, ::AbstractPolyhedron))
 * [`⊆`](@ref ⊆(::AbstractPolyhedron, ::AbstractPolyhedron))
