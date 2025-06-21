@@ -5,6 +5,7 @@ using Reexport, Requires
 using ..LazySets: LazySet, AbstractPolyhedron, default_polyhedra_backend,
                   _witness_result_empty
 using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Commutative: @commutative
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator
 using ReachabilityBase.Require: require
