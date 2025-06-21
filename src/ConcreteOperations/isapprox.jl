@@ -35,3 +35,17 @@ function ≈(X::LazySet, Y::LazySet)
 
     return true
 end
+
+# approximate equality for vectors of sets
+function ReachabilityBase.Comparison._isapprox(Xs::AbstractVector{<:LazySet},
+                                               Ys::AbstractVector{<:LazySet})
+    if length(Xs) != length(Ys)
+        return false
+    end
+    for (Xi, Yi) in zip(Xs, Ys)
+        if !(Xi ≈ Yi)
+            return false
+        end
+    end
+    return true
+end

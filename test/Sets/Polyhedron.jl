@@ -46,6 +46,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # support vector of polyhedron with no constraints
     @test_throws DimensionMismatch σ(N[1], p_univ)
 
+    # isapprox
+    @test p ≈ p && !(p ≈ p_univ) && !(p_univ ≈ p)
+
     # ispolyhedral
     @test ispolyhedral(p)
 

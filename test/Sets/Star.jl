@@ -7,19 +7,24 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
 end
 
 for N in @tN([Float64, Float32, Rational{Int}])
+    B = BallInf(N[0, 0], N(1))
+
     # constructor with basis matrix
-    S = Star(N[3, 3], N[1 0; 0 1], BallInf(N[0, 0], N(1)))
+    S = Star(N[3, 3], N[1 0; 0 1], B)
 
     # constructor vector-of-vectors basis
-    W = Star(N[3, 3], [N[1, 0], N[0, 1]], BallInf(N[0, 0], N(1)))
+    W = Star(N[3, 3], [N[1, 0], N[0, 1]], B)
 
-    @test S ≈ W
+    # isapprox
+    BP = convert(HPolygon, B)
+    S2 = Star(N[3, 3], N[1 0; 0 1], BP)
+    @test S ≈ S && S ≈ W && S2 ≈ S2 && !(S ≈ S2)
 
     # getter functions
     @test center(S) == N[3, 3]
     @test center(S, 1) == center(S, 2) == N(3)
     @test basis(S) == N[1 0; 0 1]
-    @test predicate(S) == BallInf(N[0, 0], N(1))
+    @test predicate(S) == B
     @test dim(S) == 2
 
     # support function
@@ -56,7 +61,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isequivalent(S, P)
 
     # check that we can intersect polyhedra that are axis-aligned
-    B = BallInf(N[0, 0], N(1))
     S = Star(N[0, 0], N[1 0; 0 1], B)
     I = intersection(S, H)
     @test isequivalent(I, intersection(B, H))
