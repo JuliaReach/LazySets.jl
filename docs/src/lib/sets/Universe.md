@@ -80,6 +80,7 @@ Undocumented implementations:
 * [`norm`](@ref norm(::LazySet, ::Real=Inf))
 * [`radius`](@ref radius(::LazySet, ::Real=Inf))
 * [`reflect`](@ref reflect(::LazySet))
+* [`distance`](@ref distance(::AbstractVector, ::LazySet))
 * [`∈`](@ref ∈(::AbstractVector, ::LazySet))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
@@ -90,6 +91,7 @@ Undocumented implementations:
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
+* [`distance`](@ref distance(::LazySet, ::LazySet; ::Real=2.0))
 * [`intersection`](@ref intersection(::LazySet, ::LazySet))
 
 ```@meta
