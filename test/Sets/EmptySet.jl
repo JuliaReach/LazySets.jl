@@ -194,14 +194,6 @@ for N in [Float64, Float32, Rational{Int}]
         @test res isa N && res == N(Inf)
     end
 
-    # distance (between two sets)
-    @test_throws AssertionError distance(E, E3)
-    @test_throws AssertionError distance(E3, E)
-    for v in (distance(E, E), distance(B1, E), distance(E, B1), distance(U, E), distance(E, U),
-              distance(E, B), distance(B, E), distance(E, Z), distance(Z, E))
-        @test v isa N && v == N(Inf)
-    end
-
     # exponential_map
     @test_throws AssertionError exponential_map(ones(N, 2, 3), E)
     @test_throws AssertionError exponential_map(ones(N, 3, 2), E)
@@ -312,11 +304,13 @@ for N in [Float64, Float32, Rational{Int}]
     U2 = difference(U, E)
     @test U2 isa Universe{N} && U2 == U
 
-    # distance (between sets)
+    # distance (between two sets)
     @test_throws AssertionError distance(E, E3)
     @test_throws AssertionError distance(E3, E)
-    res = distance(E, E)
-    @test res isa N && res == N(Inf)
+    for v in (distance(E, E), distance(B1, E), distance(E, B1), distance(U, E), distance(E, U),
+              distance(E, B), distance(B, E), distance(E, Z), distance(Z, E))
+        @test v isa N && v == N(Inf)
+    end
 
     # exact_sum
     @test_throws AssertionError exact_sum(E, E3)
