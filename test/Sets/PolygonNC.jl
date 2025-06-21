@@ -1,10 +1,15 @@
 for N in [Float64, Rational{Int}, Float32]
     # constructor from empty vertex list
-    P = Polygon{N}()
-    @test P isa Polygon{N,Vector{N}} && isempty(P.vertices)
+    P_empty = Polygon{N}()
+    @test P_empty isa Polygon{N,Vector{N}} && isempty(P_empty.vertices)
 
     # constructor from nonempty vertex list
     P = Polygon([N[0, 0], N[0, 2], N[2, 2], N[2, 0], N[1, 1]])
+
+    # an_element
+    @test_throws AssertionError an_element(P_empty)
+    x = an_element(P)
+    @test x isa Vector{N} && x ∈ P
 
     # dim
     @test dim(P) == 2
@@ -23,7 +28,7 @@ for N in [Float64, Rational{Int}, Float32]
 
     # isempty
     @test !isempty(P)
-    @test isempty(Polygon())
+    @test isempty(P_empty)
 
     # convex hull
     @test convex_hull(P) == VPolygon([N[0, 0], N[2, 0], N[2, 2], N[0, 2]])

@@ -6,7 +6,7 @@ using ..LazySets: LazySet, _plot_recipe_2d_vlist
 using ReachabilityBase.Comparison: _leq, _geq, _isapprox
 using ReachabilityBase.Require: require
 
-@reexport import ..API: convex_hull, dim, isconvextype, isbounded,
+@reexport import ..API: an_element, convex_hull, dim, isconvextype, isbounded,
                         isboundedtype, isempty, isoperationtype, isuniversal, ∈,
                         ρ, σ
 import ..LazySets: plot_recipe
@@ -16,6 +16,7 @@ export Polygon
 
 include("Polygon.jl")
 
+include("an_element.jl")
 include("convex_hull.jl")
 include("dim.jl")
 include("isconvextype.jl")
