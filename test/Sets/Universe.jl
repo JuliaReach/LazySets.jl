@@ -352,8 +352,8 @@ for N in [Float64, Float32, Rational{Int}]
         @test res && w isa Vector{N} && isempty(w)
     end
     @test !isdisjoint(U, B) && !isdisjoint(B, U) && !isdisjoint(U, Pnc) && !isdisjoint(Pnc, U)
-    # TODO add `isdisjoint(U, Pnc, true), isdisjoint(Pnc, U, true)` below once witness production is supported by Polygon
-    for (res, w) in (isdisjoint(U, B, true), isdisjoint(B, U, true))
+    for (res, w) in (isdisjoint(U, B, true), isdisjoint(B, U, true), isdisjoint(U, Pnc, true),
+                     isdisjoint(Pnc, U, true))
         @test !res && w isa Vector{N} && w ∈ B && w ∈ U
     end
 
