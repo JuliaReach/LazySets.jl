@@ -105,7 +105,8 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isempty
     @test isempty(E)
-    @test_broken isempty(E, true)  # TODO this should change
+    res, w = isempty(E, true)
+    @test res && w isa Vector{N} && isempty(w)
 
     # isoperation
     @test !isoperation(E)
