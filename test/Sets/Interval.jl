@@ -608,7 +608,8 @@ for N in [Float64, Float32]
     @test_throws AssertionError rand(Interval; N=N, dim=2)
 
     # rationalize
-    @test_throws MethodError rationalize(X)  # TODO is this possible?
+    Y = rationalize(X)
+    @test Y isa Interval{Rational{Int64}} && Y == Interval(N(0 // 1), N(2 // 1))
 
     # exponential_map
     Y = exponential_map(ones(N, 1, 1), X)
