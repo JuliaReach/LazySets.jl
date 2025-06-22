@@ -185,13 +185,10 @@ for N in [Float64, Float32, Rational{Int}]
     # affine_map
     @test_throws AssertionError affine_map(ones(N, 2, 3), U, N[1, 1])
     @test_throws AssertionError affine_map(ones(N, 2, 2), U, N[1])
-    if test_suite_polyhedra  # TODO this should work, even without Polyhedra
-        @test_broken affine_map(ones(N, 2, 2), U, N[1, 1])
-        # U2 = affine_map(ones(N, 2, 2), U, N[1, 1])
-        # @test isidentical(U, U2)
-        # U2 = affine_map(ones(N, 3, 2), U, N[1, 1, 3])
-        # @test isidentical(U3, U2)
-    end
+    X = affine_map(N[1 2; 0 0], U, N[1, 1])
+    @test X isa LazySet{N} && isequivalent(X, Hyperplane(N[0, 1], N(1)))
+    U2 = affine_map(ones(N, 3, 2), U, N[1, 1, 3])
+    @test isidentical(U3, U2)
 
     # exponential_map
     @test_throws AssertionError exponential_map(ones(N, 2, 3), U)
@@ -214,15 +211,12 @@ for N in [Float64, Float32, Rational{Int}]
 
     # linear_map
     @test_throws AssertionError linear_map(ones(N, 2, 3), U)
-    @test_broken linear_map(ones(N, 2, 2), U)  # TODO this should work, even without Polyhedra
-    # U2 = linear_map(ones(N, 2, 2), U)
-    # @test_broken isidentical(U, U2)
-    if test_suite_polyhedra
-        @test_broken linear_map(ones(N, 3, 2), U)
-        # U2 = linear_map(ones(N, 3, 2), U)
-        # @test U2 isa HPolyhedron{N}  # TODO this should change
-        # @test_broken isidentical(U3, U2)
-    end
+    X = linear_map(N[1 2; 0 0], U)
+    @test X isa LazySet{N} && isequivalent(X, Hyperplane(N[0, 1], N(0)))
+    X = linear_map(zeros(N, 3, 2), U)
+    @test X isa LazySet{N} && isequivalent(X, ZeroSet{N}(3))
+    U2 = linear_map(ones(N, 3, 2), U)
+    @test isidentical(U3, U2)
 
     # linear_map_inverse
     U2 = LazySets.linear_map_inverse(ones(N, 2, 3), U)
@@ -446,5 +440,5 @@ for N in [Float64, Float32]
 
     # exponential_map
     U2 = exponential_map(ones(N, 2, 2), U)
-    @test_broken isidentical(U, U2)  # TODO this should change
+    @test isidentical(U, U2)
 end
