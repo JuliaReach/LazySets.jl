@@ -20,7 +20,7 @@ using ReachabilityBase.Require: require
                         intersection, ≈, isdisjoint, ⊆, linear_combination,
                         minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, constrained_dimensions,
-                             rationalize, triangulate
+                             linear_map_inverse, rationalize, triangulate
 import ..LazySets: plot_recipe
 import Base: convert, copy
 @reexport using ..API
@@ -55,6 +55,7 @@ include("exponential_map.jl")
 include("in.jl")
 include("is_interior_point.jl")
 include("linear_map.jl")
+include("linear_map_inverse.jl")
 include("permute.jl")
 include("project.jl")
 include("scale.jl")
