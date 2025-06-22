@@ -20,18 +20,6 @@ convert(::Type{VPolygon}, ::LazySet)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-an_element(::LazySet)
-```
-```@meta
-CurrentModule = LazySets.VPolygonModule
-```
-```@docs
-an_element(::VPolygon)
-```
-```@meta
-CurrentModule = LazySets.API
-```
-```@docs; canonical=false
 area(::LazySet)
 ```
 ```@meta
@@ -101,6 +89,7 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 
+* [`an_element`](@ref an_element(::LazySet))
 * [`constraints_list`](@ref constraints_list(::LazySet))
 * [`extrema`](@ref extrema(::LazySet))
 * [`extrema`](@ref extrema(::LazySet, ::Int))
