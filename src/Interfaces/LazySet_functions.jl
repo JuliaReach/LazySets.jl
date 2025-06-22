@@ -1536,7 +1536,7 @@ function _affine_map_inverse(A, P, b=nothing)
     constraints = _affine_map_inverse_hrep(A, P, b)
     if isempty(constraints)
         return Universe{eltype(P)}(size(A, 2))
-    elseif length(constraints) == 2 && isempty(constraints)
+    elseif length(constraints) == 2 && !isfeasible(constraints)
         return EmptySet{eltype(P)}(size(A, 2))
     end
     return HPolyhedron(constraints)
