@@ -342,6 +342,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError LazySets.linear_map_inverse(ones(N, 2, 2), X)
     Y = LazySets.linear_map_inverse(ones(N, 1, 1), X)
     @test Y isa LazySet{N} && isequivalent(Y, X)
+    Y = LazySets.linear_map_inverse(ones(N, 1, 2), X)
+    Z = HPolyhedron([HalfSpace(N[1, 1], N(2)), HalfSpace(N[-1, -1], N(0))])
+    @test Y isa LazySet{N} && isequivalent(Y, Z)
 
     # permute
     @test_throws AssertionError permute(X, [-1])
