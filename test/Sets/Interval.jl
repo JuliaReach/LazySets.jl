@@ -335,8 +335,17 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError linear_map(ones(N, 2, 2), X)
     Y = linear_map(2 * ones(N, 1, 1), X)
     @test Y isa Interval{N} && isequivalent(Y, Interval(N(0), N(4)))
+    Y = linear_map(zeros(N, 1, 1), X)
+    @test Y isa Interval{N}
+    if vIA < v"0.21"
+        @test isequivalent(Y, Interval(N(0), N(0)))
+    else
+        @test_broken isequivalent(Y, Interval(N(0), N(0)))  # bug in IntervalArithmetic: 0 * I == I
+    end
     Y = linear_map(ones(N, 2, 1), X)
     @test Y isa LazySet{N} && isequivalent(Y, LineSegment(N[0, 0], N[2, 2]))
+    Y = linear_map(zeros(N, 2, 1), X)
+    @test Y isa LazySet{N} && isequivalent(Y, ZeroSet{N}(2))
 
     # linear_map_inverse
     @test_throws AssertionError LazySets.linear_map_inverse(ones(N, 2, 2), X)
