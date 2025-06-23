@@ -259,9 +259,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # triangulate_faces
-    if test_suite_polyhedra
-        @test_throws ArgumentError triangulate_faces(X)
-    end
+    @test_throws ArgumentError triangulate_faces(X)
 
     # vertices_list
     res = vertices_list(X)
