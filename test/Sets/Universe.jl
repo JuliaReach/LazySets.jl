@@ -174,9 +174,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError triangulate(U)
 
     # triangulate_faces
-    @static if isdefined(@__MODULE__, :Polyhedra)  # TODO this should work without Polyhedra
-        @test_throws AssertionError triangulate_faces(U3)
-    end
+    @test_throws ArgumentError triangulate_faces(U)
+    @test_throws AssertionError triangulate_faces(U3)
 
     # vertices_list
     @test_throws ArgumentError vertices_list(U)
