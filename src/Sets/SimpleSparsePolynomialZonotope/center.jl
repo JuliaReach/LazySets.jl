@@ -1,1 +1,1 @@
-center(P::SSPZ) = P.c
+center(P::SimpleSparsePolynomialZonotope) = P.c

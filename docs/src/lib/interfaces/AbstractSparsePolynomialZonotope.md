@@ -25,12 +25,29 @@ This interface defines the following functions:
 
 ```@docs
 nparams(::AbstractSparsePolynomialZonotope)
+ρ(::AbstractVector, ::SparsePolynomialZonotope)
 ```
 
 Undocumented implementations:
 
+```@meta
+CurrentModule = LazySets.API
+```
+* [`extrema`](@ref extrema(::LazySet))
+```@meta
+CurrentModule = LazySets
+```
 * [`ngens_dep`](@ref ngens_dep(::AbstractPolynomialZonotope))
 * [`ngens_indep`](@ref ngens_indep(::AbstractPolynomialZonotope))
+```@meta
+CurrentModule = LazySets.API
+```
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
+
+```@meta
+CurrentModule = LazySets
+```
 
 Inherited from [`LazySet`](@ref):
 * [`an_element`](@ref an_element(::LazySet))
@@ -67,12 +84,9 @@ Inherited from [`LazySet`](@ref):
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
-* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`scale`](@ref scale(::Real, ::LazySet))
-* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
-* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))

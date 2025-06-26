@@ -335,11 +335,28 @@ end
 @commutative minkowski_sum(::ZeroSet, X::LazySet) = X
 
 # See [Kochdumper21a; Proposition 3.1.19](@citet).
-@commutative function minkowski_sum(PZ::SparsePolynomialZonotope, Z::AbstractZonotope)
+@commutative function minkowski_sum(PZ::AbstractSparsePolynomialZonotope, Z::AbstractZonotope)
     c = center(PZ) + center(Z)
     G = genmat_dep(PZ)
     GI = hcat(genmat_indep(PZ), genmat(Z))
     E = expmat(PZ)
+    return SparsePolynomialZonotope(c, G, GI, E)
+end
+
+"""
+# Extended help
+
+    minkowski_sum(P1::AbstractSparsePolynomialZonotope, P2::AbstractSparsePolynomialZonotope)
+
+### Algorithm
+
+See [Kochdumper21a; Proposition 3.1.19](@citet).
+"""
+function minkowski_sum(P1::AbstractSparsePolynomialZonotope, P2::AbstractSparsePolynomialZonotope)
+    c = center(P1) + center(P2)
+    G = hcat(genmat_dep(P1), genmat_dep(P2))
+    GI = hcat(genmat_indep(P1), genmat_indep(P2))
+    E = cat(expmat(P1), expmat(P2); dims=(1, 2))
     return SparsePolynomialZonotope(c, G, GI, E)
 end
 
@@ -390,7 +407,7 @@ end
 
 for T in (:AbstractPolyhedron, :AbstractPolytope, :AbstractZonotope,
           :AbstractHyperrectangle, :AbstractSingleton, :DensePolynomialZonotope,
-          :SparsePolynomialZonotope)
+          :AbstractSparsePolynomialZonotope)
     @eval @commutative function minkowski_sum(::ZeroSet, X::$T)
         return X
     end
