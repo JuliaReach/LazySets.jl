@@ -153,10 +153,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(U3, U2)
 
     # rectify
-    @test_broken rectify(U)  # TODO see #3687
-    # P = rectify(U)
-    # Q = HPolyhedron([HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
-    # @test P isa HPolyhedron{N} && isequivalent(P, Q)
+    P = rectify(U)
+    Q = HPolyhedron([HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
+    @test P isa HPolyhedron{N} && isequivalent(P, Q)
 
     # reflect
     @test reflect(U) == U
