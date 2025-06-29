@@ -66,6 +66,7 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 
+* [`area`](@ref area(::LazySet))
 * [`complement`](@ref complement(::LazySet))
 * [`constraints_list`](@ref constraints_list(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
@@ -97,7 +98,6 @@ CurrentModule = LazySets
 ```
 
 Inherited from [`LazySet`](@ref):
-* [`area`](@ref area(::LazySet))
 * [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
