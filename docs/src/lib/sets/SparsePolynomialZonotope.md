@@ -104,7 +104,6 @@ Inherited from [`LazySet`](@ref):
 * [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
-* [`convex_hull`](@ref convex_hull(::LazySet))
 * `copy(::Type{LazySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
@@ -136,24 +135,25 @@ Inherited from [`LazySet`](@ref):
 * [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
-* [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 * [`⊆`](@ref ⊆(::LazySet, ::LazySet))
-* [`linear_combination`](@ref linear_combination(::LazySet, ::LazySet))
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`center`](@ref center(::AbstractPolynomialZonotope, ::Int))
+* [`convex_hull`](@ref convex_hull(::AbstractPolynomialZonotope))
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolynomialZonotope}))
 * [`isempty`](@ref isempty(::AbstractPolynomialZonotope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolynomialZonotope))
 * [`ngens`](@ref ngens(::AbstractPolynomialZonotope))
 * [`order`](@ref order(::AbstractPolynomialZonotope))
+* [`convex_hull`](@ref convex_hull(::AbstractPolynomialZonotope, ::AbstractPolynomialZonotope))
+* [`linear_combination`](@ref linear_combination(::AbstractPolynomialZonotope, ::AbstractPolynomialZonotope))
 
 Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`ngens_dep`](@ref ngens_dep(::AbstractSparsePolynomialZonotope))
