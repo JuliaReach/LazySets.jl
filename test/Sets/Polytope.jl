@@ -48,6 +48,9 @@ for N in [Float64, Rational{Int}, Float32]
     p2 = HPolytope{N}()
     @test isbounded(p2) && !isbounded(p2, false) && isboundedtype(typeof(p2))
 
+    # isapprox
+    @test p ≈ p && !(p ≈ p2) && !(p2 ≈ p)
+
     # ispolyhedral
     @test ispolyhedral(p)
 
