@@ -15,5 +15,7 @@ Check whether a set is polyhedral.
 
 The answer is conservative, i.e., may sometimes be `false` even if the set is
 polyhedral.
+
+See also [`ispolyhedraltype(::Type{<:LazySet})`](@ref).
 """
 function ispolyhedral(::LazySet) end
