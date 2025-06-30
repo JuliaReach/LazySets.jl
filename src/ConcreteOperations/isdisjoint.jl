@@ -613,6 +613,53 @@ end
     end
 end
 
+"""
+# Extended help
+
+    isdisjoint(H::Hyperrectangle, E::Ellipsoid)
+
+### Algorithm
+
+The sets are disjoint if the ellipse center lies outside the Minkowski sum 
+(rectangle expanded by the ellipsoid). Otherwise, we check one corner using 
+a quadratic form derived from the ellipsoids support function.
+
+### Notes
+It works only for 2D axis-aligned rectangles and ellipsoids.
+    
+### Reference
+David Eberly, “Distance Between a Point and an Ellipse, an Ellipsoid, or a Hyperellipsoid”,
+Geometric Tools, 2015. https://www.geometrictools.com/Documentation/DistancePointEllipseEllipsoid.pdf
+"""
+
+@commutative function isdisjoint(H::Hyperrectangle, E::Ellipsoid)
+    @assert dim(H) == dim(E) == 2 "$H and $E must both have 2 dimensions."
+
+    # center to the origin
+    H_trans = translate(H, -H.center)
+    E_trans = translate(E, -H.center)
+    K = E_trans.center 
+    
+    bbox = overapproximate(H_trans ⊕ E_trans, Hyperrectangle)
+    if any(abs.(K) .> bbox.radius)
+        return true
+    end
+
+    # find the rectangle corner corresponding to K.
+    s = sign.(K)
+    P = s .* H_trans.radius
+    Δ = K - P
+
+    # support vector on the boundary of E_trans in direction Δ.
+    v = σ(Δ, E_trans)
+    if any(s .* v .<= 0)
+        return false
+    end
+
+    # check the ellipse condition
+    return (ρ(Δ, E_trans))^2 ≤ 1
+end
+
 # ============== #
 # disambiguation #
 # ============== #
