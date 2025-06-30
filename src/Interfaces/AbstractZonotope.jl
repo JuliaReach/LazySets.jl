@@ -305,8 +305,8 @@ A `Zonotope`.
 
 We apply the linear map to the center and the generators.
 
-If the map has outpu dimension 1, a specialized algorithm ensures that the
-resulting zonotope only has a single generator.
+If the map has output dimension 1, a specialized algorithm ensures that the
+resulting zonotope only has a single generator (or none if the map is zero).
 """
 function linear_map(M::AbstractMatrix, Z::AbstractZonotope)
     @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
@@ -327,7 +327,8 @@ function _linear_map_zonotope_1D(M::AbstractMatrix, Z::LazySet)
     @inbounds for g in generators(Z)
         gi += abs(sum(M[1, i] * g[i] for i in eachindex(g)))
     end
-    return Zonotope(c, hcat(gi))
+    G = iszero(gi) ? Matrix{N}(undef, 1, 0) : hcat(gi)
+    return Zonotope(c, G)
 end
 
 function _linear_map_zonotope_nD(M::AbstractMatrix, Z::LazySet)
