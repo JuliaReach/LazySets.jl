@@ -9,13 +9,13 @@ using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator
 using ReachabilityBase.Require: require
 
-@reexport import ..API: an_element, complement, constraints, constraints_list,
-                        diameter, dim, isbounded, isboundedtype, isempty,
-                        isoperationtype, isuniversal, norm, radius, rand,
-                        reflect, volume, ∈, permute, project, scale, scale!, ρ,
-                        σ, translate, translate!, cartesian_product,
-                        convex_hull, difference, distance, intersection,
-                        isdisjoint, ⊆, linear_combination,
+@reexport import ..API: an_element, area, complement, constraints,
+                        constraints_list, diameter, dim, isbounded,
+                        isboundedtype, isempty, isoperationtype, isuniversal,
+                        norm, radius, rand, reflect, volume, ∈, permute,
+                        project, scale, scale!, ρ, σ, translate, translate!,
+                        cartesian_product, convex_hull, difference, distance,
+                        intersection, isdisjoint, ⊆, linear_combination,
                         minkowski_difference, minkowski_sum
 @reexport import ..LazySets: constrained_dimensions, linear_map_inverse,
                              rationalize, tosimplehrep, triangulate
@@ -27,6 +27,7 @@ export Universe
 include("Universe.jl")
 
 include("an_element.jl")
+include("area.jl")
 include("complement.jl")
 include("constraints.jl")
 include("constraints_list.jl")
