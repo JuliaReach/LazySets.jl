@@ -5,6 +5,7 @@ using Reexport, Requires
 using ..LazySets: LazySet, AbstractPolyhedron, default_polyhedra_backend,
                   _witness_result_empty
 using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Arrays: SingleEntryVector
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator
 using ReachabilityBase.Require: require
@@ -12,10 +13,10 @@ using ReachabilityBase.Require: require
 @reexport import ..API: an_element, complement, constraints, constraints_list,
                         diameter, dim, isbounded, isboundedtype, isempty,
                         isoperationtype, isuniversal, norm, radius, rand,
-                        reflect, volume, ∈, permute, project, scale, scale!, ρ,
-                        σ, translate, translate!, cartesian_product,
-                        convex_hull, difference, distance, intersection,
-                        isdisjoint, ⊆, linear_combination,
+                        reflect, volume, ∈, linear_map, permute, project,
+                        scale, scale!, ρ, σ, translate, translate!,
+                        cartesian_product, convex_hull, difference, distance,
+                        intersection, isdisjoint, ⊆, linear_combination,
                         minkowski_difference, minkowski_sum
 @reexport import ..LazySets: constrained_dimensions, linear_map_inverse,
                              rationalize, tosimplehrep, triangulate
@@ -46,6 +47,7 @@ include("rationalize.jl")
 include("reflect.jl")
 include("volume.jl")
 include("in.jl")
+include("linear_map.jl")
 include("permute.jl")
 include("project.jl")
 include("scale.jl")
