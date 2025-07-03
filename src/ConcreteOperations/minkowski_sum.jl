@@ -335,7 +335,7 @@ end
 @commutative minkowski_sum(::ZeroSet, X::LazySet) = X
 
 # See [Kochdumper21a; Proposition 3.1.19](@citet).
-@commutative function minkowski_sum(PZ::SparsePolynomialZonotope, Z::AbstractZonotope)
+@commutative function minkowski_sum(PZ::AbstractSparsePolynomialZonotope, Z::AbstractZonotope)
     c = center(PZ) + center(Z)
     G = genmat_dep(PZ)
     GI = hcat(genmat_indep(PZ), genmat(Z))

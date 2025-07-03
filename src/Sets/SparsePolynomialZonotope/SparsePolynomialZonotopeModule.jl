@@ -12,7 +12,8 @@ using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
 @reexport import ..API: center, extrema, isoperationtype, rand, linear_map, ρ,
-                        translate, cartesian_product, exact_sum, minkowski_sum
+                        translate, cartesian_product, exact_sum, minkowski_sum,
+                        scale
 @reexport import ..LazySets: expmat, genmat_dep, genmat_indep, ngens_dep,
                              ngens_indep, nparams, polynomial_order,
                              reduce_order, remove_redundant_generators
@@ -38,6 +39,7 @@ include("merge_id.jl")
 include("cartesian_product.jl")
 include("exact_sum.jl")
 include("minkowski_sum.jl")
+include("scale.jl")
 
 include("expmat.jl")
 include("genmat_dep.jl")

@@ -93,6 +93,7 @@ Undocumented implementations:
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
+* [`scale`](@ref scale(::Real, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets

@@ -102,6 +102,14 @@ for N in [Float64, Float32, Rational{Int}]
                            0 0 0 1 0 1;
                            0 0 0 0 1 3]
 
+    α = 2.0
+    PZscaled = scale(α, PZ)
+    @test center(PZscaled) == N[8, 8]
+    @test genmat_dep(PZscaled) ==  N[4 2 4; 0 4 4]
+    @test genmat_indep(PZscaled) == hcat(N[2, 0])
+    @test expmat(PZscaled) == expmat(PZ)
+    @test PZscaled == linear_map(2*Matrix{N}(I, 2, 2), PZ)
+
     S = SparsePolynomialZonotope(N[-0.5, -0.5], N[1.0 1 1 1; 1 0 -1 1], zeros(N, 2, 0),
                                  [1 0 1 2; 0 1 1 0])
     Z = overapproximate(S, Zonotope)
