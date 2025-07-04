@@ -1,3 +1,5 @@
+using LazySets, Test
+
 function isidentical(::EmptySet, ::EmptySet)
     return false
 end
@@ -131,7 +133,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # polyhedron
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         @test_throws MethodError polyhedron(E)  # TODO this should maybe change
     end
 
@@ -164,7 +166,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError triangulate(E)
 
     # triangulate_faces
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         @test_throws AssertionError triangulate_faces(E3)  # TODO this should maybe change
     end
 

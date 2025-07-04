@@ -1,3 +1,5 @@
+using LazySets, Test, LinearAlgebra
+
 for N in [Float64, Float32]
     # random ellipsoid
     rand(Ellipsoid)

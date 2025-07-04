@@ -1,3 +1,6 @@
+using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: ispermutation
+
 for N in [Float64, Rational{Int}, Float32]
     # random line segment
     rand(LineSegment)

@@ -1,3 +1,6 @@
+using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: ispermutation
+
 for N in [Float64, Rational{Int}, Float32]
     # random line
     rand(Line2D)
@@ -76,7 +79,7 @@ for N in [Float64, Rational{Int}, Float32]
     L = Line2D(N[1, -1], N(0)) # x = y
     M = N[1 0; 0 0] # non-invertible matrix
     # projection is y = 0
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         lm = linear_map(M, L)
         if N == Float32 || N == Float64
             @test lm isa Line2D{Float64}

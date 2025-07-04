@@ -1,4 +1,5 @@
-using LazySets: STAR
+using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: ispermutation
 
 for N in [Float64, Float32, Rational{Int}]
     # constructor with basis matrix

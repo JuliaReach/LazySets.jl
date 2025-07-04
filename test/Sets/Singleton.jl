@@ -1,3 +1,7 @@
+using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: ispermutation
+using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+
 for N in [Float64, Rational{Int}, Float32]
     # random singleton
     rand(Singleton)

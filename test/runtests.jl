@@ -111,6 +111,13 @@ if test_suite_basic
         include("Interfaces/SymEngine.jl")
     end
 
+    # ===========================
+    # Testing basic set interface
+    # ===========================
+    @testset "LazySets.LazySet" begin
+        include("Interfaces/LazySet.jl")
+    end
+
     # =======================
     # Testing basic set types
     # =======================

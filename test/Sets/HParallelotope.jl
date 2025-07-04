@@ -1,3 +1,6 @@
+using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: ispermutation
+
 for N in [Float32, Float64, Rational{Int}]
     # See [DreossiDP17; Example 6](@citet).
     D = N[-1 0 0; -1 -1 0; 0 0 -1]
