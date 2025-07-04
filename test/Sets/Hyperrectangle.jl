@@ -1,3 +1,9 @@
+using LazySets, Test, SparseArrays, LinearAlgebra
+using LazySets.ReachabilityBase.Arrays: ispermutation
+using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+using IntervalArithmetic: IntervalBox
+import IntervalArithmetic as IA
+
 for N in [Float64, Rational{Int}, Float32]
     # random hyperrectangle
     rand(Hyperrectangle)
@@ -114,12 +120,14 @@ for N in [Float64, Rational{Int}, Float32]
     # unicode constructor
     @test □(center(h), radius_hyperrectangle(h)) == h
 
-    # generators matrix for hyperrectangle with sparse or static arrays
-    G1 = genmat(Hyperrectangle(sparsevec(N[3, 2]), sparsevec(N[2, 1])))
-    G2 = genmat(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))
-    G3 = LazySets._genmat_static(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))
-    @test G1 isa SparseMatrixCSC && G2 isa SMatrix && G3 isa SMatrix
-    @test G1 == G2 == G3 == N[2 0; 0 1]
+    @static if isdefined(@__MODULE__, :StaticArrays)
+        # generators matrix for hyperrectangle with sparse or static arrays
+        G1 = genmat(Hyperrectangle(sparsevec(N[3, 2]), sparsevec(N[2, 1])))
+        G2 = genmat(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))
+        G3 = LazySets._genmat_static(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))
+        @test G1 isa SparseMatrixCSC && G2 isa SMatrix && G3 isa SMatrix
+        @test G1 == G2 == G3 == N[2 0; 0 1]
+    end
 
     # alternative constructor
     c = ones(N, 2)
@@ -184,9 +192,11 @@ for N in [Float64, Rational{Int}, Float32]
     S = split(H, [2, 2])
     @test S isa Vector{typeof(H)}
     @test_throws ArgumentError split(H, [0, 4])
-    H = Hyperrectangle(SA[N(0), N(0)], SA[N(1), N(2)])
-    S = split(H, [2, 2])
-    @test S isa Vector{typeof(H)}
+    @static if isdefined(@__MODULE__, :StaticArrays)
+        H = Hyperrectangle(SA[N(0), N(0)], SA[N(1), N(2)])
+        S = split(H, [2, 2])
+        @test S isa Vector{typeof(H)}
+    end
     # split with non-uniform partition
     H = Hyperrectangle(; low=N[1, 2], high=N[5, 6])
     S = split(H, [N[3], N[4]])
@@ -314,14 +324,16 @@ for N in [Float64, Rational{Int}, Float32]
     Hz = convert(Zonotope, H)
     @test Hz == Zonotope(N[129 // 20, 2361 // 20], N[119//20 0//1; 0//1 2349//20])
 
-    # conversion of a hyperrectangle with static array components to a zonotope
-    # the specialized method for 2D static arrays is also tested
-    H = Hyperrectangle(; low=SA[N(5 // 10), N(6 // 10)], high=N[N(124 // 10), N(2355 // 10)])
-    Hz = convert(Zonotope, H)
-    Hz_sp = LazySets._convert_2D_static(Zonotope, H)
-    Z = Zonotope(SA[N(129 // 20), N(2361 // 20)],
-                 SA[N(119 // 20) N(0 // 1); N(0 // 1) N(2349 // 20)])
-    @test Hz == Z && Hz_sp == Z
+    @static if isdefined(@__MODULE__, :StaticArrays)
+        # conversion of a hyperrectangle with static array components to a zonotope
+        # the specialized method for 2D static arrays is also tested
+        H = Hyperrectangle(; low=SA[N(5 // 10), N(6 // 10)], high=N[N(124 // 10), N(2355 // 10)])
+        Hz = convert(Zonotope, H)
+        Hz_sp = LazySets._convert_2D_static(Zonotope, H)
+        Z = Zonotope(SA[N(129 // 20), N(2361 // 20)],
+                     SA[N(119 // 20) N(0 // 1); N(0 // 1) N(2349 // 20)])
+        @test Hz == Z && Hz_sp == Z
+    end
 
     # rectification
     H = Hyperrectangle(N[-1, 2], N[4, 5])

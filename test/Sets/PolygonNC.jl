@@ -1,3 +1,5 @@
+using LazySets, Test
+
 for N in [Float64, Rational{Int}, Float32]
     # constructor from empty vertex list
     P = Polygon{N}()

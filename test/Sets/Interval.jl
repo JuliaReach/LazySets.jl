@@ -1,3 +1,15 @@
+using LazySets, Test
+using IntervalArithmetic: IntervalBox
+import IntervalArithmetic as IA
+@static if VERSION >= v"1.9"
+    vIA = pkgversion(IA)
+else
+    import PkgVersion
+    vIA = PkgVersion.Version(IA)
+end
+using LazySets.ReachabilityBase.Arrays: ispermutation
+using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+
 function isidentical(::Interval, ::Interval)
     return false
 end
@@ -207,7 +219,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # polyhedron
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         Y = polyhedron(X)
         @test Y isa Polyhedra.Interval{N} && ispermutation(Y.vrep.points.points, [[N(0)], [N(2)]])
     end
@@ -259,7 +271,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # triangulate_faces
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         @test_throws ArgumentError triangulate_faces(X)
     end
 

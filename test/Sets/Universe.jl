@@ -1,3 +1,5 @@
+using LazySets, Test
+
 function isidentical(::Universe, ::Universe)
     return false
 end
@@ -39,7 +41,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError area(U3)
 
     # chebyshev_center_radius
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         @test_throws ErrorException chebyshev_center_radius(U)
     end
 
@@ -129,7 +131,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError norm(U, 2)
 
     # polyhedron
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         P = polyhedron(U)
         @test P isa Polyhedra.DefaultPolyhedron
         if N != Float32
@@ -168,7 +170,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError triangulate(U)
 
     # triangulate_faces
-    if test_suite_polyhedra  # TODO this should work without Polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)  # TODO this should work without Polyhedra
         @test_throws AssertionError triangulate_faces(U3)
     end
 
@@ -185,7 +187,7 @@ for N in [Float64, Float32, Rational{Int}]
     # affine_map
     @test_throws AssertionError affine_map(ones(N, 2, 3), U, N[1, 1])
     @test_throws AssertionError affine_map(ones(N, 2, 2), U, N[1])
-    if test_suite_polyhedra  # TODO this should work, even without Polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)  # TODO this should work, even without Polyhedra
         @test_broken affine_map(ones(N, 2, 2), U, N[1, 1])
         # U2 = affine_map(ones(N, 2, 2), U, N[1, 1])
         # @test isidentical(U, U2)
@@ -217,7 +219,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_broken linear_map(ones(N, 2, 2), U)  # TODO this should work, even without Polyhedra
     # U2 = linear_map(ones(N, 2, 2), U)
     # @test_broken isidentical(U, U2)
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         @test_broken linear_map(ones(N, 3, 2), U)
         # U2 = linear_map(ones(N, 3, 2), U)
         # @test U2 isa HPolyhedron{N}  # TODO this should change

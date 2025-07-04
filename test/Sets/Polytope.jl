@@ -1,6 +1,6 @@
+using LazySets, Test, LinearAlgebra
 using LazySets: linear_map_inverse, affine_map_inverse
-
-global test_suite_polyhedra
+using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
 
 for N in [Float64, Rational{Int}, Float32]
     # random polytopes
@@ -62,7 +62,7 @@ for N in [Float64, Rational{Int}, Float32]
     # singleton list
     @test length(singleton_list(p)) == 4
 
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         # conversion to and from Polyhedra's VRep data structure
         cl = constraints_list(convert(HPolytope, polyhedron(p)))
         @test length(p.constraints) == length(cl)
@@ -83,7 +83,7 @@ for N in [Float64, Rational{Int}, Float32]
     P = convert(HPolytope, Hyperrectangle(N[1, 1], N[2, 2]))
     @test vertices_list(P) == [N[3, 3], N[-1, 3], N[-1, -1], N[3, -1]]
 
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         # nD (n > 2) vertices_list
         P = convert(HPolytope, Hyperrectangle(N[1, 1, 1], N[2, 2, 2]))
         vlist = vertices_list(P)
@@ -116,7 +116,7 @@ for N in [Float64, Rational{Int}, Float32]
     # =====================
     LM = linear_map(N[2 3; 1 2], P) # invertible matrix
     @test LM isa HPolytope{N}
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         LM = linear_map(N[2 3; 0 0], P; algorithm="vrep")  # non-invertible matrix
         @test LM isa VPolygon{N}
     end
@@ -149,7 +149,7 @@ for N in [Float64, Rational{Int}, Float32]
                        HalfSpace(N[-0, -1], N(1))])
         L7 = linear_map(M, P; algorithm="lift")
         @test L7 isa HPolytope{N}
-        if test_suite_polyhedra
+        @static if isdefined(@__MODULE__, :Polyhedra)
             L7_vrep = linear_map(M, P; algorithm="vrep")
             if N == Float64
                 @test L7 ⊆ L7_vrep && L7_vrep ⊆ L7
@@ -183,8 +183,10 @@ for N in [Float64, Rational{Int}, Float32]
                    HalfSpace(SingleEntryVector(1, 1, N(-1)), N(0))])
     Q = convert(typeof(P), P)
     @test P == Q
-    Q = convert(HPolytope{N,Vector{N}}, tovrep(P))
-    @test P == Q
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        Q = convert(HPolytope{N,Vector{N}}, tovrep(P))
+        @test P == Q
+    end
     H = HalfSpace(N[1], N(1))
     @test_throws ErrorException convert(HPolytope, H)
     @test_throws ErrorException convert(HPolytope{N,Vector{N}}, H)
@@ -252,7 +254,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test extrema(p2) == (N[], N[])
     @test_throws AssertionError extrema(p2, 1)
 
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         # conversion to and from Polyhedra's VRep data structure
         V = convert(VPolytope, polyhedron(p))
         vl = vertices_list(V)
@@ -272,7 +274,9 @@ for N in [Float64, Rational{Int}, Float32]
     end
 
     # volume
-    @test volume(p) == N(1 // 2)
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        @test volume(p) == N(1 // 2)
+    end
 
     # translation
     @test translate(p, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]])
@@ -314,14 +318,16 @@ for N in [Float64, Rational{Int}, Float32]
     Q = VPolytope([N[3, 1, 2], N[6, 4, 5]])
     @test permute(P, [3, 1, 2]) == Q
 
-    # construction with static arrays
-    vlist = [SVector{2}(N[0, 0]), SVector{2}(N[1, 0]), SVector{2}(N[0, 1])]
-    V = VPolytope(vlist)
-    @test ispermutation(vertices_list(V), vlist)
-    # check that the outer container can also be static
-    vlist = SVector{3}(SVector{2}(N[0, 0]), SVector{2}(N[1, 0]), SVector{2}(N[0, 1]))
-    V = VPolytope(vlist)
-    @test ispermutation(vertices_list(V), vlist)
+    @static if isdefined(@__MODULE__, :StaticArrays)
+        # construction with static arrays
+        vlist = [SVector{2}(N[0, 0]), SVector{2}(N[1, 0]), SVector{2}(N[0, 1])]
+        V = VPolytope(vlist)
+        @test ispermutation(vertices_list(V), vlist)
+        # check that the outer container can also be static
+        vlist = SVector{3}(SVector{2}(N[0, 0]), SVector{2}(N[1, 0]), SVector{2}(N[0, 1]))
+        V = VPolytope(vlist)
+        @test ispermutation(vertices_list(V), vlist)
+    end
 
     # reflect
     P = VPolytope([N[1, 2, 3], N[4, 5, 6]])
@@ -358,7 +364,7 @@ for N in [Float64, Float32]
     @test p isa HPolytope{N} && dim(p) == 1
     p = rand(HPolytope; N=N, dim=2)
     @test p isa HPolytope{N} && dim(p) == 2
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         p = rand(HPolytope; N=N, dim=3)
         @test p isa HPolytope{Float64} && dim(p) == 3
     else
@@ -442,8 +448,10 @@ for N in [Float64]
     @test Y ⊆ X
 
     # double inclusion check
-    Z = convert(VPolytope, Y)
-    @test isequivalent(Y, Z)
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        Z = convert(VPolytope, Y)
+        @test isequivalent(Y, Z)
+    end
 
     # negative double inclusion check
     X_eps = BallInf(N[0.1, 0.2, 0.1], N(0.30001))
@@ -455,7 +463,7 @@ for N in [Float64]
     P2 = linear_map_inverse(M2, Q)
     @test isequivalent(P2, P)
 
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         # -----
         # H-rep
         # -----
@@ -693,19 +701,21 @@ for N in [Float64]
     end
 
     # concrete projection of a polytope (see issue #2536)
-    if test_suite_polyhedra && N == Float64
-        X = HPolytope([HalfSpace([1.0, 1.0, 0.0], 4.0),
-                       HalfSpace([-1.0, -1.0, -0.0], -4.0),
-                       HalfSpace([-1.0, 0.0, 0.0], -0.0),
-                       HalfSpace([0.0, -1.0, 0.0], -0.0),
-                       HalfSpace([0.0, 0.0, -1.0], -0.0),
-                       HalfSpace([1.0, 0.0, 0.0], 10.0),
-                       HalfSpace([0.0, 1.0, 0.0], 10.0),
-                       HalfSpace([0.0, 0.0, 1.0], 10.0),
-                       HalfSpace([0.0, 1.0, 1.0], 6.0)])
-        v12 = [N[0, 4], N[4, 0]]
-        @test ispermutation(vertices_list(project(X, 1:2)), v12)
-        @test ispermutation(vertices_list(overapproximate(Projection(X, [1, 2]), 1e-3)), v12)
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        if N == Float64
+            X = HPolytope([HalfSpace([1.0, 1.0, 0.0], 4.0),
+                           HalfSpace([-1.0, -1.0, -0.0], -4.0),
+                           HalfSpace([-1.0, 0.0, 0.0], -0.0),
+                           HalfSpace([0.0, -1.0, 0.0], -0.0),
+                           HalfSpace([0.0, 0.0, -1.0], -0.0),
+                           HalfSpace([1.0, 0.0, 0.0], 10.0),
+                           HalfSpace([0.0, 1.0, 0.0], 10.0),
+                           HalfSpace([0.0, 0.0, 1.0], 10.0),
+                           HalfSpace([0.0, 1.0, 1.0], 6.0)])
+            v12 = [N[0, 4], N[4, 0]]
+            @test ispermutation(vertices_list(project(X, 1:2)), v12)
+            @test ispermutation(vertices_list(overapproximate(Projection(X, [1, 2]), 1e-3)), v12)
+        end
     end
 end
 
@@ -713,17 +723,19 @@ end
 @test !isoperationtype(VPolytope)
 
 for N in [Float64, Rational{Int}]
-    # Delaunay triangulation
-    vlist = [N[0, 0, 0], N[0, 0, 1], N[0, 1, 0], N[1, 0, 0]]  # tetrahedron
-    V = VPolytope(vlist)
-    D = triangulate(V; algorithm="delaunay")
-    @test length(D) == 1 && isequivalent(array(D)[1], V)
-    D = triangulate(V; algorithm="delaunay", compute_triangles_3d=true)
-    @test length(D) == 4
-    for P in array(D)
-        @test isequivalent(P, VPolytope(vlist[[1, 2, 3]])) ||
-              isequivalent(P, VPolytope(vlist[[1, 2, 4]])) ||
-              isequivalent(P, VPolytope(vlist[[1, 3, 4]])) ||
-              isequivalent(P, VPolytope(vlist[[2, 3, 4]]))
+    @static if isdefined(@__MODULE__, :MiniQhull)
+        # Delaunay triangulation
+        vlist = [N[0, 0, 0], N[0, 0, 1], N[0, 1, 0], N[1, 0, 0]]  # tetrahedron
+        V = VPolytope(vlist)
+        D = triangulate(V; algorithm="delaunay")
+        @test length(D) == 1 && isequivalent(array(D)[1], V)
+        D = triangulate(V; algorithm="delaunay", compute_triangles_3d=true)
+        @test length(D) == 4
+        for P in array(D)
+            @test isequivalent(P, VPolytope(vlist[[1, 2, 3]])) ||
+                  isequivalent(P, VPolytope(vlist[[1, 2, 4]])) ||
+                  isequivalent(P, VPolytope(vlist[[1, 3, 4]])) ||
+                  isequivalent(P, VPolytope(vlist[[2, 3, 4]]))
+        end
     end
 end

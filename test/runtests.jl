@@ -41,25 +41,16 @@ Random.seed!(1234)
     import IntervalConstraintProgramming as ICP
     import IntervalArithmetic as IA
     using IntervalArithmetic: IntervalBox
-    @static if VERSION >= v"1.9"
-        vIA = pkgversion(IA)
-        vGLPK = pkgversion(GLPK)
-    else
-        import PkgVersion
-        vIA = PkgVersion.Version(IA)
-        vGLPK = PkgVersion.Version(GLPK)
-    end
     using IntervalMatrices: ±, IntervalMatrix
-    using TaylorModels: set_variables, TaylorModelN
     using SymEngine, Symbolics
 end
 
 # ==============================
 # Non-exported helper functions
 # ==============================
-using LazySets: _leq, _geq, isapproxzero, _isapprox, _ztol, ispermutation, basetype
+using LazySets: _leq, _geq, isapproxzero, _ztol, ispermutation
 using LazySets.ReachabilityBase.Arrays: allequal, inner, is_cyclic_permutation,
-                                        isinvertible, SingleEntryVector
+                                        SingleEntryVector
 
 global test_suite_basic = !__test_short
 global test_suite_polyhedra = !__test_short
@@ -109,6 +100,13 @@ if test_suite_basic
     end
     @testset "LazySets.SymEngine" begin
         include("Interfaces/SymEngine.jl")
+    end
+
+    # ===========================
+    # Testing basic set interface
+    # ===========================
+    @testset "LazySets.LazySet" begin
+        include("Interfaces/LazySet.jl")
     end
 
     # =======================

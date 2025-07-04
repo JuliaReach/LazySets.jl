@@ -1,3 +1,5 @@
+using LazySets, Test
+
 for N in [Float64, Float32, Rational{Int}]
     # constructor
     vertices = [N[1, 0, -1 / sqrt(2)], N[-1, 0, -1 / sqrt(2)], N[0, 1, 1 / sqrt(2)],
@@ -13,8 +15,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test Tmat == T
 
     # constraints_list
-    c = constraints_list(T)
-    @test isequivalent(HPolytope(c), VPolytope(vertices))
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        c = constraints_list(T)
+        @test isequivalent(HPolytope(c), VPolytope(vertices))
+    end
 
     # support vector
     @test σ(ones(3), T) == N[0, 1, 1 / sqrt(2)]

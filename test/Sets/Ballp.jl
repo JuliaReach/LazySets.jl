@@ -1,3 +1,5 @@
+using LazySets, Test
+
 for N in [Float64, Float32]
     # random ball
     rand(Ballp)

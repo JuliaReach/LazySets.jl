@@ -1,3 +1,12 @@
+using LazySets, Test, LinearAlgebra
+import IntervalArithmetic as IA
+@static if VERSION >= v"1.9"
+    vIA = pkgversion(IA)
+else
+    import PkgVersion
+    vIA = PkgVersion.Version(IA)
+end
+
 for N in [Float64, Float32, Rational{Int}]
     # example from slide 13 of Niklas talk at JuliaReach & JuliaIntervals Days 3
     c = N[2, 0]

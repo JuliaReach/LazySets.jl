@@ -1,3 +1,10 @@
+@static if VERSION >= v"1.9"
+    vGLPK = pkgversion(GLPK)
+else
+    import PkgVersion
+    vGLPK = PkgVersion.Version(GLPK)
+end
+
 for N in [Float64, Rational{Int}, Float32]
     B = BallInf(ones(N, 2), N(3))
     H = Hyperrectangle(ones(N, 2), ones(N, 2))

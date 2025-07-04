@@ -1,3 +1,6 @@
+using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
+
 for N in [Float64, Rational{Int}, Float32]
     # random ball
     rand(BallInf)
@@ -195,22 +198,24 @@ for N in [Float64, Rational{Int}, Float32]
     ZB = convert(Zonotope, B)
     @test ZB == Zonotope(N[0, 0], Matrix{N}(undef, 2, 0))
 
-    # conversion to a zonotope, static arrays
-    B = BallInf(SA[N(0), N(0)], N(1))
-    ZB = convert(Zonotope, B)
-    @test ZB == Zonotope(SVector{2}(N[0, 0]), SMatrix{2,2}(N[1 0; 0 1]))
-    B = BallInf(SA[N(0), N(0)], N(0))  # flat case
-    ZB = convert(Zonotope, B)
-    @test ZB == Zonotope(SVector{2}(N[0, 0]), SMatrix{2,0,N,0}())
-    # specialized method (no prunning)
-    B = BallInf(SA[1.0, 2.0], 1.0)
-    ZB = LazySets._convert_2D_static(Zonotope, B)
-    @test ZB == Zonotope(SA[1.0, 2.0], SA[1.0 0.0; 0.0 1.0])
+    @static if isdefined(@__MODULE__, :StaticArrays)
+        # conversion to a zonotope, static arrays
+        B = BallInf(SA[N(0), N(0)], N(1))
+        ZB = convert(Zonotope, B)
+        @test ZB == Zonotope(SVector{2}(N[0, 0]), SMatrix{2,2}(N[1 0; 0 1]))
+        B = BallInf(SA[N(0), N(0)], N(0))  # flat case
+        ZB = convert(Zonotope, B)
+        @test ZB == Zonotope(SVector{2}(N[0, 0]), SMatrix{2,0,N,0}())
+        # specialized method (no prunning)
+        B = BallInf(SA[1.0, 2.0], 1.0)
+        ZB = LazySets._convert_2D_static(Zonotope, B)
+        @test ZB == Zonotope(SA[1.0, 2.0], SA[1.0 0.0; 0.0 1.0])
 
-    # internal function
-    B = BallInf(SA[N(0), N(0)], N(1))
-    Zs = LazySets._convert_2D_static(Zonotope, B)
-    @test Zs == Zonotope(SVector{2}(N[0, 0]), SMatrix{2,2}(N[1 0; 0 1]))
+        # internal function
+        B = BallInf(SA[N(0), N(0)], N(1))
+        Zs = LazySets._convert_2D_static(Zonotope, B)
+        @test Zs == Zonotope(SVector{2}(N[0, 0]), SMatrix{2,2}(N[1 0; 0 1]))
+    end
 
     # set difference
     B = BallInf(N[0, 0, 0], N(1))
@@ -224,16 +229,18 @@ for N in [Float64, Rational{Int}, Float32]
     @test project(b4, [2, 4]) == BallInf(N[3, 1], N(2))
 
     # triangulate (does not work with Float32)
-    if N != Float32
-        B = BallInf(ones(N, 2), N(1))
-        Y = triangulate(B; algorithm="delaunay")
-        @test Y isa UnionSetArray && length(array(Y)) == 2 &&
-              array(Y)[1] isa VPolytope && array(Y)[2] isa VPolytope
-        a = array(Y)
-        a1 = [N[0, 0], [2, 0], [2, 2]]
-        a2 = [N[0, 0], [0, 2], [2, 2]]
-        @test (ispermutation(a[1].vertices, a1) && ispermutation(a[2].vertices, a2)) ||
-              (ispermutation(a[1].vertices, a2) && ispermutation(a[2].vertices, a1))
+    @static if isdefined(@__MODULE__, :MiniQhull)
+        if N != Float32
+            B = BallInf(ones(N, 2), N(1))
+            Y = triangulate(B; algorithm="delaunay")
+            @test Y isa UnionSetArray && length(array(Y)) == 2 &&
+                  array(Y)[1] isa VPolytope && array(Y)[2] isa VPolytope
+            a = array(Y)
+            a1 = [N[0, 0], [2, 0], [2, 2]]
+            a2 = [N[0, 0], [0, 2], [2, 2]]
+            @test (ispermutation(a[1].vertices, a1) && ispermutation(a[2].vertices, a2)) ||
+                  (ispermutation(a[1].vertices, a2) && ispermutation(a[2].vertices, a1))
+        end
     end
 
     # generators

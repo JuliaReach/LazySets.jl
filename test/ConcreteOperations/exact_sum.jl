@@ -4,8 +4,8 @@ for N in [Float64, Float32, Rational{Int}]
     G = N[2 1 2; 0 2 2]
     GI = hcat(N[1; 0])
     E = [1 0 3; 0 1 1]
-    PZ = SparsePolynomialZonotope(c, G, GI, E)
+    P = SparsePolynomialZonotope(c, G, GI, E)
 
-    @test_throws ArgumentError exact_sum(B, PZ)
-    @test_throws ArgumentError exact_sum(PZ, B)
+    @test_throws ArgumentError exact_sum(B, P)
+    @test_throws ArgumentError exact_sum(P, B)
 end
