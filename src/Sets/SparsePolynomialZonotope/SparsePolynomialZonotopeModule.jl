@@ -19,7 +19,8 @@ using ReachabilityBase.Require: require
 @reexport using ..API
 
 export SparsePolynomialZonotope,
-       indexvector
+       indexvector,
+       merge_id
 
 include("SparsePolynomialZonotope.jl")
 
@@ -33,6 +34,7 @@ include("rand.jl")
 include("linear_map.jl")
 include("support_function.jl")
 include("translate.jl")
+include("merge_id.jl")
 include("cartesian_product.jl")
 include("exact_sum.jl")
 include("minkowski_sum.jl")

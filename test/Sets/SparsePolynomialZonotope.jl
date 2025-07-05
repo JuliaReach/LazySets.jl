@@ -37,14 +37,22 @@ for N in [Float64, Float32, Rational{Int}]
     @test expmat(LMPZ) == [1 0 1; 0 1 3]
     @test indexvector(LMPZ) == indexvector(PZ)
 
+    # exact sum: same IDs
     ESPZ = exact_sum(PZ, PZ2)
     @test center(ESPZ) == [4, 4]
     @test genmat_dep(ESPZ) == [2 1 2 2 0 1; 0 2 2 1 2 1]
     @test genmat_indep(ESPZ) == hcat([1, 0])
     @test expmat(ESPZ) == [1 0 3 1 0 1; 0 1 1 0 1 3]
     @test indexvector(ESPZ) == indexvector(PZ)
-    PZidx = SparsePolynomialZonotope(c, G, GI, E, 3:4)
-    @test_throws ArgumentError exact_sum(PZ, PZidx)
+    #exact sum: different IDs
+    PZ3 = SparsePolynomialZonotope(N[1, -1], N[1 -1; 0 2],
+                                   hcat(N[0; 1]), [1 0; 2 1], [2, 3])
+    ESPZ2 = exact_sum(PZ, PZ3)
+    @test center(ESPZ2) == [5, 3]
+    @test genmat_dep(ESPZ2) == [2 1 2 1 -1; 0 2 2 0 2]
+    @test genmat_indep(ESPZ2) == [1 0; 0 1]
+    @test expmat(ESPZ2) == [1 0 3 0 0; 0 1 1 1 0; 0 0 0 2 1]
+    @test indexvector(ESPZ2) == [1, 2, 3]
 
     TPZ = translate(PZ, N[1, 2])
     @test center(TPZ) == N[5, 6]
@@ -233,4 +241,51 @@ let
     for r in 4:8
         @test reduce_order(P, r) == P
     end
+end
+
+#test for merge_id
+for N in [Int64]
+    #case 0: dimensions mismatch
+    id1 = [1, 2, 3]
+    id2 = [1, 2]
+    E1 = rand(2,2)
+    E2 = rand(2,2)
+    @test_throws ArgumentError merge_id(id1, id2, E1, E2)
+    
+    #case 1: identical IDs
+    id = Int64[10, 20, 30]
+    E1 = rand(3, 4)
+    E2 = rand(3, 2)
+
+    Ē₁, Ē₂, idx = merge_id(id, id, E1, E2)
+
+    @test idx == id
+    @test Ē₁ === E1
+    @test Ē₂ === E2
+    
+    # case 2: IDs with overlap
+    E1 = N[1 2; 1 0]
+    id1 = [1, 2]
+
+    E2 = N[1 0 1; 3 2 0]
+    id2 = [2, 3]
+
+    Ē₁, Ē₂, idx = merge_id(id1, id2, E1, E2)
+
+    @test idx == [1, 2, 3]
+    @test Ē₁ == [1 2; 1 0; 0 0]
+    @test Ē₂ == [0 0 0; 1 0 1; 3 2 0]
+
+    #case 3: different IDs
+    E1 = N[1 2; 1 0]
+    id1 = [1, 2]
+
+    E2 = N[1 0 1; 3 2 0]
+    id2 = [3, 4]
+
+    Ē₁, Ē₂, idx = merge_id(id1, id2, E1, E2)
+
+    @test idx == [1, 2, 3, 4]
+    @test Ē₁ == [1 2; 1 0; 0 0; 0 0]
+    @test Ē₂ == [0 0 0; 0 0 0; 1 0 1; 3 2 0]
 end
