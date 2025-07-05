@@ -201,7 +201,7 @@ push!(VALIDATE_DICT, :project => (validate_project, args12))
 # end
 # push!(VALIDATE_DICT, :sample => (validate_sample, args1))
 
-function validate_scale(α::AbstractVector, X::LazySet)
+function validate_scale(α::Real, X::LazySet)
     return validate_same_dim(α, X; fun=scale)
 end
 push!(VALIDATE_DICT, :scale => (validate_scale, args12))

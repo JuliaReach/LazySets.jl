@@ -376,7 +376,7 @@ for B in (:Ball1, :BallInf)
     end
 end
 
-@commutative function minkowski_sum(∅::EmptySet, X::LazySet)
+@validate_commutative function minkowski_sum(∅::EmptySet, X::LazySet)
     return _minkowski_sum_emptyset(∅, X)
 end
 
