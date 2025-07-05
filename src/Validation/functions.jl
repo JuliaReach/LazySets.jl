@@ -1,7 +1,7 @@
 const args1 = (1,)
 const args12 = (1, 2)
 const args123 = (1, 2, 3)
-const global VALIDATE_DICT = Dict{Symbol,Tuple{Function,Tuple{Int,Vararg{Int}}}}()
+const global VALIDATE_DICT = Dict{Symbol,Tuple{Function,Any}}()
 
 # unary set operations
 
@@ -149,7 +149,7 @@ end
 push!(VALIDATE_DICT, :affine_map => (validate_affine_map, args123))
 
 function validate_distance(x::AbstractVector, X::LazySet)
-    return validate_same_dims(x, X; fun=distance)
+    return validate_same_dim(x, X; fun=distance)
 end
 push!(VALIDATE_DICT, :distance => (validate_distance, args12))
 
@@ -164,14 +164,17 @@ end
 push!(VALIDATE_DICT, :exponential_map => (validate_exponential_map, args12))
 
 function validate_in(x::AbstractVector, X::LazySet)
-    return validate_same_dims(x, X; fun=∈)
+    return validate_same_dim(x, X; fun=∈)
 end
 push!(VALIDATE_DICT, :∈ => (validate_in, args12))
 
-function validate_is_interior_point(x::AbstractVector, X::LazySet)
-    return validate_same_dims(x, X; fun=is_interior_point)
+function validate_is_interior_point(x::AbstractVector, X::LazySet, ε::N) where {N<:Number}
+    if ε <= zero(N)
+        throw(ArgumentError("the tolerance must be strictly positive but is $ε"))
+    end
+    return validate_same_dim(x, X; fun=is_interior_point)
 end
-push!(VALIDATE_DICT, :is_interior_point => (validate_is_interior_point, args12))
+push!(VALIDATE_DICT, :is_interior_point => (validate_is_interior_point, (1, 2, :ε)))
 
 function validate_linear_map(M::AbstractMatrix, X::LazySet)
     return validate_map_dim(M, X; fun=exponential_map)
@@ -179,7 +182,7 @@ end
 push!(VALIDATE_DICT, :linear_map => (validate_linear_map, args12))
 
 function validate_permute(X::LazySet, p::AbstractVector{Int})
-    return validate_same_dims(p, X; fun=permute) && validate_index_vector(p, X)
+    return validate_same_dim(p, X; fun=permute) && validate_index_vector(p, X)
 end
 push!(VALIDATE_DICT, :permute => (validate_permute, args12))
 
@@ -199,23 +202,23 @@ push!(VALIDATE_DICT, :project => (validate_project, args12))
 # push!(VALIDATE_DICT, :sample => (validate_sample, args1))
 
 function validate_scale(α::AbstractVector, X::LazySet)
-    return validate_same_dims(α, X; fun=scale)
+    return validate_same_dim(α, X; fun=scale)
 end
 push!(VALIDATE_DICT, :scale => (validate_scale, args12))
 push!(VALIDATE_DICT, :scale! => (validate_scale, args12))
 
 function validate_support_function(d::AbstractVector, X::LazySet)
-    return validate_same_dims(d, X; fun=ρ)
+    return validate_same_dim(d, X; fun=ρ)
 end
 push!(VALIDATE_DICT, :ρ => (validate_support_function, args12))
 
 function validate_support_vector(d::AbstractVector, X::LazySet)
-    return validate_same_dims(d, X; fun=σ)
+    return validate_same_dim(d, X; fun=σ)
 end
 push!(VALIDATE_DICT, :σ => (validate_support_vector, args12))
 
 function validate_translate(X::LazySet, v::AbstractVector)
-    return validate_same_dims(v, X; fun=translate)
+    return validate_same_dim(v, X; fun=translate)
 end
 push!(VALIDATE_DICT, :translate => (validate_translate, args12))
 push!(VALIDATE_DICT, :translate! => (validate_translate, args12))

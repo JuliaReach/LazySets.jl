@@ -9,7 +9,7 @@ macro validate(f)
     validation_fun, arg_indices = VALIDATE_DICT[function_name]
 
     # create assertion call of validation function
-    arguments = [_unpack_arg(function_args[arg]) for arg in arg_indices]
+    arguments = [_unpack_arg(function_args, arg) for arg in arg_indices]
     assertion = :(@assert $validation_fun($(arguments...)))
 
     # set source-code annotation to first line (only useful for debugging)
@@ -23,6 +23,14 @@ macro validate(f)
     return quote
         $(esc(f2))
     end
+end
+
+function _unpack_arg(args::Vector, idx::Int)
+    return _unpack_arg(args[idx])
+end
+
+function _unpack_arg(args::Vector, param::Symbol)
+    return param
 end
 
 function _unpack_arg(arg::Symbol)
