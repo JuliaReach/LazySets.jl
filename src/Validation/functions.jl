@@ -11,7 +11,12 @@ const global VALIDATE_DICT = Dict{Symbol,Tuple{Function,Tuple{Int,Vararg{Int}}}}
 # push!(VALIDATE_DICT, :an_element => (validate_an_element, args1))
 
 function validate_area(X::LazySet)
-    return validate_dims(X, (2, 3); fun=area)
+    n = dim(X)
+    if n != 2 && n != 3
+        throw(DimensionMismatch("`area` requires a set of dimension 2 or 3 " *
+                                "but received a $n-dimensional set"))
+    end
+    return true
 end
 push!(VALIDATE_DICT, :area => (validate_area, args1))
 
@@ -179,7 +184,12 @@ end
 push!(VALIDATE_DICT, :permute => (validate_permute, args12))
 
 function validate_project(X::LazySet, block::AbstractVector{Int})
-    return validate_index_vector_length(block, X) && validate_index_vector(block, X; fun=project)
+    n = dim(X)
+    if isempty(block) || length(block) > n
+        throw(DimensionMismatch("`$(string(fun))` requires an index vector for " *
+                                "dimension $n but received a vector of length $(length(v))"))
+    end
+    return validate_index_vector(block, X; fun=project)
 end
 push!(VALIDATE_DICT, :project => (validate_project, args12))
 

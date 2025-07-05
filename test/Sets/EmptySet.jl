@@ -46,7 +46,7 @@ for N in [Float64, Float32, Rational{Int}]
     # area
     res = area(E)
     @test res isa N && res == N(0)
-    @test_throws AssertionError area(E3)
+    @test_throws DimensionMismatch area(E3)
 
     # chebyshev_center_radius
     @test_throws ArgumentError chebyshev_center_radius(E)
@@ -296,8 +296,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # difference
-    @test_throws AssertionError difference(B, E3)
-    @test_throws AssertionError difference(E3, B)
+    @test_throws DimensionMismatch difference(B, E3)
+    @test_throws DimensionMismatch difference(E3, B)
     for E2 in (difference(E, E), difference(E, B), difference(E, U))
         @test isidentical(E, E2)
     end

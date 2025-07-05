@@ -56,11 +56,11 @@ function difference(X::LazySet, U::Universe)
     return _difference_universe2(X, U)
 end
 
-function difference(∅::EmptySet, X::LazySet)
+@validate function difference(∅::EmptySet, X::LazySet)
     return _difference_emptyset(∅, X)
 end
 
-function difference(X::LazySet, ∅::EmptySet)
+@validate function difference(X::LazySet, ∅::EmptySet)
     return _difference_emptyset2(X, ∅)
 end
 
@@ -68,10 +68,10 @@ end
 # disambiguation #
 # ============== #
 
-function difference(∅::EmptySet, U::Universe)
+@validate function difference(∅::EmptySet, U::Universe)
     return _difference_emptyset(∅, U)
 end
 
-function difference(U::Universe, ∅::EmptySet)
+@validate function difference(U::Universe, ∅::EmptySet)
     return _difference_emptyset2(U, ∅)
 end
