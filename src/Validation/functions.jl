@@ -201,11 +201,11 @@ push!(VALIDATE_DICT, :project => (validate_project, args12))
 # end
 # push!(VALIDATE_DICT, :sample => (validate_sample, args1))
 
-function validate_scale(α::Real, X::LazySet)
-    return validate_same_dim(α, X; fun=scale)
-end
-push!(VALIDATE_DICT, :scale => (validate_scale, args12))
-push!(VALIDATE_DICT, :scale! => (validate_scale, args12))
+# function validate_scale(α::Real, X::LazySet)
+#     # nothing to validate
+# end
+# push!(VALIDATE_DICT, :scale => (validate_scale, args12))
+# push!(VALIDATE_DICT, :scale! => (validate_scale, args12))
 
 function validate_support_function(d::AbstractVector, X::LazySet)
     return validate_same_dim(d, X; fun=ρ)
@@ -255,10 +255,20 @@ function validate_intersection(X::LazySet, Y::LazySet)
 end
 push!(VALIDATE_DICT, :intersection => (validate_intersection, args12))
 
+# function validate_isapprox(X::LazySet, Y::LazySet)
+#     # nothing to validate
+# end
+# push!(VALIDATE_DICT, :≈ => (validate_isapprox, args12))
+
 function validate_isdisjoint(X::LazySet, Y::LazySet)
     return validate_same_dim(X, Y; fun=isdisjoint)
 end
 push!(VALIDATE_DICT, :isdisjoint => (validate_isdisjoint, args12))
+
+# function validate_isequal(X::LazySet, Y::LazySet)
+#     # nothing to validate
+# end
+# push!(VALIDATE_DICT, :== => (validate_isequal, args12))
 
 function validate_isequivalent(X::LazySet, Y::LazySet)
     return validate_same_dim(X, Y; fun=isequivalent)

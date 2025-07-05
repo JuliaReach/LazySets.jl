@@ -1,6 +1,6 @@
 export intersection!
 
-@commutative function intersection(∅::EmptySet, X::LazySet)
+@validate_commutative function intersection(∅::EmptySet, X::LazySet)
     return _intersection_emptyset(∅, X)
 end
 
@@ -914,7 +914,7 @@ end
 # ============== #
 
 for T in (:AbstractSingleton, :Interval, :Universe, :LinearMap, :UnionSet, :UnionSetArray)
-    @eval @commutative function intersection(∅::EmptySet, X::$T)
+    @eval @validate_commutative function intersection(∅::EmptySet, X::$T)
         return _intersection_emptyset(∅, X)
     end
 end

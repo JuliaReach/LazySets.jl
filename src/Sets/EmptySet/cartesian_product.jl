@@ -1,4 +1,4 @@
-function cartesian_product(∅₁::EmptySet, ∅₂::EmptySet)
+@validate function cartesian_product(∅₁::EmptySet, ∅₂::EmptySet)
     return _cartesian_product_emptyset(∅₁, ∅₂)
 end
 

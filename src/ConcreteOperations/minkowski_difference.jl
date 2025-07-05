@@ -210,11 +210,11 @@ function _minkowski_difference_nd(Z1::AbstractZonotope, Z2::AbstractZonotope)
     return HPolytope(constraints)
 end
 
-function minkowski_difference(∅::EmptySet, X::LazySet)
+@validate function minkowski_difference(∅::EmptySet, X::LazySet)
     return _minkowski_difference_emptyset(∅, X)
 end
 
-function minkowski_difference(X::LazySet, ∅::EmptySet)
+@validate function minkowski_difference(X::LazySet, ∅::EmptySet)
     return _minkowski_difference_emptyset2(X, ∅)
 end
 
@@ -231,7 +231,7 @@ end
 # ============== #
 
 for T in (:AbstractSingleton, :ZeroSet, :Universe)
-    @eval function minkowski_difference(∅::EmptySet, X::($T))
+    @eval @validate function minkowski_difference(∅::EmptySet, X::($T))
         return _minkowski_difference_emptyset(∅, X)
     end
 end
@@ -242,6 +242,6 @@ for T in (:AbstractSingleton, :ZeroSet)
     end
 end
 
-function minkowski_difference(U::Universe, ∅::EmptySet)
+@validate function minkowski_difference(U::Universe, ∅::EmptySet)
     return _minkowski_difference_emptyset2(U, ∅)
 end

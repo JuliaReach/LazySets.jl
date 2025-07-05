@@ -403,7 +403,7 @@ for T in (:AbstractPolyhedron, :ZeroSet)
 end
 
 for T in (:ZeroSet, :Universe)
-    @eval @commutative function minkowski_sum(∅::EmptySet, X::$T)
+    @eval @validate_commutative function minkowski_sum(∅::EmptySet, X::$T)
         return _minkowski_sum_emptyset(∅, X)
     end
 end
