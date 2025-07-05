@@ -21,3 +21,41 @@ function validate_same_dim(X::LazySet, Y::LazySet; fun::Function)
     end
     return true
 end
+
+function validate_same_dim(x::AbstractVector, X::LazySet; fun::Function)
+    if length(x) != dim(X)
+        throw(DimensionMismatch("`$(string(fun))` requires a vector and a set of the same " *
+                                "dimension but received a vector of length $(length(x)) and a " *
+                                "set of dimension $(dim(X))"))
+    end
+    return true
+end
+
+function validate_map_dim(M::AbstractMatrix, X::LazySet; fun::Function)
+    if size(M, 2) != dim(X)
+        throw(DimensionMismatch("`$(string(fun))` requires a matrix and a set of compatible " *
+                                "dimension but received a matrix of size $(size(M)) and a " *
+                                "set of dimension $(dim(X))"))
+    end
+    return true
+end
+
+function validate_index_vector_length(v::AbstractVector{Int}, X::LazySet; fun::Function)
+    n = dim(X)
+    if isempty(v) || length(block) > n
+        throw(DimensionMismatch("`$(string(fun))` requires an index vector for " *
+                                "dimension $n but received a vector of length $(length(v))"))
+    end
+    return true
+end
+
+function validate_index_vector(v::AbstractVector{Int}, X::LazySet; fun::Function)
+    n = dim(X)
+    for e in v
+        if e < 1 || e > n
+            throw(DimensionMismatch("`$(string(fun))` requires an index vector " *
+                                    "for dimension $n but received the vector $v"))
+        end
+    end
+    return true
+end
