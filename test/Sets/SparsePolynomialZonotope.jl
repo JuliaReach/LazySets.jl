@@ -261,8 +261,8 @@ let
 
     #case 1: identical IDs
     id = [10, 20, 30]
-    E1 = rand(3, 4)
-    E2 = rand(3, 2)
+    E1 = rand(Int, 3, 4)
+    E2 = rand(Int, 3, 2)
 
     Ē₁, Ē₂, idx = merge_id(id, id, E1, E2)
 
