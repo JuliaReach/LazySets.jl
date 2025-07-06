@@ -16,6 +16,7 @@ Align two identifier vectors and their corresponding exponent matrices in compat
 - `Ē₁::Matrix{N}`: Aligned version of `E₁` 
 - `Ē₂::Matrix{N}`: Aligned version of `E₂` 
 - `idx::Vector{Int}`: Merged identifier vector, containing all elements of `id1` and any new ones from `id2`.
+
 ### Algorithm
 
 This method implements [KochdumperA21; Proposition 1](@citet).
