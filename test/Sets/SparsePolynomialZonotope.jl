@@ -52,9 +52,9 @@ for N in [Float64, Float32, Rational{Int}]
     PZ3 = SparsePolynomialZonotope(N[1, -1], N[1 -1; 0 2],
                                    hcat(N[0; 1]), [1 0; 2 1], [2, 3])
     ESPZ2 = exact_sum(PZ, PZ3)
-    @test center(ESPZ2) == [5, 3]
-    @test genmat_dep(ESPZ2) == [2 1 2 1 -1; 0 2 2 0 2]
-    @test genmat_indep(ESPZ2) == [1 0; 0 1]
+    @test center(ESPZ2) == N[5, 3]
+    @test genmat_dep(ESPZ2) == N[2 1 2 1 -1; 0 2 2 0 2]
+    @test genmat_indep(ESPZ2) == N[1 0; 0 1]
     @test expmat(ESPZ2) == [1 0 3 0 0; 0 1 1 1 0; 0 0 0 2 1]
     @test indexvector(ESPZ2) == [1, 2, 3]
 
