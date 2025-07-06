@@ -41,7 +41,7 @@ function merge_id(id1::AbstractVector{Int}, id2::AbstractVector{Int}, E₁::Abst
     p₁, h₁ = size(E₁)
     p₂, h₂ = size(E₂)
     if !(length(id1) == p₁ && length(id2) == p₂)
-        throw(ArgumentError("Incompatible dimensions."))
+        throw(ArgumentError("incompatible dimensions"))
     end
 
     if id1 == id2
