@@ -284,10 +284,6 @@ let
     @test Ē₂ == [0 0 0; 1 0 1; 3 2 0]
 
     #case 3: different IDs
-    E1 = [1 2; 1 0]
-    id1 = [1, 2]
-
-    E2 = [1 0 1; 3 2 0]
     id2 = [3, 4]
 
     Ē₁, Ē₂, idx = merge_id(id1, id2, E1, E2)
