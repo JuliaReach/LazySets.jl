@@ -37,7 +37,7 @@ julia> Ē₁, Ē₂, idx = merge_id(id1, id2, E₁, E₂)
 ```
 """
 function merge_id(id1::AbstractVector{Int}, id2::AbstractVector{Int}, E₁::AbstractMatrix{N},
-                  E₂::AbstractMatrix{N}) where {N}
+                  E₂::AbstractMatrix{N}) where {N<:Integer}
     p₁, h₁ = size(E₁)
     p₂, h₂ = size(E₂)
     if !(length(id1) == p₁ && length(id2) == p₂)
