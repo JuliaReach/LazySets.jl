@@ -924,8 +924,8 @@ end
 
 ### Notes
 
-This algorithm is applicable to any polytopic set `X` whose list of vertices can
-be computed via `vertices_list`.
+This algorithm is applicable to any two-dimensional polytopic set `X` whose list
+of vertices can be computed via `vertices_list`.
 
 ### Algorithm
 

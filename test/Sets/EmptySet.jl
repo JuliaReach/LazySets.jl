@@ -44,9 +44,11 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError an_element(E)
 
     # area
-    res = area(E)
-    @test res isa N && res == N(0)
-    @test_throws AssertionError area(E3)
+    for X in (E, E3)
+        res = area(X)
+        @test res isa N && res == N(0)
+    end
+    @test_throws AssertionError area(EmptySet{N}(4))
 
     # chebyshev_center_radius
     @test_throws ArgumentError chebyshev_center_radius(E)

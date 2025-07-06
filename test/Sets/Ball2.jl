@@ -156,10 +156,13 @@ for N in [Float64, Float32]
 
     # area/volume
     B = Ball2(zeros(N, 2), N(2))
-    @test area(B) == volume(B) == N(pi) * radius(B)^2
+    @test area(B) == volume(B) == 4 * N(pi)
     B = Ball2(zeros(N, 3), N(2))
+    @test area(B) ≈ 16 * N(pi)
+    @test volume(B) == 32 / 3 * N(pi)
+    B = Ball2(zeros(N, 4), N(2))
     @test_throws AssertionError area(B)
-    @test volume(B) == 4 / 3 * N(pi) * radius(B)^3
+    @test volume(B) == 8 * N(pi)^2
 
     # projection
     b4 = Ball2(N[4, 3, 2, 1], N(2))
