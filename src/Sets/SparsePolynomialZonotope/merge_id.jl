@@ -1,5 +1,5 @@
 """
-    merge_id(id1::AbstractVector{Int64}, id2::AbstractVector{Int}, 
+    merge_id(id1::AbstractVector{Int}, id2::AbstractVector{Int}, 
              E₁::AbstractMatrix{N}, E₂::AbstractMatrix{N}) where {N}
 
 Given two `indexvector`s and their corresponding exponent matrices `E₁` and `E₂`, 
@@ -7,7 +7,7 @@ Given two `indexvector`s and their corresponding exponent matrices `E₁` and `E
 
 ### Inputs
 
-- `id1::AbstractVector{Int64}`: Identifiers corresponding to the rows of `E₁`
+- `id1::AbstractVector{Int}`: Identifiers corresponding to the rows of `E₁`
 - `id2::AbstractVector{Int}`: Identifiers corresponding to the rows of `E₂`
 - `E₁::AbstractMatrix{N}`: First exponent matrix of size `(p₁ × h₁)`.
 - `E₂::AbstractMatrix{N}`: Second exponent matrix of size `(p₂ × h₂)`.
@@ -23,20 +23,20 @@ This method implements [KochdumperA21; Proposition 1](@citet).
 
 ### Example
 
-```
+```jldoctest
 julia> id1 = [1, 2];
 
 julia> E₁ = [1 2; 1 0];
 
 julia> id2 = [2, 3];
 
-julia> E₂ = [1 0 1; 3 2 0]
+julia> E₂ = [1 0 1; 3 2 0];
 
 julia> Ē₁, Ē₂, idx = merge_id(id1, id2, E₁, E₂)
 ([1 2; 1 0; 0 0], [0 0 0; 1 0 1; 3 2 0], [1, 2, 3])
+```
 """
-
-function merge_id(id1::AbstractVector{Int64}, id2::AbstractVector{Int}, E₁::AbstractMatrix{N},
+function merge_id(id1::AbstractVector{Int}, id2::AbstractVector{Int}, E₁::AbstractMatrix{N},
                   E₂::AbstractMatrix{N}) where {N}
     p₁, h₁ = size(E₁)
     p₂, h₂ = size(E₂)
