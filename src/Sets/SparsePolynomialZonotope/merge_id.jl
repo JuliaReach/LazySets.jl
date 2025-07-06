@@ -4,7 +4,7 @@
 
 Align two identifier vectors and their corresponding exponent matrices in compatible form.
 
-### Inputs
+### Input
 
 - `id1::AbstractVector{Int}` -- identifiers corresponding to the rows of `E₁`
 - `id2::AbstractVector{Int}` -- identifiers corresponding to the rows of `E₂`
