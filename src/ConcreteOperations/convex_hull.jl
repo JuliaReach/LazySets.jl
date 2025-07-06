@@ -508,7 +508,7 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true) where {N,VN<:Abstr
     return resize!(points, m)
 end
 
-@commutative function convex_hull(X::LazySet, ∅::EmptySet)
+@validate_commutative function convex_hull(X::LazySet, ∅::EmptySet)
     return _convex_hull_emptyset(∅, X)
 end
 
@@ -520,6 +520,6 @@ end
 # disambiguation #
 # ============== #
 
-@commutative function convex_hull(U::Universe, ∅::EmptySet)
+@validate_commutative function convex_hull(U::Universe, ∅::EmptySet)
     return _convex_hull_universe(U, ∅)
 end

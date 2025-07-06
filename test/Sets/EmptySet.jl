@@ -48,7 +48,7 @@ for N in [Float64, Float32, Rational{Int}]
         res = area(X)
         @test res isa N && res == N(0)
     end
-    @test_throws AssertionError area(EmptySet{N}(4))
+    @test_throws DimensionMismatch area(EmptySet{N}(4))
 
     # chebyshev_center_radius
     @test_throws ArgumentError chebyshev_center_radius(E)
@@ -192,36 +192,36 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(E3, E2)
 
     # distance (between point and set)
-    @test_throws AssertionError distance(E, N[0])
+    @test_throws DimensionMismatch distance(E, N[0])
     x = N[0, 0]
     for res in (distance(E, x), distance(x, E))
         @test res isa N && res == N(Inf)
     end
 
     # exponential_map
-    @test_throws AssertionError exponential_map(ones(N, 2, 3), E)
-    @test_throws AssertionError exponential_map(ones(N, 3, 2), E)
+    @test_throws DimensionMismatch exponential_map(ones(N, 2, 3), E)
+    @test_throws DimensionMismatch exponential_map(ones(N, 3, 2), E)
     E2 = exponential_map(ones(N, 2, 2), E)
     @test isidentical(E, E2)
 
     # in
-    @test_throws AssertionError N[0] ∈ E
+    @test_throws DimensionMismatch N[0] ∈ E
     @test N[0, 0] ∉ E
 
     # is_interior_point
-    @test_throws AssertionError is_interior_point(N[0], E)
+    @test_throws DimensionMismatch is_interior_point(N[0], E)
     if N <: AbstractFloat
         @test !is_interior_point(N[0, 0], E)
     else
-        @test_throws AssertionError is_interior_point(N[0, 0], E)
+        @test_throws ArgumentError is_interior_point(N[0, 0], E)
         @test !is_interior_point(N[0, 0], E; ε=1 // 100)
         # incompatible numeric type
         @test_throws ArgumentError is_interior_point([0.0, 0.0], E)
     end
 
     # linear_map
-    @test_throws AssertionError exponential_map(ones(N, 2, 3), E)
-    E2 = exponential_map(ones(N, 2, 2), E)
+    @test_throws DimensionMismatch linear_map(ones(N, 2, 3), E)
+    E2 = linear_map(ones(N, 2, 2), E)
     @test isidentical(E, E2)
     E2 = linear_map(ones(N, 3, 2), E)
     @test isidentical(E3, E2)
@@ -232,14 +232,14 @@ for N in [Float64, Float32, Rational{Int}]
     # @test isidentical(E3, E2)
 
     # permute
-    @test_throws AssertionError permute(E, [1, -1])
-    @test_throws AssertionError permute(E, [1, 2, 2])
+    @test_throws DimensionMismatch permute(E, [1, -1])
+    @test_throws DimensionMismatch permute(E, [1, 2, 2])
     E2 = permute(E, [2, 1])
     @test isidentical(E, E2)
 
     # project
-    @test_throws AssertionError project(E, [1, -1])
-    @test_throws AssertionError project(E, [1, 2, 3])
+    @test_throws DimensionMismatch project(E, [1, -1])
+    @test_throws DimensionMismatch project(E, [1, 2, 3])
     E2 = project(E, [2])
     @test E2 isa EmptySet{N} && dim(E2) == 1
 
@@ -260,23 +260,23 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(E, E2)
 
     # support_function
-    @test_throws AssertionError ρ(N[1], E)
+    @test_throws DimensionMismatch ρ(N[1], E)
     for x in (N[-1, 2], N[2, 0], N[0, 0])
         @test_throws ArgumentError ρ(x, E)
     end
 
     # support_vector
-    @test_throws AssertionError σ(N[1], E)
+    @test_throws DimensionMismatch σ(N[1], E)
     for x in (N[-1, 2], N[2, 0], N[0, 0])
         @test_throws ArgumentError σ(x, E)
     end
 
     # translate
-    @test_throws AssertionError translate(E, N[1])
+    @test_throws DimensionMismatch translate(E, N[1])
     E2 = translate(E, N[1, 2])
     @test isidentical(E, E2)
     # translate!
-    @test_throws AssertionError translate!(E, N[1])
+    @test_throws DimensionMismatch translate!(E, N[1])
     E2 = copy(E)
     translate!(E2, N[1, 2])
     @test isidentical(E, E2)
@@ -290,7 +290,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # convex_hull (binary)
-    @test_throws AssertionError convex_hull(E, E3)
+    @test_throws DimensionMismatch convex_hull(E, E3)
     E2 = convex_hull(E, E)
     @test isidentical(E, E2)
     for X in (convex_hull(E, Pnc), convex_hull(Pnc, E))
@@ -298,8 +298,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # difference
-    @test_throws AssertionError difference(B, E3)
-    @test_throws AssertionError difference(E3, B)
+    @test_throws DimensionMismatch difference(B, E3)
+    @test_throws DimensionMismatch difference(E3, B)
     for E2 in (difference(E, E), difference(E, B), difference(E, U))
         @test isidentical(E, E2)
     end
@@ -309,8 +309,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test U2 isa Universe{N} && U2 == U
 
     # distance (between two sets)
-    @test_throws AssertionError distance(E, E3)
-    @test_throws AssertionError distance(E3, E)
+    @test_throws DimensionMismatch distance(E, E3)
     for v in (distance(E, E), distance(B1, E), distance(E, B1), distance(U, E), distance(E, U),
               distance(E, B), distance(B, E), distance(E, Z), distance(Z, E))
         @test v isa N && v == N(Inf)
@@ -318,13 +317,12 @@ for N in [Float64, Float32, Rational{Int}]
 
     # exact_sum
     @test_throws AssertionError exact_sum(E, E3)
-    @test_throws AssertionError exact_sum(E3, E)
     for E2 in (exact_sum(E, E), exact_sum(E, B), exact_sum(B, E))
         @test isidentical(E, E2)
     end
 
     # intersection
-    @test_throws AssertionError intersection(E, E3)
+    @test_throws DimensionMismatch intersection(E, E3)
     for E2 in (intersection(E, E), intersection(E, B), intersection(B, E),
                intersection(E, U), intersection(U, E), intersection(E, Z), intersection(Z, E))
         @test isidentical(E, E2)
@@ -335,7 +333,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test !(E ≈ E3) && !(E3 ≈ E) && !(E ≈ Pe) && !(Pe ≈ E)
 
     # isdisjoint
-    @test_throws AssertionError isdisjoint(E, E3)
+    @test_throws DimensionMismatch isdisjoint(E, E3)
     @test isdisjoint(E, E) && isdisjoint(E, B) && isdisjoint(B, E) &&
           isdisjoint(E, Pnc) && isdisjoint(Pnc, E)
     for (res, w) in (isdisjoint(E, E, true), isdisjoint(E, B, true), isdisjoint(B, E, true),
@@ -349,7 +347,6 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isequivalent
     @test_throws AssertionError isequivalent(E, E3)
-    @test_throws AssertionError isequivalent(E3, E)
     @test isequivalent(E, E)
     @test !isequivalent(E, B) && !isequivalent(B, E)
 
@@ -366,8 +363,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test res && w isa Vector{N} && w ∉ E && w ∈ B
 
     # issubset
-    @test_throws AssertionError B ⊆ E3
-    @test_throws AssertionError E3 ⊆ B
+    @test_throws DimensionMismatch B ⊆ E3
+    @test_throws DimensionMismatch E3 ⊆ B
     for X in (E, B, Pnc)
         @test E ⊆ X
         res, w = ⊆(E, X, true)
@@ -383,7 +380,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test res && w isa Vector{N} && isempty(w)
 
     # linear_combination
-    @test_throws AssertionError linear_combination(E, E3)
+    @test_throws DimensionMismatch linear_combination(E, E3)
     for E2 in (linear_combination(E, Pnc), linear_combination(Pnc, E),
                linear_combination(E, B), linear_combination(B, E),
                linear_combination(E, U), linear_combination(U, E))
@@ -391,8 +388,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # minkowski_difference
-    @test_throws AssertionError minkowski_difference(B, E3)
-    @test_throws AssertionError minkowski_difference(E3, B)
+    @test_throws DimensionMismatch minkowski_difference(B, E3)
+    @test_throws DimensionMismatch minkowski_difference(E3, B)
     # empty difference
     for E2 in (minkowski_difference(E, E), minkowski_difference(E, B),
                minkowski_difference(E, U), minkowski_difference(E, Z))
@@ -406,8 +403,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test U2 isa Universe{N} && dim(U2) == 2
 
     # minkowski_sum
-    @test_throws AssertionError minkowski_sum(E, E3)
-    @test_throws AssertionError minkowski_sum(E3, E)
+    @test_throws DimensionMismatch minkowski_sum(E, E3)
     for E2 in (minkowski_sum(E, E), minkowski_sum(E, B), minkowski_sum(B, E), minkowski_sum(U, E),
                minkowski_sum(E, U), minkowski_sum(E, Z), minkowski_sum(Z, E), minkowski_sum(E, B),
                minkowski_sum(B, E))

@@ -21,7 +21,7 @@ function _linear_combination_convex(X, Y)
     return convex_hull(X, Y)
 end
 
-@commutative function linear_combination(∅::EmptySet, X::LazySet)
+@validate_commutative function linear_combination(∅::EmptySet, X::LazySet)
     return _linear_combination_emptyset(∅, X)
 end
 
@@ -55,7 +55,7 @@ end
 # ============== #
 
 for T in (:ConvexSet, :Universe)
-    @eval @commutative function linear_combination(∅::EmptySet, X::($T))
+    @eval @validate_commutative function linear_combination(∅::EmptySet, X::($T))
         return _linear_combination_emptyset(∅, X)
     end
 end

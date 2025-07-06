@@ -28,7 +28,7 @@ end
     return distance(element(S), X; p=p)
 end
 
-@commutative function distance(∅::EmptySet, X::LazySet; p::Real=2.0)
+@validate_commutative function distance(∅::EmptySet, X::LazySet; p::Real=2.0)
     return _distance_emptyset(∅, X; p=p)
 end
 
@@ -53,7 +53,7 @@ end
 end
 
 for T in [:AbstractHyperrectangle, :AbstractSingleton, :Universe]
-    @eval @commutative function distance(∅::EmptySet, X::($T); p::Real=2.0)
+    @eval @validate_commutative function distance(∅::EmptySet, X::($T); p::Real=2.0)
         return _distance_emptyset(∅, X; p=p)
     end
 end

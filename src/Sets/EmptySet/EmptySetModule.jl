@@ -2,9 +2,9 @@ module EmptySetModule
 
 using Reexport, Requires
 
-using ..LazySets: LazySet, ConvexSet, _witness_result_empty
+using ..LazySets: LazySet, ConvexSet, _witness_result_empty, @validate,
+                  @validate_commutative
 using Random: AbstractRNG, GLOBAL_RNG
-using ReachabilityBase.Commutative: @commutative
 using ReachabilityBase.Comparison: _rtol
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator

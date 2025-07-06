@@ -537,7 +537,7 @@ We perform these checks sequentially.
     return witness ? (false, w) : false
 end
 
-@commutative function isdisjoint(∅::EmptySet, X::LazySet, witness::Bool=false)
+@validate_commutative function isdisjoint(∅::EmptySet, X::LazySet, witness::Bool=false)
     return _isdisjoint_emptyset(∅, X, witness)
 end
 
@@ -681,7 +681,7 @@ end
 
 for T in (:AbstractPolyhedron, :AbstractSingleton, :HalfSpace, :Hyperplane,
           :Line2D, :Universe, :Complement, :UnionSet, :UnionSetArray)
-    @eval @commutative function isdisjoint(∅::EmptySet, X::($T), witness::Bool=false)
+    @eval @validate_commutative function isdisjoint(∅::EmptySet, X::($T), witness::Bool=false)
         return _isdisjoint_emptyset(∅, X, witness)
     end
 end
