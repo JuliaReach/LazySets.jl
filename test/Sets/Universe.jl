@@ -37,8 +37,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test x isa Vector{N} && length(x) == 2
 
     # area
-    @test_throws AssertionError area(U)
-    @test_throws AssertionError area(U3)
+    @test_throws AssertionError area(Universe{N}(1))
+    for res in (area(U), area(U3))
+        @test res isa N && res == N(Inf)
+    end
 
     # chebyshev_center_radius
     @static if isdefined(@__MODULE__, :Polyhedra)
