@@ -72,10 +72,15 @@ include("Utils/lp_solvers.jl")
 include("Utils/sdp_solvers.jl")
 include("Utils/file_formats.jl")
 
+# =====================
+# Abstract LazySet type
+# =====================
+include("Interfaces/LazySet.jl")
+
 # ==================
 # Abstract set types
 # ==================
-include("Interfaces/LazySet.jl")
+include("Interfaces/LazySet_functions.jl")
 include("Interfaces/ConvexSet.jl")
 # include("Interfaces/AbstractStar.jl")
 include("Interfaces/AbstractPolynomialZonotope.jl")
