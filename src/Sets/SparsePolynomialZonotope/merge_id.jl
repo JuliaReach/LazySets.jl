@@ -2,8 +2,7 @@
     merge_id(id1::AbstractVector{Int}, id2::AbstractVector{Int}, 
              E₁::AbstractMatrix{N}, E₂::AbstractMatrix{N}) where {N}
 
-Given two `indexvector`s and their corresponding exponent matrices `E₁` and `E₂`, 
-`merge_id` brings the exponent matrices and id lists into a common format.
+Align two identifier vectors and their corresponding exponent matrices in compatible form.
 
 ### Inputs
 
