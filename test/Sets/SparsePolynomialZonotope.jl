@@ -244,16 +244,16 @@ let
 end
 
 #test for merge_id
-for N in [Int64]
+let
     #case 0: dimensions mismatch
     id1 = [1, 2, 3]
     id2 = [1, 2]
-    E1 = rand(2,2)
-    E2 = rand(2,2)
+    E1 = rand(2, 2)
+    E2 = rand(2, 2)
     @test_throws ArgumentError merge_id(id1, id2, E1, E2)
-    
+
     #case 1: identical IDs
-    id = Int64[10, 20, 30]
+    id = [10, 20, 30]
     E1 = rand(3, 4)
     E2 = rand(3, 2)
 
@@ -262,12 +262,12 @@ for N in [Int64]
     @test idx == id
     @test Ē₁ === E1
     @test Ē₂ === E2
-    
+
     # case 2: IDs with overlap
-    E1 = N[1 2; 1 0]
+    E1 = [1 2; 1 0]
     id1 = [1, 2]
 
-    E2 = N[1 0 1; 3 2 0]
+    E2 = [1 0 1; 3 2 0]
     id2 = [2, 3]
 
     Ē₁, Ē₂, idx = merge_id(id1, id2, E1, E2)
@@ -277,10 +277,10 @@ for N in [Int64]
     @test Ē₂ == [0 0 0; 1 0 1; 3 2 0]
 
     #case 3: different IDs
-    E1 = N[1 2; 1 0]
+    E1 = [1 2; 1 0]
     id1 = [1, 2]
 
-    E2 = N[1 0 1; 3 2 0]
+    E2 = [1 0 1; 3 2 0]
     id2 = [3, 4]
 
     Ē₁, Ē₂, idx = merge_id(id1, id2, E1, E2)
