@@ -24,7 +24,7 @@ This method implements [KochdumperA21; Proposition 1](@citet).
 ### Example
 
 ```jldoctest
-julia> import LazySets.SparsePolynomialZonotopeModule: merge_id
+julia> using LazySets.SparsePolynomialZonotopeModule: merge_id
 
 julia> id1 = [1, 2];
 
