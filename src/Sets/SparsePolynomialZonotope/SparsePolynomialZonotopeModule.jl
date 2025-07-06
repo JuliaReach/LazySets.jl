@@ -19,8 +19,7 @@ using ReachabilityBase.Require: require
 @reexport using ..API
 
 export SparsePolynomialZonotope,
-       indexvector,
-       merge_id
+       indexvector
 
 include("SparsePolynomialZonotope.jl")
 
