@@ -7,10 +7,10 @@ Given two `indexvector`s and their corresponding exponent matrices `E₁` and `E
 
 ### Inputs
 
-- `id1::AbstractVector{Int}`: Identifiers corresponding to the rows of `E₁`
-- `id2::AbstractVector{Int}`: Identifiers corresponding to the rows of `E₂`
-- `E₁::AbstractMatrix{N}`: First exponent matrix of size `(p₁ × h₁)`.
-- `E₂::AbstractMatrix{N}`: Second exponent matrix of size `(p₂ × h₂)`.
+- `id1::AbstractVector{Int}` -- identifiers corresponding to the rows of `E₁`
+- `id2::AbstractVector{Int}` -- identifiers corresponding to the rows of `E₂`
+- `E₁::AbstractMatrix{N}` -- first exponent matrix of size `(p₁ × h₁)`
+- `E₂::AbstractMatrix{N}` -- second exponent matrix of size `(p₂ × h₂)`
 
 ### Outputs
 
