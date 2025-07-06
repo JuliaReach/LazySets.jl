@@ -192,7 +192,7 @@ include("Sets/Singleton/SingletonModule.jl")
 
 include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
 @reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ,
-                                                  indexvector, merge_id
+                                                  indexvector
 using ..SparsePolynomialZonotopeModule: uniqueID
 
 include("Sets/Star/StarModule.jl")
