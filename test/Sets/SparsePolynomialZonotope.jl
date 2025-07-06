@@ -256,9 +256,8 @@ let
     #case 0: dimensions mismatch
     id1 = [1, 2, 3]
     id2 = [1, 2]
-    E1 = rand(2, 2)
-    E2 = rand(2, 2)
-    @test_throws ArgumentError merge_id(id1, id2, E1, E2)
+    E = rand(Int, 2, 2)
+    @test_throws ArgumentError merge_id(id1, id2, E, E)
 
     #case 1: identical IDs
     id = [10, 20, 30]
