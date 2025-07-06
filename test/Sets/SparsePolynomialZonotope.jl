@@ -99,6 +99,14 @@ for N in [Float64, Float32, Rational{Int}]
     Z = overapproximate(S, Zonotope)
     @test isequivalent(Z, Zonotope(N[0, 0], N[1.5 1 1; 1.5 0 -1]))
 
+    α = 2.0
+    PZscaled = scale(α, PZ)
+    @test center(PZscaled) == N[8, 8]
+    @test genmat_dep(PZscaled) ==  N[4 2 4; 0 4 4]
+    @test genmat_indep(PZscaled) == hcat(N[2, 0])
+    @test expmat(PZscaled) == expmat(PZ)
+    @test PZscaled == linear_map(2*Matrix{N}(I, 2, 2), PZ)
+
     # remove_redundant_generators
     PZ = SparsePolynomialZonotope(N[-1, 2], N[1 2 0 2; 0 1 2 -1], N[1 0; 2 0], [1 0 1 2; 0 0 0 1])
     PZreduced = remove_redundant_generators(PZ)
