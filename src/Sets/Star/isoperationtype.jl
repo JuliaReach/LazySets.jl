@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:Star}) = false
+function isoperationtype(::Type{<:Star})
+    return false
+end

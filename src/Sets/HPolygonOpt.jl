@@ -75,7 +75,9 @@ mutable struct HPolygonOpt{N,VN<:AbstractVector{N}} <: AbstractHPolygon{N}
     end
 end
 
-isoperationtype(::Type{<:HPolygonOpt}) = false
+function isoperationtype(::Type{<:HPolygonOpt})
+    return false
+end
 
 # constructor with no constraints
 function HPolygonOpt{N,VN}() where {N,VN<:AbstractVector{N}}

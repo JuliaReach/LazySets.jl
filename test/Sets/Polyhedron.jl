@@ -1,6 +1,6 @@
-global test_suite_polyhedra
-
+using LazySets, Test
 using LazySets: _isbounded_stiemke, _isbounded_unit_dimensions
+using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation, isinvertible
 
 for N in [Float64, Rational{Int}, Float32]
     # random polyhedron
@@ -59,7 +59,9 @@ for N in [Float64, Rational{Int}, Float32]
     @test !isuniversal(p)
     res, w = isuniversal(p, true)
     @test !res && w ∉ p
-    @test isuniversal(p_univ) && isuniversal(p_univ, true) == (true, N[])
+    @test isuniversal(p_univ)
+    res, w = isuniversal(p_univ, true)
+    @test res && w == N[]
 
     # membership
     @test N[5 / 4, 7 / 4] ∈ p && N[4, 1] ∉ p
@@ -89,7 +91,7 @@ for N in [Float64, Rational{Int}, Float32]
     p2 = HPolyhedron([HalfSpace(N[1], N(-1))])
     @test isequivalent(p1, p1) && !isequivalent(p1, p2)
 
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         # conversion to and from Polyhedra's HRep data structure
         cl = constraints_list(convert(HPolyhedron, polyhedron(p)))
         @test length(p.constraints) == length(cl)
@@ -119,7 +121,7 @@ for N in [Float64, Rational{Int}, Float32]
     P = HPolyhedron(HalfSpace[HalfSpace(N[2, 2], N(-2)), HalfSpace(N[-2, -2], N(-34))])
     @test_throws ArgumentError ρ(N[0, 1], P)
 
-    if !test_suite_polyhedra
+    @static if !isdefined(@__MODULE__, :Polyhedra)
         # concrete linear map of a bounded polyhedron by a non-invertible matrix
         # throws an assertion error, since tovrep(HPolytope(...)) is required
         H = Hyperrectangle(N[1, 1], N[2, 2])
@@ -140,7 +142,7 @@ for N in [Float64, Rational{Int}, Float32]
         end
     end
 
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         # robustness of empty set (see issue #2532)
         s1 = HalfSpace(N[-1.0], -N(1.0000000000000002)) # x  >= 1.0000000000000002
         s2 = HalfSpace(N[1.0], N(1.0)) # x <= 1
@@ -269,7 +271,7 @@ for N in [Float64]
     # boundedness
     @test isbounded(p)
 
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         p_unbounded = HPolyhedron([LinearConstraint(N[-1, 0], N(-1))])
         p_infeasible = HPolyhedron([LinearConstraint(N[1], N(0)),
                                     LinearConstraint(N[-1], N(-1))])

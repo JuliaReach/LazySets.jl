@@ -1,10 +1,10 @@
-function intersection(x::Interval, y::Interval)
-    l = max(min(x), min(y))
-    h = min(max(x), max(y))
+function intersection(X::Interval, Y::Interval)
+    l = max(min(X), min(Y))
+    h = min(max(X), max(Y))
     if l > h
         require(@__MODULE__, :LazySets; fun_name="intersection")
 
-        N = promote_type(eltype(x), eltype(y))
+        N = promote_type(eltype(X), eltype(Y))
         return EmptySet{N}(1)
     else
         return Interval(l, h)

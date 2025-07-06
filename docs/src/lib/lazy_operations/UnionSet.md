@@ -24,6 +24,7 @@ vertices_list(::UnionSet)
 
 ```@docs
 UnionSetArray
+UnionSet!
 dim(::UnionSetArray)
 array(::UnionSetArray)
 σ(::AbstractVector, ::UnionSetArray; algorithm="support_vector")

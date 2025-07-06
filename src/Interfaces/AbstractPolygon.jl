@@ -9,6 +9,8 @@ Abstract type for convex polygons (i.e., two-dimensional polytopes).
 
 ### Notes
 
+See [`VPolygon`](@ref) for a standard implementation of this interface.
+
 The subtypes of `AbstractPolygon` (including abstract interfaces):
 
 ```jldoctest; setup = :(using LazySets: subtypes)

@@ -63,10 +63,16 @@ end
 
 for T in (:LazySet, :AbstractZonotope, :AbstractHyperrectangle)
     # Minkowski difference with singleton is a translation
-    @eval minkowski_difference(X::($T), S::AbstractSingleton) = translate(X, -element(S))
+    @eval function minkowski_difference(X::($T), S::AbstractSingleton)
+        @assert dim(X) == dim(S) "incompatible set dimensions $(dim(X)) and $(dim(S))"
+        return translate(X, -element(S))
+    end
 
     # Minkowski difference with ZeroSet is the identity
-    @eval minkowski_difference(X::($T), ::ZeroSet) = X
+    @eval function minkowski_difference(X::($T), Z::ZeroSet)
+        @assert dim(X) == dim(Z) "incompatible set dimensions $(dim(X)) and $(dim(Z))"
+        return X
+    end
 end
 
 """
@@ -81,7 +87,7 @@ A `Hyperrectangle`, or an `EmptySet` if the difference is empty.
 function minkowski_difference(H1::AbstractHyperrectangle,
                               H2::AbstractHyperrectangle)
     n = dim(H1)
-    @assert n == dim(H2) "incompatible dimensions"
+    @assert n == dim(H2) "incompatible dimensions $n and $(dim(H2))"
 
     N = promote_type(eltype(H1), eltype(H2))
     r = Vector{N}(undef, n)

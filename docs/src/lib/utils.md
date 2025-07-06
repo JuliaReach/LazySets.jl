@@ -4,7 +4,15 @@ CurrentModule = LazySets
 
 # Utilities
 
-## Macros
+## Array set types
+
+```@docs
+flatten
+neutral
+absorbing
+```
+
+### Internal helper macros
 
 ```@docs
 @neutral

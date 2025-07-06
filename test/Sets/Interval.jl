@@ -1,341 +1,621 @@
-# Note: in pre-v1.1 versions, IntervalArithmetic always operated with Float64
+using LazySets, Test
+using IntervalArithmetic: IntervalBox
+import IntervalArithmetic as IA
+@static if VERSION >= v"1.9"
+    vIA = pkgversion(IA)
+else
+    import PkgVersion
+    vIA = PkgVersion.Version(IA)
+end
+using LazySets.ReachabilityBase.Arrays: ispermutation
+using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+
+function isidentical(::Interval, ::Interval)
+    return false
+end
+
+function isidentical(X1::Interval{N}, X2::Interval{N}) where {N}
+    return X1.dat == X2.dat
+end
+
 for N in [Float64, Float32, Rational{Int}]
-    # random interval
-    rand(Interval)
+    # auxiliary sets
+    X2 = Singleton(N[0, 0])  # 2D set
+    B = BallInf(N[1], N(1))  # equivalent set
+    Pnc = Polygon([N[0, 0], N[3, 0], N[1, 1], N[0, 3]])  # nonconvex
 
-    # constructor from IntervalArithmetic.Interval
-    x = Interval(IA.interval(N(0), N(1)))
+    # default constructor from IntervalArithmetic.Interval
+    itv = IA.interval(N(0), N(2))
+    X = Interval(itv)
+    @test X isa Interval{N} && X.dat == itv
 
-    # constructor from a vector
-    x = Interval(N[0, 1])
+    # constructors from two numbers, from a vector, and with promotion
+    for Y in (Interval(N(0), N(2)), Interval(N[0, 2]), Interval(0, N(2)))
+        @test isidentical(Y, X)
+    end
 
     # constructor from a number
-    x = Interval(N(0))
-    @test x == Interval(N[0, 0])
-
-    # type-less constructor
-    x = Interval(N(0), N(1))
-
-    # constructor with promotion
-    y = Interval(0, N(1))
-    @test y == x
+    X0 = Interval(N(0))
+    @test X0 isa Interval{N} && X0 == Interval(N(0), N(0))
 
     # unbounded intervals are caught
     @test_throws AssertionError Interval(-Inf, zero(N))
     @test_throws AssertionError Interval(zero(N), Inf)
 
-    @test dim(x) == 1
-    @test center(x) == N[0.5]
-    @test center(x, 1) == N(0.5)
-    @test_throws AssertionError center(x, 2)
-    @test min(x) == N(0) && max(x) == N(1)
-    v = vertices_list(x)
-    @test N[0] in v && N[1] in v
+    # convert
+    # to and from IntervalArithmetic.Interval
+    Y = convert(IA.Interval, X)
+    @test Y == X.dat
+    Z = convert(Interval, Y)
+    @test isidentical(Z, X)
+    # from hyperrectangular set
+    @test_throws AssertionError convert(Interval, Hyperrectangle(N[0, 0], N[1, 1]))
+    Y = Hyperrectangle(N[1], N[1])
+    Z = convert(Interval, Y)
+    @test isidentical(Z, X)
+    # from Rectification of Interval
+    Y = Interval(N(-1), N(2))
+    Z = convert(Interval, Rectification(Y))
+    @test isidentical(Z, X)
+    # from MinkowskiSum of Intervals
+    Z = convert(Interval, Y + Y)
+    @test isidentical(Z, Interval(N(-2), N(4)))
+    # from LazySet
+    M = hcat(N[1])
+    Y = convert(Interval, M * X)
+    @test isidentical(Y, X)
+    # from non-convex set
+    Y = UnionSet(Interval(1, 2), Interval(3, 4))
+    @test_throws AssertionError convert(Interval, Y)
 
-    # vertices list for degenerate interval
-    @test vertices_list(Interval(N(0), N(0))) == [[N(0)]]
+    # an_element
+    x = an_element(X)
+    @test x isa Vector{N} && length(x) == 1 && x[1] isa N && N(0) <= x[1] <= N(2)
 
-    # test interface method an_element and membership
-    @test an_element(x) ∈ x
-    # number in interval is invalid
-    @test_throws MethodError N(1) ∈ x
-    # test containment
-    @test x ⊆ x
-    @test x ⊈ N(0.2) * x
-    @test x ⊆ N(2) * x
-    @test x ⊆ Interval(N(0), N(2))
-    @test x ⊈ Interval(N(-1), N(0.5))
+    # area
+    @test_throws AssertionError area(X)
 
-    # concrete linear map
-    @test linear_map(hcat(N(2)...), x) == Interval(N(2) * x.dat)
+    # center
+    c = center(X)
+    @test c isa Vector{N} && c == [N(1)]
+    v = center(X, 1)
+    @test v isa N && v == N(1)
+    @test_throws AssertionError center(X, 2)
 
-    # concrete linear map with zonotope output
-    M2 = hcat(N[1, 2, 3])
-    @test linear_map(M2, x) == Zonotope(N[0.5, 1.0, 1.5], [N[0.5, 1.0, 1.5]])
-
-    # concrete scale of interval
-    @test scale(N(0.5), x) == Interval(N(0.5) * min(x), N(0.5) * max(x))
-
-    # radius_hyperrectangle
-    @test radius_hyperrectangle(x) == [N(0.5)]
-    @test radius_hyperrectangle(x, 1) == N(0.5)
-
-    # + operator = lazy Minkowski sum of intervals
-    y = Interval(N(-2), N(0.5))
-    m = x + y
-    @test m isa MinkowskiSum
-    @test dim(m) == 1
-    @test σ(N[1], m) == N[1.5]
-    @test σ(N[-1], m) == N[-2]
-    m = convert(Interval, m) # concretize into an interval
-    @test min(m) == N(-2) && max(m) == N(1.5)
-    v = vertices_list(m)
-    @test N[1.5] in v && N[-2] in v
-
-    # the concrete Minkowski sum of intervals returns an interval
-    @test minkowski_sum(x, y) == Interval(N(-2), N(1.5))
-
-    # ispolyhedral
-    @test ispolyhedral(x)
-
-    # isempty
-    @test !isempty(x)
-
-    # isuniversal
-    answer, w = isuniversal(x, true)
-    @test !isuniversal(x) && !answer && w ∉ x
-
-    # translation
-    @test translate(x, N[2]) == Interval(N(2), N(3))
-
-    # Minkowski sum (test that we get the same results as the concrete operation)
-    m = x ⊕ y
-    @test m isa MinkowskiSum
-    @test dim(m) == 1
-    @test σ(N[1], m) == N[1.5]
-    @test σ(N[-1], m) == N[-2]
-
-    # boundedness
-    @test isbounded(x)
-
-    # cartesian product
-    cp = x × y
-    @test cp isa CartesianProduct
-    @test dim(cp) == 2
-
-    # conversion to hyperrectangle
-    h = convert(Hyperrectangle, x)
-    @test h isa Hyperrectangle && center(h) == radius_hyperrectangle(h) == N[0.5]
-
-    # diameter
-    x = Interval(N(1), N(3))
-    @test diameter(x) == diameter(x, Inf) == diameter(x, 2) == N(2)
-
-    # split
-    intervals = [Interval(N(1), N(3 // 2)), Interval(N(3 // 2), N(2)),
-                 Interval(N(2), N(5 // 2)), Interval(N(5 // 2), N(3))]
-    @test split(x, 4) == split(x, [4]) == intervals
-    @test_throws AssertionError split(x, 0)
-    @test_throws AssertionError split(x, [4, 4])
-
-    # concrete intersection
-    A = Interval(N(5), N(7))
-    B = Interval(N(3), N(6))
-    C = intersection(A, B)
-    @test C isa Interval
-    @test min(C) == N(5) && max(C) == N(6)
-    # check empty intersection
-    E = intersection(A, Interval(N(0), N(1)))
-    @test isempty(E)
-    # intersection with half-space
-    i = Interval(N(1), N(2))
-    hs = HalfSpace(N[1], N(1.5))
-    @test intersection(i, hs) == Interval(N(1), N(1.5))
-    hs = HalfSpace(N[-2], N(-5))
-    @test intersection(i, hs) == EmptySet{N}(1)
-    hs = HalfSpace(N[2], N(5))
-    @test intersection(i, hs) == i
-    # intersection with hyperplane
-    hp = Hyperplane(N[2], N(3))
-    @test intersection(i, hp) == Singleton(N[1.5])
-    hp = Hyperplane(N[-1], N(-3))
-    @test intersection(i, hp) == EmptySet{N}(1)
-    # other intersections
-    Y = Ball1(N[2], N(0.5))
-    @test intersection(i, Y) == Interval(N(1.5), N(2))
-    Y = ConvexHull(Singleton(N[-5]), Singleton(N[-1]))
-    @test intersection(i, Y) == EmptySet{N}(1)
-
-    # disjointness check
-    @test !isdisjoint(A, B)
-    @test isdisjoint(A, Interval(N(-1), N(1)), false)
-    s, w = isdisjoint(A, B, true)
-    @test s == false && w ∈ A && w ∈ B
-    # disjoint with tolerance
-    if N == Float64
-        @test !isdisjoint(Interval(0.0, 1.0), Interval(1.0 + 1e-10, 2.0))
-        LazySets.set_rtol(Float64, 1e-10)
-        @test isdisjoint(Interval(0.0, 1.0), Interval(1.0 + 1e-10, 2.0))
-        LazySets.set_rtol(Float64, LazySets.default_tolerance(Float64).rtol) # restore
-    end
-
-    # conversion from a hyperrectangular set to an interval
-    H = Hyperrectangle(N[0], N[1 / 2])
-    A = convert(Interval, H)
-    @test A isa Interval && low(A) == [N(-1 / 2)] && high(A) == [N(1 / 2)]
-
-    # conversion from a LazySet to an interval
-    M = hcat(N[2])
-    B = convert(Interval, M * H)
-    @test B isa Interval && low(B) == [N(-1)] && high(B) == [N(1)]
-    # conversion to and from IntervalArithmetic.Interval
-    B2 = convert(IA.Interval, M * H)
-    @test B2 == B.dat
-    B3 = convert(Interval, B2)
-    @test B3 == B
-    # conversion from a non-convex set fails
-    U = UnionSet(Interval(1, 2), Interval(3, 4))
-    @test_throws AssertionError convert(Interval, U)
-    @test_throws AssertionError convert(IA.Interval, U)
-
-    # set difference
-    A = Interval(N(5), N(8))
-    B = Interval(N(6), N(8))
-    C = Interval(N(9), N(10))
-    D = Interval(N(6), N(7))
-    dAB = difference(A, B)
-    dAC = difference(A, C)
-    dAD = difference(A, D)
-    @test dAB == Interval(N(5), N(6))
-    @test dAC == Interval(N(5), N(8))
-    @test dAD == UnionSet(Interval(N(5), N(6)), Interval(N(7), N(8)))
-
-    # check if an interval is flat, i.e. if its endpoints coincide (to numerical precision)
-    ztol = LazySets._ztol(N) # pick up default absolute zero tolerance value
-    @test isflat(Interval(N(0), ztol))
-    if N <: AbstractFloat
-        @test !isflat(Interval(N(0), 2 * ztol))
-    elseif N == Rational{Int}
-        @test isflat(Interval(N(0), 2 * ztol))
-    end
-
-    # rectification
-    x = Interval(N(-2), N(-1))
-    @test rectify(x) == Interval(N(0), N(0))
-    x = Interval(N(-2), N(2))
-    @test rectify(x) == Interval(N(0), N(2))
-    x = Interval(N(1), N(2))
-    @test rectify(x) == x
-
-    # list of vertices of IA types
-    b = IntervalBox(IA.interval(0, 1), IA.interval(0, 1))
-    vlistIB = vertices_list(b)
-    @test is_cyclic_permutation(vlistIB,
-                                [SA[N(1), N(1)], SA[N(0), N(1)], SA[N(1), N(0)], SA[N(0), N(0)]])
-
-    vlistI = vertices_list(b[1])
-    @test is_cyclic_permutation(vlistI, [SA[N(0)], SA[N(1)]])
-
-    # generators
-    @test ngens(x) == 1
-    @test collect(generators(x)) == [N[1 / 2]]
-    @test genmat(x) == hcat(N[1 / 2])
-    x_degenerate = Interval(N(1), N(1))
-    @test ngens(x_degenerate) == 0
-    gens = genmat(x_degenerate)
-    @test gens == Matrix{N}(undef, 1, 0) && gens isa Matrix{N}
-    gens = collect(generators(x_degenerate))
-    @test isempty(gens) && gens isa Vector{SingleEntryVector{N}}
-
-    # is_interior_point
-    v1 = N[3 / 2]
-    v2 = N[1]
-    if N <: AbstractFloat
-        @test is_interior_point(v1, x) && !is_interior_point(v2, x)
-    else
-        @test_throws AssertionError is_interior_point(v1, x)
-        @test is_interior_point(v1, x; ε=1 // 100) && !is_interior_point(v2, x; ε=1 // 100)
-    end
-    # different numeric type
-    v1 = Float16[3 / 2]
-    if N <: AbstractFloat
-        v2 = Float16[1]
-        @test is_interior_point(v1, x) && !is_interior_point(v2, x)
-    else
-        @test_throws ArgumentError is_interior_point(v1, x)
-        @test_throws ArgumentError is_interior_point(v1, x; ε=1 // 100)
-    end
-
-    # Chebyshev center
-    c, r = chebyshev_center_radius(x)
-    @test c == center(x) && r == N(1 // 2)
-
-    # reflect
-    @test reflect(Interval(N(1), N(2))) == Interval(N(-2), N(-1))
-    @test reflect(Interval(N(-1), N(2))) == Interval(N(-2), N(1))
-    @test reflect(Interval(N(-2), N(-1))) == Interval(N(1), N(2))
-
-    # issubset
-    I13 = Interval(N(1), N(3))
-    I02 = Interval(N(0), N(2))
-    I24 = Interval(N(2), N(4))
-    I03 = Interval(N(0), N(3))
-    I14 = Interval(N(1), N(4))
-    for I in (I02, I24)
-        res, w = ⊆(I13, I, true)
-        @test !(⊆(I13, I)) && !res && w ∈ I13 && w ∉ I
-    end
-    res, w = ⊆(I13, I13, true)
-    @test ⊆(I13, I13) && res && w == N[]
-    # isstrictsubset
-    for I in (I02, I24, I13)
-        res, w = ⊂(I13, I, true)
-        @test !(⊂(I13, I)) && !res && w == N[]
-    end
-    for I in (I03, I14)
-        res, w = ⊂(I13, I, true)
-        @test ⊂(I13, I) && res && w ∈ I && w ∉ I13
-    end
-
-    # permute
-    @test permute(x, [1]) == x
-    @test_throws AssertionError permute(x, Int[])
-    @test_throws AssertionError permute(x, Int[2])
-    @test_throws AssertionError permute(x, Int[1, 1])
-
-    # project
-    @test project(x, [1]) == x
-    @test_throws AssertionError project(x, Int[])
-    @test_throws AssertionError project(x, Int[2])
-    @test_throws AssertionError project(x, Int[1, 1])
-
-    # isapprox
-    @test x ≈ x ≈ translate(x, [1e-8])
-    @test !(x ≈ translate(x, [1e-4]))
-
-    # convex_hull & linear_combination
-    I1 = Interval(N(0), N(1))
-    I2 = Interval(N(2), N(3))
-    @test convex_hull(I1, I2) == linear_combination(I1, I2) == Interval(N(0), N(3))
+    # chebyshev_center_radius
+    c, r = chebyshev_center_radius(X)
+    @test c isa Vector{N} && c == [N(1)]
+    @test r isa N && r == N(1)
 
     # complement
-    C = complement(I2)
-    L = HalfSpace(N[1], N(2))
-    H = HalfSpace(N[-1], N(-3))
-    @test length(C) == 2 && ispermutation([C[1], C[2]], [L, H])
+    Y = complement(X)
+    @test Y isa UnionSet{N}
+    @test ispermutation(array(Y), [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-2))])
 
-    # low, high, extrema
-    @test extrema(I1) == (low(I1), high(I1)) == (N[0], N[1])
-    @test extrema(I1, 1) == (low(I1, 1), high(I1, 1)) == (N(0), N(1))
-    @test_throws AssertionError low(I1, 2)
-    @test_throws AssertionError high(I1, 2)
-    @test_throws AssertionError extrema(I1, 2)
+    # concretize
+    Y = concretize(X)
+    @test isidentical(Y, X)
+
+    # constrained_dimensions
+    @test constrained_dimensions(X) == 1:1
+
+    # constraints_list
+    cs = constraints_list(X)
+    @test ispermutation(cs, [HalfSpace(N[1], N(2)), HalfSpace(N[-1], N(0))])
+
+    # constraints
+    cs2 = collect(constraints(X))
+    @test ispermutation(cs2, cs)
+
+    # convex_hull (unary)
+    Y = convex_hull(X)
+    @test isidentical(Y, X)
+
+    # copy
+    Y = copy(X)
+    @test isidentical(Y, X)
+
+    # diameter
+    for res in (diameter(X), diameter(X, Inf), diameter(X, 2))
+        @test res isa N && res == N(2)
+    end
+
+    # dim
+    @test dim(X) == 1
+
+    # eltype
+    @test eltype(X) == N
+    @test eltype(typeof(X)) == N
+
+    # extrema
+    res = extrema(X)
+    @test res isa Tuple{Vector{N},Vector{N}} && res[1] == N[0] && res[2] == N[2]
+    res = extrema(X, 1)
+    @test res isa Tuple{N,N} && res[1] == N(0) && res[2] == N(2)
+    @test_throws AssertionError extrema(X, 2)
+
+    # generators
+    @test collect(generators(X)) == [N[1]]
+    # degenerate case
+    gens = collect(generators(X0))
+    @test gens isa Vector{SingleEntryVector{N}} && isempty(gens)
+
+    # genmat
+    @test genmat(X) == hcat(N[1])
+    # degenerate case
+    gens = genmat(X0)
+    @test gens isa Matrix{N} && gens == Matrix{N}(undef, 1, 0)
+
+    # high
+    res = high(X)
+    @test res isa Vector{N} && res == N[2]
+    res = high(X, 1)
+    @test res isa N && res == N(2)
+    @test_throws AssertionError high(X, 2)
+
+    # isbounded
+    @test isbounded(X)
+
+    # isboundedtype
+    @test isboundedtype(typeof(X))
+
+    # isconvextype
+    @test isconvextype(typeof(X))
+
+    # isempty
+    @test !isempty(X)
+    res, w = isempty(X, true)
+    @test !res && w ∈ X
+    if N == Float64
+        @test w isa Vector{N}
+    else
+        @test_broken w isa Vector{N}  # TODO this should change
+    end
+
+    # isflat
+    ztol = LazySets._ztol(N)  # default absolute zero tolerance
+    @test isflat(Interval(N(0), ztol))
+    @test !isflat(Interval(N(0), 2 * ztol + N(1 // 100)))
+
+    # isoperation
+    @test !isoperation(X)
+
+    # isoperationtype
+    @test !isoperationtype(typeof(X))
+
+    # ispolyhedral
+    @test ispolyhedral(X)
+
+    # isuniversal
+    @test !isuniversal(X)
+    res, w = isuniversal(X, true)
+    @test !res && w isa Vector{N} && w ∉ X
+
+    # low
+    res = low(X)
+    @test res isa Vector{N} && res == N[0]
+    res = low(X, 1)
+    @test res isa N && res == N(0)
+    @test_throws AssertionError low(X, 2)
+
+    # min
+    v = min(X)
+    @test v isa N && v == N(0)
+
+    # max
+    v = max(X)
+    @test v isa N && v == N(2)
+
+    # ngens
+    @test ngens(X) == 1
+    # degenerate case
+    @test ngens(X0) == 0
 
     # norm
-    @test norm(I1) == N(1)
-    @test norm(Interval(N(-2), N(1))) == N(2)
+    for Y in (X, Interval(N(-2), N(1)))
+        for res in (norm(Y), norm(Y, Inf), norm(Y, 2))
+            @test res isa N && res == N(2)
+        end
+    end
+
+    # polyhedron
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        Y = polyhedron(X)
+        @test Y isa Polyhedra.Interval{N} && ispermutation(Y.vrep.points.points, [[N(0)], [N(2)]])
+    end
+
+    # radius
+    for res in (radius(X), radius(X, Inf), radius(X, 2))
+        @test res isa N && res == N(1)
+    end
+
+    # radius_hyperrectangle
+    r = radius_hyperrectangle(X)
+    @test r isa Vector{N} && r == [N(1)]
+    v = radius_hyperrectangle(X, 1)
+    @test v isa N && v == N(1)
+
+    # rectify
+    Y = Interval(N(-1), N(2))
+    Z = rectify(Y)
+    @test isidentical(Z, X)
+    Y = Interval(N(-2), N(-1))
+    Z = rectify(Y)
+    @test isidentical(Z, X0)
+    Y = Interval(N(1), N(2))
+    Z = rectify(Y)
+    @test isidentical(Y, Z)
+
+    # reflect
+    Y = reflect(X)
+    @test isidentical(Y, Interval(N(-2), N(0)))
+
+    # singleton_list
+    res = singleton_list(X)
+    @test res isa Vector{Singleton{N,Vector{N}}}
+    @test ispermutation(res, [Singleton(N[0]), Singleton(N[2])])
+
+    # tosimplehrep
+    A, b = tosimplehrep(X)
+    @test A isa Matrix{N} && b isa Vector{N}
+    @test (A == hcat(N[1, -1]) && b == N[2, 0]) || (A == hcat(N[-1, 1]) && b == N[0, 2])
+
+    # triangulate
+    @static if isdefined(@__MODULE__, :MiniQhull)
+        Y = triangulate(X)  # TODO does it make sense to triangulate a set with two vertices?
+        @test Y isa UnionSetArray{N} && length(Y) == 1
+        Y = Y[1]
+        @test Y isa VPolytope{N}
+        res = vertices_list(Y)
+        @test ispermutation(res, [N[0], N[2]])
+    end
+
+    # triangulate_faces
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        @test_throws ArgumentError triangulate_faces(X)
+    end
+
+    # vertices_list
+    res = vertices_list(X)
+    @test res isa Vector{Vector{N}} && ispermutation(res, [N[0], N[2]])
+    # degenerate case
+    res = vertices_list(X0)
+    @test res isa Vector{Vector{N}} && res == [[N(0)]]
+    # vertices_list for IntervalBox IA types
+    Y = IntervalBox(IA.interval(N(0), N(1)), IA.interval(N(0), N(1)))
+    res = vertices_list(Y)
+    @test ispermutation(res, [[N(1), N(1)], [N(0), N(1)], [N(1), N(0)], [N(0), N(0)]])
+    res = vertices_list(Y[1])
+    @test ispermutation(res, [[N(0)], [N(1)]])
+
+    # vertices
+    res = collect(vertices(X))
+    @test res isa Vector{Vector{N}} && ispermutation(res, [N[0], N[2]])
 
     # volume
-    @test volume(I1) == 1
-    @test volume(Interval(N(-2), N(1))) == N(3)
+    @test volume(X) == N(2)
 
     # affine_map
-    M = hcat(N[2])
-    v = N[-3]
-    @test affine_map(M, I1, v) == Interval(N(-3), N(-1))
-    M2 = hcat(N[2, -2])
-    v = N[-1, -1]
-    H = affine_map(M2, I1, v)
-    @test H isa Zonotope && isequivalent(H, LineSegment(N[-1, -1], N[1, -3]))
+    @test_throws AssertionError affine_map(ones(N, 1, 2), X, N[1])
+    @test_throws AssertionError affine_map(ones(N, 2, 1), X, N[1])
+    Y = affine_map(ones(N, 1, 1), X, N[1])
+    @test isidentical(Y, Interval(N(1), N(3)))
+    Y = affine_map(ones(N, 2, 1), X, N[1, 2])
+    @test Y isa LazySet{N} && isequivalent(Y, LineSegment(N[1, 2], N[3, 4]))
+
+    # distance (between point and set)
+    @test_throws AssertionError distance(X, N[0, 0])
+    for (x, v) in ((N[1], N(0)), (N[4], N(2)))
+        for res in (distance(X, x), distance(x, X))
+            @test res == v
+            if N <: AbstractFloat
+                @test res isa N
+            end
+        end
+    end
 
     # exponential_map
-    @test exponential_map(M, I1) == Interval(N(0), N(exp(N(2))))
+    @test_throws AssertionError exponential_map(ones(N, 2, 2), X)
+    @test_throws AssertionError exponential_map(ones(N, 2, 1), X)
+
+    # in
+    @test_throws AssertionError N[0, 0] ∈ X
+    @test N[1] ∈ X && N[2] ∈ X && N[3] ∉ X
+    # number in interval is invalid
+    @test_throws MethodError N(1) ∈ X
+
+    # is_interior_point
+    @test_throws AssertionError is_interior_point(N[0, 0], X)
+    if N <: AbstractFloat
+        @test is_interior_point(N[1], X)
+        if N == Float64
+            @test_broken !is_interior_point(N[2], X)  # TODO fix
+        else
+            @test !is_interior_point(N[2], X)
+        end
+        @test !is_interior_point(N[3], X)
+    else
+        @test_throws AssertionError is_interior_point(N[1], X)
+        @test is_interior_point(N[1], X; ε=1 // 100)
+        @test !is_interior_point(N[2], X; ε=1 // 100)
+        @test !is_interior_point(N[3], X; ε=1 // 100)
+        # incompatible numeric type
+        @test_throws ArgumentError is_interior_point([1.0], X)
+    end
+
+    # linear_map
+    @test_throws AssertionError linear_map(ones(N, 2, 2), X)
+    Y = linear_map(2 * ones(N, 1, 1), X)
+    @test Y isa Interval{N} && isequivalent(Y, Interval(N(0), N(4)))
+    Y = linear_map(zeros(N, 1, 1), X)
+    @test Y isa Interval{N}
+    if vIA < v"0.21"
+        @test isequivalent(Y, Interval(N(0), N(0)))
+    else
+        @test_broken isequivalent(Y, Interval(N(0), N(0)))  # bug in IntervalArithmetic: 0 * I == I
+    end
+    Y = linear_map(ones(N, 2, 1), X)
+    @test Y isa LazySet{N} && isequivalent(Y, LineSegment(N[0, 0], N[2, 2]))
+    Y = linear_map(zeros(N, 2, 1), X)
+    @test Y isa LazySet{N} && isequivalent(Y, ZeroSet{N}(2))
+
+    # linear_map_inverse
+    @test_throws AssertionError LazySets.linear_map_inverse(ones(N, 2, 2), X)
+    Y = LazySets.linear_map_inverse(ones(N, 1, 1), X)
+    @test Y isa LazySet{N} && isequivalent(Y, X)
+    Y = LazySets.linear_map_inverse(ones(N, 1, 2), X)
+    Z = HPolyhedron([HalfSpace(N[1, 1], N(2)), HalfSpace(N[-1, -1], N(0))])
+    @test Y isa LazySet{N} && isequivalent(Y, Z)
+
+    # permute
+    @test_throws AssertionError permute(X, [-1])
+    @test_throws AssertionError permute(X, [1, 2])
+    @test_throws AssertionError permute(X, [2])
+    Y = permute(X, [1])
+    @test isidentical(Y, X)
+
+    # project
+    @test_throws AssertionError project(X, [-1])
+    @test_throws AssertionError project(X, [1, 2])
+    @test_throws AssertionError project(X, [2])
+    Y = project(X, [1])
+    @test isidentical(Y, X)
+
+    # scale
+    Y = scale(N(2), X)
+    @test isidentical(Y, Interval(N(0), N(4)))
+    # degenerate case
+    Y = scale(N(0), X)
+    @test isidentical(Y, X0)
+    # scale!
+    @test_throws MethodError scale!(N(2), X)
+
+    # split
+    @test_throws AssertionError split(X, 0)
+    @test_throws AssertionError split(X, [4, 4])
+    Xs = [Interval(N(0), N(1 // 2)), Interval(N(1 // 2), N(1)),
+          Interval(N(1), N(3 // 2)), Interval(N(3 // 2), N(2))]
+    Ys = split(X, 4)
+    @test Ys isa Vector{Interval{N}} && Ys == split(X, [4]) == Xs
+
+    # support_function
+    @test_throws AssertionError ρ(N[1, 1], X)
+    res = ρ(N[2], X)
+    @test res isa N && res == N(4)
+    res = ρ(N[-2], X)
+    @test res isa N && res == N(0)
+
+    # support_vector
+    @test_throws AssertionError σ(N[1, 1], X)
+    res = σ(N[2], X)
+    @test res isa Vector{N} && res == [N(2)]
+    res = σ(N[-2], X)
+    @test res isa Vector{N} && res == [N(0)]
+
+    # translate
+    @test_throws AssertionError translate(X, N[1, 1])
+    Y = translate(X, N[1])
+    @test isidentical(Y, Interval(N(1), N(3)))
+    # translate!
+    @test_throws MethodError translate!(X, N[1, 1])  # TODO this should maybe change
+    @test_throws MethodError translate!(X, N[1])  # TODO this should maybe change
+
+    # cartesian_product
+    Y = Interval(N(-3), N(1))
+    Z = cartesian_product(X, Y)
+    @test Z isa Hyperrectangle{N} && Z == Hyperrectangle(N[1, -1], N[1, 2])
+    Z = cartesian_product(Y, X)
+    @test Z isa Hyperrectangle{N} && Z == Hyperrectangle(N[-1, 1], N[2, 1])
+
+    # convex_hull (binary)
+    @test_throws AssertionError convex_hull(X, X2)
+    Y = convex_hull(X, X)
+    @test isidentical(Y, X)
+    Y = Interval(N(-3), N(-1))
+    Z = Interval(N(-3), N(2))
+    for W in (convex_hull(X, Y), convex_hull(Y, X))
+        @test W isa LazySet{N} && isidentical(W, Z)
+    end
+
+    # difference
+    @test_broken difference(X, X2) isa AssertionError  # TODO this should change
+    @test_broken difference(X2, X) isa AssertionError  # TODO this should change
+    # disjoint
+    @test isidentical(difference(X, Interval(N(3), N(4))), X)
+    # overlapping
+    @test isidentical(difference(X, Interval(N(0), N(1))), Interval(N(1), N(2)))
+    @test isidentical(difference(X, Interval(N(1), N(2))), Interval(N(0), N(1)))
+    # fully covered
+    Y = difference(X, X)
+    @test Y isa EmptySet{N} && Y == EmptySet{N}(1)
+    # cut out
+    Y = difference(X, Interval(N(1 // 2), N(1)))
+    @test Y isa UnionSet{N}
+    @test ispermutation(array(Y), [Interval(N(0), N(1 // 2)), Interval(N(1), N(2))])
+    # cut out at a single point
+    Y = difference(X, Interval(N(1), N(1)))
+    @test Y isa UnionSet{N}
+    @test ispermutation(array(Y), [Interval(N(0), N(1)), Interval(N(1), N(2))])
+
+    # distance (between two sets)
+    @test_throws AssertionError distance(X, X2)
+    @test_throws AssertionError distance(X2, X)
+    for (Y, v) in ((Interval(N(-1), N(1)), N(0)), (Interval(N(4), N(5)), N(2)))
+        for res in (distance(X, Y), distance(Y, X))
+            @test res isa N && res == v
+        end
+    end
+
+    # exact_sum
+    @test_throws AssertionError exact_sum(X, X2)
+    @test_throws AssertionError exact_sum(X2, X)
+    Y = Interval(N(3), N(4))
+    for Z in (exact_sum(X, Y), exact_sum(Y, X))
+        @test isidentical(Z, Interval(N(3), N(6)))
+    end
+
+    # intersection
+    @test_throws AssertionError intersection(X, X2)
+    # disjoint
+    Y = intersection(X, Interval(N(3), N(4)))
+    @test Y isa EmptySet{N} && Y == EmptySet{N}(1)
+    # overlapping
+    Y = intersection(X, Interval(N(1), N(3)))
+    @test isidentical(Y, Interval(N(1), N(2)))
+
+    # isapprox
+    @test X ≈ X ≈ translate(X, [1e-8])
+    @test !(X ≈ translate(X, [1e-4]))
+    @test !(X ≈ X2) && !(X2 ≈ X) && !(X ≈ B) && !(B ≈ X)
+
+    # isdisjoint
+    @test_throws AssertionError isdisjoint(X, X2)
+    # disjoint
+    Y = Interval(N(3), N(4))
+    @test isdisjoint(X, Y) && isdisjoint(Y, X)
+    for (pair, Z) in ((isdisjoint(X, Y, true), Y), (isdisjoint(Y, X, true), Y))
+        res, w = pair
+        @test res && w isa Vector{N} && isempty(w)
+    end
+    # overlapping
+    Y = Interval(N(1), N(3))
+    @test !isdisjoint(X, X) && !isdisjoint(X, Y) && !isdisjoint(Y, X)
+    for (pair, Z) in ((isdisjoint(X, X, true), X), (isdisjoint(X, Y, true), Y),
+                      (isdisjoint(Y, X, true), Y))
+        res, w = pair
+        @test !res && w isa Vector{N} && w ∈ X && w ∈ Z
+    end
+    # tolerance
+    if N == Float64
+        Y = Interval(2.0 + 1e-9, 3.0)
+        @test !isdisjoint(X, Y)
+        LazySets.set_rtol(Float64, 1e-10)
+        @test isdisjoint(X, Y)
+        # restore tolerance
+        LazySets.set_rtol(Float64, LazySets.default_tolerance(Float64).rtol)
+    end
+
+    # isequal
+    @test X == X
+    @test X != X2 && X2 != X && X != B && B != X
 
     # isequivalent
-    @test isequivalent(I1, I1) && !isequivalent(I1, I2)
+    @test_broken isequivalent(X, X2) isa AssertionError  # TODO this should change
+    @test_broken isequivalent(X2, X) isa AssertionError  # TODO this should change
+    @test isequivalent(X, X)
+    @test !isequivalent(X, Interval(N(1), N(2)))
+    @test isequivalent(X, B) && isequivalent(B, X)
 
-    # distance
-    @test distance(I1, I2) == distance(I2, I1) == N(1)
-    I3 = Interval(N(1 // 2), N(2))
-    @test distance(I1, I3) == distance(I2, I3) == distance(I1, I1) == N(0)
+    # isstrictsubset
+    @test_throws AssertionError X ⊂ X2
+    @test_throws AssertionError X2 ⊂ X
+    for Y in (X, B, Interval(N(-1), N(2)), Interval(N(0), N(3)))
+        @test !(Y ⊂ X)
+        res, w = ⊂(Y, X, true)
+        @test !res && w isa Vector{N} && isempty(w)
+    end
+    for Y in (Interval(N(-1), N(2)), Interval(N(0), N(3)))
+        @test X ⊂ Y
+        res, w = ⊂(X, Y, true)
+        @test res && w isa Vector{N} && w ∉ X && w ∈ Y
+    end
+
+    # issubset
+    @test_throws AssertionError X ⊆ X2
+    @test_throws AssertionError X2 ⊆ X
+    for Y in (X, B)
+        @test X ⊆ Y
+        res, w = ⊆(X, Y, true)
+        @test res && w isa Vector{N} && w == N[]
+    end
+    for Y in (Interval(N(0), N(1)), Interval(N(1), N(3)))
+        @test X ⊈ Y
+        res, w = ⊆(X, Y, true)
+        @test !res && w isa Vector{N} && w ∈ X && w ∉ Y
+    end
+
+    # linear_combination
+    @test_throws AssertionError linear_combination(X, X2)
+    @test_throws ArgumentError linear_combination(X, Pnc)
+    @test_throws ArgumentError linear_combination(Pnc, X)
+    for Z in (linear_combination(X, X), linear_combination(X, B), linear_combination(B, X))
+        @test isidentical(Z, X)
+    end
+    Y = Interval(N(3), N(4))
+    for Z in (linear_combination(X, Y), linear_combination(Y, X))
+        @test isidentical(Z, Interval(N(0), N(4)))
+    end
+
+    # minkowski_difference
+    @test_throws AssertionError minkowski_difference(X, X2)
+    @test_throws AssertionError minkowski_difference(X2, X)
+    # empty difference
+    for Z in (minkowski_difference(X, X), minkowski_difference(X, B), minkowski_difference(B, X))
+        @test_broken Z isa EmptySet{N} && Z == EmptySet{N}(1)  # TODO this should change
+    end
+    Y = Interval(N(1), N(2))
+    Z = minkowski_difference(Y, X)
+    @test Z isa EmptySet{N} && Z == EmptySet{N}(1)
+    # nonempty difference
+    Y = Interval(N(1), N(3))
+    Z = minkowski_difference(X, Y)
+    @test isidentical(Z, Interval(N(-1), N(-1)))
+    # Universe
+    U = Universe{N}(1)
+    U2 = minkowski_difference(U, X)
+    @test U2 isa Universe{N} && dim(U2) == 1
+
+    # minkowski_sum
+    @test_throws AssertionError minkowski_sum(X, X2)
+    @test_throws AssertionError minkowski_sum(X2, X)
+    # Interval + Interval = Interval
+    Y = minkowski_sum(X, X)
+    Z = Interval(N(0), N(4))
+    @test isidentical(Y, Z)
+    # general
+    for Y in (minkowski_sum(X, B), minkowski_sum(B, X))
+        @test Y isa LazySet{N} && isequivalent(Y, Z)
+    end
+end
+
+for N in [Float64, Float32]
+    X = Interval(N(0), N(2))
+
+    # rand
+    Y = rand(Interval; N=N)
+    @test Y isa Interval{N} && dim(Y) == 1
+    @test_throws AssertionError rand(Interval; N=N, dim=2)
+
+    # rationalize
+    @test_throws MethodError rationalize(X)  # TODO is this possible?
+
+    # exponential_map
+    Y = exponential_map(ones(N, 1, 1), X)
+    @test isidentical(Y, Interval(N(0), N(exp(1)) * N(2)))
+
+    # sample
+    res = sample(X)
+    @test res isa Vector{N} && res in X
+    res = sample(X, 2)
+    @test res isa Vector{Vector{N}} && length(res) == 2 && all(x in X for x in res)
 end

@@ -1,3 +1,3 @@
-function scale(α::Real, x::Interval)
-    return Interval(α * x.dat)
+function scale(α::Real, X::Interval)
+    return Interval(α * X.dat)
 end

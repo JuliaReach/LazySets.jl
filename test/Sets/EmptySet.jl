@@ -1,3 +1,5 @@
+using LazySets, Test
+
 function isidentical(::EmptySet, ::EmptySet)
     return false
 end
@@ -75,8 +77,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(E, E2)
 
     # diameter
-    res = diameter(E)
-    @test res isa N && res == N(0)
+    for res in (diameter(E), diameter(E, Inf), diameter(E, 2))
+        @test res isa N && res == N(0)
+    end
 
     # dim
     @test dim(E) == 2
@@ -104,6 +107,7 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isempty
     @test isempty(E)
+    @test_broken isempty(E, true)  # TODO this should change
 
     # isoperation
     @test !isoperation(E)
@@ -115,25 +119,28 @@ for N in [Float64, Float32, Rational{Int}]
     @test !ispolyhedral(E)  # TODO this should maybe change
 
     # isuniversal
+    @test !isuniversal(E)
     res, w = isuniversal(E, true)
-    @test !isuniversal(E) && !res && w isa Vector{N} && w ∉ E
+    @test !res && w isa Vector{N} && w ∉ E
 
     # low
     @test_throws ArgumentError low(E)
     @test_throws ArgumentError low(E, 1)
 
     # norm
-    res = norm(E)
-    @test res isa N && res == N(0)
+    for res in (norm(E), norm(E, Inf), norm(E, 2))
+        @test res isa N && res == N(0)
+    end
 
     # polyhedron
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         @test_throws MethodError polyhedron(E)  # TODO this should maybe change
     end
 
     # radius
-    res = radius(E)
-    @test res isa N && res == N(0)
+    for res in (radius(E), radius(E, Inf), radius(E, 2))
+        @test res isa N && res == N(0)
+    end
 
     # rand
     E2 = rand(EmptySet; N=N)
@@ -159,20 +166,20 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError triangulate(E)
 
     # triangulate_faces
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         @test_throws AssertionError triangulate_faces(E3)  # TODO this should maybe change
     end
 
     # vertices_list
-    vs = vertices_list(E)
-    @test vs == Vector{Vector{N}}() && typeof(vs) == Vector{Vector{N}}
+    res = vertices_list(E)
+    @test res isa Vector{Vector{N}} && isempty(res)
 
     # vertices
-    vs = collect(vertices(E))
-    @test vs == Vector{Vector{N}}() && typeof(vs) == Vector{Vector{N}}
+    res = collect(vertices(E))
+    @test res isa Vector{Vector{N}} && isempty(res)
 
     # volume
-    @test volume(E) == zero(N)
+    @test volume(E) == N(0)
 
     # affine_map
     @test_throws AssertionError affine_map(ones(N, 2, 3), E, N[1, 1])
@@ -189,14 +196,6 @@ for N in [Float64, Float32, Rational{Int}]
         @test res isa N && res == N(Inf)
     end
 
-    # distance (between two sets)
-    @test_throws AssertionError distance(E, E3)
-    @test_throws AssertionError distance(E3, E)
-    for v in (distance(E, E), distance(B1, E), distance(E, B1), distance(U, E), distance(E, U),
-              distance(E, B), distance(B, E), distance(E, Z), distance(Z, E))
-        @test v isa N && v == N(Inf)
-    end
-
     # exponential_map
     @test_throws AssertionError exponential_map(ones(N, 2, 3), E)
     @test_throws AssertionError exponential_map(ones(N, 3, 2), E)
@@ -206,6 +205,17 @@ for N in [Float64, Float32, Rational{Int}]
     # in
     @test_throws AssertionError N[0] ∈ E
     @test N[0, 0] ∉ E
+
+    # is_interior_point
+    @test_throws AssertionError is_interior_point(N[0], E)
+    if N <: AbstractFloat
+        @test !is_interior_point(N[0, 0], E)
+    else
+        @test_throws AssertionError is_interior_point(N[0, 0], E)
+        @test !is_interior_point(N[0, 0], E; ε=1 // 100)
+        # incompatible numeric type
+        @test_throws ArgumentError is_interior_point([0.0, 0.0], E)
+    end
 
     # linear_map
     @test_throws AssertionError exponential_map(ones(N, 2, 3), E)
@@ -296,11 +306,13 @@ for N in [Float64, Float32, Rational{Int}]
     U2 = difference(U, E)
     @test U2 isa Universe{N} && U2 == U
 
-    # distance (between sets)
+    # distance (between two sets)
     @test_throws AssertionError distance(E, E3)
     @test_throws AssertionError distance(E3, E)
-    res = distance(E, E)
-    @test res isa N && res == N(Inf)
+    for v in (distance(E, E), distance(B1, E), distance(E, B1), distance(U, E), distance(E, U),
+              distance(E, B), distance(B, E), distance(E, Z), distance(Z, E))
+        @test v isa N && v == N(Inf)
+    end
 
     # exact_sum
     @test_throws AssertionError exact_sum(E, E3)
@@ -326,7 +338,7 @@ for N in [Float64, Float32, Rational{Int}]
           isdisjoint(E, Pnc) && isdisjoint(Pnc, E)
     for (res, w) in (isdisjoint(E, E, true), isdisjoint(E, B, true), isdisjoint(B, E, true),
                      isdisjoint(E, Pnc, true), isdisjoint(Pnc, E, true))
-        @test res && w isa Vector{N} && w == N[]
+        @test res && w isa Vector{N} && isempty(w)
     end
 
     # isequal
@@ -345,7 +357,7 @@ for N in [Float64, Float32, Rational{Int}]
     for X in (E, B)
         @test !(X ⊂ E)
         res, w = ⊂(X, E, true)
-        @test !res && w isa Vector{N} && w == N[]
+        @test !res && w isa Vector{N} && isempty(w)
     end
     @test E ⊂ B
     res, w = ⊂(E, B, true)
@@ -357,16 +369,16 @@ for N in [Float64, Float32, Rational{Int}]
     for X in (E, B, Pnc)
         @test E ⊆ X
         res, w = ⊆(E, X, true)
-        @test res && w isa Vector{N} && w == N[]
+        @test res && w isa Vector{N} && isempty(w)
     end
-    @test B ⊈ E && Pnc ⊈ E
     for X in (B, Pnc)
+        @test X ⊈ E
         res, w = ⊆(X, E, true)
-        @test !res && w isa Vector{N} && w ∉ E && w ∈ X
+        @test !res && w isa Vector{N} && w ∈ X && w ∉ E
     end
     @test Pe ⊆ E
     res, w = ⊆(Pe, E, true)
-    @test res && w isa Vector{N} && w == N[]
+    @test res && w isa Vector{N} && isempty(w)
 
     # linear_combination
     @test_throws AssertionError linear_combination(E, E3)
@@ -379,14 +391,17 @@ for N in [Float64, Float32, Rational{Int}]
     # minkowski_difference
     @test_throws AssertionError minkowski_difference(B, E3)
     @test_throws AssertionError minkowski_difference(E3, B)
+    # empty difference
     for E2 in (minkowski_difference(E, E), minkowski_difference(E, B),
                minkowski_difference(E, U), minkowski_difference(E, Z))
         @test isidentical(E, E2)
     end
-    U2 = minkowski_difference(U, E)
-    @test U2 isa Universe{N} && dim(U2) == 2
+    # nonempty difference
     X = minkowski_difference(B, E)
     @test X isa BallInf{N} && X == B
+    # Universe
+    U2 = minkowski_difference(U, E)
+    @test U2 isa Universe{N} && dim(U2) == 2
 
     # minkowski_sum
     @test_throws AssertionError minkowski_sum(E, E3)
@@ -405,8 +420,4 @@ for N in [Float64, Float32]
     E2 = rationalize(E)
     @test E2 isa EmptySet{Rational{Int}} && dim(E2) == 2
     @test_throws MethodError rationalize(E2)
-
-    # is_interior_point
-    @test_throws AssertionError is_interior_point(N[0], E)
-    @test !is_interior_point(N[0, 0], E)
 end

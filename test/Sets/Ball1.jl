@@ -1,6 +1,15 @@
+using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: ispermutation
+
 for N in [Float64, Rational{Int}, Float32]
     # random ball
     rand(Ball1)
+
+    # invalid inputs
+    @test_throws AssertionError Ball1(N[0], N(-1))
+    if N <: AbstractFloat
+        @test_throws AssertionError Ball1(N[0], N(NaN))
+    end
 
     # 1D Ball1
     b = Ball1(N[0], N(1))
@@ -71,6 +80,9 @@ for N in [Float64, Rational{Int}, Float32]
 
     # boundedness
     @test isbounded(b)
+
+    # isoperationtype
+    @test !isoperationtype(typeof(b))
 
     # ispolyhedral
     @test ispolyhedral(b)

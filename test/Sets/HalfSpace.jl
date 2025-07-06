@@ -1,3 +1,6 @@
+using LazySets, Test, SparseArrays
+using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+
 for N in [Float64, Rational{Int}, Float32]
     # random half-space
     rand(HalfSpace)
@@ -131,12 +134,12 @@ for N in [Float64, Rational{Int}, Float32]
     @test_throws ArgumentError linear_map(M, H, algorithm="vrep")
     M = N[2 2; 0 1] # invertible matrix
     @test linear_map(M, H) == HalfSpace(N[0.5, -2.0], N(0.0))
-    M = zeros(N, 2, 2) # result is a singleton
-    X = linear_map(M, H)
-    @test X isa HPolyhedron && isequivalent(X, ZeroSet{N}(2))
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        M = zeros(N, 2, 2) # result is a singleton
+        X = linear_map(M, H)
+        @test X isa HPolyhedron && isequivalent(X, ZeroSet{N}(2))
 
-    if test_suite_polyhedra
-        if N == Float64 || N == Float32
+        if N isa AbstractFloat
             @test linear_map(N[1 1], H) == Universe{N}(1)
         end
     end

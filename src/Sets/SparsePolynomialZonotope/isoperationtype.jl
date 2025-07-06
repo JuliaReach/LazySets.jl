@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:SparsePolynomialZonotope}) = false
+function isoperationtype(::Type{<:SparsePolynomialZonotope})
+    return false
+end

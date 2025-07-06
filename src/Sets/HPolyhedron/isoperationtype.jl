@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:HPolyhedron}) = false
+function isoperationtype(::Type{<:HPolyhedron})
+    return false
+end

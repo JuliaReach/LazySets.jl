@@ -50,7 +50,7 @@ end
 
 function _issubset_in_hyperrectangle(S, H, witness)
     n = dim(S)
-    @assert n == dim(H)
+    @assert n == dim(H) "incompatible set dimensions $n and $(dim(H))"
     N = promote_type(eltype(S), eltype(H))
 
     for i in 1:n
@@ -84,7 +84,7 @@ end
 """
 function ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
            witness::Bool=false)
-    @assert dim(H1) == dim(H2)
+    @assert dim(H1) == dim(H2) "incompatible set dimensions $(dim(H1)) and $(dim(H2))"
     N = promote_type(eltype(H1), eltype(H2))
 
     @inbounds for i in 1:dim(H1)
@@ -137,7 +137,7 @@ Since ``S`` is convex, ``P ⊆ S`` iff ``v ∈ S`` for all vertices ``v`` of ``P
 """
 function ⊆(P::AbstractPolytope, S::LazySet, witness::Bool=false;
            algorithm=nothing)
-    @assert dim(P) == dim(S)
+    @assert dim(P) == dim(S) "incompatible set dimensions $(dim(P)) and $(dim(S))"
     if !isconvextype(typeof(S))
         error("an inclusion check for the given combination of set types is " *
               "not available")
@@ -210,7 +210,7 @@ end
 # S ⊆ P where P = ⟨Cx ≤ d⟩  iff  y ≤ d where y is the upper corner of box(C*S).
 # See [WetzlingerKBA23; Proposition 7](@citet).
 function _issubset_in_polyhedron_high(S::LazySet, P::LazySet, witness::Bool=false)
-    @assert dim(S) == dim(P)
+    @assert dim(S) == dim(P) "incompatible set dimensions $(dim(S)) and $(dim(P))"
 
     C, d = tosimplehrep(P)
     x = high(C * S)
@@ -231,7 +231,7 @@ end
 # See [WetzlingerKBA23; Proposition 7](@citet).
 function _issubset_zonotope_in_polyhedron(Z::AbstractZonotope, P::LazySet,
                                           witness::Bool=false)
-    @assert dim(Z) == dim(P)
+    @assert dim(Z) == dim(P) "incompatible set dimensions $(dim(Z)) and $(dim(P))"
 
     # corner case: no generator
     if ngens(Z) == 0
@@ -334,18 +334,18 @@ function _issubset_line_segment(L, S, witness)
 end
 
 """
-    ⊆(x::Interval, U::UnionSet, [witness]::Bool=false)
+    ⊆(X::Interval, U::UnionSet, [witness]::Bool=false)
 
 Check whether an interval is contained in the union of two convex sets.
 
 ### Input
 
-- `x` -- inner interval
+- `X` -- inner interval
 - `U` -- outer union of two convex sets
 
 ### Output
 
-`true` iff `x ⊆ U`.
+`true` iff `X ⊆ U`.
 
 ### Notes
 
@@ -354,56 +354,56 @@ Since these are equivalent to intervals, we convert to `Interval`s.
 
 ### Algorithm
 
-Let ``U = a ∪ b `` where ``a`` and ``b`` are intervals and assume that the lower
-bound of ``a`` is to the left of ``b``.
-If the lower bound of ``x`` is to the left of ``a``, we have a counterexample.
-Otherwise we compute the set difference ``y = x \\ a`` and check whether
-``y ⊆ b`` holds.
+Let ``U = Y ∪ Z `` where ``Y`` and ``Z`` are intervals and assume that the lower
+bound of ``Y`` is to the left of ``Z``.
+If the lower bound of ``X`` is to the left of ``Y``, we have a counterexample.
+Otherwise we compute the set difference ``W = X \\ Y`` and check whether
+``W ⊆ Z`` holds.
 """
-function ⊆(x::Interval, U::UnionSet, witness::Bool=false)
+function ⊆(X::Interval, U::UnionSet, witness::Bool=false)
     @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
                         "$(dim(U))"
     if !isconvextype(typeof(first(U))) || !isconvextype(typeof(second(U)))
         error("an inclusion check for the given combination of set types is " *
               "not available")
     end
-    return _issubset_interval(x, convert(Interval, first(U)),
+    return _issubset_interval(X, convert(Interval, first(U)),
                               convert(Interval, second(U)), witness)
 end
 
-function ⊆(x::Interval, U::UnionSet{N,<:Interval,<:Interval},
+function ⊆(X::Interval, U::UnionSet{N,<:Interval,<:Interval},
            witness::Bool=false) where {N}
-    return _issubset_interval(x, first(U), second(U), witness)
+    return _issubset_interval(X, first(U), second(U), witness)
 end
 
-function _issubset_interval(x::Interval{N}, a::Interval, b::Interval,
+function _issubset_interval(X::Interval{N}, Y::Interval, Z::Interval,
                             witness) where {N}
-    if min(a) > min(b)
-        c = b
-        b = a
-        a = c
+    if min(Y) > min(Z)
+        W = Z
+        Z = Y
+        Y = W
     end
     # a is on the left of b
-    if min(x) < min(a)
-        return witness ? (false, low(x)) : false
+    if min(X) < min(Y)
+        return witness ? (false, low(X)) : false
     end
-    y = difference(x, a)
-    if y ⊆ b
+    W = difference(X, Y)
+    if W ⊆ Z
         return _witness_result_empty(witness, true, N)
     elseif !witness
         return false
     end
 
     # compute witness
-    w = min(b) > min(y) ? [(min(y) + min(b)) / 2] : high(y)
+    w = min(Z) > min(W) ? [(min(W) + min(Z)) / 2] : high(W)
     return (false, w)
 end
 
-function ⊆(x::Interval, U::UnionSetArray, witness::Bool=false)
+function ⊆(X::Interval, U::UnionSetArray, witness::Bool=false)
     @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
                         "$(dim(U))"
     V = _get_interval_array_copy(U)
-    return _issubset_interval!(x, V, witness)
+    return _issubset_interval!(X, V, witness)
 end
 
 function _get_interval_array_copy(U::UnionSetArray{N}) where {N}
@@ -448,24 +448,24 @@ function _get_interval_array_copy(U::UnionSetArray{N,<:Interval}) where {N}
     return copy(array(U))
 end
 
-function _issubset_interval!(x::Interval{N}, intervals, witness) where {N}
+function _issubset_interval!(X::Interval{N}, intervals, witness) where {N}
     # sort intervals by lower bound
     sort!(intervals; lt=(x, y) -> low(x, 1) <= low(y, 1))
 
     # subtract intervals from x
-    for y in intervals
-        if low(y, 1) > low(x, 1)
+    for Y in intervals
+        if low(Y, 1) > low(X, 1)
             # lowest point of x is not contained
             # witness is the point in the middle
-            return witness ? (false, [(low(x, 1) + low(y, 1)) / 2]) : false
+            return witness ? (false, [(low(X, 1) + low(Y, 1)) / 2]) : false
         end
-        x = difference(x, y)
-        if isempty(x)
+        X = difference(X, Y)
+        if isempty(X)
             return _witness_result_empty(witness, true, N)
         end
     end
 
-    return witness ? (false, center(x)) : false
+    return witness ? (false, center(X)) : false
 end
 
 """
@@ -855,12 +855,12 @@ function ⊆(L::LineSegment, H::AbstractHyperrectangle, witness::Bool=false)
     return _issubset_line_segment(L, H, witness)
 end
 
-function ⊆(x::Interval, U::UnionSetArray{N,<:AbstractHyperrectangle},
+function ⊆(X::Interval, U::UnionSetArray{N,<:AbstractHyperrectangle},
            witness::Bool=false) where {N}
     @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
                         "$(dim(U))"
     V = _get_interval_array_copy(U)
-    return _issubset_interval!(x, V, witness)
+    return _issubset_interval!(X, V, witness)
 end
 
 function ⊆(X::LineSegment, U::UnionSetArray, witness::Bool=false)

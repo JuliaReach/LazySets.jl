@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:Universe}) = false
+function isoperationtype(::Type{<:Universe})
+    return false
+end

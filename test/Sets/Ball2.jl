@@ -1,6 +1,12 @@
+using LazySets, Test
+
 for N in [Float64, Float32]
     # random ball
     rand(Ball2)
+
+    # invalid inputs
+    @test_throws AssertionError Ball2(N[0], N(-1))
+    @test_throws AssertionError Ball2(N[0], N(NaN))
 
     # 1D Ball2
     b = Ball2(N[0], N(1))
@@ -73,6 +79,9 @@ for N in [Float64, Float32]
     # boundedness
     @test isbounded(b) && isboundedtype(typeof(b))
 
+    # isoperationtype
+    @test !isoperationtype(typeof(b))
+
     # ispolyhedral
     @test !ispolyhedral(b)
 
@@ -130,13 +139,16 @@ for N in [Float64, Float32]
     intersection_empty, point = is_intersection_empty(b1, b4, true)
     @test !is_intersection_empty(b1, b4) && !intersection_empty && point ∈ b1 && point ∈ b4
 
-    # uniform sampling
     B = Ball2(N[1, 2, 3], N(0.5))
-    s = sample(B, 100) # get 100 random elements in B
-    @test all(si -> si ∈ B, s)
-    # sampling without arguments returns a single vector
-    s = sample(B)
-    @test s isa AbstractVector{N} && s ∈ B
+
+    @static if isdefined(@__MODULE__, :Distributions)
+        # uniform sampling
+        s = sample(B, 100) # get 100 random elements in B
+        @test all(si -> si ∈ B, s)
+        # sampling without arguments returns a single vector
+        s = sample(B)
+        @test s isa AbstractVector{N} && s ∈ B
+    end
 
     # Chebyshev center
     c, r = chebyshev_center_radius(B)

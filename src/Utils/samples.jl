@@ -573,6 +573,21 @@ function _add_generators!(x, P::DensePolynomialZonotope, U, rng)
     return x
 end
 
+function _add_generators!(x, P::AbstractSparsePolynomialZonotope, U, rng)
+    # dependent generators
+    p = nparams(P)
+    αₛ = rand(rng, U, p)
+    γₛ = [prod(αₛ .^ e) for e in eachcol(expmat(P))]  # vector of monomial coefficients
+    x .+= genmat_dep(P) * γₛ
+
+    # independent generators
+    q = ngens_indep(P)
+    βₛ = rand(rng, U, q)
+    x .+= genmat_indep(P) * βₛ
+
+    return x
+end
+
 """
     UniverseSampler{D} <: AbstractSampler
 

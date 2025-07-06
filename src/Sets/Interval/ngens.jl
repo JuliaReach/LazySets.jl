@@ -1,11 +1,11 @@
 """
-    ngens(x::Interval)
+    ngens(X::Interval)
 
 Return the number of generators of an interval.
 
 ### Input
 
-- `x` -- interval
+- `X` -- interval
 
 ### Output
 
@@ -16,6 +16,6 @@ The number of generators.
 An interval has either one generator, or zero generators if it is a degenerated
 interval of diameter zero.
 """
-function ngens(x::Interval)
-    return _isapprox(min(x), max(x)) ? 0 : 1
+function ngens(X::Interval)
+    return _isapprox(min(X), max(X)) ? 0 : 1
 end

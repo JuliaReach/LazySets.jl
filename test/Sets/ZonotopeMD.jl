@@ -1,3 +1,5 @@
+using LazySets, Test, LinearAlgebra
+
 for N in [Float64, Float32, Rational{Int}]
     # isoperationtype
     @test !isoperationtype(ZonotopeMD)
@@ -9,7 +11,7 @@ for N in [Float64, Float32, Rational{Int}]
     # direct construction via (center, M, d)
     c = [N(1), N(2)]
     M = [N(1) N(0); N(0) N(1)]
-    d = [N(1//10), N(2)]
+    d = [N(1 // 10), N(2)]
     Z = ZonotopeMD(c, M, d)
     @test Z isa ZonotopeMD{N}
     @test center(Z) == c
@@ -42,7 +44,9 @@ for N in [Float64, Float32, Rational{Int}]
     cp_md = cartesian_product(Z, Z2)
     @test cp_md isa ZonotopeMD{N}
     cp_std = cartesian_product(Zstd, convert(Zonotope, Z2))
-    @test isequivalent(cp_md, cp_std)
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        @test isequivalent(cp_md, cp_std)
+    end
 
     # for order 3:
     #   center ∈ ℝ²,
@@ -51,7 +55,7 @@ for N in [Float64, Float32, Rational{Int}]
     # direct construction via (center, M, d)
     c = [N(1), N(2)]
     M = [N(1) N(0) N(2) N(0); N(0) N(1) N(3) N(0)]
-    d = [N(1//10), N(2)]
+    d = [N(1 // 10), N(2)]
     Z = ZonotopeMD(c, M, d)
     @test Z isa ZonotopeMD{N}
     @test center(Z) == c
@@ -84,5 +88,7 @@ for N in [Float64, Float32, Rational{Int}]
     cp_md = cartesian_product(Z, Z2)
     @test cp_md isa ZonotopeMD{N}
     cp_std = cartesian_product(Zstd, convert(Zonotope, Z2))
-    @test isequivalent(cp_md, cp_std)
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        @test isequivalent(cp_md, cp_std)
+    end
 end

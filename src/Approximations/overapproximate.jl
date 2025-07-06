@@ -634,8 +634,8 @@ function overapproximate(P::SparsePolynomialZonotope{N}, ::Type{<:VPolytope}) wh
 
     H = Int[]
     K = Int[]
-    for j in 1:size(E, 2)
-        push!(any(E[:, j] .> 1) ? H : K, j)
+    for (j, cj) in enumerate(eachcol(E))
+        push!(any(cj .> 1) ? H : K, j)
     end
 
     if !isempty(H)

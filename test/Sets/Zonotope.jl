@@ -1,3 +1,6 @@
+using LazySets, Test, LinearAlgebra, SparseArrays
+using LazySets.ReachabilityBase.Arrays: ispermutation
+
 for N in [Float64, Rational{Int}, Float32]
     # random zonotope
     rand(Zonotope)
@@ -158,10 +161,13 @@ for N in [Float64, Rational{Int}, Float32]
         @test genmat(Znogen) == Matrix{N}(undef, 2, 0)
         @test collect(generators(Znogen)) == Vector{N}()
     end
-    # order reduction with static arrays
-    for method in [LazySets.COMB03(), LazySets.GIR05()]
-        Zs = Zonotope(SVector{2}(Z.center), SMatrix{2,6}(Z.generators))
-        @test reduce_order(Zs, 2, method) isa Zonotope{N,SVector{2,N},SMatrix{2,4,N,8}}
+
+    @static if isdefined(@__MODULE__, :StaticArrays)
+        # order reduction with static arrays
+        for method in [LazySets.COMB03(), LazySets.GIR05()]
+            Zs = Zonotope(SVector{2}(Z.center), SMatrix{2,6}(Z.generators))
+            @test reduce_order(Zs, 2, method) isa Zonotope{N,SVector{2,N},SMatrix{2,4,N,8}}
+        end
     end
 
     # conversion from zonotopic sets
@@ -201,7 +207,9 @@ for N in [Float64, Rational{Int}, Float32]
     h2 = Hyperrectangle(N[5 // 2, 9 // 2], N[1 / 2, 1 / 2])
     H = convert(Hyperrectangle, h1 × h2)
     Z = convert(Zonotope, h1 × h2)
-    @test Z ⊆ H && H ⊆ Z
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        @test Z ⊆ H && H ⊆ Z
+    end
 
     # same for CartesianProductArray
     Z2 = convert(Zonotope, CartesianProductArray([h1, h2]))
@@ -213,9 +221,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test Z1 ⊆ Z && Z2 ⊆ Z
     Z1, Z2, Z3, Z4 = split(Z, [1, 2], [1, 1])
     @test Z1 ⊆ Z && Z2 ⊆ Z && Z3 ⊆ Z && Z4 ⊆ Z
-    Z = Zonotope(SVector{2}(N[0, 0]), SMatrix{2,2}(N[1 1; -1 1]))
-    Z1, Z2 = split(Z, 1)
-    @test Z1 ⊆ Z && Z2 ⊆ Z
+    @static if isdefined(@__MODULE__, :StaticArrays)
+        Z = Zonotope(SVector{2}(N[0, 0]), SMatrix{2,2}(N[1 1; -1 1]))
+        Z1, Z2 = split(Z, 1)
+        @test Z1 ⊆ Z && Z2 ⊆ Z
+    end
 
     # converts the cartesian product of two zonotopes to a new zonotope
     Z1 = Zonotope(N[0], hcat(N[1]))
@@ -240,17 +250,20 @@ for N in [Float64, Rational{Int}, Float32]
     Z2 = convert(Zonotope, M * CartesianProductArray([B, B]))
     @test Z2 == Z
 
-    # list of constraints
-    Z = Zonotope(zeros(N, 3), Matrix(N(1) * I, 3, 3))
-    B = BallInf(zeros(N, 3), N(1))  # equivalent to Z
-    clist = constraints_list(Z)
-    @test clist isa Vector{<:HalfSpace{N}} && length(clist) == 6
-    # test #3209
-    Z2 = Zonotope(zeros(N, 3), N[1.0 1 0; 0 1 1; 0 0 0])
-    clist = constraints_list(Z2)
-    @test clist isa Vector{<:HalfSpace{N}} && length(clist) == 8
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        # list of constraints
+        Z = Zonotope(zeros(N, 3), Matrix(N(1) * I, 3, 3))
+        B = BallInf(zeros(N, 3), N(1))  # equivalent to Z
+        clist = constraints_list(Z)
+        @test clist isa Vector{<:HalfSpace{N}} && length(clist) == 6
+        # test #3209
+        Z2 = Zonotope(zeros(N, 3), N[1.0 1 0; 0 1 1; 0 0 0])
+        clist = constraints_list(Z2)
+        @test clist isa Vector{<:HalfSpace{N}} && length(clist) == 8
+    end
 
     # concrete projection returns a zonotope
+    Z = Zonotope(zeros(N, 3), Matrix(N(1) * I, 3, 3))
     πZ12 = project(Z, 1:2)
     @test πZ12 == Zonotope(zeros(N, 2), Matrix(N(1) * I, 2, 2))
 
@@ -273,7 +286,7 @@ for N in [Float64, Rational{Int}, Float32]
         Z = Zonotope(zeros(N, size(G, 1)), G)
         Z2 = remove_redundant_generators(Z)
         @test ngens(Z2) == nG
-        if N <: AbstractFloat || test_suite_polyhedra
+        if N <: AbstractFloat || isdefined(@__MODULE__, :Polyhedra)
             @test isequivalent(Z, Z2)
         end
         if !isnothing(G2)
@@ -324,7 +337,7 @@ for N in [Float64]
     # sparse matrix (#1468)
     constraints_list(Zonotope(N[0, 0], sparse(N[1 0; 0 1])))
 
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         # constraints_list for generator matrix with a zero row
         Z = Zonotope(N[0, 0], N[2 3; 0 0])
         P = tovrep(HPolygon(constraints_list(Z)))
@@ -357,10 +370,12 @@ for N in [Float64]
     vlist3 = LazySets._vertices_list_2D(c, G; apply_convex_hull=false)
     @test ispermutation(vlistZ, vlist3)
 
-    # test 3d zonotope vertex enumeration
-    Z = Zonotope([0.0, 0.0, 0.0], [1.0 0.0 1.0; 0.0 1.0 1.0; 0.1 1.0 1.0])
-    vlistZ = vertices_list(Z)
-    @test length(vlistZ) == 8
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        # test 3d zonotope vertex enumeration
+        Z = Zonotope([0.0, 0.0, 0.0], [1.0 0.0 1.0; 0.0 1.0 1.0; 0.1 1.0 1.0])
+        vlistZ = vertices_list(Z)
+        @test length(vlistZ) == 8
+    end
 
     # test 2d zonotope generators in positive orthant vertex enumeration
     Z = Zonotope([0.0, 0.0], [1.0 0.0 1.0; 0.0 1.0 1.0])

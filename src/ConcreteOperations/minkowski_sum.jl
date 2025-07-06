@@ -183,6 +183,7 @@ end
 The resulting hyperrectangle is obtained by summing up the centers and radii.
 """
 function minkowski_sum(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
+    @assert dim(H1) == dim(H2) "incompatible set dimensions $(dim(H1)) and $(dim(H2))"
     c = center(H1) + center(H2)
     r = radius_hyperrectangle(H1) + radius_hyperrectangle(H2)
     return Hyperrectangle(c, r)

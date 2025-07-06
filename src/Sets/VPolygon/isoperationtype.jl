@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:VPolygon}) = false
+function isoperationtype(::Type{<:VPolygon})
+    return false
+end

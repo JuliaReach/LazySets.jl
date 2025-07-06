@@ -1,3 +1,5 @@
+using LazySets, Test, LinearAlgebra
+
 for N in [Float64, Float32, Rational{Int}]
     # example set from Figure 2 in original paper
     c = zeros(N, 2)

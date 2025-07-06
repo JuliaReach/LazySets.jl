@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:LineSegment}) = false
+function isoperationtype(::Type{<:LineSegment})
+    return false
+end

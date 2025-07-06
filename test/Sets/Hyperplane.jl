@@ -1,3 +1,6 @@
+using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: ispermutation
+
 for N in [Float64, Rational{Int}, Float32]
     # random hyperplane
     rand(Hyperplane)
@@ -72,7 +75,7 @@ for N in [Float64, Rational{Int}, Float32]
     H = Hyperplane(N[1, -1], N(0)) # x = y
     M = N[1 0; 0 0] # non-invertible matrix
     # projection is y = 0
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         lm = linear_map(M, H)
         if N == Float32 || N == Float64
             @test lm isa Hyperplane{Float64}
@@ -89,25 +92,28 @@ for N in [Float64, Rational{Int}, Float32]
     M = N[2 0; 0 4]
     P = linear_map(M, H)
     @test P == Hyperplane(N[1 // 2, -1 // 4], N(0))
-    # result is a singleton (but represented as a polyhedron)
-    M = zeros(N, 2, 2)
-    P = linear_map(M, H)
-    @test P isa HPolyhedron && isequivalent(P, ZeroSet{N}(2))
-    # non-origin singleton
-    H = Hyperplane(N[1, 0], N(1))
-    M = N[1 0; 0 0]
-    P = linear_map(M, H)
-    @test P isa HPolyhedron && isequivalent(P, Singleton(N[1, 0]))
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        # result is a singleton (but represented as a polyhedron)
+        M = zeros(N, 2, 2)
+        P = linear_map(M, H)
+        @test P isa HPolyhedron && isequivalent(P, ZeroSet{N}(2))
+        # non-origin singleton
+        H = Hyperplane(N[1, 0], N(1))
+        M = N[1 0; 0 0]
+        P = linear_map(M, H)
+        @test P isa HPolyhedron && isequivalent(P, Singleton(N[1, 0]))
+    end
 
     # projection
     H = Hyperplane(N[1, -1], N(0))  # x = y
     @test project(H, [1]) == project(H, [2]) == Universe{N}(1)
     @test project(H, [1, 2]) == H
 
+    M = N[1 0; 0 0]
     @test_throws ArgumentError linear_map(M, H, algorithm="inv")
     M = N[2 2; 0 1] # invertible matrix
 
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         @test linear_map(M, H) == Hyperplane(N[0.5, -2.0], N(0.0))
     end
 

@@ -1,1 +1,3 @@
-isoperationtype(::Type{<:Line}) = false
+function isoperationtype(::Type{<:Line})
+    return false
+end

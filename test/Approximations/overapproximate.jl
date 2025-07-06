@@ -448,16 +448,16 @@ for N in [Float64]
     # =======================================
     # Zonotope overapprox. of a Taylor model
     # =======================================
-    x₁, x₂, x₃ = set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
+    local x₁, x₂, x₃ = TaylorModels.set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
     Dx₁ = IA.interval(N(1.0), N(3.0))
     Dx₂ = IA.interval(N(-1.0), N(1.0))
     Dx₃ = IA.interval(N(-1.0), N(0.0))
     D = Dx₁ × Dx₂ × Dx₃   # domain
-    x0 = IntervalBox(IA.mid.(D)...)
+    local x0 = IntervalBox(IA.mid.(D)...)
     I = IA.interval(N(0.0), N(0.0)) # interval remainder
-    p₁ = 1 + x₁ - x₂
-    p₂ = x₃ - x₁
-    vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
+    local p₁ = 1 + x₁ - x₂
+    local p₂ = x₃ - x₁
+    local vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
     Z1 = overapproximate(vTM, Zonotope)
     @test center(Z1) == N[3, -2.5]
     @test Matrix(genmat(Z1)) == N[1 -1 0; -1 0 0.5]
@@ -467,12 +467,12 @@ for N in [Float64]
     @test get_linear_coeffs(t) == N[0]
     p = x₁ + 2x₂ - 3x₃
     @test get_linear_coeffs(p) == N[1, 2, -3]
-    y = set_variables("y"; numvars=2, order=1)
+    y = TaylorModels.set_variables("y"; numvars=2, order=1)
     p = zero(y[1])
     @test get_linear_coeffs(p) == N[0, 0]
 
     # auxiliary function to get nonlinear coefficients of TaylorN
-    x = set_variables("x"; numvars=2, order=10)
+    x = TaylorModels.set_variables("x"; numvars=2, order=10)
 
     p = (1 + x[1] - 2x[2])^2
     @test get_linear_coeffs(p) == [2.0, -4.0]
@@ -493,7 +493,7 @@ for N in [Float64]
     p = (1 + x[1] - 2x[2])^2
     @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1] * x[2] + 4x[2]^2
 
-    x = set_variables("x"; numvars=2, order=1)
+    x = TaylorModels.set_variables("x"; numvars=2, order=1)
 
     p = 1234.5 + 0 * x[1] + 0 * x[2]
     @test get_linear_coeffs(p) == [0.0, 0.0]
@@ -531,7 +531,7 @@ for N in [Float64]
     @test (L ∩ Z) ⊆ cap
 
     # overapproximate a nonlinear constraint with an HPolyhedron
-    dom = IntervalBox(IA.interval(-2, 2), IA.interval(-2, 2))
+    local dom = IntervalBox(IA.interval(-2, 2), IA.interval(-2, 2))
     C = ICP.@constraint x^2 + y^2 <= 1
     p = ICP.pave(C, dom, 0.01)
     dirs = OctDirections(2)

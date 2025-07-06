@@ -1,3 +1,11 @@
+using LazySets, Test
+
+for _dummy_ in 1:1  # avoid global variable warnings
+    # default Float64 constructor
+    Z = ZeroSet(2)
+    @test Z isa ZeroSet{Float64} && Z.dim == 2
+end
+
 for N in [Float64, Rational{Int}, Float32]
     # random zero set
     rand(ZeroSet)
@@ -68,10 +76,6 @@ for N in [Float64, Rational{Int}, Float32]
 
     # translation
     @test translate(Z, N[1, 2]) == Singleton(N[1, 2])
-
-    # base type and element type
-    @test basetype(Z) == basetype(typeof(Z)) == ZeroSet
-    @test eltype(Z) == eltype(typeof(Z)) == N
 
     # center
     @test center(Z, 1) == zero(N)

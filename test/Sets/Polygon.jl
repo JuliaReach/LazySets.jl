@@ -1,4 +1,8 @@
+using LazySets, Test, SparseArrays
 using LazySets: ⪯
+using LazySets.ReachabilityBase.Arrays: is_cyclic_permutation
+using LazySets.ReachabilityBase.Comparison: _isapprox
+using LazySets.ReachabilityBase.Arrays: ispermutation
 
 for N in [Float64, Float32, Rational{Int}]
     # Empty polygon
@@ -332,7 +336,7 @@ for N in [Float64, Float32, Rational{Int}]
     HP = convert(HPolygon, BallInf(N[0, 0], N(1)))
     @test linear_map(N[1 0; 0 2], HP) isa HPolygon{N}
     # in higher dimensions we get an HPolytope (#2168)
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         p4 = convert(HPolygon, BallInf(zeros(N, 2), N(1)))
         A = ones(N, 4, 2)
         @test linear_map(A, p4) isa HPolytope
@@ -530,11 +534,13 @@ for N in [Float64, Float32, Rational{Int}]
     rectify(P)
     Q1 = rectify(P, true)
     Q2 = rectify(P, false)
-    for (d, res) in [(N[-1, 0], N(0)),
-                     (N[0, -1], N(-1)),
-                     (N[-1, -1], N(-3 // 2))]
-        @test ρ(d, Q1) == res
-        @test abs(ρ(d, Q1) - ρ(d, Q2)) < 1e-8  # precision of lazy intersection not good
+    @static if isdefined(@__MODULE__, :Optim)
+        for (d, res) in [(N[-1, 0], N(0)),
+                         (N[0, -1], N(-1)),
+                         (N[-1, -1], N(-3 // 2))]
+            @test ρ(d, Q1) == res
+            @test abs(ρ(d, Q1) - ρ(d, Q2)) < 1e-8  # precision of lazy intersection not good
+        end
     end
 
     # concrete Minkowski sum for arbitrary polytopic sets performs 2D computation
@@ -563,12 +569,14 @@ for N in [Float64, Float32, Rational{Int}]
     P = VPolygon(M)
     @test P == VPolygon(Vs)
     @test eltype(P.vertices) == eltype(Vs)
-    # StaticArraysCore.SMatrix to VPolygon
-    M = @SMatrix N[0 1 0; 0 0 1]
-    Vs = [@SVector[N(0), N(0)], @SVector[N(1), N(0)], @SVector[N(0), N(1)]]
-    Q = VPolygon(M)
-    @test Q == VPolygon(Vs) == P
-    @test eltype(Q.vertices) == eltype(Vs)
+    @static if isdefined(@__MODULE__, :StaticArrays)
+        # StaticArraysCore.SMatrix to VPolygon
+        M = @SMatrix N[0 1 0; 0 0 1]
+        Vs = [@SVector[N(0), N(0)], @SVector[N(1), N(0)], @SVector[N(0), N(1)]]
+        Q = VPolygon(M)
+        @test Q == VPolygon(Vs) == P
+        @test eltype(Q.vertices) == eltype(Vs)
+    end
 
     # linear_combination with empty argument
     Q = VPolygon{N}()

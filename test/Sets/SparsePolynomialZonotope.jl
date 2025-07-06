@@ -1,3 +1,7 @@
+using LazySets, Test, LinearAlgebra
+import IntervalArithmetic as IA
+using IntervalArithmetic: IntervalBox
+
 for N in [Float64, Float32, Rational{Int}]
     @test rand(SparsePolynomialZonotope) isa SparsePolynomialZonotope
 
@@ -121,37 +125,41 @@ for N in [Float64, Float32, Rational{Int}]
         @test size(expmat(PZreduced)) == (2, 0)
     end
 
-    # support function (enclosure)
-    for (d, v) in [(N[1, 0], N(3)), (N[1, 1], N(7)), (N[1, -1], N(3))]
-        v1 = ρ(d, PZ2)  # default enclosure method
-        v2 = ρ(d, PZ2; enclosure_method=RangeEnclosures.NaturalEnclosure())
-        @test v <= v1 <= v2
-    end
+    @static if isdefined(@__MODULE__, :RangeEnclosures)
+        # support function (enclosure)
+        for (d, v) in [(N[1, 0], N(3)), (N[1, 1], N(7)), (N[1, -1], N(3))]
+            v1 = ρ(d, PZ2)  # default enclosure method
+            v2 = ρ(d, PZ2; enclosure_method=RangeEnclosures.NaturalEnclosure())
+            @test v <= v1 <= v2
+        end
 
-    # extrema approximation
-    PZ = SparsePolynomialZonotope(N[-1, 2], N[1 2 0 2; 0 1 2 -1], N[1 0; 2 0], [1 0 1 2; 0 0 0 1])
-    l1, u1 = extrema(PZ; algorithm="zonotope")
-    @test (l1, u1) == extrema(PZ)  # default algorithm
-    @test_throws ArgumentError extrema(PZ; algorithm="???")
-    H1 = Hyperrectangle(; low=l1, high=u1)
-    l2, u2 = extrema(PZ; algorithm="lowhigh")
-    H2 = Hyperrectangle(; low=l2, high=u2)
-    @test H2 ⊆ H1 == Hyperrectangle(N[0, 5 // 2], N[5, 11 // 2])
-    # another example
-    PZ = SparsePolynomialZonotope(N[-1 / 2, -1 / 2], N[1 1 1 1; 1 0 -1 1], Matrix{N}(undef, 2, 0),
-                                  [1 0 1 2; 0 1 1 0])
-    l1, u1 = extrema(PZ; algorithm="zonotope")
-    H1 = Hyperrectangle(; low=l1, high=u1)
-    l2, u2 = extrema(PZ; algorithm="lowhigh")
-    H2 = Hyperrectangle(; low=l2, high=u2)
-    @test H2 ⊆ H1 == Hyperrectangle(N[0, 0], N[7 // 2, 5 // 2])
-    Z = Zonotope(N[0, 0], N[3//2 1 1; 3//2 0 -1])
-    @test isequivalent(overapproximate(PZ, Zonotope), Z)
-    SSPZ2 = convert(SimpleSparsePolynomialZonotope, PZ)
-    @test isequivalent(overapproximate(SSPZ2, Zonotope, dom2), Z)
+        # extrema approximation
+        PZ = SparsePolynomialZonotope(N[-1, 2], N[1 2 0 2; 0 1 2 -1], N[1 0; 2 0],
+                                      [1 0 1 2; 0 0 0 1])
+        l1, u1 = extrema(PZ; algorithm="zonotope")
+        @test (l1, u1) == extrema(PZ)  # default algorithm
+        @test_throws ArgumentError extrema(PZ; algorithm="???")
+        H1 = Hyperrectangle(; low=l1, high=u1)
+        l2, u2 = extrema(PZ; algorithm="lowhigh")
+        H2 = Hyperrectangle(; low=l2, high=u2)
+        @test H2 ⊆ H1 == Hyperrectangle(N[0, 5 // 2], N[5, 11 // 2])
+        # another example
+        PZ = SparsePolynomialZonotope(N[-1 / 2, -1 / 2], N[1 1 1 1; 1 0 -1 1],
+                                      Matrix{N}(undef, 2, 0), [1 0 1 2; 0 1 1 0])
+        l1, u1 = extrema(PZ; algorithm="zonotope")
+        H1 = Hyperrectangle(; low=l1, high=u1)
+        l2, u2 = extrema(PZ; algorithm="lowhigh")
+        H2 = Hyperrectangle(; low=l2, high=u2)
+        @test H2 ⊆ H1 == Hyperrectangle(N[0, 0], N[7 // 2, 5 // 2])
+        Z = Zonotope(N[0, 0], N[3//2 1 1; 3//2 0 -1])
+        @test isequivalent(overapproximate(PZ, Zonotope), Z)
+        SSPZ2 = convert(SimpleSparsePolynomialZonotope, PZ)
+        @test isequivalent(overapproximate(SSPZ2, Zonotope, dom2), Z)
+    end
 end
 
-for N in [Float64]
+@static if isdefined(@__MODULE__, :TaylorModels)
+    N = Float64
     PZS = SimpleSparsePolynomialZonotope(N[0.2, -0.6], N[1 0; 0 0.4], [1 0; 0 1])
     PZ = convert(SparsePolynomialZonotope, PZS)
     @test center(PZ) == center(PZS)
@@ -161,7 +169,7 @@ for N in [Float64]
     @test indexvector(PZ) == 1:2
 
     # conversion from Taylor model
-    x₁, x₂, x₃ = set_variables(Float64, ["x₁", "x₂", "x₃"]; order=3)
+    x₁, x₂, x₃ = TaylorModels.set_variables(Float64, ["x₁", "x₂", "x₃"]; order=3)
     dom1 = IA.interval(N(-1), N(1))
     dom = dom1 × dom1 × dom1
     x0 = IA.IntervalBox(IA.mid.(dom)...)
@@ -184,7 +192,7 @@ for N in [Float64]
     @test isequivalent(Zt, Zp)
 
     # conversion back to Taylor model
-    vTM2 = convert(Vector{<:TaylorModelN}, PZ)
+    vTM2 = convert(Vector{<:TaylorModels.TaylorModelN}, PZ)
     @test vTM == vTM2
 end
 

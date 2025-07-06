@@ -1,3 +1,3 @@
-function isuniversal(U::Universe{N}, witness::Bool=false) where {N}
-    return witness ? (true, N[]) : true
+function isuniversal(U::Universe, witness::Bool=false)
+    return _witness_result_empty(witness, true, eltype(U))
 end
