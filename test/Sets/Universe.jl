@@ -197,6 +197,13 @@ for N in [Float64, Float32, Rational{Int}]
         # @test isidentical(U3, U2)
     end
 
+    # distance (between point and set)
+    @test_throws AssertionError distance(U, N[0])
+    x = N[0, 0]
+    for res in (distance(U, x), distance(x, U))
+        @test res isa N && res == N(0)
+    end
+
     # exponential_map
     @test_throws AssertionError exponential_map(ones(N, 2, 3), U)
     @test_throws AssertionError exponential_map(ones(N, 3, 2), U)
@@ -313,7 +320,7 @@ for N in [Float64, Float32, Rational{Int}]
     X = difference(U, B)
     @test X isa UnionSetArray{N,<:HalfSpace} && length(array(X)) == 4 && X == complement(B)
 
-    # distance (between sets)
+    # distance (between two sets)
     @test_throws AssertionError distance(U, U3)
     @test_throws AssertionError distance(U3, U)
     for v in (distance(U, U), distance(U, B), distance(B, U), distance(U, Z), distance(Z, U))
