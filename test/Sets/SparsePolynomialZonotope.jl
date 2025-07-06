@@ -1,6 +1,7 @@
 using LazySets, Test, LinearAlgebra
 import IntervalArithmetic as IA
 using IntervalArithmetic: IntervalBox
+import LazySets.SparsePolynomialZonotopeModule: merge_id
 
 for N in [Float64, Float32, Rational{Int}]
     @test rand(SparsePolynomialZonotope) isa SparsePolynomialZonotope
