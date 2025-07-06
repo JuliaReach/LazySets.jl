@@ -91,6 +91,7 @@ Undocumented implementations:
 * [`extrema`](@ref extrema(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
+* [`scale`](@ref scale(::Real, ::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 
 ```@meta
@@ -135,7 +136,6 @@ Inherited from [`LazySet`](@ref):
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
-* [`scale`](@ref scale(::Real, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
