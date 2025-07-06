@@ -11,7 +11,7 @@ Align two identifier vectors and their corresponding exponent matrices in compat
 - `E₁::AbstractMatrix{N}` -- first exponent matrix of size `(p₁ × h₁)`
 - `E₂::AbstractMatrix{N}` -- second exponent matrix of size `(p₂ × h₂)`
 
-### Outputs
+### Output
 
 - `Ē₁::Matrix{N}`: Aligned version of `E₁` 
 - `Ē₂::Matrix{N}`: Aligned version of `E₂` 
