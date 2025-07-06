@@ -55,7 +55,7 @@ function merge_id(id1::AbstractVector{Int}, id2::AbstractVector{Int}, E₁::Abst
     Ē₁ = vcat(E₁, zeros(N, k, h₁))
 
     Ē₂ = zeros(N, p₁ + k, h₂)
-    for i in 1:(p₁ + k)
+    @inbounds for i in 1:(p₁ + k)
         j = findfirst(==(idx[i]), id2)
         if !isnothing(j)
             Ē₂[i, :] = E₂[j, :]
