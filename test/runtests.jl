@@ -98,6 +98,9 @@ if test_suite_basic
     @testset "LazySets.CDDLib" begin
         include("Interfaces/CDDLib.jl")
     end
+    @testset "LazySets.IntervalArithmetic" begin
+        include("Interfaces/IntervalArithmetic.jl")
+    end
     @testset "LazySets.SymEngine" begin
         include("Interfaces/SymEngine.jl")
     end
