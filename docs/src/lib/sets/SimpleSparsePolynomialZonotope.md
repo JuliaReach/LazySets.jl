@@ -127,15 +127,6 @@ CurrentModule = LazySets.API
 CurrentModule = LazySets
 ```
 * [`ngens_indep`](@ref ngens_indep(::AbstractPolynomialZonotope))
-```@meta
-CurrentModule = LazySets.API
-```
-* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
-* [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
-
-```@meta
-CurrentModule = LazySets
-```
 
 Inherited from [`LazySet`](@ref):
 * [`an_element`](@ref an_element(::LazySet))
@@ -148,7 +139,6 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
-* [`extrema`](@ref extrema(::LazySet))
 * [`extrema`](@ref extrema(::LazySet, ::Int))
 * [`high`](@ref high(::LazySet))
 * [`high`](@ref high(::LazySet, ::Int))
@@ -175,8 +165,6 @@ Inherited from [`LazySet`](@ref):
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`scale`](@ref scale(::Real, ::LazySet))
-* [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
-* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`≈`](@ref ≈(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
@@ -190,6 +178,7 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`center`](@ref center(::AbstractPolynomialZonotope, ::Int))
 * [`dim`](@ref dim(::AbstractPolynomialZonotope))
+* [`extrema`](@ref extrema(::AbstractPolynomialZonotope))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolynomialZonotope}))
 * [`isempty`](@ref isempty(::AbstractPolynomialZonotope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolynomialZonotope))
@@ -198,3 +187,7 @@ Inherited from [`AbstractPolynomialZonotope`](@ref):
 Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`ngens_dep`](@ref ngens_dep(::AbstractSparsePolynomialZonotope))
 * [`nparams`](@ref nparams(::AbstractSparsePolynomialZonotope))
+* [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
+* [`ρ`](@ref ρ(::AbstractVector, ::AbstractSparsePolynomialZonotope))
+* [`translate`](@ref translate(::AbstractSparsePolynomialZonotope, ::AbstractVector))
+* [`minkowski_sum`](@ref minkowski_sum(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))

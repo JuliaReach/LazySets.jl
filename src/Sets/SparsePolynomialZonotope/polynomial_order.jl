@@ -1,5 +1,5 @@
 """
-    polynomial_order(P::SPZ)
+    polynomial_order(P::SparsePolynomialZonotope)
 
 Return the polynomial order of a sparse polynomial zonotope.
 
@@ -15,6 +15,6 @@ The polynomial order.
 
 The polynomial order is the maximum sum of all monomials' parameter exponents.
 """
-function polynomial_order(P::SPZ)
+function polynomial_order(P::SparsePolynomialZonotope)
     return maximum(sum, eachcol(expmat(P)))
 end

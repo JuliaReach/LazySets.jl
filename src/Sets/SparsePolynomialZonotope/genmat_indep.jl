@@ -11,4 +11,4 @@ Return the matrix of independent generators of a sparse polynomial zonotope.
 
 The matrix of independent generators.
 """
-genmat_indep(P::SPZ) = P.GI
+genmat_indep(P::SparsePolynomialZonotope) = P.GI

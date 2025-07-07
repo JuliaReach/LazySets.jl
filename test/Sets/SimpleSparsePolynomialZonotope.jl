@@ -38,6 +38,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     LMS = linear_map(N[1 2; 3 4], S)
+    @test LMS isa SimpleSparsePolynomialZonotope{N}
     @test center(LMS) == N[2, 6]
     @test genmat(LMS) == N[5 6; 11 14]
     @test expmat(LMS) == expmat(S)
@@ -56,6 +57,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test center(CPS) == N[2, 0, 2, 0]
     @test genmat(CPS) == N[1 2 0 0; 2 2 0 0; 0 0 1 2; 0 0 2 2.0]
     @test expmat(CPS) == [1 4 0 0; 1 2 0 0; 0 0 1 4; 0 0 1 2]
+    Z = overapproximate(S, Zonotope)
+    PZZ = cartesian_product(S, Z)
+    @test center(PZZ) == vcat(center(S), center(Z))
+    @test genmat_dep(PZZ) == vcat(genmat_dep(S), zeros(N, 2, 2))
+    @test genmat_indep(PZZ) == vcat(zeros(N, 2, 2), genmat(Z))
+    @test expmat(PZZ) == expmat(S)
 
     _c = N[2, 0]
     _g = N[0 0.5 1 0.5 1 0.5 1 -0.5 -1
@@ -121,6 +128,29 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isoperationtype
     @test !isoperationtype(SimpleSparsePolynomialZonotope)
+
+    # extrema approximation
+    l1, u1 = extrema(S; algorithm="zonotope")
+    @test (l1, u1) == extrema(S)  # default algorithm
+    @test_throws ArgumentError extrema(S; algorithm="???")
+    H1 = Hyperrectangle(; low=l1, high=u1)
+    l2, u2 = extrema(S; algorithm="lowhigh")
+    H2 = Hyperrectangle(; low=l2, high=u2)
+    @test H2 ⊆ H1 == Hyperrectangle(N[3, 1], N[2, 3])
+
+    # support function (enclosure)
+    P = SimpleSparsePolynomialZonotope(zeros(N, 2), N[2 0 1; 1 2 1], [1 0 1; 0 1 3])
+    for (d, v) in [(N[1, 0], N(3)), (N[1, 1], N(7)), (N[1, -1], N(3))]
+        v1 = ρ(d, P)  # default enclosure method
+        v2 = ρ(d, P; enclosure_method=RangeEnclosures.NaturalEnclosure())
+        @test v <= v1 <= v2
+    end
+
+    # translate
+    TPZ = translate(P, N[1, 2])
+    @test center(TPZ) == N[1, 2]
+    @test genmat_dep(TPZ) == genmat_dep(P)
+    @test expmat(TPZ) == expmat(P)
 end
 
 for Z in [rand(Zonotope), rand(Hyperrectangle)]
@@ -130,8 +160,10 @@ for Z in [rand(Zonotope), rand(Hyperrectangle)]
     @test expmat(ZS) == I
 end
 
-SPZ = SparsePolynomialZonotope([4.0, 4], [2.0 1 2; 0 2 2], hcat([1.0; 0]), [1 0 3; 0 1 1])
-SSPZ = convert(SimpleSparsePolynomialZonotope, SPZ)
-@test center(SSPZ) == center(SPZ)
-@test genmat(SSPZ) == hcat(SPZ.G, SPZ.GI)
-@test expmat(SSPZ) == [1 0 3 0; 0 1 1 0; 0 0 0 1]
+for _dummy_ in 1:1  # avoid global variable warnings
+    SPZ = SparsePolynomialZonotope([4.0, 4], [2.0 1 2; 0 2 2], hcat([1.0; 0]), [1 0 3; 0 1 1])
+    SSPZ = convert(SimpleSparsePolynomialZonotope, SPZ)
+    @test center(SSPZ) == center(SPZ)
+    @test genmat(SSPZ) == hcat(SPZ.G, SPZ.GI)
+    @test expmat(SSPZ) == [1 0 3 0; 0 1 1 0; 0 0 0 1]
+end

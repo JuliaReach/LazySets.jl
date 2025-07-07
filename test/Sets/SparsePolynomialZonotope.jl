@@ -13,8 +13,7 @@ for N in [Float64, Float32, Rational{Int}]
     E = [1 0 3; 0 1 1]
     PZ = SparsePolynomialZonotope(c, G, GI, E)
     # Example 3.1.21 from thesis
-    PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1; 1 2 1],
-                                   zeros(N, 2, 0), [1 0 1; 0 1 3])
+    PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1; 1 2 1], zeros(N, 2, 0), [1 0 1; 0 1 3])
 
     @test center(PZ) == c
     @test genmat_dep(PZ) == G
@@ -29,6 +28,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test order(PZ) == 2 // 1
 
     LM = linear_map(N[1//2 0; 0 1//2], PZ)
+    @test LM isa SparsePolynomialZonotope{N}
     @test center(LM) == [2, 2]
     @test genmat_dep(LM) == [1 0.5 1; 0 1 1]
     @test genmat_indep(LM) == hcat([0.5, 0.0])
@@ -61,10 +61,11 @@ for N in [Float64, Float32, Rational{Int}]
 
     TPZ = translate(PZ, N[1, 2])
     @test center(TPZ) == N[5, 6]
-    @test genmat_dep(TPZ) == genmat_dep(TPZ)
-    @test genmat_indep(TPZ) == genmat_indep(TPZ)
-    @test expmat(TPZ) == expmat(TPZ)
+    @test genmat_dep(TPZ) == genmat_dep(PZ)
+    @test genmat_indep(TPZ) == genmat_indep(PZ)
+    @test expmat(TPZ) == expmat(PZ)
 
+    # cartesian_product SPZ/SPZ
     CPPZ = cartesian_product(PZ, PZ2)
     @test center(CPPZ) == N[4, 4, 0, 0]
     @test genmat_dep(CPPZ) == N[2 1 2 0 0 0;
@@ -76,6 +77,12 @@ for N in [Float64, Float32, Rational{Int}]
                            0 1 1 0 0 0;
                            0 0 0 1 0 1;
                            0 0 0 0 1 3]
+    # cartesian_product mixed: SPZ/SSPZ
+    CPPZ2 = cartesian_product(PZ, convert(SimpleSparsePolynomialZonotope, PZ2))
+    @test CPPZ == CPPZ2
+    CPPZ2 = cartesian_product(convert(SimpleSparsePolynomialZonotope, PZ), PZ2)
+    @test center(CPPZ) == center(CPPZ2)  # the sets are equivalent, but this is hard to check
+    # cartesian_product SPZ/Z
     Z = overapproximate(PZ2, Zonotope)
     SSPZ2 = convert(SimpleSparsePolynomialZonotope, PZ2)
     dom2 = IntervalBox(IA.interval(N(-1), N(1)), IA.interval(N(-1), N(1)))
@@ -94,6 +101,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test expmat(CPPZ) == [1 0 3;
                            0 1 1]
 
+    # minkowski_sum SPZ/SPZ
     MSPZ = minkowski_sum(PZ, PZ2)
     @test center(MSPZ) == [4, 4]
     @test genmat_dep(MSPZ) == [2 1 2 2 0 1; 0 2 2 1 2 1]
@@ -102,6 +110,11 @@ for N in [Float64, Float32, Rational{Int}]
                            0 1 1 0 0 0;
                            0 0 0 1 0 1;
                            0 0 0 0 1 3]
+    # minkowski_sum mixed SPZ/SSPZ
+    MSPZ2 = minkowski_sum(PZ, convert(SimpleSparsePolynomialZonotope, PZ2))
+    @test MSPZ == MSPZ2
+    MSPZ2 = minkowski_sum(convert(SimpleSparsePolynomialZonotope, PZ), PZ2)
+    @test center(MSPZ) == center(MSPZ2)  # the sets are equivalent, but this is hard to check
 
     S = SparsePolynomialZonotope(N[-0.5, -0.5], N[1.0 1 1 1; 1 0 -1 1], zeros(N, 2, 0),
                                  [1 0 1 2; 0 1 1 0])
