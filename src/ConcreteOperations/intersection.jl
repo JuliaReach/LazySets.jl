@@ -227,8 +227,8 @@ function _intersection_interval(X::Interval, Y::LazySet)
                                     "set, but got $(typeof(Y))"
 
     N = promote_type(eltype(X), eltype(Y))
-    lower = max(min(X), -ρ(N[-1], Y))
-    upper = min(max(X), ρ(N[1], Y))
+    lower = max(min(X), low(Y, 1))
+    upper = min(max(X), high(Y, 1))
     if _isapprox(lower, upper)
         return Singleton([lower])
     elseif lower < upper
