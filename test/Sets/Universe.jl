@@ -44,6 +44,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     # chebyshev_center_radius
     @static if isdefined(@__MODULE__, :Polyhedra)
+        # behavior differs for Rational solver:
+        # - prints `glp_exact: problem has no rows/columns`
+        # - different error message (reported in Polyhedra.jl#352)
         @test_throws ErrorException chebyshev_center_radius(U)
     end
 
@@ -188,7 +191,8 @@ for N in [Float64, Float32, Rational{Int}]
     # affine_map
     @test_throws AssertionError affine_map(ones(N, 2, 3), U, N[1, 1])
     @test_throws AssertionError affine_map(ones(N, 2, 2), U, N[1])
-    @static if isdefined(@__MODULE__, :Polyhedra)  # TODO this should work, even without Polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        # TODO this should work, even without Polyhedra
         @test_broken affine_map(ones(N, 2, 2), U, N[1, 1])
         # U2 = affine_map(ones(N, 2, 2), U, N[1, 1])
         # @test isidentical(U, U2)
@@ -224,10 +228,11 @@ for N in [Float64, Float32, Rational{Int}]
 
     # linear_map
     @test_throws AssertionError linear_map(ones(N, 2, 3), U)
-    @test_broken linear_map(ones(N, 2, 2), U)  # TODO this should work, even without Polyhedra
-    # U2 = linear_map(ones(N, 2, 2), U)
-    # @test_broken isidentical(U, U2)
-    @static if isdefined(@__MODULE__, :Polyhedra)
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        # TODO this should work, even without Polyhedra
+        @test_broken linear_map(ones(N, 2, 2), U)
+        # U2 = linear_map(ones(N, 2, 2), U)
+        # @test_broken isidentical(U, U2)
         @test_broken linear_map(ones(N, 3, 2), U)
         # U2 = linear_map(ones(N, 3, 2), U)
         # @test U2 isa HPolyhedron{N}  # TODO this should change
