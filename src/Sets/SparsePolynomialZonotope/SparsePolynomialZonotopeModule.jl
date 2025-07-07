@@ -11,8 +11,9 @@ using ReachabilityBase.Arrays: remove_zero_columns
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
-@reexport import ..API: center, extrema, isoperationtype, rand, linear_map, ρ,
-                        translate, cartesian_product, exact_sum, minkowski_sum
+@reexport import ..API: center, extrema, isoperationtype, rand, linear_map,
+                        scale, ρ, translate, cartesian_product, exact_sum,
+                        minkowski_sum
 @reexport import ..LazySets: expmat, genmat_dep, genmat_indep, ngens_dep,
                              ngens_indep, nparams, polynomial_order,
                              reduce_order, remove_redundant_generators
@@ -31,6 +32,7 @@ include("extrema.jl")
 include("isoperationtype.jl")
 include("rand.jl")
 include("linear_map.jl")
+include("scale.jl")
 include("support_function.jl")
 include("translate.jl")
 include("cartesian_product.jl")
