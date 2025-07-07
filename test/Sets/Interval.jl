@@ -570,16 +570,18 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError minkowski_difference(X, X2)
     @test_throws AssertionError minkowski_difference(X2, X)
     # empty difference
-    for Z in (minkowski_difference(X, X), minkowski_difference(X, B), minkowski_difference(B, X))
-        @test_broken Z isa EmptySet{N} && Z == EmptySet{N}(1)  # TODO this should change
-    end
-    Y = Interval(N(1), N(2))
-    Z = minkowski_difference(Y, X)
+    Y = Interval(N(0), N(3))
+    Z = minkowski_difference(X, Y)
     @test Z isa EmptySet{N} && Z == EmptySet{N}(1)
     # nonempty difference
+    Y = minkowski_difference(X, X)
+    isidentical(Y, Interval(N(0), N(0)))
     Y = Interval(N(1), N(3))
     Z = minkowski_difference(X, Y)
     @test isidentical(Z, Interval(N(-1), N(-1)))
+    for Y in (minkowski_difference(X, B), minkowski_difference(B, X))
+        @test isequivalent(Y, Interval(N(0), N(0)))
+    end
     # Universe
     U = Universe{N}(1)
     U2 = minkowski_difference(U, X)
