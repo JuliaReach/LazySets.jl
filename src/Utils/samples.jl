@@ -93,6 +93,7 @@ _default_sampler(::Line2D) = HyperplaneSampler()
 _default_sampler(::AbstractSingleton) = SingletonSampler()
 _default_sampler(::AbstractPolynomialZonotope) = PolynomialZonotopeSampler()
 _default_sampler(::Universe) = UniverseSampler()
+_default_sampler(H::AbstractHyperrectangle) = RejectionSampler(H)
 
 _rand(rng, U) = rand(rng, U)
 _rand(rng, U::AbstractVector) = rand.(Ref(rng), U)
