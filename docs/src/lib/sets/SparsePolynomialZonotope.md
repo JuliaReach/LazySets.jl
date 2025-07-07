@@ -30,7 +30,7 @@ CurrentModule = LazySets.SparsePolynomialZonotopeModule
 ```@docs
 remove_redundant_generators(::SparsePolynomialZonotope)
 uniqueID(::Int)
-SparsePolynomialZonotopeModule.merge_id(::AbstractVector{Int}, ::AbstractVector{Int}, ::AbstractMatrix{N}, ::AbstractMatrix{N}) where {N}
+merge_id(::AbstractVector{Int}, ::AbstractVector{Int}, ::AbstractMatrix{N}, ::AbstractMatrix{N}) where {N<:Integer}
 ```
 ```@meta
 CurrentModule = LazySets
