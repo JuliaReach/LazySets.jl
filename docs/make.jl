@@ -137,7 +137,8 @@ makedocs(; sitename="LazySets.jl",
                                                    "lib/approximations/underapproximate.md",
                                                    "lib/approximations/approximate.md",
                                                    "lib/approximations/decompose.md",
-                                                   "lib/approximations/hausdorff_distance.md"
+                                                   "lib/approximations/hausdorff_distance.md",
+                                                   "lib/approximations/overapproximate_norm.md"
                                                    #
                                                    ],
                               "Utilities" => "lib/utils.md",
