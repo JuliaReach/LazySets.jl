@@ -335,6 +335,9 @@ if test_suite_basic
     @testset "LazySets.Approximations.hausdorff_distance" begin
         include("Approximations/hausdorff_distance.jl")
     end
+    @testset "LazySets.Approximations.overapproximate_norm" begin
+        include("Approximations/overapproximate_norm.jl")
+    end
 
     # ================================
     # Testing shared utility functions

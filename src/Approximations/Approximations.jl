@@ -20,7 +20,8 @@ export approximate,
        PolarDirections,
        SphericalDirections,
        CustomDirections,
-       isbounding
+       isbounding,
+       overapproximate_norm
 
 using ..LazySets, ReachabilityBase.Arrays, Requires, LinearAlgebra, SparseArrays
 import IntervalArithmetic as IA
@@ -46,6 +47,7 @@ include("underapproximate.jl")
 include("approximate.jl")
 include("decompositions.jl")
 include("hausdorff_distance.jl")
+include("overapproximate_norm.jl")
 include("init.jl")
 
 end # module
