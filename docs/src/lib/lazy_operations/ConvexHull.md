@@ -8,7 +8,6 @@ CurrentModule = LazySets
 
 ```@docs
 ConvexHull
-CH
 swap(::ConvexHull)
 dim(::ConvexHull)
 ρ(::AbstractVector, ::ConvexHull)
@@ -29,7 +28,6 @@ Inherited from [`LazySet`](@ref):
 
 ```@docs
 ConvexHullArray
-CHArray
 ConvexHull!
 dim(::ConvexHullArray)
 ρ(::AbstractVector, ::ConvexHullArray)

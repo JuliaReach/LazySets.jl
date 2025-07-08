@@ -6,8 +6,6 @@ CurrentModule = LazySets
 
 ```@docs
 Translation
-+(X::LazySet, v::AbstractVector)
-⊕(X::LazySet, v::AbstractVector)
 ρ(::AbstractVector, ::Translation)
 σ(::AbstractVector, ::Translation)
 an_element(::Translation)

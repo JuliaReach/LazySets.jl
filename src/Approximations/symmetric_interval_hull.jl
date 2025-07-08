@@ -13,7 +13,7 @@ A tight hyperrectangle that is centrally symmetric wrt. the origin.
 
 ### Notes
 
-An alias for this function is `box_approximation_symmetric`.
+The convenience alias `box_approximation_symmetric` is also available.
 
 ### Algorithm
 
@@ -34,11 +34,6 @@ function symmetric_interval_hull(S::LazySet{N}) where {N}
     return Hyperrectangle(zeros(N, length(r)), r)
 end
 
-"""
-    box_approximation_symmetric
-
-Alias for `symmetric_interval_hull`.
-"""
 box_approximation_symmetric = symmetric_interval_hull
 
 # concretization of a lazy SymmetricIntervalHull
