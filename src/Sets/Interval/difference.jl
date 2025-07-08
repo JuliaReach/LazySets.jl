@@ -70,6 +70,8 @@ function difference(X::Interval, Y::Interval)
         elseif !flat_left && flat_right
             return L
         else
+            require(@__MODULE__, :LazySets; fun_name="difference")
+
             return UnionSet(L, R)
         end
     end
