@@ -153,6 +153,18 @@ CurrentModule = LazySets
 ```@docs
 minkowski_sum(::AbstractZonotope, ::AbstractZonotope)
 ```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+norm(::LazySet, ::Real=Inf)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+norm(::AbstractZonotope, ::Real=Inf)
+```
 
 ```@meta
 CurrentModule = LazySets.API
@@ -179,7 +191,6 @@ Inherited from [`LazySet`](@ref):
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
-* [`norm`](@ref norm(::LazySet, ::Real=Inf))
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`radius`](@ref radius(::LazySet, ::Real=Inf))
 * [`rationalize`](@ref rationalize(::LazySet))
@@ -234,6 +245,7 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 ```@docs
 generators_fallback(::AbstractZonotope)
 genmat_fallback(::AbstractZonotope)
+_l1_norm(::AbstractZonotope)
 ```
 
 ## Order-reduction methods

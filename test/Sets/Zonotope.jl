@@ -311,6 +311,17 @@ for N in [Float64, Rational{Int}, Float32]
     Z = Zonotope(N[-1, -2], N[1 2 3; -4 -5 -6])
     @test permute(Z, [1, 2]) == Z
     @test permute(Z, [2, 1]) == Zonotope(N[-2, -1], N[-4 -5 -6; 1 2 3])
+
+    # norm 
+    Z = Zonotope(N[1, 2], N[2 1 -2; 1 2 0])
+    @test norm(Z, 1) == 11
+    @test norm(scale(2.0, Z), 1) == 22.0
+
+    Z2 = Zonotope(N[1, -1], zeros(N, 2, 2))
+    @test norm(Z2, 1) == 2 
+
+    Z3 = Zonotope(N[1, -1], N[-2 1; 0 -1])
+    @test norm(Z3, 1) == 6
 end
 
 for N in [Float64]
