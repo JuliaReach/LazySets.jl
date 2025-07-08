@@ -10,7 +10,7 @@ using ..LazySets: AbstractPolytope, LazySet, LinearMapVRep, default_lp_solver,
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: projection_matrix
-using ReachabilityBase.Comparison: _ztol
+using ReachabilityBase.Comparison: _isapprox, _ztol
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 

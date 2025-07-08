@@ -33,7 +33,7 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
     if m == 0
         return false
     elseif m == 1
-        return isapprox(x, @inbounds vertices[1])
+        return _isapprox(x, @inbounds vertices[1])
     end
 
     n = length(x)
