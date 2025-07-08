@@ -38,4 +38,4 @@ struct MatrixZonotope{N, MN <: AbstractMatrix{N}}
 end
 
 Base.size(Z::MatrixZonotope) = size(center(Z))
-Base.eltype(Z::MatrixZonotope) = eltype(Z.A0)
+Base.eltype(::Type{<:MatrixZonotope{N}}) where {N} = N

@@ -1,4 +1,4 @@
-module MatrixSets
+module MatrixZonotope
 
 using Reexport, Requires
 

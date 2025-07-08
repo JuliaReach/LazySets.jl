@@ -1,6 +1,14 @@
 """
-	center(Z::MatrixZonotope)
+	center(MZ::MatrixZonotope)
 
 Return the center matrix of the matrix zonotope `Z`.
+
+### Input
+
+- `MZ` -- matrix zonotope set
+
+### Output
+
+The centre matrix of `MZ`.
 """
-center(Z::MatrixZonotope) = Z.A0
+center(MZ::MatrixZonotope) = MZ.A0

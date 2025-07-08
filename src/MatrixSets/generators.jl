@@ -1,6 +1,14 @@
 """
-	generators(Z::MatrixZonotope)
+	generators(MZ::MatrixZonotope)
 
-Return the generator matrices of the matrix zonotope `Z`.
+Return an iterator over the generators of a matrix zonotope.
+
+### Input
+
+- `MZ` -- matrix zonotope set
+
+### Output
+
+An iterator over the generators of `MZ`.
 """
-generators(Z::MatrixZonotope) = Z.Ai
+generators(MZ::MatrixZonotope) = MZ.Ai
