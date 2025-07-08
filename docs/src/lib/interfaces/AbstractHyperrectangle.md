@@ -221,6 +221,13 @@ CurrentModule = LazySets.API
 Undocumented implementations:
 
 * [`area`](@ref area(::LazySet))
+```@meta
+CurrentModule = LazySets
+```
+* [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
+```@meta
+CurrentModule = LazySets.API
+```
 * [`extrema`](@ref extrema(::LazySet))
 * [`extrema`](@ref extrema(::LazySet, ::Int))
 ```@meta
@@ -246,7 +253,6 @@ CurrentModule = LazySets
 ```
 
 Inherited from [`LazySet`](@ref):
-* [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
 * [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
