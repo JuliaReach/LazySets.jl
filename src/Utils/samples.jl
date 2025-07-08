@@ -281,7 +281,7 @@ Type used for sampling arbitrary sets by trying different sampling strategies.
 
 ### Algorithm
 
-The algorithm is to first try a [`RejectionSampler`](@ref) 100 times.
+The algorithm is to first try a [`RejectionSampler`](@ref) 10 times.
 If that fails, it tries a [`RandomWalkSampler`](@ref).
 """
 struct CombinedSampler <: AbstractSampler
@@ -291,7 +291,7 @@ end
 function sample!(D::Vector{VN}, X::LazySet, sampler::CombinedSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
-    # try rejection sampling 100 times
+    # try rejection sampling 10 times
     tmp_sampler = RejectionSampler(X; maxiter=10)
     D2 = Vector{VN}(undef, 1)
     D2[1] = fill(N(NaN), dim(X))
