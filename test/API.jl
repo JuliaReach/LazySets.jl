@@ -53,8 +53,8 @@ end
     @test isnothing(affine_map(M, X, v))
 
     # binary set operations
-    for f in (cartesian_product, difference, distance, exact_sum, intersection,
-              is_intersection_empty, isdisjoint, ≈, ==, ⊆, isequivalent, ⊂, linear_combination,
+    for f in (cartesian_product, difference, distance, exact_sum, intersection, isapprox,
+              is_intersection_empty, isdisjoint, ==, ⊆, isequivalent, ⊂, linear_combination,
               minkowski_difference, pontryagin_difference, minkowski_sum)
         @test isnothing(f(X, X))
     end
