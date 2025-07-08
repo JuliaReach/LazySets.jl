@@ -116,7 +116,6 @@ Inherited from [`LazySet`](@ref):
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 * [`⊆`](@ref ⊆(::LazySet, ::LazySet))
-* [`linear_combination`](@ref linear_combination(::LazySet, ::LazySet))
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 
 Inherited from [`AbstractPolynomialZonotope`](@ref):
@@ -137,4 +136,5 @@ Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`ρ`](@ref ρ(::AbstractVector, ::AbstractSparsePolynomialZonotope))
 * [`translate`](@ref translate(::AbstractSparsePolynomialZonotope, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))
+* [`linear_combination`](@ref linear_combination(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))

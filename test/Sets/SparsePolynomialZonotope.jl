@@ -124,7 +124,7 @@ for N in [Float64, Float32, Rational{Int}]
     α = 2.0
     PZscaled = scale(α, PZ)
     @test center(PZscaled) == N[8, 8]
-    @test genmat_dep(PZscaled) ==  N[4 2 4; 0 4 4]
+    @test genmat_dep(PZscaled) == N[4 2 4; 0 4 4]
     @test genmat_indep(PZscaled) == hcat(N[2, 0])
     @test expmat(PZscaled) == expmat(PZ)
     @test PZscaled == linear_map(α * Matrix{N}(I, 2, 2), PZ)
@@ -177,6 +177,25 @@ for N in [Float64, Float32, Rational{Int}]
         @test isequivalent(overapproximate(PZ, Zonotope), Z)
         SSPZ2 = convert(SimpleSparsePolynomialZonotope, PZ)
         @test isequivalent(overapproximate(SSPZ2, Zonotope, dom2), Z)
+    end
+
+    # linear_combination
+    # example from slide 13 of Niklas talk at JuliaReach & JuliaIntervals Days 3
+    c = N[2, 0]
+    G = N[1 2; 2 2.0]
+    E = [1 4; 1 2]
+    SP = SimpleSparsePolynomialZonotope(c, G, E)
+    P = convert(SparsePolynomialZonotope, SP)
+    for P2 in (linear_combination(P, P), linear_combination(P, SP), linear_combination(SP, P))
+        @test P2 isa SimpleSparsePolynomialZonotope{N}
+        @test center(P2) == N[2, 0]
+        @test genmat(P2) == N[0 0.5 1 0.5 1 0.5 1 -0.5 -1
+                            0 1 1 1 1 1 1 -1 -1]
+        @test expmat(P2) == [0 1 4 1 4 0 0 0 0
+                            0 1 2 1 2 0 0 0 0
+                            0 0 0 0 0 1 4 1 4
+                            0 0 0 0 0 1 2 1 2
+                            1 0 0 1 1 0 0 1 1]
     end
 end
 
