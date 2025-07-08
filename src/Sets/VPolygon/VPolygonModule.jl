@@ -11,6 +11,7 @@ using ..HPolygonModule: HPolygon
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG, shuffle
 using ReachabilityBase.Arrays: isabove, rand_pos_neg_zerosum_vector
+using ReachabilityBase.Comparison: _isapprox
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 

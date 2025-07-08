@@ -9,6 +9,6 @@ end
 # the lines do not intersect <=> det is zero and they are not identical
 function _isdisjoint(L1::Line2D, L2::Line2D)
     det = right_turn(L1.a, L2.a)
-    disjoint = isapproxzero(det) && !isapprox(L1.b, L2.b)
+    disjoint = isapproxzero(det) && !_isapprox(L1.b, L2.b)
     return disjoint
 end

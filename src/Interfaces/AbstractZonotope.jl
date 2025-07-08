@@ -272,7 +272,7 @@ constrained to ``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p`` such that
     p = ngens(Z)
     if p == 0
         # no generators can cause trouble in LP solver
-        return isapprox(x, center(Z))
+        return _isapprox(x, center(Z))
     end
 
     N = promote_type(eltype(x), eltype(Z))
