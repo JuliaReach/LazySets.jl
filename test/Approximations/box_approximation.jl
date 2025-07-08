@@ -86,7 +86,7 @@ for N in [Float64, Rational{Int}, Float32]
     @test h.radius ≈ hexp.radius
 
     # Testing alias symmetric_interval_hull
-    h == symmetric_interval_hull(b)
+    h = symmetric_interval_hull(b)
 
     # empty set
     E = EmptySet{N}(2)
