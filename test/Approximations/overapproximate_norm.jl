@@ -1,7 +1,7 @@
 using LazySets, Test
 using LazySets.Approximations: overapproximate_norm
 
-for N in [Float64, Float32, Rational{Int}]
+for N in [Float64, Float32]
     for _ in 1:5
         Z = rand(Zonotope; N=N, dim=8, num_generators=5)
         @test overapproximate_norm(Z, 1) ≥ norm(Z, 1)

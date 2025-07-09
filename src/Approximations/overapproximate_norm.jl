@@ -27,10 +27,20 @@ Compute an upper bound on the ``\\ell_1`` norm over a zonotope `Z`.
 
 ### Notes
 
-The problem ``\\max_{z ∈ Z} \\|z\\|_1`` is NP-hard in general. This function computes a convex relaxation
-using a formulation described in [Jordan2021; Theorem 5](@citet), which fits a tight upper envelope to the 
-absolute value operator. For a zonotope ``Z ∈ ℝ^d`` with `n` generators, this function
-has time complexity ``\\mathcal{O}(n ⋅ d)`` compared to ``\\mathcal{O}(2ⁿ ⋅ d)`` for the exact function.
+The problem ``\\max_{z ∈ Z} \\|z\\|_1`` is NP-hard in general. This function computes a convex relaxation 
+by combining the MILP formulation described in [Jordan2021; Theorem 5](@citet) with the convex-hull construction
+in their supplement section §C.3.
+
+### Algorithm 
+
+We replace each coordinate's absolute value
+``
+|z_i|\\quad z_i ∈ [ℓ_i, u_i]
+``
+by its convex-hull secant upper envelope: the line through
+the two points ``((ℓ_i,|ℓ_i|)`` and ``((u_i,|u_i|)``.  This yields a
+linear-programming relaxation of complexity \\(O(n·d)\\), where `n` is the
+number of generators and `d` the ambient dimension.
 """
 function _overapproximate_l1_norm(Z::AbstractZonotope{N}) where {N}
     lb = low(Z)
