@@ -49,6 +49,7 @@ function _overapproximate_l1_norm(Z::AbstractZonotope{N}) where {N}
     @. w[S] = (ub[S] + lb[S]) / (ub[S] - lb[S])
 
     const_term = -2 * sum(ub[S] .* lb[S] ./ (ub[S] .- lb[S]))
+    # max_{x ∈ Z} wᵀx
     linear_max = dot(w, c) + sum(abs.(At_mul_B(G, w)))
     return linear_max + const_term
 end
