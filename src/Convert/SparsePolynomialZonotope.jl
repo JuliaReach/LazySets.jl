@@ -101,8 +101,7 @@ function load_TaylorModels_convert_SparsePolynomialZonotope()
             G = stack(Gs)
             GI = remove_zero_columns(diagm(GI_diag))
             E = stack(Es)
-            idx = uniqueID(n)
-            return SparsePolynomialZonotope(c, G, GI, E, idx)
+            return SparsePolynomialZonotope(c, G, GI, E)
         end
     end
 end  # quote / load_TaylorModels_convert_SparsePolynomialZonotope
