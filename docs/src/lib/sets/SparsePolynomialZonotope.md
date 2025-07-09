@@ -33,18 +33,6 @@ uniqueID(::Int)
 merge_id(::AbstractVector{Int}, ::AbstractVector{Int}, ::AbstractMatrix{N}, ::AbstractMatrix{N}) where {N<:Integer}
 ```
 ```@meta
-CurrentModule = LazySets
-```
-```@docs; canonical=false
-reduce_order(::AbstractZonotope, ::Real)
-```
-```@meta
-CurrentModule = LazySets.SparsePolynomialZonotopeModule
-```
-```@docs
-reduce_order(::SparsePolynomialZonotope, ::Real, ::AbstractReductionMethod=GIR05())
-```
-```@meta
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
@@ -136,5 +124,6 @@ Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractSparsePolynomialZonotope))
 * [`ρ`](@ref ρ(::AbstractVector, ::AbstractSparsePolynomialZonotope))
 * [`translate`](@ref translate(::AbstractSparsePolynomialZonotope, ::AbstractVector))
+* [`reduce_order`](@ref reduce_order(::AbstractSparsePolynomialZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
 * [`cartesian_product`](@ref cartesian_product(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))

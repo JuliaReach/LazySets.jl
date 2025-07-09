@@ -190,4 +190,5 @@ Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::AbstractSparsePolynomialZonotope))
 * [`translate`](@ref translate(::AbstractSparsePolynomialZonotope, ::AbstractVector))
+* [`reduce_order`](@ref reduce_order(::AbstractSparsePolynomialZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))

@@ -25,7 +25,13 @@ This interface defines the following functions:
 
 ```@docs
 nparams(::AbstractSparsePolynomialZonotope)
-ρ(::AbstractVector, ::SparsePolynomialZonotope)
+```
+```@docs; canonical=false
+reduce_order(::AbstractZonotope, ::Real)
+```
+```@docs
+reduce_order(::AbstractSparsePolynomialZonotope, ::Real, ::AbstractReductionMethod=GIR05())
+ρ(::AbstractVector, ::AbstractSparsePolynomialZonotope)
 ```
 
 Undocumented implementations:
