@@ -12,12 +12,6 @@ SimpleSparsePolynomialZonotope
 CurrentModule = LazySets
 ```
 
-Alias:
-
-```@docs
-PolynomialZonotope
-```
-
 ## Operations
 
 ```@meta

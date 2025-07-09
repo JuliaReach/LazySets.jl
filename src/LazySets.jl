@@ -180,13 +180,6 @@ include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModul
                                                         SSPZ,
                                                         quadratic_map
 
-"""
-    PolynomialZonotope = SimpleSparsePolynomialZonotope
-
-Alias for `SimpleSparsePolynomialZonotope`.
-"""
-const PolynomialZonotope = SimpleSparsePolynomialZonotope
-
 include("Sets/Singleton/SingletonModule.jl")
 @reexport using ..SingletonModule: Singleton
 
