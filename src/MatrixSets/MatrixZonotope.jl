@@ -1,6 +1,6 @@
 """
-	MatrixZonotope{N, MN<:AbstractMatrix{N}}(A₀::MN, Aᵢ::Vector{MN}, 
-											  idx::Vector{Int}=collect(1:length(Aᵢ)))
+    MatrixZonotope{N, MN<:AbstractMatrix{N}}(A₀::MN, Aᵢ::Vector{MN}, 
+                                              idx::Vector{Int}=collect(1:length(Aᵢ)))
 
 Type that represents a matrix zonotope.
 
@@ -34,20 +34,20 @@ MatrixZonotope{Float64, Matrix{Float64}}([2.0 1.0; -1.0 0.0], [[1.0 -1.0; 0.0 -1
 ```
 """
 struct MatrixZonotope{N, MN <: AbstractMatrix{N}}
-	A0::MN
-	Ai::Vector{MN}
+    A0::MN
+    Ai::Vector{MN}
     idx::Vector{Int64}
 
-	function MatrixZonotope(A0::MN, Ai::Vector{MN},
-		idx::Vector{Int64} = collect(1:length(Ai))) where {N, MN <: AbstractMatrix{N}}
-		length(Ai) == length(unique(idx)) ||
-			throw(ArgumentError("the number of generator matrices doesn't match the id's length"))
-		if length(Ai) > 0
-			(allequal(size.(Ai)) && size(A0) == size(first(Ai))) ||
-				throw(ArgumentError("the size of all generator matrices should match"))
-		end
-		return new{N, MN}(A0, Ai, idx)
-	end
+    function MatrixZonotope(A0::MN, Ai::Vector{MN},
+        idx::Vector{Int64} = collect(1:length(Ai))) where {N, MN <: AbstractMatrix{N}}
+        length(Ai) == length(unique(idx)) ||
+            throw(ArgumentError("the number of generator matrices doesn't match the id's length"))
+        if length(Ai) > 0
+            (allequal(size.(Ai)) && size(A0) == size(first(Ai))) ||
+                throw(ArgumentError("the size of all generator matrices should match"))
+        end
+        return new{N, MN}(A0, Ai, idx)
+    end
 end
 
 Base.size(Z::MatrixZonotope) = size(center(Z))

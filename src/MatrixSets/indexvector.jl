@@ -1,5 +1,5 @@
 """
-	indexvector(MZ::MatrixZonotope)
+    indexvector(MZ::MatrixZonotope)
 
 Return the `indexVector` of the matrix zonotope `Z`.
 
@@ -9,7 +9,7 @@ Return the `indexVector` of the matrix zonotope `Z`.
 
 ### Output
 
-The index vector contains positive integers for the generators.
+A vector of unique positive integers representing each generator
 """
 function indexvector(MZ::MatrixZonotope)
     return MZ.idx

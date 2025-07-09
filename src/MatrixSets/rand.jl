@@ -28,6 +28,5 @@ function rand(::Type{MatrixZonotope};
     @inbounds for i in 1:num_generators
         generators[i] = randn(rng, N, dim...)
     end
-
-    return MatrixZonotope(center, generators)
+    return MatrixZonotope(center, generators) 
 end

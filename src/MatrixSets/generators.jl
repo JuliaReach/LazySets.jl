@@ -1,5 +1,5 @@
 """
-	generators(MZ::MatrixZonotope)
+    generators(MZ::MatrixZonotope)
 
 Return an iterator over the generators of a matrix zonotope.
 
@@ -11,4 +11,4 @@ Return an iterator over the generators of a matrix zonotope.
 
 An iterator over the generators of `MZ`.
 """
-generators(MZ::MatrixZonotope) = MZ.Ai
+generators(MZ::MatrixZonotope) = MZ.Ai 

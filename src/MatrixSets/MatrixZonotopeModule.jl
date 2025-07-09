@@ -13,12 +13,12 @@ import ..LazySets: linear_map
 export MatrixZonotope
 
 include("MatrixZonotope.jl")
+include("indexvector.jl")
 include("scale.jl")
 include("center.jl")
 include("rand.jl")
 
 include("generators.jl")
 include("ngens.jl")
-include("indexvector.jl")
 
 end #module
