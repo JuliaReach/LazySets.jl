@@ -1,7 +1,5 @@
 function scale(α::Real, Z::MatrixZonotope)
-    A0 = α * center(Z)
-    Ai = [α * gen for gen in generators(Z)]
-    return MatrixZonotope(A0, Ai)
+    return scale!(α, copy(Z))
 end
 
 function scale!(α::Real, Z::MatrixZonotope)

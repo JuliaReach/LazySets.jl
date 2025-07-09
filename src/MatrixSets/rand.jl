@@ -1,7 +1,7 @@
 """
 # Extended help
 
-    rand(::Type{MatrixZonotope}; [N]::Type{<:Real}=Float64, [dim]::Tuple{Int, Int}=2,
+    rand(::Type{MatrixZonotope}; [N]::Type{<:Real}=Float64, [dim]::Tuple{Int,Int}=(2,2),
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
 
 ### Algorithm
@@ -19,14 +19,14 @@ function rand(::Type{MatrixZonotope};
               seed::Union{Int,Nothing}=nothing,
               num_generators::Int=-1)
     rng = reseed!(rng, seed)
-    center = randn(rng, N, dim...)
+    center = randn(rng, N, dim)
     if num_generators < 0
-        num_generators = (dim == 1) ? 1 : rand(rng, 1:max(dim...))
+        num_generators = rand(rng, 1:maximum(dim))
     end
 
     generators = Vector{Matrix{N}}(undef, num_generators)
     @inbounds for i in 1:num_generators
-        generators[i] = randn(rng, N, dim...)
+        generators[i] = randn(rng, N, dim)
     end
     return MatrixZonotope(center, generators) 
 end

@@ -20,4 +20,4 @@ CurrentModule = LazySets.API
 ```
 Undocumented implementations:
 * [`scale`](@ref scale(::Real, ::LazySet))
-* [`!scale`](@ref scale(::Real, ::LazySet))
+* [`scale!`](@ref scale!(::Real, ::LazySet))

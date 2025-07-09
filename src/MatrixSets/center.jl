@@ -9,6 +9,6 @@ Return the center matrix of the matrix zonotope `Z`.
 
 ### Output
 
-The centre matrix of `MZ`.
+The center matrix of `MZ`.
 """
 center(MZ::MatrixZonotope) = MZ.A0 

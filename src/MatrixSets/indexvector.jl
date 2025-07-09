@@ -1,7 +1,7 @@
 """
     indexvector(MZ::MatrixZonotope)
 
-Return the `indexVector` of the matrix zonotope `Z`.
+Return the  index vector of the matrix zonotope `MZ`.
 
 ### Input
 
