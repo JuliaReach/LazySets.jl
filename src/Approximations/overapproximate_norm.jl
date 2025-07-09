@@ -44,8 +44,8 @@ function _overapproximate_l1_norm(Z::AbstractZonotope{N}) where {N}
     S = .!(S⁺ .| S⁻)
 
     w = zeros(N, length(c))
-    w[S⁺] .= 1.0
-    w[S⁻] .= -1.0
+    w[S⁺] .= N(1)
+    w[S⁻] .= N(-1)
     @. w[S] = (ub[S] + lb[S]) / (ub[S] - lb[S])
 
     const_term = -2 * sum(ub[S] .* lb[S] ./ (ub[S] .- lb[S]))
