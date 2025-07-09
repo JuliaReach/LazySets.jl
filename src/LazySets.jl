@@ -320,9 +320,10 @@ include("Plotting/mesh.jl")
 include("Parallel/Parallel.jl")
 
 # ==========================
-# Parallel-algorithms module
+# Matrix sets module
 # ==========================
-include("MatrixSets/MatrixSets.jl")
+include("MatrixSets/MatrixZonotopeModule.jl")
+@reexport using ..MatrixZonotopeModule: MatrixZonotope
 
 # ==============================
 # Activate assertions by default

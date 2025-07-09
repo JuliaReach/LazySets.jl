@@ -1,17 +1,24 @@
-module MatrixZonotope
+module MatrixZonotopeModule
 
-using Reexport, Requires
+using Reexport
 
+using Random: AbstractRNG, GLOBAL_RNG
+using ReachabilityBase.Distribution: reseed!
 using ..LazySets.SparsePolynomialZonotopeModule
 import ..LazySets: linear_map
 
-@reexport import ..API: center, scale, scale!
-@reexport import ..LazySets: generators, ngens
+@reexport import ..API: center, scale, scale!, rand
+@reexport import ..LazySets: generators, ngens, indexvector
+
+export MatrixZonotope
 
 include("MatrixZonotope.jl")
+include("scale.jl")
 include("center.jl")
+include("rand.jl")
+
 include("generators.jl")
 include("ngens.jl")
-include("scale.jl")
+include("indexvector.jl")
 
-end
+end #module
