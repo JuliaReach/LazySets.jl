@@ -9,8 +9,7 @@
 All numbers are normally distributed with mean 0 and standard deviation 1.
 
 The number of generators can be controlled with the argument `num_generators`.
-For a negative value we choose a random number in the range `1:max(dim...)` (except
-if `dim == 1`, in which case we only create a single generator).
+For a negative value we choose a random number in the range `1:maximum(dim)`.
 """
 function rand(::Type{MatrixZonotope};
               N::Type{<:Real}=Float64,

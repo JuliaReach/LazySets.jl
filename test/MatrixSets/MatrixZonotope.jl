@@ -1,7 +1,6 @@
-using LazySets
+using LazySets, Test
 
 for N in [Float64, Float32, Rational{Int}]
-    MZ = rand(MatrixZonotope)
     # test constructor
     c = N[1 0; 0 1]
     gens = [N[1 -1; 0 2], N[2 -1; -1 1]]
@@ -37,4 +36,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test center(MZ3) == c
     @test isempty(generators(MZ3))
     @test isempty(indexvector(MZ3))
+end
+
+for N in [Float64, Float32]
+    MZ = rand(MatrixZonotope; N=N)
+    @test MZ isa MatrixZonotope{N}
 end
