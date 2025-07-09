@@ -69,6 +69,7 @@ include("Utils/helper_functions.jl")
 include("Utils/macros.jl")
 include("Utils/matrix_exponential.jl")
 include("Utils/lp_solvers.jl")
+include("Utils/reduction_algorithms.jl")
 include("Utils/sdp_solvers.jl")
 include("Utils/file_formats.jl")
 
