@@ -25,7 +25,19 @@ This interface defines the following functions:
 
 ```@docs
 nparams(::AbstractSparsePolynomialZonotope)
-ρ(::AbstractVector, ::SparsePolynomialZonotope)
+ρ(::AbstractVector, ::AbstractSparsePolynomialZonotope)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+linear_combination(::LazySet, ::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+linear_combination(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope)
 ```
 
 Undocumented implementations:
