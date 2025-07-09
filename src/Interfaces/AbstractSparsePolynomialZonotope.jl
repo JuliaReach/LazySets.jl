@@ -232,3 +232,68 @@ function translate(S::AbstractSparsePolynomialZonotope, v::AbstractVector)
     c = center(S) + v
     return SparsePolynomialZonotope(c, genmat_dep(S), genmat_indep(S), expmat(S))
 end
+
+"""
+# Extended help
+
+    reduce_order(P::AbstractSparsePolynomialZonotope, r::Real,
+                 [method]::AbstractReductionMethod=GIR05())
+
+### Notes
+
+This method implements the algorithm described in [Kochdumper21a; Proposition 3.1.39](@citet).
+"""
+function reduce_order(P::AbstractSparsePolynomialZonotope, r::Real,
+                      method::AbstractReductionMethod=GIR05())
+    @assert r ≥ 1 "cannot reduce below order 1 (got $r)"
+
+    if order(P) <= r
+        return P
+    end
+
+    require(@__MODULE__, :LazySets; fun_name="reduce_order")
+
+    n = dim(P)
+    h = ngens_dep(P)
+    q = ngens_indep(P)
+
+    a = min(h + q, ceil(Int, h + q - n * (r - 1)))
+    @assert a > 0  # holds because `r > order(P)`
+
+    c = center(P)
+    G = genmat_dep(P)
+    GI = genmat_indep(P)
+    E = expmat(P)
+
+    Gbar = hcat(G, GI)
+    norms = [norm(g) for g in eachcol(Gbar)]
+    th = sort(norms)[a]
+
+    # TODO is constructing an array of booleans the most efficient way?
+    K = [norms[i] ≤ th for i in 1:h]
+    Kbar = .!K
+
+    if q > 0
+        H = [norms[h + i] ≤ th for i in 1:q]
+        idx = indexvector(P)
+        PZ = SparsePolynomialZonotope(c, G[:, K], GI[:, H], E[:, K], idx)
+    else
+        PZ = SimpleSparsePolynomialZonotope(c, G[:, K], E[:, K])
+    end
+    Z = reduce_order(overapproximate(PZ, Zonotope), 1, method)
+
+    Ebar = E[:, Kbar]
+    N = [!iszero(e) for e in eachrow(Ebar)]
+
+    cz = center(Z)
+    Gz = genmat(Z)
+    if q > 0
+        Hbar = .!H
+        GI_new = hcat(GI[:, Hbar], Gz)
+        idx = idx[N]
+        return SparsePolynomialZonotope(cz, G[:, Kbar], GI_new, Ebar[N, :], idx)
+    else
+        GI_new = Gz
+        return SparsePolynomialZonotope(cz, G[:, Kbar], GI_new, Ebar[N, :])
+    end
+end

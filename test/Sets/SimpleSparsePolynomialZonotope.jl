@@ -151,6 +151,26 @@ for N in [Float64, Float32, Rational{Int}]
     @test center(TPZ) == N[1, 2]
     @test genmat_dep(TPZ) == genmat_dep(P)
     @test expmat(TPZ) == expmat(P)
+
+    # reduce_order
+    # example 3.1.40 from Nilkas' thesis (page 68)
+    c = N[0, 0]
+    G = N[-1 -2 -1 2 0.01 0.4
+          1 0 -1 1 0.2 0]
+    E = [1 0 1 2 2 0
+         0 1 1 0 0 2
+         0 0 0 0 1 2]
+    P = SimpleSparsePolynomialZonotope(c, G, E)
+    Pred = reduce_order(P, 3)
+    @test Pred === P
+    Pred = reduce_order(P, 2)
+    @test Pred isa SparsePolynomialZonotope{N}
+    @test center(Pred) == N[0.2, 0]
+    @test indexvector(Pred) == [1, 2]
+    @test order(Pred) == 2
+    for r in 3:8
+        @test reduce_order(P, r) == P
+    end
 end
 
 for Z in [rand(Zonotope), rand(Hyperrectangle)]

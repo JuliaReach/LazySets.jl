@@ -2,8 +2,8 @@ module SparsePolynomialZonotopeModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractSparsePolynomialZonotope, AbstractReductionMethod,
-                  genmat, GIR05, order, _remove_redundant_generators_polyzono
+using ..LazySets: AbstractSparsePolynomialZonotope,
+                  _remove_redundant_generators_polyzono
 import IntervalArithmetic as IA
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: remove_zero_columns
@@ -13,7 +13,7 @@ using ReachabilityBase.Require: require
 @reexport import ..API: center, isoperationtype, rand, scale, exact_sum
 @reexport import ..LazySets: expmat, genmat_dep, genmat_indep, ngens_dep,
                              ngens_indep, nparams, polynomial_order,
-                             reduce_order, remove_redundant_generators
+                             remove_redundant_generators
 @reexport using ..API
 
 export SparsePolynomialZonotope,
@@ -37,7 +37,6 @@ include("indexvector.jl")
 include("merge_id.jl")
 include("polynomial_order.jl")
 include("remove_redundant_generators.jl")
-include("reduce_order.jl")
 
 include("init.jl")
 
