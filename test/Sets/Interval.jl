@@ -374,6 +374,12 @@ for N in [Float64, Float32, Rational{Int}]
     Y = project(X, [1])
     @test isidentical(Y, X)
 
+    # sample
+    res = sample(X)
+    @test res isa Vector{N} && res in X
+    res = sample(X, 2)
+    @test res isa Vector{Vector{N}} && length(res) == 2 && all(x in X for x in res)
+
     # scale
     Y = scale(N(2), X)
     @test isidentical(Y, Interval(N(0), N(4)))
@@ -613,10 +619,4 @@ for N in [Float64, Float32]
     # exponential_map
     Y = exponential_map(ones(N, 1, 1), X)
     @test isidentical(Y, Interval(N(0), N(exp(1)) * N(2)))
-
-    # sample
-    res = sample(X)
-    @test res isa Vector{N} && res in X
-    res = sample(X, 2)
-    @test res isa Vector{Vector{N}} && length(res) == 2 && all(x in X for x in res)
 end
