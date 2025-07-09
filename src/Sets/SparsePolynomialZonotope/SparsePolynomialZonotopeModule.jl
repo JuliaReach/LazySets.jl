@@ -10,7 +10,8 @@ using ReachabilityBase.Arrays: remove_zero_columns
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
-@reexport import ..API: center, isoperationtype, rand, scale, exact_sum
+@reexport import ..API: center, isoperationtype, rand, scale, translate,
+                        translate!, exact_sum
 @reexport import ..LazySets: expmat, genmat_dep, genmat_indep, ngens_dep,
                              ngens_indep, nparams, polynomial_order,
                              reduce_order, remove_redundant_generators
@@ -28,6 +29,7 @@ include("center.jl")
 include("isoperationtype.jl")
 include("rand.jl")
 include("scale.jl")
+include("translate.jl")
 include("exact_sum.jl")
 
 include("expmat.jl")

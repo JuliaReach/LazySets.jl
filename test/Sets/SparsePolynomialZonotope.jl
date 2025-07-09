@@ -59,11 +59,17 @@ for N in [Float64, Float32, Rational{Int}]
     @test expmat(ESPZ2) == [1 0 3 0 0; 0 1 1 1 0; 0 0 0 2 1]
     @test indexvector(ESPZ2) == [1, 2, 3]
 
+    # translate / translate!
     TPZ = translate(PZ, N[1, 2])
+    @test TPZ isa SparsePolynomialZonotope{N}
     @test center(TPZ) == N[5, 6]
     @test genmat_dep(TPZ) == genmat_dep(PZ)
     @test genmat_indep(TPZ) == genmat_indep(PZ)
     @test expmat(TPZ) == expmat(PZ)
+    @test indexvector(TPZ) == indexvector(PZ)
+    P2 = copy(PZ)
+    translate!(P2, N[1, 2])
+    @test P2 == TPZ
 
     # cartesian_product SPZ/SPZ
     CPPZ = cartesian_product(PZ, PZ2)

@@ -227,8 +227,3 @@ function load_RangeEnclosures_support_function()
         end
     end
 end  # load_RangeEnclosures_support_function
-
-function translate(S::AbstractSparsePolynomialZonotope, v::AbstractVector)
-    c = center(S) + v
-    return SparsePolynomialZonotope(c, genmat_dep(S), genmat_indep(S), expmat(S))
-end
