@@ -188,12 +188,12 @@ for N in [Float64, Float32, Rational{Int}]
         @test P2 isa SimpleSparsePolynomialZonotope{N}
         @test center(P2) == N[2, 0]
         @test genmat(P2) == N[0 0.5 1 0.5 1 0.5 1 -0.5 -1
-                            0 1 1 1 1 1 1 -1 -1]
+                              0 1 1 1 1 1 1 -1 -1]
         @test expmat(P2) == [0 1 4 1 4 0 0 0 0
-                            0 1 2 1 2 0 0 0 0
-                            0 0 0 0 0 1 4 1 4
-                            0 0 0 0 0 1 2 1 2
-                            1 0 0 1 1 0 0 1 1]
+                             0 1 2 1 2 0 0 0 0
+                             0 0 0 0 0 1 4 1 4
+                             0 0 0 0 0 1 2 1 2
+                             1 0 0 1 1 0 0 1 1]
     end
 end
 
