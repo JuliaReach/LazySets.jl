@@ -1146,3 +1146,46 @@ end
 
 # internal function; defined here due to dependency StaticArrays and submodules
 function _genmat_static(::AbstractZonotope) end
+
+"""
+    _l1_norm(Z::AbstractZonotope)
+
+Compute the exact ``ℓ₁`` norm of a zonotope with generator matrix ``G ∈ \\mathbb{R}^{d×n}``
+
+### Notes 
+
+The function exploits the fact that the mapping ``ξ ↦ \\| c + ∑_{i=1}^n ξ_i g_i \\|_1`` is 
+a convex function of the coefficients ``ξ_i``.  As a result, its maximum over the hypercube ``[-1,1]^n`` is
+attained at one of the ``2^n`` corners.
+
+This algorithm has time complexity ``\\mathcal{O}(2ⁿ · d)``, and thus is only practical for zonotopes
+with a small number of generators.
+
+"""
+function _l1_norm(Z::AbstractZonotope{N}) where {N}
+    n = ngens(Z)
+    dirs = DiagDirections(n)
+    norm = N(-Inf)
+    c = center(Z)
+    G = genmat(Z)
+
+    @inbounds for v in dirs
+        aux = sum(abs.((c + G * v)))
+        norm = max(norm, aux)
+    end
+
+    return norm
+end
+
+"""
+    norm(Z::AbstractZonotope, p::Real=Inf)
+
+Compute the ``ℓ_p`` norm of a zonotope.
+"""
+function norm(Z::AbstractZonotope, p::Real=Inf)
+    if p == 1
+        return _l1_norm(Z)
+    else
+        return _norm_default(Z, p)
+    end
+end

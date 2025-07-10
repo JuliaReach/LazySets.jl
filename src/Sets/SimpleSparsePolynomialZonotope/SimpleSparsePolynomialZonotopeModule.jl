@@ -10,7 +10,8 @@ using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Comparison: isapproxzero
 
 @reexport import ..API: convex_hull, center, isoperationtype, rand, linear_map,
-                        cartesian_product, linear_combination, minkowski_sum
+                        translate, translate!, cartesian_product,
+                        linear_combination, minkowski_sum
 @reexport import ..LazySets: expmat, genmat, genmat_dep, genmat_indep, ngens,
                              ngens_indep, polynomial_order,
                              remove_redundant_generators
@@ -30,6 +31,7 @@ include("convex_hull.jl")
 include("isoperationtype.jl")
 include("rand.jl")
 include("linear_map.jl")
+include("translate.jl")
 include("cartesian_product.jl")
 include("linear_combination.jl")
 include("minkowski_sum.jl")

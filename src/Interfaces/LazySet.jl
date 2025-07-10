@@ -583,6 +583,10 @@ Otherwise it checks whether `X` is polytopic, in which case it iterates over all
 vertices.
 """
 function norm(X::LazySet, p::Real=Inf)
+    return _norm_default(X, p)
+end
+
+function _norm_default(X::LazySet, p::Real)
     if p == Inf
         l, h = extrema(X)
         return max(maximum(abs, l), maximum(abs, h))
