@@ -1,4 +1,4 @@
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     B1 = BallInf(N[0, 0], N(1))
     B2 = BallInf(N[4, -4], N(1))
     B3 = BallInf(N[1, -1], N(1))

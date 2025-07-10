@@ -1,4 +1,4 @@
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     # constructor
     b = BallInf(N[2, 2, 2], N(1))
     s = Singleton(N[0, 0])

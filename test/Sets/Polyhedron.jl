@@ -2,7 +2,7 @@ using LazySets, Test
 using LazySets: _isbounded_stiemke, _isbounded_unit_dimensions
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation, isinvertible
 
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     # random polyhedron
     rand(HPolyhedron)
 

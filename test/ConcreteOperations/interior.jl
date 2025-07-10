@@ -1,4 +1,4 @@
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     P = BallInf(zeros(N, 2), N(1 // 10))
     d = N[1 // 10, 1 // 10]
     if N <: AbstractFloat

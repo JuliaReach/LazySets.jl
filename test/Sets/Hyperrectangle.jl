@@ -4,7 +4,7 @@ using LazySets.ReachabilityBase.Arrays: SingleEntryVector
 using IntervalArithmetic: IntervalBox
 import IntervalArithmetic as IA
 
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     # random hyperrectangle
     rand(Hyperrectangle)
 
