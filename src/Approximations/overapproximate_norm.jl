@@ -52,21 +52,30 @@ relaxation of complexity \\(O(p·n)\\), where `p` is the number of generators an
 function _overapproximate_l1_norm(Z::AbstractZonotope{N}) where {N}
     lb = low(Z)
     ub = high(Z)
+    n = dim(Z)
 
-    c = center(Z)
-    G = genmat(Z)
+    S⁺ = Int[]
+    S⁻ = Int[]
+    S = Int[]
+    @inbounds for i in 1:n
+        if lb[i] ≥ 0
+            push!(S⁺, i)
+        elseif ub[i] ≤ 0
+            push!(S⁻, i)
+        else
+            push!(S, i)
+        end
+    end
 
-    S⁺ = lb .> 0
-    S⁻ = ub .< 0
-    S = .!(S⁺ .| S⁻)
-
-    w = zeros(N, length(c))
-    w[S⁺] .= N(1)
+    w = ones(N, n)
     w[S⁻] .= N(-1)
     @. w[S] = (ub[S] + lb[S]) / (ub[S] - lb[S])
 
     const_term = -2 * sum(ub[S] .* lb[S] ./ (ub[S] .- lb[S]))
+
     # max_{x ∈ Z} wᵀx
+    c = center(Z)
+    G = genmat(Z)
     linear_max = dot(w, c) + sum(abs.(At_mul_B(G, w)))
     return linear_max + const_term
 end
