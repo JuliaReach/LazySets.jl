@@ -1,16 +1,21 @@
 """
-    overapproximate_norm(Z::AbstractZonotope, p::Real=1)
+    overapproximate_norm(Z::AbstractZonotope, [p]::Real=1)
 
-Compute an upper bound on the ``\\ell_p`` norm over a zonotope `Z`.
+Compute an upper bound on the ``p``-norm of a zonotopic set.
 
 ### Input
 
-- `Z` -- A zonotopic set
-- `p` -- The ``ℓ_p`` norm to overapproximate
+- `Z` -- Zonotopic set
+- `p` -- (optional, default: `1`) norm
 
 ### Output
 
-- An upper bound on ``\\max_{z ∈ Z} \\|z\\|_p``.
+An upper bound on ``\\max_{x ∈ Z} \\|x\\|_p``.
+
+### Notes
+
+The norm of a set is the norm of the enclosing ball (of the given ``p``-norm) of
+minimal volume that is centered in the origin.
 """
 function overapproximate_norm(Z::AbstractZonotope, p::Real=1)
     if p == 1
@@ -21,26 +26,28 @@ function overapproximate_norm(Z::AbstractZonotope, p::Real=1)
 end
 
 """
-    _overapproximate_l1_norm(Z::AbstractZonotope)
+    _overapproximate_l1_norm(Z::AbstractZonotope{N}) where {N}
 
-Compute an upper bound on the ``\\ell_1`` norm over a zonotope `Z`.
+Compute an upper bound on the 1-norm of a zonotopic set.
 
 ### Notes
 
-The problem ``\\max_{z ∈ Z} \\|z\\|_1`` is NP-hard in general. This function computes a convex relaxation 
-by combining the MILP formulation described in [Jordan2021; Theorem 5](@citet) with the convex-hull construction
-in their supplement section §C.3.
+The problem ``\\max_{z ∈ Z} \\|z\\|_1`` is NP-hard in general.
 
-### Algorithm 
+### Algorithm
 
-We replace each coordinate's absolute value
-``
+This method computes a convex relaxation by combining the MILP formulation
+described in [JordanD21; Theorem 5](@citet) with the convex-hull construction in
+the supplement section §C.3. We replace each coordinate's absolute value
+
+```math
 |z_i|\\quad z_i ∈ [ℓ_i, u_i]
-``
-by its convex-hull secant upper envelope: the line through
-the two points ``((ℓ_i,|ℓ_i|)`` and ``((u_i,|u_i|)``.  This yields a
-linear-programming relaxation of complexity \\(O(n·d)\\), where `n` is the
-number of generators and `d` the ambient dimension.
+```
+
+by its convex-hull secant upper envelope: the line through the two points
+``((ℓ_i,|ℓ_i|)`` and ``((u_i,|u_i|)``. This yields a linear-programming
+relaxation of complexity \\(O(p·n)\\), where `p` is the number of generators and
+`n` the ambient dimension.
 """
 function _overapproximate_l1_norm(Z::AbstractZonotope{N}) where {N}
     lb = low(Z)
