@@ -1,5 +1,5 @@
 """
-    MatrixZonotope{N, MN<:AbstractMatrix{N}}(A₀::MN, Aᵢ::Vector{MN}, 
+    MatrixZonotope{N, MN<:AbstractMatrix{N}}(A0::MN, Ai::Vector{MN}, 
                                               idx::Vector{Int}=collect(1:length(Aᵢ)))
 
 Type that represents a matrix zonotope.
@@ -8,7 +8,7 @@ Type that represents a matrix zonotope.
 
 - `center`     -- center of the matrix zonotope
 - `generators` -- vector of matrices; each matrix is a generator of the matrix zonotope
-- `idx` -- identifier vector of positive integers for each factor 
+- `idx`        -- identifier vector of positive integers for each factor 
 
 ### Notes
 
@@ -18,7 +18,7 @@ Mathematically a matrix zonotope is defined as the set of matrices
 \\mathcal{A} = \\left\\{A ∈ ℝ^{n×m} : A^{(0)} + ∑_{i=1}^p ξ_i A^{(i)},~~ ξ_i ∈ [-1, 1]~~ ∀ i = 1,…, p \\right\\},
 ```
 
-Matrix zonotopes were introduced in [HuangLBS2025]@citet
+Matrix zonotopes were introduced in [HuangLBS2025](@citet).
 
 ### Examples
 
@@ -40,7 +40,7 @@ struct MatrixZonotope{N, MN <: AbstractMatrix{N}}
 
     function MatrixZonotope(A0::MN, Ai::Vector{MN},
         idx::Vector{Int} = collect(1:length(Ai))) where {N, MN <: AbstractMatrix{N}}
-        length(Ai) == length(unique(idx)) ||
+        length(Ai) == length(idx) == length(unique(idx)) ||
             throw(ArgumentError("the number of generator matrices doesn't match the id's length"))
         if length(Ai) > 0
             (all(size(Aij) == size(A0) for Aij in Ai)) ||

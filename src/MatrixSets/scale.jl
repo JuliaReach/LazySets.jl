@@ -1,11 +1,11 @@
-function scale(α::Real, Z::MatrixZonotope)
-    return scale!(α, copy(Z))
+function scale(α::Real, MZ::MatrixZonotope)
+    return scale!(α, copy(MZ))
 end
 
-function scale!(α::Real, Z::MatrixZonotope)
-    Z.A0 .*= α
-    @inbounds for i in ngens(Z)
-        Z.Ai[i] .*= α
+function scale!(α::Real, MZ::MatrixZonotope)
+    MZ.A0 .*= α
+    @inbounds for i in ngens(MZ)
+        MZ.Ai[i] .*= α
     end
-    return Z
+    return MZ
 end

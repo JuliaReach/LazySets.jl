@@ -5,7 +5,6 @@ using Reexport
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ..LazySets.SparsePolynomialZonotopeModule
-import ..LazySets: linear_map
 
 @reexport import ..API: center, scale, scale!, rand
 @reexport import ..LazySets: generators, ngens, indexvector

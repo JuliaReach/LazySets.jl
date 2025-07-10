@@ -2,7 +2,8 @@
 # Extended help
 
     rand(::Type{MatrixZonotope}; [N]::Type{<:Real}=Float64, [dim]::Tuple{Int,Int}=(2,2),
-         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing)
+         [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing,
+         [num_generators]::Int=-1)
 
 ### Algorithm
 
