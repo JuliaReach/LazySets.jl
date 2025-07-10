@@ -1,6 +1,6 @@
 using LazySets, Test
 
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     # constructor from empty vertex list
     P = Polygon{N}()
     @test P isa Polygon{N,Vector{N}} && isempty(P.vertices)

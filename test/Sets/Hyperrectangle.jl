@@ -4,10 +4,7 @@ using LazySets.ReachabilityBase.Arrays: SingleEntryVector
 using IntervalArithmetic: IntervalBox
 import IntervalArithmetic as IA
 
-for N in [Float64, Rational{Int}, Float32]
-    # random hyperrectangle
-    rand(Hyperrectangle)
-
+for N in [Float64, Float32, Rational{Int}]
     # constructor with mixed vectors
     Hyperrectangle(sparsevec([1], N[1], 1), N[1])
     Hyperrectangle(N[1], sparsevec([1], N[1], 1))
@@ -381,8 +378,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test H2 == H3 == Hyperrectangle(N[3, 5, 7], N[4, 5, 6])
 end
 
-# tests that only work with Float64 and Float32
 for N in [Float64, Float32]
+    # rand
+    @test rand(Hyperrectangle; N=N) isa Hyperrectangle{N}
+
     # distance
     H = Hyperrectangle(N[1, 2], N[2, 3])
     xs = [N[1, 1], N[8, 1], N[1, 6], N[-3, 2], N[-4, -5]]

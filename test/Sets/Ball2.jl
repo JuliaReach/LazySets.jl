@@ -1,8 +1,8 @@
 using LazySets, Test
 
 for N in [Float64, Float32]
-    # random ball
-    rand(Ball2)
+    # rand
+    @test rand(Ball2; N=N) isa Ball2{N}
 
     # invalid inputs
     @test_throws AssertionError Ball2(N[0], N(-1))

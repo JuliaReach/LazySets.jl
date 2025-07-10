@@ -2,7 +2,7 @@ using LazySets, Test, LinearAlgebra
 using LazySets: linear_map_inverse, affine_map_inverse
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
 
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     # random polytopes
     @test_throws ArgumentError rand(HPolytope; N=N, dim=1, num_vertices=3)
     p = rand(HPolytope; N=N, dim=1, num_vertices=0)
@@ -351,7 +351,6 @@ end
 @test HPolytope() isa HPolytope{Float64}
 @test VPolytope() isa VPolytope{Float64,Vector{Float64}}
 
-# tests that only work with Float64 and Float32
 for N in [Float64, Float32]
     # rand
     p = rand(HPolytope; N=N, dim=2, num_vertices=0)
@@ -383,7 +382,6 @@ for N in [Float64, Float32]
     end
 end
 
-# tests that only work with Float64
 for N in [Float64]
     p = HPolytope{N}()
     c1 = LinearConstraint(N[2, 2], N(12))

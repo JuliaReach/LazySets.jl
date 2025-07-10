@@ -1,10 +1,7 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
 
-for N in [Float64, Rational{Int}, Float32]
-    # random ball
-    rand(BallInf)
-
+for N in [Float64, Float32, Rational{Int}]
     # invalid inputs
     @test_throws AssertionError BallInf(N[0], N(-1))
     if N <: AbstractFloat
@@ -263,7 +260,11 @@ for N in [Float64, Rational{Int}, Float32]
     @test scale(N(-2), B) == BallInf(N[4, -6], N(2))
 end
 
-# tests that only work with Float64
+for N in [Float64, Float32]
+    # rand
+    @test rand(BallInf; N=N) isa BallInf{N}
+end
+
 for N in [Float64]
     # concrete Minkowski sum
     b = BallInf(N[1, 2], N(1))

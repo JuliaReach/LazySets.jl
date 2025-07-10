@@ -1,8 +1,8 @@
 using LazySets, Test, LinearAlgebra
 
 for N in [Float64, Float32]
-    # random ellipsoid
-    rand(Ellipsoid)
+    # rand
+    @test rand(Ellipsoid; N=N) isa Ellipsoid{N}
 
     # 1D ellipsoid
     E = Ellipsoid(N[0], Diagonal(N[1]))

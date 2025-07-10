@@ -1,4 +1,4 @@
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     # compact set
     @test Ball1 <: CompactSet && !(Ball1 <: NonCompactSet)
     b = Ball1(N[0, 1], N(1))

@@ -82,9 +82,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test ispermutation(vertices_list(S), vertices_list(B))
 end
 
-for N in [Float64]
+for N in [Float64, Float32]
     # random star
-    rand(Star)
+    @test rand(Star; N=N) isa Star{N}
 end
 
 # isoperationtype
