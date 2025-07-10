@@ -1,10 +1,7 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
 
-for N in [Float64, Rational{Int}, Float32]
-    # random hyperplane
-    rand(Hyperplane)
-
+for N in [Float64, Float32, Rational{Int}]
     # normal constructor
     a = ones(N, 3)
     b = N(5)
@@ -163,8 +160,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test project(N[1, 0], H) ≈ N[1 // 2, 1 // 2]
 end
 
-# tests that only work with Float64 and Float32
 for N in [Float64, Float32]
+    # rand
+    @test rand(Hyperplane; N=N) isa Hyperplane{N}
+
     # normalization
     H1 = Hyperplane(N[1e5, 2e5], N(3e5))
     H2 = normalize(H1)
@@ -187,7 +186,6 @@ for N in [Float64, Float32]
     end
 end
 
-# Polyhedra tests that only work with Float64
 for N in [Float64]
     hp = Hyperplane(ones(N, 3), N(5))
 

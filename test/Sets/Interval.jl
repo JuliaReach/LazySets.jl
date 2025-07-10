@@ -1,5 +1,4 @@
 using LazySets, Test
-using IntervalArithmetic: IntervalBox
 import IntervalArithmetic as IA
 @static if VERSION >= v"1.9"
     vIA = pkgversion(IA)
@@ -281,12 +280,6 @@ for N in [Float64, Float32, Rational{Int}]
     # degenerate case
     res = vertices_list(X0)
     @test res isa Vector{Vector{N}} && res == [[N(0)]]
-    # vertices_list for IntervalBox IA types
-    Y = IntervalBox(IA.interval(N(0), N(1)), IA.interval(N(0), N(1)))
-    res = vertices_list(Y)
-    @test ispermutation(res, [[N(1), N(1)], [N(0), N(1)], [N(1), N(0)], [N(0), N(0)]])
-    res = vertices_list(Y[1])
-    @test ispermutation(res, [[N(0)], [N(1)]])
 
     # vertices
     res = collect(vertices(X))
@@ -349,10 +342,10 @@ for N in [Float64, Float32, Rational{Int}]
     @test Y isa Interval{N} && isequivalent(Y, Interval(N(0), N(4)))
     Y = linear_map(zeros(N, 1, 1), X)
     @test Y isa Interval{N}
-    if vIA < v"0.21"
-        @test isequivalent(Y, Interval(N(0), N(0)))
-    else
+    if vIA == v"0.21.0"
         @test_broken isequivalent(Y, Interval(N(0), N(0)))  # bug in IntervalArithmetic: 0 * I == I
+    else
+        @test isequivalent(Y, Interval(N(0), N(0)))
     end
     Y = linear_map(ones(N, 2, 1), X)
     @test Y isa LazySet{N} && isequivalent(Y, LineSegment(N[0, 0], N[2, 2]))
@@ -380,6 +373,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws AssertionError project(X, [2])
     Y = project(X, [1])
     @test isidentical(Y, X)
+
+    # sample
+    res = sample(X)
+    @test res isa Vector{N} && res in X
+    res = sample(X, 2)
+    @test res isa Vector{Vector{N}} && length(res) == 2 && all(x in X for x in res)
 
     # scale
     Y = scale(N(2), X)
@@ -484,8 +483,14 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(Y, Interval(N(1), N(2)))
 
     # isapprox
-    @test X ≈ X ≈ translate(X, [1e-8])
-    @test !(X ≈ translate(X, [1e-4]))
+    @test X ≈ X
+    res = (X ≈ translate(X, N[1//100000000]))
+    if N <: AbstractFloat
+        @test res  # below default tolerance for AbstractFloat
+    else
+        @test !res  # zero default tolerance for Rational
+    end
+    @test !(X ≈ translate(X, N[1//1000]))  # above default tolerance for all types
     @test !(X ≈ X2) && !(X2 ≈ X) && !(X ≈ B) && !(B ≈ X)
 
     # isdisjoint
@@ -614,10 +619,4 @@ for N in [Float64, Float32]
     # exponential_map
     Y = exponential_map(ones(N, 1, 1), X)
     @test isidentical(Y, Interval(N(0), N(exp(1)) * N(2)))
-
-    # sample
-    res = sample(X)
-    @test res isa Vector{N} && res in X
-    res = sample(X, 2)
-    @test res isa Vector{Vector{N}} && length(res) == 2 && all(x in X for x in res)
 end

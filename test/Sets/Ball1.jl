@@ -1,10 +1,7 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
 
-for N in [Float64, Rational{Int}, Float32]
-    # random ball
-    rand(Ball1)
-
+for N in [Float64, Float32, Rational{Int}]
     # invalid inputs
     @test_throws AssertionError Ball1(N[0], N(-1))
     if N <: AbstractFloat
@@ -136,4 +133,9 @@ for N in [Float64, Rational{Int}, Float32]
     B = Ball1(N[-2, 3], N(1))
     @test scale(N(2), B) == Ball1(N[-4, 6], N(2))
     @test scale(N(-2), B) == Ball1(N[4, -6], N(2))
+end
+
+for N in [Float64, Float32]
+    # rand
+    @test rand(Ball1; N=N) isa Ball1{N}
 end

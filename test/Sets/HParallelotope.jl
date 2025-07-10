@@ -1,7 +1,7 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
 
-for N in [Float32, Float64, Rational{Int}]
+for N in [Float64, Float32, Rational{Int}]
     # See [DreossiDP17; Example 6](@citet).
     D = N[-1 0 0; -1 -1 0; 0 0 -1]
     c = N[-0.80, -0.95, 0, 0.85, 1, 0]
@@ -54,9 +54,6 @@ for N in [Float32, Float64, Rational{Int}]
     # test generators getters
     @test genmat(P) == N[1 0; 0 1]
 
-    # random parallelotope
-    rand(HParallelotope)
-
     # emptiness
     @test !isempty(P)
 
@@ -68,7 +65,10 @@ for N in [Float32, Float64, Rational{Int}]
                         [N[1, 1], N[1, -1], N[-1, 1], N[-1, -1]])
 end
 
-for N in [Float32, Float64]
+for N in [Float64, Float32]
+    # rand
+    @test rand(HParallelotope; N=N) isa HParallelotope{N}
+
     # conversion from zonotope
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
     @test convert(HParallelotope, Z) ==

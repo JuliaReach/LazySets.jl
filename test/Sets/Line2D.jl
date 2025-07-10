@@ -1,10 +1,7 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
 
-for N in [Float64, Rational{Int}, Float32]
-    # random line
-    rand(Line2D)
-
+for N in [Float64, Float32, Rational{Int}]
     # construction
     a1 = N[0, 1]
     b1 = N(1)
@@ -133,8 +130,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test res && w isa Vector{N} && isempty(w)
 end
 
-# tests that only work with Float64 and Float32
 for N in [Float64, Float32]
+    # rand
+    @test rand(Line2D; N=N) isa Line2D{N}
+
     # sampling
     L = Line2D(N[1, -1], N(0))  # x = y
     for x in sample(L, 10)

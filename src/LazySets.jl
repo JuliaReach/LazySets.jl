@@ -180,13 +180,6 @@ include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModul
                                                         SSPZ,
                                                         quadratic_map
 
-"""
-    PolynomialZonotope = SimpleSparsePolynomialZonotope
-
-Alias for `SimpleSparsePolynomialZonotope`.
-"""
-const PolynomialZonotope = SimpleSparsePolynomialZonotope
-
 include("Sets/Singleton/SingletonModule.jl")
 @reexport using ..SingletonModule: Singleton
 
@@ -229,8 +222,6 @@ using ..ZonotopeModule: _split
 include("Sets/ZonotopeMD/ZonotopeMDModule.jl")
 @reexport using ..ZonotopeMDModule: ZonotopeMD
 
-include("LazyOperations/UnionSet.jl")  # must come before IntervalModule
-
 include("Sets/Interval/IntervalModule.jl")
 @reexport using ..IntervalModule: Interval
 
@@ -265,8 +256,9 @@ include("LazyOperations/QuadraticMap.jl")
 include("LazyOperations/ResetMap.jl")
 include("LazyOperations/SymmetricIntervalHull.jl")
 include("LazyOperations/Translation.jl")
+include("LazyOperations/UnionSet.jl")
 include("LazyOperations/UnionSetArray.jl")
-include("LazyOperations/Rectification.jl")  # must come after UnionSet
+include("LazyOperations/Rectification.jl")  # must come after UnionSetArray
 
 # =======
 # Aliases

@@ -589,8 +589,8 @@ end
 function area(H::AbstractHyperrectangle)
     n = dim(H)
     @assert n ∈ (2, 3) "this function only applies to two-dimensional or " *
-                        "three-dimensional sets, but the given set is " *
-                        "$n-dimensional"
+                       "three-dimensional sets, but the given set is " *
+                       "$n-dimensional"
 
     if n == 2
         return _volume_hyperrectangle(H)

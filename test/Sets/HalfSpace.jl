@@ -1,10 +1,7 @@
 using LazySets, Test, SparseArrays
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector
 
-for N in [Float64, Rational{Int}, Float32]
-    # random half-space
-    rand(HalfSpace)
-
+for N in [Float64, Float32, Rational{Int}]
     # normal constructor
     hs = HalfSpace(ones(N, 3), N(5))
 
@@ -203,8 +200,10 @@ for N in [Float64, Rational{Int}, Float32]
     @test !res
 end
 
-# tests that only work with Float64 and Float32
 for N in [Float64, Float32]
+    # rand
+    @test rand(HalfSpace; N=N) isa HalfSpace{N}
+
     # normalization
     hs1 = HalfSpace(N[1e5, 2e5], N(3e5))
     hs2 = normalize(hs1)

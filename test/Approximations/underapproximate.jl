@@ -1,4 +1,4 @@
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     X = Hyperrectangle(zeros(N, 2), ones(N, 2))
     U = underapproximate(X, BoxDirections{N}(2))
     @test U ⊆ X

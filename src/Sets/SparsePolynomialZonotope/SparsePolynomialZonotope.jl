@@ -63,6 +63,7 @@ struct SparsePolynomialZonotope{N,
                                                                  "should have the same number of columns"))
         @assert all(>=(0), E) throw(ArgumentError("E should contain " *
                                                   "non-negative integers"))
+        @assert length(idx) == size(E, 1) throw(DimensionMismatch("the number of indices is incompatible"))
         @assert all(>(0), idx) throw(ArgumentError("identifiers in index " *
                                                    "vector must be positive integers"))
         return new{N,VN,MN,MNI,ME,VI}(c, G, GI, E, idx)

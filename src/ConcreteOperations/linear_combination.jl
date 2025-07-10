@@ -29,6 +29,27 @@ end
     return _linear_combination_universe(U, X)
 end
 
+"""
+# Extended help
+
+    linear_combination(P1::AbstractSparsePolynomialZonotope,
+                       P2::AbstractSparsePolynomialZonotope)
+
+### Algorithm
+
+This method implements [Kochdumper21a; Proposition 3.1.25](@citet).
+
+### Output
+
+A `SimpleSparsePolynomialZonotope`.
+"""
+function linear_combination(P1::AbstractSparsePolynomialZonotope,
+                            P2::AbstractSparsePolynomialZonotope)
+    SP1 = convert(SimpleSparsePolynomialZonotope, P1)
+    SP2 = convert(SimpleSparsePolynomialZonotope, P2)
+    return linear_combination(SP1, SP2)
+end
+
 # ============== #
 # disambiguation #
 # ============== #

@@ -13,8 +13,6 @@ for N in [Float64, Float32, Rational{Int}]
     G = N[1 2; 2 2.0]
     E = [1 4; 1 2]
 
-    @test rand(SimpleSparsePolynomialZonotope) isa SimpleSparsePolynomialZonotope
-
     S = SimpleSparsePolynomialZonotope(c, G, E)
 
     @test genmat(S) == G
@@ -153,6 +151,11 @@ for N in [Float64, Float32, Rational{Int}]
     @test expmat(TPZ) == expmat(P)
 end
 
+for N in [Float64, Float32]
+    # rand
+    @test rand(SimpleSparsePolynomialZonotope; N=N) isa SimpleSparsePolynomialZonotope{N}
+end
+
 for Z in [rand(Zonotope), rand(Hyperrectangle)]
     ZS = convert(SimpleSparsePolynomialZonotope, Z)
     @test center(ZS) == center(Z)
@@ -160,7 +163,7 @@ for Z in [rand(Zonotope), rand(Hyperrectangle)]
     @test expmat(ZS) == I
 end
 
-for _dummy_ in 1:1  # avoid global variable warnings
+let
     SPZ = SparsePolynomialZonotope([4.0, 4], [2.0 1 2; 0 2 2], hcat([1.0; 0]), [1 0 3; 0 1 1])
     SSPZ = convert(SimpleSparsePolynomialZonotope, SPZ)
     @test center(SSPZ) == center(SPZ)

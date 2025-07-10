@@ -98,6 +98,9 @@ if test_suite_basic
     @testset "LazySets.CDDLib" begin
         include("Interfaces/CDDLib.jl")
     end
+    @testset "LazySets.IntervalArithmetic" begin
+        include("Interfaces/IntervalArithmetic.jl")
+    end
     @testset "LazySets.SymEngine" begin
         include("Interfaces/SymEngine.jl")
     end
@@ -334,6 +337,9 @@ if test_suite_basic
     end
     @testset "LazySets.Approximations.hausdorff_distance" begin
         include("Approximations/hausdorff_distance.jl")
+    end
+    @testset "LazySets.Approximations.overapproximate_norm" begin
+        include("Approximations/overapproximate_norm.jl")
     end
 
     # ================================
