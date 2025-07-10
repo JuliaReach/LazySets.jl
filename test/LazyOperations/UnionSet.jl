@@ -136,10 +136,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test !isbounded(Uarr) && !isboundedtype(typeof(Uarr))
 
     # ispolyhedral
-    @test ispolyhedral(UXY)
+    @test_throws ArgumentError ispolyhedral(UXY)
+    X = BallInf(N[1, 1], N(1))
+    UXY = UnionSet(X, B1)
+    @test_throws ArgumentError ispolyhedral(UXY)
     if N isa AbstractFloat
         U2 = UnionSet(B1, Ball2(zeros(N, 2), N(1)))
-        @test !ispolyhedral(U2)
+        @test_throws ArgumentError ispolyhedral(U2)
     end
 
     # volume
