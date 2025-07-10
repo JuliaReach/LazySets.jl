@@ -54,9 +54,6 @@ for N in [Float64, Float32, Rational{Int}]
     # test generators getters
     @test genmat(P) == N[1 0; 0 1]
 
-    # random parallelotope
-    rand(HParallelotope)
-
     # emptiness
     @test !isempty(P)
 
@@ -69,6 +66,9 @@ for N in [Float64, Float32, Rational{Int}]
 end
 
 for N in [Float64, Float32]
+    # rand
+    @test rand(HParallelotope; N=N) isa HParallelotope{N}
+
     # conversion from zonotope
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
     @test convert(HParallelotope, Z) ==

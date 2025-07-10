@@ -26,7 +26,6 @@ for N in [Float64, Float32, Rational{Int}]
     end
 end
 
-# tests that only work with Float64 and Float32
 for N in [Float64, Float32]
     # exponential map of singleton
     M = sparse(diagm(N[1, 1, 1]))

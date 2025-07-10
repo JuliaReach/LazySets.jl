@@ -2,9 +2,6 @@ using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
 
 for N in [Float64, Float32, Rational{Int}]
-    # random line
-    rand(Line)
-
     # construction
     l1 = Line(; from=N[0, 1], to=N[1, 1]) # two points on the line
     l2 = Line(N[0, 1], N[1, 0]) # point and direction
@@ -85,6 +82,9 @@ for N in [Float64, Float32, Rational{Int}]
 end
 
 for N in [Float64, Float32]
+    # rand
+    @test rand(Line; N=N) isa Line{N}
+
     # constraints_list
     l = Line(N[0, 1], N[1, 0])
     @test ispermutation(constraints_list(l),

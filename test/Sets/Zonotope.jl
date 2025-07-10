@@ -2,9 +2,6 @@ using LazySets, Test, LinearAlgebra, SparseArrays
 using LazySets.ReachabilityBase.Arrays: ispermutation
 
 for N in [Float64, Float32, Rational{Int}]
-    # random zonotope
-    rand(Zonotope)
-
     # constructor from list of generators
     Z = Zonotope(N[1, 1], [N[1, 2], N[3, 4]])
     @test Z isa Zonotope{N} && Z == Zonotope(N[1, 1], N[1 3; 2 4])
@@ -311,6 +308,11 @@ for N in [Float64, Float32, Rational{Int}]
     Z = Zonotope(N[-1, -2], N[1 2 3; -4 -5 -6])
     @test permute(Z, [1, 2]) == Z
     @test permute(Z, [2, 1]) == Zonotope(N[-2, -1], N[-4 -5 -6; 1 2 3])
+end
+
+for N in [Float64, Float32]
+    # rand
+    @test rand(Zonotope; N=N) isa Zonotope{N}
 end
 
 for N in [Float64]

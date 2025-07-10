@@ -113,7 +113,6 @@ for N in [Float64, Float32, Rational{Int}]
     @test concretize(am) == affine_map(M, B, v)
 end
 
-# tests that only work with Float64 and Float32
 for N in [Float64, Float32]
     B = BallInf(zeros(N, 3), N(1))
 
