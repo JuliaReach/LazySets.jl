@@ -1,7 +1,7 @@
 using LazySets, Test, SparseArrays
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector
 
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     # random half-space
     rand(HalfSpace)
 

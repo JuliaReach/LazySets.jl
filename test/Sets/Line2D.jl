@@ -1,7 +1,7 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
 
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     # random line
     rand(Line2D)
 

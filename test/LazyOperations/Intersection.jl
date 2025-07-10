@@ -5,7 +5,7 @@ else
     vGLPK = PkgVersion.Version(GLPK)
 end
 
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     B = BallInf(ones(N, 2), N(3))
     H = Hyperrectangle(ones(N, 2), ones(N, 2))
     E = EmptySet{N}(2)

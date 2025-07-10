@@ -1,4 +1,4 @@
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     # Sum of 2D centered balls in norm 1 and infinity
     b1 = BallInf(N[0, 0], N(2))
     b2 = Ball1(N[0, 0], N(1))

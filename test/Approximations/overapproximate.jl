@@ -2,7 +2,7 @@ using LazySets.Approximations: project
 
 using LazySets.Approximations: get_linear_coeffs, _nonlinear_polynomial
 
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     c = N[0, 0]
     b = Ball1(c, N(1))
 

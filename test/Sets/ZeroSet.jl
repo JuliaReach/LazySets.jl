@@ -6,7 +6,7 @@ for _dummy_ in 1:1  # avoid global variable warnings
     @test Z isa ZeroSet{Float64} && Z.dim == 2
 end
 
-for N in [Float64, Rational{Int}, Float32]
+for N in [Float64, Float32, Rational{Int}]
     # random zero set
     rand(ZeroSet)
 
