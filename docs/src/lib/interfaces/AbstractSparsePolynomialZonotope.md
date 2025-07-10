@@ -55,7 +55,6 @@ CurrentModule = LazySets
 CurrentModule = LazySets.API
 ```
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
-* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 
 ```@meta
 CurrentModule = LazySets
@@ -90,6 +89,8 @@ Inherited from [`LazySet`](@ref):
 * [`reflect`](@ref reflect(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
+* [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))

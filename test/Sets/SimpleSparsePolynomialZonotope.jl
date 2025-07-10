@@ -144,11 +144,15 @@ for N in [Float64, Float32, Rational{Int}]
         @test v <= v1 <= v2
     end
 
-    # translate
+    # translate / translate!
     TPZ = translate(P, N[1, 2])
+    @test TPZ isa SimpleSparsePolynomialZonotope{N}
     @test center(TPZ) == N[1, 2]
     @test genmat_dep(TPZ) == genmat_dep(P)
     @test expmat(TPZ) == expmat(P)
+    P2 = copy(P)
+    translate!(P2, N[1, 2])
+    @test P2 == TPZ
 end
 
 for N in [Float64, Float32]

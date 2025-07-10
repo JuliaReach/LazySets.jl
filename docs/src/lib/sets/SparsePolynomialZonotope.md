@@ -66,6 +66,8 @@ Undocumented implementations:
 * [`center`](@ref center(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`scale`](@ref scale(::Real, ::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
+* [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 
 ```@meta
 CurrentModule = LazySets
@@ -134,7 +136,6 @@ Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`nparams`](@ref nparams(::AbstractSparsePolynomialZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractSparsePolynomialZonotope))
 * [`ρ`](@ref ρ(::AbstractVector, ::AbstractSparsePolynomialZonotope))
-* [`translate`](@ref translate(::AbstractSparsePolynomialZonotope, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))
 * [`linear_combination`](@ref linear_combination(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractSparsePolynomialZonotope, ::AbstractSparsePolynomialZonotope))
