@@ -4,8 +4,6 @@ using IntervalArithmetic: IntervalBox
 using LazySets.SparsePolynomialZonotopeModule: merge_id
 
 for N in [Float64, Float32, Rational{Int}]
-    @test rand(SparsePolynomialZonotope) isa SparsePolynomialZonotope
-
     # Example 3.1.2 from thesis
     c = N[4, 4]
     G = N[2 1 2; 0 2 2]
@@ -332,4 +330,9 @@ let
     @test idx == [1, 2, 3, 4]
     @test Ē₁ == [1 2; 1 0; 0 0; 0 0]
     @test Ē₂ == [0 0 0; 0 0 0; 1 0 1; 3 2 0]
+end
+
+for N in [Float64, Float32]
+    # rand
+    @test rand(SparsePolynomialZonotope; N=N) isa SparsePolynomialZonotope{N}
 end

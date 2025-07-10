@@ -1,15 +1,12 @@
 using LazySets, Test
 
-for _dummy_ in 1:1  # avoid global variable warnings
+let
     # default Float64 constructor
     Z = ZeroSet(2)
     @test Z isa ZeroSet{Float64} && Z.dim == 2
 end
 
 for N in [Float64, Float32, Rational{Int}]
-    # random zero set
-    rand(ZeroSet)
-
     Z = ZeroSet{N}(2)
     B = BallInf(ones(N, 2), N(1))
 
@@ -98,4 +95,9 @@ for N in [Float64, Float32, Rational{Int}]
     Z2 = copy(Z)
     scale!(N(2), Z2)
     @test scale(N(-2), Z) == Z2 == ZeroSet{N}(dim(Z))
+end
+
+for N in [Float64, Float32]
+    # rand
+    @test rand(ZeroSet; N=N) isa ZeroSet{N}
 end

@@ -3,9 +3,6 @@ using LazySets.ReachabilityBase.Arrays: ispermutation
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector
 
 for N in [Float64, Float32, Rational{Int}]
-    # random singleton
-    rand(Singleton)
-
     # constructors
     S1 = Singleton(N[1, 2])
     S2 = Singleton(N(1), N(2))
@@ -190,4 +187,9 @@ for N in [Float64, Float32, Rational{Int}]
 
     # singleton_list
     @test singleton_list(S) == [S]
+end
+
+for N in [Float64, Float32]
+    # rand
+    @test rand(Singleton; N=N) isa Singleton{N}
 end

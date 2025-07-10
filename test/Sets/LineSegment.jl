@@ -2,9 +2,6 @@ using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
 
 for N in [Float64, Float32, Rational{Int}]
-    # random line segment
-    rand(LineSegment)
-
     # construction
     p, q = N[1, 1], N[2, 2]
     l = LineSegment(p, q)
@@ -201,4 +198,9 @@ for N in [Float64, Float32, Rational{Int}]
     L2 = copy(L)
     scale!(N(2), L2)
     @test scale(N(2), L) == L2 == LineSegment(N[0, 0], N[2, 2])
+end
+
+for N in [Float64, Float32]
+    # rand
+    @test rand(LineSegment; N=N) isa LineSegment{N}
 end

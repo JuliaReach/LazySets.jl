@@ -143,7 +143,6 @@ for N in [Float64, Float32, Rational{Int}]
     @test first(array(c)) == HalfSpace(N[0, -1], N(-1)) # complement of y <= 1 is y >= 1
 end
 
-# tests that only work with Float64
 for N in [Float64]
     b = BallInf(N[0, 0], N(1))
 

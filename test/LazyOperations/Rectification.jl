@@ -107,7 +107,6 @@ for N in [Float64, Float32, Rational{Int}]
     @test concretize(RI3) == rectify(I3)
 end
 
-# tests that only work with Float64
 for N in [Float64]
     # support function
     # some of the tests do not work because of insufficient precision in the

@@ -6,7 +6,7 @@ using LazySets.ReachabilityBase.Arrays: extend,
                                         to_matrix,
                                         same_sign
 
-for _dummy_ in 1:1 # avoid global variable warnings
+let
     # square matrix
     @test LazySets.issquare([2 3; 0 0])
     @test LazySets.issquare(sparse([1], [1], [1], 3, 3))

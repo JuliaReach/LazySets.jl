@@ -351,7 +351,6 @@ end
 @test HPolytope() isa HPolytope{Float64}
 @test VPolytope() isa VPolytope{Float64,Vector{Float64}}
 
-# tests that only work with Float64 and Float32
 for N in [Float64, Float32]
     # rand
     p = rand(HPolytope; N=N, dim=2, num_vertices=0)
@@ -383,7 +382,6 @@ for N in [Float64, Float32]
     end
 end
 
-# tests that only work with Float64
 for N in [Float64]
     p = HPolytope{N}()
     c1 = LinearConstraint(N[2, 2], N(12))

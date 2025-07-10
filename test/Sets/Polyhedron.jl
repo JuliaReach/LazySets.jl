@@ -3,9 +3,6 @@ using LazySets: _isbounded_stiemke, _isbounded_unit_dimensions
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation, isinvertible
 
 for N in [Float64, Float32, Rational{Int}]
-    # random polyhedron
-    rand(HPolyhedron)
-
     @test HPolyhedron{N}() isa HPolyhedron{N}
     @test HPolyhedron{N,Vector{N}}() isa HPolyhedron{N,Vector{N}}
     p_univ = HPolyhedron{N}()
@@ -190,8 +187,10 @@ end
 # default Float64 constructors
 @test HPolyhedron() isa HPolyhedron{Float64}
 
-# tests that only work with Float64 and Float32
 for N in [Float64, Float32]
+    # rand
+    @test rand(HPolyhedron; N=N) isa HPolyhedron{N}
+
     # normalization
     p1 = HPolyhedron([HalfSpace(N[1e5], N(3e5)), HalfSpace(N[-2e5], N(4e5))])
     p2 = normalize(p1)
@@ -226,7 +225,6 @@ for N in [Float64, Float32]
     @test !_isbounded_unit_dimensions(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
 end
 
-# Polyhedra tests that only work with Float64
 for N in [Float64]
     p = HPolyhedron{N}()
     c1 = LinearConstraint(N[2, 2], N(12))

@@ -691,6 +691,8 @@ for N in [Float64, Float32]
     end
 
     # rand
+    @test rand(HPolygon; N=N) isa HPolygon{N}
+    @test rand(HPolygonOpt; N=N) isa HPolygonOpt{N}
     @test rand(VPolygon; N=N, num_vertices=0) == VPolygon{N}()
     vp = rand(VPolygon; N=N, num_vertices=1)
     @test vp isa VPolygon{N} && length(vp.vertices) == 1
@@ -764,10 +766,6 @@ for N in [Float64]
     Pr = rationalize(BigInt, P, 10 * eps(Float64))
     @test isa(Pr, HPolygon{Rational{BigInt},Vector{Rational{BigInt}}})
 end
-
-# random polygons
-rand(HPolygon)
-rand(HPolygonOpt)
 
 # default Float64 constructors
 @test HPolygon() isa HPolygon{Float64,Vector{Float64}}

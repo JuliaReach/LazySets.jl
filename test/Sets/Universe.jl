@@ -8,7 +8,7 @@ function isidentical(U1::Universe{N}, U2::Universe{N}) where {N}
     return U1.dim == U2.dim
 end
 
-for _dummy_ in 1:1  # avoid global variable warnings
+let
     # default Float64 constructor
     U = Universe(2)
     @test U isa Universe{Float64}

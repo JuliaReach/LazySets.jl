@@ -8,7 +8,7 @@ function isidentical(E1::EmptySet{N}, E2::EmptySet{N}) where {N}
     return E1.dim == E2.dim
 end
 
-for _dummy_ in 1:1  # avoid global variable warnings
+let
     # default Float64 constructor
     for E in (EmptySet(2), ∅(2))
         @test E isa EmptySet{Float64}

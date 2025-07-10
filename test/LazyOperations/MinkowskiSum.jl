@@ -269,7 +269,6 @@ for N in [Float64, Float32, Rational{Int}]
     @test z + e == e + z == e
 end
 
-# tests that only work with Float64
 for N in [Float64]
     # inclusion
     ms = MinkowskiSum(BallInf(N[0, 0], N(1)), BallInf(N[0, 0], N(1)))
