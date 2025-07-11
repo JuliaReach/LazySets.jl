@@ -113,6 +113,10 @@ isoperationtype(::Type{<:Rectification}) = true
 
 isconvextype(::Type{<:Rectification}) = false
 
+isconvextype(::Type{<:Rectification{N,<:AbstractHyperrectangle}}) where {N} = true
+isconvextype(::Type{<:Rectification{N,<:EmptySet}}) where {N} = true
+isconvextype(::Type{<:Rectification{N,<:Universe}}) where {N} = true
+
 function _compute_exact_representation!(R::Rectification)
     if isnothing(R.cache.set)
         R.cache.set = to_union_of_projections(R)
