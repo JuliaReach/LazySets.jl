@@ -1,5 +1,3 @@
-function ∈(v::AbstractVector, ∅::EmptySet)
-    @assert length(v) == dim(∅) "the dimensions should match, but they are $(length(v)) and " *
-                                "$(dim(∅)), respectively"
+@validate function ∈(v::AbstractVector, ∅::EmptySet)
     return false
 end

@@ -572,7 +572,7 @@ function _inclusion_in_union_isflat(H::AbstractHyperrectangle)
     return isflat(H)
 end
 
-function ⊆(∅::EmptySet, X::LazySet, witness::Bool=false)
+@validate function ⊆(∅::EmptySet, X::LazySet, witness::Bool=false)
     return _issubset_emptyset(∅, X, witness)
 end
 
@@ -586,7 +586,7 @@ end
 We rely on `isempty(X)` for the emptiness check and on `an_element(X)` for
 witness production.
 """
-function ⊆(X::LazySet, ∅::EmptySet, witness::Bool=false)
+@validate function ⊆(X::LazySet, ∅::EmptySet, witness::Bool=false)
     return _issubset_emptyset2(X, ∅, witness)
 end
 
@@ -873,13 +873,13 @@ function ⊆(X::AbstractPolytope, U::UnionSetArray, witness::Bool=false; algorit
 end
 
 for T in (:AbstractPolyhedron, :AbstractHyperrectangle, :Complement, :UnionSet, :UnionSetArray)
-    @eval function ⊆(∅::EmptySet, X::($T), witness::Bool=false)
+    @eval @validate function ⊆(∅::EmptySet, X::($T), witness::Bool=false)
         return _issubset_emptyset(∅, X, witness)
     end
 end
 
 for T in (:AbstractPolytope, :UnionSet, :UnionSetArray, :AbstractSingleton, :LineSegment)
-    @eval function ⊆(X::($T), ∅::EmptySet, witness::Bool=false)
+    @eval @validate function ⊆(X::($T), ∅::EmptySet, witness::Bool=false)
         return _issubset_emptyset2(X, ∅, witness)
     end
 end

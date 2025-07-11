@@ -393,7 +393,7 @@ for B in (:Ball1, :BallInf)
     end
 end
 
-@commutative function minkowski_sum(∅::EmptySet, X::LazySet)
+@validate_commutative function minkowski_sum(∅::EmptySet, X::LazySet)
     return _minkowski_sum_emptyset(∅, X)
 end
 
@@ -420,7 +420,7 @@ for T in (:AbstractPolyhedron, :ZeroSet)
 end
 
 for T in (:ZeroSet, :Universe)
-    @eval @commutative function minkowski_sum(∅::EmptySet, X::$T)
+    @eval @validate_commutative function minkowski_sum(∅::EmptySet, X::$T)
         return _minkowski_sum_emptyset(∅, X)
     end
 end

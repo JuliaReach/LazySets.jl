@@ -28,7 +28,7 @@ import RecipesBase: apply_recipe
 export Arrays, subtypes
 
 using LinearAlgebra, RecipesBase, Requires, SparseArrays
-import GLPK, JuMP, Random, ReachabilityBase
+import GLPK, JuMP, Random, ReachabilityBase, ExprTools
 import IntervalArithmetic as IA
 using LinearAlgebra: checksquare
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, randperm
@@ -72,10 +72,22 @@ include("Utils/lp_solvers.jl")
 include("Utils/sdp_solvers.jl")
 include("Utils/file_formats.jl")
 
+# =====================
+# Abstract LazySet type
+# =====================
+include("Interfaces/LazySet.jl")
+
+# ====================
+# Validation functions
+# ====================
+include("Validation/common.jl")
+include("Validation/functions.jl")
+include("Validation/validate.jl")
+
 # ==================
 # Abstract set types
 # ==================
-include("Interfaces/LazySet.jl")
+include("Interfaces/LazySet_functions.jl")
 include("Interfaces/ConvexSet.jl")
 # include("Interfaces/AbstractStar.jl")
 include("Interfaces/AbstractPolynomialZonotope.jl")
