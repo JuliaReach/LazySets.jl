@@ -41,6 +41,9 @@ for N in [Float64, Float32, Rational{Int}]
     # support vector of polyhedron with no constraints
     @test σ(N[1], p_univ) == N[Inf]
 
+    # isapprox
+    @test p ≈ p && !(p ≈ p_univ) && !(p_univ ≈ p)
+
     # ispolyhedral
     @test ispolyhedral(p)
 
