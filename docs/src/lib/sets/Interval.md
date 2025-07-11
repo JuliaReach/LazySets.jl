@@ -170,7 +170,7 @@ Undocumented implementations:
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`distance`](@ref distance(::LazySet, ::LazySet))
 * [`intersection`](@ref intersection(::LazySet, ::LazySet))
-* [`≈`](@ref ≈(::LazySet, ::LazySet))
+* [`isapprox`](@ref isapprox(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 * [`⊆`](@ref ⊆(::LazySet, ::LazySet, ::Bool=false))
