@@ -174,7 +174,7 @@ for N in [Float64, Float32, Rational{Int}]
     P = HPolytope(HalfSpace[HalfSpace(N[-1, -1], N(3)), HalfSpace(N[1, 0], N(-1)),
                             HalfSpace(N[0, 1], N(-1))])
     X = linear_map_inverse(M, P)
-    @test isempty(X)
+    @test X isa EmptySet{N} && dim(X) == 2
     Y = affine_map_inverse(M, P, zeros(N, 2))
     @test X == Y
 
