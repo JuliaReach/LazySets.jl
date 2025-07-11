@@ -438,12 +438,12 @@ non-negative numbers ``λ_j`` that sum up to ``1`` we have that
 ``∑_{j=1}^m λ_j v_j ∈ S`` as well. Alternatively, a closed convex set is an
 intersection of (possibly infinitely many) closed half-spaces.
 
-One of the central functions are `support_function(d, X)` (with the alias
-`ρ(d, X)` (type `\rho<tab>`)) and `support_vector` (with the alias `σ` (type
-`\sigma<tab>`)). The support function of a set ``X`` along direction
-``d ∈ ℝ^n`` corresponds to the (signed) distance of the maximum element
-in ``X`` along direction ``d``. The support vector is a (among possibly
-infinitely many) maximizer of the support function.
+One of the central functions are `ρ(d, X)` (type `\rho<tab>`; with the alias
+`support_function`) and `σ` (type `\sigma<tab>`; with the alias `support_vector`).
+The support function of a set ``X`` along direction ``d ∈ ℝ^n`` corresponds to
+the (signed) distance of the maximum element in ``X`` along direction ``d``.
+The support vector is a (among possibly infinitely many) maximizer of the support
+function.
 
 The support function also characterizes the half-space that tightly covers a set
 in a given direction. Hence it can be used to obtain a polyhedral

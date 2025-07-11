@@ -32,7 +32,7 @@ Misuse of this flag can result in incorrect behavior.
 The symmetric interval hull of a set is a hyperrectangle centered in the origin,
 which in particular is convex.
 
-An alias for this function is `⊡`.
+The convenience alias `⊡` can be typed by `\\boxdot<tab>`.
 """
 struct SymmetricIntervalHull{N,S<:LazySet{N}} <: AbstractHyperrectangle{N}
     X::S
@@ -52,11 +52,6 @@ struct SymmetricIntervalHull{N,S<:LazySet{N}} <: AbstractHyperrectangle{N}
     end
 end
 
-"""
-    ⊡
-
-Alias for `SymmetricIntervalHull`.
-"""
 const ⊡ = SymmetricIntervalHull
 
 isoperationtype(::Type{<:SymmetricIntervalHull}) = true

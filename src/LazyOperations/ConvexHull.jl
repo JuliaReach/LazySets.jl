@@ -23,6 +23,8 @@ The `EmptySet` is the neutral element for `ConvexHull`.
 
 This type is always convex.
 
+The convenience alias `CH` is also available.
+
 ### Examples
 
 The convex hull of two 100-dimensional Euclidean balls:
@@ -67,11 +69,6 @@ Base.first(ch::ConvexHull) = ch.X
 second(ch::ConvexHull) = ch.Y
 @declare_binary_operation(ConvexHull)
 
-"""
-    CH
-
-Alias for `ConvexHull`.
-"""
 const CH = ConvexHull
 
 """

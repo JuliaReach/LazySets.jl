@@ -8,7 +8,6 @@ CurrentModule = LazySets
 
 ```@docs
 Intersection
-∩(::LazySet, ::LazySet)
 dim(::Intersection)
 ρ(::AbstractVector, ::Intersection)
 ρ(::AbstractVector, ::Intersection{N, S1, S2}) where {N, S1<:LazySet, S2<:Union{HalfSpace, Hyperplane, Line2D}}
@@ -50,7 +49,6 @@ IntersectionCache
 ```@docs
 IntersectionArray
 Intersection!
-∩(::LazySet, ::LazySet...)
 dim(::IntersectionArray)
 σ(::AbstractVector, ::IntersectionArray)
 isbounded(::IntersectionArray)

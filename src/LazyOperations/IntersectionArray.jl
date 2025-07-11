@@ -18,6 +18,8 @@ The `EmptySet` is the absorbing element for `IntersectionArray`.
 
 The intersection preserves convexity: if the set arguments are convex, then
 their intersection is convex as well.
+
+The convenience alias `∩` can be typed by `\\cap<tab>`.
 """
 struct IntersectionArray{N,S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
@@ -31,12 +33,6 @@ Convenience function to compute the lazy intersection and modify
 """
 function Intersection! end
 
-"""
-    ∩(X::LazySet, Xs::LazySet...)
-    ∩(Xs::Vector{<:LazySet})
-
-Alias for the n-ary lazy intersection.
-"""
 ∩(X::LazySet, Xs::LazySet...) = IntersectionArray(vcat(X, Xs...))
 ∩(X::LazySet) = X
 ∩(Xs::Vector{<:LazySet}) = IntersectionArray(Xs)

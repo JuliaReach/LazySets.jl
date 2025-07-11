@@ -8,6 +8,10 @@ Type that represents a (closed) half-space of the form ``a⋅x ≤ b``.
 - `a` -- normal direction (non-zero)
 - `b` -- constraint
 
+### Notes
+
+The convenience alias `LinearConstraint` is also available.
+
 ### Examples
 
 The half-space ``x + 2y - z ≤ 3``:

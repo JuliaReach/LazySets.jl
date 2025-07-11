@@ -8,7 +8,6 @@ CurrentModule = LazySets
 
 ```@docs
 UnionSet
-∪(::LazySet, ::LazySet)
 swap(::UnionSet)
 dim(::UnionSet)
 σ(::AbstractVector, ::UnionSet; algorithm="support_vector")

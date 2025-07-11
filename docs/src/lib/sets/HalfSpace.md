@@ -6,7 +6,6 @@ CurrentModule = LazySets.HalfSpaceModule
 
 ```@docs
 HalfSpace
-LinearConstraint
 ```
 
 ## Conversion
