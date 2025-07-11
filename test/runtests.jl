@@ -199,6 +199,9 @@ if test_suite_basic
     @testset "LazySets.SparsePolynomialZonotope" begin
         include("Sets/SparsePolynomialZonotope.jl")
     end
+    @testset "LazySets.MatrixZonotope" begin
+        include("MatrixSets/MatrixZonotope.jl")
+    end
 
     # =========================================
     # Testing types representing set operations
