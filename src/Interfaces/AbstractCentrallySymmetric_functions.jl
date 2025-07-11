@@ -24,8 +24,8 @@ for T in Base.uniontypes(ACS)
     end
 end
 
-function isempty(::ACS)
-    return false
+function isempty(X::ACS, witness::Bool=false)
+    return witness ? (false, an_element(X)) : false
 end
 
 for T in Base.uniontypes(ACS)
