@@ -45,5 +45,5 @@ end
 end
 
 function isequivalent(S1::AbstractSingleton, S2::AbstractSingleton)
-    return isapprox(element(S1), element(S2))
+    return _isapprox(element(S1), element(S2))
 end
