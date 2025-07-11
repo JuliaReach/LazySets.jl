@@ -95,5 +95,11 @@ Compute an upper bound on the ``p``-norm of a matrix zonotope.
 An upper bound on ``\\sup_{A ∈ \\mathcal{A} } \\|A\\|_p ``.
 """
 function overapproximate_norm(MZ::MatrixZonotope, p::Real=Inf)
-    return _matrixzonotope_norm(MZ, p, _overapproximate_l1_norm)
+    if p == 1
+        return _rowwise_zonotope_norm(transpose(MZ), overapproximate_norm)
+    elseif p == Inf
+        return _rowwise_zonotope_norm(MZ, overapproximate_norm)
+    else
+        throw(ArgumentError("the norm for p=$p has not been implemented"))
+    end
 end

@@ -5,11 +5,12 @@ using Reexport
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ..LazySets.SparsePolynomialZonotopeModule
+using ..LazySets: Zonotope
 
 @reexport import ..API: center, scale, scale!, rand, norm
 @reexport import ..LazySets: generators, ngens, indexvector
 
-export MatrixZonotope, _matrixzonotope_norm
+export MatrixZonotope
 
 include("MatrixZonotope.jl")
 include("indexvector.jl")
