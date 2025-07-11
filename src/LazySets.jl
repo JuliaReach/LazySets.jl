@@ -237,6 +237,12 @@ include("Sets/ZonotopeMD/ZonotopeMDModule.jl")
 include("Sets/Interval/IntervalModule.jl")
 @reexport using ..IntervalModule: Interval
 
+# ==========================
+# Matrix sets module
+# ==========================
+include("MatrixSets/MatrixZonotopeModule.jl")
+@reexport using ..MatrixZonotopeModule: MatrixZonotope
+
 # =================================
 # Types representing set operations
 # =================================
@@ -322,12 +328,6 @@ include("Plotting/mesh.jl")
 # Parallel-algorithms module
 # ==========================
 include("Parallel/Parallel.jl")
-
-# ==========================
-# Matrix sets module
-# ==========================
-include("MatrixSets/MatrixZonotopeModule.jl")
-@reexport using ..MatrixZonotopeModule: MatrixZonotope
 
 # ==============================
 # Activate assertions by default

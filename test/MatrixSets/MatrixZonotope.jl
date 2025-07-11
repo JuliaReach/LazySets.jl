@@ -36,6 +36,15 @@ for N in [Float64, Float32, Rational{Int}]
     @test center(MZ3) == c
     @test isempty(generators(MZ3))
     @test isempty(indexvector(MZ3))
+
+    #transpose
+    MZt = transpose(MZ)
+    @test center(MZt) == c
+    @test generators(MZt)== [transpose(Ai) for Ai in generators(MZ)]
+
+    #norm
+    @test norm(MZ, Inf) == 6
+    @test norm(MZ, 1) == 6
 end
 
 for N in [Float64, Float32]
