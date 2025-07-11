@@ -6,9 +6,9 @@ Type that represents a matrix zonotope.
 
 ### Fields
 
-- `center`     -- center of the matrix zonotope
-- `generators` -- vector of matrices; each matrix is a generator of the matrix zonotope
-- `idx`        -- identifier vector of positive integers for each factor 
+- `A0`  -- center of the matrix zonotope
+- `Ai`  -- vector of matrices; each matrix is a generator of the matrix zonotope
+- `idx` -- identifier vector of positive integers for each factor 
 
 ### Notes
 
