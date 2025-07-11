@@ -24,11 +24,14 @@ function _isdisjoint(I1::Interval, I2::Interval, ::Val{false})
 end
 
 function _isdisjoint(I1::Interval, I2::Interval, ::Val{true})
-    check = _isdisjoint(I1, I2, Val(false))
-    if check
+    if _isdisjoint(I1, I2, Val(false))
         N = promote_type(eltype(I1), eltype(I2))
         return (true, N[])
     else
-        return (false, [max(min(I1), min(I2))])
+        # mid-point, most robust witness
+        l = max(min(I1), min(I2))
+        h = min(max(I1), max(I2))
+        w = [l + (h - l) / 2]
+        return (false, w)
     end
 end
