@@ -15,7 +15,7 @@ where \``\\|A\\|_p\`` denotes the induced matrix norm.
 
 ### Input
 
-- `MZ` -- A `MatrixZonotope` representing the set ``\\mathcal{A}\``
+- `MZ` -- matrix zonotope set
 - `p`  -- (optional, default: `Inf`) norm
 
 ### Output
@@ -29,12 +29,12 @@ end
 """
     _rowwise_zonotope_norm(MZ::MatrixZonotope{N}, norm_fn::Function) where {N}
 
-Compute the induced matrix norm of a matrix zonotope by reducing to row-wise zonotope norms.
+Compute the induced matrix norm of a matrix zonotope by reducing to row-wise zonotope ``ℓ₁`` norms.
 
 ### Input
 
-- `MZ` -- A matrix zonotope (possibly transposed depending on the norm direction).
-- `norm_fn` -- A function that computes a norm on zonotopes (e.g., `norm`, `_overapproximate_l1_norm`).
+- `MZ` -- matrix zonotope set
+- `norm_fn` -- a function to approximate the zonotope ``ℓ₁`` norm
 
 ### Output
 
@@ -42,10 +42,9 @@ The induced matrix ``p``-norm of the matrix zonotope.
 
 ### Algorithm
 
-For each row index `i = 1, ..., n`, we construct a zonotope from the `i`-th row
-of the center matrix and the corresponding rows from each generator matrix.
-We then compute the norm of this zonotope using the provided `norm_fn`.
-
+For each row index `i = 1, ..., n`, we construct a zonotope with center given 
+by the `i`-th row of the center matrix and as generators the `i`-th row of each generator matrix.
+The norm of this zonotope is then computed using the provided `norm_fn`.
 The final result is the maximum of these `n` row-wise zonotope norms.
 """
 function _rowwise_zonotope_norm(MZ::MatrixZonotope{N}, norm_fn::Function) where {N}
