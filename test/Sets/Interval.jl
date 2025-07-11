@@ -185,6 +185,9 @@ for N in [Float64, Float32, Rational{Int}]
     # ispolyhedral
     @test ispolyhedral(X)
 
+    # ispolyhedraltype
+    @test ispolyhedraltype(typeof(X))
+
     # isuniversal
     @test !isuniversal(X)
     res, w = isuniversal(X, true)

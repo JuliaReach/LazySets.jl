@@ -12,8 +12,8 @@ end
 
     # unary set operations
     for f in (an_element, area, center, complement, concretize, constraints_list, constraints,
-              convex_hull, diameter, dim, eltype, extrema, high, ispolyhedral, isbounded, isempty,
-              isoperation, isuniversal, low, norm, radius, rectify, reflect, sample, vertices_list,
+              convex_hull, diameter, dim, eltype, extrema, high, isbounded, isempty, isoperation,
+              ispolyhedral, isuniversal, low, norm, radius, rectify, reflect, sample, vertices_list,
               vertices, volume)
         @test isnothing(f(X))
     end
@@ -27,7 +27,7 @@ end
     end
 
     # unary set-type operations
-    for f in (eltype, isboundedtype, isconvextype, isoperationtype, rand)
+    for f in (eltype, isboundedtype, isconvextype, isoperationtype, ispolyhedraltype, rand)
         @test isnothing(f(MySet))
     end
 

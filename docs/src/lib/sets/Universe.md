@@ -131,11 +131,12 @@ Inherited from [`ConvexSet`](@ref):
 * [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
-* [`extrema`](@ref extrema(::LazySet))
-* [`extrema`](@ref extrema(::LazySet, ::Int))
+* [`extrema`](@ref extrema(::AbstractPolyhedron))
+* [`extrema`](@ref extrema(::AbstractPolyhedron, ::Int))
 * [`high`](@ref high(::AbstractPolyhedron))
 * [`high`](@ref high(::AbstractPolyhedron, ::Int))
-* [`ispolyhedral`](@ref ispolyhedral(::LazySet))
+* [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
+* [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{AbstractPolyhedron}))
 * [`low`](@ref low(::AbstractPolyhedron))
 * [`low`](@ref low(::AbstractPolyhedron, ::Int))
 * [`vertices_list`](@ref vertices_list(::AbstractPolyhedron))
