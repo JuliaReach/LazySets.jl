@@ -1,7 +1,7 @@
 """
     center(MZ::MatrixZonotope)
 
-Return the center matrix of the matrix zonotope `Z`.
+Return the center matrix of the matrix zonotope `MZ`.
 
 ### Input
 

@@ -79,3 +79,21 @@ function _overapproximate_l1_norm(Z::AbstractZonotope{N}) where {N}
     linear_max = dot(w, c) + sum(abs.(At_mul_B(G, w)))
     return linear_max + const_term
 end
+
+"""
+    overapproximate_norm(MZ::MatrixZonotope, [p]::Real=1)
+
+Compute an upper bound on the ``p``-norm of a matrix zonotope.
+
+### Input
+
+- `MZ` -- Matrix zonotope
+- `p` -- (optional, default: `1`) norm
+
+### Output
+
+An upper bound on ``\\sup_{A ∈ \\mathcal{A} } \\|A\\|_p ``.
+"""
+function overapproximate_norm(MZ::MatrixZonotope, p::Real=Inf)
+    return _matrixzonotope_norm(MZ, p, _overapproximate_l1_norm)
+end

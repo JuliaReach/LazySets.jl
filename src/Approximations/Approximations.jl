@@ -33,6 +33,7 @@ using ..LazySets: ACS, default_lp_solver, _isbounded_stiemke, require, linprog,
                   get_exponential_backend, _expmv, second, @assert
 using ..LazySets.JuMP: Model, set_silent, @variable, @constraint, optimize!,
                        value, @NLobjective, @objective
+using ..LazySets.MatrixZonotopeModule: _matrixzonotope_norm
 
 include("box_approximation.jl")
 include("iterative_refinement.jl")
