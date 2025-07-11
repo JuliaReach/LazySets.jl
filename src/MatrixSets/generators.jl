@@ -5,10 +5,12 @@ Return the generators of a matrix zonotope.
 
 ### Input
 
-- `MZ` -- matrix zonotope set
+- `MZ` -- matrix zonotope
 
 ### Output
 
 The generators of `MZ`.
 """
-generators(MZ::MatrixZonotope) = MZ.Ai 
+function generators(MZ::MatrixZonotope)
+    return MZ.Ai
+end
