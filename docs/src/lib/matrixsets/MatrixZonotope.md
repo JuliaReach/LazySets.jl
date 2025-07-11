@@ -7,7 +7,9 @@ CurrentModule = LazySets.MatrixZonotopeModule
 ```@docs
 MatrixZonotope
 ```
+
 ## Operations
+
 ```@docs
 center(::MatrixZonotope)
 generators(::MatrixZonotope)
@@ -18,6 +20,7 @@ rand(::Type{MatrixZonotope})
 ```@meta
 CurrentModule = LazySets.API
 ```
+
 Undocumented implementations:
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
