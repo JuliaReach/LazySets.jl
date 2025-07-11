@@ -653,3 +653,9 @@ radius ``r``.
 function reflect(H::AbstractHyperrectangle)
     return Hyperrectangle(-center(H), radius_hyperrectangle(H))
 end
+
+function chebyshev_center_radius(H::AbstractHyperrectangle)
+    c = center(H)
+    r = minimum(radius_hyperrectangle(H, i) for i in 1:dim(H))
+    return c, r
+end
