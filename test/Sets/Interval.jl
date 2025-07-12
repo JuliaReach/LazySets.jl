@@ -437,8 +437,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # difference
-    @test_broken difference(X, X2) isa AssertionError  # TODO this should change
-    @test_broken difference(X2, X) isa AssertionError  # TODO this should change
+    @test_throws DimensionMismatch difference(X, X2)
+    @test_throws DimensionMismatch difference(X2, X)
     # disjoint
     @test isidentical(difference(X, Interval(N(3), N(4))), X)
     # overlapping

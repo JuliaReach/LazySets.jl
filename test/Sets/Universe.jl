@@ -316,8 +316,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # difference
-    @test_throws AssertionError difference(B, U3)
-    @test_throws AssertionError difference(U3, B)
+    @test_throws DimensionMismatch difference(B, U3)
+    @test_throws DimensionMismatch difference(U3, B)
     for E2 in (difference(U, U), difference(B, U))
         @test E2 isa EmptySet{N} && dim(E2) == 2
     end
