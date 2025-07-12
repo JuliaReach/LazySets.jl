@@ -1,4 +1,4 @@
-function minkowski_sum(U1::Universe, U2::Universe)
+@validate function minkowski_sum(U1::Universe, U2::Universe)
     return _minkowski_sum_universe(U1, U2)
 end
 
