@@ -335,8 +335,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # exact_sum
-    @test_throws AssertionError exact_sum(U, U3)
-    @test_throws AssertionError exact_sum(U3, U)
+    @test_throws DimensionMismatch exact_sum(U, U3)
+    @test_throws DimensionMismatch exact_sum(U3, U)
     for U2 in (exact_sum(U, U), exact_sum(U, B), exact_sum(B, U))
         @test isidentical(U, U2)
     end

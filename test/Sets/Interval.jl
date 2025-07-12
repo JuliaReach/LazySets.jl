@@ -466,8 +466,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # exact_sum
-    @test_throws AssertionError exact_sum(X, X2)
-    @test_throws AssertionError exact_sum(X2, X)
+    @test_throws DimensionMismatch exact_sum(X, X2)
+    @test_throws DimensionMismatch exact_sum(X2, X)
     Y = Interval(N(3), N(4))
     for Z in (exact_sum(X, Y), exact_sum(Y, X))
         @test isidentical(Z, Interval(N(3), N(6)))
