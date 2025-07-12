@@ -18,7 +18,7 @@ intersection.
 
 - Otherwise, there is no intersection and the empty set is returned.
 """
-function intersection(LS1::LineSegment, LS2::LineSegment)
+@validate function intersection(LS1::LineSegment, LS2::LineSegment)
     require(@__MODULE__, :LazySets; fun_name="intersection")
 
     # cast each segment as a line

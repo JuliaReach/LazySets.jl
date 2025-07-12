@@ -1,4 +1,4 @@
-function intersection(X::Interval, Y::Interval)
+@validate function intersection(X::Interval, Y::Interval)
     l = max(min(X), min(Y))
     h = min(max(X), max(Y))
     if l > h

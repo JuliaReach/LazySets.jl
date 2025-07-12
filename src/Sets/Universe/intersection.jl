@@ -1,4 +1,4 @@
-function intersection(U1::Universe, U2::Universe)
+@validate function intersection(U1::Universe, U2::Universe)
     return _intersection_universe(U1, U2)
 end
 

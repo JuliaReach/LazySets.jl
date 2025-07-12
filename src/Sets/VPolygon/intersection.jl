@@ -14,7 +14,7 @@ algorithm](https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm).
 The implementation is based on the one found in
 [rosetta code](http://www.rosettacode.org/wiki/Sutherland-Hodgman_polygon_clipping#Julia).
 """
-function intersection(P1::VPolygon, P2::VPolygon; apply_convex_hull::Bool=true)
+@validate function intersection(P1::VPolygon, P2::VPolygon; apply_convex_hull::Bool=true)
     v1 = vertices_list(P1)
     v2 = vertices_list(P2)
     v12 = _intersection_vrep_2d(v1, v2)
