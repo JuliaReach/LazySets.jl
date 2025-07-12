@@ -7,7 +7,7 @@
 
 An `Interval`, or an `EmptySet` if the difference is empty.
 """
-function minkowski_difference(I1::Interval, I2::Interval)
+@validate function minkowski_difference(I1::Interval, I2::Interval)
     l = min(I1) - min(I2)
     h = max(I1) - max(I2)
     if h < l
