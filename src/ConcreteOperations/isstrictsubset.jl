@@ -8,7 +8,7 @@
 The default implementation first checks inclusion of `X` in `Y` and then checks
 noninclusion of `Y` in `X`:
 """
-function ⊂(X::LazySet, Y::LazySet, witness::Bool=false)
+@validate function ⊂(X::LazySet, Y::LazySet, witness::Bool=false)
     @assert dim(X) == dim(Y) "the dimensions of the given sets should match, " *
                              "but they are $(dim(X)) and $(dim(Y)), respectively"
 
