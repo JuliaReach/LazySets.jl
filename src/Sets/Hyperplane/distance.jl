@@ -1,4 +1,4 @@
-@commutative function distance(x::AbstractVector, H::Hyperplane; p::Real=2)
+@validate_commutative function distance(x::AbstractVector, H::Hyperplane; p::Real=2)
     @assert length(x) == dim(H) "incompatible dimensions $(length(x)) and $(dim(H))"
 
     if p != 2

@@ -1,4 +1,4 @@
-@commutative function distance(x::AbstractVector, L::Line; p::Real=2)
+@validate_commutative function distance(x::AbstractVector, L::Line; p::Real=2)
     @assert length(x) == dim(L) "incompatible dimensions $(length(x)) and $(dim(L))"
 
     if p != 2
