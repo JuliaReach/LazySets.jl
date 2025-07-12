@@ -23,7 +23,7 @@ julia> isequivalent(X, Y)
 true
 ```
 """
-function isequivalent(X::LazySet, Y::LazySet)
+@validate function isequivalent(X::LazySet, Y::LazySet)
     @assert dim(X) == dim(Y) "the dimensions of the given sets should match, " *
                              "but they are $(dim(X)) and $(dim(Y)), respectively"
 
@@ -40,10 +40,10 @@ function _isequivalent_inclusion(X::LazySet, Y::LazySet)
     return X ⊆ Y && Y ⊆ X
 end
 
-@commutative function isequivalent(S::AbstractSingleton, Z::AbstractZonotope)
+@validate_commutative function isequivalent(S::AbstractSingleton, Z::AbstractZonotope)
     return center(Z) == element(S) && iszero(genmat(Z))
 end
 
-function isequivalent(S1::AbstractSingleton, S2::AbstractSingleton)
+@validate function isequivalent(S1::AbstractSingleton, S2::AbstractSingleton)
     return isapprox(element(S1), element(S2))
 end
