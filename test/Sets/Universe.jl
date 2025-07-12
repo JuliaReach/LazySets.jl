@@ -425,8 +425,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # minkowski_difference
-    @test_throws AssertionError minkowski_difference(B, U3)
-    @test_throws AssertionError minkowski_difference(U3, B)
+    @test_throws DimensionMismatch minkowski_difference(B, U3)
+    @test_throws DimensionMismatch minkowski_difference(U3, B)
     # Universe
     for U2 in (minkowski_difference(U, U), minkowski_difference(U, B), minkowski_difference(U, Z))
         @test isidentical(U, U2)

@@ -1,4 +1,4 @@
-function minkowski_difference(U1::Universe, U2::Universe)
+@validate function minkowski_difference(U1::Universe, U2::Universe)
     return _minkowski_difference_universe(U1, U2)
 end
 

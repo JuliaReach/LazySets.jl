@@ -572,8 +572,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # minkowski_difference
-    @test_throws AssertionError minkowski_difference(X, X2)
-    @test_throws AssertionError minkowski_difference(X2, X)
+    @test_throws DimensionMismatch minkowski_difference(X, X2)
+    @test_throws DimensionMismatch minkowski_difference(X2, X)
     # empty difference
     Y = Interval(N(0), N(3))
     Z = minkowski_difference(X, Y)
