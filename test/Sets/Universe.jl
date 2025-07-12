@@ -437,8 +437,8 @@ for N in [Float64, Float32, Rational{Int}]
     # TODO test `minkowski_difference(X, U)` with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
 
     # minkowski_sum
-    @test_throws AssertionError minkowski_sum(U, U3)
-    @test_throws AssertionError minkowski_sum(U3, U)
+    @test_throws DimensionMismatch minkowski_sum(U, U3)
+    @test_throws DimensionMismatch minkowski_sum(U3, U)
     for U2 in (minkowski_sum(U, U), minkowski_sum(U, B), minkowski_sum(B, U))
         @test isidentical(U, U2)
     end

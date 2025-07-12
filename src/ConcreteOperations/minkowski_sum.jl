@@ -27,8 +27,8 @@ This method requires that the list of constraints of both sets `P` and `Q` can
 be obtained. After obtaining the respective lists of constraints, the
 `minkowski_sum` method for polyhedral sets is used.
 """
-function minkowski_sum(P::LazySet, Q::LazySet;
-                       backend=nothing, algorithm=nothing, prune=true)
+@validate function minkowski_sum(P::LazySet, Q::LazySet;
+                                 backend=nothing, algorithm=nothing, prune=true)
     n = dim(P)
     @assert n == dim(Q) "expected that the sets have the same dimension, " *
                         "but they are $n and $(dim(Q)) respectively"
@@ -104,16 +104,16 @@ itself uses `CDDLib` for variable elimination. The available algorithms are:
 
 - `Polyhedra.ProjectGenerators` -- projection by computing the V-representation
 """
-function minkowski_sum(P::AbstractPolyhedron, Q::AbstractPolyhedron;
-                       backend=nothing, algorithm=nothing, prune=true)
+@validate function minkowski_sum(P::AbstractPolyhedron, Q::AbstractPolyhedron;
+                                 backend=nothing, algorithm=nothing, prune=true)
     @assert dim(P) == dim(Q) "expected that the sets have the same dimension, " *
                              "but they are $(dim(P)) and $(dim(Q)) respectively"
 
     return _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
 end
 
-function minkowski_sum(P::AbstractPolytope, Q::AbstractPolytope;
-                       backend=nothing, algorithm=nothing, prune=true)
+@validate function minkowski_sum(P::AbstractPolytope, Q::AbstractPolytope;
+                                 backend=nothing, algorithm=nothing, prune=true)
     n = dim(P)
     @assert n == dim(Q) "expected that the sets have the same dimension, " *
                         "but they are $n and $(dim(Q)) respectively"
@@ -182,7 +182,7 @@ end
 
 The resulting hyperrectangle is obtained by summing up the centers and radii.
 """
-function minkowski_sum(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
+@validate function minkowski_sum(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
     @assert dim(H1) == dim(H2) "incompatible set dimensions $(dim(H1)) and $(dim(H2))"
     c = center(H1) + center(H2)
     r = radius_hyperrectangle(H1) + radius_hyperrectangle(H2)
@@ -199,13 +199,13 @@ end
 The resulting zonotope is obtained by summing up the centers and concatenating
 the generators of `Z1` and `Z2`.
 """
-function minkowski_sum(Z1::AbstractZonotope, Z2::AbstractZonotope)
+@validate function minkowski_sum(Z1::AbstractZonotope, Z2::AbstractZonotope)
     cnew = center(Z1) + center(Z2)
     Gnew = hcat(genmat(Z1), genmat(Z2))
     return Zonotope(cnew, Gnew)
 end
 
-function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
+@validate function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
     @assert dim(X) == dim(Y) "expected that the singletons have the same " *
                              "dimension, but they are $(dim(X)) and $(dim(Y)) respectively"
     return Singleton(element(X) + element(Y))
@@ -324,8 +324,8 @@ A `DensePolynomialZonotope`.
 The polynomial zonotope's center is the sum of the centers of `PZ` and `Z`, and
 its generators are the concatenation of the generators of `PZ` and `Z`.
 """
-@commutative function minkowski_sum(PZ::DensePolynomialZonotope,
-                                    Z::AbstractZonotope)
+@validate_commutative function minkowski_sum(PZ::DensePolynomialZonotope,
+                                             Z::AbstractZonotope)
     c = PZ.c + center(Z)
     G = [PZ.G genmat(Z)]
     return DensePolynomialZonotope(c, PZ.E, PZ.F, G)
@@ -335,7 +335,8 @@ end
 @commutative minkowski_sum(::ZeroSet, X::LazySet) = X
 
 # See [Kochdumper21a; Proposition 3.1.19](@citet).
-@commutative function minkowski_sum(PZ::AbstractSparsePolynomialZonotope, Z::AbstractZonotope)
+@validate_commutative function minkowski_sum(PZ::AbstractSparsePolynomialZonotope,
+                                             Z::AbstractZonotope)
     c = center(PZ) + center(Z)
     G = genmat_dep(PZ)
     GI = hcat(genmat_indep(PZ), genmat(Z))
@@ -352,7 +353,8 @@ end
 
 See [Kochdumper21a; Proposition 3.1.19](@citet).
 """
-function minkowski_sum(P1::AbstractSparsePolynomialZonotope, P2::AbstractSparsePolynomialZonotope)
+@validate function minkowski_sum(P1::AbstractSparsePolynomialZonotope,
+                                 P2::AbstractSparsePolynomialZonotope)
     c = center(P1) + center(P2)
     G = hcat(genmat_dep(P1), genmat_dep(P2))
     GI = hcat(genmat_indep(P1), genmat_indep(P2))
@@ -376,7 +378,7 @@ end
 # = ρ_Bp³(d)
 #
 # where Bp³ = Ball(center(Bp¹) + center(Bp²), radius(Bp¹) + radius(Bp²))
-function minkowski_sum(B1::BT1, B2::BT2) where {BT<:AbstractBallp,BT1<:BT,BT2<:BT}
+@validate function minkowski_sum(B1::BT1, B2::BT2) where {BT<:AbstractBallp,BT1<:BT,BT2<:BT}
     p = ball_norm(B1)
     if ball_norm(B2) != p
         throw(ArgumentError("this method only applies to balls of the same norm"))
@@ -397,7 +399,7 @@ end
     return _minkowski_sum_emptyset(∅, X)
 end
 
-@commutative function minkowski_sum(U::Universe, X::LazySet)
+@validate_commutative function minkowski_sum(U::Universe, X::LazySet)
     return _minkowski_sum_universe(U, X)
 end
 
@@ -408,13 +410,13 @@ end
 for T in (:AbstractPolyhedron, :AbstractPolytope, :AbstractZonotope,
           :AbstractHyperrectangle, :AbstractSingleton, :DensePolynomialZonotope,
           :AbstractSparsePolynomialZonotope)
-    @eval @commutative function minkowski_sum(::ZeroSet, X::$T)
+    @eval @validate_commutative function minkowski_sum(Z::ZeroSet, X::$T)
         return X
     end
 end
 
 for T in (:AbstractPolyhedron, :ZeroSet)
-    @eval @commutative function minkowski_sum(U::Universe, X::$T)
+    @eval @validate_commutative function minkowski_sum(U::Universe, X::$T)
         return _minkowski_sum_universe(U, X)
     end
 end
