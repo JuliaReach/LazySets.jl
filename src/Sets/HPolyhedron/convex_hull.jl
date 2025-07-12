@@ -25,8 +25,8 @@ for the `convex_hull`.
 For further information on the supported backends see
 [Polyhedra's documentation](https://juliapolyhedra.github.io/).
 """
-function convex_hull(P1::HPoly, P2::HPoly;
-                     backend=default_polyhedra_backend(P1))
+@validate function convex_hull(P1::HPoly, P2::HPoly;
+                               backend=default_polyhedra_backend(P1))
     require(@__MODULE__, :Polyhedra; fun_name="convex_hull")
     Pch = Polyhedra.convexhull(LazySets.polyhedron(P1; backend=backend),
                                LazySets.polyhedron(P2; backend=backend))

@@ -5,7 +5,8 @@ using Reexport, Requires
 using ..LazySets: AbstractPolyhedron, LazySet, default_lp_solver,
                   default_polyhedra_backend, iscomplement, is_lp_infeasible,
                   is_lp_optimal, is_lp_unbounded, has_lp_infeasibility_ray,
-                  linprog, tosimplehrep, _isempty_polyhedron, _normal_Vector
+                  linprog, tosimplehrep, _isempty_polyhedron, _normal_Vector,
+                  @validate
 using ..HalfSpaceModule: HalfSpace
 using ..HPolytopeModule: HPolytope
 using LinearAlgebra: dot
