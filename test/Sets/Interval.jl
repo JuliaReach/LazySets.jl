@@ -484,13 +484,13 @@ for N in [Float64, Float32, Rational{Int}]
 
     # isapprox
     @test X ≈ X
-    res = (X ≈ translate(X, N[1//100000000]))
+    res = (X ≈ translate(X, N[1 // 100000000]))
     if N <: AbstractFloat
         @test res  # below default tolerance for AbstractFloat
     else
         @test !res  # zero default tolerance for Rational
     end
-    @test !(X ≈ translate(X, N[1//1000]))  # above default tolerance for all types
+    @test !(X ≈ translate(X, N[1 // 1000]))  # above default tolerance for all types
     @test !(X ≈ X2) && !(X2 ≈ X) && !(X ≈ B) && !(B ≈ X)
 
     # isdisjoint
