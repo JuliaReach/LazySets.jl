@@ -351,8 +351,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test !isequivalent(E, B) && !isequivalent(B, E)
 
     # isstrictsubset
-    @test_throws AssertionError B ⊂ E3
-    @test_throws AssertionError E3 ⊂ B
+    @test_throws DimensionMismatch B ⊂ E3
+    @test_throws DimensionMismatch E3 ⊂ B
     for X in (E, B)
         @test !(X ⊂ E)
         res, w = ⊂(X, E, true)

@@ -383,8 +383,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test !isequivalent(U, B) && !isequivalent(B, U)
 
     # isstrictsubset
-    @test_throws AssertionError B ⊂ U3
-    @test_throws AssertionError U3 ⊂ B
+    @test_throws DimensionMismatch B ⊂ U3
+    @test_throws DimensionMismatch U3 ⊂ B
     @test !(U ⊂ U)
     res, w = ⊂(U, U, true)
     @test !res && w isa Vector{N} && isempty(w)
