@@ -28,7 +28,7 @@ Then the result is a vector with one non-zero entry in dimension ``i``, defined
 as ``[0, …, 0, (b_1 + b_2)/(a_1[i] + a_2[i]), 0, …, 0]``.
 Such a dimension ``i`` always exists.
 """
-function isdisjoint(H1::HalfSpace, H2::HalfSpace, witness::Bool=false)
+@validate function isdisjoint(H1::HalfSpace, H2::HalfSpace, witness::Bool=false)
     require(@__MODULE__, :LazySets; fun_name="isdisjoint")
 
     a1 = H1.a

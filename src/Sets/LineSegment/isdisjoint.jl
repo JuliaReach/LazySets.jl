@@ -13,7 +13,7 @@ collinear. In the latter case, we check membership of any of the end points in
 the other line segment. Otherwise the lines are not parallel, so we can solve an
 equation of the intersection point, if it exists.
 """
-function isdisjoint(L1::LineSegment, L2::LineSegment, witness::Bool=false)
+@validate function isdisjoint(L1::LineSegment, L2::LineSegment, witness::Bool=false)
     r = L1.q - L1.p
     if all(isapproxzero, r)
         # first line segment is a point

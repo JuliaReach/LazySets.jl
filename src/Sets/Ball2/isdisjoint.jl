@@ -15,7 +15,7 @@ choose `B1` for the smaller ball) as follows.
   In other words, the witness is the point in the smaller ball that is closest
   to the center of the bigger ball.
 """
-function isdisjoint(B1::Ball2, B2::Ball2, witness::Bool=false)
+@validate function isdisjoint(B1::Ball2, B2::Ball2, witness::Bool=false)
     center_diff_normed = norm(center(B2) - center(B1), 2)
     empty_intersection = center_diff_normed > B1.radius + B2.radius
 

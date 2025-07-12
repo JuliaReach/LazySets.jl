@@ -4,7 +4,7 @@ using Reexport, Requires
 
 using ..LazySets: AbstractPolyhedron, LazySet, AbstractLinearMapAlgorithm,
                   default_lp_solver, is_lp_infeasible, is_lp_optimal, linprog,
-                  _witness_result_empty, @validate_commutative
+                  _witness_result_empty, @validate, @validate_commutative
 import LinearAlgebra
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
