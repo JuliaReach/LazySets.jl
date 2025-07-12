@@ -201,6 +201,21 @@ for N in [Float64, Float32, Rational{Int}]
                              0 0 0 0 0 1 2 1 2
                              1 0 0 1 1 0 0 1 1]
     end
+
+    # Example 3.1.29 from thesis
+    PZ1 = SparsePolynomialZonotope(N[-5, 0], N[2 0 2; 0 2 2], Matrix{N}(undef, 2, 0), [1 0 1; 0 1 1])
+    PZ2 = SparsePolynomialZonotope(N[3, 3], N[1 -2 2; 2 3 1], hcat(N[1//2; 0]), [1 0 2; 0 1 1])
+    PZ_lc = linear_combination(PZ1, PZ2)
+    # no reasonable tests available here
+    @test PZ_lc isa SimpleSparsePolynomialZonotope{N}
+    @test center(PZ_lc) == N[-1, 3//2]
+    PZ_ch = convex_hull(PZ1, PZ2)
+    # no reasonable tests available here
+    @test PZ_ch isa SimpleSparsePolynomialZonotope{N}
+    @test center(PZ_ch) == N[-1, 3//2]
+    # mixed linear_combination
+    PZ_lc = linear_combination(PZ1, ZeroSet{N}(2))
+    @test PZ_lc isa SimpleSparsePolynomialZonotope{N}
 end
 
 @static if isdefined(@__MODULE__, :TaylorModels)
