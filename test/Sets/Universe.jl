@@ -415,7 +415,7 @@ for N in [Float64, Float32, Rational{Int}]
     # TODO test `U ⊆ X` with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
 
     # linear_combination
-    @test_throws AssertionError linear_combination(U, U3)
+    @test_throws DimensionMismatch linear_combination(U, U3)
     for U2 in (linear_combination(U, Pnc), linear_combination(Pnc, U),
                linear_combination(U, B), linear_combination(B, U))
         @test isidentical(U, U2)

@@ -21,7 +21,7 @@ for N in [Float64, Float32, Rational{Int}]
     # auxiliary sets
     X2 = Singleton(N[0, 0])  # 2D set
     B = BallInf(N[1], N(1))  # equivalent set
-    Pnc = Polygon([N[0, 0], N[3, 0], N[1, 1], N[0, 3]])  # nonconvex
+    PZ = SimpleSparsePolynomialZonotope(N[0], zeros(N, 1, 0), zeros(Int, 0, 0))  # nonconvex
 
     # default constructor from IntervalArithmetic.Interval
     itv = IA.interval(N(0), N(2))
@@ -560,9 +560,9 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # linear_combination
-    @test_throws AssertionError linear_combination(X, X2)
-    @test_throws ArgumentError linear_combination(X, Pnc)
-    @test_throws ArgumentError linear_combination(Pnc, X)
+    @test_throws DimensionMismatch linear_combination(X, X2)
+    @test_throws ArgumentError linear_combination(X, PZ)
+    @test_throws ArgumentError linear_combination(PZ, X)
     for Z in (linear_combination(X, X), linear_combination(X, B), linear_combination(B, X))
         @test isidentical(Z, X)
     end

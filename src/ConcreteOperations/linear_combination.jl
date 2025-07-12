@@ -1,11 +1,11 @@
-function linear_combination(X::LazySet, Y::LazySet)
+@validate function linear_combination(X::LazySet, Y::LazySet)
     if isconvextype(typeof(X)) && isconvextype(typeof(Y))
         return _linear_combination_convex(X, Y)
     end
     throw(ArgumentError("the linear combination of non-convex sets is not implemented"))
 end
 
-function linear_combination(X::ConvexSet, Y::ConvexSet)
+@validate function linear_combination(X::ConvexSet, Y::ConvexSet)
     return _linear_combination_convex(X, Y)
 end
 
@@ -25,7 +25,7 @@ end
     return _linear_combination_emptyset(∅, X)
 end
 
-@commutative function linear_combination(U::Universe, X::LazySet)
+@validate_commutative function linear_combination(U::Universe, X::LazySet)
     return _linear_combination_universe(U, X)
 end
 
@@ -43,8 +43,8 @@ This method implements [Kochdumper21a; Proposition 3.1.25](@citet).
 
 A `SimpleSparsePolynomialZonotope`.
 """
-function linear_combination(P1::AbstractSparsePolynomialZonotope,
-                            P2::AbstractSparsePolynomialZonotope)
+@validate function linear_combination(P1::AbstractSparsePolynomialZonotope,
+                                      P2::AbstractSparsePolynomialZonotope)
     SP1 = convert(SimpleSparsePolynomialZonotope, P1)
     SP2 = convert(SimpleSparsePolynomialZonotope, P2)
     return linear_combination(SP1, SP2)
@@ -60,6 +60,6 @@ for T in (:ConvexSet, :Universe)
     end
 end
 
-@commutative function linear_combination(U::Universe, X::ConvexSet)
+@validate_commutative function linear_combination(U::Universe, X::ConvexSet)
     return _linear_combination_universe(U, X)
 end
