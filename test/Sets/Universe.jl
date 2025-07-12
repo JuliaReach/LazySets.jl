@@ -308,7 +308,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # convex_hull (binary)
-    @test_throws AssertionError convex_hull(U, U3)
+    @test_throws DimensionMismatch convex_hull(U, U3)
     U2 = convex_hull(U, U)
     @test isidentical(U, U2)
     for U2 in (convex_hull(U, Pnc), convex_hull(Pnc, U), convex_hull(U, E), convex_hull(E, U))

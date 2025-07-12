@@ -2,7 +2,8 @@ module IntervalModule
 
 using Reexport, Requires
 
-using ..LazySets: LazySet, AbstractHyperrectangle, _witness_result_empty
+using ..LazySets: LazySet, AbstractHyperrectangle, _witness_result_empty,
+                  @validate
 using ..API: eltype, isconvextype, isempty
 import IntervalArithmetic as IA
 using Random: AbstractRNG, GLOBAL_RNG

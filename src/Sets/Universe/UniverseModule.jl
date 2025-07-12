@@ -3,7 +3,7 @@ module UniverseModule
 using Reexport, Requires
 
 using ..LazySets: LazySet, AbstractPolyhedron, default_polyhedra_backend,
-                  _witness_result_empty
+                  _witness_result_empty, @validate
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: SingleEntryVector
 using ReachabilityBase.Commutative: @commutative

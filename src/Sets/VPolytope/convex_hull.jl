@@ -23,7 +23,7 @@ using the `backend` keyword argument.
 
 For performance reasons, it is suggested to use the `CDDLib.Library()` backend.
 """
-function convex_hull(P1::VPolytope, P2::VPolytope; backend=nothing)
+@validate function convex_hull(P1::VPolytope, P2::VPolytope; backend=nothing)
     vunion = [P1.vertices; P2.vertices]
     convex_hull!(vunion; backend=backend)
     return VPolytope(vunion)

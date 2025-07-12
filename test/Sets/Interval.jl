@@ -427,7 +427,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test Z isa Hyperrectangle{N} && Z == Hyperrectangle(N[-1, 1], N[2, 1])
 
     # convex_hull (binary)
-    @test_throws AssertionError convex_hull(X, X2)
+    @test_throws DimensionMismatch convex_hull(X, X2)
     Y = convex_hull(X, X)
     @test isidentical(Y, X)
     Y = Interval(N(-3), N(-1))
