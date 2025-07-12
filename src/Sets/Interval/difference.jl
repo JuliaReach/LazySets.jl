@@ -49,7 +49,7 @@ julia> difference(Y, Z)
 UnionSet{Float64, Interval{Float64}, Interval{Float64}}(Interval{Float64}([1, 2]), Interval{Float64}([3, 4]))
 ```
 """
-function difference(X::Interval, Y::Interval)
+@validate function difference(X::Interval, Y::Interval)
     Z = intersection(X, Y)
     if isempty(Z)
         return X

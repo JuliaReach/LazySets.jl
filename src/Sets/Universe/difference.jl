@@ -1,4 +1,4 @@
-function difference(U1::Universe, U2::Universe)
+@validate function difference(U1::Universe, U2::Universe)
     return _difference_universe2(U1, U2)
 end
 
