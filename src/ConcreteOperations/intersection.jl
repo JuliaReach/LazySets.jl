@@ -830,7 +830,7 @@ Compute the intersection between a star set and a half-space, in-place.
 
 The modified star set.
 """
-function intersection!(X::Star, H::HalfSpace)
+@validate function intersection!(X::Star, H::HalfSpace)
     _intersection_star!(center(X), basis(X), predicate(X), H)
     return X
 end

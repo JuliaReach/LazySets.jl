@@ -159,6 +159,7 @@ function validate_intersection(X::LazySet, Y::LazySet)
     return validate_same_dim(X, Y; fun=intersection)
 end
 push!(VALIDATE_DICT, :intersection => (validate_intersection, args12))
+push!(VALIDATE_DICT, :intersection! => (validate_intersection, args12))
 
 function validate_isdisjoint(X::LazySet, Y::LazySet)
     return validate_same_dim(X, Y; fun=isdisjoint)
