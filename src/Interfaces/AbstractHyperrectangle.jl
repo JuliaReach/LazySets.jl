@@ -606,7 +606,7 @@ function project(H::AbstractHyperrectangle, block::AbstractVector{Int};
     return Hyperrectangle(πc, πr; check_bounds=false)
 end
 
-@commutative function distance(x::AbstractVector, H::AbstractHyperrectangle; p::Real=2)
+@validate_commutative function distance(x::AbstractVector, H::AbstractHyperrectangle; p::Real=2)
     @assert length(x) == dim(H) "a vector of length $(length(x)) is " *
                                 "incompatible with a set of dimension $(dim(H))"
 

@@ -316,7 +316,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # exact_sum
-    @test_throws AssertionError exact_sum(E, E3)
+    @test_throws DimensionMismatch exact_sum(E, E3)
     for E2 in (exact_sum(E, E), exact_sum(E, B), exact_sum(B, E))
         @test isidentical(E, E2)
     end
@@ -346,13 +346,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test E != E3 && E3 != E && E != B && B != E
 
     # isequivalent
-    @test_throws AssertionError isequivalent(E, E3)
+    @test_throws DimensionMismatch isequivalent(E, E3)
     @test isequivalent(E, E)
     @test !isequivalent(E, B) && !isequivalent(B, E)
 
     # isstrictsubset
-    @test_throws AssertionError B ⊂ E3
-    @test_throws AssertionError E3 ⊂ B
+    @test_throws DimensionMismatch B ⊂ E3
+    @test_throws DimensionMismatch E3 ⊂ B
     for X in (E, B)
         @test !(X ⊂ E)
         res, w = ⊂(X, E, true)

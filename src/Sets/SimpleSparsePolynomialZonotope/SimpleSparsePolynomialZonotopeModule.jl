@@ -3,7 +3,7 @@ module SimpleSparsePolynomialZonotopeModule
 using Reexport
 
 using ..LazySets: AbstractSparsePolynomialZonotope, ngens_dep, nparams,
-                  _remove_redundant_generators_polyzono
+                  _remove_redundant_generators_polyzono, @validate
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!

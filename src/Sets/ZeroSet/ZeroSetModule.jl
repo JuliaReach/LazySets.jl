@@ -2,7 +2,7 @@ module ZeroSetModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractSingleton
+using ..LazySets: AbstractSingleton, @validate
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require

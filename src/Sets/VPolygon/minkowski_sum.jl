@@ -12,7 +12,7 @@ given polygons. This algorithm assumes that the vertices of `P` and `Q` are
 sorted in counter-clockwise fashion and has linear complexity ``O(m+n)``, where
 ``m`` and ``n`` are the number of vertices of `P` and `Q`, respectively.
 """
-function minkowski_sum(P::VPolygon, Q::VPolygon)
+@validate function minkowski_sum(P::VPolygon, Q::VPolygon)
     R = _minkowski_sum_vrep_2d(P.vertices, Q.vertices)
     return VPolygon(R; apply_convex_hull=false)
 end
