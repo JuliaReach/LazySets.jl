@@ -1,4 +1,4 @@
-function ⊆(U1::Universe, U2::Universe, witness::Bool=false)
+@validate function ⊆(U1::Universe, U2::Universe, witness::Bool=false)
     return _issubset_universe2(U1, U2, witness)
 end
 

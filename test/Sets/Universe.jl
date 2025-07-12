@@ -396,8 +396,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test res && w isa Vector{N} && w ∉ B && w ∈ U
 
     # issubset
-    @test_throws AssertionError B ⊆ U3
-    @test_throws AssertionError U3 ⊆ B
+    @test_throws DimensionMismatch B ⊆ U3
+    @test_throws DimensionMismatch U3 ⊆ B
     for X in (U, B, Pnc)
         @test X ⊆ U
         res, w = ⊆(X, U, true)

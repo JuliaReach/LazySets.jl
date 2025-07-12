@@ -546,8 +546,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # issubset
-    @test_throws AssertionError X ⊆ X2
-    @test_throws AssertionError X2 ⊆ X
+    @test_throws DimensionMismatch X ⊆ X2
+    @test_throws DimensionMismatch X2 ⊆ X
     for Y in (X, B)
         @test X ⊆ Y
         res, w = ⊆(X, Y, true)
