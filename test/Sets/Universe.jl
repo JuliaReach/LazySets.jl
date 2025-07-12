@@ -342,7 +342,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # intersection
-    @test_throws AssertionError intersection(U, U3)
+    @test_throws DimensionMismatch intersection(U, U3)
     U2 = intersection(U, U)
     @test isidentical(U, U2)
     for X in (intersection(U, B), intersection(B, U))

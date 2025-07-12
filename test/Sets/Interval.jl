@@ -474,7 +474,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # intersection
-    @test_throws AssertionError intersection(X, X2)
+    @test_throws DimensionMismatch intersection(X, X2)
     # disjoint
     Y = intersection(X, Interval(N(3), N(4)))
     @test Y isa EmptySet{N} && Y == EmptySet{N}(1)
