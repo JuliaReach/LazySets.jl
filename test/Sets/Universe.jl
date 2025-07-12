@@ -357,7 +357,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test !(U ≈ U3) && !(U3 ≈ U) && !(U ≈ B) && !(B ≈ U)
 
     # isdisjoint
-    @test_throws AssertionError isdisjoint(U, U3)
+    @test_throws DimensionMismatch isdisjoint(U, U3)
     @test !isdisjoint(U, U)
     res, w = isdisjoint(U, U, true)
     @test !res && w isa Vector{N} && w ∈ U

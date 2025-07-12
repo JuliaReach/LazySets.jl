@@ -1,4 +1,4 @@
-function isdisjoint(U1::Universe, U2::Universe, witness::Bool=false)
+@validate function isdisjoint(U1::Universe, U2::Universe, witness::Bool=false)
     return _isdisjoint_universe(U1, U2, witness)
 end
 

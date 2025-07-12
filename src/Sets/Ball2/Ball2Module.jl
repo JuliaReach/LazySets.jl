@@ -2,7 +2,7 @@ module Ball2Module
 
 using Reexport, Requires
 
-using ..LazySets: AbstractBallp, _witness_result_empty
+using ..LazySets: AbstractBallp, _witness_result_empty, @validate
 using LinearAlgebra: dot, axpby!
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: _leq, isapproxzero

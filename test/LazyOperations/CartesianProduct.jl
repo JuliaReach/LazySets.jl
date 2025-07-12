@@ -466,8 +466,8 @@ for N in [Float64, Float32]
           !is_intersection_empty(Approximations.overapproximate(cpa1), G)
     @test !is_intersection_empty(cpa1, Universe{N}(4)) &&
           !is_intersection_empty(Universe{N}(4), cpa2)
-    @test_throws AssertionError is_intersection_empty(cpa1, Universe{N}(3))
-    @test_throws AssertionError is_intersection_empty(Universe{N}(5), cpa2)
+    @test_throws DimensionMismatch is_intersection_empty(cpa1, Universe{N}(3))
+    @test_throws DimensionMismatch is_intersection_empty(Universe{N}(5), cpa2)
 
     # projection
     cp = Interval(N(0), N(2)) × Hyperrectangle(N[2, 3], N[1, 1])

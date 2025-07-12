@@ -1,4 +1,4 @@
-function isdisjoint(L1::Line2D, L2::Line2D, witness::Bool=false)
+@validate function isdisjoint(L1::Line2D, L2::Line2D, witness::Bool=false)
     disjoint = _isdisjoint(L1, L2)
     if disjoint
         return _witness_result_empty(witness, true, L1, L2)

@@ -494,7 +494,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test !(X ≈ X2) && !(X2 ≈ X) && !(X ≈ B) && !(B ≈ X)
 
     # isdisjoint
-    @test_throws AssertionError isdisjoint(X, X2)
+    @test_throws DimensionMismatch isdisjoint(X, X2)
     # disjoint
     Y = Interval(N(3), N(4))
     @test isdisjoint(X, Y) && isdisjoint(Y, X)
