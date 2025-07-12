@@ -8,8 +8,8 @@
 
 This method implements the algorithm described in [Kochdumper21a; Proposition 3.1.25](@citet).
 """
-function linear_combination(P1::SimpleSparsePolynomialZonotope,
-                            P2::SimpleSparsePolynomialZonotope)
+@validate function linear_combination(P1::SimpleSparsePolynomialZonotope,
+                                      P2::SimpleSparsePolynomialZonotope)
     c1, c2 = center(P1), center(P2)
     G1, G2 = genmat(P1), genmat(P2)
     E1, E2 = expmat(P1), expmat(P2)
