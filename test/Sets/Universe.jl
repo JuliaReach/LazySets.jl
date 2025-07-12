@@ -201,7 +201,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # distance (between point and set)
-    @test_throws AssertionError distance(U, N[0])
+    @test_throws DimensionMismatch distance(U, N[0])
     x = N[0, 0]
     for res in (distance(U, x), distance(x, U))
         @test res isa N && res == N(0)
@@ -325,8 +325,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test X isa UnionSetArray{N,<:HalfSpace} && length(array(X)) == 4 && X == complement(B)
 
     # distance (between two sets)
-    @test_throws AssertionError distance(U, U3)
-    @test_throws AssertionError distance(U3, U)
+    @test_throws DimensionMismatch distance(U, U3)
+    @test_throws DimensionMismatch distance(U3, U)
     for v in (distance(U, U), distance(U, B), distance(B, U), distance(U, Z), distance(Z, U))
         @test v isa N && v == N(0)
     end

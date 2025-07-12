@@ -4,12 +4,11 @@ using Reexport, Requires
 
 using ..LazySets: AbstractPolyhedron, LazySet, AbstractLinearMapAlgorithm,
                   default_lp_solver, is_lp_infeasible, is_lp_optimal, linprog,
-                  _witness_result_empty
+                  _witness_result_empty, @validate_commutative
 import LinearAlgebra
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: ismultiple, nonzero_indices, samedir
-using ReachabilityBase.Commutative: @commutative
 using ReachabilityBase.Comparison: isapproxzero, _isapprox, _leq
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require

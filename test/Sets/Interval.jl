@@ -297,7 +297,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test Y isa LazySet{N} && isequivalent(Y, LineSegment(N[1, 2], N[3, 4]))
 
     # distance (between point and set)
-    @test_throws AssertionError distance(X, N[0, 0])
+    @test_throws DimensionMismatch distance(X, N[0, 0])
     for (x, v) in ((N[1], N(0)), (N[4], N(2)))
         for res in (distance(X, x), distance(x, X))
             @test res == v
@@ -457,8 +457,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test ispermutation(array(Y), [Interval(N(0), N(1)), Interval(N(1), N(2))])
 
     # distance (between two sets)
-    @test_throws AssertionError distance(X, X2)
-    @test_throws AssertionError distance(X2, X)
+    @test_throws DimensionMismatch distance(X, X2)
+    @test_throws DimensionMismatch distance(X2, X)
     for (Y, v) in ((Interval(N(-1), N(1)), N(0)), (Interval(N(4), N(5)), N(2)))
         for res in (distance(X, Y), distance(Y, X))
             @test res isa N && res == v

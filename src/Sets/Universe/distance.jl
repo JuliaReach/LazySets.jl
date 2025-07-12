@@ -1,6 +1,6 @@
 # distance point <-> set
 
-@commutative function distance(x::AbstractVector, U::Universe; p::Real=2)
+@validate_commutative function distance(x::AbstractVector, U::Universe; p::Real=2)
     @assert length(x) == dim(U) "incompatible dimensions $(length(x)) and $(dim(U))"
 
     N = promote_type(eltype(x), eltype(U))
@@ -9,7 +9,7 @@ end
 
 # distance set <-> set
 
-function distance(U1::Universe, U2::Universe; p::Real=2.0)
+@validate function distance(U1::Universe, U2::Universe; p::Real=2.0)
     return _distance_universe(U1, U2; p=p)
 end
 
