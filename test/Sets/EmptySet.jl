@@ -346,7 +346,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test E != E3 && E3 != E && E != B && B != E
 
     # isequivalent
-    @test_throws AssertionError isequivalent(E, E3)
+    @test_throws DimensionMismatch isequivalent(E, E3)
     @test isequivalent(E, E)
     @test !isequivalent(E, B) && !isequivalent(B, E)
 

@@ -525,8 +525,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test X != X2 && X2 != X && X != B && B != X
 
     # isequivalent
-    @test_broken isequivalent(X, X2) isa AssertionError  # TODO this should change
-    @test_broken isequivalent(X2, X) isa AssertionError  # TODO this should change
+    @test_throws DimensionMismatch isequivalent(X, X2)
+    @test_throws DimensionMismatch isequivalent(X2, X)
     @test isequivalent(X, X)
     @test !isequivalent(X, Interval(N(1), N(2)))
     @test isequivalent(X, B) && isequivalent(B, X)

@@ -377,8 +377,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test U != U3 && U3 != U && U != B && B != U
 
     # isequivalent
-    @test_throws AssertionError isequivalent(U, U3)
-    @test_throws AssertionError isequivalent(U3, U)
+    @test_throws DimensionMismatch isequivalent(U, U3)
+    @test_throws DimensionMismatch isequivalent(U3, U)
     @test isequivalent(U, U)
     @test !isequivalent(U, B) && !isequivalent(B, U)
 
