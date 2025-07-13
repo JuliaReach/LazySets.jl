@@ -136,7 +136,7 @@ function σ(::AbstractVector, S::AbstractSingleton)
     return element(S)
 end
 
-function ρ(d::AbstractVector, S::AbstractSingleton)
+@validate function ρ(d::AbstractVector, S::AbstractSingleton)
     return dot(d, element(S))
 end
 

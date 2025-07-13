@@ -383,8 +383,8 @@ The evaluation of the support function in the given direction.
 If ``E = \\exp(M)⋅X``, where ``M`` is a matrix and ``X`` is a set, it
 follows that ``ρ(d, E) = ρ(\\exp(M)^T d, X)`` for any direction ``d``.
 """
-function ρ(d::AbstractVector, em::ExponentialMap;
-           backend=get_exponential_backend())
+@validate function ρ(d::AbstractVector, em::ExponentialMap;
+                     backend=get_exponential_backend())
     N = promote_type(eltype(d), eltype(em))
     v = _expmv(backend, one(N), transpose(em.spmexp.M), d)  # exp(M^T) * d
     return ρ(v, em.X)

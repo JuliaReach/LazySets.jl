@@ -169,7 +169,7 @@ The evaluation of the support function in the given direction.
 The support function of the union of a finite number of sets ``X₁, X₂, ...``
 can be obtained as the maximum of ``ρ(d, X₂), ρ(d, X₂), ...``.
 """
-function ρ(d::AbstractVector, cup::UnionSetArray)
+@validate function ρ(d::AbstractVector, cup::UnionSetArray)
     return maximum(Xi -> ρ(d, Xi), array(cup))
 end
 

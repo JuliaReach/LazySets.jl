@@ -107,7 +107,7 @@ Return the support function of a bloated set in a given direction.
 
 The support function of the bloated set in the given direction.
 """
-function ρ(d::AbstractVector, B::Bloating)
+@validate function ρ(d::AbstractVector, B::Bloating)
     @assert !iszero(d) "the support function in the zero direction is undefined"
 
     return ρ(d, B.X) +

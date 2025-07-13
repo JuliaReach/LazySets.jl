@@ -1,4 +1,4 @@
-function ρ(d::AbstractVector, L::Line)
+@validate function ρ(d::AbstractVector, L::Line)
     if isapproxzero(dot(d, L.d))
         return dot(d, L.p)
     else

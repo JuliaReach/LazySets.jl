@@ -1,4 +1,4 @@
-function ρ(d::AbstractVector, P::VPolytope)
+@validate function ρ(d::AbstractVector, P::VPolytope)
     return _ρ_vertices(d, P.vertices)
 end
 

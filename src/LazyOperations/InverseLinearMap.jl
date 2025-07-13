@@ -189,7 +189,7 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``L = M^{-1}⋅X``, where ``M`` is a matrix and ``X`` is a set, it follows
 that ``ρ(d, L) = ρ((M^T)^{-1} d, X)`` for any direction ``d``.
 """
-function ρ(d::AbstractVector, ilm::InverseLinearMap)
+@validate function ρ(d::AbstractVector, ilm::InverseLinearMap)
     y = transpose(ilm.M) \ d
     return ρ(y, ilm.X)
 end

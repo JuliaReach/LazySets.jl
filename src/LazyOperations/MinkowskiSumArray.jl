@@ -154,7 +154,7 @@ The evaluation of the support function in the given direction.
 The support function of the Minkowski sum of multiple sets evaluations to the
 sum of the support-function evaluations of each set.
 """
-function ρ(d::AbstractVector, msa::MinkowskiSumArray)
+@validate function ρ(d::AbstractVector, msa::MinkowskiSumArray)
     return sum(ρ(d, Xi) for Xi in msa.array)
 end
 

@@ -161,7 +161,7 @@ The evaluation of the support function in the given direction.
 The support function of the union of two sets ``X`` and ``Y`` evaluates to the
 maximum of the support-function evaluations of ``X`` and ``Y``.
 """
-function ρ(d::AbstractVector, cup::UnionSet)
+@validate function ρ(d::AbstractVector, cup::UnionSet)
     X, Y = cup.X, cup.Y
     return max(ρ(d, X), ρ(d, Y))
 end

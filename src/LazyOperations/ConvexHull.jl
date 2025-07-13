@@ -146,7 +146,7 @@ direction.
 The evaluation of the support function of the convex hull in the given
 direction.
 """
-function ρ(d::AbstractVector, ch::ConvexHull)
+@validate function ρ(d::AbstractVector, ch::ConvexHull)
     return max(ρ(d, ch.X), ρ(d, ch.Y))
 end
 

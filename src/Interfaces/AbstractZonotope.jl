@@ -213,7 +213,7 @@ end
 The support value is ``cᵀ d + ‖Gᵀ d‖₁``, where ``c`` is the center and ``G`` is
 the generator matrix of `Z`.
 """
-function ρ(d::AbstractVector, Z::AbstractZonotope)
+@validate function ρ(d::AbstractVector, Z::AbstractZonotope)
     c = center(Z)
     G = genmat(Z)
     return dot(c, d) + abs_sum(d, G)

@@ -398,7 +398,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test Ys isa Vector{Interval{N}} && Ys == split(X, [4]) == Xs
 
     # support_function
-    @test_throws AssertionError ρ(N[1, 1], X)
+    @test_throws DimensionMismatch ρ(N[1, 1], X)
     res = ρ(N[2], X)
     @test res isa N && res == N(4)
     res = ρ(N[-2], X)

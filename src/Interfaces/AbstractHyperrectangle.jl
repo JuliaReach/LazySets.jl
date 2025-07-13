@@ -302,10 +302,7 @@ function _σ_sev_hyperrectangle(d::SingleEntryVector, H::AbstractHyperrectangle)
     return s
 end
 
-function ρ(d::AbstractVector, H::AbstractHyperrectangle)
-    @assert length(d) == dim(H) "a $(length(d))-dimensional vector is " *
-                                "incompatible with a $(dim(H))-dimensional set"
-
+@validate function ρ(d::AbstractVector, H::AbstractHyperrectangle)
     N = promote_type(eltype(d), eltype(H))
     c = center(H)
     res = zero(N)
@@ -322,9 +319,6 @@ end
 
 # helper function for single-entry vector (used by subtypes)
 function _ρ_sev_hyperrectangle(d::SingleEntryVector, H::AbstractHyperrectangle)
-    @assert d.n == dim(H) "a $(d.n)-dimensional vector is " *
-                          "incompatible with a $(dim(H))-dimensional set"
-
     return d.v * center(H, d.i) + abs(d.v) * radius_hyperrectangle(H, d.i)
 end
 

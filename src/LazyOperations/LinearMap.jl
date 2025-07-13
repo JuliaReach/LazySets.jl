@@ -287,7 +287,7 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a set, it follows that
 ``ρ(d, L) = ρ(M^T d, S)`` for any direction ``d``.
 """
-function ρ(d::AbstractVector, lm::LinearMap; kwargs...)
+@validate function ρ(d::AbstractVector, lm::LinearMap; kwargs...)
     return _ρ_linear_map(d, lm.M, lm.X; kwargs...)
 end
 

@@ -233,9 +233,7 @@ function σ(d::SingleEntryVector, sih::SymmetricIntervalHull)
 end
 
 # faster support-function evaluation for SingleEntryVector
-function ρ(d::SingleEntryVector, sih::SymmetricIntervalHull)
-    @assert length(d) == dim(sih) "a $(d.n)-dimensional vector is " *
-                                  "incompatible with a $(dim(sih))-dimensional set"
+@validate function ρ(d::SingleEntryVector, sih::SymmetricIntervalHull)
     return abs(d.v) * get_radius!(sih, d.i)
 end
 

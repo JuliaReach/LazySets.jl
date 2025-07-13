@@ -201,7 +201,7 @@ Evaluate the support function of a Cartesian product of a finite number of sets.
 The evaluation of the support function in the given direction.
 If the direction has norm zero, the result depends on the wrapped sets.
 """
-function ρ(d::AbstractVector, cpa::CartesianProductArray)
+@validate function ρ(d::AbstractVector, cpa::CartesianProductArray)
     N = promote_type(eltype(d), eltype(cpa))
     sfun = zero(N)
     i0 = 1
@@ -214,7 +214,7 @@ function ρ(d::AbstractVector, cpa::CartesianProductArray)
 end
 
 # faster version for sparse vectors
-function ρ(d::AbstractSparseVector, cpa::CartesianProductArray)
+@validate function ρ(d::AbstractSparseVector, cpa::CartesianProductArray)
     N = promote_type(eltype(d), eltype(cpa))
     # idea: see the σ method for AbstractSparseVector
     sfun = zero(N)
@@ -250,7 +250,7 @@ function ρ(d::AbstractSparseVector, cpa::CartesianProductArray)
 end
 
 # faster version for single-entry vectors
-function ρ(d::SingleEntryVector, cpa::CartesianProductArray)
+@validate function ρ(d::SingleEntryVector, cpa::CartesianProductArray)
     i0 = 1
     idx = d.i
     for Xi in cpa.array

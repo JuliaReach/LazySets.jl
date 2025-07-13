@@ -244,7 +244,7 @@ Evaluate the support function of a translation.
 
 The evaluation of the support function in the given direction.
 """
-function ρ(d::AbstractVector, tr::Translation)
+@validate function ρ(d::AbstractVector, tr::Translation)
     return dot(d, tr.v) + ρ(d, tr.X)
 end
 

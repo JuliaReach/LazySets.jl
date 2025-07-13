@@ -276,7 +276,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError scale!(N(0), U2)
 
     # support_function
-    @test_throws AssertionError ρ(N[1], U)
+    @test_throws DimensionMismatch ρ(N[1], U)
     v = ρ(N[-1, 2], U)
     @test v isa N && v == N(Inf)
     v = ρ(N[2, 0], U)

@@ -243,7 +243,7 @@ NaN
 
 See the discussion [here](https://math.stackexchange.com/q/28940).
 """
-function ρ(d::AbstractVector, rm::ResetMap)
+@validate function ρ(d::AbstractVector, rm::ResetMap)
     return dot_zero(d, σ(d, rm))
 end
 

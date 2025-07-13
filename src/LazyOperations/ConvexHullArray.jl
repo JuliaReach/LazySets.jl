@@ -139,7 +139,7 @@ sets in the given direction.
 This algorithm calculates the maximum over all ``ρ(d, X_i)``, where the
 ``X_1, …, X_k`` are the sets in the array of `cha`.
 """
-function ρ(d::AbstractVector, cha::ConvexHullArray)
+@validate function ρ(d::AbstractVector, cha::ConvexHullArray)
     return maximum(ρ(d, Xi) for Xi in cha)
 end
 

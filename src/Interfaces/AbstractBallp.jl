@@ -148,7 +148,7 @@ respectively, and let ``q = \\frac{p}{p-1}``. Then:
 ρ(d, B) = ⟨d, c⟩ + r ‖d‖_q.
 ```
 """
-function ρ(d::AbstractVector, B::AbstractBallp)
+@validate function ρ(d::AbstractVector, B::AbstractBallp)
     p = ball_norm(B)
     q = p / (p - 1)
     return dot(d, center(B)) + radius_ball(B) * norm(d, q)

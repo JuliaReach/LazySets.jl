@@ -302,7 +302,7 @@ Otherwise we compute the union of projections to obtain a precise result (see
 this union.
 (The union is cached internally, so subsequent queries are more efficient.)
 """
-function ρ(d::AbstractVector, R::Rectification)
+@validate function ρ(d::AbstractVector, R::Rectification)
     if R.cache.use_support_vector
         return dot(d, σ(d, R))
     end

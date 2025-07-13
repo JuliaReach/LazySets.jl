@@ -214,7 +214,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test σ(d, p) == N[1, 0]
     # empty polytope
     V = VPolytope{N}()
-    @test_throws ErrorException ρ(d, V)
+    @test_throws DimensionMismatch ρ(d, V)
     @test_throws ErrorException σ(d, V)
     # one vertex
     V = VPolytope([N[2, 1]])

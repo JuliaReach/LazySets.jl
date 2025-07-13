@@ -268,7 +268,7 @@ An upper bound on the support function in the given direction.
 The support function of an intersection of ``X`` and ``Y`` is upper-bounded by
 the minimum of the support-function evaluations for ``X`` and ``Y``.
 """
-function ρ(d::AbstractVector, cap::Intersection)
+@validate function ρ(d::AbstractVector, cap::Intersection)
     return _ρ_min(d, cap)
 end
 
@@ -385,18 +385,18 @@ where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
 
 For additional information we refer to [Frehse012, LeGuernic09, RockafellarW98](@citet)
 """
-function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           algorithm::String="line_search",
-           kwargs...) where {N,S1<:LazySet,
-                             S2<:Union{HalfSpace,Hyperplane,Line2D}}
+@validate function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
+                     algorithm::String="line_search",
+                     kwargs...) where {N,S1<:LazySet,
+                                       S2<:Union{HalfSpace,Hyperplane,Line2D}}
     return ρ_helper(d, cap, algorithm; kwargs...)
 end
 
 # symmetric method
-function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           algorithm::String="line_search",
-           kwargs...) where {N,S1<:Union{HalfSpace,Hyperplane,Line2D},
-                             S2<:LazySet}
+@validate function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
+                     algorithm::String="line_search",
+                     kwargs...) where {N,S1<:Union{HalfSpace,Hyperplane,Line2D},
+                                       S2<:LazySet}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
@@ -430,20 +430,20 @@ This algorithm is inspired from [Frehse012](@citet).
 
 This method relies on the `constraints_list` of the polyhedron.
 """
-function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           kwargs...) where {N,S1<:LazySet,S2<:AbstractPolyhedron}
+@validate function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
+                     kwargs...) where {N,S1<:LazySet,S2<:AbstractPolyhedron}
     return ρ_helper(d, cap; kwargs...)
 end
 
 # symmetric method
-function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           kwargs...) where {N,S1<:AbstractPolyhedron,S2<:LazySet}
+@validate function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
+                     kwargs...) where {N,S1<:AbstractPolyhedron,S2<:LazySet}
     return ρ_helper(d, swap(cap); kwargs...)
 end
 
 # disambiguation
-function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           kwargs...) where {N,S1<:AbstractPolytope,S2<:AbstractPolyhedron}
+@validate function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
+                     kwargs...) where {N,S1<:AbstractPolytope,S2<:AbstractPolyhedron}
     return ρ_helper(d, cap; kwargs...)
 end
 
@@ -490,48 +490,48 @@ The evaluation of the support function in the given direction.
 We combine the constraints of the two polyhedra to a new `HPolyhedron`, for
 which we then evaluate the support function.
 """
-function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           kwargs...) where {N,S1<:AbstractPolyhedron,S2<:AbstractPolyhedron}
+@validate function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
+                     kwargs...) where {N,S1<:AbstractPolyhedron,S2<:AbstractPolyhedron}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # disambiguation
-function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           algorithm::String="line_search",
-           kwargs...) where {N,S1<:AbstractPolytope,
-                             S2<:Union{HalfSpace,Hyperplane,Line2D}}
+@validate function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
+                     algorithm::String="line_search",
+                     kwargs...) where {N,S1<:AbstractPolytope,
+                                       S2<:Union{HalfSpace,Hyperplane,Line2D}}
     return ρ_helper(d, cap, algorithm; kwargs...)
 end
 
 # symmetric method
-function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           algorithm::String="line_search",
-           kwargs...) where {N,S1<:Union{HalfSpace,Hyperplane,Line2D},
-                             S2<:AbstractPolytope}
+@validate function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
+                     algorithm::String="line_search",
+                     kwargs...) where {N,S1<:Union{HalfSpace,Hyperplane,Line2D},
+                                       S2<:AbstractPolytope}
     return ρ_helper(d, swap(cap), algorithm; kwargs...)
 end
 
 # disambiguation
-function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           algorithm::String="line_search",
-           kwargs...) where {N,S1<:AbstractPolyhedron,
-                             S2<:Union{HalfSpace,Hyperplane,Line2D}}
+@validate function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
+                     algorithm::String="line_search",
+                     kwargs...) where {N,S1<:AbstractPolyhedron,
+                                       S2<:Union{HalfSpace,Hyperplane,Line2D}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # symmetric method
-function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           algorithm::String="line_search",
-           kwargs...) where {N,S1<:Union{HalfSpace,Hyperplane,Line2D},
-                             S2<:AbstractPolyhedron}
+@validate function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
+                     algorithm::String="line_search",
+                     kwargs...) where {N,S1<:Union{HalfSpace,Hyperplane,Line2D},
+                                       S2<:AbstractPolyhedron}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 
 # disambiguation
-function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
-           algorithm::String="line_search",
-           kwargs...) where {N,S1<:Union{HalfSpace,Hyperplane,Line2D},
-                             S2<:Union{HalfSpace,Hyperplane,Line2D}}
+@validate function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
+                     algorithm::String="line_search",
+                     kwargs...) where {N,S1<:Union{HalfSpace,Hyperplane,Line2D},
+                                       S2<:Union{HalfSpace,Hyperplane,Line2D}}
     return ρ(d, HPolyhedron([constraints_list(cap.X); constraints_list(cap.Y)]))
 end
 

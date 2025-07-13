@@ -12,6 +12,6 @@ respectively. Then:
 ρ(d, B) = ⟨d, c⟩ + r ‖d‖_2.
 ```
 """
-function ρ(d::AbstractVector, B::Ball2)
+@validate function ρ(d::AbstractVector, B::Ball2)
     return dot(d, B.center) + B.radius * norm(d, 2)
 end

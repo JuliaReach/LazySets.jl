@@ -28,9 +28,7 @@ For balls of higher dimension, we instead exploit that for a support vector
 
 where ``⟨·, ·⟩`` denotes the dot product.
 """
-function ρ(d::AbstractVector, B::BallInf)
-    @assert length(d) == dim(B) "a $(length(d))-dimensional vector is " *
-                                "incompatible with a $(dim(B))-dimensional set"
+@validate function ρ(d::AbstractVector, B::BallInf)
     c = center(B)
     r = B.radius
     if length(d) > BALLINF_THRESHOLD_ρ
@@ -50,6 +48,6 @@ function ρ(d::AbstractVector, B::BallInf)
 end
 
 # special case for SingleEntryVector
-function ρ(d::SingleEntryVector, B::BallInf)
+@validate function ρ(d::SingleEntryVector, B::BallInf)
     return _ρ_sev_hyperrectangle(d, B)
 end

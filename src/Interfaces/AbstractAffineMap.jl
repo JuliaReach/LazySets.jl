@@ -92,7 +92,7 @@ function σ(d::AbstractVector, am::AbstractAffineMap)
     return A * σ(At_mul_B(A, d), set(am)) + vector(am)
 end
 
-function ρ(d::AbstractVector, am::AbstractAffineMap)
+@validate function ρ(d::AbstractVector, am::AbstractAffineMap)
     return ρ(At_mul_B(matrix(am), d), set(am)) + dot(d, vector(am))
 end
 

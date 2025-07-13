@@ -153,7 +153,7 @@ The support function in direction ``d`` of the Minkowski sum of two sets ``X``
 and ``Y`` is the sum of the support functions of ``X`` and ``Y`` in direction
 ``d``.
 """
-function ρ(d::AbstractVector, ms::MinkowskiSum)
+@validate function ρ(d::AbstractVector, ms::MinkowskiSum)
     return ρ(d, ms.X) + ρ(d, ms.Y)
 end
 

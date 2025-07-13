@@ -362,7 +362,7 @@ eltype(::LazySet{N}) where {N} = N
 
 The default implementation computes a support vector via `σ`.
 """
-function ρ(d::AbstractVector, X::LazySet)
+@validate function ρ(d::AbstractVector, X::LazySet)
     return dot(d, σ(d, X))
 end
 
