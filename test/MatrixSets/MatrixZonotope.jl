@@ -22,7 +22,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError MatrixZonotope(c, gens, [1, 1])
     @test_throws ArgumentError MatrixZonotope(c, gens, [1])
 
-    # Test for mismatching matrix sizes
+    # test for mismatching matrix sizes
     c_bad_size = N[1 0; 0 1; 0 0]
     @test_throws ArgumentError MatrixZonotope(c_bad_size, gens)
 
@@ -37,12 +37,12 @@ for N in [Float64, Float32, Rational{Int}]
     @test isempty(generators(MZ3))
     @test isempty(indexvector(MZ3))
 
-    #transpose
+    # transpose
     MZt = transpose(MZ)
     @test center(MZt) == c
     @test generators(MZt)== [transpose(Ai) for Ai in generators(MZ)]
 
-    #norm
+    # norm
     @test norm(MZ, Inf) == 7
     @test norm(MZ, 1) == 8
 end

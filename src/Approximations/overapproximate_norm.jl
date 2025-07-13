@@ -10,7 +10,7 @@ Compute an upper bound on the ``p``-norm of a zonotopic set.
 
 ### Output
 
-An upper bound on ``\\max_{x ∈ Z} \\|x\\|_p``.
+An upper bound on ``\\max_{x ∈ Z} ‖x‖_p``.
 
 ### Notes
 
@@ -32,7 +32,7 @@ Compute an upper bound on the 1-norm of a zonotopic set.
 
 ### Notes
 
-The problem ``\\max_{z ∈ Z} \\|z\\|_1`` is NP-hard in general.
+The problem ``\\max_{z ∈ Z} ‖z‖_1`` is NP-hard in general.
 
 ### Algorithm
 
@@ -92,7 +92,7 @@ Compute an upper bound on the ``p``-norm of a matrix zonotope.
 
 ### Output
 
-An upper bound on ``\\sup_{A ∈ \\mathcal{A} } \\|A\\|_p ``.
+An upper bound on ``\\sup_{A ∈ \\mathcal{A} } ‖A‖_p ``.
 """
 function overapproximate_norm(MZ::MatrixZonotope, p::Real=Inf)
     if p == 1

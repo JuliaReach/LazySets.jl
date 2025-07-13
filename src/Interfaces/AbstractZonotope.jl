@@ -1060,7 +1060,7 @@ function _weighted_gens!(indices, G::AbstractMatrix{N}, ::Union{ASB10,COMB03}) w
 end
 
 # Return the indices of the generators in G (= columns) sorted according to
-# ||⋅||₁ - ||⋅||∞ difference. The generator index with highest score goes first.
+# ‖⋅‖₁ - ‖⋅‖∞ difference. The generator index with highest score goes first.
 function _weighted_gens!(indices, G::AbstractMatrix{N}, ::GIR05) where {N}
     n, p = size(G)
     weights = Vector{N}(undef, p)
@@ -1149,13 +1149,12 @@ Compute the exact ``ℓ₁`` norm of a zonotope with generator matrix ``G ∈ \\
 
 ### Notes
 
-The function exploits the fact that the mapping ``ξ ↦ \\| c + ∑_{i=1}^n ξ_i g_i \\|_1`` is
-a convex function of the coefficients ``ξ_i``.  As a result, its maximum over the hypercube ``[-1,1]^n`` is
-attained at one of the ``2^n`` corners.
+The function exploits the fact that the mapping ``ξ ↦ ‖ c + ∑_{i=1}^n ξ_i g_i ‖_1`` is
+a convex function of the coefficients ``ξ_i``.  As a result, its maximum over the hypercube
+``[-1,1]^n`` is attained at one of the ``2^n`` corners.
 
-This algorithm has time complexity ``\\mathcal{O}(2ⁿ · d)``, and thus is only practical for zonotopes
-with a small number of generators.
-
+This algorithm has time complexity ``\\mathcal{O}(2ⁿ · d)``, and thus is only practical for
+zonotopes with a small number of generators.
 """
 function _l1_norm(Z::AbstractZonotope{N}) where {N}
     n = ngens(Z)

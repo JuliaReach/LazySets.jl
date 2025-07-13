@@ -57,11 +57,6 @@ makedocs(; sitename="LazySets.jl",
                                                    "lib/interfaces/AbstractBallp.md"
                                                    #
                                                    ],
-                              "MatrixSets" => [
-                                               #
-                                               "MatrixZonotope" => "lib/matrixsets/MatrixZonotope.md"
-                                               #
-                                               ],
                               "Sets" => [
                                          #
                                          "Ball1" => "lib/sets/Ball1.md",
@@ -146,6 +141,11 @@ makedocs(; sitename="LazySets.jl",
                                                    "lib/approximations/overapproximate_norm.md"
                                                    #
                                                    ],
+                              "MatrixSets" => [
+                                               #
+                                               "MatrixZonotope" => "lib/matrixsets/MatrixZonotope.md"
+                                               #
+                                               ],
                               "Utilities" => "lib/utils.md",
                               "Parallel" => "lib/parallel.md"
                               #

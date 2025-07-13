@@ -17,7 +17,7 @@ Mathematically, a ball in the infinity norm is defined as the set
 ```
 where ``c ∈ ℝ^n`` is its center and ``r ∈ ℝ_+`` its radius.
 Here ``‖ ⋅ ‖_∞`` denotes the infinity norm, defined as
-``‖ x ‖_∞ = \\max\\limits_{i=1,…,n} \\vert x_i \\vert`` for any
+``‖ x ‖_∞ = \\max\\limits_{i=1,…,n} | x_i |`` for any
 ``x ∈ ℝ^n``.
 
 ### Examples
