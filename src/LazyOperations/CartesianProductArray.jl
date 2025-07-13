@@ -671,8 +671,7 @@ A polyhedron or polytope.
     return _linear_map_cartesian_product(M, cpa)
 end
 
-function project(cpa::CartesianProductArray, block::AbstractVector{Int};
-                 kwargs...)
+@validate function project(cpa::CartesianProductArray, block::AbstractVector{Int}; kwargs...)
     target_sets = LazySet[]
     m = length(block)
 

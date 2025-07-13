@@ -374,7 +374,7 @@ function _linear_map_cartesian_product(M, cp)
     return linear_map(M, P)
 end
 
-function project(cp::CartesianProduct, block::AbstractVector{Int}; kwargs...)
+@validate function project(cp::CartesianProduct, block::AbstractVector{Int}; kwargs...)
     n1 = dim(cp.X)
     if block[end] <= n1
         # projection completely in the first block
@@ -411,9 +411,8 @@ hyperrectangular set.
 A hyperrectangle representing the projection of the Cartesian product `cp` on
 the dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N,<:Interval,<:AbstractHyperrectangle},
-                 block::AbstractVector{Int};
-                 kwargs...) where {N}
+@validate function project(cp::CartesianProduct{N,<:Interval,<:AbstractHyperrectangle},
+                           block::AbstractVector{Int}; kwargs...) where {N}
     I = cp.X
     H = cp.Y
     block_vec = collect(block)
@@ -445,9 +444,8 @@ Concrete projection of the Cartesian product of an interval and a zonotopic set.
 A zonotope representing the projection of the Cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N,<:Interval,<:AbstractZonotope},
-                 block::AbstractVector{Int};
-                 kwargs...) where {N}
+@validate function project(cp::CartesianProduct{N,<:Interval,<:AbstractZonotope},
+                           block::AbstractVector{Int}; kwargs...) where {N}
     block_vec = collect(block)
     Z = cp.Y
     if 1 ∉ block_vec
@@ -477,9 +475,8 @@ representation.
 A `VPolytope` representing the projection of the Cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N,<:Interval,<:Union{VPolygon,VPolytope}},
-                 block::AbstractVector{Int};
-                 kwargs...) where {N}
+@validate function project(cp::CartesianProduct{N,<:Interval,<:Union{VPolygon,VPolytope}},
+                           block::AbstractVector{Int}; kwargs...) where {N}
     I = cp.X
     P = cp.Y
     block_vec = collect(block)

@@ -107,7 +107,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test project(L, [1, 2]) == L
     @test project(L, [2, 1]) == Line2D(N[0, 2], N(4))
     @test_throws ArgumentError project(L, [1, 1])
-    @test_throws ArgumentError project(L, [1, 2, 1])
+    @test_throws DimensionMismatch project(L, [1, 2, 1])
 
     # translation
     @test translate(l1, N[1, 2]) == Line2D(a1, N(3))

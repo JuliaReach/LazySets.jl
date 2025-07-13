@@ -1,6 +1,6 @@
 # the algorithm is a 2D specialization of the `Hyperplane` algorithm, except
 # that it returns a `Singleton` for a 1D line
-function project(L::Line2D{N}, block::AbstractVector{Int}; kwargs...) where {N}
+@validate function project(L::Line2D{N}, block::AbstractVector{Int}; kwargs...) where {N}
     m = length(block)
     if m == 2
         @inbounds if block[1] == 1 && block[2] == 2

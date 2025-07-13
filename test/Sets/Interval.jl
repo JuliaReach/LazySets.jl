@@ -368,9 +368,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(Y, X)
 
     # project
-    @test_throws AssertionError project(X, [-1])
-    @test_throws AssertionError project(X, [1, 2])
-    @test_throws AssertionError project(X, [2])
+    @test_throws DimensionMismatch project(X, [-1])
+    @test_throws DimensionMismatch project(X, [1, 2])
+    @test_throws DimensionMismatch project(X, [2])
     Y = project(X, [1])
     @test isidentical(Y, X)
 

@@ -2,7 +2,7 @@ module BallpModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractBallp
+using ..LazySets: AbstractBallp, @validate
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require

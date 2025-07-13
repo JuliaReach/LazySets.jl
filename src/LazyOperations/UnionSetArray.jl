@@ -288,7 +288,7 @@ end
     return UnionSetArray([linear_map(M, X) for X in cup])
 end
 
-function project(cup::UnionSetArray, block::AbstractVector{Int}; kwargs...)
+@validate function project(cup::UnionSetArray, block::AbstractVector{Int}; kwargs...)
     return UnionSetArray([project(X, block; kwargs...) for X in cup])
 end
 

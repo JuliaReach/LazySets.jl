@@ -741,8 +741,7 @@ function split(Z::AbstractZonotope, gens::AbstractVector{Int},
 end
 
 # project via the concrete linear map, which is typically efficient
-function project(Z::AbstractZonotope{N}, block::AbstractVector{Int};
-                 kwargs...) where {N}
+@validate function project(Z::AbstractZonotope{N}, block::AbstractVector{Int}; kwargs...) where {N}
     n = dim(Z)
     M = projection_matrix(block, n, N)
     Z2 = linear_map(M, Z)

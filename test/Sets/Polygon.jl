@@ -507,9 +507,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test project(V, [2, 1]) == VPolygon([N[1, 0], N[0, 1], N[0, -1]])
     V = VPolygon([N[1, 0], N[1, 1]])
     @test project(V, [1]) == Interval(N(1), N(1))
-    @test_throws AssertionError project(V, [3])
-    @test_throws AssertionError project(V, [1, 3])
-    @test_throws ArgumentError project(V, [1, 2, 3])
+    @test_throws DimensionMismatch project(V, [3])
+    @test_throws DimensionMismatch project(V, [1, 3])
+    @test_throws DimensionMismatch project(V, [1, 2, 3])
 
     # permute
     V = VPolygon([N[1, 0], N[1, 2]])

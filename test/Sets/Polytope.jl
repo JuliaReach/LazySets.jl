@@ -301,7 +301,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test project(V, [1, 2, 3]) == V
     # empty polytope
     V = VPolytope{N}()
-    @test project(V, [1]) == V
+    @test_throws DimensionMismatch project(V, [1])
 
     # linear_map with redundant vertices
     A = N[1 0; 0 0]

@@ -872,7 +872,7 @@ julia> project(P, [1, 2]) |> constraints_list
  HalfSpace{Float64, Vector{Float64}}([0.0, 1.0], 1.0)
 ```
 """
-function project(P::AbstractPolyhedron, block::AbstractVector{Int}; kwargs...)
+@validate function project(P::AbstractPolyhedron, block::AbstractVector{Int}; kwargs...)
     # cheap case
     clist = nothing  # allocate later
     @inbounds for c in constraints(P)

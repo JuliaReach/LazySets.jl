@@ -1,4 +1,4 @@
-function project(H::Hyperplane{N}, block::AbstractVector{Int}; kwargs...) where {N}
+@validate function project(H::Hyperplane{N}, block::AbstractVector{Int}; kwargs...) where {N}
     if constrained_dimensions(H) ⊆ block
         return Hyperplane(H.a[block], H.b)
     else
