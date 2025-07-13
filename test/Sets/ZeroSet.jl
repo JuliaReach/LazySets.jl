@@ -55,12 +55,13 @@ for N in [Float64, Float32, Rational{Int}]
 
     # subset
     z = ZeroSet{N}(1)
+    @test_throws DimensionMismatch z ⊆ Z
     s1 = Singleton(N[0])
     s2 = Singleton(N[2])
     @test z ⊆ s1 && ⊆(z, s1, true)[1]
     subset, point = ⊆(z, s2, true)
     @test z ⊈ s2 && !subset && point ∈ z && point ∉ s2
-    @test z ⊆ z && z ⊈ ZeroSet{N}(2)
+    @test z ⊆ z
 
     # linear map (concrete)
     M = hcat(N[1])

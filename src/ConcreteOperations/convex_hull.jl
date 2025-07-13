@@ -35,15 +35,11 @@ Otherwise the result is a `VPolytope`.
 We compute the vertices of both `X` and `Y` using `vertices_list` and then
 compute the convex hull of the union of those vertices.
 """
-function convex_hull(X::LazySet, Y::LazySet; algorithm=nothing,
-                     backend=nothing, solver=nothing)
-    n = dim(X)
-    @assert n == dim(Y) "the convex hull requires two sets of the same " *
-                        "dimension, but they have dimension $n and $(dim(Y))"
-
+@validate function convex_hull(X::LazySet, Y::LazySet; algorithm=nothing,
+                               backend=nothing, solver=nothing)
     vlist = convex_hull!([vertices_list(X); vertices_list(Y)];
                          algorithm=algorithm, backend=backend, solver=solver)
-    return _convex_hull_set(vlist; n=n)
+    return _convex_hull_set(vlist; n=dim(X))
 end
 
 # turn a list of points describing the convex hull into an appropriate set
@@ -512,7 +508,7 @@ end
     return _convex_hull_emptyset(∅, X)
 end
 
-@commutative function convex_hull(X::LazySet, U::Universe)
+@validate_commutative function convex_hull(X::LazySet, U::Universe)
     return _convex_hull_universe(U, X)
 end
 

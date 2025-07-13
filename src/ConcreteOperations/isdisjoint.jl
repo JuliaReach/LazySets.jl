@@ -10,7 +10,7 @@ This is a fallback implementation that computes the concrete intersection,
 
 A witness is constructed using the `an_element` implementation of the result.
 """
-function isdisjoint(X::LazySet, Y::LazySet, witness::Bool=false)
+@validate function isdisjoint(X::LazySet, Y::LazySet, witness::Bool=false)
     if _isdisjoint_convex_sufficient(X, Y)
         return _witness_result_empty(witness, true, X, Y)
     end
@@ -62,8 +62,8 @@ center for as long as the minimum of the radius and the center distance.
 In other words, the witness is the point in `H1` that is closest to the center
 of `H2`.
 """
-function isdisjoint(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
-                    witness::Bool=false)
+@validate function isdisjoint(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
+                              witness::Bool=false)
     empty_intersection = false
     center_diff = center(H2) - center(H1)
     @inbounds for i in eachindex(center_diff)
@@ -95,8 +95,8 @@ function isdisjoint(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
     return (false, v)
 end
 
-function isdisjoint(S1::AbstractSingleton, S2::AbstractSingleton,
-                    witness::Bool=false)
+@validate function isdisjoint(S1::AbstractSingleton, S2::AbstractSingleton,
+                              witness::Bool=false)
     s1 = element(S1)
     empty_intersection = !isapprox(s1, element(S2))
     return _witness_result_empty(witness, empty_intersection, S1, S2, s1)
@@ -119,8 +119,8 @@ end
 
 Let ``S = \\{s\\}``. Then ``S ∩ X = ∅`` iff ``s ∉ X``.
 """
-@commutative function isdisjoint(X::LazySet, S::AbstractSingleton,
-                                 witness::Bool=false)
+@validate_commutative function isdisjoint(X::LazySet, S::AbstractSingleton,
+                                          witness::Bool=false)
     return _isdisjoint_singleton(S, X, witness)
 end
 
@@ -138,13 +138,13 @@ center, and ``g_i`` are the zonotope's generators.
 For witness production we fall back to a less efficient implementation for
 general sets as the first argument.
 """
-@commutative function isdisjoint(Z::AbstractZonotope, H::Hyperplane,
-                                 witness::Bool=false)
+@validate_commutative function isdisjoint(Z::AbstractZonotope, H::Hyperplane,
+                                          witness::Bool=false)
     return _isdisjoint_zonotope_hyperplane(Z, H, witness)
 end
 
-@commutative function isdisjoint(Z::AbstractZonotope, H::Line2D,
-                                 witness::Bool=false)
+@validate_commutative function isdisjoint(Z::AbstractZonotope, H::Line2D,
+                                          witness::Bool=false)
     return _isdisjoint_zonotope_hyperplane(Z, H, witness)
 end
 
@@ -193,16 +193,14 @@ The algorithm is taken from [GuibasNZ03](@citet).
 are the center and generators of zonotope `Zi` and ``Z(c, g)`` represents the
 zonotope with center ``c`` and generators ``g``.
 """
-function isdisjoint(Z1::AbstractZonotope, Z2::AbstractZonotope,
-                    witness::Bool=false; solver=nothing)
+@validate function isdisjoint(Z1::AbstractZonotope, Z2::AbstractZonotope,
+                              witness::Bool=false; solver=nothing)
     if _isdisjoint_convex_sufficient(Z1, Z2)
         return _witness_result_empty(witness, true, Z1, Z2)
     end
 
-    n = dim(Z1)
-    @assert n == dim(Z2) "the zonotopes need to have the same dimensions"
     N = promote_type(eltype(Z1), eltype(Z2))
-    Z = Zonotope(zeros(N, n), hcat(genmat(Z1), genmat(Z2)))
+    Z = Zonotope(zeros(N, dim(Z1)), hcat(genmat(Z1), genmat(Z2)))
     result = !∈(center(Z1) - center(Z2), Z; solver=solver)
     if result
         return _witness_result_empty(witness, true, N)
@@ -265,11 +263,11 @@ We follow
 [this algorithm](https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection#Algebraic_form)
 for the line-hyperplane intersection.
 """
-@commutative function isdisjoint(X::LazySet, hp::Hyperplane, witness::Bool=false)
+@validate_commutative function isdisjoint(X::LazySet, hp::Hyperplane, witness::Bool=false)
     return _isdisjoint_hyperplane(hp, X, witness)
 end
 
-@commutative function isdisjoint(X::LazySet, L::Line2D, witness::Bool=false)
+@validate_commutative function isdisjoint(X::LazySet, L::Line2D, witness::Bool=false)
     return _isdisjoint_hyperplane(L, X, witness)
 end
 
@@ -299,7 +297,7 @@ For compact set `X`, we equivalently have that the support vector in the
 negative direction ``-a`` is contained in the half-space: ``σ(-a) ∈ hs``.
 The support vector is thus also a witness if the sets are not disjoint.
 """
-@commutative function isdisjoint(X::LazySet, hs::HalfSpace, witness::Bool=false)
+@validate_commutative function isdisjoint(X::LazySet, hs::HalfSpace, witness::Bool=false)
     return _isdisjoint_halfspace(hs, X, witness)
 end
 
@@ -335,9 +333,9 @@ With this algorithm, the method may return `false` even in the case where the
 intersection is empty. On the other hand, if the algorithm returns `true`, then
 it is guaranteed that the intersection is empty.
 """
-@commutative function isdisjoint(P::AbstractPolyhedron, X::LazySet,
-                                 witness::Bool=false; solver=nothing,
-                                 algorithm="exact")
+@validate_commutative function isdisjoint(P::AbstractPolyhedron, X::LazySet,
+                                          witness::Bool=false; solver=nothing,
+                                          algorithm="exact")
     return _isdisjoint_polyhedron(P, X, witness; solver=solver,
                                   algorithm=algorithm)
 end
@@ -373,19 +371,19 @@ function _isdisjoint_polyhedron(P::AbstractPolyhedron, X::LazySet,
     end
 end
 
-function isdisjoint(U1::UnionSet, U2::UnionSet, witness::Bool=false)
+@validate function isdisjoint(U1::UnionSet, U2::UnionSet, witness::Bool=false)
     return _isdisjoint_union(U1, U2, witness)
 end
 
-@commutative function isdisjoint(U::UnionSet, X::LazySet, witness::Bool=false)
+@validate_commutative function isdisjoint(U::UnionSet, X::LazySet, witness::Bool=false)
     return _isdisjoint_union(U, X, witness)
 end
 
-function isdisjoint(U1::UnionSetArray, U2::UnionSetArray, witness::Bool=false)
+@validate function isdisjoint(U1::UnionSetArray, U2::UnionSetArray, witness::Bool=false)
     return _isdisjoint_union(U1, U2, witness)
 end
 
-@commutative function isdisjoint(U::UnionSetArray, X::LazySet, witness::Bool=false)
+@validate_commutative function isdisjoint(U::UnionSetArray, X::LazySet, witness::Bool=false)
     return _isdisjoint_union(U, X, witness)
 end
 
@@ -404,11 +402,11 @@ function _isdisjoint_union(cup::Union{UnionSet,UnionSetArray}, X::LazySet, witne
     return _witness_result_empty(witness, true, N)
 end
 
-@commutative function isdisjoint(U::Universe, X::LazySet, witness::Bool=false)
+@validate_commutative function isdisjoint(U::Universe, X::LazySet, witness::Bool=false)
     return _isdisjoint_universe(U, X, witness)
 end
 
-function isdisjoint(C1::Complement, C2::Complement, witness::Bool=false)
+@validate function isdisjoint(C1::Complement, C2::Complement, witness::Bool=false)
     return _isdisjoint_general(C1, C2, witness)
 end
 
@@ -425,7 +423,7 @@ We fall back to `X ⊆ C.X`, which can be justified as follows:
     X ∩ Y^C = ∅ ⟺ X ⊆ Y
 ```
 """
-@commutative function isdisjoint(C::Complement, X::LazySet, witness::Bool=false)
+@validate_commutative function isdisjoint(C::Complement, X::LazySet, witness::Bool=false)
     return _isdisjoint_complement(C, X, witness)
 end
 
@@ -452,8 +450,8 @@ Then we project `cpa` to those blocks and convert the result to an `HPolytope`
 (or `HPolyhedron` if the set type is not known to be bounded) `Q`.
 Finally we determine whether `Q` and the projected `P` intersect.
 """
-@commutative function isdisjoint(cpa::CartesianProductArray,
-                                 P::AbstractPolyhedron, witness::Bool=false)
+@validate_commutative function isdisjoint(cpa::CartesianProductArray,
+                                          P::AbstractPolyhedron, witness::Bool=false)
     return _isdisjoint_cpa_polyhedron(cpa, P, witness)
 end
 
@@ -480,8 +478,8 @@ same block structure.
 
 Witness production is currently not supported.
 """
-function isdisjoint(X::CartesianProductArray, Y::CartesianProductArray,
-                    witness::Bool=false)
+@validate function isdisjoint(X::CartesianProductArray, Y::CartesianProductArray,
+                              witness::Bool=false)
     @assert same_block_structure(array(X), array(Y)) "block structure has to " *
                                                      "be identical"
 
@@ -509,9 +507,9 @@ The sets `cpa` and `H` are disjoint if and only if at least one block of `cpa`
 and the corresponding projection of `H` are disjoint.
 We perform these checks sequentially.
 """
-@commutative function isdisjoint(cpa::CartesianProductArray,
-                                 H::AbstractHyperrectangle,
-                                 witness::Bool=false)
+@validate_commutative function isdisjoint(cpa::CartesianProductArray,
+                                          H::AbstractHyperrectangle,
+                                          witness::Bool=false)
     N = promote_type(eltype(cpa), eltype(H))
     if witness
         w = zeros(N, dim(H))
@@ -542,33 +540,31 @@ end
 end
 
 for T in [:AbstractZonotope, :AbstractSingleton]
-    @eval @commutative function isdisjoint(C::CartesianProduct{N,<:LazySet,<:Universe},
-                                           Z::$(T)) where {N}
+    @eval @validate_commutative function isdisjoint(C::CartesianProduct{N,<:LazySet,<:Universe},
+                                                    Z::$(T)) where {N}
         X = first(C)
         Zp = project(Z, 1:dim(X))
         return isdisjoint(X, Zp)
     end
 
-    @eval @commutative function isdisjoint(C::CartesianProduct{N,<:Universe,<:LazySet},
-                                           Z::$(T)) where {N}
+    @eval @validate_commutative function isdisjoint(C::CartesianProduct{N,<:Universe,<:LazySet},
+                                                    Z::$(T)) where {N}
         Y = second(C)
         Zp = project(Z, (dim(first(C)) + 1):dim(C))
         return isdisjoint(Y, Zp)
     end
 
     # disambiguation
-    @eval @commutative function isdisjoint(::CartesianProduct{N,<:Universe,<:Universe},
-                                           Z::$(T)) where {N}
+    @eval @validate_commutative function isdisjoint(C::CartesianProduct{N,<:Universe,<:Universe},
+                                                    Z::$(T)) where {N}
         return false
     end
 end
 
 # See [WetzlingerKBA23; Proposition 8](@citet).
-@commutative function isdisjoint(Z::AbstractZonotope, P::AbstractPolyhedron,
-                                 witness::Bool=false; solver=nothing)
+@validate_commutative function isdisjoint(Z::AbstractZonotope, P::AbstractPolyhedron,
+                                          witness::Bool=false; solver=nothing)
     n = dim(Z)
-    @assert n == dim(P) "incompatible dimensions $(dim(Z)) and $(dim(P))"
-
     if n <= 2
         # this implementation is slower for low-dimensional sets
         return _isdisjoint_polyhedron(Z, P, witness; solver=solver)
@@ -620,61 +616,64 @@ end
 for T in (:AbstractPolyhedron, :AbstractZonotope, :AbstractHyperrectangle,
           :Hyperplane, :Line2D, :HalfSpace, :CartesianProductArray, :UnionSet,
           :UnionSetArray)
-    @eval @commutative function isdisjoint(X::($T), S::AbstractSingleton, witness::Bool=false)
+    @eval @validate_commutative function isdisjoint(X::($T), S::AbstractSingleton,
+                                                    witness::Bool=false)
         return _isdisjoint_singleton(S, X, witness)
     end
 end
 
 for T in (:Hyperplane, :Line2D)
-    @eval @commutative function isdisjoint(X::AbstractPolyhedron, Y::$(T), witness::Bool=false)
+    @eval @validate_commutative function isdisjoint(X::AbstractPolyhedron, Y::$(T),
+                                                    witness::Bool=false)
         return _isdisjoint_hyperplane(Y, X, witness)
     end
 end
 
-@commutative function isdisjoint(hp::Hyperplane, L::Line2D, witness::Bool=false)
+@validate_commutative function isdisjoint(hp::Hyperplane, L::Line2D, witness::Bool=false)
     return _isdisjoint_hyperplane_hyperplane(hp, L, witness)
 end
 
 for T in (:AbstractPolyhedron, :AbstractZonotope, :Hyperplane, :Line2D, :CartesianProductArray)
-    @eval @commutative function isdisjoint(X::($T), H::HalfSpace, witness::Bool=false)
+    @eval @validate_commutative function isdisjoint(X::($T), H::HalfSpace, witness::Bool=false)
         return _isdisjoint_halfspace(H, X, witness)
     end
 end
 
-function isdisjoint(X::AbstractPolyhedron, P::AbstractPolyhedron, witness::Bool=false;
-                    solver=nothing, algorithm="exact")
+@validate function isdisjoint(X::AbstractPolyhedron, P::AbstractPolyhedron, witness::Bool=false;
+                              solver=nothing, algorithm="exact")
     return _isdisjoint_polyhedron(P, X, witness)
 end
 
 for TU in (:UnionSet, :UnionSetArray)
     for T in (:AbstractPolyhedron, :Hyperplane, :Line2D, :HalfSpace)
-        @eval @commutative function isdisjoint(U::($TU), X::($T), witness::Bool=false)
+        @eval @validate_commutative function isdisjoint(U::($TU), X::($T), witness::Bool=false)
             return _isdisjoint_union(U, X, witness)
         end
     end
 end
 
-@commutative function isdisjoint(U1::UnionSet, U2::UnionSetArray, witness::Bool=false)
+@validate_commutative function isdisjoint(U1::UnionSet, U2::UnionSetArray, witness::Bool=false)
     return _isdisjoint_union(U1, U2, witness)
 end
 
 for T in (:AbstractPolyhedron, :AbstractZonotope, :AbstractSingleton,
           :HalfSpace, :Hyperplane, :Line2D, :CartesianProductArray, :UnionSet,
           :UnionSetArray, :Complement)
-    @eval @commutative function isdisjoint(U::Universe, X::($T), witness::Bool=false)
+    @eval @validate_commutative function isdisjoint(U::Universe, X::($T), witness::Bool=false)
         return _isdisjoint_universe(U, X, witness)
     end
 end
 
 for T in (:AbstractPolyhedron, :AbstractSingleton, :UnionSet, :UnionSetArray,
           :Hyperplane, :Line2D, :HalfSpace)
-    @eval @commutative function isdisjoint(C::Complement, X::($T), witness::Bool=false)
+    @eval @validate_commutative function isdisjoint(C::Complement, X::($T), witness::Bool=false)
         return _isdisjoint_complement(C, X, witness)
     end
 end
 
 for T in (:Hyperplane, :Line2D)
-    @eval @commutative function isdisjoint(cpa::CartesianProductArray, X::($T), witness::Bool=false)
+    @eval @validate_commutative function isdisjoint(cpa::CartesianProductArray, X::($T),
+                                                    witness::Bool=false)
         return _isdisjoint_cpa_polyhedron(cpa, X, witness)
     end
 end

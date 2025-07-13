@@ -1,4 +1,4 @@
-function ⊆(X::Interval, Y::Interval, witness::Bool=false)
+@validate function ⊆(X::Interval, Y::Interval, witness::Bool=false)
     if min(Y) > min(X)
         return witness ? (false, low(X)) : false
     elseif max(X) > max(Y)

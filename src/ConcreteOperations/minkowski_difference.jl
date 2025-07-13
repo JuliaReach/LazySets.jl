@@ -40,9 +40,7 @@ While the algorithm applies the support function to `Q`, we have that
 convex hull. Hence, if `Q` is not convex by type information, we wrap it in a
 lazy `ConvexHull`.
 """
-function minkowski_difference(P::LazySet, Q::LazySet)
-    @assert dim(P) == dim(Q) "the dimensions of the given sets should match, " *
-                             "but they are $(dim(P)) and $(dim(Q)), respectively"
+@validate function minkowski_difference(P::LazySet, Q::LazySet)
     @assert ispolyhedral(P) "this implementation requires that the first argument " *
                             "is polyhedral; try overapproximating with an `HPolyhedron`"
     @assert isbounded(Q) "this implementation requires that the second " *
@@ -63,14 +61,12 @@ end
 
 for T in (:LazySet, :AbstractZonotope, :AbstractHyperrectangle)
     # Minkowski difference with singleton is a translation
-    @eval function minkowski_difference(X::($T), S::AbstractSingleton)
-        @assert dim(X) == dim(S) "incompatible set dimensions $(dim(X)) and $(dim(S))"
+    @eval @validate function minkowski_difference(X::($T), S::AbstractSingleton)
         return translate(X, -element(S))
     end
 
     # Minkowski difference with ZeroSet is the identity
-    @eval function minkowski_difference(X::($T), Z::ZeroSet)
-        @assert dim(X) == dim(Z) "incompatible set dimensions $(dim(X)) and $(dim(Z))"
+    @eval @validate function minkowski_difference(X::($T), Z::ZeroSet)
         return X
     end
 end
@@ -84,11 +80,9 @@ end
 
 A `Hyperrectangle`, or an `EmptySet` if the difference is empty.
 """
-function minkowski_difference(H1::AbstractHyperrectangle,
-                              H2::AbstractHyperrectangle)
+@validate function minkowski_difference(H1::AbstractHyperrectangle,
+                                        H2::AbstractHyperrectangle)
     n = dim(H1)
-    @assert n == dim(H2) "incompatible dimensions $n and $(dim(H2))"
-
     N = promote_type(eltype(H1), eltype(H2))
     r = Vector{N}(undef, n)
     for i in 1:n
@@ -115,11 +109,8 @@ For one-dimensional sets, this method implements a simple algorithm for interval
 For two-dimensional sets, this method implements [Althoff15; Proposition 6](@citet).
 For higher-dimensional sets, this method implements [Althoff15; Theorem 3](@citet).
 """
-function minkowski_difference(Z1::AbstractZonotope, Z2::AbstractZonotope)
+@validate function minkowski_difference(Z1::AbstractZonotope, Z2::AbstractZonotope)
     n = dim(Z1)
-    @assert dim(Z2) == n "the Minkowski difference only applies to sets of " *
-                         "the same dimension, but the arguments have dimension $n and $(dim(Z2))"
-
     if n == 1
         return _minkowski_difference_1d(Z1, Z2)
     elseif n == 2
@@ -218,11 +209,11 @@ end
     return _minkowski_difference_emptyset2(X, ∅)
 end
 
-function minkowski_difference(U::Universe, X::LazySet)
+@validate function minkowski_difference(U::Universe, X::LazySet)
     return _minkowski_difference_universe(U, X)
 end
 
-function minkowski_difference(X::LazySet, U::Universe)
+@validate function minkowski_difference(X::LazySet, U::Universe)
     return _minkowski_difference_universe2(X, U)
 end
 
@@ -237,7 +228,7 @@ for T in (:AbstractSingleton, :ZeroSet, :Universe)
 end
 
 for T in (:AbstractSingleton, :ZeroSet)
-    @eval function minkowski_difference(U::Universe, X::$T)
+    @eval @validate function minkowski_difference(U::Universe, X::$T)
         return _minkowski_difference_universe(U, X)
     end
 end

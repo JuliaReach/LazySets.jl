@@ -1,4 +1,4 @@
-function ⊂(X::Interval, Y::Interval, witness::Bool=false)
+@validate function ⊂(X::Interval, Y::Interval, witness::Bool=false)
     if min(X) < min(Y) || max(X) > max(Y)
         return _witness_result_empty(witness, false, X, Y)
     end

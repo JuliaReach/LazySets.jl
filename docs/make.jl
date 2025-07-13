@@ -58,9 +58,10 @@ makedocs(; sitename="LazySets.jl",
                                                    #
                                                    ],
                               "MatrixSets" => [
-                                          "MatrixZonotope" => "lib/matrixsets/MatrixZonotope.md"
-                                          #
-                                          ],                    
+                                               #
+                                               "MatrixZonotope" => "lib/matrixsets/MatrixZonotope.md"
+                                               #
+                                               ],
                               "Sets" => [
                                          #
                                          "Ball1" => "lib/sets/Ball1.md",

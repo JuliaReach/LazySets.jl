@@ -30,6 +30,6 @@ julia> intersection(Line2D([1.0, 1], 1.0), Line2D([1.0, 1], 1.0))
 Line2D{Float64, Vector{Float64}}([1.0, 1.0], 1.0)
 ```
 """
-function intersection(L1::Line2D, L2::Line2D)
+@validate function intersection(L1::Line2D, L2::Line2D)
     return _intersection_line2d(L1, L2)
 end

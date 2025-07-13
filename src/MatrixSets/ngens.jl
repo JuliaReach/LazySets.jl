@@ -5,7 +5,7 @@ Return the number of generators of a matrix zonotope.
 
 ### Input
 
-- `MZ` -- matrix zonotope 
+- `MZ` -- matrix zonotope
 
 ### Output
 

@@ -21,6 +21,7 @@ end
 
 The tightest convex simple sparse polynomial zonotope containing `P1` and `P2`.
 """
-function convex_hull(P1::SimpleSparsePolynomialZonotope, P2::SimpleSparsePolynomialZonotope)
+@validate function convex_hull(P1::SimpleSparsePolynomialZonotope,
+                               P2::SimpleSparsePolynomialZonotope)
     return linear_combination(linear_combination(P1, P1), linear_combination(P2, P2))
 end

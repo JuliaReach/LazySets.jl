@@ -7,7 +7,7 @@
 
 ``B1 ⊆ B2`` iff ``‖ c_1 - c_2 ‖_2 + r_1 ≤ r_2``
 """
-function ⊆(B1::Ball2, B2::Ball2, witness::Bool=false)
+@validate function ⊆(B1::Ball2, B2::Ball2, witness::Bool=false)
     result = norm(B1.center - B2.center, 2) + B1.radius <= B2.radius
     if result
         return _witness_result_empty(witness, true, B1, B2)

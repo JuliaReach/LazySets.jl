@@ -2,13 +2,12 @@ module LineModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolyhedron
+using ..LazySets: AbstractPolyhedron, @validate_commutative
 import LinearAlgebra
 using LinearAlgebra: dot, nullspace
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: ismultiple
 using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Commutative: @commutative
 using ReachabilityBase.Comparison: _isapprox, isapproxzero
 using ReachabilityBase.Require
 

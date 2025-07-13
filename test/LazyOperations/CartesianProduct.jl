@@ -238,8 +238,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test convert(Singleton, S1 × S2) == Singleton(N[1, 2, 3, 4, 5, 6])
 
     # concrete intersection
-    S1 = BallInf(zeros(N, 2), N(1))
-    S2 = BallInf(ones(N, 2), N(1))
+    S1 = BallInf(zeros(N, 1), N(1))
+    S2 = BallInf(ones(N, 1), N(1))
     P = BallInf(fill(N(1 / 2), 2), N(3 / 2))
     cp = S1 × S2
     cpa = intersection(cp, P)
@@ -339,9 +339,6 @@ for N in [Float64, Float32, Rational{Int}]
         res, w = isdisjoint(x, y, true)
         @test !isdisjoint(x, y) && !res && w ∈ x && w ∈ y
     end
-
-    # concrete intersection where all dimensions are unconstrained
-    @test intersection(cpa, HPolyhedron{N}()) == cpa
 
     # linear_map
     cpa = CartesianProductArray([Interval(N(0), N(1)), Interval(N(2), N(3))])
@@ -469,8 +466,8 @@ for N in [Float64, Float32]
           !is_intersection_empty(Approximations.overapproximate(cpa1), G)
     @test !is_intersection_empty(cpa1, Universe{N}(4)) &&
           !is_intersection_empty(Universe{N}(4), cpa2)
-    @test_throws AssertionError is_intersection_empty(cpa1, Universe{N}(3))
-    @test_throws AssertionError is_intersection_empty(Universe{N}(5), cpa2)
+    @test_throws DimensionMismatch is_intersection_empty(cpa1, Universe{N}(3))
+    @test_throws DimensionMismatch is_intersection_empty(Universe{N}(5), cpa2)
 
     # projection
     cp = Interval(N(0), N(2)) × Hyperrectangle(N[2, 3], N[1, 1])

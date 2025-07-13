@@ -4,12 +4,11 @@ using Reexport, Requires
 
 using ..LazySets: AbstractPolyhedron, LazySet, AbstractLinearMapAlgorithm,
                   default_lp_solver, is_lp_infeasible, is_lp_optimal, linprog,
-                  _witness_result_empty
+                  _witness_result_empty, @validate, @validate_commutative
 import LinearAlgebra
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: ismultiple, nonzero_indices, samedir
-using ReachabilityBase.Commutative: @commutative
 using ReachabilityBase.Comparison: isapproxzero, _isapprox, _leq
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
@@ -104,9 +103,14 @@ function is_tighter_same_dir_2D(c1::HalfSpace,
 end
 
 # TODO: after #2032, #2041 remove use of this function
-_normal_Vector(c::HalfSpace) = HalfSpace(convert(Vector, c.a), c.b)
-_normal_Vector(C::Vector{<:HalfSpace}) = [_normal_Vector(c) for c in C]
 _normal_Vector(P::LazySet) = _normal_Vector(constraints_list(P))
+_normal_Vector(c::HalfSpace) = HalfSpace(convert(Vector, c.a), c.b)
+_normal_Vector(C::Vector{<:HalfSpace{N}}) where {N} = [_normal_Vector(c) for c in C]
+
+function _normal_Vector(C::Vector{<:HalfSpace})
+    N = promote_type([eltype(c) for c in C]...)
+    return [HalfSpace(convert(Vector{N}, c.a), N(c.b)) for c in C]
+end
 
 include("init.jl")
 

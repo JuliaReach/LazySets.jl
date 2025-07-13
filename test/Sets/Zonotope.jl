@@ -112,6 +112,10 @@ for N in [Float64, Float32, Rational{Int}]
     M = N[-1 1;]
     Z6 = linear_map(M, Z3)
     @test ngens(Z6) == 1 && genmat(Z6) == hcat(N[4])
+    # ... unless the map is zero
+    M = N[0 0;]
+    Z7 = linear_map(M, Z3)
+    @test ngens(Z7) == 0 && genmat(Z7) == Matrix{N}(undef, 1, 0)
 
     # in-place linear map
     Zin = convert(Zonotope, BallInf(zeros(N, 2), N(1)))
@@ -309,13 +313,13 @@ for N in [Float64, Float32, Rational{Int}]
     @test permute(Z, [1, 2]) == Z
     @test permute(Z, [2, 1]) == Zonotope(N[-2, -1], N[-4 -5 -6; 1 2 3])
 
-    # norm 
+    # norm
     Z = Zonotope(N[1, 2], N[2 1 -2; 1 2 0])
     @test norm(Z, 1) == 11
     @test norm(scale(2.0, Z), 1) == 22.0
 
     Z2 = Zonotope(N[1, -1], zeros(N, 2, 2))
-    @test norm(Z2, 1) == 2 
+    @test norm(Z2, 1) == 2
 
     Z3 = Zonotope(N[1, -1], N[-2 1; 0 -1])
     @test norm(Z3, 1) == 6

@@ -12,15 +12,13 @@ union is in general not convex.
 
 This implementation uses `IntervalArithmetic.setdiff`.
 """
-function difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
+@validate function difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
     Xib = convert(IA.IntervalBox, X)
     Yib = convert(IA.IntervalBox, Y)
     return UnionSetArray(convert.(Hyperrectangle, IA.setdiff(Xib, Yib)))
 end
 
-function difference(X::Interval{N}, H::HalfSpace) where {N}
-    @assert dim(H) == 1
-
+@validate function difference(X::Interval{N}, H::HalfSpace) where {N}
     if H.a[1] < zero(N)
         # half-space is a lower bound
         l = low(H, 1)
@@ -48,11 +46,11 @@ function difference(X::Interval{N}, H::HalfSpace) where {N}
     end
 end
 
-function difference(U::Universe, X::LazySet)
+@validate function difference(U::Universe, X::LazySet)
     return _difference_universe(U, X)
 end
 
-function difference(X::LazySet, U::Universe)
+@validate function difference(X::LazySet, U::Universe)
     return _difference_universe2(X, U)
 end
 

@@ -2,7 +2,8 @@ module IntervalModule
 
 using Reexport, Requires
 
-using ..LazySets: LazySet, AbstractHyperrectangle, _witness_result_empty
+using ..LazySets: LazySet, AbstractHyperrectangle, _witness_result_empty,
+                  @validate
 using ..API: eltype, isconvextype, isempty
 import IntervalArithmetic as IA
 using Random: AbstractRNG, GLOBAL_RNG
@@ -20,7 +21,7 @@ using ReachabilityBase.Require: require
                         isdisjoint, isequivalent, ⊂, ⊆, minkowski_difference,
                         minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens,
-                             radius_hyperrectangle, split
+                             radius_hyperrectangle, rationalize, split
 import ..LazySets: plot_recipe
 import Base: convert, min, max
 @reexport using ..API
@@ -44,6 +45,7 @@ include("low.jl")
 include("norm.jl")
 include("radius.jl")
 include("rand.jl")
+include("rationalize.jl")
 include("rectify.jl")
 include("reflect.jl")
 include("vertices_list.jl")

@@ -1,6 +1,4 @@
-@commutative function distance(x::AbstractVector, L::Line; p::Real=2)
-    @assert length(x) == dim(L) "incompatible dimensions $(length(x)) and $(dim(L))"
-
+@validate_commutative function distance(x::AbstractVector, L::Line; p::Real=2)
     if p != 2
         throw(ArgumentError("`distance` is only implemented for Euclidean norm"))
     end
