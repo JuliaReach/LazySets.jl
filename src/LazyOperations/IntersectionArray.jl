@@ -173,7 +173,7 @@ of sets.
 
 A point ``x`` is in the intersection iff it is in each set.
 """
-function ∈(x::AbstractVector, ia::IntersectionArray)
+@validate function ∈(x::AbstractVector, ia::IntersectionArray)
     for S in ia.array
         if x ∉ S
             return false

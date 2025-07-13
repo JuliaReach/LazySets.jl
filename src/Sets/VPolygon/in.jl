@@ -23,10 +23,7 @@ julia> [4.4, 3.4] ∈ P  #  point lies on the edge
 true
 ```
 """
-function ∈(x::AbstractVector, P::VPolygon)
-    @assert length(x) == 2 "a $(length(x))-dimensional vector is " *
-                           "incompatible with an $(dim(P))-dimensional set"
-
+@validate function ∈(x::AbstractVector, P::VPolygon)
     # special cases: 0 or 1 vertex
     @inbounds begin
         if length(P.vertices) == 0

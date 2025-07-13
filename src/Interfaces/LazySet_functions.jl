@@ -1504,7 +1504,7 @@ end
 
 # The default implementation throws an error because Julia's default behavior
 # leads to an error that is hard to understand.
-function ∈(::AbstractVector, X::LazySet)
+@validate function ∈(::AbstractVector, X::LazySet)
     throw(ArgumentError("membership check for set type $(basetype(X)) is not implemented"))
 end
 

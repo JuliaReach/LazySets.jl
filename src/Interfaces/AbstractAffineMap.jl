@@ -183,7 +183,7 @@ julia> [0.5, 0.5] ∈ M*B
 true
 ```
 """
-function ∈(x::AbstractVector, am::AbstractAffineMap)
+@validate function ∈(x::AbstractVector, am::AbstractAffineMap)
     if !iswellconditioned(matrix(am))
         # ill-conditioned matrix; use concrete set representation
         return x ∈ affine_map(matrix(am), set(am), vector(am))

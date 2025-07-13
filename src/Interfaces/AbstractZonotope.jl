@@ -268,9 +268,7 @@ We consider the ``p``-dimensional space of elements ``(ξ_1, …, ξ_p)``
 constrained to ``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p`` such that
 ``x-c = Gξ`` holds.
 """
-function ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
-    @assert length(x) == dim(Z)
-
+@validate function ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
     p = ngens(Z)
     if p == 0
         # no generators can cause trouble in LP solver
@@ -1153,9 +1151,9 @@ function _genmat_static(::AbstractZonotope) end
 
 Compute the exact ``ℓ₁`` norm of a zonotope with generator matrix ``G ∈ \\mathbb{R}^{d×n}``
 
-### Notes 
+### Notes
 
-The function exploits the fact that the mapping ``ξ ↦ \\| c + ∑_{i=1}^n ξ_i g_i \\|_1`` is 
+The function exploits the fact that the mapping ``ξ ↦ \\| c + ∑_{i=1}^n ξ_i g_i \\|_1`` is
 a convex function of the coefficients ``ξ_i``.  As a result, its maximum over the hypercube ``[-1,1]^n`` is
 attained at one of the ``2^n`` corners.
 

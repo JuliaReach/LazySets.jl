@@ -359,7 +359,7 @@ the answer is negative.
 Finally, if there are zero entries in the vector and the vector is not contained
 in the wrapped set, we give up and throw an error.
 """
-function ∈(x::AbstractVector, R::Rectification)
+@validate function ∈(x::AbstractVector, R::Rectification)
     N = promote_type(eltype(x), eltype(R))
     # scan for negative entries
     if any(xi -> xi < zero(N), x)

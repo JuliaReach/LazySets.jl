@@ -18,10 +18,7 @@ let ``x`` be the given point.
 
 The algorithm is inspired from [here](https://stackoverflow.com/a/328110).
 """
-function ∈(x::AbstractVector, L::LineSegment)
-    @assert length(x) == dim(L) "a vector of length $(length(x)) is " *
-                                "incompatible with a $(dim(L))-dimensional set"
-
+@validate function ∈(x::AbstractVector, L::LineSegment)
     # check if point x is on the line through the line segment (p, q)
     p = L.p
     q = L.q

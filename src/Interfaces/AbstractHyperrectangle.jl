@@ -395,9 +395,7 @@ the center and radius, and ``x_i`` be the vector ``x`` in dimension ``i``,
 respectively.
 Then ``x ∈ H`` iff ``|c_i - x_i| ≤ r_i`` for all ``i=1,…,n``.
 """
-function ∈(x::AbstractVector, H::AbstractHyperrectangle)
-    @assert length(x) == dim(H) "a $(length(x))-dimensional vector is " *
-                                "incompatible with a $(dim(H))-dimensional set"
+@validate function ∈(x::AbstractVector, H::AbstractHyperrectangle)
     @inbounds for i in eachindex(x)
         ri = radius_hyperrectangle(H, i)
         if !_leq(abs(center(H, i) - x[i]), ri)

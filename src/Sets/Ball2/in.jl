@@ -30,8 +30,7 @@ julia> [.5, 1.5] ∈ B
 true
 ```
 """
-function ∈(x::AbstractVector, B::Ball2)
-    @assert length(x) == dim(B)
+@validate function ∈(x::AbstractVector, B::Ball2)
     N = promote_type(eltype(x), eltype(B))
     sum = zero(N)
     @inbounds for i in eachindex(x)

@@ -204,7 +204,7 @@ Check whether a given point is contained in the union of two sets.
 
 `true` iff ``x ∈ cup``.
 """
-function ∈(x::AbstractVector, cup::UnionSet)
+@validate function ∈(x::AbstractVector, cup::UnionSet)
     return x ∈ cup.X || x ∈ cup.Y
 end
 

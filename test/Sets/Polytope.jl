@@ -431,7 +431,7 @@ for N in [Float64]
     @test N[0, 1 // 2] ∉ q
     # empty polytope
     V = VPolytope{N}()
-    @test N[0] ∉ V
+    @test_throws DimensionMismatch N[0] ∈ V
     # one vertex
     V = VPolytope([N[1, 2]])
     @test N[1, 2] ∈ V && N[2, 2] ∉ V

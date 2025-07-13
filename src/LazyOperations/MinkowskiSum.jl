@@ -254,19 +254,19 @@ and another set.
 Note that ``x ∈ (S ⊕ P)``, where ``S = \\{s\\}``  is a singleton set and
 ``P`` is a set, if and only if ``(x-s) ∈ P``.
 """
-function ∈(x::AbstractVector, ms::MinkowskiSum{N,<:AbstractSingleton}) where {N}
+@validate function ∈(x::AbstractVector, ms::MinkowskiSum{N,<:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 
 # symmetric method
-function ∈(x::AbstractVector,
-           ms::MinkowskiSum{N,<:LazySet,<:AbstractSingleton}) where {N}
+@validate function ∈(x::AbstractVector,
+                     ms::MinkowskiSum{N,<:LazySet,<:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.Y, ms.X)
 end
 
 # disambiguation
-function ∈(x::AbstractVector,
-           ms::MinkowskiSum{N,<:AbstractSingleton,<:AbstractSingleton}) where {N}
+@validate function ∈(x::AbstractVector,
+                     ms::MinkowskiSum{N,<:AbstractSingleton,<:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 

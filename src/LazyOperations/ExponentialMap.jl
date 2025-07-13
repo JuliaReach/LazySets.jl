@@ -431,10 +431,8 @@ julia> [1.0, 1.0] ∈ em
 true
 ```
 """
-function ∈(x::AbstractVector, em::ExponentialMap;
-           backend=get_exponential_backend())
-    @assert length(x) == dim(em) "a vector of length $(length(x)) is " *
-                                 "incompatible with a set of dimension $(dim(em))"
+@validate function ∈(x::AbstractVector, em::ExponentialMap;
+                     backend=get_exponential_backend())
     N = promote_type(eltype(x), eltype(em))
     y = _expmv(backend, -one(N), em.spmexp.M, x)
     return y ∈ em.X

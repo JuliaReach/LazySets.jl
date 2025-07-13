@@ -583,7 +583,7 @@ Check whether a given point is contained in the intersection of two sets.
 
 A point ``x`` is in the intersection iff it is in each set.
 """
-function ∈(x::AbstractVector, cap::Intersection)
+@validate function ∈(x::AbstractVector, cap::Intersection)
     return (x ∈ cap.X) && (x ∈ cap.Y)
 end
 

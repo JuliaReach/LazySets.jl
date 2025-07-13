@@ -186,9 +186,7 @@ julia> [0.5, 1.5] ∈ B
 true
 ```
 """
-function ∈(x::AbstractVector, B::AbstractBallp)
-    @assert length(x) == dim(B) "a vector of length $(length(x)) is " *
-                                "incompatible with a set of dimension $(dim(B))"
+@validate function ∈(x::AbstractVector, B::AbstractBallp)
     N = promote_type(eltype(x), eltype(B))
     p = ball_norm(B)
     sum = zero(N)

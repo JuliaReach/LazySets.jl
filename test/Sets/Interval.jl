@@ -312,7 +312,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws DimensionMismatch exponential_map(ones(N, 2, 1), X)
 
     # in
-    @test_throws AssertionError N[0, 0] ∈ X
+    @test_throws DimensionMismatch N[0, 0] ∈ X
     @test N[1] ∈ X && N[2] ∈ X && N[3] ∉ X
     # number in interval is invalid
     @test_throws MethodError N(1) ∈ X

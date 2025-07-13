@@ -150,7 +150,7 @@ end
 This implementation performs an approximate comparison to account for
 imprecision in floating-point computations.
 """
-function ∈(x::AbstractVector, S::AbstractSingleton)
+@validate function ∈(x::AbstractVector, S::AbstractSingleton)
     return _isapprox(x, element(S))
 end
 

@@ -246,9 +246,7 @@ Check whether a given point is contained in a Cartesian product.
 
 `true` iff ``x ∈ cp``.
 """
-function ∈(x::AbstractVector, cp::CartesianProduct)
-    @assert length(x) == dim(cp)
-
+@validate function ∈(x::AbstractVector, cp::CartesianProduct)
     n1 = dim(cp.X)
     return view(x, 1:n1) ∈ cp.X &&
            view(x, (n1 + 1):length(x)) ∈ cp.Y

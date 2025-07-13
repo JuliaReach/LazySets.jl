@@ -214,7 +214,7 @@ sets.
 
 `true` iff ``x ∈ cup``.
 """
-function ∈(x::AbstractVector, cup::UnionSetArray)
+@validate function ∈(x::AbstractVector, cup::UnionSetArray)
     return any(X -> x ∈ X, array(cup))
 end
 

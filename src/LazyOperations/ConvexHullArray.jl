@@ -221,7 +221,7 @@ function constraints_list(X::ConvexHullArray{N,Singleton{N,VT}}) where {N,VT}
 end
 
 # membership in a convex-hull array of singletons
-function ∈(x::AbstractVector, X::ConvexHullArray)
+@validate function ∈(x::AbstractVector, X::ConvexHullArray)
     n = length(x)
     ST = n == 2 ? VPolygon : VPolytope
     V = convert(ST, X)

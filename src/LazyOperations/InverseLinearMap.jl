@@ -225,7 +225,7 @@ julia> [0.1, 0.1] ∈ ilm
 true
 ```
 """
-function ∈(x::AbstractVector, ilm::InverseLinearMap)
+@validate function ∈(x::AbstractVector, ilm::InverseLinearMap)
     y = ilm.M * x
     return y ∈ ilm.X
 end

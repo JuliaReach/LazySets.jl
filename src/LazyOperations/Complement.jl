@@ -89,9 +89,7 @@ Check whether a given point is contained in the complement of a set.
     x ∈ X^C ⟺ x ∉ X
 ```
 """
-function ∈(x::AbstractVector, C::Complement)
-    @assert length(x) == dim(C) "a vector of length $(length(x)) is " *
-                                "incompatible with a set of dimension $(dim(C))"
+@validate function ∈(x::AbstractVector, C::Complement)
     return x ∉ C.X
 end
 

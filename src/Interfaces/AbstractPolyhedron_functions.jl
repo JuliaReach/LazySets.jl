@@ -15,10 +15,7 @@ ispolyhedral(::AbstractPolyhedron) = true
 
 This implementation checks if the point lies inside each defining half-space.
 """
-function ∈(x::AbstractVector, P::AbstractPolyhedron)
-    @assert length(x) == dim(P) "a $(length(x))-dimensional point cannot be " *
-                                "an element of a $(dim(P))-dimensional set"
-
+@validate function ∈(x::AbstractVector, P::AbstractPolyhedron)
     for c in constraints_list(P)
         if !_leq(dot(c.a, x), c.b)
             return false

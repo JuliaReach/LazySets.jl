@@ -338,7 +338,7 @@ julia> [0.5, 0.5] ∈ M*B
 true
 ```
 """
-function ∈(x::AbstractVector, lm::LinearMap)
+@validate function ∈(x::AbstractVector, lm::LinearMap)
     if !iswellconditioned(matrix(lm))
         # ill-conditioned matrix; use concrete set representation
         return x ∈ linear_map(matrix(lm), set(lm))

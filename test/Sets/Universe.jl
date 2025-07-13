@@ -212,7 +212,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws DimensionMismatch exponential_map(ones(N, 3, 2), U)
 
     # in
-    @test_throws AssertionError N[0] ∈ U
+    @test_throws DimensionMismatch N[0] ∈ U
     @test N[0, 0] ∈ U
 
     # is_interior_point
