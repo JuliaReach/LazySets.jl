@@ -378,7 +378,7 @@ function center(tr::Translation)
     return center(tr.X) + tr.v
 end
 
-function translate(tr::Translation, x::AbstractVector)
+@validate function translate(tr::Translation, x::AbstractVector)
     return Translation(translate(tr.X, x))
 end
 

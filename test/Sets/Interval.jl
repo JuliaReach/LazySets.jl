@@ -412,7 +412,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test res isa Vector{N} && res == [N(0)]
 
     # translate
-    @test_throws AssertionError translate(X, N[1, 1])
+    @test_throws DimensionMismatch translate(X, N[1, 1])
     Y = translate(X, N[1])
     @test isidentical(Y, Interval(N(1), N(3)))
     # translate!

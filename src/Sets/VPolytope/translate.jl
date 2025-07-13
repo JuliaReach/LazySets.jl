@@ -1,4 +1,4 @@
-function translate(P::VPolytope, v::AbstractVector)
+@validate function translate(P::VPolytope, v::AbstractVector)
     return translate!(deepcopy(P), v)
 end
 

@@ -258,6 +258,6 @@ function ispolyhedral(B::Bloating)
     return (B.p == 1 || B.p == Inf) && ispolyhedral(B.X)
 end
 
-function translate(B::Bloating, x::AbstractVector)
+@validate function translate(B::Bloating, x::AbstractVector)
     return Bloating(translate(B.X, x), B.ε, B.p)
 end

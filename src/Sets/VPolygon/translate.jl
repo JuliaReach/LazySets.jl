@@ -1,4 +1,4 @@
-function translate(P::VPolygon, v::AbstractVector)
+@validate function translate(P::VPolygon, v::AbstractVector)
     return translate!(deepcopy(P), v)
 end
 

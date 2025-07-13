@@ -292,6 +292,6 @@ end
     return UnionSetArray([project(X, block; kwargs...) for X in cup])
 end
 
-function translate(cup::UnionSetArray, v::AbstractVector)
+@validate function translate(cup::UnionSetArray, v::AbstractVector)
     return UnionSetArray([translate(X, v) for X in cup])
 end

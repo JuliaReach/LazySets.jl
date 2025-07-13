@@ -293,7 +293,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test x isa Vector{N} && x == N[0, 0]
 
     # translate
-    @test_throws AssertionError translate(U, N[1])
+    @test_throws DimensionMismatch translate(U, N[1])
     U2 = translate(U, N[1, 2])
     @test isidentical(U, U2)
     # translate!

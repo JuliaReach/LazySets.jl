@@ -1,4 +1,4 @@
-function translate(U::Universe, v::AbstractVector)
+@validate function translate(U::Universe, v::AbstractVector)
     return translate!(U, v)  # no need to copy
 end
 

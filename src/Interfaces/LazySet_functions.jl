@@ -517,7 +517,7 @@ end
 
 The default implementation calls `translate!` on a copy of `X`.
 """
-function translate(X::LazySet, v::AbstractVector)
+@validate function translate(X::LazySet, v::AbstractVector)
     Y = copy(X)
     translate!(Y, v)
     return Y

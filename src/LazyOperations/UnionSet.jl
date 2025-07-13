@@ -287,7 +287,7 @@ function convex_hull(cup::UnionSet)
     return convex_hull(cup.X, cup.Y)
 end
 
-function translate(cup::UnionSet, x::AbstractVector)
+@validate function translate(cup::UnionSet, x::AbstractVector)
     X = translate(first(cup), x)
     Y = translate(second(cup), x)
     return UnionSet(X, Y)

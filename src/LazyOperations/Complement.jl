@@ -153,7 +153,7 @@ function constraints_list(C::Complement)
     return out
 end
 
-function translate(C::Complement, x::AbstractVector)
+@validate function translate(C::Complement, x::AbstractVector)
     return Complement(translate(C.X, x))
 end
 

@@ -294,7 +294,7 @@ function vertices_list(ms::MinkowskiSum)
     return vertices_list(minkowski_sum(ms.X, ms.Y))
 end
 
-function translate(ms::MinkowskiSum, x::AbstractVector)
+@validate function translate(ms::MinkowskiSum, x::AbstractVector)
     X = translate(first(ms), x)
     Y = translate(second(ms), x)
     return MinkowskiSum(X, Y)

@@ -216,7 +216,7 @@ function vertices_list(ch::ConvexHull;
     return vlist
 end
 
-function translate(ch::ConvexHull, x::AbstractVector)
+@validate function translate(ch::ConvexHull, x::AbstractVector)
     X = translate(first(ch), x)
     Y = translate(second(ch), x)
     return ConvexHull(X, Y)

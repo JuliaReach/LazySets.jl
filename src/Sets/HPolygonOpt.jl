@@ -207,9 +207,7 @@ the original constraints if `share == true`.
 
 We translate every constraint.
 """
-function translate(P::HPolygonOpt, v::AbstractVector; share::Bool=false)
-    @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
-                                "set by a $(length(v))-dimensional vector"
+@validate function translate(P::HPolygonOpt, v::AbstractVector; share::Bool=false)
     constraints = [translate(c, v; share=share) for c in constraints_list(P)]
     return HPolygonOpt(constraints, P.ind; sort_constraints=false,
                        check_boundedness=false, prune=false)

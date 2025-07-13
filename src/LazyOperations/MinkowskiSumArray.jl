@@ -218,6 +218,6 @@ function concretize(msa::MinkowskiSumArray)
     return _concretize_lazy_array(msa)
 end
 
-function translate(msa::MinkowskiSumArray, x::AbstractVector)
+@validate function translate(msa::MinkowskiSumArray, x::AbstractVector)
     return MinkowskiSumArray([translate(X, x) for X in array(msa)])
 end

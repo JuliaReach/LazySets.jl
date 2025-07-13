@@ -221,6 +221,6 @@ function concretize(ia::IntersectionArray)
     return _concretize_lazy_array(ia)
 end
 
-function translate(ia::IntersectionArray, x::AbstractVector)
+@validate function translate(ia::IntersectionArray, x::AbstractVector)
     return IntersectionArray([translate(X, x) for X in array(ia)])
 end

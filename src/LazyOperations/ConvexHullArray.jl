@@ -238,6 +238,6 @@ function concretize(cha::ConvexHullArray)
     return _concretize_lazy_array(cha)
 end
 
-function translate(cha::ConvexHullArray, x::AbstractVector)
+@validate function translate(cha::ConvexHullArray, x::AbstractVector)
     return ConvexHullArray([translate(X, x) for X in array(cha)])
 end

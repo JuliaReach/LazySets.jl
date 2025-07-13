@@ -1,4 +1,4 @@
-function translate(P::SimpleSparsePolynomialZonotope, v::AbstractVector)
+@validate function translate(P::SimpleSparsePolynomialZonotope, v::AbstractVector)
     return translate!(copy(P), v)
 end
 
