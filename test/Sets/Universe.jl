@@ -297,7 +297,7 @@ for N in [Float64, Float32, Rational{Int}]
     U2 = translate(U, N[1, 2])
     @test isidentical(U, U2)
     # translate!
-    @test_throws AssertionError translate!(U, N[1])
+    @test_throws DimensionMismatch translate!(U, N[1])
     U2 = copy(U)
     translate!(U2, N[1, 2])
     @test isidentical(U, U2)

@@ -20,9 +20,7 @@ The radius vector is shared with the original hyperrectangle if `share == true`.
     return Hyperrectangle(c, radius)
 end
 
-function translate!(H::Hyperrectangle, v::AbstractVector)
-    @assert length(v) == dim(H) "cannot translate a $(dim(H))-dimensional " *
-                                "set by a $(length(v))-dimensional vector"
+@validate function translate!(H::Hyperrectangle, v::AbstractVector)
     H.center .+= v
     return H
 end

@@ -284,7 +284,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test translate!(pp, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]]) == pp
     # empty polytope
     V = VPolytope{N}()
-    @test translate!(copy(V), N[1]) == V
+    @test_throws DimensionMismatch translate!(copy(V), N[1])
 
     # copy (see #1002)
     p, q = [N(1)], [N(2)]
