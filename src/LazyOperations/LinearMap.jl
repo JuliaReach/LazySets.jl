@@ -434,7 +434,7 @@ Return the linear map of a lazy linear map.
 
 A set representing the linear map.
 """
-function linear_map(M::AbstractMatrix, lm::LinearMap)
+@validate function linear_map(M::AbstractMatrix, lm::LinearMap)
     return linear_map(M * lm.M, lm.X)
 end
 

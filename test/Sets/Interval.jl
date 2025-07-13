@@ -337,7 +337,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # linear_map
-    @test_throws AssertionError linear_map(ones(N, 2, 2), X)
+    @test_throws DimensionMismatch linear_map(ones(N, 2, 2), X)
     Y = linear_map(2 * ones(N, 1, 1), X)
     @test Y isa Interval{N} && isequivalent(Y, Interval(N(0), N(4)))
     Y = linear_map(zeros(N, 1, 1), X)

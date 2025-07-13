@@ -320,7 +320,7 @@ The set representing the linear map of the lazy inverse linear map of a set.
 This implementation is inefficient because it computes the concrete inverse of
 ``M``, which is what `InverseLinearMap` is supposed to avoid.
 """
-function linear_map(M::AbstractMatrix, ilm::InverseLinearMap)
+@validate function linear_map(M::AbstractMatrix, ilm::InverseLinearMap)
     return linear_map(M * inv(ilm.M), ilm.X)
 end
 

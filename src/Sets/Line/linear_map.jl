@@ -13,9 +13,7 @@ or a `Singleton` otherwise.
 We apply the linear map to the point and direction of `L`.
 If the resulting direction is zero, the result is a singleton.
 """
-function linear_map(M::AbstractMatrix, L::Line)
-    @assert dim(L) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-                                 "applied to a set of dimension $(dim(L))"
+@validate function linear_map(M::AbstractMatrix, L::Line)
 
     Mp = M * L.p
     Md = M * L.d

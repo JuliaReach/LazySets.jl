@@ -168,7 +168,7 @@ function _extrema_polynomial_zonotope(P::AbstractSparsePolynomialZonotope{N}) wh
     return (c .- r, c .+ r)
 end
 
-function linear_map(M::AbstractMatrix, P::AbstractSparsePolynomialZonotope)
+@validate function linear_map(M::AbstractMatrix, P::AbstractSparsePolynomialZonotope)
     return SparsePolynomialZonotope(M * center(P),
                                     M * genmat_dep(P),
                                     M * genmat_indep(P),

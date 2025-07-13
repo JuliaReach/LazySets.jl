@@ -667,7 +667,7 @@ sets.
 
 A polyhedron or polytope.
 """
-function linear_map(M::AbstractMatrix, cpa::CartesianProductArray)
+@validate function linear_map(M::AbstractMatrix, cpa::CartesianProductArray)
     return _linear_map_cartesian_product(M, cpa)
 end
 

@@ -363,14 +363,11 @@ We convert the Cartesian product to constraint representation and then call
 This is a fallback implementation and will fail if the wrapped sets are not
 polyhedral.
 """
-function linear_map(M::AbstractMatrix, cp::CartesianProduct)
+@validate function linear_map(M::AbstractMatrix, cp::CartesianProduct)
     return _linear_map_cartesian_product(M, cp)
 end
 
 function _linear_map_cartesian_product(M, cp)
-    @assert dim(cp) == size(M, 2) "a linear map of size $(size(M)) cannot " *
-                                  "be applied to a set of dimension $(dim(cp))"
-
     # use constraint representation
     T = isbounded(cp) ? HPolytope : HPolyhedron
     P = T(constraints_list(cp))

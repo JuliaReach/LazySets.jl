@@ -227,7 +227,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # linear_map
-    @test_throws AssertionError linear_map(ones(N, 2, 3), U)
+    @test_throws DimensionMismatch linear_map(ones(N, 2, 3), U)
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         # TODO this should work, even without Polyhedra
         @test_broken linear_map(ones(N, 2, 2), U)

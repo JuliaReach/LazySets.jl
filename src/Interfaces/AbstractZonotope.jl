@@ -306,10 +306,7 @@ We apply the linear map to the center and the generators.
 If the map has output dimension 1, a specialized algorithm ensures that the
 resulting zonotope only has a single generator (or none if the map is zero).
 """
-function linear_map(M::AbstractMatrix, Z::AbstractZonotope)
-    @assert dim(Z) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-                                 "applied to a set of dimension $(dim(Z))"
-
+@validate function linear_map(M::AbstractMatrix, Z::AbstractZonotope)
     if size(M, 1) == 1
         # yields only one generator
         return _linear_map_zonotope_1D(M, Z)

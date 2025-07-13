@@ -13,11 +13,7 @@
 The linear map ``M`` is applied to each vertex of the given set ``P``, obtaining
 a polytope in vertex representation. The output type is again a `VPolytope`.
 """
-function linear_map(M::AbstractMatrix, P::VPolytope;
-                    apply_convex_hull::Bool=false)
-    @assert dim(P) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-                                 "applied to a set of dimension $(dim(P))"
-
+@validate function linear_map(M::AbstractMatrix, P::VPolytope; apply_convex_hull::Bool=false)
     return _linear_map_vrep(M, P; apply_convex_hull=apply_convex_hull)
 end
 
