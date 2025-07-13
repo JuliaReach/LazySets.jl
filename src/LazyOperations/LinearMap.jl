@@ -257,7 +257,7 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a set, it follows that
 ``σ(d, L) = M⋅σ(M^T d, S)`` for any direction ``d``.
 """
-function σ(d::AbstractVector, lm::LinearMap)
+@validate function σ(d::AbstractVector, lm::LinearMap)
     return _σ_linear_map(d, lm.M, lm.X)
 end
 
@@ -287,7 +287,7 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a set, it follows that
 ``ρ(d, L) = ρ(M^T d, S)`` for any direction ``d``.
 """
-function ρ(d::AbstractVector, lm::LinearMap; kwargs...)
+@validate function ρ(d::AbstractVector, lm::LinearMap; kwargs...)
     return _ρ_linear_map(d, lm.M, lm.X; kwargs...)
 end
 
@@ -338,7 +338,7 @@ julia> [0.5, 0.5] ∈ M*B
 true
 ```
 """
-function ∈(x::AbstractVector, lm::LinearMap)
+@validate function ∈(x::AbstractVector, lm::LinearMap)
     if !iswellconditioned(matrix(lm))
         # ill-conditioned matrix; use concrete set representation
         return x ∈ linear_map(matrix(lm), set(lm))
@@ -434,7 +434,7 @@ Return the linear map of a lazy linear map.
 
 A set representing the linear map.
 """
-function linear_map(M::AbstractMatrix, lm::LinearMap)
+@validate function linear_map(M::AbstractMatrix, lm::LinearMap)
     return linear_map(M * lm.M, lm.X)
 end
 

@@ -136,7 +136,7 @@ constant time.
 When sets are added to the cached Minkowski sum, the query is only performed
 for the new sets.
 """
-function σ(d::AbstractVector, cms::CachedMinkowskiSumArray)
+@validate function σ(d::AbstractVector, cms::CachedMinkowskiSumArray)
     arr = array(cms)
     l = length(arr)
     cache = cms.cache

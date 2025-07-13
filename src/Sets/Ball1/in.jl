@@ -35,9 +35,7 @@ julia> [0.5, 1.5] ∈ B
 true
 ```
 """
-function ∈(x::AbstractVector, B::Ball1, failfast::Bool=false)
-    @assert length(x) == dim(B) "a $(length(x))-dimensional vector is " *
-                                "incompatible with a $(dim(B))-dimensional set"
+@validate function ∈(x::AbstractVector, B::Ball1, failfast::Bool=false)
     N = promote_type(eltype(x), eltype(B))
     sum = zero(N)
     @inbounds for (i, xi) in enumerate(x)

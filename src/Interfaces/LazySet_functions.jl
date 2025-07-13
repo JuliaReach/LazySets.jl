@@ -362,7 +362,7 @@ eltype(::LazySet{N}) where {N} = N
 
 The default implementation computes a support vector via `σ`.
 """
-function ρ(d::AbstractVector, X::LazySet)
+@validate function ρ(d::AbstractVector, X::LazySet)
     return dot(d, σ(d, X))
 end
 
@@ -517,7 +517,7 @@ end
 
 The default implementation calls `translate!` on a copy of `X`.
 """
-function translate(X::LazySet, v::AbstractVector)
+@validate function translate(X::LazySet, v::AbstractVector)
     Y = copy(X)
     translate!(Y, v)
     return Y
@@ -532,12 +532,7 @@ end
 
 The default implementation applies the functions `linear_map` and `translate`.
 """
-function affine_map(M, X::LazySet, v::AbstractVector; kwargs...)
-    @assert size(M, 2) == dim(X) "an affine map of size $(size(M)) cannot be " *
-                                 "applied to a set of dimension $(dim(X))"
-    @assert size(M, 1) == length(v) "an affine map of sizes $(size(M)) and " *
-                                    "$(length(v)) is incompatible"
-
+@validate function affine_map(M, X::LazySet, v::AbstractVector; kwargs...)
     return translate(linear_map(M, X; kwargs...), v)
 end
 
@@ -550,10 +545,8 @@ end
 
 The default implementation applies the functions `exp` and `linear_map`.
 """
-function exponential_map(M::AbstractMatrix, X::LazySet)
+@validate function exponential_map(M::AbstractMatrix, X::LazySet)
     n = dim(X)
-    @assert size(M) == (n, n) "cannot apply an exponential map of dimension " *
-                              "$(size(M)) to an $n-dimensional set"
     return linear_map(exp(M), X)
 end
 
@@ -657,9 +650,6 @@ The default implementation determines `v ∈ interior(X)` with error tolerance
 contained in `X`.
 """
 function is_interior_point(v::AbstractVector{<:Real}, X::LazySet; kwargs...)
-    @assert length(v) == dim(X) "a vector of length $(length(v)) is " *
-                                "incompatible with a set of dimension $(dim(X))"
-
     N = promote_type(eltype(v), eltype(X))
     if N != eltype(X)
         throw(ArgumentError("the set eltype must be more general"))
@@ -672,11 +662,8 @@ function is_interior_point(v::AbstractVector{<:Real}, X::LazySet; kwargs...)
     return is_interior_point(v, X; p=p, ε=ε)
 end
 
-function is_interior_point(v::AbstractVector{N}, X::LazySet{N}; p=N(Inf),
-                           ε=_rtol(N)) where {N<:Real}
-    @assert length(v) == dim(X) "a vector of length $(length(v)) is " *
-                                "incompatible with a set of dimension $(dim(X))"
-    @assert ε > zero(N) "the tolerance must be strictly positive"
+@validate function is_interior_point(v::AbstractVector{N}, X::LazySet{N}; p=N(Inf),
+                                     ε=_rtol(N)) where {N<:Real}
 
     return Ballp(p, v, ε) ⊆ X
 end
@@ -823,20 +810,20 @@ Let `m` be the number of vertices of `X`. We consider the following instances:
 Otherwise, the general Shoelace formula is used; for details see the
 [Wikipedia page](https://en.wikipedia.org/wiki/Shoelace_formula).
 """
-function area(X::LazySet)
-    @assert dim(X) == 2 "this function only applies to two-dimensional sets, " *
+@validate function area(X::LazySet)
+    @assert dim(X) == 2 "this implementation only applies to two-dimensional sets, " *
                         "but the given set is $(dim(X))-dimensional"
     @assert ispolyhedral(X) && isbounded(X) "this method requires a polytope"
 
     vlist = vertices_list(X)
-    return _area_vlist(vlist)
+    return _area_vlist_2D(vlist)
 end
 
 # Notes:
 # - dimension is expected to be 2D
 # - implementation requires sorting of vertices
 # - convex hull is applied in-place
-function _area_vlist(vlist; apply_convex_hull::Bool=true)
+function _area_vlist_2D(vlist; apply_convex_hull::Bool=true)
     if apply_convex_hull
         convex_hull!(vlist)
     end
@@ -1432,10 +1419,7 @@ end
 The default implementation assumes that `P` is polyhedral and applies an
 algorithm based on the set type (see [`_linear_map_polyhedron`](@ref)).
 """
-function linear_map(M::AbstractMatrix, P::LazySet; kwargs...)
-    @assert size(M, 2) == dim(P) "a linear map of size $(size(M)) cannot be " *
-                                 "applied to a set of dimension $(dim(P))"
-
+@validate function linear_map(M::AbstractMatrix, P::LazySet; kwargs...)
     if ispolyhedral(P)
         return _linear_map_polyhedron(M, P; kwargs...)
     else
@@ -1511,7 +1495,7 @@ end
 
 # The default implementation throws an error because Julia's default behavior
 # leads to an error that is hard to understand.
-function ∈(::AbstractVector, X::LazySet)
+@validate function ∈(::AbstractVector, X::LazySet)
     throw(ArgumentError("membership check for set type $(basetype(X)) is not implemented"))
 end
 

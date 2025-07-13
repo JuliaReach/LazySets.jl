@@ -41,7 +41,7 @@ for N in [Float64, Float32, Rational{Int}]
     addconstraint!(p, c2)
 
     # support vector of polytope with no constraints
-    @test_throws ErrorException σ(N[0], HPolytope{N}())
+    @test_throws DimensionMismatch σ(N[0], HPolytope{N}())
 
     # boundedness
     @test isbounded(p) && isbounded(p, false) && isboundedtype(typeof(p))
@@ -214,8 +214,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test σ(d, p) == N[1, 0]
     # empty polytope
     V = VPolytope{N}()
-    @test_throws ErrorException ρ(d, V)
-    @test_throws ErrorException σ(d, V)
+    @test_throws DimensionMismatch ρ(d, V)
+    @test_throws DimensionMismatch σ(d, V)
     # one vertex
     V = VPolytope([N[2, 1]])
     @test σ(d, V) == N[2, 1]
@@ -284,7 +284,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test translate!(pp, N[1, 2]) == VPolytope([N[1, 2], N[2, 2], N[1, 3]]) == pp
     # empty polytope
     V = VPolytope{N}()
-    @test translate!(copy(V), N[1]) == V
+    @test_throws DimensionMismatch translate!(copy(V), N[1])
 
     # copy (see #1002)
     p, q = [N(1)], [N(2)]
@@ -301,7 +301,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test project(V, [1, 2, 3]) == V
     # empty polytope
     V = VPolytope{N}()
-    @test project(V, [1]) == V
+    @test_throws DimensionMismatch project(V, [1])
 
     # linear_map with redundant vertices
     A = N[1 0; 0 0]
@@ -431,7 +431,7 @@ for N in [Float64]
     @test N[0, 1 // 2] ∉ q
     # empty polytope
     V = VPolytope{N}()
-    @test N[0] ∉ V
+    @test_throws DimensionMismatch N[0] ∈ V
     # one vertex
     V = VPolytope([N[1, 2]])
     @test N[1, 2] ∈ V && N[2, 2] ∉ V

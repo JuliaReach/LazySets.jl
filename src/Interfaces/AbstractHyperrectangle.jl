@@ -280,17 +280,12 @@ vector `[1, 0]` in the middle of the right-hand facet.
 If the direction has norm zero, the result can be any point in `H`. The default
 implementation returns the center of `H`.
 """
-function σ(d::AbstractVector, H::AbstractHyperrectangle)
-    @assert length(d) == dim(H) "a $(length(d))-dimensional vector is " *
-                                "incompatible with a $(dim(H))-dimensional set"
+@validate function σ(d::AbstractVector, H::AbstractHyperrectangle)
     return center(H) .+ sign_cadlag.(d) .* radius_hyperrectangle(H)
 end
 
 # helper function for single-entry vector (used by subtypes)
 function _σ_sev_hyperrectangle(d::SingleEntryVector, H::AbstractHyperrectangle)
-    @assert d.n == dim(H) "a $(d.n)-dimensional vector is " *
-                          "incompatible with a $(dim(H))-dimensional set"
-
     N = promote_type(eltype(d), eltype(H))
     s = copy(center(H))
     idx = d.i
@@ -302,10 +297,7 @@ function _σ_sev_hyperrectangle(d::SingleEntryVector, H::AbstractHyperrectangle)
     return s
 end
 
-function ρ(d::AbstractVector, H::AbstractHyperrectangle)
-    @assert length(d) == dim(H) "a $(length(d))-dimensional vector is " *
-                                "incompatible with a $(dim(H))-dimensional set"
-
+@validate function ρ(d::AbstractVector, H::AbstractHyperrectangle)
     N = promote_type(eltype(d), eltype(H))
     c = center(H)
     res = zero(N)
@@ -322,9 +314,6 @@ end
 
 # helper function for single-entry vector (used by subtypes)
 function _ρ_sev_hyperrectangle(d::SingleEntryVector, H::AbstractHyperrectangle)
-    @assert d.n == dim(H) "a $(d.n)-dimensional vector is " *
-                          "incompatible with a $(dim(H))-dimensional set"
-
     return d.v * center(H, d.i) + abs(d.v) * radius_hyperrectangle(H, d.i)
 end
 
@@ -395,9 +384,7 @@ the center and radius, and ``x_i`` be the vector ``x`` in dimension ``i``,
 respectively.
 Then ``x ∈ H`` iff ``|c_i - x_i| ≤ r_i`` for all ``i=1,…,n``.
 """
-function ∈(x::AbstractVector, H::AbstractHyperrectangle)
-    @assert length(x) == dim(H) "a $(length(x))-dimensional vector is " *
-                                "incompatible with a $(dim(H))-dimensional set"
+@validate function ∈(x::AbstractVector, H::AbstractHyperrectangle)
     @inbounds for i in eachindex(x)
         ri = radius_hyperrectangle(H, i)
         if !_leq(abs(center(H, i) - x[i]), ri)
@@ -586,21 +573,15 @@ function _surface_area_hyperrectangle(H)
     return 2 * (l * b + l * h + b * h)
 end
 
-function area(H::AbstractHyperrectangle)
-    n = dim(H)
-    @assert n ∈ (2, 3) "this function only applies to two-dimensional or " *
-                       "three-dimensional sets, but the given set is " *
-                       "$n-dimensional"
-
-    if n == 2
+@validate function area(H::AbstractHyperrectangle)
+    if dim(H) == 2
         return _volume_hyperrectangle(H)
     else
         return _surface_area_hyperrectangle(H)
     end
 end
 
-function project(H::AbstractHyperrectangle, block::AbstractVector{Int};
-                 kwargs...)
+@validate function project(H::AbstractHyperrectangle, block::AbstractVector{Int}; kwargs...)
     πc = center(H)[block]
     πr = radius_hyperrectangle(H)[block]
     return Hyperrectangle(πc, πr; check_bounds=false)

@@ -12,9 +12,7 @@ if and only if
 (x-c)^\\mathrm{T} Q^{-1} (x-c) ≤ 1.
 ```
 """
-function ∈(x::AbstractVector, E::Ellipsoid)
-    @assert length(x) == dim(E) "cannot check membership of a vector of " *
-                                "length $(length(x)) in an ellipsoid of dimension $(dim(E))"
+@validate function ∈(x::AbstractVector, E::Ellipsoid)
     w = x - E.center
     Q = E.shape_matrix
     return dot(w, Q \ w) ≤ 1

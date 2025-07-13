@@ -15,8 +15,7 @@ If `P` is unbounded in the given direction, there are two cases:
 - If `P` is an `HPolytope`, we throw an error.
 - If `P` is an `HPolyedron`, the result is `Inf`.
 """
-function ρ(d::AbstractVector{M}, P::HPoly{N};
-           solver=default_lp_solver(M, N)) where {M,N}
+@validate function ρ(d::AbstractVector{M}, P::HPoly{N}; solver=default_lp_solver(M, N)) where {M,N}
     lp, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope

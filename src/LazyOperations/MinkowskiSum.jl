@@ -129,7 +129,7 @@ A valid support vector in direction ``d`` of the Minkowski sum of two sets ``X``
 and ``Y`` is the sum of the support vectors of ``X`` and ``Y`` in direction
 ``d``.
 """
-function σ(d::AbstractVector, ms::MinkowskiSum)
+@validate function σ(d::AbstractVector, ms::MinkowskiSum)
     return σ(d, ms.X) + σ(d, ms.Y)
 end
 
@@ -153,7 +153,7 @@ The support function in direction ``d`` of the Minkowski sum of two sets ``X``
 and ``Y`` is the sum of the support functions of ``X`` and ``Y`` in direction
 ``d``.
 """
-function ρ(d::AbstractVector, ms::MinkowskiSum)
+@validate function ρ(d::AbstractVector, ms::MinkowskiSum)
     return ρ(d, ms.X) + ρ(d, ms.Y)
 end
 
@@ -254,19 +254,19 @@ and another set.
 Note that ``x ∈ (S ⊕ P)``, where ``S = \\{s\\}``  is a singleton set and
 ``P`` is a set, if and only if ``(x-s) ∈ P``.
 """
-function ∈(x::AbstractVector, ms::MinkowskiSum{N,<:AbstractSingleton}) where {N}
+@validate function ∈(x::AbstractVector, ms::MinkowskiSum{N,<:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 
 # symmetric method
-function ∈(x::AbstractVector,
-           ms::MinkowskiSum{N,<:LazySet,<:AbstractSingleton}) where {N}
+@validate function ∈(x::AbstractVector,
+                     ms::MinkowskiSum{N,<:LazySet,<:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.Y, ms.X)
 end
 
 # disambiguation
-function ∈(x::AbstractVector,
-           ms::MinkowskiSum{N,<:AbstractSingleton,<:AbstractSingleton}) where {N}
+@validate function ∈(x::AbstractVector,
+                     ms::MinkowskiSum{N,<:AbstractSingleton,<:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 
@@ -294,7 +294,7 @@ function vertices_list(ms::MinkowskiSum)
     return vertices_list(minkowski_sum(ms.X, ms.Y))
 end
 
-function translate(ms::MinkowskiSum, x::AbstractVector)
+@validate function translate(ms::MinkowskiSum, x::AbstractVector)
     X = translate(first(ms), x)
     Y = translate(second(ms), x)
     return MinkowskiSum(X, Y)

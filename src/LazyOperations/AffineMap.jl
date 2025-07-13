@@ -168,7 +168,7 @@ function isboundedtype(::Type{<:AffineMap{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
-function translate(am::AffineMap, x::AbstractVector)
+@validate function translate(am::AffineMap, x::AbstractVector)
     M = matrix(am)
     X = set(am)
     v = vector(am)

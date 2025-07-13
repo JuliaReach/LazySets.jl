@@ -184,8 +184,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test volume(E) == N(0)
 
     # affine_map
-    @test_throws AssertionError affine_map(ones(N, 2, 3), E, N[1, 1])
-    @test_throws AssertionError affine_map(ones(N, 2, 2), E, N[1])
+    @test_throws DimensionMismatch affine_map(ones(N, 2, 3), E, N[1, 1])
+    @test_throws DimensionMismatch affine_map(ones(N, 2, 2), E, N[1])
     E2 = affine_map(ones(N, 2, 2), E, N[1, 1])
     @test isidentical(E, E2)
     E2 = affine_map(ones(N, 3, 2), E, N[1, 1, 3])

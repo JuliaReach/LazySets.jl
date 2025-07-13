@@ -2,7 +2,8 @@ module ZonotopeModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractZonotope, generators_fallback, _scale_copy_inplace
+using ..LazySets: AbstractZonotope, generators_fallback, _scale_copy_inplace,
+                  @validate
 using LinearAlgebra: mul!
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: ismultiple, remove_zero_columns, to_matrix,

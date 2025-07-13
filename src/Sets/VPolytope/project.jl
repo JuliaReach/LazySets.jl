@@ -1,4 +1,4 @@
-function project(P::VPolytope, block::AbstractVector{Int}; kwargs...)
+@validate function project(P::VPolytope, block::AbstractVector{Int}; kwargs...)
     require(@__MODULE__, :LazySets; fun_name="project")
 
     if isempty(P.vertices)

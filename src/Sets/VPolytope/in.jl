@@ -24,8 +24,8 @@ Then we solve the following ``m``-dimensional linear program.
 ∧ ⋀_{j=1}^m λ_j ≥ 0
 ```
 """
-function ∈(x::AbstractVector{N}, P::VPolytope{N};
-           solver=default_lp_solver(N)) where {N}
+@validate function ∈(x::AbstractVector{N}, P::VPolytope{N};
+                     solver=default_lp_solver(N)) where {N}
     vertices = P.vertices
     m = length(vertices)
 
@@ -37,9 +37,6 @@ function ∈(x::AbstractVector{N}, P::VPolytope{N};
     end
 
     n = length(x)
-    @assert n == dim(P) "a vector of length $(length(x)) cannot be " *
-                        "contained in a polytope of dimension $(dim(P))"
-
     A = Matrix{N}(undef, n + 1, m)
     for (j, v_j) in enumerate(vertices)
         # ⋀_i Σ_j λ_j v_j[i] = x[i]

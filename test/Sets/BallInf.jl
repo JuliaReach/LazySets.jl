@@ -172,7 +172,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test volume(B) == N(64)
     if N <: AbstractFloat
         B = BallInf(zeros(N, 100), N(1 / 2 + 1e-5))
-        @test_throws AssertionError area(B)
+        @test_throws DimensionMismatch area(B)
         @test volume(B) ≈ N(1.0020019812942185)
     end
 

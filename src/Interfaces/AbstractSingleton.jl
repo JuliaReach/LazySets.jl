@@ -132,11 +132,11 @@ end
 The support vector is the set's vector itself, irrespective of the given
 direction.
 """
-function σ(::AbstractVector, S::AbstractSingleton)
+@validate function σ(d::AbstractVector, S::AbstractSingleton)
     return element(S)
 end
 
-function ρ(d::AbstractVector, S::AbstractSingleton)
+@validate function ρ(d::AbstractVector, S::AbstractSingleton)
     return dot(d, element(S))
 end
 
@@ -150,7 +150,7 @@ end
 This implementation performs an approximate comparison to account for
 imprecision in floating-point computations.
 """
-function ∈(x::AbstractVector, S::AbstractSingleton)
+@validate function ∈(x::AbstractVector, S::AbstractSingleton)
     return _isapprox(x, element(S))
 end
 

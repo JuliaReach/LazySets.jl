@@ -8,7 +8,7 @@
 Unless the direction is (a multiple of) the normal direction of the half-space,
 the result is `Inf`.
 """
-function ρ(d::AbstractVector, hs::HalfSpace)
+@validate function ρ(d::AbstractVector, hs::HalfSpace)
     v, unbounded = _σ_hyperplane_halfspace(d, hs.a, hs.b; error_unbounded=false,
                                            halfspace=true)
     if unbounded

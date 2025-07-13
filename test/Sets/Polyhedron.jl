@@ -39,7 +39,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test (A == hcat(N[1; -1]) || A == hcat(N[-1; 1])) && b == N[2, 2]
 
     # support vector of polyhedron with no constraints
-    @test σ(N[1], p_univ) == N[Inf]
+    @test_throws DimensionMismatch σ(N[1], p_univ)
 
     # ispolyhedral
     @test ispolyhedral(p)

@@ -126,7 +126,7 @@ direction.
 A support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 """
-function σ(d::AbstractVector, msa::MinkowskiSumArray)
+@validate function σ(d::AbstractVector, msa::MinkowskiSumArray)
     return _σ_msum_array(d, msa.array)
 end
 
@@ -154,7 +154,7 @@ The evaluation of the support function in the given direction.
 The support function of the Minkowski sum of multiple sets evaluations to the
 sum of the support-function evaluations of each set.
 """
-function ρ(d::AbstractVector, msa::MinkowskiSumArray)
+@validate function ρ(d::AbstractVector, msa::MinkowskiSumArray)
     return sum(ρ(d, Xi) for Xi in msa.array)
 end
 
@@ -218,6 +218,6 @@ function concretize(msa::MinkowskiSumArray)
     return _concretize_lazy_array(msa)
 end
 
-function translate(msa::MinkowskiSumArray, x::AbstractVector)
+@validate function translate(msa::MinkowskiSumArray, x::AbstractVector)
     return MinkowskiSumArray([translate(X, x) for X in array(msa)])
 end

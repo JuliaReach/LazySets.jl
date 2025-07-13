@@ -2,7 +2,7 @@ module LineModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolyhedron, @validate_commutative
+using ..LazySets: AbstractPolyhedron, @validate, @validate_commutative
 import LinearAlgebra
 using LinearAlgebra: dot, nullspace
 using Random: AbstractRNG, GLOBAL_RNG

@@ -122,7 +122,7 @@ Return a support vector of the convex hull of two sets in a given direction.
 
 A support vector of the convex hull in the given direction.
 """
-function σ(d::AbstractVector, ch::ConvexHull)
+@validate function σ(d::AbstractVector, ch::ConvexHull)
     σ1 = σ(d, ch.X)
     σ2 = σ(d, ch.Y)
     ρ1 = dot(d, σ1)
@@ -146,7 +146,7 @@ direction.
 The evaluation of the support function of the convex hull in the given
 direction.
 """
-function ρ(d::AbstractVector, ch::ConvexHull)
+@validate function ρ(d::AbstractVector, ch::ConvexHull)
     return max(ρ(d, ch.X), ρ(d, ch.Y))
 end
 
@@ -216,7 +216,7 @@ function vertices_list(ch::ConvexHull;
     return vlist
 end
 
-function translate(ch::ConvexHull, x::AbstractVector)
+@validate function translate(ch::ConvexHull, x::AbstractVector)
     X = translate(first(ch), x)
     Y = translate(second(ch), x)
     return ConvexHull(X, Y)

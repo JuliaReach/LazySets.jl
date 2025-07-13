@@ -2,7 +2,7 @@ module TetrahedronModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolytope
+using ..LazySets: AbstractPolytope, @validate
 using LinearAlgebra: dot, cross
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: isapproxzero

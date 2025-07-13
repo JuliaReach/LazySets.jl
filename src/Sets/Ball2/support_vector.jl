@@ -18,7 +18,7 @@ performed in the given precision of the numeric datatype of both the direction
 and the set.
 Exact inputs are not supported.
 """
-function σ(d::AbstractVector, B::Ball2)
+@validate function σ(d::AbstractVector, B::Ball2)
     dnorm = norm(d, 2)
     if isapproxzero(dnorm)
         return B.center

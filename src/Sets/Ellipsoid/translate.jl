@@ -1,6 +1,4 @@
-function translate!(E::Ellipsoid, v::AbstractVector)
-    @assert length(v) == dim(E) "cannot translate a $(dim(E))-dimensional " *
-                                "set by a $(length(v))-dimensional vector"
+@validate function translate!(E::Ellipsoid, v::AbstractVector)
     c = E.center
     c .+= v
     return E

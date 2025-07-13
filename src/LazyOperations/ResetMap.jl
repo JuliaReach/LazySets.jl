@@ -208,7 +208,7 @@ Return a support vector of a reset map.
 A support vector in the given direction.
 If the direction has norm zero, the result depends on the wrapped set.
 """
-function σ(d::AbstractVector, rm::ResetMap)
+@validate function σ(d::AbstractVector, rm::ResetMap)
     N = promote_type(eltype(d), eltype(rm))
     d_reset = copy(d)
     for var in keys(rm.resets)
@@ -243,7 +243,7 @@ NaN
 
 See the discussion [here](https://math.stackexchange.com/q/28940).
 """
-function ρ(d::AbstractVector, rm::ResetMap)
+@validate function ρ(d::AbstractVector, rm::ResetMap)
     return dot_zero(d, σ(d, rm))
 end
 

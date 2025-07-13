@@ -118,7 +118,7 @@ implementation `algorithm="support_function"` can be used, which evaluates the
 support function of each set directly and then calls only the support vector of
 one of the ``Xᵢ``.
 """
-function σ(d::AbstractVector, cup::UnionSetArray; algorithm="support_vector")
+@validate function σ(d::AbstractVector, cup::UnionSetArray; algorithm="support_vector")
     arr = array(cup)
 
     if algorithm == "support_vector"
@@ -169,7 +169,7 @@ The evaluation of the support function in the given direction.
 The support function of the union of a finite number of sets ``X₁, X₂, ...``
 can be obtained as the maximum of ``ρ(d, X₂), ρ(d, X₂), ...``.
 """
-function ρ(d::AbstractVector, cup::UnionSetArray)
+@validate function ρ(d::AbstractVector, cup::UnionSetArray)
     return maximum(Xi -> ρ(d, Xi), array(cup))
 end
 
@@ -214,7 +214,7 @@ sets.
 
 `true` iff ``x ∈ cup``.
 """
-function ∈(x::AbstractVector, cup::UnionSetArray)
+@validate function ∈(x::AbstractVector, cup::UnionSetArray)
     return any(X -> x ∈ X, array(cup))
 end
 
@@ -284,14 +284,14 @@ function vertices_list(cup::UnionSetArray;
     return vlist
 end
 
-function linear_map(M::AbstractMatrix, cup::UnionSetArray)
+@validate function linear_map(M::AbstractMatrix, cup::UnionSetArray)
     return UnionSetArray([linear_map(M, X) for X in cup])
 end
 
-function project(cup::UnionSetArray, block::AbstractVector{Int}; kwargs...)
+@validate function project(cup::UnionSetArray, block::AbstractVector{Int}; kwargs...)
     return UnionSetArray([project(X, block; kwargs...) for X in cup])
 end
 
-function translate(cup::UnionSetArray, v::AbstractVector)
+@validate function translate(cup::UnionSetArray, v::AbstractVector)
     return UnionSetArray([translate(X, v) for X in cup])
 end

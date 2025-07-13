@@ -164,7 +164,7 @@ If ``L = M^{-1}⋅X``, where ``M`` is a matrix and ``X`` is a set, since
 (M^T)^{-1}=(M^{-1})^T, it follows that ``σ(d, L) = M^{-1}⋅σ((M^T)^{-1} d, X)``
 for any direction ``d``.
 """
-function σ(d::AbstractVector, ilm::InverseLinearMap)
+@validate function σ(d::AbstractVector, ilm::InverseLinearMap)
     y = transpose(ilm.M) \ d
     return ilm.M \ σ(y, ilm.X)
 end
@@ -189,7 +189,7 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``L = M^{-1}⋅X``, where ``M`` is a matrix and ``X`` is a set, it follows
 that ``ρ(d, L) = ρ((M^T)^{-1} d, X)`` for any direction ``d``.
 """
-function ρ(d::AbstractVector, ilm::InverseLinearMap)
+@validate function ρ(d::AbstractVector, ilm::InverseLinearMap)
     y = transpose(ilm.M) \ d
     return ρ(y, ilm.X)
 end
@@ -225,7 +225,7 @@ julia> [0.1, 0.1] ∈ ilm
 true
 ```
 """
-function ∈(x::AbstractVector, ilm::InverseLinearMap)
+@validate function ∈(x::AbstractVector, ilm::InverseLinearMap)
     y = ilm.M * x
     return y ∈ ilm.X
 end
@@ -320,7 +320,7 @@ The set representing the linear map of the lazy inverse linear map of a set.
 This implementation is inefficient because it computes the concrete inverse of
 ``M``, which is what `InverseLinearMap` is supposed to avoid.
 """
-function linear_map(M::AbstractMatrix, ilm::InverseLinearMap)
+@validate function linear_map(M::AbstractMatrix, ilm::InverseLinearMap)
     return linear_map(M * inv(ilm.M), ilm.X)
 end
 

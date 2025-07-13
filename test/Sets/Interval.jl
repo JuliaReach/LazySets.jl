@@ -72,7 +72,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test x isa Vector{N} && length(x) == 1 && x[1] isa N && N(0) <= x[1] <= N(2)
 
     # area
-    @test_throws AssertionError area(X)
+    @test_throws DimensionMismatch area(X)
 
     # center
     c = center(X)
@@ -289,8 +289,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test volume(X) == N(2)
 
     # affine_map
-    @test_throws AssertionError affine_map(ones(N, 1, 2), X, N[1])
-    @test_throws AssertionError affine_map(ones(N, 2, 1), X, N[1])
+    @test_throws DimensionMismatch affine_map(ones(N, 1, 2), X, N[1])
+    @test_throws DimensionMismatch affine_map(ones(N, 2, 1), X, N[1])
     Y = affine_map(ones(N, 1, 1), X, N[1])
     @test isidentical(Y, Interval(N(1), N(3)))
     Y = affine_map(ones(N, 2, 1), X, N[1, 2])
@@ -308,17 +308,17 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # exponential_map
-    @test_throws AssertionError exponential_map(ones(N, 2, 2), X)
-    @test_throws AssertionError exponential_map(ones(N, 2, 1), X)
+    @test_throws DimensionMismatch exponential_map(ones(N, 2, 2), X)
+    @test_throws DimensionMismatch exponential_map(ones(N, 2, 1), X)
 
     # in
-    @test_throws AssertionError N[0, 0] ∈ X
+    @test_throws DimensionMismatch N[0, 0] ∈ X
     @test N[1] ∈ X && N[2] ∈ X && N[3] ∉ X
     # number in interval is invalid
     @test_throws MethodError N(1) ∈ X
 
     # is_interior_point
-    @test_throws AssertionError is_interior_point(N[0, 0], X)
+    @test_throws DimensionMismatch is_interior_point(N[0, 0], X)
     if N <: AbstractFloat
         @test is_interior_point(N[1], X)
         if N == Float64
@@ -328,7 +328,7 @@ for N in [Float64, Float32, Rational{Int}]
         end
         @test !is_interior_point(N[3], X)
     else
-        @test_throws AssertionError is_interior_point(N[1], X)
+        @test_throws ArgumentError is_interior_point(N[1], X)
         @test is_interior_point(N[1], X; ε=1 // 100)
         @test !is_interior_point(N[2], X; ε=1 // 100)
         @test !is_interior_point(N[3], X; ε=1 // 100)
@@ -337,7 +337,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # linear_map
-    @test_throws AssertionError linear_map(ones(N, 2, 2), X)
+    @test_throws DimensionMismatch linear_map(ones(N, 2, 2), X)
     Y = linear_map(2 * ones(N, 1, 1), X)
     @test Y isa Interval{N} && isequivalent(Y, Interval(N(0), N(4)))
     Y = linear_map(zeros(N, 1, 1), X)
@@ -361,16 +361,16 @@ for N in [Float64, Float32, Rational{Int}]
     @test Y isa LazySet{N} && isequivalent(Y, Z)
 
     # permute
-    @test_throws AssertionError permute(X, [-1])
-    @test_throws AssertionError permute(X, [1, 2])
-    @test_throws AssertionError permute(X, [2])
+    @test_throws DimensionMismatch permute(X, [1, 1])
+    @test_throws DimensionMismatch permute(X, [-1])
+    @test_throws DimensionMismatch permute(X, [2])
     Y = permute(X, [1])
     @test isidentical(Y, X)
 
     # project
-    @test_throws AssertionError project(X, [-1])
-    @test_throws AssertionError project(X, [1, 2])
-    @test_throws AssertionError project(X, [2])
+    @test_throws DimensionMismatch project(X, [-1])
+    @test_throws DimensionMismatch project(X, [1, 2])
+    @test_throws DimensionMismatch project(X, [2])
     Y = project(X, [1])
     @test isidentical(Y, X)
 
@@ -398,21 +398,21 @@ for N in [Float64, Float32, Rational{Int}]
     @test Ys isa Vector{Interval{N}} && Ys == split(X, [4]) == Xs
 
     # support_function
-    @test_throws AssertionError ρ(N[1, 1], X)
+    @test_throws DimensionMismatch ρ(N[1, 1], X)
     res = ρ(N[2], X)
     @test res isa N && res == N(4)
     res = ρ(N[-2], X)
     @test res isa N && res == N(0)
 
     # support_vector
-    @test_throws AssertionError σ(N[1, 1], X)
+    @test_throws DimensionMismatch σ(N[1, 1], X)
     res = σ(N[2], X)
     @test res isa Vector{N} && res == [N(2)]
     res = σ(N[-2], X)
     @test res isa Vector{N} && res == [N(0)]
 
     # translate
-    @test_throws AssertionError translate(X, N[1, 1])
+    @test_throws DimensionMismatch translate(X, N[1, 1])
     Y = translate(X, N[1])
     @test isidentical(Y, Interval(N(1), N(3)))
     # translate!

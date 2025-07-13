@@ -226,7 +226,7 @@ Return a support vector of a translation.
 A support vector in the given direction.
 If the direction has norm zero, the result depends on the wrapped set.
 """
-function σ(d::AbstractVector, tr::Translation)
+@validate function σ(d::AbstractVector, tr::Translation)
     return tr.v + σ(d, tr.X)
 end
 
@@ -244,7 +244,7 @@ Evaluate the support function of a translation.
 
 The evaluation of the support function in the given direction.
 """
-function ρ(d::AbstractVector, tr::Translation)
+@validate function ρ(d::AbstractVector, tr::Translation)
     return dot(d, tr.v) + ρ(d, tr.X)
 end
 
@@ -330,7 +330,7 @@ Check whether a given point is contained in the translation of a set.
 This implementation relies on the set-membership function for the wrapped set
 `tr.X`, since ``x ∈ X ⊕ v`` iff ``x - v ∈ X``.
 """
-function ∈(x::AbstractVector, tr::Translation)
+@validate function ∈(x::AbstractVector, tr::Translation)
     return x - tr.v ∈ tr.X
 end
 
@@ -353,10 +353,7 @@ The type of the result depends on the type of the set wrapped by `tr`.
 
 We compute `affine_map(M, tr.X, M * tr.v)`.
 """
-function linear_map(M::AbstractMatrix, tr::Translation)
-    @assert dim(tr) == size(M, 2) "a linear map of size $(size(M)) cannot be " *
-                                  "applied to a set of dimension $(dim(tr))"
-
+@validate function linear_map(M::AbstractMatrix, tr::Translation)
     return affine_map(M, tr.X, M * tr.v)
 end
 
@@ -381,7 +378,7 @@ function center(tr::Translation)
     return center(tr.X) + tr.v
 end
 
-function translate(tr::Translation, x::AbstractVector)
+@validate function translate(tr::Translation, x::AbstractVector)
     return Translation(translate(tr.X, x))
 end
 

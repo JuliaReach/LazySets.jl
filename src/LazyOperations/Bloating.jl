@@ -84,7 +84,7 @@ Return the support vector of a bloated set in a given direction.
 
 The support vector of the bloated set in the given direction.
 """
-function σ(d::AbstractVector, B::Bloating)
+@validate function σ(d::AbstractVector, B::Bloating)
     @assert !iszero(d) "the support vector in the zero direction is undefined"
     @assert B.ε >= 0 || B.p > 1 "the support vector for negative bloating " *
                                 "in the 1-norm is not implemented"
@@ -107,7 +107,7 @@ Return the support function of a bloated set in a given direction.
 
 The support function of the bloated set in the given direction.
 """
-function ρ(d::AbstractVector, B::Bloating)
+@validate function ρ(d::AbstractVector, B::Bloating)
     @assert !iszero(d) "the support function in the zero direction is undefined"
 
     return ρ(d, B.X) +
@@ -258,6 +258,6 @@ function ispolyhedral(B::Bloating)
     return (B.p == 1 || B.p == Inf) && ispolyhedral(B.X)
 end
 
-function translate(B::Bloating, x::AbstractVector)
+@validate function translate(B::Bloating, x::AbstractVector)
     return Bloating(translate(B.X, x), B.ε, B.p)
 end

@@ -1,7 +1,4 @@
-function translate!(L::Line, v::AbstractVector)
-    @assert length(v) == dim(L) "cannot translate a $(dim(L))-dimensional " *
-                                "set by a $(length(v))-dimensional vector"
-
+@validate function translate!(L::Line, v::AbstractVector)
     L.p .+= v
     return L
 end

@@ -118,7 +118,7 @@ Compute a support vector of a Cartesian product of a finite number of sets.
 A support vector in the given direction.
 If the direction has norm zero, the result depends on the product sets.
 """
-function σ(d::AbstractVector, cpa::CartesianProductArray)
+@validate function σ(d::AbstractVector, cpa::CartesianProductArray)
     svec = similar(d)
     i0 = 1
     for Xi in cpa.array
@@ -130,7 +130,7 @@ function σ(d::AbstractVector, cpa::CartesianProductArray)
 end
 
 # faster version for sparse vectors
-function σ(d::AbstractSparseVector, cpa::CartesianProductArray)
+@validate function σ(d::AbstractSparseVector, cpa::CartesianProductArray)
     # idea: We walk through the blocks of `cpa` (i.e., the sets `Xi`) and search
     # for corresponding non-zero entries in `d` (stored in `indices`).
     # `next_idx` is the next index of `indices` such that
@@ -169,7 +169,7 @@ function σ(d::AbstractSparseVector, cpa::CartesianProductArray)
 end
 
 # faster version for single-entry vectors
-function σ(d::SingleEntryVector, cpa::CartesianProductArray)
+@validate function σ(d::SingleEntryVector, cpa::CartesianProductArray)
     svec = similar(d)
     i0 = 1
     idx = d.i
@@ -201,7 +201,7 @@ Evaluate the support function of a Cartesian product of a finite number of sets.
 The evaluation of the support function in the given direction.
 If the direction has norm zero, the result depends on the wrapped sets.
 """
-function ρ(d::AbstractVector, cpa::CartesianProductArray)
+@validate function ρ(d::AbstractVector, cpa::CartesianProductArray)
     N = promote_type(eltype(d), eltype(cpa))
     sfun = zero(N)
     i0 = 1
@@ -214,7 +214,7 @@ function ρ(d::AbstractVector, cpa::CartesianProductArray)
 end
 
 # faster version for sparse vectors
-function ρ(d::AbstractSparseVector, cpa::CartesianProductArray)
+@validate function ρ(d::AbstractSparseVector, cpa::CartesianProductArray)
     N = promote_type(eltype(d), eltype(cpa))
     # idea: see the σ method for AbstractSparseVector
     sfun = zero(N)
@@ -250,7 +250,7 @@ function ρ(d::AbstractSparseVector, cpa::CartesianProductArray)
 end
 
 # faster version for single-entry vectors
-function ρ(d::SingleEntryVector, cpa::CartesianProductArray)
+@validate function ρ(d::SingleEntryVector, cpa::CartesianProductArray)
     i0 = 1
     idx = d.i
     for Xi in cpa.array
@@ -304,9 +304,7 @@ number of sets.
 
 `true` iff ``x ∈ \\text{cpa}``.
 """
-function ∈(x::AbstractVector, cpa::CartesianProductArray)
-    @assert length(x) == dim(cpa)
-
+@validate function ∈(x::AbstractVector, cpa::CartesianProductArray)
     i0 = 1
     for Xi in cpa.array
         i1 = i0 + dim(Xi) - 1
@@ -669,12 +667,11 @@ sets.
 
 A polyhedron or polytope.
 """
-function linear_map(M::AbstractMatrix, cpa::CartesianProductArray)
+@validate function linear_map(M::AbstractMatrix, cpa::CartesianProductArray)
     return _linear_map_cartesian_product(M, cpa)
 end
 
-function project(cpa::CartesianProductArray, block::AbstractVector{Int};
-                 kwargs...)
+@validate function project(cpa::CartesianProductArray, block::AbstractVector{Int}; kwargs...)
     target_sets = LazySet[]
     m = length(block)
 
@@ -744,7 +741,7 @@ function volume(cpa::CartesianProductArray)
     return prod(volume, array(cpa))
 end
 
-function translate(cpa::CartesianProductArray, x::AbstractVector)
+@validate function translate(cpa::CartesianProductArray, x::AbstractVector)
     res = Vector{LazySet}(undef, length(array(cpa)))
     s = 1
     @inbounds for (j, Xj) in enumerate(array(cpa))

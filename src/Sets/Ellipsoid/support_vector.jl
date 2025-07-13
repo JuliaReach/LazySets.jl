@@ -15,7 +15,7 @@ vector,
 = c + \\dfrac{Qd}{\\sqrt{d^\\mathrm{T}Q d}}.
 ```
 """
-function σ(d::AbstractVector, E::Ellipsoid)
+@validate function σ(d::AbstractVector, E::Ellipsoid)
     if iszero(norm(d, 2))
         return E.center
     end

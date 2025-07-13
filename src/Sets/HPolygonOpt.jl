@@ -133,8 +133,8 @@ Comparison of directions is performed using polar angles; see the definition of
 For polygons with $BINARY_SEARCH_THRESHOLD or more constraints we use a binary
 search by default.
 """
-function σ(d::AbstractVector, P::HPolygonOpt;
-           linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD))
+@validate function σ(d::AbstractVector, P::HPolygonOpt;
+                     linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD))
     n = length(P.constraints)
     @assert n > 0 "the polygon has no constraints"
     if linear_search
@@ -207,9 +207,7 @@ the original constraints if `share == true`.
 
 We translate every constraint.
 """
-function translate(P::HPolygonOpt, v::AbstractVector; share::Bool=false)
-    @assert length(v) == dim(P) "cannot translate a $(dim(P))-dimensional " *
-                                "set by a $(length(v))-dimensional vector"
+@validate function translate(P::HPolygonOpt, v::AbstractVector; share::Bool=false)
     constraints = [translate(c, v; share=share) for c in constraints_list(P)]
     return HPolygonOpt(constraints, P.ind; sort_constraints=false,
                        check_boundedness=false, prune=false)

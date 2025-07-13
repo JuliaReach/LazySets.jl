@@ -125,7 +125,7 @@ implementation `algorithm="support_function"` can be used, which evaluates the
 support function of each set directly and then calls only the support vector of
 either ``X`` *or* ``Y``.
 """
-function σ(d::AbstractVector, cup::UnionSet; algorithm="support_vector")
+@validate function σ(d::AbstractVector, cup::UnionSet; algorithm="support_vector")
     X, Y = cup.X, cup.Y
 
     if algorithm == "support_vector"
@@ -161,7 +161,7 @@ The evaluation of the support function in the given direction.
 The support function of the union of two sets ``X`` and ``Y`` evaluates to the
 maximum of the support-function evaluations of ``X`` and ``Y``.
 """
-function ρ(d::AbstractVector, cup::UnionSet)
+@validate function ρ(d::AbstractVector, cup::UnionSet)
     X, Y = cup.X, cup.Y
     return max(ρ(d, X), ρ(d, Y))
 end
@@ -204,7 +204,7 @@ Check whether a given point is contained in the union of two sets.
 
 `true` iff ``x ∈ cup``.
 """
-function ∈(x::AbstractVector, cup::UnionSet)
+@validate function ∈(x::AbstractVector, cup::UnionSet)
     return x ∈ cup.X || x ∈ cup.Y
 end
 
@@ -287,7 +287,7 @@ function convex_hull(cup::UnionSet)
     return convex_hull(cup.X, cup.Y)
 end
 
-function translate(cup::UnionSet, x::AbstractVector)
+@validate function translate(cup::UnionSet, x::AbstractVector)
     X = translate(first(cup), x)
     Y = translate(second(cup), x)
     return UnionSet(X, Y)

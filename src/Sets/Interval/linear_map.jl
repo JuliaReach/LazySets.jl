@@ -13,9 +13,7 @@ number of rows) of `M`:
 - If `size(M, 1) ≠ 1`, the output is a `Zonotope` with center `M * center(X)`
   and the single generator `M * g`, where `g = (high(X)-low(X))/2`.
 """
-function linear_map(M::AbstractMatrix, X::Interval)
-    @assert size(M, 2) == 1 "a linear map of size $(size(M)) " *
-                            "cannot be applied to an interval"
+@validate function linear_map(M::AbstractMatrix, X::Interval)
     nout = size(M, 1)
     if nout == 1
         return _linear_map_interval(M, X)

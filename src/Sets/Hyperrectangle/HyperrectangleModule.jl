@@ -3,7 +3,7 @@ module HyperrectangleModule
 using Reexport, Requires
 
 using ..LazySets: AbstractHyperrectangle, _scale_copy_inplace,
-                  _ρ_sev_hyperrectangle, _σ_sev_hyperrectangle
+                  _ρ_sev_hyperrectangle, _σ_sev_hyperrectangle, @validate
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: SingleEntryVector
 using ReachabilityBase.Comparison: isapproxzero

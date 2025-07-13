@@ -233,10 +233,7 @@ constraint representation.
 
 This implementation checks if the point lies inside each constraint.
 """
-function ∈(x::AbstractVector, P::AbstractHPolygon)
-    @assert length(x) == 2 "a $(length(x))-dimensional vector is " *
-                           "incompatible with a 2-dimensional polygon"
-
+@validate function ∈(x::AbstractVector, P::AbstractHPolygon)
     for c in P.constraints
         if !_leq(dot(c.a, x), c.b)
             return false

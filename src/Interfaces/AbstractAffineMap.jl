@@ -87,12 +87,12 @@ function dim(am::AbstractAffineMap)
     return length(vector(am))
 end
 
-function σ(d::AbstractVector, am::AbstractAffineMap)
+@validate function σ(d::AbstractVector, am::AbstractAffineMap)
     A = matrix(am)
     return A * σ(At_mul_B(A, d), set(am)) + vector(am)
 end
 
-function ρ(d::AbstractVector, am::AbstractAffineMap)
+@validate function ρ(d::AbstractVector, am::AbstractAffineMap)
     return ρ(At_mul_B(matrix(am), d), set(am)) + dot(d, vector(am))
 end
 
@@ -183,7 +183,7 @@ julia> [0.5, 0.5] ∈ M*B
 true
 ```
 """
-function ∈(x::AbstractVector, am::AbstractAffineMap)
+@validate function ∈(x::AbstractVector, am::AbstractAffineMap)
     if !iswellconditioned(matrix(am))
         # ill-conditioned matrix; use concrete set representation
         return x ∈ affine_map(matrix(am), set(am), vector(am))
@@ -267,7 +267,7 @@ function constraints_list(am::AbstractAffineMap)
                                          vector(am))
 end
 
-function linear_map(M::AbstractMatrix, am::AbstractAffineMap)
+@validate function linear_map(M::AbstractMatrix, am::AbstractAffineMap)
     return affine_map(M * matrix(am), set(am), M * vector(am))
 end
 

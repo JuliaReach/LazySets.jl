@@ -12,7 +12,7 @@ following two cases:
 In both cases the result is any point on the boundary (the defining hyperplane).
 Otherwise this function throws an error.
 """
-function σ(d::AbstractVector, hs::HalfSpace)
+@validate function σ(d::AbstractVector, hs::HalfSpace)
     v, unbounded = _σ_hyperplane_halfspace(d, hs.a, hs.b; error_unbounded=true,
                                            halfspace=true)
     return v

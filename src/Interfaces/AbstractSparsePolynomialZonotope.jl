@@ -168,7 +168,7 @@ function _extrema_polynomial_zonotope(P::AbstractSparsePolynomialZonotope{N}) wh
     return (c .- r, c .+ r)
 end
 
-function linear_map(M::AbstractMatrix, P::AbstractSparsePolynomialZonotope)
+@validate function linear_map(M::AbstractMatrix, P::AbstractSparsePolynomialZonotope)
     return SparsePolynomialZonotope(M * center(P),
                                     M * genmat_dep(P),
                                     M * genmat_indep(P),
@@ -197,8 +197,8 @@ An overapproximation of the support function in the given direction.
 
 This method implements [Kochdumper21a; Proposition 3.1.16](@citet).
 """
-function ρ(d::AbstractVector, P::AbstractSparsePolynomialZonotope;
-           enclosure_method=nothing)
+@validate function ρ(d::AbstractVector, P::AbstractSparsePolynomialZonotope;
+                     enclosure_method=nothing)
     require(@__MODULE__, :RangeEnclosures; fun_name="ρ")
     return _ρ_range_enclosures(d, P, enclosure_method)
 end

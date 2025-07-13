@@ -12,7 +12,7 @@ two cases:
 In all cases, any point on the hyperplane is a solution.
 Otherwise this function throws an error.
 """
-function σ(d::AbstractVector, H::Hyperplane)
+@validate function σ(d::AbstractVector, H::Hyperplane)
     v, unbounded = _σ_hyperplane_halfspace(d, H.a, H.b; error_unbounded=true,
                                            halfspace=false)
     return v
@@ -67,11 +67,6 @@ to ``d``.
 @inline function _σ_hyperplane_halfspace(d::AbstractVector, a, b;
                                          error_unbounded::Bool=true,
                                          halfspace::Bool=false)
-    @assert length(d) == length(a) "cannot compute the support vector of a " *
-                                   "$(length(a))-dimensional " *
-                                   (halfspace ? "halfspace" : "hyperplane") *
-                                   " along a vector of length $(length(d))"
-
     first_nonzero_entry_a = -1
     unbounded = false
     if iszero(d)

@@ -169,7 +169,7 @@ Return a support vector of a rectification.
 A support vector in the given direction.
 If the direction has norm zero, the result depends on the wrapped set.
 """
-function σ(d::AbstractVector, R::Rectification)
+@validate function σ(d::AbstractVector, R::Rectification)
     _compute_exact_representation!(R)
     return σ(d, R.cache.set)
 end
@@ -193,7 +193,7 @@ A support vector in the given direction.
 Let ``R(·)`` be the rectification of a vector respectively a set, and let ``H``
 be a hyperrectangle. Then ``σ_{R(H)}(d) = R(σ_{H}(d))``.
 """
-function σ(d::AbstractVector, R::Rectification{N,<:AbstractHyperrectangle}) where {N}
+@validate function σ(d::AbstractVector, R::Rectification{N,<:AbstractHyperrectangle}) where {N}
     return rectify(σ(d, R.X))
 end
 
@@ -226,8 +226,7 @@ We can just query a support vector for ``R(X)`` and ``R(Y)`` recursively:
 ``σ_{R(X × Y)}(d) = σ_{R(X)}(d_X) × σ_{R(Y)}(d_Y)``, where ``x × y``
 concatenates vectors ``x`` and ``y``.
 """
-function σ(d::AbstractVector,
-           R::Rectification{N,<:CartesianProduct}) where {N}
+@validate function σ(d::AbstractVector, R::Rectification{N,<:CartesianProduct}) where {N}
     X, Y = first(R.X), second(R.X)
     n1 = dim(X)
     return vcat(σ(d[1:n1], Rectification(X)), σ(d[(n1 + 1):end], Rectification(Y)))
@@ -264,8 +263,7 @@ We can just query a support vector for each subspace recursively:
 ``σ_{R(X_1 × ⋯ × X_m)}(d) = σ_{R(X_1)}(d_{X_1}) × ⋯ × σ_{R(X_m)}(d_{X_m})``,
 where ``x × y`` concatenates vectors ``x`` and ``y``.
 """
-function σ(d::AbstractVector,
-           R::Rectification{N,<:CartesianProductArray}) where {N}
+@validate function σ(d::AbstractVector, R::Rectification{N,<:CartesianProductArray}) where {N}
     svec = similar(d)
     i = 1
     for X in R.X
@@ -302,7 +300,7 @@ Otherwise we compute the union of projections to obtain a precise result (see
 this union.
 (The union is cached internally, so subsequent queries are more efficient.)
 """
-function ρ(d::AbstractVector, R::Rectification)
+@validate function ρ(d::AbstractVector, R::Rectification)
     if R.cache.use_support_vector
         return dot(d, σ(d, R))
     end
@@ -359,7 +357,7 @@ the answer is negative.
 Finally, if there are zero entries in the vector and the vector is not contained
 in the wrapped set, we give up and throw an error.
 """
-function ∈(x::AbstractVector, R::Rectification)
+@validate function ∈(x::AbstractVector, R::Rectification)
     N = promote_type(eltype(x), eltype(R))
     # scan for negative entries
     if any(xi -> xi < zero(N), x)

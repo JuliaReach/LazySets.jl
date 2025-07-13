@@ -2,7 +2,7 @@ module StarModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractPolyhedron
+using ..LazySets: AbstractPolyhedron, @validate
 using LinearAlgebra: I, dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: At_mul_B, to_matrix, DEFAULT_COND_TOL

@@ -2,7 +2,7 @@ module SingletonModule
 
 using Reexport
 
-using ..LazySets: AbstractSingleton, _scale_copy_inplace
+using ..LazySets: AbstractSingleton, _scale_copy_inplace, @validate
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 

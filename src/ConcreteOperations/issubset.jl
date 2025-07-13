@@ -843,8 +843,6 @@ end
 
 @validate function ⊆(X::Interval, U::UnionSetArray{N,<:AbstractHyperrectangle},
                      witness::Bool=false) where {N}
-    @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
-                        "$(dim(U))"
     V = _get_interval_array_copy(U)
     return _issubset_interval!(X, V, witness)
 end

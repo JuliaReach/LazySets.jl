@@ -117,7 +117,7 @@ otherwise, for all ``i = 1, …, n``.
 
 If the direction has norm zero, the center of the ball is returned.
 """
-function σ(d::AbstractVector, B::AbstractBallp)
+@validate function σ(d::AbstractVector, B::AbstractBallp)
     p = ball_norm(B)
     q = p / (p - 1)
     v = similar(d)
@@ -148,7 +148,7 @@ respectively, and let ``q = \\frac{p}{p-1}``. Then:
 ρ(d, B) = ⟨d, c⟩ + r ‖d‖_q.
 ```
 """
-function ρ(d::AbstractVector, B::AbstractBallp)
+@validate function ρ(d::AbstractVector, B::AbstractBallp)
     p = ball_norm(B)
     q = p / (p - 1)
     return dot(d, center(B)) + radius_ball(B) * norm(d, q)
@@ -186,9 +186,7 @@ julia> [0.5, 1.5] ∈ B
 true
 ```
 """
-function ∈(x::AbstractVector, B::AbstractBallp)
-    @assert length(x) == dim(B) "a vector of length $(length(x)) is " *
-                                "incompatible with a set of dimension $(dim(B))"
+@validate function ∈(x::AbstractVector, B::AbstractBallp)
     N = promote_type(eltype(x), eltype(B))
     p = ball_norm(B)
     sum = zero(N)

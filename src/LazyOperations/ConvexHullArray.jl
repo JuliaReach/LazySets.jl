@@ -113,7 +113,7 @@ direction.
 
 A support vector in the given direction.
 """
-function σ(d::AbstractVector, cha::ConvexHullArray)
+@validate function σ(d::AbstractVector, cha::ConvexHullArray)
     @assert !isempty(cha.array) "an empty convex hull is not allowed"
     return _σ_union(d, array(cha))
 end
@@ -139,7 +139,7 @@ sets in the given direction.
 This algorithm calculates the maximum over all ``ρ(d, X_i)``, where the
 ``X_1, …, X_k`` are the sets in the array of `cha`.
 """
-function ρ(d::AbstractVector, cha::ConvexHullArray)
+@validate function ρ(d::AbstractVector, cha::ConvexHullArray)
     return maximum(ρ(d, Xi) for Xi in cha)
 end
 
@@ -221,7 +221,7 @@ function constraints_list(X::ConvexHullArray{N,Singleton{N,VT}}) where {N,VT}
 end
 
 # membership in a convex-hull array of singletons
-function ∈(x::AbstractVector, X::ConvexHullArray)
+@validate function ∈(x::AbstractVector, X::ConvexHullArray)
     n = length(x)
     ST = n == 2 ? VPolygon : VPolytope
     V = convert(ST, X)
@@ -238,6 +238,6 @@ function concretize(cha::ConvexHullArray)
     return _concretize_lazy_array(cha)
 end
 
-function translate(cha::ConvexHullArray, x::AbstractVector)
+@validate function translate(cha::ConvexHullArray, x::AbstractVector)
     return ConvexHullArray([translate(X, x) for X in array(cha)])
 end

@@ -8,7 +8,7 @@
 For each plane of the tetrahedron, we check if the point `x` is on the same side as the remaining vertex.
 [We need to check this for each plane](https://stackoverflow.com/q/25179693).
 """
-function ∈(x::AbstractVector, T::Tetrahedron)
+@validate function ∈(x::AbstractVector, T::Tetrahedron)
     v = T.vertices
     return same_side(v[1], v[2], v[3], v[4], x) &&
            same_side(v[4], v[1], v[2], v[3], x) &&

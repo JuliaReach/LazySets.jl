@@ -37,7 +37,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test x isa Vector{N} && length(x) == 2
 
     # area
-    @test_throws AssertionError area(Universe{N}(1))
+    @test_throws DimensionMismatch area(Universe{N}(1))
     for res in (area(U), area(U3))
         @test res isa N && res == N(Inf)
     end
@@ -189,8 +189,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test x isa N && x == N(Inf)
 
     # affine_map
-    @test_throws AssertionError affine_map(ones(N, 2, 3), U, N[1, 1])
-    @test_throws AssertionError affine_map(ones(N, 2, 2), U, N[1])
+    @test_throws DimensionMismatch affine_map(ones(N, 2, 3), U, N[1, 1])
+    @test_throws DimensionMismatch affine_map(ones(N, 2, 2), U, N[1])
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         # TODO this should work, even without Polyhedra
         @test_broken affine_map(ones(N, 2, 2), U, N[1, 1])
@@ -208,26 +208,26 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # exponential_map
-    @test_throws AssertionError exponential_map(ones(N, 2, 3), U)
-    @test_throws AssertionError exponential_map(ones(N, 3, 2), U)
+    @test_throws DimensionMismatch exponential_map(ones(N, 2, 3), U)
+    @test_throws DimensionMismatch exponential_map(ones(N, 3, 2), U)
 
     # in
-    @test_throws AssertionError N[0] ∈ U
+    @test_throws DimensionMismatch N[0] ∈ U
     @test N[0, 0] ∈ U
 
     # is_interior_point
-    @test_throws AssertionError is_interior_point(N[0], U)
+    @test_throws DimensionMismatch is_interior_point(N[0], U)
     if N <: AbstractFloat
         @test is_interior_point(N[0, 0], U)
     else
-        @test_throws AssertionError is_interior_point(N[0, 0], U)
+        @test_throws ArgumentError is_interior_point(N[0, 0], U)
         @test is_interior_point(N[0, 0], U; ε=1 // 100)
         # incompatible numeric type
         @test_throws ArgumentError is_interior_point([0.0, 0.0], U)
     end
 
     # linear_map
-    @test_throws AssertionError linear_map(ones(N, 2, 3), U)
+    @test_throws DimensionMismatch linear_map(ones(N, 2, 3), U)
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         # TODO this should work, even without Polyhedra
         @test_broken linear_map(ones(N, 2, 2), U)
@@ -244,14 +244,14 @@ for N in [Float64, Float32, Rational{Int}]
     @test isidentical(U3, U2)
 
     # permute
-    @test_throws AssertionError permute(U, [1, -1])
-    @test_throws AssertionError permute(U, [1, 2, 2])
+    @test_throws DimensionMismatch permute(U, [1, -1])
+    @test_throws DimensionMismatch permute(U, [1, 2, 2])
     U2 = permute(U, [2, 1])
     @test isidentical(U, U2)
 
     # project
-    @test_throws AssertionError project(U, [1, -1])
-    @test_throws AssertionError project(U, [1, 2, 3])
+    @test_throws DimensionMismatch project(U, [1, -1])
+    @test_throws DimensionMismatch project(U, [1, 2, 3])
     U2 = project(U, [2])
     @test U2 isa Universe{N} && dim(U2) == 1
 
@@ -276,7 +276,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws ArgumentError scale!(N(0), U2)
 
     # support_function
-    @test_throws AssertionError ρ(N[1], U)
+    @test_throws DimensionMismatch ρ(N[1], U)
     v = ρ(N[-1, 2], U)
     @test v isa N && v == N(Inf)
     v = ρ(N[2, 0], U)
@@ -284,7 +284,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test ρ(N[0, 0], U) == N(0)
 
     # support_vector
-    @test_throws AssertionError σ(N[1], U)
+    @test_throws DimensionMismatch σ(N[1], U)
     x = σ(N[-1, 2], U)
     @test x isa Vector{N} && x == N[-Inf, Inf]
     x = σ(N[2, 0], U)
@@ -293,11 +293,11 @@ for N in [Float64, Float32, Rational{Int}]
     @test x isa Vector{N} && x == N[0, 0]
 
     # translate
-    @test_throws AssertionError translate(U, N[1])
+    @test_throws DimensionMismatch translate(U, N[1])
     U2 = translate(U, N[1, 2])
     @test isidentical(U, U2)
     # translate!
-    @test_throws AssertionError translate!(U, N[1])
+    @test_throws DimensionMismatch translate!(U, N[1])
     U2 = copy(U)
     translate!(U2, N[1, 2])
     @test isidentical(U, U2)

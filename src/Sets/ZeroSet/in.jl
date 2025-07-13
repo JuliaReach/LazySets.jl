@@ -1,5 +1,3 @@
-function ∈(x::AbstractVector, Z::ZeroSet)
-    @assert length(x) == dim(Z) "a $(length(x))-dimensional vector is " *
-                                "incompatible with a $(dim(Z))-dimensional set"
+@validate function ∈(x::AbstractVector, Z::ZeroSet)
     return iszero(x)
 end

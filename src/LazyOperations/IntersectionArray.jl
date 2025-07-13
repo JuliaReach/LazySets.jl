@@ -115,7 +115,7 @@ If the direction has norm zero, the result depends on the individual sets.
 
 This implementation computes the concrete intersection, which can be expensive.
 """
-function σ(d::AbstractVector, ia::IntersectionArray)
+@validate function σ(d::AbstractVector, ia::IntersectionArray)
     X = concretize(ia)
     return σ(d, X)
 end
@@ -173,7 +173,7 @@ of sets.
 
 A point ``x`` is in the intersection iff it is in each set.
 """
-function ∈(x::AbstractVector, ia::IntersectionArray)
+@validate function ∈(x::AbstractVector, ia::IntersectionArray)
     for S in ia.array
         if x ∉ S
             return false
@@ -221,6 +221,6 @@ function concretize(ia::IntersectionArray)
     return _concretize_lazy_array(ia)
 end
 
-function translate(ia::IntersectionArray, x::AbstractVector)
+@validate function translate(ia::IntersectionArray, x::AbstractVector)
     return IntersectionArray([translate(X, x) for X in array(ia)])
 end

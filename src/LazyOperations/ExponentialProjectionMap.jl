@@ -156,8 +156,8 @@ If ``S = (L⋅M⋅R)⋅X``, where ``L`` and ``R`` are matrices, ``M`` is a matri
 exponential, and ``X`` is a set, it follows that
 ``σ(d, S) = L⋅M⋅R⋅σ(R^T⋅M^T⋅L^T⋅d, X)`` for any direction ``d``.
 """
-function σ(d::AbstractVector, eprojmap::ExponentialProjectionMap;
-           backend=get_exponential_backend())
+@validate function σ(d::AbstractVector, eprojmap::ExponentialProjectionMap;
+                     backend=get_exponential_backend())
     N = promote_type(eltype(d), eltype(eprojmap))
     Lᵀd = transpose(eprojmap.projspmexp.L) * d
     eᴹLᵀd = _expmv(backend, one(N), transpose(eprojmap.projspmexp.spmexp.M), Lᵀd)
@@ -192,8 +192,8 @@ If ``S = (L⋅M⋅R)⋅X``, where ``L`` and ``R`` are matrices, ``M`` is a matri
 exponential, and ``X`` is a set, it follows that ``ρ(d, S) = ρ(R^T⋅M^T⋅L^T⋅d, X)``
 for any direction ``d``.
 """
-function ρ(d::AbstractVector, eprojmap::ExponentialProjectionMap;
-           backend=get_exponential_backend())
+@validate function ρ(d::AbstractVector, eprojmap::ExponentialProjectionMap;
+                     backend=get_exponential_backend())
     N = promote_type(eltype(d), eltype(eprojmap))
     Lᵀd = transpose(eprojmap.projspmexp.L) * d
     eᴹLᵀd = _expmv(backend, one(N), transpose(eprojmap.projspmexp.spmexp.M), Lᵀd)

@@ -7,9 +7,7 @@
 
 A vector with infinity values, except in dimensions where the direction is zero.
 """
-function σ(d::AbstractVector, U::Universe)
-    @assert length(d) == dim(U) "incompatible dimensions $(length(d)) and $(dim(U))"
-
+@validate function σ(d::AbstractVector, U::Universe)
     N = promote_type(eltype(d), eltype(U))
     vec = Vector{N}(undef, length(d))
     @inbounds for (i, vi) in enumerate(d)

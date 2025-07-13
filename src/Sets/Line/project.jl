@@ -1,4 +1,4 @@
-function project(L::Line{N}, block::AbstractVector{Int}; kwargs...) where {N}
+@validate function project(L::Line{N}, block::AbstractVector{Int}; kwargs...) where {N}
     d = L.d[block]
     if iszero(d)
         require(@__MODULE__, :LazySets; fun_name="project")

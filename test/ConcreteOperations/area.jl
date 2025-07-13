@@ -2,7 +2,7 @@ for N in [Float64, Float32, Rational{Int}]
     # not implemented for dimension other than 2 or 3
     for d in (1, 4)
         p = BallInf(zeros(N, d), N(1))
-        @test_throws AssertionError area(p)
+        @test_throws DimensionMismatch area(p)
     end
 
     # sets with zero area

@@ -1,5 +1,3 @@
-function ∈(x::AbstractVector, U::Universe)
-    @assert length(x) == dim(U) "a $(length(x))-dimensional vector is " *
-                                "incompatible with a $(dim(U))-dimensional set"
+@validate function ∈(x::AbstractVector, U::Universe)
     return true
 end

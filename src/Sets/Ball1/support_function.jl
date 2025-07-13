@@ -12,6 +12,6 @@ respectively. Then:
 ρ(d, B) = ⟨d, c⟩ + r ‖d‖_∞.
 ```
 """
-function ρ(d::AbstractVector, B::Ball1)
+@validate function ρ(d::AbstractVector, B::Ball1)
     return dot(d, B.center) + B.radius * maximum(abs, d)
 end

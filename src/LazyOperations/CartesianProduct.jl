@@ -162,13 +162,13 @@ Return a support vector of a Cartesian product.
 A support vector in the given direction.
 If the direction has norm zero, the result depends on the wrapped sets.
 """
-function σ(d::AbstractVector, cp::CartesianProduct)
+@validate function σ(d::AbstractVector, cp::CartesianProduct)
     n1 = dim(cp.X)
     return [σ(d[1:n1], cp.X); σ(d[(n1 + 1):length(d)], cp.Y)]
 end
 
 # faster version for single-entry vectors
-function σ(d::SingleEntryVector, cp::CartesianProduct)
+@validate function σ(d::SingleEntryVector, cp::CartesianProduct)
     n1 = dim(cp.X)
     idx = d.i
     if idx <= n1
@@ -194,13 +194,13 @@ Evaluate the support function of a Cartesian product.
 The evaluation of the support function in the given direction.
 If the direction has norm zero, the result depends on the wrapped sets.
 """
-function ρ(d::AbstractVector, cp::CartesianProduct)
+@validate function ρ(d::AbstractVector, cp::CartesianProduct)
     n1 = dim(cp.X)
     return ρ(d[1:n1], cp.X) + ρ(d[(n1 + 1):length(d)], cp.Y)
 end
 
 # faster version for single-entry vectors
-function ρ(d::SingleEntryVector, cp::CartesianProduct)
+@validate function ρ(d::SingleEntryVector, cp::CartesianProduct)
     n1 = dim(cp.X)
     idx = d.i
     if idx <= n1
@@ -246,9 +246,7 @@ Check whether a given point is contained in a Cartesian product.
 
 `true` iff ``x ∈ cp``.
 """
-function ∈(x::AbstractVector, cp::CartesianProduct)
-    @assert length(x) == dim(cp)
-
+@validate function ∈(x::AbstractVector, cp::CartesianProduct)
     n1 = dim(cp.X)
     return view(x, 1:n1) ∈ cp.X &&
            view(x, (n1 + 1):length(x)) ∈ cp.Y
@@ -365,21 +363,18 @@ We convert the Cartesian product to constraint representation and then call
 This is a fallback implementation and will fail if the wrapped sets are not
 polyhedral.
 """
-function linear_map(M::AbstractMatrix, cp::CartesianProduct)
+@validate function linear_map(M::AbstractMatrix, cp::CartesianProduct)
     return _linear_map_cartesian_product(M, cp)
 end
 
 function _linear_map_cartesian_product(M, cp)
-    @assert dim(cp) == size(M, 2) "a linear map of size $(size(M)) cannot " *
-                                  "be applied to a set of dimension $(dim(cp))"
-
     # use constraint representation
     T = isbounded(cp) ? HPolytope : HPolyhedron
     P = T(constraints_list(cp))
     return linear_map(M, P)
 end
 
-function project(cp::CartesianProduct, block::AbstractVector{Int}; kwargs...)
+@validate function project(cp::CartesianProduct, block::AbstractVector{Int}; kwargs...)
     n1 = dim(cp.X)
     if block[end] <= n1
         # projection completely in the first block
@@ -416,9 +411,8 @@ hyperrectangular set.
 A hyperrectangle representing the projection of the Cartesian product `cp` on
 the dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N,<:Interval,<:AbstractHyperrectangle},
-                 block::AbstractVector{Int};
-                 kwargs...) where {N}
+@validate function project(cp::CartesianProduct{N,<:Interval,<:AbstractHyperrectangle},
+                           block::AbstractVector{Int}; kwargs...) where {N}
     I = cp.X
     H = cp.Y
     block_vec = collect(block)
@@ -450,9 +444,8 @@ Concrete projection of the Cartesian product of an interval and a zonotopic set.
 A zonotope representing the projection of the Cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N,<:Interval,<:AbstractZonotope},
-                 block::AbstractVector{Int};
-                 kwargs...) where {N}
+@validate function project(cp::CartesianProduct{N,<:Interval,<:AbstractZonotope},
+                           block::AbstractVector{Int}; kwargs...) where {N}
     block_vec = collect(block)
     Z = cp.Y
     if 1 ∉ block_vec
@@ -482,9 +475,8 @@ representation.
 A `VPolytope` representing the projection of the Cartesian product `cp` on the
 dimensions specified by `block`.
 """
-function project(cp::CartesianProduct{N,<:Interval,<:Union{VPolygon,VPolytope}},
-                 block::AbstractVector{Int};
-                 kwargs...) where {N}
+@validate function project(cp::CartesianProduct{N,<:Interval,<:Union{VPolygon,VPolytope}},
+                           block::AbstractVector{Int}; kwargs...) where {N}
     I = cp.X
     P = cp.Y
     block_vec = collect(block)
@@ -514,7 +506,7 @@ function volume(cp::CartesianProduct)
     return volume(cp.X) * volume(cp.Y)
 end
 
-function translate(cp::CartesianProduct, x::AbstractVector)
+@validate function translate(cp::CartesianProduct, x::AbstractVector)
     X = first(cp)
     n1 = dim(X)
     X = translate(X, @view(x[1:n1]))
