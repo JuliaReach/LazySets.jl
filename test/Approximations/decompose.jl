@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # =====================================
     # Run decompose for different set types
     # =====================================
@@ -79,7 +79,7 @@ for N in [Float64, Float32, Rational{Int}]
 end
 
 # tests that do not work with Rational{Int}
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # =============================
     # Check that Issue #43 is fixed
     # =============================

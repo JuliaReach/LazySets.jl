@@ -1,7 +1,7 @@
 using LinearAlgebra, SparseArrays
 import Optim
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     for n in [1, 2]
         p0 = zero(N)
         p1 = one(N)

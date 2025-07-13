@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     I1 = Interval(N(-1), N(1))
     I2 = Interval(N(2), N(3))
     I3 = Interval(N(-2), N(-1))

@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     P = BallInf(zeros(N, 2), N(1 // 10))
     d = N[1 // 10, 1 // 10]
     if N <: AbstractFloat
@@ -19,7 +19,7 @@ for N in [Float64, Float32, Rational{Int}]
 end
 
 # tests that do not work with Rational{Int}
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     P = BallInf(zeros(N, 2), N(1 // 10))
     d = N[1 // 10, 1 // 10]
     @test !is_interior_point(d, P; p=N(2))

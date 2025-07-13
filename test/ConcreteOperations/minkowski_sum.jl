@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     X = Interval(N(1), N(2))
     Y = X + X
     if test_suite_polyhedra
@@ -25,7 +25,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     B1 = Ball2(N[1, 2], N(3))
     B2 = Ball2(N[4, 5], N(6))
     @test minkowski_sum(B1, B2) == Ball2(N[5, 7], N(9))

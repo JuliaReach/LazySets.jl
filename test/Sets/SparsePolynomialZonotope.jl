@@ -2,8 +2,13 @@ using LazySets, Test, LinearAlgebra
 import IntervalArithmetic as IA
 using IntervalArithmetic: IntervalBox
 using LazySets.SparsePolynomialZonotopeModule: merge_id
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # Example 3.1.2 from thesis
     c = N[4, 4]
     G = N[2 1 2; 0 2 2]
@@ -338,7 +343,7 @@ let
     @test Ē₂ == [0 0 0; 0 0 0; 1 0 1; 3 2 0]
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # rand
     @test rand(SparsePolynomialZonotope; N=N) isa SparsePolynomialZonotope{N}
 end

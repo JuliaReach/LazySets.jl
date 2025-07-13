@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     c1 = N[1, 2]
     c2 = N[3, 4, 5]
     Z1 = Zonotope(c1, N[1 0; 0 1])

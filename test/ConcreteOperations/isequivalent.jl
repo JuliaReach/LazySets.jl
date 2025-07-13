@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # -- singletons --
     S = Singleton(N[1, 2])
     @test isequivalent(S, S)

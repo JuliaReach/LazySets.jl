@@ -1,6 +1,11 @@
 using LazySets, Test
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # constructor from empty vertex list
     P_empty = Polygon{N}()
     @test P_empty isa Polygon{N,Vector{N}} && isempty(P_empty.vertices)

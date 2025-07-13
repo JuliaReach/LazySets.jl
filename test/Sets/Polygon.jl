@@ -3,8 +3,13 @@ using LazySets: ⪯
 using LazySets.ReachabilityBase.Arrays: is_cyclic_permutation
 using LazySets.ReachabilityBase.Comparison: _isapprox
 using LazySets.ReachabilityBase.Arrays: ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # Empty polygon
     p = HPolygon{N}()
 
@@ -585,7 +590,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     v1 = N[1 // 10, 3 // 10]
     v2 = N[1 // 5, 1 // 10]
     v3 = N[2 // 5, 3 // 10]

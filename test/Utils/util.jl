@@ -31,7 +31,7 @@ let
     @test rank(Matrix(A)) == rank(A) == rank(view(A, :, :))
 end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # removal of zero columns
     A = N[1 2; 3 4]
     @test remove_zero_columns(A) === A
@@ -118,7 +118,7 @@ for N in [Float64, Float32, Rational{Int}]
     @assert matrix_type(typeof(mat)) == Diagonal{N,Vector{N}}
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # modified dot product
     @test isnan(dot(N[1, 0], N[Inf, -Inf]))
     @test LazySets.dot_zero(N[1, 0], N[Inf, -Inf]) == N(Inf)

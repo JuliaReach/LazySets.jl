@@ -1,4 +1,9 @@
 using LazySets, Test
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
 function isidentical(::EmptySet, ::EmptySet)
     return false
@@ -16,7 +21,7 @@ let
     end
 end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # auxiliary sets
     B = BallInf(ones(N, 2), N(1))
     U = Universe{N}(2)
@@ -411,7 +416,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     E = EmptySet{N}(2)
 
     # rationalize

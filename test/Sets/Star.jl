@@ -1,7 +1,12 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # constructor with basis matrix
     S = Star(N[3, 3], N[1 0; 0 1], BallInf(N[0, 0], N(1)))
 
@@ -82,7 +87,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test ispermutation(vertices_list(S), vertices_list(B))
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # random star
     @test rand(Star; N=N) isa Star{N}
 end

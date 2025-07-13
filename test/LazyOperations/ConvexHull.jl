@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # ConvexHull of two 2D Ball1
     b1 = Ball1(N[0, 0], N(1))
     b2 = Ball1(N[1, 2], N(1))

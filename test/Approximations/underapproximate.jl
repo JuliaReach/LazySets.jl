@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     X = Hyperrectangle(zeros(N, 2), ones(N, 2))
     U = underapproximate(X, BoxDirections{N}(2))
     @test U ⊆ X
@@ -8,7 +8,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test U ≈ Hyperrectangle(N[2, 2], ones(N, 2))
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     X = VPolygon([N[1, 0], N[1, 2], N[-1, 2], N[-1, 1 // 3], N[-2 // 3, 0]])
     U = underapproximate(X, Ball2)
     @test U ≈ Ball2(N[0, 1], N(1))

@@ -8,6 +8,11 @@ else
 end
 using LazySets.ReachabilityBase.Arrays: ispermutation
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
 function isidentical(::Interval, ::Interval)
     return false
@@ -17,7 +22,7 @@ function isidentical(X1::Interval{N}, X2::Interval{N}) where {N}
     return X1.dat == X2.dat
 end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # auxiliary sets
     X2 = Singleton(N[0, 0])  # 2D set
     B = BallInf(N[1], N(1))  # equivalent set
@@ -605,7 +610,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     X = Interval(N(0), N(2))
 
     # rand

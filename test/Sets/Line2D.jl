@@ -1,7 +1,12 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # construction
     a1 = N[0, 1]
     b1 = N(1)
@@ -130,7 +135,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test res && w isa Vector{N} && isempty(w)
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # rand
     @test rand(Line2D; N=N) isa Line2D{N}
 

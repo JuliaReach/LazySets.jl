@@ -1,6 +1,11 @@
 using LazySets, Test, LinearAlgebra
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # rand
     @test rand(Ellipsoid; N=N) isa Ellipsoid{N}
 

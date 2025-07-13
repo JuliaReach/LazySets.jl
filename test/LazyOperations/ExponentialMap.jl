@@ -2,7 +2,7 @@ for exp_backend in [ExponentialUtilities, Expokit]
     # test changing the exponentiation backend
     LazySets.set_exponential_backend!(exp_backend)
 
-    for N in [Float64, Float32]
+    for N in @tN([Float64, Float32])
         # dimension (choose a multiple of 3)
         n = 3 * 2
 

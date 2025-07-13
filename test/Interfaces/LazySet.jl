@@ -2,7 +2,7 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Basetype
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     Z = ZeroSet{N}(2)
 
     # basetype

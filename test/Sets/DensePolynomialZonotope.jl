@@ -1,6 +1,11 @@
 using LazySets, Test, LinearAlgebra
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # example set from Figure 2 in original paper
     c = zeros(N, 2)
     E1 = Matrix(Diagonal(N[-1, 0.5]))
