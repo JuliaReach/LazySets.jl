@@ -37,13 +37,9 @@ compute the convex hull of the union of those vertices.
 """
 @validate function convex_hull(X::LazySet, Y::LazySet; algorithm=nothing,
                                backend=nothing, solver=nothing)
-    n = dim(X)
-    @assert n == dim(Y) "the convex hull requires two sets of the same " *
-                        "dimension, but they have dimension $n and $(dim(Y))"
-
     vlist = convex_hull!([vertices_list(X); vertices_list(Y)];
                          algorithm=algorithm, backend=backend, solver=solver)
-    return _convex_hull_set(vlist; n=n)
+    return _convex_hull_set(vlist; n=dim(X))
 end
 
 # turn a list of points describing the convex hull into an appropriate set

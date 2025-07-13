@@ -607,9 +607,6 @@ function project(H::AbstractHyperrectangle, block::AbstractVector{Int};
 end
 
 @validate_commutative function distance(x::AbstractVector, H::AbstractHyperrectangle; p::Real=2)
-    @assert length(x) == dim(H) "a vector of length $(length(x)) is " *
-                                "incompatible with a set of dimension $(dim(H))"
-
     # compute closest point
     y = similar(x)
     outside = false

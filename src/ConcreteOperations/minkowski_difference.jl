@@ -41,8 +41,6 @@ convex hull. Hence, if `Q` is not convex by type information, we wrap it in a
 lazy `ConvexHull`.
 """
 @validate function minkowski_difference(P::LazySet, Q::LazySet)
-    @assert dim(P) == dim(Q) "the dimensions of the given sets should match, " *
-                             "but they are $(dim(P)) and $(dim(Q)), respectively"
     @assert ispolyhedral(P) "this implementation requires that the first argument " *
                             "is polyhedral; try overapproximating with an `HPolyhedron`"
     @assert isbounded(Q) "this implementation requires that the second " *
@@ -64,13 +62,11 @@ end
 for T in (:LazySet, :AbstractZonotope, :AbstractHyperrectangle)
     # Minkowski difference with singleton is a translation
     @eval @validate function minkowski_difference(X::($T), S::AbstractSingleton)
-        @assert dim(X) == dim(S) "incompatible set dimensions $(dim(X)) and $(dim(S))"
         return translate(X, -element(S))
     end
 
     # Minkowski difference with ZeroSet is the identity
     @eval @validate function minkowski_difference(X::($T), Z::ZeroSet)
-        @assert dim(X) == dim(Z) "incompatible set dimensions $(dim(X)) and $(dim(Z))"
         return X
     end
 end
@@ -87,8 +83,6 @@ A `Hyperrectangle`, or an `EmptySet` if the difference is empty.
 @validate function minkowski_difference(H1::AbstractHyperrectangle,
                                         H2::AbstractHyperrectangle)
     n = dim(H1)
-    @assert n == dim(H2) "incompatible dimensions $n and $(dim(H2))"
-
     N = promote_type(eltype(H1), eltype(H2))
     r = Vector{N}(undef, n)
     for i in 1:n
@@ -117,9 +111,6 @@ For higher-dimensional sets, this method implements [Althoff15; Theorem 3](@cite
 """
 @validate function minkowski_difference(Z1::AbstractZonotope, Z2::AbstractZonotope)
     n = dim(Z1)
-    @assert dim(Z2) == n "the Minkowski difference only applies to sets of " *
-                         "the same dimension, but the arguments have dimension $n and $(dim(Z2))"
-
     if n == 1
         return _minkowski_difference_1d(Z1, Z2)
     elseif n == 2
