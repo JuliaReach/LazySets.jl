@@ -50,9 +50,7 @@ end
 
 function _issubset_in_hyperrectangle(S, H, witness)
     n = dim(S)
-    @assert n == dim(H) "incompatible set dimensions $n and $(dim(H))"
     N = promote_type(eltype(S), eltype(H))
-
     for i in 1:n
         lS, hS = extrema(S, i)
         lH, hH = extrema(H, i)
@@ -84,9 +82,7 @@ end
 """
 @validate function ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
                      witness::Bool=false)
-    @assert dim(H1) == dim(H2) "incompatible set dimensions $(dim(H1)) and $(dim(H2))"
     N = promote_type(eltype(H1), eltype(H2))
-
     @inbounds for i in 1:dim(H1)
         c_dist = center(H1, i) - center(H2, i)
         r_dist = radius_hyperrectangle(H1, i) - radius_hyperrectangle(H2, i)
@@ -137,7 +133,6 @@ Since ``S`` is convex, ``P ⊆ S`` iff ``v ∈ S`` for all vertices ``v`` of ``P
 """
 @validate function ⊆(P::AbstractPolytope, S::LazySet, witness::Bool=false;
                      algorithm=nothing)
-    @assert dim(P) == dim(S) "incompatible set dimensions $(dim(P)) and $(dim(S))"
     if !isconvextype(typeof(S))
         error("an inclusion check for the given combination of set types is " *
               "not available")
@@ -210,8 +205,6 @@ end
 # S ⊆ P where P = ⟨Cx ≤ d⟩  iff  y ≤ d where y is the upper corner of box(C*S).
 # See [WetzlingerKBA23; Proposition 7](@citet).
 function _issubset_in_polyhedron_high(S::LazySet, P::LazySet, witness::Bool=false)
-    @assert dim(S) == dim(P) "incompatible set dimensions $(dim(S)) and $(dim(P))"
-
     C, d = tosimplehrep(P)
     x = high(C * S)
     result = all(x .≤ d)
@@ -231,8 +224,6 @@ end
 # See [WetzlingerKBA23; Proposition 7](@citet).
 function _issubset_zonotope_in_polyhedron(Z::AbstractZonotope, P::LazySet,
                                           witness::Bool=false)
-    @assert dim(Z) == dim(P) "incompatible set dimensions $(dim(Z)) and $(dim(P))"
-
     # corner case: no generator
     if ngens(Z) == 0
         c = center(Z)
@@ -258,7 +249,6 @@ end
 # for documentation see
 # ⊆(X::LazySet, P::AbstractPolyhedron, witness::Bool=false)
 function _issubset_constraints_list(S::LazySet, P::LazySet, witness::Bool=false)
-    @assert dim(S) == dim(P) "incompatible set dimensions $(dim(S)) and $(dim(P))"
     @assert ispolyhedral(P) "this inclusion check requires a polyhedral set " *
                             "on the right-hand side"
 
@@ -361,8 +351,6 @@ Otherwise we compute the set difference ``W = X \\ Y`` and check whether
 ``W ⊆ Z`` holds.
 """
 @validate function ⊆(X::Interval, U::UnionSet, witness::Bool=false)
-    @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
-                        "$(dim(U))"
     if !isconvextype(typeof(first(U))) || !isconvextype(typeof(second(U)))
         error("an inclusion check for the given combination of set types is " *
               "not available")
@@ -400,8 +388,6 @@ function _issubset_interval(X::Interval{N}, Y::Interval, Z::Interval,
 end
 
 @validate function ⊆(X::Interval, U::UnionSetArray, witness::Bool=false)
-    @assert dim(U) == 1 "an interval is incompatible with a set of dimension " *
-                        "$(dim(U))"
     V = _get_interval_array_copy(U)
     return _issubset_interval!(X, V, witness)
 end

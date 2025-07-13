@@ -29,15 +29,11 @@ be obtained. After obtaining the respective lists of constraints, the
 """
 @validate function minkowski_sum(P::LazySet, Q::LazySet;
                                  backend=nothing, algorithm=nothing, prune=true)
-    n = dim(P)
-    @assert n == dim(Q) "expected that the sets have the same dimension, " *
-                        "but they are $n and $(dim(Q)) respectively"
-
     @assert ispolyhedral(P) && ispolyhedral(Q) "this method requires polyhedral sets; try " *
                                                "overapproximating with an `HPolytope` or " *
                                                "`HPolyhedron` first"
 
-    if n == 2 && isboundedtype(typeof(P)) && isboundedtype(typeof(Q))
+    if dim(P) == 2 && isboundedtype(typeof(P)) && isboundedtype(typeof(Q))
         # use vertex representation
         return _minkowski_sum_vpolygon(P, Q)
     end
@@ -106,19 +102,12 @@ itself uses `CDDLib` for variable elimination. The available algorithms are:
 """
 @validate function minkowski_sum(P::AbstractPolyhedron, Q::AbstractPolyhedron;
                                  backend=nothing, algorithm=nothing, prune=true)
-    @assert dim(P) == dim(Q) "expected that the sets have the same dimension, " *
-                             "but they are $(dim(P)) and $(dim(Q)) respectively"
-
     return _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
 end
 
 @validate function minkowski_sum(P::AbstractPolytope, Q::AbstractPolytope;
                                  backend=nothing, algorithm=nothing, prune=true)
-    n = dim(P)
-    @assert n == dim(Q) "expected that the sets have the same dimension, " *
-                        "but they are $n and $(dim(Q)) respectively"
-
-    if n == 2
+    if dim(P) == 2
         return _minkowski_sum_vpolygon(P, Q)
     end
 
@@ -183,7 +172,6 @@ end
 The resulting hyperrectangle is obtained by summing up the centers and radii.
 """
 @validate function minkowski_sum(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
-    @assert dim(H1) == dim(H2) "incompatible set dimensions $(dim(H1)) and $(dim(H2))"
     c = center(H1) + center(H2)
     r = radius_hyperrectangle(H1) + radius_hyperrectangle(H2)
     return Hyperrectangle(c, r)
@@ -206,8 +194,6 @@ the generators of `Z1` and `Z2`.
 end
 
 @validate function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
-    @assert dim(X) == dim(Y) "expected that the singletons have the same " *
-                             "dimension, but they are $(dim(X)) and $(dim(Y)) respectively"
     return Singleton(element(X) + element(Y))
 end
 

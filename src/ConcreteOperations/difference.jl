@@ -19,8 +19,6 @@ This implementation uses `IntervalArithmetic.setdiff`.
 end
 
 @validate function difference(X::Interval{N}, H::HalfSpace) where {N}
-    @assert dim(H) == 1
-
     if H.a[1] < zero(N)
         # half-space is a lower bound
         l = low(H, 1)

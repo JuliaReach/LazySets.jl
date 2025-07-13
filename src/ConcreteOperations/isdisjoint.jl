@@ -199,10 +199,8 @@ zonotope with center ``c`` and generators ``g``.
         return _witness_result_empty(witness, true, Z1, Z2)
     end
 
-    n = dim(Z1)
-    @assert n == dim(Z2) "the zonotopes need to have the same dimensions"
     N = promote_type(eltype(Z1), eltype(Z2))
-    Z = Zonotope(zeros(N, n), hcat(genmat(Z1), genmat(Z2)))
+    Z = Zonotope(zeros(N, dim(Z1)), hcat(genmat(Z1), genmat(Z2)))
     result = !∈(center(Z1) - center(Z2), Z; solver=solver)
     if result
         return _witness_result_empty(witness, true, N)
@@ -567,8 +565,6 @@ end
 @validate_commutative function isdisjoint(Z::AbstractZonotope, P::AbstractPolyhedron,
                                           witness::Bool=false; solver=nothing)
     n = dim(Z)
-    @assert n == dim(P) "incompatible dimensions $(dim(Z)) and $(dim(P))"
-
     if n <= 2
         # this implementation is slower for low-dimensional sets
         return _isdisjoint_polyhedron(Z, P, witness; solver=solver)

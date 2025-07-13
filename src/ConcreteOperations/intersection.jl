@@ -18,8 +18,6 @@ end
 end
 
 function _intersection_singleton(S::AbstractSingleton, X)
-    @assert dim(S) == dim(X) "cannot take the intersection between a " *
-                             "$(dim(S))-dimensional set and a $(dim(X))-dimensional set"
     N = promote_type(eltype(S), eltype(X))
     return element(S) ∈ X ? S : EmptySet{N}(dim(S))
 end
@@ -88,8 +86,6 @@ Otherwise the resulting hyperrectangle uses these borders in each dimension.
 """
 @validate function intersection(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle)
     n = dim(H1)
-    @assert n == dim(H2) "cannot take the intersection between a " *
-                         "$n-dimensional set and a $(dim(H2))-dimensional set"
     N = promote_type(eltype(H1), eltype(H2))
     v_high = Vector{N}(undef, n)
     v_low = Vector{N}(undef, n)
@@ -125,9 +121,6 @@ We first handle the special case that the normal vector `a` of `hs` is close to
 zero. Then we distinguish the cases that `hs` is a lower or an upper bound.
 """
 @validate_commutative function intersection(X::Interval, hs::HalfSpace)
-    @assert dim(hs) == 1 "cannot take the intersection between an interval " *
-                         "and a $(dim(hs))-dimensional half-space"
-
     a = hs.a[1]
     b = hs.b
     N = promote_type(eltype(X), eltype(hs))
@@ -187,9 +180,6 @@ function _intersection_interval_halfspace(lo, hi, a, b, N)
 end
 
 @validate_commutative function intersection(X::Interval, hp::Hyperplane)
-    @assert dim(hp) == 1 "cannot take the intersection between an interval " *
-                         "and a $(dim(hp))-dimensional hyperplane"
-
     # a one-dimensional hyperplane is just a point
     p = hp.b / hp.a[1]
     if _leq(min(X), p) && _leq(p, max(X))
@@ -221,8 +211,6 @@ be of type `Singleton` if the intersection is very small.
 end
 
 function _intersection_interval(X::Interval, Y::LazySet)
-    @assert dim(Y) == 1 "cannot take the intersection between an interval " *
-                        "and a $(dim(Y))-dimensional set"
     @assert isconvextype(typeof(Y)) "this implementation requires a convex " *
                                     "set, but got $(typeof(Y))"
 
@@ -522,8 +510,6 @@ If `prunefunc` is `nothing`, this implementation sets it to
                                 P2::Union{VPolygon,VPolytope};
                                 backend=nothing, prunefunc=nothing)
     n = dim(P1)
-    @assert n == dim(P2) "expected polytopes with equal dimensions but they " *
-                         "are $(dim(P1)) and $(dim(P2)) respectively"
 
     # fast path for one- and two-dimensional sets
     if n == 1

@@ -1,8 +1,6 @@
 @validate function distance(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle;
                             p::Real=2)
     n = dim(H1)
-    @assert n == dim(H2) "incompatible set dimensions $n and $(dim(H2))"
-
     N = promote_type(eltype(H1), eltype(H2))
     d = Vector{N}(undef, n)
     @inbounds for i in 1:n

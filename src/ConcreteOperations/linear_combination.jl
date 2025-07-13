@@ -10,9 +10,6 @@ end
 end
 
 function _linear_combination_convex(X, Y)
-    @assert dim(X) == dim(Y) "the dimensions of the given sets should match, " *
-                             "but they are $(dim(X)) and $(dim(Y)), respectively"
-
     if isempty(X)
         return X
     elseif isempty(Y)

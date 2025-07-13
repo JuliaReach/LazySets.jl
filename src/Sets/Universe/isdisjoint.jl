@@ -3,9 +3,6 @@
 end
 
 function _isdisjoint_universe(U::Universe, X::LazySet, witness)
-    @assert dim(U) == dim(X) "the dimensions of the given sets should match, " *
-                             "but they are $(dim(U)) and $(dim(X)), respectively"
-
     if isempty(X)
         return _witness_result_empty(witness, true, U, X)
     else
