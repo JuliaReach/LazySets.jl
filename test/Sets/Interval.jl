@@ -308,8 +308,8 @@ for N in [Float64, Float32, Rational{Int}]
     end
 
     # exponential_map
-    @test_throws AssertionError exponential_map(ones(N, 2, 2), X)
-    @test_throws AssertionError exponential_map(ones(N, 2, 1), X)
+    @test_throws DimensionMismatch exponential_map(ones(N, 2, 2), X)
+    @test_throws DimensionMismatch exponential_map(ones(N, 2, 1), X)
 
     # in
     @test_throws AssertionError N[0, 0] ∈ X
