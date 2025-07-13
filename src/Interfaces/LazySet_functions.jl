@@ -650,9 +650,6 @@ The default implementation determines `v ∈ interior(X)` with error tolerance
 contained in `X`.
 """
 function is_interior_point(v::AbstractVector{<:Real}, X::LazySet; kwargs...)
-    @assert length(v) == dim(X) "a vector of length $(length(v)) is " *
-                                "incompatible with a set of dimension $(dim(X))"
-
     N = promote_type(eltype(v), eltype(X))
     if N != eltype(X)
         throw(ArgumentError("the set eltype must be more general"))
@@ -665,11 +662,8 @@ function is_interior_point(v::AbstractVector{<:Real}, X::LazySet; kwargs...)
     return is_interior_point(v, X; p=p, ε=ε)
 end
 
-function is_interior_point(v::AbstractVector{N}, X::LazySet{N}; p=N(Inf),
-                           ε=_rtol(N)) where {N<:Real}
-    @assert length(v) == dim(X) "a vector of length $(length(v)) is " *
-                                "incompatible with a set of dimension $(dim(X))"
-    @assert ε > zero(N) "the tolerance must be strictly positive"
+@validate function is_interior_point(v::AbstractVector{N}, X::LazySet{N}; p=N(Inf),
+                                     ε=_rtol(N)) where {N<:Real}
 
     return Ballp(p, v, ε) ⊆ X
 end

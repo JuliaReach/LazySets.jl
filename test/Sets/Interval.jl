@@ -318,7 +318,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test_throws MethodError N(1) ∈ X
 
     # is_interior_point
-    @test_throws AssertionError is_interior_point(N[0, 0], X)
+    @test_throws DimensionMismatch is_interior_point(N[0, 0], X)
     if N <: AbstractFloat
         @test is_interior_point(N[1], X)
         if N == Float64
@@ -328,7 +328,7 @@ for N in [Float64, Float32, Rational{Int}]
         end
         @test !is_interior_point(N[3], X)
     else
-        @test_throws AssertionError is_interior_point(N[1], X)
+        @test_throws ArgumentError is_interior_point(N[1], X)
         @test is_interior_point(N[1], X; ε=1 // 100)
         @test !is_interior_point(N[2], X; ε=1 // 100)
         @test !is_interior_point(N[3], X; ε=1 // 100)

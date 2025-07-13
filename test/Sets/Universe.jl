@@ -216,11 +216,11 @@ for N in [Float64, Float32, Rational{Int}]
     @test N[0, 0] ∈ U
 
     # is_interior_point
-    @test_throws AssertionError is_interior_point(N[0], U)
+    @test_throws DimensionMismatch is_interior_point(N[0], U)
     if N <: AbstractFloat
         @test is_interior_point(N[0, 0], U)
     else
-        @test_throws AssertionError is_interior_point(N[0, 0], U)
+        @test_throws ArgumentError is_interior_point(N[0, 0], U)
         @test is_interior_point(N[0, 0], U; ε=1 // 100)
         # incompatible numeric type
         @test_throws ArgumentError is_interior_point([0.0, 0.0], U)
