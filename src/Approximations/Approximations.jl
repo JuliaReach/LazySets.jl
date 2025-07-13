@@ -31,6 +31,7 @@ using ReachabilityBase.Subtypes: subtypes
 using ..LazySets: ACS, default_lp_solver, _isbounded_stiemke, require, linprog,
                   is_lp_optimal, _normal_Vector, default_sdp_solver,
                   get_exponential_backend, _expmv, second, @assert
+using ..LazySets.SparsePolynomialZonotopeModule: merge_id
 using ..LazySets.JuMP: Model, set_silent, @variable, @constraint, optimize!,
                        value, @NLobjective, @objective
 using ..LazySets.MatrixZonotopeModule: _rowwise_zonotope_norm
@@ -48,6 +49,7 @@ include("underapproximate.jl")
 include("approximate.jl")
 include("decompositions.jl")
 include("hausdorff_distance.jl")
+include("overapproximate_spz.jl")
 include("overapproximate_norm.jl")
 include("init.jl")
 

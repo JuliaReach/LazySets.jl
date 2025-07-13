@@ -1,3 +1,5 @@
+abstract type AbstractMatrixZonotope{N} end
+
 """
     MatrixZonotope{N, MN<:AbstractMatrix{N}}(A0::MN, Ai::Vector{MN},
                                               idx::Vector{Int}=collect(1:length(Aᵢ)))
@@ -34,7 +36,7 @@ julia> MZ = MatrixZonotope(A0, Ai, idx)
 MatrixZonotope{Float64, Matrix{Float64}}([2.0 1.0; -1.0 0.0], [[1.0 -1.0; 0.0 -1.0], [0.0 2.0; -1.0 1.0]], [1, 3])
 ```
 """
-struct MatrixZonotope{N,MN<:AbstractMatrix{N}}
+struct MatrixZonotope{N, MN <: AbstractMatrix{N}} <: AbstractMatrixZonotope{N}
     A0::MN
     Ai::Vector{MN}
     idx::Vector{Int}
@@ -79,4 +81,10 @@ Base.transpose(MZ::MatrixZonotope{N}) where {N} = begin
     Ct = transpose(center(MZ))
     Gts = map(transpose, generators(MZ))
     MatrixZonotope(Ct, Gts)
+end
+
+function Base.copy(MZ::MatrixZonotope{N,MN}) where {N,MN}
+    return MatrixZonotope(copy(MZ.A0),               
+                                [copy(Aij) for Aij in MZ.Ai],
+                                copy(MZ.idx))
 end
