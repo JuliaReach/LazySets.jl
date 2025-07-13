@@ -2,7 +2,7 @@ using LazySets, Test
 
 for N in [Float64, Float32, Rational{Int}]
     # test constructor
-    c = N[1 0; 0 1]
+    c = N[1 0; 0 3]
     gens = [N[1 -1; 0 2], N[2 -1; -1 1]]
     MZ = MatrixZonotope(c, gens)
     @test MZ isa MatrixZonotope{N}
@@ -43,8 +43,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test generators(MZt)== [transpose(Ai) for Ai in generators(MZ)]
 
     #norm
-    @test norm(MZ, Inf) == 6
-    @test norm(MZ, 1) == 6
+    @test norm(MZ, Inf) == 7
+    @test norm(MZ, 1) == 8
 end
 
 for N in [Float64, Float32]

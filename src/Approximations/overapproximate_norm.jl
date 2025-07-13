@@ -81,7 +81,7 @@ function _overapproximate_l1_norm(Z::AbstractZonotope{N}) where {N}
 end
 
 """
-    overapproximate_norm(MZ::MatrixZonotope, [p]::Real=1)
+    overapproximate_norm(MZ::MatrixZonotope, [p]::Real=Inf)
 
 Compute an upper bound on the ``p``-norm of a matrix zonotope.
 
