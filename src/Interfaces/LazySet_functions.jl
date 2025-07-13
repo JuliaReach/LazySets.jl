@@ -532,12 +532,7 @@ end
 
 The default implementation applies the functions `linear_map` and `translate`.
 """
-function affine_map(M, X::LazySet, v::AbstractVector; kwargs...)
-    @assert size(M, 2) == dim(X) "an affine map of size $(size(M)) cannot be " *
-                                 "applied to a set of dimension $(dim(X))"
-    @assert size(M, 1) == length(v) "an affine map of sizes $(size(M)) and " *
-                                    "$(length(v)) is incompatible"
-
+@validate function affine_map(M, X::LazySet, v::AbstractVector; kwargs...)
     return translate(linear_map(M, X; kwargs...), v)
 end
 

@@ -289,8 +289,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test volume(X) == N(2)
 
     # affine_map
-    @test_throws AssertionError affine_map(ones(N, 1, 2), X, N[1])
-    @test_throws AssertionError affine_map(ones(N, 2, 1), X, N[1])
+    @test_throws DimensionMismatch affine_map(ones(N, 1, 2), X, N[1])
+    @test_throws DimensionMismatch affine_map(ones(N, 2, 1), X, N[1])
     Y = affine_map(ones(N, 1, 1), X, N[1])
     @test isidentical(Y, Interval(N(1), N(3)))
     Y = affine_map(ones(N, 2, 1), X, N[1, 2])

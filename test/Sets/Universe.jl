@@ -189,8 +189,8 @@ for N in [Float64, Float32, Rational{Int}]
     @test x isa N && x == N(Inf)
 
     # affine_map
-    @test_throws AssertionError affine_map(ones(N, 2, 3), U, N[1, 1])
-    @test_throws AssertionError affine_map(ones(N, 2, 2), U, N[1])
+    @test_throws DimensionMismatch affine_map(ones(N, 2, 3), U, N[1, 1])
+    @test_throws DimensionMismatch affine_map(ones(N, 2, 2), U, N[1])
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         # TODO this should work, even without Polyhedra
         @test_broken affine_map(ones(N, 2, 2), U, N[1, 1])

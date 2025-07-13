@@ -2,7 +2,7 @@ module EllipsoidModule
 
 using Reexport
 
-using ..LazySets: AbstractCentrallySymmetric
+using ..LazySets: AbstractCentrallySymmetric, @validate
 using LinearAlgebra: dot, I, checksquare, isposdef
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: inner
