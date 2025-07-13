@@ -72,7 +72,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test x isa Vector{N} && length(x) == 1 && x[1] isa N && N(0) <= x[1] <= N(2)
 
     # area
-    @test_throws AssertionError area(X)
+    @test_throws DimensionMismatch area(X)
 
     # center
     c = center(X)

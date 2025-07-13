@@ -161,7 +161,7 @@ for N in [Float64, Float32]
     @test area(B) ≈ 16 * N(pi)
     @test volume(B) == 32 / 3 * N(pi)
     B = Ball2(zeros(N, 4), N(2))
-    @test_throws AssertionError area(B)
+    @test_throws DimensionMismatch area(B)
     @test volume(B) == 8 * N(pi)^2
 
     # projection

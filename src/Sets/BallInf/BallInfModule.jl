@@ -2,8 +2,9 @@ module BallInfModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractHyperrectangle, _high_AbstractBallp, _low_AbstractBallp,
-                  _ρ_sev_hyperrectangle, _σ_sev_hyperrectangle
+using ..LazySets: AbstractHyperrectangle, _high_AbstractBallp,
+                  _low_AbstractBallp, _ρ_sev_hyperrectangle,
+                  _σ_sev_hyperrectangle, @validate
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: SingleEntryVector

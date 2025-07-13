@@ -823,20 +823,20 @@ Let `m` be the number of vertices of `X`. We consider the following instances:
 Otherwise, the general Shoelace formula is used; for details see the
 [Wikipedia page](https://en.wikipedia.org/wiki/Shoelace_formula).
 """
-function area(X::LazySet)
-    @assert dim(X) == 2 "this function only applies to two-dimensional sets, " *
+@validate function area(X::LazySet)
+    @assert dim(X) == 2 "this implementation only applies to two-dimensional sets, " *
                         "but the given set is $(dim(X))-dimensional"
     @assert ispolyhedral(X) && isbounded(X) "this method requires a polytope"
 
     vlist = vertices_list(X)
-    return _area_vlist(vlist)
+    return _area_vlist_2D(vlist)
 end
 
 # Notes:
 # - dimension is expected to be 2D
 # - implementation requires sorting of vertices
 # - convex hull is applied in-place
-function _area_vlist(vlist; apply_convex_hull::Bool=true)
+function _area_vlist_2D(vlist; apply_convex_hull::Bool=true)
     if apply_convex_hull
         convex_hull!(vlist)
     end

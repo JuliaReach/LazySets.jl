@@ -111,7 +111,7 @@ for N in [Float64, Float32, Rational{Int}]
     # area/volume
     @test area(h) == volume(h) == N(8)
     h1 = Hyperrectangle(N[0], N[1])
-    @test_throws AssertionError area(h1)
+    @test_throws DimensionMismatch area(h1)
     @test volume(h1) == N(2)
     h1 = Hyperrectangle(N[0, 0, 0], N[1, 3 // 2, 2])
     @test area(h1) == N(52)

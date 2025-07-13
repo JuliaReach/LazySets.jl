@@ -586,13 +586,8 @@ function _surface_area_hyperrectangle(H)
     return 2 * (l * b + l * h + b * h)
 end
 
-function area(H::AbstractHyperrectangle)
-    n = dim(H)
-    @assert n ∈ (2, 3) "this function only applies to two-dimensional or " *
-                       "three-dimensional sets, but the given set is " *
-                       "$n-dimensional"
-
-    if n == 2
+@validate function area(H::AbstractHyperrectangle)
+    if dim(H) == 2
         return _volume_hyperrectangle(H)
     else
         return _surface_area_hyperrectangle(H)
