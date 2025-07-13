@@ -7,13 +7,6 @@ function ⊆(::AbstractVector, ::LazySet)
                         "(they behave equivalently although the implementations may differ)"))
 end
 
-# conversion for IA types
-⊆(X::LazySet, Y::IA.Interval) = ⊆(X, Interval(Y))
-⊆(X::IA.Interval, Y::LazySet) = ⊆(Interval(X), Y)
-
-⊆(X::LazySet, Y::IA.IntervalBox) = ⊆(X, convert(Hyperrectangle, Y))
-⊆(X::IA.IntervalBox, Y::LazySet) = ⊆(convert(Hyperrectangle, X), Y)
-
 """
 # Extended help
 
