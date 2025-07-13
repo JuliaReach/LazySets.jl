@@ -18,6 +18,7 @@ Mathematically a matrix zonotope is defined as the set of matrices
 \\mathcal{A} = \\left\\{A ∈ ℝ^{n×m} : A^{(0)} + ∑_{i=1}^p ξ_i A^{(i)},~~ ξ_i ∈ [-1, 1]~~ ∀ i = 1,…, p \\right\\},
 ```
 
+It can be written in shorthand notation as ``\\mathcal{A} = \\braket{A^{(0)},A^{(1)}, ..., A^{(p)} }_{MZ}.
 Matrix zonotopes were introduced in [HuangLBS2025](@citet).
 
 ### Examples
@@ -50,5 +51,32 @@ struct MatrixZonotope{N,MN<:AbstractMatrix{N}}
     end
 end
 
-Base.size(Z::MatrixZonotope) = size(center(Z))
 Base.eltype(::Type{<:MatrixZonotope{N}}) where {N} = N
+
+"""
+    size(MZ::MatrixZonotope)
+
+Return the dimensions of a matrix zonotope.  
+
+"""
+Base.size(MZ::MatrixZonotope) = size(center(MZ))
+Base.size(MZ::MatrixZonotope, d::Int) = size(center(MZ), d)
+
+"""
+    transpose(MZ::MatrixZonotope)
+
+Return the transpose of a matrix zonotope.
+
+### Notes
+
+The transpose of a matrix zonotope is defined as:
+
+```math
+    \\mathcal{A}ᵀ = \\braket{(A^{(0)})ᵀ,(A^{(1)})ᵀ, \\dots, (A^{(p)})ᵀ }
+```
+"""
+Base.transpose(MZ::MatrixZonotope{N}) where {N} = begin
+    Ct = transpose(center(MZ))
+    Gts = map(transpose, generators(MZ))
+    MatrixZonotope(Ct, Gts)
+end
