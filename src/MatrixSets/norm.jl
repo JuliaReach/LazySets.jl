@@ -1,7 +1,7 @@
 """
     norm(MZ::MatrixZonotope, p::Real=Inf)
 
-Compute the operator ``p-norm`` of a matrix zonotope.
+Compute the operator ``p``-norm of a matrix zonotope.
 
 ### Definition
 
@@ -11,7 +11,7 @@ For a matrix zonotope `\\mathcal{A}``, its ``p``-norm is defined as
 \\|\\mathcal{A}\\|_p = \\sup_{A \\in \\mathcal{A}} \\|A\\|_p
 ```
 
-where \``\\|A\\|_p\`` denotes the induced matrix norm.
+where ``\\|A\\|_p`` denotes the induced matrix norm.
 
 ### Input
 

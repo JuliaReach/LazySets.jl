@@ -56,7 +56,7 @@ Base.eltype(::Type{<:MatrixZonotope{N}}) where {N} = N
 """
     size(MZ::MatrixZonotope)
 
-Return the dimensions of the center matrix of the matrix zonotope `MZ`.  
+Return the dimensions of a matrix zonotope.  
 
 """
 Base.size(MZ::MatrixZonotope) = size(center(MZ))
@@ -65,14 +65,14 @@ Base.size(MZ::MatrixZonotope, d::Int) = size(center(MZ), d)
 """
     transpose(MZ::MatrixZonotope)
 
-Returns the transpose of the matrix zonotope `MZ`.
+Return the transpose of a matrix zonotope.
 
 ### Notes
 
 The transpose of a matrix zonotope is defined as:
 
 ```math
-    \\mathcal{A}^⊺ = \\braket{(A^{(0)})^⊺,(A^{(1)})^⊺, \\dots, (A^{(p)})^⊺ }
+    \\mathcal{A}ᵀ = \\braket{(A^{(0)})ᵀ,(A^{(1)})ᵀ, \\dots, (A^{(p)})ᵀ }
 ```
 """
 Base.transpose(MZ::MatrixZonotope{N}) where {N} = begin
