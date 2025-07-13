@@ -117,7 +117,7 @@ otherwise, for all ``i = 1, …, n``.
 
 If the direction has norm zero, the center of the ball is returned.
 """
-function σ(d::AbstractVector, B::AbstractBallp)
+@validate function σ(d::AbstractVector, B::AbstractBallp)
     p = ball_norm(B)
     q = p / (p - 1)
     v = similar(d)

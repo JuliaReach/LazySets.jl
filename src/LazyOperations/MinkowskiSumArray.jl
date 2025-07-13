@@ -126,7 +126,7 @@ direction.
 A support vector in the given direction.
 If the direction has norm zero, the result depends on the summand sets.
 """
-function σ(d::AbstractVector, msa::MinkowskiSumArray)
+@validate function σ(d::AbstractVector, msa::MinkowskiSumArray)
     return _σ_msum_array(d, msa.array)
 end
 

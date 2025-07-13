@@ -115,7 +115,7 @@ If the direction has norm zero, the result depends on the individual sets.
 
 This implementation computes the concrete intersection, which can be expensive.
 """
-function σ(d::AbstractVector, ia::IntersectionArray)
+@validate function σ(d::AbstractVector, ia::IntersectionArray)
     X = concretize(ia)
     return σ(d, X)
 end

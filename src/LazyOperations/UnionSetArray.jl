@@ -118,7 +118,7 @@ implementation `algorithm="support_function"` can be used, which evaluates the
 support function of each set directly and then calls only the support vector of
 one of the ``Xᵢ``.
 """
-function σ(d::AbstractVector, cup::UnionSetArray; algorithm="support_vector")
+@validate function σ(d::AbstractVector, cup::UnionSetArray; algorithm="support_vector")
     arr = array(cup)
 
     if algorithm == "support_vector"

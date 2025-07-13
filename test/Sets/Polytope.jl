@@ -41,7 +41,7 @@ for N in [Float64, Float32, Rational{Int}]
     addconstraint!(p, c2)
 
     # support vector of polytope with no constraints
-    @test_throws ErrorException σ(N[0], HPolytope{N}())
+    @test_throws DimensionMismatch σ(N[0], HPolytope{N}())
 
     # boundedness
     @test isbounded(p) && isbounded(p, false) && isboundedtype(typeof(p))
@@ -215,7 +215,7 @@ for N in [Float64, Float32, Rational{Int}]
     # empty polytope
     V = VPolytope{N}()
     @test_throws DimensionMismatch ρ(d, V)
-    @test_throws ErrorException σ(d, V)
+    @test_throws DimensionMismatch σ(d, V)
     # one vertex
     V = VPolytope([N[2, 1]])
     @test σ(d, V) == N[2, 1]

@@ -84,7 +84,7 @@ Return the support vector of a bloated set in a given direction.
 
 The support vector of the bloated set in the given direction.
 """
-function σ(d::AbstractVector, B::Bloating)
+@validate function σ(d::AbstractVector, B::Bloating)
     @assert !iszero(d) "the support vector in the zero direction is undefined"
     @assert B.ε >= 0 || B.p > 1 "the support vector for negative bloating " *
                                 "in the 1-norm is not implemented"

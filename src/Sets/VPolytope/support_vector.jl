@@ -9,7 +9,7 @@ A support vector maximizes the support function.
 For a polytope, the support function is always maximized in some vertex.
 Hence it is sufficient to check all vertices.
 """
-function σ(d::AbstractVector, P::VPolytope)
+@validate function σ(d::AbstractVector, P::VPolytope)
     return _σ_vertices(d, P.vertices)
 end
 

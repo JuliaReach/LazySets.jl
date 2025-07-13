@@ -118,7 +118,7 @@ Compute a support vector of a Cartesian product of a finite number of sets.
 A support vector in the given direction.
 If the direction has norm zero, the result depends on the product sets.
 """
-function σ(d::AbstractVector, cpa::CartesianProductArray)
+@validate function σ(d::AbstractVector, cpa::CartesianProductArray)
     svec = similar(d)
     i0 = 1
     for Xi in cpa.array
@@ -130,7 +130,7 @@ function σ(d::AbstractVector, cpa::CartesianProductArray)
 end
 
 # faster version for sparse vectors
-function σ(d::AbstractSparseVector, cpa::CartesianProductArray)
+@validate function σ(d::AbstractSparseVector, cpa::CartesianProductArray)
     # idea: We walk through the blocks of `cpa` (i.e., the sets `Xi`) and search
     # for corresponding non-zero entries in `d` (stored in `indices`).
     # `next_idx` is the next index of `indices` such that
@@ -169,7 +169,7 @@ function σ(d::AbstractSparseVector, cpa::CartesianProductArray)
 end
 
 # faster version for single-entry vectors
-function σ(d::SingleEntryVector, cpa::CartesianProductArray)
+@validate function σ(d::SingleEntryVector, cpa::CartesianProductArray)
     svec = similar(d)
     i0 = 1
     idx = d.i

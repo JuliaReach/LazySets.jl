@@ -257,7 +257,7 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a set, it follows that
 ``σ(d, L) = M⋅σ(M^T d, S)`` for any direction ``d``.
 """
-function σ(d::AbstractVector, lm::LinearMap)
+@validate function σ(d::AbstractVector, lm::LinearMap)
     return _σ_linear_map(d, lm.M, lm.X)
 end
 

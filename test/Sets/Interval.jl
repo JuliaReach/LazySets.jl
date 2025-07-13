@@ -405,7 +405,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test res isa N && res == N(0)
 
     # support_vector
-    @test_throws AssertionError σ(N[1, 1], X)
+    @test_throws DimensionMismatch σ(N[1, 1], X)
     res = σ(N[2], X)
     @test res isa Vector{N} && res == [N(2)]
     res = σ(N[-2], X)

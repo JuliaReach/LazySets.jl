@@ -243,7 +243,7 @@ A support vector in the given direction.
 
 We compute the concrete intersection, which may be expensive.
 """
-function σ(d::AbstractVector, cap::Intersection)
+@validate function σ(d::AbstractVector, cap::Intersection)
     X = concretize(cap)
     return σ(d, X)
 end

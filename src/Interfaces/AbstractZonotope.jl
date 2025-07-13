@@ -229,7 +229,7 @@ end
 If the direction has norm zero, the vertex with ``ξ_i = 1 \\ \\ ∀ i = 1,…, p``
 is returned.
 """
-function σ(d::AbstractVector, Z::AbstractZonotope)
+@validate function σ(d::AbstractVector, Z::AbstractZonotope)
     G = genmat(Z)
     return center(Z) .+ G * sign_cadlag.(At_mul_B(G, d))
 end

@@ -113,7 +113,7 @@ direction.
 
 A support vector in the given direction.
 """
-function σ(d::AbstractVector, cha::ConvexHullArray)
+@validate function σ(d::AbstractVector, cha::ConvexHullArray)
     @assert !isempty(cha.array) "an empty convex hull is not allowed"
     return _σ_union(d, array(cha))
 end

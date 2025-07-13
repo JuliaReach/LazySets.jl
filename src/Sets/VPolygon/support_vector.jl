@@ -23,7 +23,7 @@ The binary search runs in ``O(log n)`` and we follow
 [this implementation](http://geomalgorithms.com/a14-_extreme_pts.html#polyMax_2D())
 based on an algorithm described in [ORourke98](@citet).
 """
-function σ(d::AbstractVector, P::VPolygon)
+@validate function σ(d::AbstractVector, P::VPolygon)
     @assert !isempty(P.vertices) "the polygon has no vertices"
     return P.vertices[_σ_helper(d, P)]
 end

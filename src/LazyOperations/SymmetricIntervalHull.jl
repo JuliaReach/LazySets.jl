@@ -203,10 +203,7 @@ For each non-zero entry in `d` we need to either look up the bound (if it has
 been computed before) or compute it, in which case we store it for future
 queries.
 """
-function σ(d::AbstractVector, sih::SymmetricIntervalHull)
-    @assert length(d) == dim(sih) "cannot compute the support vector of a " *
-                                  "$(dim(sih))-dimensional set along a vector of length $(length(d))"
-
+@validate function σ(d::AbstractVector, sih::SymmetricIntervalHull)
     N = promote_type(eltype(d), eltype(sih))
     svec = similar(d)
     for i in eachindex(d)
@@ -220,11 +217,8 @@ function σ(d::AbstractVector, sih::SymmetricIntervalHull)
 end
 
 # faster support-vector calculation for SingleEntryVector
-function σ(d::SingleEntryVector, sih::SymmetricIntervalHull)
+@validate function σ(d::SingleEntryVector, sih::SymmetricIntervalHull)
     N = promote_type(eltype(d), eltype(sih))
-    @assert length(d) == dim(sih) "a $(d.n)-dimensional vector is " *
-                                  "incompatible with a $(dim(sih))-dimensional set"
-
     entry = get_radius!(sih, d.i)
     if d.v < zero(N)
         entry = -entry

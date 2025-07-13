@@ -226,7 +226,7 @@ Return a support vector of a translation.
 A support vector in the given direction.
 If the direction has norm zero, the result depends on the wrapped set.
 """
-function σ(d::AbstractVector, tr::Translation)
+@validate function σ(d::AbstractVector, tr::Translation)
     return tr.v + σ(d, tr.X)
 end
 

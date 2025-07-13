@@ -280,17 +280,12 @@ vector `[1, 0]` in the middle of the right-hand facet.
 If the direction has norm zero, the result can be any point in `H`. The default
 implementation returns the center of `H`.
 """
-function σ(d::AbstractVector, H::AbstractHyperrectangle)
-    @assert length(d) == dim(H) "a $(length(d))-dimensional vector is " *
-                                "incompatible with a $(dim(H))-dimensional set"
+@validate function σ(d::AbstractVector, H::AbstractHyperrectangle)
     return center(H) .+ sign_cadlag.(d) .* radius_hyperrectangle(H)
 end
 
 # helper function for single-entry vector (used by subtypes)
 function _σ_sev_hyperrectangle(d::SingleEntryVector, H::AbstractHyperrectangle)
-    @assert d.n == dim(H) "a $(d.n)-dimensional vector is " *
-                          "incompatible with a $(dim(H))-dimensional set"
-
     N = promote_type(eltype(d), eltype(H))
     s = copy(center(H))
     idx = d.i

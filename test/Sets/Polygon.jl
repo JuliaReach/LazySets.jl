@@ -81,8 +81,8 @@ for N in [Float64, Float32, Rational{Int}]
     HPolygonOpt(constraints_list(H))
 
     # support vector of polygon with no constraints
-    @test_throws AssertionError σ(N[0], HPolygon{N}())
-    @test_throws AssertionError σ(N[0], HPolygonOpt{N}())
+    @test_throws DimensionMismatch σ(N[0], HPolygon{N}())
+    @test_throws DimensionMismatch σ(N[0], HPolygonOpt{N}())
 
     # boundedness
     @test isbounded(p) && isbounded(po)

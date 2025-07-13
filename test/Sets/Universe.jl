@@ -284,7 +284,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test ρ(N[0, 0], U) == N(0)
 
     # support_vector
-    @test_throws AssertionError σ(N[1], U)
+    @test_throws DimensionMismatch σ(N[1], U)
     x = σ(N[-1, 2], U)
     @test x isa Vector{N} && x == N[-Inf, Inf]
     x = σ(N[2, 0], U)

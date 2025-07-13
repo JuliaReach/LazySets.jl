@@ -132,7 +132,7 @@ end
 The support vector is the set's vector itself, irrespective of the given
 direction.
 """
-function σ(::AbstractVector, S::AbstractSingleton)
+@validate function σ(d::AbstractVector, S::AbstractSingleton)
     return element(S)
 end
 

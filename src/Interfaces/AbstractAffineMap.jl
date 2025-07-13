@@ -87,7 +87,7 @@ function dim(am::AbstractAffineMap)
     return length(vector(am))
 end
 
-function σ(d::AbstractVector, am::AbstractAffineMap)
+@validate function σ(d::AbstractVector, am::AbstractAffineMap)
     A = matrix(am)
     return A * σ(At_mul_B(A, d), set(am)) + vector(am)
 end

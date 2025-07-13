@@ -354,8 +354,8 @@ If the direction has norm zero, the result depends on the wrapped set.
 If ``E = \\exp(M)⋅X``, where ``M`` is a matrix and ``X`` is a set, it
 follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, X)`` for any direction ``d``.
 """
-function σ(d::AbstractVector, em::ExponentialMap;
-           backend=get_exponential_backend())
+@validate function σ(d::AbstractVector, em::ExponentialMap;
+                     backend=get_exponential_backend())
     N = promote_type(eltype(d), eltype(em))
     v = _expmv(backend, one(N), transpose(em.spmexp.M), d)  # exp(M^T) * d
     return _expmv(backend, one(N), em.spmexp.M, σ(v, em.X))  # exp(M) * σ(v, X)

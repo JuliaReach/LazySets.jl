@@ -129,7 +129,7 @@ A valid support vector in direction ``d`` of the Minkowski sum of two sets ``X``
 and ``Y`` is the sum of the support vectors of ``X`` and ``Y`` in direction
 ``d``.
 """
-function σ(d::AbstractVector, ms::MinkowskiSum)
+@validate function σ(d::AbstractVector, ms::MinkowskiSum)
     return σ(d, ms.X) + σ(d, ms.Y)
 end
 

@@ -125,7 +125,7 @@ implementation `algorithm="support_function"` can be used, which evaluates the
 support function of each set directly and then calls only the support vector of
 either ``X`` *or* ``Y``.
 """
-function σ(d::AbstractVector, cup::UnionSet; algorithm="support_vector")
+@validate function σ(d::AbstractVector, cup::UnionSet; algorithm="support_vector")
     X, Y = cup.X, cup.Y
 
     if algorithm == "support_vector"
