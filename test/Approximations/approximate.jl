@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # approximate rectification by rectifying the vertices
     # - exact approximation
     X = Ball1(N[1, 1], N(1))

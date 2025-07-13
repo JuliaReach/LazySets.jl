@@ -4,9 +4,11 @@ using Test
 begin
     __test_short = haskey(ENV, "JULIA_PKGEVAL")
 
+    __test_Float64_only = false
+
     macro ts(arg)
         if !__test_short
-            quote
+            return quote
                 $(esc(arg))
             end
         end
@@ -17,6 +19,16 @@ begin
             return v1
         else
             return @eval vcat($v1, $v2)
+        end
+    end
+
+    macro tN(v)
+        if __test_Float64_only
+            return quote
+                [$(esc(v))[1]]
+            end
+        else
+            return v
         end
     end
 end

@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # π/2 trigonometric rotation
     b = BallInf(N[1, 2], N(1))
     M = N[0 -1; 1 0]

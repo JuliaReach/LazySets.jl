@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # using IA types
     X = IA.interval(N(0), N(1)) # IA
     Y = Interval(N(-1), N(2))

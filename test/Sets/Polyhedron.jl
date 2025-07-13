@@ -1,8 +1,13 @@
 using LazySets, Test
 using LazySets: _isbounded_stiemke, _isbounded_unit_dimensions
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation, isinvertible
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     @test HPolyhedron{N}() isa HPolyhedron{N}
     @test HPolyhedron{N,Vector{N}}() isa HPolyhedron{N,Vector{N}}
     p_univ = HPolyhedron{N}()
@@ -187,7 +192,7 @@ end
 # default Float64 constructors
 @test HPolyhedron() isa HPolyhedron{Float64}
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # rand
     @test rand(HPolyhedron; N=N) isa HPolyhedron{N}
 

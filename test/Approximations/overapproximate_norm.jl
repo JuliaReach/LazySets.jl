@@ -1,7 +1,7 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Comparison: _geq
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     for _ in 1:5
         Z = rand(Zonotope; N=N, dim=8, num_generators=5)
         @test _geq(overapproximate_norm(Z, 1), norm(Z, 1), atol=1e-3)

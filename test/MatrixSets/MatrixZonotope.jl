@@ -1,6 +1,6 @@
 using LazySets, Test
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # test constructor
     c = N[1 0; 0 3]
     gens = [N[1 -1; 0 2], N[2 -1; -1 1]]
@@ -47,7 +47,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test norm(MZ, 1) == 8
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     MZ = rand(MatrixZonotope; N=N)
     @test MZ isa MatrixZonotope{N}
 end

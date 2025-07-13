@@ -1,7 +1,12 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # See [DreossiDP17; Example 6](@citet).
     D = N[-1 0 0; -1 -1 0; 0 0 -1]
     c = N[-0.80, -0.95, 0, 0.85, 1, 0]
@@ -65,7 +70,7 @@ for N in [Float64, Float32, Rational{Int}]
                         [N[1, 1], N[1, -1], N[-1, 1], N[-1, -1]])
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # rand
     @test rand(HParallelotope; N=N) isa HParallelotope{N}
 

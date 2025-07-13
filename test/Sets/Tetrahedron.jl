@@ -1,6 +1,11 @@
 using LazySets, Test
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # constructor
     vertices = [N[1, 0, -1 / sqrt(2)], N[-1, 0, -1 / sqrt(2)], N[0, 1, 1 / sqrt(2)],
                 N[0, -1, 1 / sqrt(2)]]
@@ -34,7 +39,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test zeros(N, 3) ∈ T
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # rand
     @test rand(Tetrahedron; N=N) isa Tetrahedron{N}
 end

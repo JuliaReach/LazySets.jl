@@ -1,7 +1,12 @@
 using LazySets, Test, SparseArrays
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # normal constructor
     hs = HalfSpace(ones(N, 3), N(5))
 
@@ -200,7 +205,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test !res
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # rand
     @test rand(HalfSpace; N=N) isa HalfSpace{N}
 

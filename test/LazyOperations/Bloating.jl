@@ -1,4 +1,4 @@
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     B = BallInf(zeros(N, 2), N(1))
     E = HPolyhedron([HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1))])  # empty
     U = Universe{N}(3)

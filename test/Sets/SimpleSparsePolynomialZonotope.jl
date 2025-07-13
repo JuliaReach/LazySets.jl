@@ -6,8 +6,13 @@ else
     import PkgVersion
     vIA = PkgVersion.Version(IA)
 end
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # example from slide 13 of Niklas talk at JuliaReach & JuliaIntervals Days 3
     c = N[2, 0]
     G = N[1 2; 2 2.0]
@@ -155,7 +160,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test P2 == TPZ
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # rand
     @test rand(SimpleSparsePolynomialZonotope; N=N) isa SimpleSparsePolynomialZonotope{N}
 end

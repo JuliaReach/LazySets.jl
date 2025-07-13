@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # singleton
     S = Singleton(N[1, -2, 3, -4])
     H = Hyperrectangle(zeros(N, 4), N[1, 2, 3, 4])
@@ -26,7 +26,7 @@ for N in [Float64, Float32, Rational{Int}]
     end
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # exponential map of singleton
     M = sparse(diagm(N[1, 1, 1]))
     E = SparseMatrixExp(M) * Singleton(N[1, 2, 3])

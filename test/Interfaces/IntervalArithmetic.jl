@@ -3,7 +3,7 @@ using IntervalArithmetic: IntervalBox
 import IntervalArithmetic as IA
 using LazySets.ReachabilityBase.Arrays: ispermutation
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # vertices_list for IA types
     Y = IntervalBox(IA.interval(N(0), N(1)), IA.interval(N(2), N(3)))
     res = vertices_list(Y)

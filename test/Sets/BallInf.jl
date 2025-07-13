@@ -1,7 +1,12 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # invalid inputs
     @test_throws AssertionError BallInf(N[0], N(-1))
     if N <: AbstractFloat
@@ -260,7 +265,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test scale(N(-2), B) == BallInf(N[4, -6], N(2))
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # rand
     @test rand(BallInf; N=N) isa BallInf{N}
 end

@@ -1,8 +1,13 @@
 using LazySets, Test, LinearAlgebra
 using LazySets: linear_map_inverse, affine_map_inverse
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # random polytopes
     @test_throws ArgumentError rand(HPolytope; N=N, dim=1, num_vertices=3)
     p = rand(HPolytope; N=N, dim=1, num_vertices=0)
@@ -351,7 +356,7 @@ end
 @test HPolytope() isa HPolytope{Float64}
 @test VPolytope() isa VPolytope{Float64,Vector{Float64}}
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # rand
     p = rand(HPolytope; N=N, dim=2, num_vertices=0)
     @test p isa HPolytope{N} && dim(p) == 2 && isempty(p)

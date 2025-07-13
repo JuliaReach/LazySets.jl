@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     B1 = BallInf(zeros(N, 2), N(1))
     B2 = Ball1(ones(N, 2), N(1))
     B3 = Hyperrectangle(; low=N[-1, -1], high=N[2, 2])

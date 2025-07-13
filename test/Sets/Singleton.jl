@@ -1,8 +1,13 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # constructors
     S1 = Singleton(N[1, 2])
     S2 = Singleton(N(1), N(2))
@@ -189,7 +194,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test singleton_list(S) == [S]
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # rand
     @test rand(Singleton; N=N) isa Singleton{N}
 end

@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     B = Ball1(N[0, 0], N(1))
     c = N[4, 4]
     G = N[2 1 2; 0 2 2]

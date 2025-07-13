@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
 
     # ==================================
     # Constructor and interface methods
@@ -113,7 +113,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test concretize(am) == affine_map(M, B, v)
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     B = BallInf(zeros(N, 3), N(1))
 
     # the translation is the origin and the linear map is the identity => constraints remain unchanged

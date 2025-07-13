@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # ==================================
     # Constructor and interface methods
     # ==================================
@@ -90,7 +90,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test tr isa AffineMap && tr.M == M && tr.X == B && tr.v == v
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # translation of a set not represented by a finite number of constraints
     tr = Ball2(zeros(N, 2), N(1)) ⊕ N[1, 0]
     @test ρ(N[1, 0], tr) == N(2)

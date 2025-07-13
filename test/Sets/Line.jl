@@ -1,7 +1,12 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # construction
     l1 = Line(; from=N[0, 1], to=N[1, 1]) # two points on the line
     l2 = Line(N[0, 1], N[1, 0]) # point and direction
@@ -81,7 +86,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test project(L, [2, 3]) == Singleton(N[2, 3])
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # rand
     @test rand(Line; N=N) isa Line{N}
 

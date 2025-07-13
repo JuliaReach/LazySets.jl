@@ -1,4 +1,4 @@
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # Interval with HalfSpace
     X = Interval(N(1), N(2))
     H = HalfSpace(N[1], N(1.5))

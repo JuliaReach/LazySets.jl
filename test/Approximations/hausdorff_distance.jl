@@ -1,6 +1,6 @@
 _in_interval(v, x, ε) = x - ε <= v <= x + ε
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     ε = N(1e-3)
 
     b1 = BallInf(zeros(N, 2), N(1))

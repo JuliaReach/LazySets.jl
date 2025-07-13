@@ -1,6 +1,6 @@
 using LazySets.Approximations: overapproximate
 
-for N in [Float64, Float32, Rational{Int}]
+for N in @tN([Float64, Float32, Rational{Int}])
     # Cartesian Product of a centered 1D BallInf and a centered 2D BallInf
     # Here a 3D BallInf
     b1 = BallInf(N[0], N(1))
@@ -445,7 +445,7 @@ for N in [Float64, Float32, Rational{Int}]
     @test volume(cp) == volume(cpa) == N(3456)
 end
 
-for N in [Float64, Float32]
+for N in @tN([Float64, Float32])
     # is_intersection_empty
     i1 = Interval(N[0, 1])
     i2 = Interval(N[2, 3])
