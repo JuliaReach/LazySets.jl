@@ -361,9 +361,9 @@ for N in [Float64, Float32, Rational{Int}]
     @test Y isa LazySet{N} && isequivalent(Y, Z)
 
     # permute
-    @test_throws AssertionError permute(X, [-1])
-    @test_throws AssertionError permute(X, [1, 2])
-    @test_throws AssertionError permute(X, [2])
+    @test_throws DimensionMismatch permute(X, [1, 1])
+    @test_throws DimensionMismatch permute(X, [-1])
+    @test_throws DimensionMismatch permute(X, [2])
     Y = permute(X, [1])
     @test isidentical(Y, X)
 
