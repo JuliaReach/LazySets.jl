@@ -208,42 +208,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 end
 
-@static if isdefined(@__MODULE__, :TaylorModels)
-    N = Float64
-    PZS = SimpleSparsePolynomialZonotope(N[0.2, -0.6], N[1 0; 0 0.4], [1 0; 0 1])
-    PZ = convert(SparsePolynomialZonotope, PZS)
-    @test center(PZ) == center(PZS)
-    @test genmat_dep(PZ) == genmat(PZS)
-    @test expmat(PZ) == expmat(PZS)
-    @test isempty(genmat_indep(PZ))
-    @test indexvector(PZ) == 1:2
-
-    # conversion from Taylor model
-    x₁, x₂, x₃ = TaylorModels.set_variables(Float64, ["x₁", "x₂", "x₃"]; order=3)
-    dom1 = IA.interval(N(-1), N(1))
-    dom = dom1 × dom1 × dom1
-    x0 = IA.IntervalBox(IA.mid.(dom)...)
-    rem = IA.interval(N(0), N(0))
-    p₁ = 33 + 2x₁ + 3x₂ + 4x₃ + 5x₁^2 + 6x₂ * x₃ + 7x₃^2 + 8x₁ * x₂ * x₃
-    p₂ = x₃ - x₁
-    vTM = [TaylorModels.TaylorModelN(pi, rem, x0, dom) for pi in [p₁, p₂]]
-    PZ = convert(SparsePolynomialZonotope, vTM)
-    # the following tests check for equality (but equivalence should be tested)
-    @test PZ.c == N[33, 0]
-    @test PZ.G == N[2 3 4 5 6 7 8;
-                    -1 0 1 0 0 0 0]
-    @test PZ.GI == Matrix{N}(undef, 2, 0)
-    @test PZ.E == [1 0 0 2 0 0 1;
-                   0 1 0 0 1 0 1;
-                   0 0 1 0 1 2 1]
-    # interestingly, the zonotope approximations are equivalent
-    Zt = overapproximate(vTM, Zonotope)
-    Zp = overapproximate(PZ, Zonotope)
-    @test isequivalent(Zt, Zp)
-
-    # conversion back to Taylor model
-    vTM2 = convert(Vector{<:TaylorModels.TaylorModelN}, PZ)
-    @test vTM == vTM2
+for N in @tN([Float64, Float32])
+    # rand
+    @test rand(SparsePolynomialZonotope; N=N) isa SparsePolynomialZonotope{N}
 end
 
 for Z in [rand(Zonotope), rand(Hyperrectangle)]
@@ -255,6 +222,44 @@ for Z in [rand(Zonotope), rand(Hyperrectangle)]
 end
 
 let
+    @static if isdefined(@__MODULE__, :TaylorModels)
+        N = Float64
+        PZS = SimpleSparsePolynomialZonotope(N[0.2, -0.6], N[1 0; 0 0.4], [1 0; 0 1])
+        PZ = convert(SparsePolynomialZonotope, PZS)
+        @test center(PZ) == center(PZS)
+        @test genmat_dep(PZ) == genmat(PZS)
+        @test expmat(PZ) == expmat(PZS)
+        @test isempty(genmat_indep(PZ))
+        @test indexvector(PZ) == 1:2
+
+        # conversion from Taylor model
+        x₁, x₂, x₃ = TaylorModels.set_variables(Float64, ["x₁", "x₂", "x₃"]; order=3)
+        dom1 = IA.interval(N(-1), N(1))
+        dom = dom1 × dom1 × dom1
+        x0 = IA.IntervalBox(IA.mid.(dom)...)
+        rem = IA.interval(N(0), N(0))
+        p₁ = 33 + 2x₁ + 3x₂ + 4x₃ + 5x₁^2 + 6x₂ * x₃ + 7x₃^2 + 8x₁ * x₂ * x₃
+        p₂ = x₃ - x₁
+        vTM = [TaylorModels.TaylorModelN(pi, rem, x0, dom) for pi in [p₁, p₂]]
+        PZ = convert(SparsePolynomialZonotope, vTM)
+        # the following tests check for equality (but equivalence should be tested)
+        @test PZ.c == N[33, 0]
+        @test PZ.G == N[2 3 4 5 6 7 8;
+                        -1 0 1 0 0 0 0]
+        @test PZ.GI == Matrix{N}(undef, 2, 0)
+        @test PZ.E == [1 0 0 2 0 0 1;
+                    0 1 0 0 1 0 1;
+                    0 0 1 0 1 2 1]
+        # interestingly, the zonotope approximations are equivalent
+        Zt = overapproximate(vTM, Zonotope)
+        Zp = overapproximate(PZ, Zonotope)
+        @test isequivalent(Zt, Zp)
+
+        # conversion back to Taylor model
+        vTM2 = convert(Vector{<:TaylorModels.TaylorModelN}, PZ)
+        @test vTM == vTM2
+    end
+
     # isoperationtype
     @test !isoperationtype(SparsePolynomialZonotope)
 
@@ -299,10 +304,8 @@ let
     for r in 4:8
         @test reduce_order(P, r) == P
     end
-end
 
-#test for merge_id
-let
+    # merge_id
     #case 0: dimensions mismatch
     id1 = [1, 2, 3]
     id2 = [1, 2]
@@ -341,9 +344,4 @@ let
     @test idx == [1, 2, 3, 4]
     @test Ē₁ == [1 2; 1 0; 0 0; 0 0]
     @test Ē₂ == [0 0 0; 0 0 0; 1 0 1; 3 2 0]
-end
-
-for N in @tN([Float64, Float32])
-    # rand
-    @test rand(SparsePolynomialZonotope; N=N) isa SparsePolynomialZonotope{N}
 end
