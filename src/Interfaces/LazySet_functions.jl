@@ -638,17 +638,6 @@ function reflect(P::LazySet)
     return T(-F, g)
 end
 
-"""
-# Extended help
-
-    is_interior_point(v::AbstractVector{<:Real}, X::LazySet; [kwargs]...)
-
-### Algorithm
-
-The default implementation determines `v ∈ interior(X)` with error tolerance
-`ε` by checking whether a `Ballp` of norm `p` with center `v` and radius `ε` is
-contained in `X`.
-"""
 function is_interior_point(v::AbstractVector{<:Real}, X::LazySet; kwargs...)
     N = promote_type(eltype(v), eltype(X))
     if N != eltype(X)
@@ -662,6 +651,17 @@ function is_interior_point(v::AbstractVector{<:Real}, X::LazySet; kwargs...)
     return is_interior_point(v, X; p=p, ε=ε)
 end
 
+"""
+# Extended help
+
+    is_interior_point(v::AbstractVector{N}, X::LazySet{N}; [p]=N(Inf), [ε]=_rtol(N)) where {N<:Real}
+
+### Algorithm
+
+The default implementation determines `v ∈ interior(X)` with error tolerance
+`ε` by checking whether a `Ballp` of norm `p` with center `v` and radius `ε` is
+contained in `X`.
+"""
 @validate function is_interior_point(v::AbstractVector{N}, X::LazySet{N}; p=N(Inf),
                                      ε=_rtol(N)) where {N<:Real}
 
