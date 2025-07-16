@@ -1,5 +1,5 @@
 """
-    is_interior_point(v::AbstractVector{<:Real}, X::LazySet; kwargs...) end
+    is_interior_point(v::AbstractVector, X::LazySet; [p]::Real=Inf, [ε]::Real=_rtol(eltype(X)))
 
 Check whether a point is contained in the interior of a set.
 

@@ -385,7 +385,7 @@ is_interior_point(::AbstractVector{<:Real}, ::LazySet)
 CurrentModule = LazySets
 ```
 ```@docs
-is_interior_point(::AbstractVector{<:Real}, ::LazySet; kwargs...)
+is_interior_point(::AbstractVector{N}, ::LazySet{N}; p=N(Inf), ε=_rtol(N)) where {N<:Real}
 ```
 ```@meta
 CurrentModule = LazySets.API
