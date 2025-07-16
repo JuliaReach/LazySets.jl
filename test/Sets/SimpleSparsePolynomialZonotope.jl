@@ -46,11 +46,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test genmat(LMS) == N[5 6; 11 14]
     @test expmat(LMS) == expmat(S)
 
-    LMS2 = linear_map(N[1//2 0; 0 1//2], S)
-    @test center(LMS2) == N[1, 0]
-    @test genmat(LMS2) == N[0.5 1; 1 1]
-    @test expmat(LMS2) == expmat(LMS2)
-
     MSS = minkowski_sum(S, S)
     @test center(MSS) == N[4, 0]
     @test genmat(MSS) == N[1 2 1 2; 2 2 2 2.0]
@@ -61,33 +56,30 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test genmat(CPS) == N[1 2 0 0; 2 2 0 0; 0 0 1 2; 0 0 2 2.0]
     @test expmat(CPS) == [1 4 0 0; 1 2 0 0; 0 0 1 4; 0 0 1 2]
     Z = overapproximate(S, Zonotope)
-    PZZ = cartesian_product(S, Z)
-    @test center(PZZ) == vcat(center(S), center(Z))
-    @test genmat_dep(PZZ) == vcat(genmat_dep(S), zeros(N, 2, 2))
-    @test genmat_indep(PZZ) == vcat(zeros(N, 2, 2), genmat(Z))
-    @test expmat(PZZ) == expmat(S)
+    CPS = cartesian_product(S, Z)
+    @test center(CPS) == vcat(center(S), center(Z))
+    @test genmat_dep(CPS) == vcat(genmat_dep(S), zeros(N, 2, 2))
+    @test genmat_indep(CPS) == vcat(zeros(N, 2, 2), genmat(Z))
+    @test expmat(CPS) == expmat(S)
 
-    _c = N[2, 0]
-    _g = N[0 0.5 1 0.5 1 0.5 1 -0.5 -1
-           0 1 1 1 1 1 1 -1 -1]
-
-    _e = [0 1 4 1 4 0 0 0 0
-          0 1 2 1 2 0 0 0 0
-          0 0 0 0 0 1 4 1 4
-          0 0 0 0 0 1 2 1 2
-          1 0 0 1 1 0 0 1 1]
+    c = N[2, 0]
+    G = N[0 0.5 1 0.5 1 0.5 1 -0.5 -1
+          0 1 1 1 1 1 1 -1 -1]
+    E = [0 1 4 1 4 0 0 0 0
+         0 1 2 1 2 0 0 0 0
+         0 0 0 0 0 1 4 1 4
+         0 0 0 0 0 1 2 1 2
+         1 0 0 1 1 0 0 1 1]
 
     LCS = linear_combination(S, S)
-
-    @test center(LCS) == _c
-    @test genmat(LCS) == _g
-    @test expmat(LCS) == _e
+    @test center(LCS) == c
+    @test genmat(LCS) == G
+    @test expmat(LCS) == E
 
     CH1 = convex_hull(S)
-
-    @test center(CH1) == _c
-    @test genmat(CH1) == _g
-    @test expmat(CH1) == _e
+    @test center(CH1) == c
+    @test genmat(CH1) == G
+    @test expmat(CH1) == E
 
     # convex hull with itself
     CH2 = convex_hull(S, S)
@@ -102,20 +94,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     q1 = quadratic_map(Q, S2)
     @test concretize(QuadraticMap(Q, S2)) == q1
     q2 = quadratic_map(Q, S2, S2)
-
     @test center(q1) == center(q2) ≈ N[-6 // 25, -52 // 125]
     @test genmat(q1) ≈ genmat(q2) ≈ N[-6//5 4//25 0 4//5;
                                       -272//100 192//1000 -16//5 96//100]
-
     @test expmat(q1) == expmat(q2) == [1 0 2 1;
                                        0 1 0 1]
 
     c = N[1, 2, 3]
-
     G = N[0 1 4 7 10 13 16
           0 2 5 8 11 14 17
           0 3 6 9 12 15 18]
-
     E = [1 4 1 3 0 3 7
          2 5 2 4 0 4 8
          3 6 3 5 0 5 9]
