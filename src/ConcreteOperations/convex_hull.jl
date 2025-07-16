@@ -519,3 +519,17 @@ end
 @validate_commutative function convex_hull(U::Universe, ∅::EmptySet)
     return _convex_hull_universe(U, ∅)
 end
+
+"""
+# Extended help
+
+    convex_hull(PZ1::AbstractPolynomialZonotope, PZ2::AbstractPolynomialZonotope)
+
+### Output
+
+The tightest convex polynomial zonotope containing `P1` and `P2`.
+"""
+@validate function convex_hull(PZ1::AbstractPolynomialZonotope,
+                               PZ2::AbstractPolynomialZonotope)
+    return linear_combination(convex_hull(PZ1), convex_hull(PZ2))
+end
