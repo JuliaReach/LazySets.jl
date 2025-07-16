@@ -534,7 +534,7 @@ end
 function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron, algo::LinearMapElimination)
     m, n = size(M)
     N = promote_type(eltype(M), eltype(P))
-    ₋Id_m = Matrix(-one(N) * I, m, m)
+    Id_neg = Matrix(-one(N) * I, m, m)
     backend = algo.backend
     method = algo.method
 
@@ -547,7 +547,7 @@ function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron, algo::Linear
     else
         Ax_leq_b = [Polyhedra.HalfSpace(vcat(zeros(N, m), Vector(c.a)), c.b) for c in clist]
     end
-    y_eq_Mx = [Polyhedra.HyperPlane(vcat(₋Id_m[i, :], Vector(M[i, :])), zero(N)) for i in 1:m]
+    y_eq_Mx = [Polyhedra.HyperPlane(vcat(Id_neg[i, :], Vector(M[i, :])), zero(N)) for i in 1:m]
 
     Phrep = Polyhedra.hrep(y_eq_Mx, Ax_leq_b)
     Phrep = polyhedron(Phrep, backend) # define concrete subtype
