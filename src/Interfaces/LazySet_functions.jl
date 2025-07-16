@@ -572,7 +572,6 @@ end
 The default implementation applies the functions `exp` and `linear_map`.
 """
 @validate function exponential_map(M::AbstractMatrix, X::LazySet)
-    n = dim(X)
     return linear_map(exp(M), X)
 end
 
