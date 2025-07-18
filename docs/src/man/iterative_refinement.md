@@ -77,9 +77,9 @@ approx_EAST_NORTH = addapproximation!(Ω, p1, d1, p2, d2)
 approx_EAST_NORTH.refinable
 ```
 
-The associated error is ``\sqrt{2}-1≈0.414213``, which is the distance between
+The associated error is ``\sqrt{2}-1 ≈ 0.414213``, which is the distance between
 the point ``q`` and the intersection between the line ``(0 q)`` and the circle.
-Actually this point corresponds to the support vector of the set `b` along
+Note that this point corresponds to the support vector of the set `b` along
 `ndir`.
 
 ```@example example_iterative_refinement

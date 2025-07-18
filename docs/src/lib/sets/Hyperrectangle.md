@@ -97,7 +97,7 @@ Inherited from [`LazySet`](@ref):
 * [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
-* [`≈`](@ref ≈(::LazySet, ::LazySet))
+* [`isapprox`](@ref isapprox(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))

@@ -112,7 +112,7 @@ Inherited from [`LazySet`](@ref):
 * [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
-* [`≈`](@ref ≈(::LazySet, ::LazySet))
+* [`isapprox`](@ref isapprox(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))

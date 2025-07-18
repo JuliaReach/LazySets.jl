@@ -88,7 +88,7 @@ difference(::LazySet, ::LazySet)
 distance(::LazySet, ::LazySet)
 exact_sum(::LazySet, ::LazySet)
 intersection(::LazySet, ::LazySet)
-≈(::LazySet, ::LazySet)
+isapprox(::LazySet, ::LazySet)
 isdisjoint(::LazySet, ::LazySet)
 is_intersection_empty
 ==(::LazySet, ::LazySet)
