@@ -61,6 +61,8 @@ to a polyhedron in constraint representation (`HPolyhedron`).
 The intersection preserves convexity: if the set arguments are convex, then
 their intersection is convex as well.
 
+The convenience alias `∩` can be typed by `\\cap<tab>`.
+
 ### Examples
 
 Create an expression ``Z`` that lazily represents the intersection of two
@@ -112,15 +114,6 @@ Intersection(H1::HalfSpace, H2::HalfSpace) = HPolyhedron([H1, H2])
 Intersection(H::HalfSpace, P::HPolyhedron) = HPolyhedron(vcat(P.constraints, H))
 Intersection(P::HPolyhedron, H::HalfSpace) = HPolyhedron(vcat(P.constraints, H))
 
-"""
-    ∩(X::LazySet, Y::LazySet)
-
-Alias for the lazy intersection.
-
-### Notes
-
-The function symbol can be typed via `\\cap<tab>`.
-"""
 ∩(X::LazySet, Y::LazySet) = Intersection(X, Y)
 
 isoperationtype(::Type{<:Intersection}) = true

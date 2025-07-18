@@ -72,9 +72,7 @@ sample(::LazySet, ::Int=1)
 scale(::Real, ::LazySet)
 scale!(::Real, ::LazySet)
 ρ(::AbstractVector, ::LazySet)
-support_function
 σ(::AbstractVector, ::LazySet)
-support_vector
 translate(::LazySet, ::AbstractVector)
 translate!(::LazySet, ::AbstractVector)
 ```
@@ -90,13 +88,11 @@ exact_sum(::LazySet, ::LazySet)
 intersection(::LazySet, ::LazySet)
 ≈(::LazySet, ::LazySet)
 isdisjoint(::LazySet, ::LazySet)
-is_intersection_empty
 ==(::LazySet, ::LazySet)
 isequivalent(::LazySet, ::LazySet)
 ⊂(::LazySet, ::LazySet)
 ⊆(::LazySet, ::LazySet)
 linear_combination(::LazySet, ::LazySet)
 minkowski_difference(::LazySet, ::LazySet)
-pontryagin_difference
 minkowski_sum(::LazySet, ::LazySet)
 ```

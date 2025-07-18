@@ -14,7 +14,7 @@ A support vector of `X` in direction `d`.
 
 ### Notes
 
-A convenience alias `support_vector` is also available.
+The convenience alias `support_vector` is also available.
 """
 function σ(::AbstractVector, ::LazySet) end
 

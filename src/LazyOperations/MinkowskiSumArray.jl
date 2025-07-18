@@ -19,6 +19,9 @@ for `MinkowskiSumArray`.
 
 The Minkowski sum preserves convexity: if the set arguments are convex, then
 their Minkowski sum is convex as well.
+
+The convenience aliases `⊕` and `+` are also available. `⊕` can be typed by
+`\\oplus<tab>`.
 """
 struct MinkowskiSumArray{N,S<:LazySet{N}} <: LazySet{N}
     array::Vector{S}
@@ -32,26 +35,10 @@ Convenience function to compute the lazy Minkowski sum and modify
 """
 function MinkowskiSum! end
 
-"""
-    +(X::LazySet, Xs::LazySet...)
-    +(Xs::Vector{<:LazySet})
-
-Alias for the n-ary Minkowski sum.
-"""
 +(X::LazySet, Xs::LazySet...) = MinkowskiSumArray(vcat(X, Xs...))
 +(X::LazySet) = X
 +(Xs::Vector{<:LazySet}) = MinkowskiSumArray(Xs)
 
-"""
-    ⊕(X::LazySet, Xs::LazySet...)
-    ⊕(Xs::Vector{<:LazySet})
-
-Alias for the n-ary Minkowski sum.
-
-### Notes
-
-The function symbol can be typed via `\\oplus<tab>`.
-"""
 ⊕(X::LazySet, Xs::LazySet...) = +(X, Xs...)
 ⊕(Xs::Vector{<:LazySet}) = +(Xs)
 

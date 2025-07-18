@@ -23,9 +23,4 @@ The convenience alias `is_intersection_empty` is also available.
 """
 function isdisjoint(::LazySet, ::LazySet, ::Bool=false) end
 
-"""
-    is_intersection_empty(X::LazySet, Y::LazySet, [witness]::Bool=false)
-
-Convenience alias for the `isdisjoint` function.
-"""
 const is_intersection_empty = isdisjoint

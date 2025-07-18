@@ -28,9 +28,4 @@ to the geometric difference of two sets.
 """
 function minkowski_difference(::LazySet, ::LazySet) end
 
-"""
-    pontryagin_difference(X::LazySet, Y::LazySet)
-
-Convenience alias for the `minkowski_difference` function.
-"""
 const pontryagin_difference = minkowski_difference

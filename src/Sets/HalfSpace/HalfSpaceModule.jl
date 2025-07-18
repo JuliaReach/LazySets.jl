@@ -61,11 +61,6 @@ include("iscomplement.jl")
 
 include("convert.jl")
 
-"""
-    LinearConstraint
-
-Alias for `HalfSpace`
-"""
 const LinearConstraint = HalfSpace
 
 """

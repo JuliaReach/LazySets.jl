@@ -16,6 +16,8 @@ Type that represents the set union of two sets.
 ### Notes
 
 The union of convex sets is typically not convex.
+
+The convenience alias `∪` can be typed by `\\cup<tab>`.
 """
 struct UnionSet{N,S1<:LazySet{N},S2<:LazySet{N}} <: LazySet{N}
     X::S1
@@ -47,11 +49,6 @@ Base.first(U::UnionSet) = U.X
 second(U::UnionSet) = U.Y
 @declare_binary_operation(UnionSet)
 
-"""
-    ∪
-
-Alias for `UnionSet`.
-"""
 ∪(X::LazySet, Y::LazySet) = UnionSet(X, Y)
 
 """
