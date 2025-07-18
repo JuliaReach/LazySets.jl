@@ -267,6 +267,28 @@ function constraints_list(am::AbstractAffineMap)
                                          vector(am))
 end
 
+"""
+# Extended help
+
+    isuniversal(am::AbstractAffineMap)
+
+### Algorithm
+
+An affine map is universal iff the wrapped set is universal and the matrix does
+not map any dimension to zero.
+"""
+function isuniversal(am::AbstractAffineMap)
+    if isuniversal(set(am))
+        for row in eachrow(matrix(am))
+            if all(isapproxzero, row)
+                return false
+            end
+        end
+        return true
+    end
+    return false
+end
+
 @validate function linear_map(M::AbstractMatrix, am::AbstractAffineMap)
     return affine_map(M * matrix(am), set(am), M * vector(am))
 end
