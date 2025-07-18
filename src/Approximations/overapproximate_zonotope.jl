@@ -660,7 +660,7 @@ end  # quote / load_taylormodels_overapproximation
 
 function load_intervalmatrices_overapproximation()
     return quote
-        using .IntervalMatrices: AbstractIntervalMatrix, midpoint_radius, IntervalMatrix
+        using .IntervalMatrices: AbstractIntervalMatrix, midpoint_radius
 
         # temporary patch for IntervalArithmetic#317
         function convert(::Type{IntervalMatrices.Interval{T}},

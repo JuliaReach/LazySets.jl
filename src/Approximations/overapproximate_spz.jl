@@ -100,43 +100,49 @@ end
 get_factors(MZP::MatrixZonotope) = (nothing, MZP)
 get_factors(MZP::MatrixZonotopeProduct) = (MZP.A, MZP.B)
 
-"""
-    overapproximate(em::ExponentialMap{N, SparsePolynomialZonotope{N}, NM, MAT},
-	                 k::Int = 2) where {N, NM, MAT <: AbstractMatrixZonotope{NM}}
+function load_intervalmatrices_overapproximation_matrixzonotope()
+    return quote
+        using .IntervalMatrices: IntervalMatrix
+		"""
+			overapproximate(em::ExponentialMap{N, SparsePolynomialZonotope{N}, NM, MAT},
+							k::Int = 2) where {N, NM, MAT <: AbstractMatrixZonotope{NM}}
 
-Overapproximate the exponential map of a sparse polynomial zonotope through a product of matrix 
-zonotopes, following Proposition 1 of []@citet.
+		Overapproximate the exponential map of a sparse polynomial zonotope through a product of matrix 
+		zonotopes, following Proposition 1 of []@citet.
 
-### Input
+		### Input
 
-- `em` -- an expontial map of a sparse polynomial zonotope through a product of matrix zonotopes
+		- `em` -- an expontial map of a sparse polynomial zonotope through a product of matrix zonotopes
 
-### Output
+		### Output
 
-A sparse polynomial zonotope overapproximating the exponential map.
+		A sparse polynomial zonotope overapproximating the exponential map.
 
-"""
-function overapproximate(em::ExponentialMap{N,S,NM,MAT},
+		"""
+        function overapproximate(em::ExponentialMap{N,S,NM,MAT},
                          k::Int=2) where {N,S<:SparsePolynomialZonotope{N},NM,
                                           MAT<:AbstractMatrixZonotope{NM}}
-	MZP  = matrix(em)
-	A, B = get_factors(MZP)
-	P    = set(em)
-	n    = size(B, 1)    # A could be nothing, so size(B)
+			MZP  = matrix(em)
+			A, B = get_factors(MZP)
+			P    = set(em)
+			n    = size(B, 1)    # A could be nothing, so size(B)
 
-    ABn = (A === nothing ? overapproxi_norm(B, Inf) :
-           overapproximate_norm(A, Inf) * overapproximate_norm(B, Inf))
-	ϵ = ABn / (k + 2)
-	if ϵ > 1
-		@warn "κ should be chosen such that ϵ<1 " ϵ
-	end
+			ABn = (A === nothing ? overapproxi_norm(B, Inf) :
+				overapproximate_norm(A, Inf) * overapproximate_norm(B, Inf))
+			ϵ = ABn / (k + 2)
+			if ϵ > 1
+				@warn "κ should be chosen such that ϵ<1 " ϵ
+			end
 
-	σ = _taylor_expmap(A, B, P, k)
-	ε = IntervalMatrix(fill(IA.interval(-1, 1), n, n))
-	ε *= ABn^(k + 1) / (factorial(k + 1) * (1 - ϵ))
+			σ = _taylor_expmap(A, B, P, k)
+			ε = IntervalMatrix(fill(IA.interval(-1, 1), n, n))
+			ε *= ABn^(k + 1) / (factorial(k + 1) * (1 - ϵ))
 
-	Zp = overapproximate(P)
-	rhs = overapproximate(ε * Zp, Zonotope)
+			Zp = overapproximate(P)
+			rhs = overapproximate(ε * Zp, Zonotope)
 
-	return minkowski_sum(σ, rhs)
+			return minkowski_sum(σ, rhs)
+		end
+
+    end
 end

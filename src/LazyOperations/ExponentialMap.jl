@@ -257,6 +257,13 @@ struct ExponentialMap{N,S<:LazySet{N},NM,
        AbstractAffineMap{N,S}
     expmat::MAT
     X::S
+    function ExponentialMap(expmat::MAT,
+                            X::S) where {N,S<:LazySet{N},NM,
+                                         MAT<:Union{SparseMatrixExp{NM},AbstractMatrixZonotope{NM}}}
+        @assert dim(X) == size(expmat, 2) "an exponential map of size " *
+                                          "$(size(spmexp)) cannot be applied to a set of dimension $(dim(Z))"
+        return new{N,S,NM,MAT}(expmat, X)
+    end
 end
 
 # ZeroSet is "almost absorbing" for ExponentialMap (only the dimension changes)
@@ -300,8 +307,8 @@ Alias to create an `ExponentialMap` object.
 
 The exponential map of the set.
 """
-function *(spmexp::SparseMatrixExp, X::LazySet)
-    return ExponentialMap(spmexp, X)
+function *(expmat::T, X::LazySet) where {T<:Union{SparseMatrixExp,AbstractMatrixZonotope}}
+    return ExponentialMap(expmat, X)
 end
 
 function matrix(em::ExponentialMap)
