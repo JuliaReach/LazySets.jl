@@ -85,6 +85,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(U, U2)
 
     # diameter
+    @test_throws ArgumentError diameter(U, N(1 // 2))
     @test_throws ArgumentError diameter(U)
     @test_throws ArgumentError diameter(U, Inf)
     @test_throws ArgumentError diameter(U, 2)
@@ -137,6 +138,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test low(U, 1) == N(-Inf)
 
     # norm
+    @test_throws ArgumentError norm(U, N(1 // 2))
     @test_throws ArgumentError norm(U)
     @test_throws ArgumentError norm(U, Inf)
     @test_throws ArgumentError norm(U, 2)
@@ -152,6 +154,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # radius
+    @test_throws ArgumentError radius(U, N(1 // 2))
     @test_throws ArgumentError radius(U)
     @test_throws ArgumentError radius(U, Inf)
     @test_throws ArgumentError radius(U, 2)

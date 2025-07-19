@@ -84,6 +84,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(E, E2)
 
     # diameter
+    @test_throws ArgumentError diameter(E, N(1 // 2))
     for res in (diameter(E), diameter(E, Inf), diameter(E, 2))
         @test res isa N && res == N(0)
     end
@@ -135,6 +136,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError low(E, 1)
 
     # norm
+    @test_throws ArgumentError norm(E, N(1 // 2))
     for res in (norm(E), norm(E, Inf), norm(E, 2))
         @test res isa N && res == N(0)
     end
@@ -145,6 +147,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # radius
+    @test_throws ArgumentError radius(E, N(1 // 2))
     for res in (radius(E), radius(E, Inf), radius(E, 2))
         @test res isa N && res == N(0)
     end

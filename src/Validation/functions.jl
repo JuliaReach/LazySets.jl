@@ -1,6 +1,7 @@
 const args1 = (1,)
 const args12 = (1, 2)
 const args123 = (1, 2, 3)
+const args2 = (2,)
 const global VALIDATE_DICT = Dict{Symbol,Tuple{Function,Any}}()
 
 # unary set operations
@@ -26,20 +27,20 @@ push!(VALIDATE_DICT, :area => (validate_area, args1))
 # push!(VALIDATE_DICT, :constraints_list => (validate_constraints_list, args1))
 # push!(VALIDATE_DICT, :constraints => (validate_constraints, args1))
 
-# function validate_diameter(X::LazySet)
-#     # require p ≥ 1?
-# end
-# push!(VALIDATE_DICT, :diameter => (validate_diameter, args1))
+function validate_diameter(p::Real)
+    return validate_pnorm(p; fun=diameter)
+end
+push!(VALIDATE_DICT, :diameter => (validate_diameter, args2))
 
-# function validate_norm(X::LazySet)
-#     # require p ≥ 1?
-# end
-# push!(VALIDATE_DICT, :norm => (validate_norm, args1))
+function validate_norm(p::Real)
+    return validate_pnorm(p; fun=norm)
+end
+push!(VALIDATE_DICT, :norm => (validate_norm, args2))
 
-# function validate_radius(X::LazySet)
-#     # require p ≥ 1?
-# end
-# push!(VALIDATE_DICT, :radius => (validate_radius, args1))
+function validate_radius(p::Real)
+    return validate_pnorm(p; fun=radius)
+end
+push!(VALIDATE_DICT, :radius => (validate_radius, args2))
 
 # function validate_vertices_list(X::LazySet)
 #     # require polytopic set?

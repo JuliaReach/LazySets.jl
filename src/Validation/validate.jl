@@ -55,8 +55,12 @@ function _unpack_arg(arg::Symbol)
 end
 
 function _unpack_arg(arg::Expr)
-    if arg.head != :(::)
-        throw(ArgumentError("unsupported argument $arg in validation"))
+    if arg.head == :(::)
+        # var::Type
+        return arg.args[1]
+    elseif arg.head == :kw
+        # var::Type=value
+        return _unpack_arg(arg.args[1])
     end
-    return arg.args[1]
+    throw(ArgumentError("unsupported argument $arg in validation"))
 end
