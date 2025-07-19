@@ -201,6 +201,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # distance (between point and set)
     @test_throws DimensionMismatch distance(E, N[0])
+    @test_throws ArgumentError distance(E, N[0, 0]; p=N(1 // 2))
     x = N[0, 0]
     for res in (distance(E, x), distance(x, E))
         @test res isa N && res == N(Inf)
@@ -322,6 +323,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # distance (between two sets)
     @test_throws DimensionMismatch distance(E, E3)
+    @test_throws ArgumentError distance(E, E; p=N(1 // 2))
     for v in (distance(E, E), distance(B1, E), distance(E, B1), distance(U, E), distance(E, U),
               distance(E, B), distance(B, E), distance(E, Z), distance(Z, E))
         @test v isa N && v == N(Inf)

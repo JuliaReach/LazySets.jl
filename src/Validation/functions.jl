@@ -61,10 +61,10 @@ function validate_affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
 end
 push!(VALIDATE_DICT, :affine_map => (validate_affine_map, args123))
 
-function validate_distance(x::AbstractVector, X::LazySet)
-    return validate_same_dim(x, X; fun=distance)
+function validate_distance(x::AbstractVector, X::LazySet, p::Real)
+    return validate_same_dim(x, X; fun=distance) && validate_pnorm(p; fun=distance)
 end
-push!(VALIDATE_DICT, :distance => (validate_distance, args12))
+push!(VALIDATE_DICT, :distance => (validate_distance, (1, 2, :p)))
 
 function validate_exponential_map(M::AbstractMatrix, X::LazySet)
     m, n = size(M)
@@ -145,11 +145,11 @@ function validate_difference(X::LazySet, Y::LazySet)
 end
 push!(VALIDATE_DICT, :difference => (validate_difference, args12))
 
-function validate_distance(X::LazySet, Y::LazySet)
-    return validate_same_dim(X, Y; fun=distance)
+function validate_distance(X::LazySet, Y::LazySet, p::Real)
+    return validate_same_dim(X, Y; fun=distance) && validate_pnorm(p; fun=distance)
 end
 # NOTE: dictionary entry was already added above for other `distance` method
-# push!(VALIDATE_DICT, :distance => (validate_distance, args12))
+# push!(VALIDATE_DICT, :distance => (validate_distance, (1, 2, :p)))
 
 function validate_exact_sum(X::LazySet, Y::LazySet)
     return validate_same_dim(X, Y; fun=exact_sum)
