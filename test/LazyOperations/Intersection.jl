@@ -196,6 +196,11 @@ for N in [Float64]
                          HalfSpace(N[-1, 0], N(0)),
                          HalfSpace(N[0, -1], N(0))])
 
+    # constraints_list with single HalfSpace
+    H2 = HalfSpace(N[1], N(0))
+    IArr = IntersectionArray([H2])
+    @test constraints_list(IArr) == [H2]
+
     # HalfSpace vs. Ball1 intersection
     X = Ball1(zeros(2), N(1))
     d = normalize(N[1, 0])
