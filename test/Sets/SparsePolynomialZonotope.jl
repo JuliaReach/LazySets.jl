@@ -156,6 +156,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test size(expmat(PZreduced)) == (2, 0)
     end
 
+    PZ = SparsePolynomialZonotope(N[-1, 2], N[1 2 0 2; 0 1 2 -1], N[0 0; 0 0], [1 0 1 2; 0 0 0 1])
+    PZreduced = remove_redundant_generators(PZ)
+    @test PZreduced isa SimpleSparsePolynomialZonotope
+
     @static if isdefined(@__MODULE__, :RangeEnclosures)
         # support function (enclosure)
         for (d, v) in [(N[1, 0], N(3)), (N[1, 1], N(7)), (N[1, -1], N(3))]

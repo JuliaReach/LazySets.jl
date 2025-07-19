@@ -5,7 +5,8 @@
 
 ## Notes
 
-The result uses dense arrays irrespective of the array type of `S`.
+The result uses dense arrays irrespective of the array type of `S`. If the columns of 
+the independent generators is zero, it returns a `SimpleSparsePolynomialZonotope`.
 
 ### Algorithm
 
@@ -21,6 +22,11 @@ independent generator matrix of `S`. We perform the following simplifications:
 function remove_redundant_generators(S::SparsePolynomialZonotope)
     c, G, E = _remove_redundant_generators_polyzono(center(S), genmat_dep(S),
                                                     expmat(S))
-    GI = remove_zero_columns(genmat_indep(S))
+    GI = genmat_indep(S)
+    if all(GI .== 0)
+        return SimpleSparsePolynomialZonotope(c, G, E)
+    end
+    GI = remove_zero_columns(GI)
+
     return SparsePolynomialZonotope(c, G, GI, E)
 end
