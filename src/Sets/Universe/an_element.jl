@@ -7,7 +7,7 @@
 
 The output is the origin.
 """
-function an_element(U::Universe)
+@validate function an_element(U::Universe)
     N = eltype(U)
     return zeros(N, dim(U))
 end
