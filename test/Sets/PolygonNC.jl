@@ -14,7 +14,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     P = Polygon([N[0, 0], N[0, 2], N[2, 2], N[2, 0], N[1, 1]])
 
     # an_element
-    @test_throws AssertionError an_element(P_empty)
+    @test_throws ArgumentError an_element(P_empty)
     x = an_element(P)
     @test x isa Vector{N} && x ∈ P
 

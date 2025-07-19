@@ -103,7 +103,7 @@ end
 
 The implementation relies on the `an_element` method of the wrapped set.
 """
-function an_element(am::AbstractAffineMap)
+@validate function an_element(am::AbstractAffineMap)
     return matrix(am) * an_element(set(am)) + vector(am)
 end
 
