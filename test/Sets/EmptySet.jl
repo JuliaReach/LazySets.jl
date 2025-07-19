@@ -241,6 +241,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch permute(E, [1])
     @test_throws DimensionMismatch permute(E, [1, -1])
     @test_throws DimensionMismatch permute(E, [1, 3])
+    @test_throws ArgumentError permute(E, [1, 1])
     E2 = permute(E, [2, 1])
     @test isidentical(E, E2)
 
@@ -248,6 +249,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch project(E, [1, 2, 3])
     @test_throws DimensionMismatch project(E, [1, -1])
     @test_throws DimensionMismatch project(E, [1, 3])
+    @test_throws ArgumentError project(E, [1, 1])
     E2 = project(E, [2])
     @test E2 isa EmptySet{N} && dim(E2) == 1
 
