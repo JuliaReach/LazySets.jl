@@ -149,7 +149,7 @@ function vertices_list(P::AbstractHPolygon;
     N = eltype(P)
     points = Vector{Vector{N}}(undef, n)
     if n == 0
-        return points
+        throw(ArgumentError("a polygon with no constraints is invalid"))
     end
     @inbounds for i in 1:(n - 1)
         cap = _intersection_line2d(P.constraints[i], P.constraints[i + 1])
