@@ -159,7 +159,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
         # an_element function
         @test an_element(hp) ∈ hp
-        hp_shallow = HPolygon{N}()
+        hp_shallow = t_hp{N}()
         @test_throws AssertionError an_element(hp_shallow)
         addconstraint!(hp_shallow, c1)
         @test_throws AssertionError an_element(hp_shallow)
@@ -359,6 +359,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Q = linear_map(A, P)
     @test !(Q isa VPolygon) && dim(Q) == 3
 
+    # vertices_list
+    @test_throws ArgumentError vertices_list(HPolygon{N}())
+    @test_throws ArgumentError vertices_list(HPolygonOpt{N}())
     # vertices_list removes duplicates by default (#1405)
     p3 = HPolygon([HalfSpace(N[1, 0], N(0)), HalfSpace(N[0, 1], N(0)),
                    HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
