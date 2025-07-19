@@ -40,7 +40,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # transpose
     MZt = transpose(MZ)
     @test center(MZt) == c
-    @test generators(MZt)== [transpose(Ai) for Ai in generators(MZ)]
+    @test generators(MZt) == [transpose(Ai) for Ai in generators(MZ)]
 
     # norm
     @test norm(MZ, Inf) == 7
