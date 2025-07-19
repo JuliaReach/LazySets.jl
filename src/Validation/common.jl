@@ -34,10 +34,16 @@ end
 
 function validate_index_vector(v::AbstractVector{Int}, X::LazySet; fun::Function)
     n = dim(X)
+    b = falses(n)
     for e in v
         if e < 1 || e > n
             throw(DimensionMismatch("`$(string(fun))` requires an index vector " *
                                     "for dimension $n but received the vector $v"))
+        end
+        if b[e]
+            throw(ArgumentError("an index vector must not contain duplicate entries"))
+        else
+            b[e] = true
         end
     end
     return true
