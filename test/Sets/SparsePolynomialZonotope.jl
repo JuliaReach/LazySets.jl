@@ -248,8 +248,8 @@ let
                         -1 0 1 0 0 0 0]
         @test PZ.GI == Matrix{N}(undef, 2, 0)
         @test PZ.E == [1 0 0 2 0 0 1;
-                    0 1 0 0 1 0 1;
-                    0 0 1 0 1 2 1]
+                       0 1 0 0 1 0 1;
+                       0 0 1 0 1 2 1]
         # interestingly, the zonotope approximations are equivalent
         Zt = overapproximate(vTM, Zonotope)
         Zp = overapproximate(PZ, Zonotope)

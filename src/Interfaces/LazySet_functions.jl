@@ -664,7 +664,6 @@ contained in `X`.
 """
 @validate function is_interior_point(v::AbstractVector{N}, X::LazySet{N}; p=N(Inf),
                                      ε=_rtol(N)) where {N<:Real}
-
     return Ballp(p, v, ε) ⊆ X
 end
 

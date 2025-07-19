@@ -14,7 +14,6 @@ We apply the linear map to the point and direction of `L`.
 If the resulting direction is zero, the result is a singleton.
 """
 @validate function linear_map(M::AbstractMatrix, L::Line)
-
     Mp = M * L.p
     Md = M * L.d
     if iszero(Md)
