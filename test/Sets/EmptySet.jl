@@ -173,9 +173,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError triangulate(E)
 
     # triangulate_faces
-    @static if isdefined(@__MODULE__, :Polyhedra)
-        @test_throws AssertionError triangulate_faces(E3)  # TODO this should maybe change
-    end
+    @test_throws DimensionMismatch triangulate_faces(E)
+    @test_throws ArgumentError triangulate_faces(E3)  # TODO this should maybe change
 
     # vertices_list
     res = vertices_list(E)
