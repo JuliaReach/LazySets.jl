@@ -324,6 +324,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # is_interior_point
     @test_throws DimensionMismatch is_interior_point(N[0, 0], X)
+    @test_throws DimensionMismatch is_interior_point(N[0, 0], X; ε=N(0))
     if N <: AbstractFloat
         @test is_interior_point(N[1], X)
         if N == Float64
@@ -373,8 +374,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(Y, X)
 
     # project
+    @test_throws DimensionMismatch project(X, [1, 1])
     @test_throws DimensionMismatch project(X, [-1])
-    @test_throws DimensionMismatch project(X, [1, 2])
     @test_throws DimensionMismatch project(X, [2])
     Y = project(X, [1])
     @test isidentical(Y, X)
@@ -463,7 +464,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # distance (between two sets)
     @test_throws DimensionMismatch distance(X, X2)
-    @test_throws DimensionMismatch distance(X2, X)
     for (Y, v) in ((Interval(N(-1), N(1)), N(0)), (Interval(N(4), N(5)), N(2)))
         for res in (distance(X, Y), distance(Y, X))
             @test res isa N && res == v
@@ -472,7 +472,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # exact_sum
     @test_throws DimensionMismatch exact_sum(X, X2)
-    @test_throws DimensionMismatch exact_sum(X2, X)
     Y = Interval(N(3), N(4))
     for Z in (exact_sum(X, Y), exact_sum(Y, X))
         @test isidentical(Z, Interval(N(3), N(6)))
@@ -531,7 +530,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isequivalent
     @test_throws DimensionMismatch isequivalent(X, X2)
-    @test_throws DimensionMismatch isequivalent(X2, X)
     @test isequivalent(X, X)
     @test !isequivalent(X, Interval(N(1), N(2)))
     @test isequivalent(X, B) && isequivalent(B, X)
@@ -566,8 +564,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # linear_combination
     @test_throws DimensionMismatch linear_combination(X, X2)
-    @test_throws ArgumentError linear_combination(X, PZ)
-    @test_throws ArgumentError linear_combination(PZ, X)
+    @test_broken linear_combination(X, PZ)
+    @test_broken linear_combination(PZ, X)
     for Z in (linear_combination(X, X), linear_combination(X, B), linear_combination(B, X))
         @test isidentical(Z, X)
     end

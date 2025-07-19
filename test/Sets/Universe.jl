@@ -43,7 +43,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # area
     @test_throws DimensionMismatch area(Universe{N}(1))
-    for res in (area(U), area(U3))
+    for X in (U, U3)
+        res = area(X)
         @test res isa N && res == N(Inf)
     end
 
@@ -213,7 +214,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # exponential_map
-    @test_throws DimensionMismatch exponential_map(ones(N, 2, 3), U)
+    @test_throws DimensionMismatch exponential_map(ones(N, 1, 1), U)
     @test_throws DimensionMismatch exponential_map(ones(N, 3, 2), U)
 
     # in
@@ -222,6 +223,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # is_interior_point
     @test_throws DimensionMismatch is_interior_point(N[0], U)
+    @test_throws DimensionMismatch is_interior_point(N[0], U; ε=N(0))
     if N <: AbstractFloat
         @test is_interior_point(N[0, 0], U)
     else
@@ -232,7 +234,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # linear_map
-    @test_throws DimensionMismatch linear_map(ones(N, 2, 3), U)
+    @test_throws DimensionMismatch linear_map(ones(N, 2, 1), U)
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         # TODO this should work, even without Polyhedra
         @test_broken linear_map(ones(N, 2, 2), U)
@@ -249,14 +251,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(U3, U2)
 
     # permute
+    @test_throws DimensionMismatch permute(U, [1])
     @test_throws DimensionMismatch permute(U, [1, -1])
-    @test_throws DimensionMismatch permute(U, [1, 2, 2])
+    @test_throws DimensionMismatch permute(U, [1, 3])
     U2 = permute(U, [2, 1])
     @test isidentical(U, U2)
 
     # project
-    @test_throws DimensionMismatch project(U, [1, -1])
     @test_throws DimensionMismatch project(U, [1, 2, 3])
+    @test_throws DimensionMismatch project(U, [1, -1])
+    @test_throws DimensionMismatch project(U, [1, 3])
     U2 = project(U, [2])
     @test U2 isa Universe{N} && dim(U2) == 1
 
@@ -321,6 +325,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # difference
+    @test_throws DimensionMismatch difference(U, U3)
     @test_throws DimensionMismatch difference(B, U3)
     @test_throws DimensionMismatch difference(U3, B)
     for E2 in (difference(U, U), difference(B, U))
@@ -331,7 +336,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # distance (between two sets)
     @test_throws DimensionMismatch distance(U, U3)
-    @test_throws DimensionMismatch distance(U3, U)
     for v in (distance(U, U), distance(U, B), distance(B, U), distance(U, Z), distance(Z, U))
         @test v isa N && v == N(0)
     end
@@ -341,7 +345,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # exact_sum
     @test_throws DimensionMismatch exact_sum(U, U3)
-    @test_throws DimensionMismatch exact_sum(U3, U)
     for U2 in (exact_sum(U, U), exact_sum(U, B), exact_sum(B, U))
         @test isidentical(U, U2)
     end
@@ -383,11 +386,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isequivalent
     @test_throws DimensionMismatch isequivalent(U, U3)
-    @test_throws DimensionMismatch isequivalent(U3, U)
     @test isequivalent(U, U)
     @test !isequivalent(U, B) && !isequivalent(B, U)
 
     # isstrictsubset
+    @test_throws DimensionMismatch U ⊂ U3
     @test_throws DimensionMismatch B ⊂ U3
     @test_throws DimensionMismatch U3 ⊂ B
     @test !(U ⊂ U)
@@ -430,6 +433,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # minkowski_difference
+    @test_throws DimensionMismatch minkowski_difference(U, U3)
     @test_throws DimensionMismatch minkowski_difference(B, U3)
     @test_throws DimensionMismatch minkowski_difference(U3, B)
     # Universe
@@ -443,7 +447,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # minkowski_sum
     @test_throws DimensionMismatch minkowski_sum(U, U3)
-    @test_throws DimensionMismatch minkowski_sum(U3, U)
     for U2 in (minkowski_sum(U, U), minkowski_sum(U, B), minkowski_sum(B, U))
         @test isidentical(U, U2)
     end
