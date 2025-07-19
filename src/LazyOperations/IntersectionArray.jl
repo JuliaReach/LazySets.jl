@@ -211,7 +211,11 @@ function constraints_list(ia::IntersectionArray)
     constraints = Vector{HalfSpace{N,Vector{N}}}() # TODO: use vector type of ia
     for X in ia
         clist_X = _normal_Vector(X)
-        append!(constraints, clist_X)
+        if clist_X isa HalfSpace
+            push!(constraints, clist_X)
+        else
+            append!(constraints, clist_X)
+        end
     end
     remove_redundant_constraints!(constraints)
     return constraints
