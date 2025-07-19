@@ -180,7 +180,7 @@ An element in the union of two sets.
 
 We use `an_element` on the first non-empty wrapped set.
 """
-function an_element(cup::UnionSet)
+@validate function an_element(cup::UnionSet)
     if isempty(cup.X)
         return an_element(cup.Y)
     end

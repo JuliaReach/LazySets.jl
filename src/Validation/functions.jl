@@ -6,10 +6,13 @@ const global VALIDATE_DICT = Dict{Symbol,Tuple{Function,Any}}()
 
 # unary set operations
 
-# function validate_an_element(X::LazySet)
-#     # require nonemptiness?
-# end
-# push!(VALIDATE_DICT, :an_element => (validate_an_element, args1))
+function validate_an_element(X::LazySet)
+    if isempty(X)
+        throw(ArgumentError("`an_element` requires a nonempty set"))
+    end
+    return true
+end
+push!(VALIDATE_DICT, :an_element => (validate_an_element, args1))
 
 function validate_area(X::LazySet)
     n = dim(X)

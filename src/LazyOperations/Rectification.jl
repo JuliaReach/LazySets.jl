@@ -327,7 +327,7 @@ Return some element of a rectification.
 An element in the rectification.
 The implementation relies on the `an_element` function of the wrapped set.
 """
-function an_element(R::Rectification)
+@validate function an_element(R::Rectification)
     return rectify(an_element(R.X))
 end
 

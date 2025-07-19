@@ -190,7 +190,7 @@ An element in the union of a finite number of sets.
 
 We use `an_element` on the first non-empty wrapped set.
 """
-function an_element(cup::UnionSetArray)
+@validate function an_element(cup::UnionSetArray)
     for Xi in cup
         if !isempty(Xi)
             return an_element(Xi)

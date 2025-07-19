@@ -1,1 +1,3 @@
-an_element(L::Line) = L.p
+@validate function an_element(L::Line)
+    return L.p
+end
