@@ -209,7 +209,7 @@ Return some element of a polygon in constraint representation.
 A vertex of the polygon in constraint representation (the first one in the order
 of the constraints).
 """
-function an_element(P::AbstractHPolygon)
+@validate function an_element(P::AbstractHPolygon)
     @assert length(P.constraints) >= 2 "polygon has less than two constraints"
     return element(_intersection_line2d(P.constraints[1], P.constraints[2]))
 end
