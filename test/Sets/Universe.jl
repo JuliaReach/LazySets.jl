@@ -227,7 +227,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # is_interior_point
     @test_throws DimensionMismatch is_interior_point(N[0], U)
-    @test_throws DimensionMismatch is_interior_point(N[0], U; ε=N(0))
+    @test_throws ArgumentError is_interior_point(N[0, 0], U; ε=N(0))
+    @test_throws ArgumentError is_interior_point(N[0, 0], U; p=N(1 // 2))
     if N <: AbstractFloat
         @test is_interior_point(N[0, 0], U)
     else

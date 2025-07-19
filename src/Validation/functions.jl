@@ -81,15 +81,15 @@ function validate_in(x::AbstractVector, X::LazySet)
 end
 push!(VALIDATE_DICT, :∈ => (validate_in, args12))
 
-function validate_is_interior_point(x::AbstractVector, X::LazySet, ε::N) where {N<:Number}
-    if !validate_same_dim(x, X; fun=is_interior_point)
+function validate_is_interior_point(x::AbstractVector, X::LazySet, p::Real, ε::Number)
+    if !validate_same_dim(x, X; fun=is_interior_point) || !validate_pnorm(p; fun=is_interior_point)
         return false
-    elseif ε <= zero(N)
+    elseif ε <= zero(ε)
         throw(ArgumentError("the tolerance must be strictly positive but is $ε"))
     end
     return true
 end
-push!(VALIDATE_DICT, :is_interior_point => (validate_is_interior_point, (1, 2, :ε)))
+push!(VALIDATE_DICT, :is_interior_point => (validate_is_interior_point, (1, 2, :p, :ε)))
 
 function validate_linear_map(M::AbstractMatrix, X::LazySet)
     return validate_map_dim(M, X; fun=exponential_map)
