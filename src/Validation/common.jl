@@ -42,3 +42,11 @@ function validate_index_vector(v::AbstractVector{Int}, X::LazySet; fun::Function
     end
     return true
 end
+
+function validate_pnorm(p::Real; fun::Function)
+    if p < one(p)
+        throw(ArgumentError("`$(string(fun))` requires a p-norm for p ≥ 1 " *
+                                "but received $(p)"))
+    end
+    return true
+end
