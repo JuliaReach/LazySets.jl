@@ -44,9 +44,12 @@ Undocumented implementations:
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
+
 ```@meta
-CurrentModule = LazySets.API
+CurrentModule = LazySets.MatrixZonotopeModule
 ```
+
+Inherited from [`AbstractMatrixZonotope`](@ref):
 * [`size`](@ref size(::AbstractMatrixZonotope))
 
 ```@meta
@@ -58,6 +61,11 @@ CurrentModule = LazySets.MatrixZonotopeModule
 MatrixZonotopeProduct
 *(::MatrixZonotope, ::MatrixZonotope)
 ```
+
+```@meta
+CurrentModule = LazySets.MatrixZonotopeModule
+```
+
 ## Operations 
-Undocumented implementations:
-* [size](@ref size(::AbstractMatrixZonotope))
+Inherited from [`AbstractMatrixZonotope`](@ref):
+* [`size`](@ref size(::AbstractMatrixZonotope))

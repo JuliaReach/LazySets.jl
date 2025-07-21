@@ -63,36 +63,6 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:SparsePolynomial
     return SparsePolynomialZonotope(c, G, Gi, E, idx)
 end
 
-function overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:AbstractZonotope{N},NM,
-                                                           MAT<:MatrixZonotope{NM}}
-    MZ = matrix(lm)
-    Z = set(lm)
-    T = promote_type(N, NM)
-
-    m, n = size(MZ)
-    w = ngens(MZ)
-    h = ngens(Z)
-
-    if n != dim(Z)
-        throw(DimensionMismatch("incompatible dimensions:" *
-                                "size(MZ) = $(size(MZ)), dim(Z) = $q"))
-    end
-
-    c = center(MZ) * center(Z)
-
-    # compute matrix of dependendent generators
-    G = Matrix{T}(undef, m, h + w + h * w)
-    G[:, 1:h] = center(MZ) * genmat(Z)
-
-    # loop to populate G 
-    @inbounds for (i, A) in enumerate(generators(MZ))
-        G[:, h + i] = A * center(P)
-        G[:, (h + w + (i - 1) * h + 1):(h + w + i * h)] = A * genmat(Z)
-    end
-
-    return Zonotope(c, G)
-end
-
 """
     _taylor_expmap(A::T, B::MatrixZonotope, P::SparsePolynomialZonotope, k::Int) where {T<:Union{MatrixZonotope, Nothing}}
 
@@ -156,7 +126,7 @@ end
 get_factors(MZP::MatrixZonotope) = (nothing, MZP)
 get_factors(MZP::MatrixZonotopeProduct) = (MZP.A, MZP.B)
 
-function load_intervalmatrices_overapproximation_matrixzonotope_s()
+function load_intervalmatrices_overapproximation_matrixzonotope()
     return quote
         using .IntervalMatrices: IntervalMatrix
 
