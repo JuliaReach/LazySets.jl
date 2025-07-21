@@ -204,13 +204,16 @@ function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int};
 end
 
 """
-    ExponentialMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+    ExponentialMap{N,S<:LazySet{N},NM,
+                      MAT<:Union{SparseMatrixExp{NM},AbstractMatrixZonotope{NM}}} <:
+       AbstractAffineMap{N,S}
 
 Type that represents the action of an exponential map on a set.
 
 ### Fields
 
-- `spmexp` -- sparse matrix exponential
+- `expmat` -- matrix exponential, either a concrete matrix exponential
+              or a matrix set represented by an `AbstractMatrixZonotope
 - `X`      -- set
 
 ### Notes
@@ -261,7 +264,7 @@ struct ExponentialMap{N,S<:LazySet{N},NM,
                             X::S) where {N,S<:LazySet{N},NM,
                                          MAT<:Union{SparseMatrixExp{NM},AbstractMatrixZonotope{NM}}}
         @assert dim(X) == size(expmat, 2) "an exponential map of size " *
-                                          "$(size(spmexp)) cannot be applied to a set of dimension $(dim(Z))"
+                                          "$(size(expmat)) cannot be applied to a set of dimension $(dim(Z))"
         return new{N,S,NM,MAT}(expmat, X)
     end
 end
@@ -307,8 +310,8 @@ Alias to create an `ExponentialMap` object.
 
 The exponential map of the set.
 """
-function *(expmat::T, X::LazySet) where {T<:Union{SparseMatrixExp,AbstractMatrixZonotope}}
-    return ExponentialMap(expmat, X)
+function *(spmexp::SparseMatrixExp, X::LazySet)
+    return ExponentialMap(spmexp, X)
 end
 
 function matrix(em::ExponentialMap)

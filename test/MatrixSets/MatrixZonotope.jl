@@ -45,6 +45,32 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # norm
     @test norm(MZ, Inf) == 7
     @test norm(MZ, 1) == 8
+
+    #MatrixZonotopeProduct
+    gs = [N[1 0 -1; -1 2 0], N[1 1 -1; 0 2 -1]]
+    MZ4 = MatrixZonotope(c = N[1 0 0; 0 1 1], gs)
+    # test constructor 
+    MZP = MatrixZonotopeProduct(MZ, MZ4)
+    @test MZP isa MatrixZonotopeProduct{N}
+    @test MZP.A == A_mz
+    @test MZP.B == B_mz
+
+    MZP_alias = A_mz * B_mz
+    @test MZP_alias isa MatrixZonotopeProduct{N}
+    @test MZP_alias.A == A_mz
+    @test MZP_alias.B == B_mz
+
+    # test size 
+    @test size(MZP) == (2, 3) # A is 2x2, B is 2x3, product should be 2x3
+    @test size(MZP, 1) == 2
+    @test size(MZP, 2) == 3
+
+    # Test constructor with incompatible dimensions
+    # C is 3x2
+    C_c = N[1 2; 3 4; 5 6]
+    C_gens = [N[2 0; 1 -1; -3 0]]
+    C_mz = MatrixZonotope(C_c, C_gens)
+    @test_throws AssertionError MatrixZonotopeProduct(A_mz, C_mz)
 end
 
 for N in @tN([Float64, Float32])

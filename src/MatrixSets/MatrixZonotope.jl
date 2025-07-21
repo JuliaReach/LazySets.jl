@@ -1,8 +1,6 @@
-abstract type AbstractMatrixZonotope{N} end
-
 """
-    MatrixZonotope{N, MN<:AbstractMatrix{N}}(A0::MN, Ai::Vector{MN},
-                                              idx::Vector{Int}=collect(1:length(Aᵢ)))
+    MatrixZonotope{N, MN<:AbstractMatrix{N}}(A0::MN, Ai::Vector{MN}, 
+                    idx::Vector{Int}=collect(1:length(Aᵢ))) <: AbstractMatrixZonotope{N}
 
 Type that represents a matrix zonotope.
 
@@ -55,12 +53,6 @@ end
 
 Base.eltype(::Type{<:MatrixZonotope{N}}) where {N} = N
 
-"""
-    size(MZ::MatrixZonotope)
-
-Return the dimensions of a matrix zonotope.  
-
-"""
 Base.size(MZ::MatrixZonotope) = size(center(MZ))
 Base.size(MZ::MatrixZonotope, d::Int) = size(center(MZ), d)
 

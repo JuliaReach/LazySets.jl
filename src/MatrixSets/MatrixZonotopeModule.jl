@@ -1,7 +1,6 @@
 module MatrixZonotopeModule
 
 using Reexport
-import Base: *
 
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
@@ -15,6 +14,7 @@ using ..LazySets: Zonotope
 
 export AbstractMatrixZonotope, MatrixZonotope, MatrixZonotopeProduct
 
+include("AbstractMatrixZonotope.jl")
 include("MatrixZonotope.jl")
 include("MatrixZonotopeProduct.jl")
 include("indexvector.jl")
