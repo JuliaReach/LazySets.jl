@@ -29,6 +29,8 @@ ngens(::MatrixZonotope)
 rand(::Type{MatrixZonotope})
 *(::Real, ::MatrixZonotope)
 norm(::MatrixZonotope, ::Real)
+linear_map(::AbstractMatrix, ::MatrixZonotope)
+linear_map(::MatrixZonotope, ::AbstractMatrix)
 _rowwise_zonotope_norm
 rand(::Type{MatrixZonotope})
 size(::MatrixZonotope)
@@ -59,7 +61,13 @@ CurrentModule = LazySets.MatrixZonotopeModule
 # [MatrixZonotopeProduct](@id def_MatrixZonotopeProduct)
 ```@docs
 MatrixZonotopeProduct
-*(::MatrixZonotope, ::MatrixZonotope)
+*(::MatrixZonotope{N,S}, ::MatrixZonotope{N,S}) where {N,S}
+*(::MatrixZonotope{N,S}, ::MatrixZonotopeProduct{N,S}) where {N,S}
+*(::MatrixZonotopeProduct{N,S}, ::MatrixZonotope{N,S}) where {N,S}
+*(::MatrixZonotopeProduct{N,S}, ::MatrixZonotopeProduct{N,S}) where {N,S}
+factors
+nfactors
+remove_redundant_factors
 ```
 
 ```@meta

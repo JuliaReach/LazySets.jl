@@ -10,8 +10,10 @@ CurrentModule = LazySets.Approximations
 # Overapproximation
 
 ```@docs
-overapproximate(::LinearMap{N, SparsePolynomialZonotope{N}, NM, MAT}) where {N, NM,
-	                 MAT <: MatrixZonotope{NM}}
+overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:SparsePolynomialZonotope{N},NM,
+                                                           MAT<:MatrixZonotope{NM}}
+overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:AbstractZonotope{N},NM,
+                                                           MAT<:MatrixZonotope{NM}}
 _taylor_expmap
 overapproximate(::ExponentialMap, ::Int)
 ```
