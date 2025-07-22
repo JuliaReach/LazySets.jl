@@ -1,6 +1,6 @@
 """
-	overapproximate(lm::LinearMap{N, SparsePolynomialZonotope{N}, NM, MAT}) where {N, NM,
-	                 MAT <: MatrixZonotope{NM}}
+	overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:SparsePolynomialZonotope{N},NM,
+                                                           MAT<:MatrixZonotope{NM}}
 
 Overapproximate the linear map of a sparse polynomial zonotope through a matrix zonotope,
 following Proposition 1 of [HuangLBS2025](@citet).
@@ -64,8 +64,8 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:SparsePolynomial
 end
 
 """
-	overapproximate(lm::LinearMap{N, SparsePolynomialZonotope{N}, NM, MAT}) where {N, NM,
-	                 MAT <: MatrixZonotope{NM}}
+	overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:AbstractZonotope{N},NM,
+                                                           MAT<:MatrixZonotope{NM}}
 
 Overapproximate the linear map of a zonotope through a matrix zonotope,
 following a modification of Proposition 1 of [HuangLBS2025](@citet).
