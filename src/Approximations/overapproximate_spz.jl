@@ -64,67 +64,158 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:SparsePolynomial
 end
 
 """
-    _taylor_expmap(A::T, B::MatrixZonotope, P::SparsePolynomialZonotope, k::Int) where {T<:Union{MatrixZonotope, Nothing}}
+	overapproximate(lm::LinearMap{N, SparsePolynomialZonotope{N}, NM, MAT}) where {N, NM,
+	                 MAT <: MatrixZonotope{NM}}
 
-Compute the k-th order truncated Taylor expansion of the composition of matrix zonotopes with a sparse polynomial zonotope,
-following Proposition 3 of [HuangLBS2025](@citet).
+Overapproximate the linear map of a zonotope through a matrix zonotope,
+following a modification of Proposition 1 of [HuangLBS2025](@citet).
 
 ### Input
 
-- `A` -- a matrix zonotope, or `nothing` if the expansion is for a single matrix zonotope `B`
-- `B` -- a matrix zonotope
-- `P` -- a sparse polynomial zonotope
+- `lm` -- a linear map of a zonotope through a matrix zonotope
+
+### Output
+
+A zonotope overapproximating the linear map.
+
+"""
+function overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:AbstractZonotope{N},NM,
+                                                           MAT<:MatrixZonotope{NM}}
+    MZ = matrix(lm)
+    Z = set(lm)
+    T = promote_type(N, NM)
+
+    m, n = size(MZ)
+    w = ngens(MZ)
+    h = ngens(Z)
+
+    if n != dim(Z)
+        throw(DimensionMismatch("incompatible dimensions:" *
+                                "size(MZ) = $(size(MZ)), dim(P) = $(dim(Z))"))
+    end
+
+    c = center(MZ) * center(Z)
+
+    # compute matrix of dependendent generators
+    G = Matrix{T}(undef, m, h + w + h * w)
+    G[:, 1:h] = center(MZ) * genmat(Z)
+    @inbounds for (i, A) in enumerate(generators(MZ))
+        G[:, h + i] = A * center(Z)
+        G[:, (h + w + (i - 1) * h + 1):(h + w + i * h)] = A * genmat(Z)
+    end
+
+    return Zonotope(c, G)
+end
+
+function _compute_inner_powers(MZ::MatrixZonotope, P::S,
+                               k::Int) where {S<:Union{SparsePolynomialZonotope,
+                                                       AbstractZonotope}}
+    N = promote_type(eltype(MZ), eltype(P))
+    S_type = Base.typename(S).wrapper
+
+    powers = Vector{S_type{N}}(undef, k + 1)
+    invfact = N(1)
+    powers[1] = P
+
+    @inbounds for i in 1:k
+        invfact /= i
+        term = overapproximate(invfact * MZ * powers[i])
+        powers[i + 1] = remove_redundant_generators(term)
+    end
+    return powers
+end
+
+function _compute_outer_powers(MZ::MatrixZonotope, in_powers::Vector{S},
+                               k::Int) where {S<:Union{SparsePolynomialZonotope,
+                                                       AbstractZonotope}}
+    out_powers = similar(in_powers)
+    out_powers[1] = in_powers[1]
+
+    @inbounds for (i, P) in enumerate(in_powers[2:(k + 1)])
+        term = copy(P)
+        for _ in 1:i
+            term = remove_redundant_generators(overapproximate(MZ * term))
+        end
+        out_powers[i] = term
+    end
+    return out_powers
+end
+
+"""
+    _taylor_expmap(MZ::MatrixZonotope, P::S, k::Int) where S
+
+Compute the k-th order truncated Taylor expansion of the the exponential mao of a matrix zonotope
+with a zonotopic set following Proposition 3 of [HuangLBS2025](@citet).
+
+### Input
+
+- `A` -- a matrix zonotope
+- `P` -- a zonotopic set
 - `k` -- the order of the Taylor expansion
 
 ### Output
 
-A sparse polynomial zonotope representing the k-th order truncated Taylor expansion.
+A zonotopic set representing the k-th order truncated Taylor expansion.
 
 ### Algorithm
 
 This function computes the approximation:
 
 ```math
-\\displaystyle\\boxplus_{i=0}^k \\frac{\\mathcal{A}^i \\mathcal{B}^i}{i!} \\mathcal{PZ}
+\\displaystyle\\boxplus_{i=0}^k \\frac{\\mathcal{A}^i }{i!} X
 ```
 """
-function _taylor_expmap(A::T, B::MatrixZonotope, P::SparsePolynomialZonotope,
-                        k::Int) where {T<:Union{MatrixZonotope,Nothing}}
-    N = isnothing(A) ? promote_type(eltype(B), eltype(P)) :
-        promote_type(eltype(A), eltype(B), eltype(P))
-
-    #Bpowers = [P, BP, BBP/2, ..., B^k P /k!] 
-    Bpowers = Vector{SparsePolynomialZonotope{N}}(undef, k + 1)
-    invfact = N(1)
-    Bpowers[1] = P
-
-    @inbounds for i in 1:k
-        invfact /= i
-        term = overapproximate(invfact * B * Bpowers[i])
-        Bpowers[i + 1] = remove_redundant_generators(term)
+function _taylor_expmap(MZ::MatrixZonotope, P::S,
+                        k::Int) where {S<:Union{SparsePolynomialZonotope,AbstractZonotope}}
+    # avoid seg fault
+    if isempty(generators(MZ))
+        σ = linear_map(exp(center(MZ)), P)
+        return remove_redundant_generators(σ)
     end
-
-    if isnothing(A)
-        result = reduce(exact_sum, Bpowers)
-        return result
-    end
-
-    # A^i * (B^i * X)/ i!
-    result = Bpowers[1]
-    @inbounds for i in 1:k
-        term = Bpowers[i + 1]
-        # apply A^i
-        for _ in 1:i
-            term = remove_redundant_generators(overapproximate(A * term))
-        end
-        result = remove_redundant_generators(exact_sum(result, term))
-    end
-    return result
+    
+    inner = _compute_inner_powers(MZ, P, k)
+    σ = reduce(exact_sum, inner)
+    return remove_redundant_generators(σ)
 end
 
-# helper to pull out A,B
-get_factors(MZP::MatrixZonotope) = (nothing, MZP)
-get_factors(MZP::MatrixZonotopeProduct) = (MZP.A, MZP.B)
+"""
+    _taylor_expmap(MZP::MatrixZonotopeProduct, P::S, k::Int) where S
+
+Compute the k-th order truncated Taylor expansion of the the exponential map of the product of
+matrix zonotopes with a zonotopic set following Proposition 3 of [HuangLBS2025](@citet).
+
+### Input
+
+- `MZP` -- a matrix zonotope product
+- `P` -- a zonotopic set
+- `k` -- the order of the Taylor expansion
+
+### Output
+
+A zonotopic set representing the k-th order truncated Taylor expansion.
+
+### Algorithm
+
+This function computes the approximation:
+
+```math
+\\displaystyle\\boxplus_{i=0}^k \\frac{\\mathcal{A}^i \\mathcal{B}^i}{i!} X
+```
+"""
+function _taylor_expmap(MZP::MatrixZonotopeProduct, P::S,
+                        k::Int) where {S<:Union{SparsePolynomialZonotope,AbstractZonotope}}
+    # inner powers on the last factor
+    last_factor = factors(MZP)[end]
+    terms = _compute_inner_powers(last_factor, P, k)
+
+    # propagate outwards through the preceding factors
+    for MZ in reverse(view(factors(MZP), 1:(nfactors(MZP) - 1)))
+        terms = _compute_outer_powers(MZ, terms, k)
+    end
+
+    σ = reduce(exact_sum, terms)
+    return remove_redundant_generators(σ)
+end
 
 function load_intervalmatrices_overapproximation_matrixzonotope()
     return quote
@@ -147,29 +238,30 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
         A sparse polynomial zonotope overapproximating the exponential map.
         """
         function overapproximate(em::ExponentialMap{N,S,NM,MAT},
-                                 k::Int=2) where {N,S<:SparsePolynomialZonotope{N},NM,
+                                 k::Int=2) where {N,
+                                                  S<:Union{SparsePolynomialZonotope{N},
+                                                           AbstractZonotope},NM,
                                                   MAT<:AbstractMatrixZonotope{NM}}
-            T    = promote_type(N, NM)
-            MZP  = matrix(em)
-            A, B = get_factors(MZP)
-            P    = set(em)
-            n    = size(B, 2)
+            T   = promote_type(N, NM)
+            MZP = matrix(em)
+            P   = set(em) #SPZ or Zonotope
+            n   = size(MZP, 2)
 
-            ABn = T(A === nothing ? overapproximate_norm(B, Inf) :
-                    overapproximate_norm(A, Inf) * overapproximate_norm(B, Inf)) # norm overapproximation
-            ϵ = ABn / (k + 2)
+            matnorm = T(overapproximate_norm(MZP, Inf))
+            ϵ = matnorm / (k + 2)
             if ϵ > 1
                 @warn "k should be chosen such that ϵ<1 " ϵ
             end
 
-            σ = _taylor_expmap(A, B, P, k)
+            σ = _taylor_expmap(MZP, P, k)
             ε = IntervalMatrix(fill(IA.interval(T(-1), T(1)), n, n))
-            ε *= ABn^(k + 1) / (factorial(k + 1) * (1 - ϵ))
-
+            ε *= matnorm^(k + 1) / (factorial(k + 1) * (1 - ϵ))
+        
             Zp = overapproximate(P, Zonotope)
             rhs = overapproximate(ε * Zp, Zonotope)
+            P_approx = minkowski_sum(σ, rhs)
 
-            return minkowski_sum(σ, rhs)
+            return remove_redundant_generators(P_approx) 
         end
     end
 end
