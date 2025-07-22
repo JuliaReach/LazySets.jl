@@ -34,20 +34,20 @@ julia> MZ = MatrixZonotope(A0, Ai, idx)
 MatrixZonotope{Float64, Matrix{Float64}}([2.0 1.0; -1.0 0.0], [[1.0 -1.0; 0.0 -1.0], [0.0 2.0; -1.0 1.0]], [1, 3])
 ```
 """
-struct MatrixZonotope{N, MN <: AbstractMatrix{N}} <: AbstractMatrixZonotope{N}
+struct MatrixZonotope{N,MN<:AbstractMatrix{N}} <: AbstractMatrixZonotope{N}
     A0::MN
     Ai::Vector{MN}
     idx::Vector{Int}
 
     function MatrixZonotope(A0::MN, Ai::Vector{MN},
-        idx::Vector{Int} = collect(1:length(Ai))) where {N, MN <: AbstractMatrix{N}}
+                            idx::Vector{Int}=collect(1:length(Ai))) where {N,MN<:AbstractMatrix{N}}
         length(Ai) == length(idx) == length(unique(idx)) ||
             throw(ArgumentError("the number of generator matrices doesn't match the id's length"))
         if length(Ai) > 0
             (all(size(Aij) == size(A0) for Aij in Ai)) ||
                 throw(ArgumentError("the size of all generator matrices should match"))
         end
-        return new{N, MN}(A0, Ai, idx)
+        return new{N,MN}(A0, Ai, idx)
     end
 end
 
@@ -76,7 +76,7 @@ Base.transpose(MZ::MatrixZonotope{N}) where {N} = begin
 end
 
 function Base.copy(MZ::MatrixZonotope{N,MN}) where {N,MN}
-    return MatrixZonotope(copy(MZ.A0),               
-                                [copy(Aij) for Aij in MZ.Ai],
-                                copy(MZ.idx))
+    return MatrixZonotope(copy(MZ.A0),
+                          [copy(Aij) for Aij in MZ.Ai],
+                          copy(MZ.idx))
 end

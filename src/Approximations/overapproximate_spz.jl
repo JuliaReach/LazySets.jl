@@ -172,7 +172,7 @@ function _taylor_expmap(MZ::MatrixZonotope, P::S,
         σ = linear_map(exp(center(MZ)), P)
         return remove_redundant_generators(σ)
     end
-    
+
     inner = _compute_inner_powers(MZ, P, k)
     σ = reduce(exact_sum, inner)
     return remove_redundant_generators(σ)
@@ -242,10 +242,10 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
                                                   S<:Union{SparsePolynomialZonotope{N},
                                                            AbstractZonotope},NM,
                                                   MAT<:AbstractMatrixZonotope{NM}}
-            T   = promote_type(N, NM)
+            T = promote_type(N, NM)
             MZP = matrix(em)
-            P   = set(em) #SPZ or Zonotope
-            n   = size(MZP, 2)
+            P = set(em) #SPZ or Zonotope
+            n = size(MZP, 2)
 
             matnorm = T(overapproximate_norm(MZP, Inf))
             ϵ = matnorm / (k + 2)
@@ -256,12 +256,12 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
             σ = _taylor_expmap(MZP, P, k)
             ε = IntervalMatrix(fill(IA.interval(T(-1), T(1)), n, n))
             ε *= matnorm^(k + 1) / (factorial(k + 1) * (1 - ϵ))
-        
+
             Zp = overapproximate(P, Zonotope)
             rhs = overapproximate(ε * Zp, Zonotope)
             P_approx = minkowski_sum(σ, rhs)
 
-            return remove_redundant_generators(P_approx) 
+            return remove_redundant_generators(P_approx)
         end
     end
 end
