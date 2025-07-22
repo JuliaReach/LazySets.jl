@@ -241,7 +241,9 @@ include("Sets/Interval/IntervalModule.jl")
 # Matrix sets module
 # ==========================
 include("MatrixSets/MatrixZonotopeModule.jl")
-@reexport using ..MatrixZonotopeModule: MatrixZonotope, AbstractMatrixZonotope, MatrixZonotopeProduct
+@reexport using ..MatrixZonotopeModule: MatrixZonotope, AbstractMatrixZonotope,
+                                        MatrixZonotopeProduct, factors,
+                                        nfactors, remove_redundant_factors
 
 # =================================
 # Types representing set operations
