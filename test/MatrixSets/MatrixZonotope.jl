@@ -42,21 +42,21 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test center(MZt) == c
     @test generators(MZt) == [transpose(Ai) for Ai in generators(MZ)]
 
-    #norm
-    @test norm(MZ, Inf) == 6
-    @test norm(MZ, 1) == 6
-    
+    # norm
+    @test norm(MZ, Inf) == 7
+    @test norm(MZ, 1) == 8
+
     #linear_map 
     M = N[2 -1; 1 0]
     lm_l = linear_map(M, MZ)
-    @test center(lm_l) == [2 -1; 1 0]
+    @test center(lm_l) == [2 -3; 1 0]
     @test generators(lm_l) == [[2 -4; 1 -1], [5 -3; 2 -1]]
     lm_r = linear_map(MZ, M)
-    @test center(lm_r) == [2 -1; 1 0]
+    @test center(lm_r) == [2 -1; 3 0]
     @test generators(lm_r) == [[1 -1; 2 0], [3 -2; -1 1]]
 end
 
-for N in (Float64, Float32, Rational{Int})
+for N in @tn([Float64, Float32, Rational{Int}])
     # A: (2x2), B: (2x3)
     A_c = N[1 0; 0 1]
     A_gens = [N[1 -1; 0 2], N[2 -1; -1 1]]

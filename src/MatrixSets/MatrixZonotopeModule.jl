@@ -17,13 +17,10 @@ export AbstractMatrixZonotope, MatrixZonotope, MatrixZonotopeProduct,
 include("AbstractMatrixZonotope.jl")
 include("MatrixZonotope.jl")
 include("MatrixZonotopeProduct.jl")
-include("indexvector.jl")
-include("norm.jl")
 include("linear_map.jl")
 include("scale.jl")
 include("center.jl")
 include("rand.jl")
-include("scale.jl")
 include("norm.jl")
 
 include("generators.jl")
