@@ -22,12 +22,5 @@ overapproximate(lm::LinearMap{N,S,NM,MAT},
                                       MAT<:MatrixZonotopeProduct{NM},
                                       U<:Union{Zonotope, SparsePolynomialZonotope}}
 _taylor_expmap
-overapproximate(em::ExponentialMap{N,S,NM,MAT},
-                                 ::Type{U},
-                                 k::Int=2) where {N,
-                                                  S<:Union{SparsePolynomialZonotope{N},
-                                                           AbstractZonotope},
-                                                  NM,
-                                                  MAT<:AbstractMatrixZonotope{NM},
-                                                  U<:Union{Zonotope,SparsePolynomialZonotope}}
+verapproximate(em::ExponentialMap{N,S,NM,MAT}, ::Type{U}, k::Int)
 ```
