@@ -15,4 +15,4 @@ end
 
 Alias to scale a matrix zonotope.
 """
-@commutative Base.:*(A::Real, B::MatrixZonotope) = scale(A, B)
+@commutative Base.:*(a::Real, B::MatrixZonotope) = scale(a, B)

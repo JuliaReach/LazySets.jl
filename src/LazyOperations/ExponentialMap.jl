@@ -264,7 +264,7 @@ struct ExponentialMap{N,S<:LazySet{N},NM,
                             X::S) where {N,S<:LazySet{N},NM,
                                          MAT<:Union{SparseMatrixExp{NM},AbstractMatrixZonotope{NM}}}
         @assert dim(X) == size(expmat, 2) "an exponential map of size " *
-                                          "$(size(expmat)) cannot be applied to a set of dimension $(dim(Z))"
+                                          "$(size(expmat)) cannot be applied to a set of dimension $(dim(X))"
         return new{N,S,NM,MAT}(expmat, X)
     end
 end

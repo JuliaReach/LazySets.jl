@@ -1,7 +1,7 @@
 """
     AbstractMatrixZonotope{N}
 
-Abstract supertype for all matrix zonotope representations, including standard (`MatrixZonotope`), products (`MatrixZonotopeProduct`), polynomial matrix zonotopes, and others.
+Abstract supertype for all matrix zonotope representations.
 
 Every concrete `AbstractSparsePolynomialZonotope` must define the following functions:
 - `size(::AbstractSparsePolynomialZonotope)` -- return the size of the matrix zonotope

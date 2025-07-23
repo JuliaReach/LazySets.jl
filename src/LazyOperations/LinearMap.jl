@@ -123,7 +123,7 @@ Alias to create a `LinearMap` object.
 
 ### Input
 
-- `M` -- linear map or matrix zonotope
+- `M` -- matrix or matrix zonotope
 - `X` -- set
 
 ### Output
