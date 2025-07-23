@@ -30,14 +30,9 @@ end
 
 MatrixZonotopeProduct(ms::MatrixZonotope...) = MatrixZonotopeProduct(collect(ms))
 
-"""
-    *(A::MatrixZonotope{N,S}, B::MatrixZonotope{N,S}) where {N,S}
-
-Alias to create a `MatrixZonotopeProduct` object.
-"""
 Base.:*(A::MatrixZonotope, B::MatrixZonotope) = MatrixZonotopeProduct([A, B])
 Base.:*(P::MatrixZonotopeProduct, B::MatrixZonotope) = MatrixZonotopeProduct(vcat(P.factors, B))
-Base.:*(A::MatrixZonotope, P::MatrixZonotopeProduct) =MatrixZonotopeProduct(vcat(A, P.factors))
+Base.:*(A::MatrixZonotope, P::MatrixZonotopeProduct) = MatrixZonotopeProduct(vcat(A, P.factors))
 Base.:*(P1::MatrixZonotopeProduct, P2::MatrixZonotopeProduct) = MatrixZonotopeProduct(vcat(P1.factors, P2.factors))
 
 """
@@ -82,10 +77,9 @@ function remove_redundant_factors(MZP::MatrixZonotopeProduct)
     i = 1
     while i < length(factors_)
         MZ = factors_[i]
-        next = factors_[i + 1]
 
         if isempty(generators(MZ))
-            push!(gens, linear_map(center(MZ), next))
+            push!(gens, linear_map(center(MZ), factors_[i + 1]))
             i += 2  # skip next since it's been merged
         else
             push!(gens, MZ)
@@ -93,7 +87,7 @@ function remove_redundant_factors(MZP::MatrixZonotopeProduct)
         end
     end
 
-    # in the the last element apply linear map to the left
+    # in the last element apply linear map to the left
     if i == length(factors_)
         last = factors_[end]
         if isempty(generators(last)) && !isempty(gens)
