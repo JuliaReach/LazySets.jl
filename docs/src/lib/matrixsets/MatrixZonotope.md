@@ -32,9 +32,6 @@ norm(::MatrixZonotope, ::Real)
 linear_map(::AbstractMatrix, ::MatrixZonotope)
 linear_map(::MatrixZonotope, ::AbstractMatrix)
 _rowwise_zonotope_norm
-rand(::Type{MatrixZonotope})
-size(::MatrixZonotope)
-transpose(::MatrixZonotope)
 ```
 
 ```@meta

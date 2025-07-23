@@ -6,7 +6,7 @@ CurrentModule = LazySets
 
 ```@docs
 LinearMap
-*(::Union{AbstractMatrix, UniformScaling, AbstractVector, Real, MatrixZonotope}, ::LazySet)
+*(::Union{AbstractMatrix, UniformScaling, AbstractVector, Real, AbstractMatrixZonotope}, ::LazySet)
 dim(::LinearMap)
 ρ(::AbstractVector, ::LinearMap)
 σ(::AbstractVector, ::LinearMap)

@@ -56,7 +56,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test generators(lm_r) == [[1 -1; 2 0], [3 -2; -1 1]]
 end
 
-for N in @tn([Float64, Float32, Rational{Int}])
+for N in @tN([Float64, Float32, Rational{Int}])
     # A: (2x2), B: (2x3)
     A_c = N[1 0; 0 1]
     A_gens = [N[1 -1; 0 2], N[2 -1; -1 1]]

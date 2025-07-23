@@ -1,6 +1,8 @@
 """
-	overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:SparsePolynomialZonotope{N},NM,
-                                                           MAT<:MatrixZonotope{NM}}
+	overapproximate(lm::LinearMap{N,S,NM,MAT},
+                         ::Type{SparsePolynomialZonotope}) where {N,S<:SparsePolynomialZonotope{N},
+                                                                  NM,
+                                                                  MAT<:MatrixZonotope{NM}}
 
 Overapproximate the linear map of a sparse polynomial zonotope through a matrix zonotope,
 following Proposition 1 of [HuangLBS2025](@citet).
@@ -14,8 +16,10 @@ following Proposition 1 of [HuangLBS2025](@citet).
 A sparse polynomial zonotope overapproximating the linear map.
 
 """
-function overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:SparsePolynomialZonotope{N},NM,
-                                                           MAT<:MatrixZonotope{NM}}
+function overapproximate(lm::LinearMap{N,S,NM,MAT},
+                         ::Type{SparsePolynomialZonotope}) where {N,S<:SparsePolynomialZonotope{N},
+                                                                  NM,
+                                                                  MAT<:MatrixZonotope{NM}}
     MZ = matrix(lm)
     P = set(lm)
     T = promote_type(N, NM)
@@ -25,18 +29,13 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:SparsePolynomial
     h = ngens_dep(P)
     q = ngens_indep(P)
 
-    if n != dim(P)
-        throw(DimensionMismatch("incompatible dimensions:" *
-                                "size(MZ) = $(size(MZ)), dim(P) = $q"))
-    end
-
     c = center(MZ) * center(P)
 
     # matrix of independent generators
     Gi = Matrix{T}(undef, m, q * (w + 1))
     Gi[:, 1:q] = center(MZ) * genmat_indep(P)
 
-    # compute matrix of dependendent generators
+    # compute matrix of dependent generators
     G = Matrix{T}(undef, m, h + w + h * w)
     G[:, 1:h] = center(MZ) * genmat_dep(P)
 
@@ -51,21 +50,24 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:SparsePolynomial
     Imat = Matrix{Int}(I, w, w)
     Ê₁, Ê₂, idx = merge_id(indexvector(P), indexvector(MZ), expmat(P), Imat)
     pₖ = size(Ê₁, 1)
-    E = Matrix{eltype(Ê₁)}(undef, pₖ, h + w + h * w)
+    E = Matrix{Int}(undef, pₖ, h + w + h * w)
     E[:, 1:h] = Ê₁
     E[:, (h + 1):(h + w)] = Ê₂
+    ones_h = ones(Int, 1, h)
     @inbounds for l in 1:w
         cstart = (h + w) + (l - 1) * h + 1
         cend = (h + w) + l * h
-        E[:, cstart:cend] = Ê₂[:, l] * ones(1, h) .+ Ê₁
-    end
+        col = @view Ê₂[:, l]
+        E[:, cstart:cend] = col * ones_h .+ Ê₁
+    end    
 
     return SparsePolynomialZonotope(c, G, Gi, E, idx)
 end
 
 """
-	overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:AbstractZonotope{N},NM,
-                                                           MAT<:MatrixZonotope{NM}}
+	function overapproximate(lm::LinearMap{N,S,NM,MAT},
+                         ::Type{Zonotope}) where {N,S<:AbstractZonotope{N},NM,
+                                                  MAT<:MatrixZonotope{NM}}
 
 Overapproximate the linear map of a zonotope through a matrix zonotope,
 following a modification of Proposition 1 of [HuangLBS2025](@citet).
@@ -79,8 +81,9 @@ following a modification of Proposition 1 of [HuangLBS2025](@citet).
 A zonotope overapproximating the linear map.
 
 """
-function overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:AbstractZonotope{N},NM,
-                                                           MAT<:MatrixZonotope{NM}}
+function overapproximate(lm::LinearMap{N,S,NM,MAT},
+                         ::Type{Zonotope}) where {N,S<:AbstractZonotope{N},NM,
+                                                  MAT<:MatrixZonotope{NM}}
     MZ = matrix(lm)
     Z = set(lm)
     T = promote_type(N, NM)
@@ -89,14 +92,9 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:AbstractZonotope
     w = ngens(MZ)
     h = ngens(Z)
 
-    if n != dim(Z)
-        throw(DimensionMismatch("incompatible dimensions:" *
-                                "size(MZ) = $(size(MZ)), dim(P) = $(dim(Z))"))
-    end
-
     c = center(MZ) * center(Z)
 
-    # compute matrix of dependendent generators
+    # compute matrix of dependent generators
     G = Matrix{T}(undef, m, h + w + h * w)
     G[:, 1:h] = center(MZ) * genmat(Z)
     @inbounds for (i, A) in enumerate(generators(MZ))
@@ -105,6 +103,36 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT}) where {N,S<:AbstractZonotope
     end
 
     return Zonotope(c, G)
+end
+
+"""
+    overapproximate(lm::LinearMap{N,S,NM,MAT},
+                    ::Type{U}) where {N, S<:AbstractZonotope{N}, NM,
+                                      MAT<:MatrixZonotopeProduct{NM},
+                                      U<:Union{Zonotope, SparsePolynomialZonotope}}
+
+Overapproximate the linear map of a zonotope or sparse polynomial zonotope through a product of matrix zonotopes,
+by recursively applying the overapproximation rule from the inside out.
+
+### Input
+
+- `lm` -- a linear map of a zonotope or sparse polynomial zonotope through a `MatrixZonotopeProduct`
+- `U` -- the target overapproximation type
+
+### Output
+
+An overapproximation of the linear map as a zonotope or sparse polynomial zonotope,
+"""
+function overapproximate(lm::LinearMap{N,S,NM,MAT},
+                         ::Type{U}) where {N,S<:AbstractZonotope{N},NM,
+                                                  MAT<:MatrixZonotopeProduct{NM},
+                                                  U <: Union{Zonotope, SparsePolynomialZonotope}}
+    MZs = factors(matrix(lm))
+    P = set(lm)
+
+    # apply overapproximation from innermost to outermost
+    reduced = foldr((A, acc) -> overapproximate(A*acc, U), MZP_factors, init=P)
+    return reduced
 end
 
 function _compute_inner_powers(MZ::MatrixZonotope, P::S,
@@ -119,7 +147,7 @@ function _compute_inner_powers(MZ::MatrixZonotope, P::S,
 
     @inbounds for i in 1:k
         invfact /= i
-        term = overapproximate(invfact * MZ * powers[i])
+        term = overapproximate(invfact * MZ * powers[i], S_type)
         powers[i + 1] = remove_redundant_generators(term)
     end
     return powers
@@ -134,7 +162,7 @@ function _compute_outer_powers(MZ::MatrixZonotope, in_powers::Vector{S},
     @inbounds for (i, P) in enumerate(in_powers[2:(k + 1)])
         term = copy(P)
         for _ in 1:i
-            term = remove_redundant_generators(overapproximate(MZ * term))
+            term = remove_redundant_generators(overapproximate(MZ * term, S))
         end
         out_powers[i] = term
     end
@@ -205,6 +233,7 @@ This function computes the approximation:
 function _taylor_expmap(MZP::MatrixZonotopeProduct, P::S,
                         k::Int) where {S<:Union{SparsePolynomialZonotope,AbstractZonotope}}
     # inner powers on the last factor
+    MZP = remove_redundant_factors(MZP)
     last_factor = factors(MZP)[end]
     terms = _compute_inner_powers(last_factor, P, k)
 
@@ -223,8 +252,13 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
 
         """
         	overapproximate(em::ExponentialMap{N,S,NM,MAT},
-        					k::Int=2) where {N,S<:SparsePolynomialZonotope{N},NM,
-        									MAT<:AbstractMatrixZonotope{NM}}
+                                 ::Type{U},
+                                 k::Int=2) where {N,
+                                                  S<:Union{SparsePolynomialZonotope{N},
+                                                           AbstractZonotope},
+                                                  NM,
+                                                  MAT<:AbstractMatrixZonotope{NM},
+                                                  U<:Union{Zonotope,SparsePolynomialZonotope}}
 
         Overapproximate the exponential map of a sparse polynomial zonotope through a composition of matrix 
         zonotopes, following Proposition 1 of [HuangLBS2025](@citet).
@@ -238,10 +272,13 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
         A sparse polynomial zonotope overapproximating the exponential map.
         """
         function overapproximate(em::ExponentialMap{N,S,NM,MAT},
+                                 ::Type{U},
                                  k::Int=2) where {N,
                                                   S<:Union{SparsePolynomialZonotope{N},
-                                                           AbstractZonotope},NM,
-                                                  MAT<:AbstractMatrixZonotope{NM}}
+                                                           AbstractZonotope},
+                                                  NM,
+                                                  MAT<:AbstractMatrixZonotope{NM},
+                                                  U<:Union{Zonotope,SparsePolynomialZonotope}}
             T = promote_type(N, NM)
             MZP = matrix(em)
             P = set(em) #SPZ or Zonotope
