@@ -13,7 +13,7 @@ Mathematically, this represents the set:
 
 ```math
 \\mathcal{C} = \\{ A_1 A_2 \\dots A_n ~|~ A_i \\in \\mathcal{A}_i \\}
-
+```
 """
 struct MatrixZonotopeProduct{N,S<:AbstractMatrix{N}} <: AbstractMatrixZonotope{N}
     factors::Vector{MatrixZonotope{N,S}}
@@ -28,43 +28,17 @@ struct MatrixZonotopeProduct{N,S<:AbstractMatrix{N}} <: AbstractMatrixZonotope{N
     end
 end
 
-MatrixZonotopeProduct(ms::MatrixZonotope{N,S}...) where {N,S} = MatrixZonotopeProduct(collect(ms))
+MatrixZonotopeProduct(ms::MatrixZonotope...) = MatrixZonotopeProduct(collect(ms))
 
 """
     *(A::MatrixZonotope{N,S}, B::MatrixZonotope{N,S}) where {N,S}
 
-Appends matrix zonotope B to an existing matrix zonotope product P.
+Alias to create a `MatrixZonotopeProduct` object.
 """
-function Base.:*(A::MatrixZonotope{N,S}, B::MatrixZonotope{N,S}) where {N,S}
-    return MatrixZonotopeProduct([A, B])
-end
-
-"""
-    *(P::MatrixZonotopeProduct{N,S}, B::MatrixZonotope{N,S}) where {N,S}
-
-Appends matrix zonotope B to an existing matrix zonotope product P.
-"""
-function Base.:*(P::MatrixZonotopeProduct{N,S}, B::MatrixZonotope{N,S}) where {N,S}
-    return MatrixZonotopeProduct(vcat(P.factors, B))
-end
-
-"""
-    *(A::MatrixZonotope{N,S}, P::MatrixZonotopeProduct{N,S}) where {N,S}
-
-Prepends matrix zonotope A to an existing matrix zonotope product P.
-"""
-function Base.:*(A::MatrixZonotope{N,S}, P::MatrixZonotopeProduct{N,S}) where {N,S}
-    return MatrixZonotopeProduct(vcat(A, P.factors))
-end
-
-"""
-    *(P1::MatrixZonotopeProduct{N,S}, P2::MatrixZonotopeProduct{N,S}) where {N,S}
-
-Concatenates two matrix zonotope products.
-"""
-function Base.:*(P1::MatrixZonotopeProduct{N,S}, P2::MatrixZonotopeProduct{N,S}) where {N,S}
-    return MatrixZonotopeProduct(vcat(P1.factors, P2.factors))
-end
+Base.:*(A::MatrixZonotope, B::MatrixZonotope) = MatrixZonotopeProduct([A, B])
+Base.:*(P::MatrixZonotopeProduct, B::MatrixZonotope) = MatrixZonotopeProduct(vcat(P.factors, B))
+Base.:*(A::MatrixZonotope, P::MatrixZonotopeProduct) =MatrixZonotopeProduct(vcat(A, P.factors))
+Base.:*(P1::MatrixZonotopeProduct, P2::MatrixZonotopeProduct) = MatrixZonotopeProduct(vcat(P1.factors, P2.factors))
 
 """
     factors(MZP::MatrixZonotopeProduct)
@@ -99,27 +73,34 @@ into adjacent factors via linear maps.
 
 ### Output
 
-A matrix zonotope with redundant constant factors removed.
+A matrix zonotope product with redundant constant factors removed.
 """
 function remove_redundant_factors(MZP::MatrixZonotopeProduct)
-    gens = Vector{typeof(factors(MZP)[1])}()
-    
-    # right multiply the first n-1 factors
-    @inbounds for (i, MZ) in enumerate(factors(MZP)[1:(end - 1)])
+    factors_ = factors(MZP)
+    gens = MatrixZonotope{eltype(factors_[1]), typeof(factors_[1].A0)}[]
+
+    i = 1
+    while i < length(factors_)
+        MZ = factors_[i]
+        next = factors_[i + 1]
+
         if isempty(generators(MZ))
-            G = linear_map(center(MZ), factors(MZP)[i + 1])
-            gens[i] = G
+            push!(gens, linear_map(center(MZ), next))
+            i += 2  # skip next since it's been merged
         else
             push!(gens, MZ)
+            i += 1
         end
     end
 
-    # left multiply the last factor
-    last_factor = factors(MZP)[end]
-    if isempty(generators(last_factor))
-        gens[end] = linear_map(MZ, center(last_factor))
-    else
-        push!(gens, last_factor)
+    # in the the last element apply linear map to the left
+    if i == length(factors_)
+        last = factors_[end]
+        if isempty(generators(last)) && !isempty(gens)
+            gens[end] = linear_map(gens[end], center(last))
+        else
+            push!(gens, last)
+        end
     end
 
     return MatrixZonotopeProduct(gens)

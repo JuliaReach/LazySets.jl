@@ -104,7 +104,7 @@ end
 
 function symmetric_interval_hull(E::ExponentialMap{N,<:AbstractSingleton};
                                  backend=get_exponential_backend()) where {N}
-    v = _expmv(backend, one(N), E.spmexp.M, element(E.X))
+    v = _expmv(backend, one(N), E.expmat.M, element(E.X))
     c = zeros(N, dim(E))
     r = abs.(v)
     return Hyperrectangle(c, r)
@@ -115,14 +115,14 @@ function symmetric_interval_hull(E::ExponentialMap{N,<:AbstractHyperrectangle};
     H = set(E)
     n = dim(H)
     x = zeros(N, n)
-    r = abs.(_expmv(backend, one(N), E.spmexp.M, center(H)))
+    r = abs.(_expmv(backend, one(N), E.expmat.M, center(H)))
     @inbounds for i in 1:n
         x[i] = radius_hyperrectangle(H, i)
         if isapproxzero(x[i])
             x[i] = 0
             continue
         end
-        r .+= abs.(_expmv(backend, one(N), E.spmexp.M, x))
+        r .+= abs.(_expmv(backend, one(N), E.expmat.M, x))
         x[i] = 0
     end
     return Hyperrectangle(zeros(N, n), r)

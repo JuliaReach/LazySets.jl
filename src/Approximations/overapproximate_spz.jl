@@ -1,11 +1,11 @@
 """
 	overapproximate(lm::LinearMap{N,S,NM,MAT},
-                         ::Type{SparsePolynomialZonotope}) where {N,S<:SparsePolynomialZonotope{N},
+                         ::Type{<:SparsePolynomialZonotope}) where {N,S<:SparsePolynomialZonotope{N},
                                                                   NM,
                                                                   MAT<:MatrixZonotope{NM}}
 
 Overapproximate the linear map of a sparse polynomial zonotope through a matrix zonotope,
-following Proposition 1 of [HuangLBS2025](@citet).
+following Proposition 2 of [HuangLBS2025](@citet).
 
 ### Input
 
@@ -17,7 +17,7 @@ A sparse polynomial zonotope overapproximating the linear map.
 
 """
 function overapproximate(lm::LinearMap{N,S,NM,MAT},
-                         ::Type{SparsePolynomialZonotope}) where {N,S<:SparsePolynomialZonotope{N},
+                         ::Type{<:SparsePolynomialZonotope}) where {N,S<:SparsePolynomialZonotope{N},
                                                                   NM,
                                                                   MAT<:MatrixZonotope{NM}}
     MZ = matrix(lm)
@@ -82,7 +82,7 @@ A zonotope overapproximating the linear map.
 
 """
 function overapproximate(lm::LinearMap{N,S,NM,MAT},
-                         ::Type{Zonotope}) where {N,S<:AbstractZonotope{N},NM,
+                         ::Type{<:Zonotope}) where {N,S<:AbstractZonotope{N},NM,
                                                   MAT<:MatrixZonotope{NM}}
     MZ = matrix(lm)
     Z = set(lm)
@@ -105,34 +105,64 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT},
     return Zonotope(c, G)
 end
 
-"""
-    overapproximate(lm::LinearMap{N,S,NM,MAT},
-                    ::Type{U}) where {N, S<:AbstractZonotope{N}, NM,
-                                      MAT<:MatrixZonotopeProduct{NM},
-                                      U<:Union{Zonotope, SparsePolynomialZonotope}}
-
-Overapproximate the linear map of a zonotope or sparse polynomial zonotope through a product of matrix zonotopes,
-by recursively applying the overapproximation rule from the inside out.
-
-### Input
-
-- `lm` -- a linear map of a zonotope or sparse polynomial zonotope through a `MatrixZonotopeProduct`
-- `U` -- the target overapproximation type
-
-### Output
-
-An overapproximation of the linear map as a zonotope or sparse polynomial zonotope,
-"""
-function overapproximate(lm::LinearMap{N,S,NM,MAT},
-                         ::Type{U}) where {N,S<:AbstractZonotope{N},NM,
-                                                  MAT<:MatrixZonotopeProduct{NM},
-                                                  U <: Union{Zonotope, SparsePolynomialZonotope}}
+function _overapproximate_lmzp(lm::LinearMap{N,S,NM,MAT}) where {N,S<:AbstractZonotope{N},NM,
+                                                                 MAT<:MatrixZonotopeProduct{NM}}
     MZs = factors(matrix(lm))
     P = set(lm)
 
     # apply overapproximation from innermost to outermost
-    reduced = foldr((A, acc) -> overapproximate(A*acc, U), MZP_factors, init=P)
+    reduced = foldr((A, acc) -> overapproximate(A * acc, U), MZP_factors; init=P)
     return reduced
+end
+
+"""
+    overapproximate(lm::LinearMap{N,S,NM,MAT},
+                         ::Type{<:Zonotope}) where {N,S<:AbstractZonotope{N},NM,
+                                                    MAT<:MatrixZonotopeProduct{NM}}
+
+Overapproximate the linear map of a zonotope through a product of matrix zonotopes,
+by recursively applying the overapproximation rule from the inside out.
+
+### Input
+
+- `lm` -- a linear map of a zonotope through a `MatrixZonotopeProduct`
+- `U` -- the target overapproximation type
+
+### Output
+
+An overapproximation of the linear map as a zonotope.
+"""
+function overapproximate(lm::LinearMap{N,S,NM,MAT},
+                         ::Type{<:Zonotope}) where {N,S<:AbstractZonotope{N},NM,
+                                                    MAT<:MatrixZonotopeProduct{NM}}
+    return _overapproximate_lmzp(lm)
+end
+
+"""
+    overapproximate(lm::LinearMap{N,S,NM,MAT},
+                         ::Type{<:SparsePolynomialZonotope}) where {N,
+                                                                    S<:SparsePolynomialZonotope{N},
+                                                                    NM,
+                                                                    MAT<:MatrixZonotopeProduct{NM}}
+
+Overapproximate the linear map of a sparse polynomial zonotope through a product of matrix zonotopes,
+by recursively applying the overapproximation rule from the inside out.
+
+### Input
+
+- `lm` -- a linear map of a sparse polynomial zonotope through a `MatrixZonotopeProduct`
+- `U` -- the target overapproximation type
+
+### Output
+
+An overapproximation of the linear map as a sparse polynomial zonotope,
+"""
+function overapproximate(lm::LinearMap{N,S,NM,MAT},
+                         ::Type{<:SparsePolynomialZonotope}) where {N,
+                                                                    S<:SparsePolynomialZonotope{N},
+                                                                    NM,
+                                                                    MAT<:MatrixZonotopeProduct{NM}}
+    return _overapproximate_lmzp(lm)
 end
 
 function _compute_inner_powers(MZ::MatrixZonotope, P::S,
@@ -250,35 +280,12 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
     return quote
         using .IntervalMatrices: IntervalMatrix
 
-        """
-        	overapproximate(em::ExponentialMap{N,S,NM,MAT},
-                                 ::Type{U},
-                                 k::Int=2) where {N,
-                                                  S<:Union{SparsePolynomialZonotope{N},
-                                                           AbstractZonotope},
-                                                  NM,
-                                                  MAT<:AbstractMatrixZonotope{NM},
-                                                  U<:Union{Zonotope,SparsePolynomialZonotope}}
-
-        Overapproximate the exponential map of a sparse polynomial zonotope through a composition of matrix 
-        zonotopes, following Proposition 1 of [HuangLBS2025](@citet).
-
-        ### Input
-
-        - `em` -- an expontial map of a sparse polynomial zonotope through a product of matrix zonotopes
-
-        ### Output
-
-        A sparse polynomial zonotope overapproximating the exponential map.
-        """
-        function overapproximate(em::ExponentialMap{N,S,NM,MAT},
-                                 ::Type{U},
-                                 k::Int=2) where {N,
-                                                  S<:Union{SparsePolynomialZonotope{N},
-                                                           AbstractZonotope},
-                                                  NM,
-                                                  MAT<:AbstractMatrixZonotope{NM},
-                                                  U<:Union{Zonotope,SparsePolynomialZonotope}}
+        function _overapproximate_emz(em::ExponentialMap{N,S,NM,MAT},
+                                  k::Int=2) where {N,
+                                                   S<:Union{SparsePolynomialZonotope{N},
+                                                            AbstractZonotope},
+                                                   NM,
+                                                   MAT<:AbstractMatrixZonotope{NM}}
             T = promote_type(N, NM)
             MZP = matrix(em)
             P = set(em) #SPZ or Zonotope
@@ -299,6 +306,53 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
             P_approx = minkowski_sum(σ, rhs)
 
             return remove_redundant_generators(P_approx)
+        end
+
+        """
+        	function overapproximate(em::ExponentialMap{N,S,NM,MAT},
+                                 T::Type{<:SparsePolynomialZonotope},
+                                 k::Int=2) where {N,S<:SparsePolynomialZonotope,NM,
+                                                  MAT<:AbstractMatrixZonotope}
+
+        Overapproximate the exponential map of a sparse polynomial zonotope through a composition of matrix 
+        zonotopes, following Proposition 1 of [HuangLBS2025](@citet).
+
+        ### Input
+
+        - `em` -- an expontial map of a sparse polynomial zonotope through a product of matrix zonotopes
+
+        ### Output
+
+        A sparse polynomial zonotope overapproximating the exponential map.
+        """
+        function overapproximate(em::ExponentialMap{N,S,NM,MAT},
+                                 T::Type{<:SparsePolynomialZonotope},
+                                 k::Int=2) where {N,S<:SparsePolynomialZonotope,NM,
+                                                  MAT<:AbstractMatrixZonotope}
+            return _overapproximate_emz(em, k)
+        end
+
+        """
+        	function overapproximate(em::ExponentialMap{N,S,NM,MAT},
+                                 T::Type{<:Zonotope},
+                                 k::Int=2) where {N,S<:AbstractZonotope,NM,
+                                                  MAT<:AbstractMatrixZonotope}
+
+        Overapproximate the exponential map of a zonotope through a composition of matrix 
+        zonotopes, following Proposition 1 of [HuangLBS2025](@citet).
+
+        ### Input
+
+        - `em` -- an expontial map of a zonotope through a product of matrix zonotopes
+
+        ### Output
+
+        A zonotope overapproximating the exponential map.
+        """
+        function overapproximate(em::ExponentialMap{N,S,NM,MAT}, T::Type{<:Zonotope},
+                                 k::Int=2) where {N,S<:AbstractZonotope,NM,
+                                                  MAT<:AbstractMatrixZonotope}
+            return _overapproximate_emz(em, k)
         end
     end
 end

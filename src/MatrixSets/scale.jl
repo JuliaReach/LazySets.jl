@@ -11,7 +11,7 @@ function scale!(α::Real, MZ::MatrixZonotope)
 end
 
 """
-    *(A::Real, B::MatrixZonotope)
+    *(a::Real, B::MatrixZonotope)
 
 Alias to scale a matrix zonotope.
 """

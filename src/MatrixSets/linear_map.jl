@@ -5,7 +5,7 @@ Applies a linear transformation to a matrix zonotope from the left.
 
 ### Input
 - `M` -- a linear map / matrix
-- `MZ`` -- a matrix zonotope
+- `MZ` -- a matrix zonotope
 
 ### Output
 
@@ -24,7 +24,7 @@ Applies a linear transformation to a matrix zonotope from the right.
 
 ### Input
 - `M` -- a linear map / matrix
-- `MZ`` -- a matrix zonotope
+- `MZ` -- a matrix zonotope
 
 ### Output
 

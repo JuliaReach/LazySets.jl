@@ -263,8 +263,10 @@ struct ExponentialMap{N,S<:LazySet{N},NM,
     function ExponentialMap(expmat::MAT,
                             X::S) where {N,S<:LazySet{N},NM,
                                          MAT<:Union{SparseMatrixExp{NM},AbstractMatrixZonotope{NM}}}
-        @assert dim(X) == size(expmat, 2) "an exponential map of size " *
-                                          "$(size(expmat)) cannot be applied to a set of dimension $(dim(X))"
+        @assert dim(X) == size(expmat, 2) "an exponential map of size $(size(expmat)) cannot " *
+                                          "be applied to a set of dimension $(dim(X))"
+        @assert size(expmat, 1) == size(expmat, 2) "the matrix exponential requires a square " *
+                                                   "matrix, but it has size $(size(expmat))"
         return new{N,S,NM,MAT}(expmat, X)
     end
 end
