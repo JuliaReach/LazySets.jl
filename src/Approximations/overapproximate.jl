@@ -361,20 +361,13 @@ function overapproximate(cap::Intersection{N,
     return overapproximate(swap(cap), dirs; kwargs...)
 end
 
-function overapproximate(P::SimpleSparsePolynomialZonotope,
+function overapproximate(P::AbstractSparsePolynomialZonotope,
                          ::Type{<:UnionSetArray{Zonotope}};
                          nsdiv=10, partition=nothing)
     q = nparams(P)
     dom = IA.IntervalBox(IA.interval(-1, 1), q)
     cells = IA.mince(dom, isnothing(partition) ? nsdiv : partition)
     return UnionSetArray([overapproximate(P, Zonotope, c) for c in cells])
-end
-
-function overapproximate(P::SparsePolynomialZonotope,
-                         T::Type{<:UnionSetArray{Zonotope}};
-                         nsdiv=10, partition=nothing)
-    SSPZ = convert(SimpleSparsePolynomialZonotope, P)
-    return overapproximate(SSPZ, T; nsdiv=nsdiv, partition=partition)
 end
 
 """

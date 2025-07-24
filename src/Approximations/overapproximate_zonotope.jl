@@ -220,66 +220,6 @@ function _zonotope_overapprox(c, G, E)
 end
 
 """
-    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope})
-
-Overapproximate a simple sparse polynomial zonotope with a zonotope.
-
-### Input
-
-- `P`         -- simple sparse polynomial zonotope
-- `Zonotope`  -- target set type
-
-### Output
-
-A zonotope.
-"""
-function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope})
-    cnew, Gnew = _zonotope_overapprox(center(P), genmat(P), expmat(P))
-    return Zonotope(cnew, Gnew)
-end
-
-"""
-    overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope},
-                    dom::IntervalBox)
-
-Overapproximate a simple sparse polynomial zonotope over the parameter domain
-`dom` with a zonotope.
-
-### Input
-
-- `P`         -- simple sparse polynomial zonotope
-- `Zonotope`  -- target set type
-- `dom`       -- parameter domain, which should be a subset of `[-1, 1]^q`,
-                 where `q = nparams(P)`
-
-### Output
-
-A zonotope.
-"""
-function overapproximate(P::SimpleSparsePolynomialZonotope, ::Type{<:Zonotope},
-                         dom::IA.IntervalBox)
-    @assert dom ⊆ IA.IntervalBox(IA.interval(-1, 1), nparams(P)) "dom should " *
-                                                                 "be a subset of [-1, 1]^q"
-
-    G = genmat(P)
-    E = expmat(P)
-    cnew = copy(center(P))
-    Gnew = similar(G)
-    @inbounds for (j, g) in enumerate(eachcol(G))
-        # monomial value over the domain
-        # α = mapreduce(x -> _fast_interval_pow(x[1],  x[2]), *, zip(dom, E[:, i]))
-        α = IA.interval(1, 1)
-        for (i, vi) in enumerate(dom)
-            α *= fast_interval_pow(vi, E[i, j])
-        end
-        m, r = IA.midpoint_radius(α)
-        cnew .+= m * g
-        Gnew[:, j] .= r * g
-    end
-    return Zonotope(cnew, Gnew)
-end
-
-"""
     overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope})
 
 Overapproximate a sparse polynomial zonotope with a zonotope.
@@ -299,9 +239,64 @@ This method implements [Kochdumper21a; Proposition 3.1.14](@citet).
 """
 function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope})
     cnew, Gnew = _zonotope_overapprox(center(P), genmat_dep(P), expmat(P))
-    Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
-    Zred = remove_redundant_generators(Z)
-    return Zred
+    if ngens_indep(P) > 0
+        Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
+        Z = remove_redundant_generators(Z)
+    else
+        Z = Zonotope(cnew, Gnew)
+    end
+    return Z
+end
+
+"""
+    overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope},
+                    dom::IntervalBox)
+
+Overapproximate a sparse polynomial zonotope over the parameter domain `dom`
+with a zonotope.
+
+### Input
+
+- `P`         -- sparse polynomial zonotope
+- `Zonotope`  -- target set type
+- `dom`       -- parameter domain, which should be a subset of `[-1, 1]^q`,
+                 where `q = nparams(P)`
+
+### Output
+
+A zonotope.
+"""
+function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope},
+                         dom::IA.IntervalBox)
+    @assert dom ⊆ IA.IntervalBox(IA.interval(-1, 1), nparams(P)) "dom should " *
+                                                                 "be a subset of [-1, 1]^q"
+
+    # handle dependent generators
+    G = genmat_dep(P)
+    E = expmat(P)
+    cnew = copy(center(P))
+    Gnew = similar(G)
+    @inbounds for (j, g) in enumerate(eachcol(G))
+        # monomial value over the domain
+        # α = mapreduce(x -> _fast_interval_pow(x[1],  x[2]), *, zip(dom, E[:, i]))
+        α = IA.interval(1, 1)
+        for (i, vi) in enumerate(dom)
+            α *= fast_interval_pow(vi, E[i, j])
+        end
+        m, r = IA.midpoint_radius(α)
+        cnew .+= m * g
+        Gnew[:, j] .= r * g
+    end
+
+    # handle independent generators
+    if ngens_indep(P) > 0
+        Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
+        Z = remove_redundant_generators(Z)
+    else
+        Z = Zonotope(cnew, Gnew)
+    end
+
+    return Z
 end
 
 """
