@@ -189,8 +189,8 @@ function _compute_outer_powers(MZ::MatrixZonotope, in_powers::Vector{S},
     out_powers = similar(in_powers)
     out_powers[1] = in_powers[1]
 
-    @inbounds for (i, P) in enumerate(in_powers[2:(k + 1)])
-        term = copy(P)
+    @inbounds for i in 2:(k + 1)
+        term = in_powers[i]
         for _ in 1:i
             term = remove_redundant_generators(overapproximate(MZ * term, S))
         end
