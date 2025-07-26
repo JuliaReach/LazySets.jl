@@ -9,3 +9,10 @@ function scale!(α::Real, MZ::MatrixZonotope)
     end
     return MZ
 end
+
+"""
+    *(a::Real, B::MatrixZonotope)
+
+Alias to scale a matrix zonotope.
+"""
+@commutative Base.:*(α::Real, MZ::MatrixZonotope) = scale(α, MZ)
