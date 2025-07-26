@@ -99,7 +99,7 @@ The full type includes type parameters for the types of the arguments:
 
 ```jldoctest index_label
 julia> typeof(Y)
-ConvexHull{Float64, MinkowskiSum{Float64, ExponentialMap{Float64, Ball2{Float64, Vector{Float64}}, Float64, SparseMatrixExp{Float64, SparseMatrixCSC{Float64, Int64}}}, LinearMap{Float64, BallInf{Float64, Vector{Float64}}, Float64, Matrix{Float64}}}, Ball2{Float64, Vector{Float64}}}
+ConvexHull{Float64, MinkowskiSum{Float64, ExponentialMap{Float64, Ball2{Float64, Vector{Float64}}, SparseMatrixExp{Float64, SparseMatrixCSC{Float64, Int64}}}, LinearMap{Float64, BallInf{Float64, Vector{Float64}}, Float64, Matrix{Float64}}}, Ball2{Float64, Vector{Float64}}}
 ```
 
 Now suppose that we are interested in observing the projection of ``\mathcal{Y}``
