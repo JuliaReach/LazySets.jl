@@ -4,7 +4,7 @@ end
 
 function scale!(α::Real, MZ::MatrixZonotope)
     MZ.A0 .*= α
-    @inbounds for i in ngens(MZ)
+    @inbounds for i in 1:ngens(MZ)
         MZ.Ai[i] .*= α
     end
     return MZ
