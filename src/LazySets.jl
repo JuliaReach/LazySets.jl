@@ -187,6 +187,22 @@ include("Sets/LineSegment/LineSegmentModule.jl")
 include("Sets/Polygon/PolygonModule.jl")
 @reexport using ..PolygonModule: Polygon
 
+include("Sets/Zonotope/ZonotopeModule.jl")
+@reexport using ..ZonotopeModule: Zonotope,
+                                  remove_zero_generators,
+                                  linear_map!,
+                                  split!
+using ..ZonotopeModule: _split
+
+include("Sets/ZonotopeMD/ZonotopeMDModule.jl")
+@reexport using ..ZonotopeMDModule: ZonotopeMD
+
+include("MatrixSets/MatrixZonotopeModule.jl")
+@reexport using ..MatrixZonotopeModule: MatrixZonotope, AbstractMatrixZonotope,
+                                        MatrixZonotopeProduct, MatrixZonotopeExp,
+                                        indexvector, factors, nfactors, 
+                                        remove_redundant_factors
+
 include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
                                                         SSPZ,
@@ -196,8 +212,7 @@ include("Sets/Singleton/SingletonModule.jl")
 @reexport using ..SingletonModule: Singleton
 
 include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
-@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ,
-                                                  indexvector
+@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ
 using ..SparsePolynomialZonotopeModule: uniqueID
 
 include("Sets/Star/StarModule.jl")
@@ -224,24 +239,8 @@ include("Sets/VPolytope/VPolytopeModule.jl")
 include("Sets/ZeroSet/ZeroSetModule.jl")
 @reexport using ..ZeroSetModule: ZeroSet
 
-include("Sets/Zonotope/ZonotopeModule.jl")
-@reexport using ..ZonotopeModule: Zonotope,
-                                  remove_zero_generators,
-                                  linear_map!,
-                                  split!
-using ..ZonotopeModule: _split
-
-include("Sets/ZonotopeMD/ZonotopeMDModule.jl")
-@reexport using ..ZonotopeMDModule: ZonotopeMD
-
 include("Sets/Interval/IntervalModule.jl")
 @reexport using ..IntervalModule: Interval
-
-# ==========================
-# Matrix sets module
-# ==========================
-include("MatrixSets/MatrixZonotopeModule.jl")
-@reexport using ..MatrixZonotopeModule: MatrixZonotope
 
 # =================================
 # Types representing set operations
