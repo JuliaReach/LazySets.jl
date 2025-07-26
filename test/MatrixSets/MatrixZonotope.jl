@@ -95,6 +95,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     C_gens = [N[2 0; 1 -1; -3 0]]
     C_mz = MatrixZonotope(C_c, C_gens)  # 3x2
     @test_throws AssertionError MatrixZonotopeProduct(A_mz, C_mz)
+
+    #MatrixZonotopeExp constructor
+    expMZ = MatrixZonotopeExp(A_mz)
+    @test expMZ.M == A_mz
+    @test size(expMZ) == size(A_mz)
+    @test_throws AssertionError MatrixZonotopeExp(B_mz)
 end
 
 for N in @tN([Float64, Float32])

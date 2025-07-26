@@ -204,8 +204,7 @@ function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int};
 end
 
 """
-    ExponentialMap{N,S<:LazySet{N},NM,
-                      MAT<:Union{SparseMatrixExp{NM},AbstractMatrixZonotope{NM}}} <:
+    ExponentialMap{N,S<:LazySet{N},MAT<:Union{SparseMatrixExp{N},MatrixZonotopeExp{N}}} <:
        AbstractAffineMap{N,S}
 
 Type that represents the action of an exponential map on a set.
@@ -213,7 +212,7 @@ Type that represents the action of an exponential map on a set.
 ### Fields
 
 - `expmat` -- matrix exponential, either a concrete matrix exponential
-              or a matrix set represented by an `AbstractMatrixZonotope
+              or a matrix zonotope exponential represented by an `MatrixZonotopeExp`
 - `X`      -- set
 
 ### Notes
@@ -255,19 +254,18 @@ julia> E * EmptySet(100)
 ∅(100)
 ```
 """
-struct ExponentialMap{N,S<:LazySet{N},NM,
-                      MAT<:Union{SparseMatrixExp{NM},AbstractMatrixZonotope{NM}}} <:
+struct ExponentialMap{N,S<:LazySet{N},MAT<:Union{SparseMatrixExp{N},MatrixZonotopeExp{N}}} <:
        AbstractAffineMap{N,S}
     expmat::MAT
     X::S
     function ExponentialMap(expmat::MAT,
                             X::S) where {N,S<:LazySet{N},NM,
-                                         MAT<:Union{SparseMatrixExp{NM},AbstractMatrixZonotope{NM}}}
+                                         MAT<:Union{SparseMatrixExp{NM},MatrixZonotopeExp{NM}}}
         @assert dim(X) == size(expmat, 2) "an exponential map of size $(size(expmat)) cannot " *
                                           "be applied to a set of dimension $(dim(X))"
         @assert size(expmat, 1) == size(expmat, 2) "the matrix exponential requires a square " *
                                                    "matrix, but it has size $(size(expmat))"
-        return new{N,S,NM,MAT}(expmat, X)
+        return new{N,S,MAT}(expmat, X)
     end
 end
 

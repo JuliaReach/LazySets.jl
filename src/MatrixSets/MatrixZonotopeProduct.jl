@@ -72,30 +72,33 @@ A matrix zonotope product with redundant constant factors removed.
 """
 function remove_redundant_factors(MZP::MatrixZonotopeProduct)
     factors_ = factors(MZP)
-    gens = MatrixZonotope{eltype(factors_[1]), typeof(factors_[1].A0)}[]
+    reduced = MatrixZonotope{eltype(factors_[1]), typeof(center(factors_[1]))}[]
 
     i = 1
     while i < length(factors_)
         MZ = factors_[i]
-
         if isempty(generators(MZ))
-            push!(gens, linear_map(center(MZ), factors_[i + 1]))
-            i += 2  # skip next since it's been merged
+            factors_[i+1] =  linear_map(center(MZ), factors_[i + 1])
         else
-            push!(gens, MZ)
-            i += 1
+            push!(reduced, MZ)
         end
+        i += 1
     end
 
     # in the last element apply linear map to the left
     if i == length(factors_)
         last = factors_[end]
-        if isempty(generators(last)) && !isempty(gens)
-            gens[end] = linear_map(gens[end], center(last))
+        if isempty(generators(last)) && !isempty(reduced)
+            reduced[end] = linear_map(reduced[end], center(last))
         else
-            push!(gens, last)
+            push!(reduced, last)
         end
     end
+    if isempty(reduced)
+        return center(factors_[end-1]) # return concrete matrix
+    elseif length(reduced) == 1
+        return reduced[1] # return a single matrix zonotope 
+    end
 
-    return MatrixZonotopeProduct(gens)
+    return MatrixZonotopeProduct(reduced)
 end

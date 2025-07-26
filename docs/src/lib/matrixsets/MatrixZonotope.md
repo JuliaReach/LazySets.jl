@@ -24,6 +24,7 @@ MatrixZonotope
 ```@docs
 center(::MatrixZonotope)
 generators(::MatrixZonotope)
+indexvector(::MatrixZonotope)
 transpose(::MatrixZonotope)
 ngens(::MatrixZonotope)
 rand(::Type{MatrixZonotope})
@@ -67,6 +68,14 @@ remove_redundant_factors
 CurrentModule = LazySets.MatrixZonotopeModule
 ```
 
+## Operations 
+Inherited from [`AbstractMatrixZonotope`](@ref):
+* [`size`](@ref size(::AbstractMatrixZonotope))
+
+# [MatrixZonotopeExp](@id def_MatrixZonotopeExp)
+```@docs
+MatrixZonotopeExp
+```
 ## Operations 
 Inherited from [`AbstractMatrixZonotope`](@ref):
 * [`size`](@ref size(::AbstractMatrixZonotope))

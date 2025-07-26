@@ -1,5 +1,4 @@
 using LazySets.Approximations: project
-
 using LazySets.Approximations: get_linear_coeffs, _nonlinear_polynomial
 
 for N in @tN([Float64, Float32, Rational{Int}])
@@ -154,6 +153,45 @@ for N in @tN([Float64, Float32, Rational{Int}])
     P = overapproximate(S, VPolytope)
     @test ispermutation([N[-1.5, -2.5], N[2.5, -0.5], N[3.5, 0.5], N[-0.5, 2.5], N[-1.5, 1.5]],
                         vertices_list(P))
+
+    # overapproximate the lm of a matrix zonotope with a Zonotope
+    MZ = MatrixZonotope(N[1 1; -1 1], [N[1 0; 1 2]])
+    Z = Zonotope(N[2, 0], N[-1 2; -1 0])
+    res = overapproximate(MZ * Z, Zonotope)
+    @test center(res) == N[4, 0]
+    @test genmat(res) == hcat(N[-2 2; 0 -2], N[-1 2; -3 2])
+
+    # overapproximate the lm of a matrix zonotope with a SPZ
+    P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], hcat(N[0, 1]), [2 1; 0 1; 1 0], [1, 2, 3])
+    res = overapproximate(MZ * P, SparsePolynomialZonotope)
+    @test center(res) == [0, -2]
+    @test genmat_dep(res) == hcat(N[1 0; -1 -2], N[1, -1], N[1 1; 1 -1])
+    @test genmat_indep(res) == hcat([1, 1], [0, 2])
+    @test expmat(res) == hcat([2 1; 0 1; 1 0], [1; 0; 0], [3 2; 0 1; 1 0])
+
+    # case: 0 gens matrix zonotope
+    MZ = MatrixZonotope(N[1 1; -1 1], Vector{Matrix{N}}())
+    res = overapproximate(MZ * P, SparsePolynomialZonotope)
+    @test res == linear_map(N[1 1; -1 1], P)
+
+    #case: id_mz ≠ id_spz
+    MZ = MatrixZonotope(N[1 1; -1 1], [N[1 0; 1 2]], [4])
+    res = overapproximate(MZ * P, SparsePolynomialZonotope)
+    @test center(res) == [0, -2]
+    @test genmat_dep(res) == hcat(N[1 0; -1 -2], N[1, -1], N[1 1; 1 -1])
+    @test genmat_indep(res) == hcat([1, 1], [0, 2])
+    @test expmat(res) == hcat([2 1; 0 1; 1 0; 0 0], [0, 0, 0, 1], [2 1; 0 1; 1 0; 1 1])
+
+    #case: matrix zonotope product
+    MZ2 = MatrixZonotope(N[1.1 0.9; -1.1 1.1], [N[1.1 -0.1; 0.9 2.1]])
+    res = overapproximate(MZ*MZ2*P, SparsePolynomialZonotope)  
+    P_in = overapproximate(MZ2*P, SparsePolynomialZonotope)
+    @test res == overapproximate( MZ*P_in, SparsePolynomialZonotope)
+
+    #case: no ind generators 
+    P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], Matrix{N}(undef, 2, 0), [2 1; 0 1; 1 0], [1, 2, 3])
+    res = overapproximate(MZ * P, SparsePolynomialZonotope)
+    @test res == linear_map(MZ, P) #test fallback
 end
 
 # tests that do not work with Rational{Int}

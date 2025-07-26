@@ -195,6 +195,25 @@ include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModul
 include("Sets/Singleton/SingletonModule.jl")
 @reexport using ..SingletonModule: Singleton
 
+include("Sets/Zonotope/ZonotopeModule.jl")
+@reexport using ..ZonotopeModule: Zonotope,
+                                  remove_zero_generators,
+                                  linear_map!,
+                                  split!
+using ..ZonotopeModule: _split
+
+include("Sets/ZonotopeMD/ZonotopeMDModule.jl")
+@reexport using ..ZonotopeMDModule: ZonotopeMD
+
+# ==========================
+# Matrix sets module
+# ==========================
+include("MatrixSets/MatrixZonotopeModule.jl")
+@reexport using ..MatrixZonotopeModule: MatrixZonotope, AbstractMatrixZonotope,
+                                        MatrixZonotopeProduct, MatrixZonotopeExp,
+                                        indexvector, factors, nfactors, 
+                                        remove_redundant_factors
+                                        
 include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
 @reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ,
                                                   indexvector
@@ -224,26 +243,8 @@ include("Sets/VPolytope/VPolytopeModule.jl")
 include("Sets/ZeroSet/ZeroSetModule.jl")
 @reexport using ..ZeroSetModule: ZeroSet
 
-include("Sets/Zonotope/ZonotopeModule.jl")
-@reexport using ..ZonotopeModule: Zonotope,
-                                  remove_zero_generators,
-                                  linear_map!,
-                                  split!
-using ..ZonotopeModule: _split
-
-include("Sets/ZonotopeMD/ZonotopeMDModule.jl")
-@reexport using ..ZonotopeMDModule: ZonotopeMD
-
 include("Sets/Interval/IntervalModule.jl")
 @reexport using ..IntervalModule: Interval
-
-# ==========================
-# Matrix sets module
-# ==========================
-include("MatrixSets/MatrixZonotopeModule.jl")
-@reexport using ..MatrixZonotopeModule: MatrixZonotope, AbstractMatrixZonotope,
-                                        MatrixZonotopeProduct, factors,
-                                        nfactors, remove_redundant_factors
 
 # =================================
 # Types representing set operations
