@@ -69,22 +69,3 @@ function _rowwise_zonotope_norm(MZ::MatrixZonotope{N}, norm_fn::Function) where 
     end
     return best
 end
-
-"""
-    overapproximate_norm(MZ::MatrixZonotopeProduct, [p]::Real=Inf)
-
-Compute an upper bound on the ``p``-norm of a product of matrix zonotopes.
-
-### Input
-
-- `MZP` -- Matrix zonotope product
-- `p` -- (optional, default: `Inf`) norm
-
-### Output
-
-An upper bound on ``\\sup_{M ∈ \\mathcal{A*B*…} } \\|M\\|_p ``.
-
-"""
-function overapproximate_norm(MZP::MatrixZonotopeProduct, p::Real=Inf)
-    return mapreduce(x -> overapproximate_norm(x, p), *, factors(MZP))
-end
