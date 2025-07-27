@@ -206,6 +206,30 @@ for N in @tN([Float64, Float32, Rational{Int}])
                              0 0 0 0 0 1 2 1 2
                              1 0 0 1 1 0 0 1 1]
     end
+
+    # linear map with matrix zonotope
+    MZ = MatrixZonotope(N[1 1; -1 1], [N[1 0; 1 2]])
+    P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], Matrix{N}(undef, 2, 0), [2 1; 0 1; 1 0], [1, 2, 3])
+    res = linear_map(MZ, P)
+    @test center(res) == [0, -2]
+    @test genmat_dep(res) == hcat(N[1 0; -1 -2], N[1, -1], N[1 1; 1 -1])
+    @test genmat_indep(res) == Matrix{N}(undef, 2, 0)
+    @test expmat(res) == hcat([2 1; 0 1; 1 0], [1; 0; 0], [3 2; 0 1; 1 0])
+
+    # case: 0 gens in MZ
+    MZ = MatrixZonotope(N[1 1; -1 1], Vector{Matrix{N}}())
+    res = linear_map(MZ, P)
+    @test res == linear_map(N[1 1; -1 1], P)
+
+    #case: error 
+    P_err = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], hcat(N[0, 1]), [2 1; 0 1; 1 0], [1, 2, 3])
+    @test_throws ErrorException linear_map(MZ, P_err)
+
+    #MZP linear map
+    MZ2 = MatrixZonotope(N[1.1 0.9; -1.1 1.1], [N[1.1 -0.1; 0.9 2.1]])
+    res = linear_map(MZ * MZ2, P)  
+    P_in = linear_map(MZ2, P)
+    @test res == linear_map(MZ, P_in)
 end
 
 for N in @tN([Float64, Float32])

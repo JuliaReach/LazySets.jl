@@ -4,14 +4,14 @@ export LinearMap,
        Projection
 
 """
-    LinearMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM}}
-        <: AbstractAffineMap{N, S}
+    LinearMap{N,S<:LazySet{N},NM,
+              MAT<:Union{AbstractMatrix{NM},AbstractMatrixZonotope{NM}}} <: AbstractAffineMap{N,S}
 
 Type that represents a linear transformation ``M⋅X`` of a set ``X``.
 
 ### Fields
 
-- `M` -- matrix/linear map
+- `M` -- linear map; can be a concrete matrix (`AbstractMatrix`) or a set-valued matrix (`MatrixZonotope`)
 - `X` -- set
 
 ### Notes
@@ -96,13 +96,13 @@ EmptySet{Int64}(3)
 ```
 """
 struct LinearMap{N,S<:LazySet{N},NM,
-                 MAT<:AbstractMatrix{NM}} <: AbstractAffineMap{N,S}
+                 MAT<:Union{AbstractMatrix{NM},AbstractMatrixZonotope{NM}}} <: AbstractAffineMap{N,S}
     M::MAT
     X::S
 
     # default constructor with dimension check
     function LinearMap(M::MAT, X::S) where {N,S<:LazySet{N},NM,
-                                            MAT<:AbstractMatrix{NM}}
+                                            MAT<:Union{AbstractMatrix{NM},AbstractMatrixZonotope{NM}}}
         @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
                                      "be applied to a set of dimension $(dim(X))"
         return new{N,S,NM,MAT}(M, X)
@@ -115,7 +115,7 @@ isconvextype(::Type{<:LinearMap{N,S}}) where {N,S} = isconvextype(S)
 
 """
 ```
-    *(M::Union{AbstractMatrix, UniformScaling, AbstractVector, Real},
+    *(M::Union{AbstractMatrix, UniformScaling, AbstractVector, Real, AbstractMatrixZonotope},
       X::LazySet)
 ```
 
@@ -123,14 +123,14 @@ Alias to create a `LinearMap` object.
 
 ### Input
 
-- `M` -- linear map
+- `M` -- matrix or matrix zonotope
 - `X` -- set
 
 ### Output
 
 A lazy linear map, i.e., a `LinearMap` instance.
 """
-function *(M::Union{AbstractMatrix,UniformScaling,AbstractVector,Real},
+function *(M::Union{AbstractMatrix,UniformScaling,AbstractVector,Real,AbstractMatrixZonotope},
            X::LazySet)
     return LinearMap(M, X)
 end

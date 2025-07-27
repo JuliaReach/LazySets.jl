@@ -154,6 +154,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     P = overapproximate(S, VPolytope)
     @test ispermutation([N[-1.5, -2.5], N[2.5, -0.5], N[3.5, 0.5], N[-0.5, 2.5], N[-1.5, 1.5]],
                         vertices_list(P))
+    
+    # overapproximate the lm of a matrix zonotope and a zonotope
+    MZ = MatrixZonotope(N[1 1; -1 1], [N[1 0; 1 2]])
+    Z = Zonotope(N[2, 0], N[-1 2; -1 0])
+    res = overapproximate(MZ * Z, Zonotope)
+    @test center(res) == N[4, 0]
+    @test genmat(res) == hcat(N[-2 2; 0 -2], N[-1 2; -3 2])
 end
 
 # tests that do not work with Rational{Int}
