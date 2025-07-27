@@ -11,7 +11,7 @@ Type that represents a linear transformation ``M⋅X`` of a set ``X``.
 
 ### Fields
 
-- `M` -- linear map; can be a concrete matrix (`AbstractMatrix`) or a set-valued matrix (`MatrixZonotope`)
+- `M` -- linear map; can be a concrete matrix (`AbstractMatrix`) or a set-valued matrix (`AbstractMatrixZonotope`)
 - `X` -- set
 
 ### Notes

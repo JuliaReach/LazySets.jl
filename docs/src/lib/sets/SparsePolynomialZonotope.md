@@ -17,7 +17,8 @@ genmat_indep(::SparsePolynomialZonotope)
 indexvector(::SparsePolynomialZonotope)
 polynomial_order(::SparsePolynomialZonotope)
 rand(::Type{SparsePolynomialZonotope})
-linear_map
+linear_map(::MatrixZonotope, ::SparsePolynomialZonotope)
+linear_map(::MatrixZonotopeProduct, ::SparsePolynomialZonotope)
 ```
 ```@meta
 CurrentModule = LazySets
