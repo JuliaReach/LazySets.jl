@@ -75,8 +75,3 @@ Base.transpose(MZ::MatrixZonotope{N}) where {N} = begin
     MatrixZonotope(Ct, Gts)
 end
 
-function Base.copy(MZ::MatrixZonotope{N,MN}) where {N,MN}
-    return MatrixZonotope(copy(MZ.A0),
-                          [copy(Aij) for Aij in MZ.Ai],
-                          copy(MZ.idx))
-end
