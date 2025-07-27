@@ -88,7 +88,7 @@ Compute an upper bound on the ``p``-norm of a matrix zonotope.
 ### Input
 
 - `MZ` -- Matrix zonotope
-- `p` -- (optional, default: `1`) norm
+- `p` -- (optional, default: `Inf`) norm
 
 ### Output
 
