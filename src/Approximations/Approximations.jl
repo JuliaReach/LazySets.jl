@@ -21,7 +21,9 @@ export approximate,
        SphericalDirections,
        CustomDirections,
        isbounding,
-       overapproximate_norm
+       overapproximate_norm,
+       taylor_expmap_truncation,
+       taylor_expmap_remainder
 
 using ..LazySets, ReachabilityBase.Arrays, Requires, LinearAlgebra, SparseArrays
 import IntervalArithmetic as IA

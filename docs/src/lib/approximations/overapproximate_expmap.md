@@ -10,5 +10,6 @@ CurrentModule = LazySets.Approximations
 # Overapproximation
 
 ```@docs
-_taylor_expmap
+taylor_expmap_truncation
+taylor_expmap_remainder
 ```
