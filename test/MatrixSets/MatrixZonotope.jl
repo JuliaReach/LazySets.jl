@@ -37,6 +37,21 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isempty(generators(MZ3))
     @test isempty(indexvector(MZ3))
 
+    #scale
+    MZ_scaled = scale(2, MZ)
+    @test MZ_scaled isa MatrixZonotope{N}
+    @test center(MZ_scaled) == 2 .* center(MZ)
+    @test generators(MZ_scaled) == [2 .* g for g in generators(MZ)]
+    # scale!
+    MZ_copy = copy(MZ)
+    scale!(3, MZ_copy)
+    @test center(MZ_copy) == 3 .* center(MZ)
+    @test generators(MZ_copy) == [3 .* g for g in generators(MZ)]
+    # case: no generators
+    MZ4 = scale(2, MZ3)
+    @test center(MZ4) == 2 .* c
+    @test isempty(generators(MZ4))
+
     # transpose
     MZt = transpose(MZ)
     @test center(MZt) == c
