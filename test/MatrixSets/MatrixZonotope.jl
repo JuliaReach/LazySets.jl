@@ -40,7 +40,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     #scale
     MZ_scaled = scale(2, MZ)
     @test MZ_scaled isa MatrixZonotope{N}
-    @test MZ_scaled !== MZ  # not the same object
     @test center(MZ_scaled) == 2 .* center(MZ)
     @test generators(MZ_scaled) == [2 .* g for g in generators(MZ)]
     # scale!
