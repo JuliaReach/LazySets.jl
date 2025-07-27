@@ -6,7 +6,6 @@ using ..LazySets: AbstractSparsePolynomialZonotope, AbstractReductionMethod,
                   genmat, GIR05, order, _remove_redundant_generators_polyzono,
                   @validate
 import IntervalArithmetic as IA
-using LinearAlgebra: I
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: remove_zero_columns
 using ReachabilityBase.Distribution: reseed!
