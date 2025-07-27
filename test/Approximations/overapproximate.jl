@@ -161,6 +161,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     res = overapproximate(MZ * Z, Zonotope)
     @test center(res) == N[4, 0]
     @test genmat(res) == hcat(N[-2 2; 0 -2], N[-1 2; -3 2])
+
+    MZ2= MatrixZonotope(N[1 0; 0 1], [N[2 0; 1 -1]])
+    MZP = MZ2 * MZ
+    res2 = overapproximate(MZP * Z, Zonotope)
+    @test res2 == overapproximate(MZ2 * res, Zonotope)
 end
 
 # tests that do not work with Rational{Int}
