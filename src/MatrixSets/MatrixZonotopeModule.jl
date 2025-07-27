@@ -10,7 +10,7 @@ using ..LazySets: Zonotope
 @reexport import ..LazySets: generators, ngens
 
 export AbstractMatrixZonotope, MatrixZonotope, MatrixZonotopeProduct,
-       MatrixZonotopeExp, indexvector, factors, nfactors, remove_redundant_factors
+       MatrixZonotopeExp, indexvector, factors, nfactors
 
 include("AbstractMatrixZonotope.jl")
 include("MatrixZonotope.jl")

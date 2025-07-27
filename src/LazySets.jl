@@ -200,8 +200,7 @@ include("Sets/ZonotopeMD/ZonotopeMDModule.jl")
 include("MatrixSets/MatrixZonotopeModule.jl")
 @reexport using ..MatrixZonotopeModule: MatrixZonotope, AbstractMatrixZonotope,
                                         MatrixZonotopeProduct, MatrixZonotopeExp,
-                                        indexvector, factors, nfactors, 
-                                        remove_redundant_factors
+                                        indexvector, factors, nfactors
 
 include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,

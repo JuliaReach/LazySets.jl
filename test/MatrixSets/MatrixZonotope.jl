@@ -102,13 +102,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test MZP * B_mz == MatrixZonotopeProduct(A_mz, B_mz, B_mz)
     @test MZP * MZP == MatrixZonotopeProduct(A_mz, B_mz, A_mz, B_mz)
 
-    # remove_redundant_factors
-    const_A = MatrixZonotope(N[1 0; 0 1], Vector{Matrix{N}}())
-    const_B = MatrixZonotope(N[1 0 0; 0 1 0; 0 0 1], Vector{Matrix{N}}())
-    mixed = MatrixZonotopeProduct(const_A, const_A, A_mz, const_A, const_A, B_mz, const_B, const_B)
-    simplified = remove_redundant_factors(mixed)
-    @test simplified == MZP
-
     # incompatible dimensions
     C_c = N[1 2; 3 4; 5 6]
     C_gens = [N[2 0; 1 -1; -3 0]]

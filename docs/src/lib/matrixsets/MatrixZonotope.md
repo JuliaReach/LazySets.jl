@@ -54,7 +54,6 @@ Undocumented implementations:
 MatrixZonotopeProduct
 factors
 nfactors
-remove_redundant_factors
 ```
 
 ## Operations 
