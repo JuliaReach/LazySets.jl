@@ -1,6 +1,6 @@
 """
-    MatrixZonotope{N, MN<:AbstractMatrix{N}}(A0::MN, Ai::Vector{MN},
-                                              idx::Vector{Int}=collect(1:length(Aᵢ)))
+    MatrixZonotope{N, MN<:AbstractMatrix{N}}(A0::MN, Ai::Vector{MN}, 
+                    idx::Vector{Int}=collect(1:length(Aᵢ))) <: AbstractMatrixZonotope{N}
 
 Type that represents a matrix zonotope.
 
@@ -19,7 +19,7 @@ Mathematically a matrix zonotope is defined as the set of matrices
 ```
 
 It can be written in shorthand notation as ``\\mathcal{A} = \\braket{A^{(0)},A^{(1)}, ..., A^{(p)} }_{MZ}.
-Matrix zonotopes were introduced in [HuangLBS2025](@citet).
+Matrix zonotopes were introduced in [AlthoffGCKH11](@citet).
 
 ### Examples
 
@@ -34,7 +34,7 @@ julia> MZ = MatrixZonotope(A0, Ai, idx)
 MatrixZonotope{Float64, Matrix{Float64}}([2.0 1.0; -1.0 0.0], [[1.0 -1.0; 0.0 -1.0], [0.0 2.0; -1.0 1.0]], [1, 3])
 ```
 """
-struct MatrixZonotope{N,MN<:AbstractMatrix{N}}
+struct MatrixZonotope{N,MN<:AbstractMatrix{N}} <: AbstractMatrixZonotope{N}
     A0::MN
     Ai::Vector{MN}
     idx::Vector{Int}
@@ -53,12 +53,6 @@ end
 
 Base.eltype(::Type{<:MatrixZonotope{N}}) where {N} = N
 
-"""
-    size(MZ::MatrixZonotope)
-
-Return the dimensions of a matrix zonotope.  
-
-"""
 Base.size(MZ::MatrixZonotope) = size(center(MZ))
 Base.size(MZ::MatrixZonotope, d::Int) = size(center(MZ), d)
 

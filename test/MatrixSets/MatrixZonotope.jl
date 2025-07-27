@@ -1,4 +1,5 @@
 using LazySets, Test
+using LazySets.MatrixZonotopeModule: factors
 
 for N in @tN([Float64, Float32, Rational{Int}])
     # test constructor
@@ -60,6 +61,61 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # norm
     @test norm(MZ, Inf) == 7
     @test norm(MZ, 1) == 8
+
+    #linear_map 
+    M = N[2 -1; 1 0]
+    lm_l = linear_map(M, MZ)
+    @test center(lm_l) == [2 -3; 1 0]
+    @test generators(lm_l) == [[2 -4; 1 -1], [5 -3; 2 -1]]
+    lm_r = linear_map(MZ, M)
+    @test center(lm_r) == [2 -1; 3 0]
+    @test generators(lm_r) == [[1 -1; 2 0], [3 -2; -1 1]]
+end
+
+for N in @tN([Float64, Float32, Rational{Int}])
+    # A: (2x2), B: (2x3)
+    A_c = N[1 0; 0 1]
+    A_gens = [N[1 -1; 0 2], N[2 -1; -1 1]]
+    A_mz = MatrixZonotope(A_c, A_gens)
+
+    #B: (2x3)
+    B_c = N[1 0 0; 0 1 1]
+    B_gens = [N[1 0 -1; -1 2 0], N[1 1 -1; 0 2 -1]]
+    B_mz = MatrixZonotope(B_c, B_gens)
+
+    #C: (3, 2)
+    # incompatible dimensions
+    C_c = N[1 2; 3 4; 5 6]
+    C_gens = [N[2 0; 1 -1; -3 0]]
+    C_mz = MatrixZonotope(C_c, C_gens) 
+    @test_throws AssertionError MatrixZonotopeProduct(A_mz, C_mz)
+
+    # constructor from 2
+    MZP = MatrixZonotopeProduct(A_mz, B_mz)
+    @test MZP isa MatrixZonotopeProduct{N}
+    @test nfactors(MZP) == 2
+    @test factors(MZP) == [A_mz, B_mz]
+
+    # size checks
+    @test size(MZP) == (2, 3)
+    @test size(MZP, 1) == 2
+    @test size(MZP, 2) == 3
+
+    # chainable multiplication
+    MZP_chain = A_mz * B_mz * MatrixZonotope(N[1 0; 0 1; 1 1], [N[1 1; 0 0; 0 -2], N[0 1; 1 0; 1 -1]])
+    MZP2 = C_mz * B_mz
+    @test nfactors(MZP_chain) == 3
+    @test MZP_chain isa MatrixZonotopeProduct{N}
+    @test A_mz * B_mz == MZP
+    @test A_mz * MZP == MatrixZonotopeProduct(A_mz, A_mz, B_mz)
+    @test MZP * C_mz == MatrixZonotopeProduct(A_mz, B_mz, C_mz)
+    @test MZP * MZP2 == MatrixZonotopeProduct(A_mz, B_mz, C_mz, B_mz)
+
+    #MatrixZonotopeExp constructor
+    expMZ = MatrixZonotopeExp(A_mz)
+    @test expMZ.M == A_mz
+    @test size(expMZ) == size(A_mz)
+    @test_throws AssertionError MatrixZonotopeExp(B_mz)
 end
 
 for N in @tN([Float64, Float32])

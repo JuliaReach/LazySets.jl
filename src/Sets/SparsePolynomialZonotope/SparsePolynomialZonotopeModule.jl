@@ -13,13 +13,12 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: center, isoperationtype, rand, scale, translate,
                         translate!, exact_sum
-@reexport import ..LazySets: expmat, genmat_dep, genmat_indep, ngens_dep,
-                             ngens_indep, nparams, polynomial_order,
+@reexport import ..LazySets: expmat, genmat_dep, genmat_indep, indexvector,
+                             ngens_dep, ngens_indep, nparams, polynomial_order,
                              reduce_order, remove_redundant_generators
 @reexport using ..API
 
-export SparsePolynomialZonotope,
-       indexvector
+export SparsePolynomialZonotope
 
 include("SparsePolynomialZonotope.jl")
 
@@ -57,6 +56,6 @@ Return a collection of n unique identifiers (integers 1, …, n).
 
 `1:n`.
 """
-uniqueID(n::Int) = 1:n
+uniqueID(n::Int) = collect(1:n)
 
 end  # module
