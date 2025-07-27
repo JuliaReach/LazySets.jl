@@ -41,18 +41,13 @@ Undocumented implementations:
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
-* [`eltype`](@ref eltype(::Type{<:LazySet}))
 
 ```@meta
 CurrentModule = LazySets.MatrixZonotopeModule
 ```
 
-Inherited from [`AbstractMatrixZonotope`](@ref):
+Undocumented implementations:
 * [`size`](@ref size(::AbstractMatrixZonotope))
-
-```@meta
-CurrentModule = LazySets.MatrixZonotopeModule
-```
 
 # [MatrixZonotopeProduct](@id def_MatrixZonotopeProduct)
 ```@docs
@@ -62,12 +57,8 @@ nfactors
 remove_redundant_factors
 ```
 
-```@meta
-CurrentModule = LazySets.MatrixZonotopeModule
-```
-
 ## Operations 
-Inherited from [`AbstractMatrixZonotope`](@ref):
+Undocumented implementations:
 * [`size`](@ref size(::AbstractMatrixZonotope))
 
 # [MatrixZonotopeExp](@id def_MatrixZonotopeExp)
@@ -75,5 +66,5 @@ Inherited from [`AbstractMatrixZonotope`](@ref):
 MatrixZonotopeExp
 ```
 ## Operations 
-Inherited from [`AbstractMatrixZonotope`](@ref):
+Undocumented implementations:
 * [`size`](@ref size(::AbstractMatrixZonotope))

@@ -59,20 +59,20 @@ Base.size(P::MatrixZonotopeProduct, d::Int) = size(P)[d]
 """
     remove_redundant_factors(MZP::MatrixZonotopeProduct)
 
-Returns a simplified `MatrixZonotopeProduct` where generator-free factors are absorbed
+Return a simplified `MatrixZonotopeProduct` where generator-free factors are absorbed
 into adjacent factors via linear maps.
 
 ### Input
 
-- `MZP` -- matrix zonotope product.
+- `MZP` -- matrix zonotope product
 
 ### Output
 
 A matrix zonotope product with redundant constant factors removed.
 """
-function remove_redundant_factors(MZP::MatrixZonotopeProduct)
+function remove_redundant_factors(MZP::MatrixZonotopeProduct{N,S}) where {N,S}
     factors_ = factors(MZP)
-    reduced = MatrixZonotope{eltype(factors_[1]), typeof(center(factors_[1]))}[]
+    reduced = MatrixZonotope{N,S}[]
 
     i = 1
     while i < length(factors_)

@@ -105,7 +105,7 @@ function overapproximate_norm(MZ::MatrixZonotope, p::Real=Inf)
 end
 
 """
-    overapproximate_norm(MZ::MatrixZonotopeProduct, [p]::Real=Inf)
+    overapproximate_norm(MZP::MatrixZonotopeProduct, [p]::Real=Inf)
 
 Compute an upper bound on the ``p``-norm of a product of matrix zonotopes.
 

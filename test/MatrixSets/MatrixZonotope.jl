@@ -97,13 +97,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
     MZP_chain = A_mz * B_mz * MatrixZonotope(N[1 0; 0 1; 1 1], [N[1 1; 0 0; 0 -2], N[0 1; 1 0; 1 -1]])
     @test nfactors(MZP_chain) == 3
     @test MZP_chain isa MatrixZonotopeProduct{N}
+    @test A_mz * B_mz == MZP
+    @test A_mz * MZP == MatrixZonotopeProduct(A_mz, A_mz, B_mz)
+    @test MZP * B_mz == MatrixZonotopeProduct(A_mz, B_mz, B_mz)
+    @test MZP * MZP == MatrixZonotopeProduct(A_mz, B_mz, A_mz, B_mz)
 
     # remove_redundant_factors
     const_A = MatrixZonotope(N[1 0; 0 1], Vector{Matrix{N}}())
-    mixed = MatrixZonotopeProduct(const_A, A_mz, B_mz)
+    const_B = MatrixZonotope(N[1 0 0; 0 1 0; 0 0 1], Vector{Matrix{N}}())
+    mixed = MatrixZonotopeProduct(const_A, const_A, A_mz, const_A, const_A, B_mz, const_B, const_B)
     simplified = remove_redundant_factors(mixed)
-    @test nfactors(simplified) == 2
-    @test size(simplified) == (2, 3)
+    @test simplified == MZP
 
     # incompatible dimensions
     C_c = N[1 2; 3 4; 5 6]

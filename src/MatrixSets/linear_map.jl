@@ -1,7 +1,7 @@
 """
     linear_map(M::AbstractMatrix, MZ::MatrixZonotope)
 
-Applies a linear transformation to a matrix zonotope from the left.
+Apply a linear transformation to a matrix zonotope from the left.
 
 ### Input
 - `M` -- a linear map / matrix
@@ -20,7 +20,7 @@ end
 """
     linear_map(M::AbstractMatrix, MZ::MatrixZonotope)
 
-Applies a linear transformation to a matrix zonotope from the right.
+Apply a linear transformation to a matrix zonotope from the right.
 
 ### Input
 - `M` -- a linear map / matrix

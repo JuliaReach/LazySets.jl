@@ -4,7 +4,6 @@ using Reexport
 
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Commutative
 using ..LazySets: Zonotope
 
 @reexport import ..API: center, scale, scale!, rand, norm, linear_map
