@@ -1,5 +1,5 @@
 using LazySets, Test
-import LazySets.MatrixZonotopeModule: factors
+using LazySets.MatrixZonotopeModule: factors
 
 for N in @tN([Float64, Float32, Rational{Int}])
     # test constructor
