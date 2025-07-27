@@ -20,7 +20,6 @@ struct MatrixZonotopeProduct{N,S<:AbstractMatrix{N}} <: AbstractMatrixZonotope{N
 
     function MatrixZonotopeProduct(factors::Vector{<:MatrixZonotope{N,T}}) where {N,
                                                                                   T<:AbstractMatrix{N}}
-        @assert length(factors) >= 2 "need at least two matrix zonotope factors"
         for i in 1:(length(factors) - 1)
             @assert size(factors[i], 2) == size(factors[i + 1], 1) "incompatible dimensions for factors at index $i ($(size(factors[i],2))) and $(i+1) ($(size(factors[i+1],1)))"
         end
@@ -55,3 +54,5 @@ end
 
 Base.size(P::MatrixZonotopeProduct) = (size(P.factors[1].A0, 1), size(P.factors[end].A0, 2))
 Base.size(P::MatrixZonotopeProduct, d::Int) = size(P)[d]
+
+Base.:(==)(P1::MatrixZonotopeProduct, P2::MatrixZonotopeProduct)= P1.factors == P2.factors
