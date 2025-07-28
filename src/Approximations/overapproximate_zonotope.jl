@@ -1258,7 +1258,7 @@ end  # load_overapproximate_ICP()
                                                   MAT<:MatrixZonotope{NM}}
 
 Overapproximate the linear map of a zonotope through a matrix zonotope,
-following of Proposition 4 of [AlthoffGCKH11](@citet).
+following Proposition 4 in [AlthoffGCKH11](@citet).
 
 ### Input
 
@@ -1281,14 +1281,14 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT},
     h = ngens(Z)
 
     cZ = center(Z)
-    gZ = genmat(Z)
+    GZ = genmat(Z)
     
     c = center(MZ) * cZ
     # generator 
     G = Matrix{T}(undef, n, h * (w + 1) + w)
-    G[:, 1:h] = center(MZ) * gZ
+    G[:, 1:h] = center(MZ) * GZ
     @inbounds for (i, A) in enumerate(generators(MZ))
-        G[:, h * i + 1 : h * (i + 1)] = A * gZ
+        G[:, h * i + 1 : h * (i + 1)] = A * GZ
         G[:, h * (w + 1) + i] = A * cZ
     end
 
