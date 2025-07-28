@@ -211,8 +211,7 @@ Type that represents the action of an exponential map on a set.
 
 ### Fields
 
-- `expmat` -- matrix exponential, either a concrete matrix exponential
-              or a matrix zonotope exponential represented by an `MatrixZonotopeExp`
+- `expmat` -- matrix exponential, either a `SparseMatrixExp` or a `MatrixZonotopeExp`
 - `X`      -- set
 
 ### Notes
