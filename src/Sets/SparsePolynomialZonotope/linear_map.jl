@@ -13,15 +13,12 @@ following Proposition 1 of [HuangLBS2025](@citet).
 A sparse polynomial zonotope representing the linear map ``MZ ⋅ P```.
 
 """
-function linear_map(MZ::MatrixZonotope, P::SparsePolynomialZonotope)
+@validate function linear_map(MZ::MatrixZonotope, P::SparsePolynomialZonotope)
     if ngens_indep(P) > 0
         error("an exact expression for the linear map is only available for " *
               "`SparsePolynomialZonotope`s with no independent generators. " *
               "Try using `overapproximate` instead")
     end
-
-    @assert size(MZ, 2) == dim(P) "a linear map of size $(size(M)) cannot " *
-                                  "be applied to a set of dimension $(dim(X))"
 
     T = promote_type(eltype(MZ), eltype(P))
 
@@ -41,7 +38,7 @@ function linear_map(MZ::MatrixZonotope, P::SparsePolynomialZonotope)
 
     Gi = Matrix{T}(undef, n, 0)
 
-    # compute exponent
+    # compute exponent matrix
     Imat = Matrix{Int}(I, w, w)
     Ê₁, Ê₂, idx = merge_id(indexvector(P), indexvector(MZ), expmat(P), Imat)
     pₖ = size(Ê₁, 1)
@@ -63,7 +60,7 @@ end
 	linear_map(MZP::MatrixZonotopeProduct, P::SparsePolynomialZonotope)
 
 Compute the linear map of a sparse polynomial zonotope through a matrix zonotope product
-by recursively applying the overapproximation rule from the inside out.
+by recursively applying the `linear_map` method from the inside out.
 
 ### Input
 
@@ -72,10 +69,9 @@ by recursively applying the overapproximation rule from the inside out.
 
 ### Output
 
-A sparse polynomial zonotope representing the linear map ``MZ ⋅ P```.
-
+A sparse polynomial zonotope representing the linear map ``MZ ⋅ P``.
 """
-function linear_map(MZP::MatrixZonotopeProduct, P::SparsePolynomialZonotope)
+@validate function linear_map(MZP::MatrixZonotopeProduct, P::SparsePolynomialZonotope)
     MZs = factors(MZP)
     reduced = foldr((A, acc) -> linear_map(A, acc), MZs; init=P)
     return reduced
