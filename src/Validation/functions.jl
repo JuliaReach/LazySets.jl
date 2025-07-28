@@ -90,7 +90,7 @@ function validate_is_interior_point(x::AbstractVector, X::LazySet, ε::N) where 
 end
 push!(VALIDATE_DICT, :is_interior_point => (validate_is_interior_point, (1, 2, :ε)))
 
-function validate_linear_map(M::Union{AbstractMatrix,AbstractMatrixZonotope}, X::LazySet)
+function validate_linear_map(M::AbstractMatrix, X::LazySet)
     return validate_map_dim(M, X; fun=exponential_map)
 end
 push!(VALIDATE_DICT, :linear_map => (validate_linear_map, args12))
