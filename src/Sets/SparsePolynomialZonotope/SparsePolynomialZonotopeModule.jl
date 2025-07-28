@@ -4,15 +4,17 @@ using Reexport, Requires
 
 using ..LazySets: AbstractSparsePolynomialZonotope, AbstractReductionMethod,
                   genmat, GIR05, order, _remove_redundant_generators_polyzono,
-                  @validate
+                  MatrixZonotope, MatrixZonotopeProduct, ngens, generators,
+                  factors, @validate
 import IntervalArithmetic as IA
+using LinearAlgebra: I
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: remove_zero_columns
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
 @reexport import ..API: center, isoperationtype, rand, scale, translate,
-                        translate!, exact_sum
+                        translate!, exact_sum, linear_map
 @reexport import ..LazySets: expmat, genmat_dep, genmat_indep, indexvector,
                              ngens_dep, ngens_indep, nparams, polynomial_order,
                              reduce_order, remove_redundant_generators
@@ -31,6 +33,7 @@ include("rand.jl")
 include("scale.jl")
 include("translate.jl")
 include("exact_sum.jl")
+include("linear_map.jl")
 
 include("expmat.jl")
 include("genmat_dep.jl")

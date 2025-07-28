@@ -1251,3 +1251,71 @@ function load_overapproximate_ICP()
         end
     end
 end  # load_overapproximate_ICP()
+
+"""
+	overapproximate(lm::LinearMap{N,S,NM,MAT},
+                         ::Type{Zonotope}) where {N,S<:AbstractZonotope{N},NM,
+                                                  MAT<:MatrixZonotope{NM}}
+
+Overapproximate the linear map of a zonotope through a matrix zonotope,
+following Proposition 4 in [AlthoffGCKH11](@citet).
+
+### Input
+
+- `lm` -- a linear map of a zonotope through a matrix zonotope
+
+### Output
+
+A zonotope overapproximating the linear map.
+
+"""
+function overapproximate(lm::LinearMap{N,S,NM,MAT},
+                         ::Type{<:Zonotope}) where {N,S<:AbstractZonotope{N},NM,
+                                                  MAT<:MatrixZonotope{NM}}
+    MZ = matrix(lm)
+    Z = set(lm)
+    T = promote_type(N, NM)
+
+    n = dim(Z)
+    w = ngens(MZ)
+    h = ngens(Z)
+
+    cZ = center(Z)
+    GZ = genmat(Z)
+    
+    c = center(MZ) * cZ
+    # generator 
+    G = Matrix{T}(undef, n, h * (w + 1) + w)
+    G[:, 1:h] = center(MZ) * GZ
+    @inbounds for (i, Ai) in enumerate(generators(MZ))
+        G[:, h * i + 1 : h * (i + 1)] = Ai * GZ
+        G[:, h * (w + 1) + i] = Ai * cZ
+    end
+
+    return Zonotope(c, G)
+end
+
+"""
+    overapproximate(lm::LinearMap{N,S,NM,MAT},
+                         ::Type{<:Zonotope}) where {N,S<:AbstractZonotope{N},NM,
+                                                    MAT<:MatrixZonotopeProduct{NM}}
+
+Overapproximate the linear map of a zonotope through a product of matrix zonotopes,
+by recursively applying the overapproximation rule from the inside out.
+
+### Input
+
+- `lm` -- a linear map of a zonotope through a `MatrixZonotopeProduct`
+- `Zonotope` -- target type
+
+### Output
+
+An overapproximation of the linear map as a zonotope.
+"""
+function overapproximate(lm::LinearMap{N, S, NM, MAT},
+                         T::Type{<:Zonotope}) where {N, S<:AbstractZonotope{N}, NM, MAT<:MatrixZonotopeProduct{NM}}
+    MZs = factors(matrix(lm))
+    Z = set(lm)
+    reduced = foldr((A, acc) -> overapproximate(A * acc, T), MZs; init=Z)
+    return reduced
+end
