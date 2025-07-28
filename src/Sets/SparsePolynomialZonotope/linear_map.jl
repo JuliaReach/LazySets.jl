@@ -34,9 +34,9 @@ function linear_map(MZ::MatrixZonotope, P::SparsePolynomialZonotope)
     # compute matrix of dependent generators
     G = Matrix{T}(undef, n, h + w + h * w)
     G[:, 1:h] = center(MZ) * genmat_dep(P)
-    @inbounds for (i, A) in enumerate(generators(MZ))
-        G[:, h + i] = A * center(P)
-        G[:, (h + w + (i - 1) * h + 1):(h + w + i * h)] = A * genmat_dep(P)
+    @inbounds for (i, Ai) in enumerate(generators(MZ))
+        G[:, h + i] = Ai * center(P)
+        G[:, (h + w + (i - 1) * h + 1):(h + w + i * h)] = Ai * genmat_dep(P)
     end
 
     Gi = Matrix{T}(undef, n, 0)
