@@ -12,7 +12,7 @@ function reduce_order(P::SparsePolynomialZonotope, r::Real,
                       method::AbstractReductionMethod=GIR05())
     @assert r ≥ 1 "cannot reduce below order 1 (got $r)"
 
-    if order(P) <= r
+    if order(P) ≤ r
         return P
     end
 
@@ -22,8 +22,8 @@ function reduce_order(P::SparsePolynomialZonotope, r::Real,
     h = ngens_dep(P)
     q = ngens_indep(P)
 
-    a = min(h + q, ceil(Int, h + q - n * (r - 1)))
-    @assert a > 0  # holds because `r > order(P)`
+    a = ceil(Int, h + q - n * (r - 1))
+    @assert n ≤ a ≤ h + q  # holds because `1 ≤ r < order(P)`
 
     c = center(P)
     G = genmat_dep(P)
