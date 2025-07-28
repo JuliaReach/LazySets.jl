@@ -1287,9 +1287,9 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT},
     # generator 
     G = Matrix{T}(undef, n, h * (w + 1) + w)
     G[:, 1:h] = center(MZ) * GZ
-    @inbounds for (i, A) in enumerate(generators(MZ))
-        G[:, h * i + 1 : h * (i + 1)] = A * GZ
-        G[:, h * (w + 1) + i] = A * cZ
+    @inbounds for (i, Ai) in enumerate(generators(MZ))
+        G[:, h * i + 1 : h * (i + 1)] = Ai * GZ
+        G[:, h * (w + 1) + i] = Ai * cZ
     end
 
     return Zonotope(c, G)
