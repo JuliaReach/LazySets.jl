@@ -204,13 +204,15 @@ function get_rows(spmexp::SparseMatrixExp{N}, I::AbstractArray{Int};
 end
 
 """
-    ExponentialMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
+    ExponentialMap{N,S<:LazySet{N},MAT<:Union{SparseMatrixExp{N},MatrixZonotopeExp{N}}} <:
+       AbstractAffineMap{N,S}
 
 Type that represents the action of an exponential map on a set.
 
 ### Fields
 
-- `spmexp` -- sparse matrix exponential
+- `expmat` -- matrix exponential, either a concrete matrix exponential
+              or a matrix zonotope exponential represented by an `MatrixZonotopeExp`
 - `X`      -- set
 
 ### Notes
@@ -252,9 +254,17 @@ julia> E * EmptySet(100)
 ∅(100)
 ```
 """
-struct ExponentialMap{N,S<:LazySet{N}} <: AbstractAffineMap{N,S}
-    spmexp::SparseMatrixExp{N}
+struct ExponentialMap{N,S<:LazySet{N},MAT<:Union{SparseMatrixExp{N},MatrixZonotopeExp{N}}} <:
+       AbstractAffineMap{N,S}
+    expmat::MAT
     X::S
+    function ExponentialMap(expmat::MAT,
+                            X::S) where {N,S<:LazySet{N},
+                                         MAT<:Union{SparseMatrixExp{N},MatrixZonotopeExp{N}}}
+        @assert dim(X) == size(expmat, 2) "an exponential map of size $(size(expmat)) cannot " *
+                                          "be applied to a set of dimension $(dim(X))"
+        return new{N,S,MAT}(expmat, X)
+    end
 end
 
 # ZeroSet is "almost absorbing" for ExponentialMap (only the dimension changes)
@@ -303,7 +313,7 @@ function *(spmexp::SparseMatrixExp, X::LazySet)
 end
 
 function matrix(em::ExponentialMap)
-    return em.spmexp
+    return em.expmat
 end
 
 function vector(em::ExponentialMap{N}) where {N}
@@ -328,7 +338,7 @@ Return the dimension of an exponential map.
 The ambient dimension of the exponential map.
 """
 function dim(em::ExponentialMap)
-    return size(em.spmexp, 1)
+    return size(em.expmat, 1)
 end
 
 """
@@ -357,8 +367,8 @@ follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, X)`` for any direction ``d
 @validate function σ(d::AbstractVector, em::ExponentialMap;
                      backend=get_exponential_backend())
     N = promote_type(eltype(d), eltype(em))
-    v = _expmv(backend, one(N), transpose(em.spmexp.M), d)  # exp(M^T) * d
-    return _expmv(backend, one(N), em.spmexp.M, σ(v, em.X))  # exp(M) * σ(v, X)
+    v = _expmv(backend, one(N), transpose(em.expmat.M), d)  # exp(M^T) * d
+    return _expmv(backend, one(N), em.expmat.M, σ(v, em.X))  # exp(M) * σ(v, X)
 end
 
 """
@@ -386,12 +396,12 @@ follows that ``ρ(d, E) = ρ(\\exp(M)^T d, X)`` for any direction ``d``.
 @validate function ρ(d::AbstractVector, em::ExponentialMap;
                      backend=get_exponential_backend())
     N = promote_type(eltype(d), eltype(em))
-    v = _expmv(backend, one(N), transpose(em.spmexp.M), d)  # exp(M^T) * d
+    v = _expmv(backend, one(N), transpose(em.expmat.M), d)  # exp(M^T) * d
     return ρ(v, em.X)
 end
 
 function concretize(em::ExponentialMap)
-    return exponential_map(Matrix(em.spmexp.M), concretize(em.X))
+    return exponential_map(Matrix(em.expmat.M), concretize(em.X))
 end
 
 """
@@ -434,7 +444,7 @@ true
 @validate function ∈(x::AbstractVector, em::ExponentialMap;
                      backend=get_exponential_backend())
     N = promote_type(eltype(x), eltype(em))
-    y = _expmv(backend, -one(N), em.spmexp.M, x)
+    y = _expmv(backend, -one(N), em.expmat.M, x)
     return y ∈ em.X
 end
 
@@ -466,7 +476,7 @@ function vertices_list(em::ExponentialMap; backend=get_exponential_backend())
     N = eltype(em)
     vlist = Vector{Vector{N}}(undef, length(vlist_X))
     @inbounds for (i, v) in enumerate(vlist_X)
-        vlist[i] = _expmv(backend, one(N), em.spmexp.M, v)
+        vlist[i] = _expmv(backend, one(N), em.expmat.M, v)
     end
 
     return vlist
