@@ -1280,13 +1280,16 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT},
     w = ngens(MZ)
     h = ngens(Z)
 
-    c = mapreduce(x -> x*center(Z), +, generators(MZ), init= center(MZ) * center(Z))
-
+    cZ = center(Z)
+    gZ = genmat(Z)
+    
+    c = center(MZ) * cZ
     # generator 
-    G = Matrix{T}(undef, n, h * (w + 1))
-    G[:, 1:h] = center(MZ) * genmat(Z)
+    G = Matrix{T}(undef, n, h * (w + 1) + w)
+    G[:, 1:h] = center(MZ) * gZ
     @inbounds for (i, A) in enumerate(generators(MZ))
-        G[:, h * i + 1 : h * (i + 1)] = A * genmat(Z)
+        G[:, h * i + 1 : h * (i + 1)] = A * gZ
+        G[:, h * (w + 1) + i] = A * cZ
     end
 
     return Zonotope(c, G)
@@ -1312,7 +1315,7 @@ An overapproximation of the linear map as a zonotope.
 function overapproximate(lm::LinearMap{N, S, NM, MAT},
                          T::Type{<:Zonotope}) where {N, S<:AbstractZonotope{N}, NM, MAT<:MatrixZonotopeProduct{NM}}
     MZs = factors(matrix(lm))
-    P = set(lm)
-    reduced = foldr((A, acc) -> overapproximate(A * acc, T), MZs; init = P)
+    Z = set(lm)
+    reduced = foldr((A, acc) -> overapproximate(A * acc, T), MZs; init=Z)
     return reduced
 end
