@@ -622,8 +622,8 @@ Polar directions representation.
 
 ### Fields
 
-- `Nφ`    -- length of the partition of the polar angle
-- `stack` -- list of computed directions
+- `Nφ`         -- length of the partition of the polar angle
+- `directions` -- list of computed directions
 
 ### Notes
 
@@ -631,7 +631,7 @@ The `PolarDirections` constructor computes a sample of the unit sphere
 in ``ℝ^2``, which is parameterized by the polar angle
 ``φ ∈ Dφ := [0, 2π]``; see the Wikipedia entry on the
 [polar coordinate system](https://en.wikipedia.org/wiki/Polar_coordinate_system)
-for details. The resulting directions are stored in `stack`.
+for details. The resulting directions are stored in `directions`.
 
 The integer argument ``Nφ`` defines how many samples of ``Dφ`` are taken. The
 Cartesian components of each direction are obtained with
@@ -647,7 +647,7 @@ The integer passed as an argument is used to discretize ``φ``:
 ```jldoctest; filter = r"2246[0-9]*e-16"
 julia> pd = PolarDirections(2);
 
-julia> pd.stack
+julia> pd.directions
 2-element Vector{Vector{Float64}}:
  [1.0, 0.0]
  [-1.0, 1.2246467991473532e-16]
@@ -658,7 +658,7 @@ julia> length(pd)
 """
 struct PolarDirections{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractDirections{N,VN}
     Nφ::Int
-    stack::Vector{VN} # stores the polar directions
+    directions::Vector{VN} # stores the polar directions
 end
 
 # constructor where only N is specified
@@ -671,13 +671,13 @@ function PolarDirections{N,Vector{N}}(Nφ::Int) where {N}
     if Nφ <= 0
         throw(ArgumentError("Nφ = $Nφ is invalid; it should be at least 1"))
     end
-    stack = Vector{Vector{N}}(undef, Nφ)
+    directions = Vector{Vector{N}}(undef, Nφ)
     φ = range(N(0); stop=N(2 * π), length=Nφ + 1)  # discretization of the polar angle
 
     @inbounds for i in 1:Nφ  # skip last (repeated) angle
-        stack[i] = N[cos(φ[i]), sin(φ[i])]
+        directions[i] = N[cos(φ[i]), sin(φ[i])]
     end
-    return PolarDirections{N,Vector{N}}(Nφ, stack)
+    return PolarDirections{N,Vector{N}}(Nφ, directions)
 end
 
 Base.eltype(::Type{PolarDirections{N,VN}}) where {N,VN} = VN
@@ -690,7 +690,7 @@ isnormalized(::Type{<:PolarDirections}) = true
 
 function Base.iterate(pd::PolarDirections{N,Vector{N}}, state::Int=1) where {N}
     state == pd.Nφ + 1 && return nothing
-    return (pd.stack[state], state + 1)
+    return (pd.directions[state], state + 1)
 end
 
 """
@@ -700,9 +700,9 @@ Spherical directions representation.
 
 ### Fields
 
-- `Nθ`    -- length of the partition of the azimuthal angle
-- `Nφ`    -- length of the partition of the polar angle
-- `stack` -- list of computed directions
+- `Nθ`         -- length of the partition of the azimuthal angle
+- `Nφ`         -- length of the partition of the polar angle
+- `directions` -- list of computed directions
 
 ### Notes
 
@@ -757,7 +757,7 @@ julia> length(sd)
 struct SphericalDirections{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractDirections{N,VN}
     Nθ::Int
     Nφ::Int
-    stack::Vector{VN} # stores the spherical directions
+    directions::Vector{VN} # stores the spherical directions
 end
 
 # constructor where only N is specified
@@ -776,27 +776,27 @@ function SphericalDirections{N,Vector{N}}(Nθ::Int, Nφ::Int) where {N}
         throw(ArgumentError("(Nθ, Nφ) = ($Nθ, $Nφ) is invalid; both should " *
                             "be at least 2"))
     end
-    stack = Vector{Vector{N}}()
+    directions = Vector{Vector{N}}()
     θ = range(N(0); stop=N(π), length=Nθ)    # discretization of the azimuthal angle
     φ = range(N(0); stop=N(2 * π), length=Nφ)  # discretization of the polar angle
 
     # add north pole (θ = 0)
-    push!(stack, N[0, 0, 1])
+    push!(directions, N[0, 0, 1])
 
     # add south pole (θ = π)
-    push!(stack, N[0, 0, -1])
+    push!(directions, N[0, 0, -1])
 
     for φᵢ in φ[1:(Nφ - 1)]  # skip repeated angle
         for θⱼ in θ[2:(Nθ - 1)]  # skip north and south poles
             d = N[sin(θⱼ) * cos(φᵢ), sin(θⱼ) * sin(φᵢ), cos(θⱼ)]
-            push!(stack, d)
+            push!(directions, d)
         end
     end
-    return SphericalDirections{N,Vector{N}}(Nθ, Nφ, stack)
+    return SphericalDirections{N,Vector{N}}(Nθ, Nφ, directions)
 end
 
 Base.eltype(::Type{SphericalDirections{N,VN}}) where {N,VN} = VN
-Base.length(sd::SphericalDirections) = length(sd.stack)
+Base.length(sd::SphericalDirections) = length(sd.directions)
 
 # interface functions
 LazySets.dim(::SphericalDirections) = 3
@@ -804,8 +804,8 @@ isbounding(sd::SphericalDirections) = sd.Nθ > 2 && sd.Nφ > 2
 isnormalized(::Type{<:SphericalDirections}) = true
 
 function Base.iterate(sd::SphericalDirections, state::Int=1)
-    state == length(sd.stack) + 1 && return nothing
-    return (sd.stack[state], state + 1)
+    state == length(sd.directions) + 1 && return nothing
+    return (sd.directions[state], state + 1)
 end
 
 """
