@@ -233,9 +233,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(E3, E2)
 
     # linear_map_inverse
-    @test_broken LazySets.linear_map_inverse(ones(N, 2, 3), E)  # TODO this should maybe change
-    # E2 = LazySets.linear_map_inverse(ones(N, 2, 3), E)
-    # @test isidentical(E3, E2)
+    E2 = LazySets.linear_map_inverse(ones(N, 2, 3), E)
+    @test isidentical(E3, E2)
 
     # permute
     @test_throws DimensionMismatch permute(E, [1])
