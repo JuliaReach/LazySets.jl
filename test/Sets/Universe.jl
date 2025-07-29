@@ -254,6 +254,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch permute(U, [1])
     @test_throws DimensionMismatch permute(U, [1, -1])
     @test_throws DimensionMismatch permute(U, [1, 3])
+    @test_throws ArgumentError permute(U, [1, 1])
     U2 = permute(U, [2, 1])
     @test isidentical(U, U2)
 
@@ -261,6 +262,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch project(U, [1, 2, 3])
     @test_throws DimensionMismatch project(U, [1, -1])
     @test_throws DimensionMismatch project(U, [1, 3])
+    @test_throws ArgumentError project(U, [1, 1])
     U2 = project(U, [2])
     @test U2 isa Universe{N} && dim(U2) == 1
 
