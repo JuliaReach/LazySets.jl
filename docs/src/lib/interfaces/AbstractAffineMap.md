@@ -89,6 +89,18 @@ isempty(::AbstractAffineMap)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
+isuniversal(::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+isuniversal(::AbstractAffineMap)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
 ∈(::AbstractVector, ::LazySet)
 ```
 ```@meta
