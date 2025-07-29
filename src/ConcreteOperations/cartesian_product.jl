@@ -175,7 +175,7 @@ This method implements [Kochdumper21a; Proposition 3.1.22](@citet).
     G = vcat(G1, zeros(eltype(G1), size(G1)))
     GI = cat(genmat_indep(SPZ), genmat(Z); dims=(1, 2))
     E = expmat(SPZ)
-    return SparsePolynomialZonotope(c, G, GI, E, indexvector(SPZ))
+    return SparsePolynomialZonotope(c, G, GI, E, _indexvector(SPZ))
 end
 
 """

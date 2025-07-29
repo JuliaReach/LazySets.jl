@@ -25,7 +25,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], N[1 0; 0 -1], [2 1; 0 1; 1 0], [3, 4, 5])
-    Z = rand(Zonotope)
+    Z = Zonotope(N[0, 1], N[2 1; 1 -1])
     ms = minkowski_sum(P, Z)
     @test indexvector(ms) == indexvector(P)
 end
