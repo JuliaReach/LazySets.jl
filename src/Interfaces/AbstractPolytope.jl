@@ -69,8 +69,8 @@ function isuniversal(P::AbstractPolytope, witness::Bool=false)
     if witness
         constraints = constraints_list(P)
         if isempty(constraints)
-            N = eltype(P)
-            return (true, N[])  # special case for polytopes without constraints
+            # special case for polytopes without constraints
+            throw(ArgumentError("illegal polytope without constraints"))
         end
         return isuniversal(constraints[1], true)
     else
