@@ -837,7 +837,7 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT},
     P = set(lm)
     MZ = matrix(lm)
     n = dim(P)
-    T = promote_type(eltype(MZ), eltype(P))
+    T = promote_type(N, NM)
     
     SP = SparsePolynomialZonotope(center(P), genmat_dep(P), zeros(N, n, 0), expmat(P), indexvector(P))
     Pd = linear_map(MZ, SP)
@@ -849,7 +849,7 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT},
     Z = Zonotope(zeros(T, n), genmat_indep(P))
     Zi = overapproximate(MZ * Z, Zonotope)
 
-    return minkowski_sum(Pd, Zi)
+    return SparsePolynomialZonotope(center(Pd), genmat_dep(Pd), genmat(Z), expmat(Pd), indexvector(Pd))
 end
 
 """

@@ -172,7 +172,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     res = overapproximate(MZ * P, SparsePolynomialZonotope)
     @test center(res) == [0, -2]
     @test genmat_dep(res) == hcat(N[1 0; -1 -2], N[1, -1], N[1 1; 1 -1])
-    @test genmat_indep(res) == hcat([1, 1], [0, 2], [0, 0])
+    @test genmat_indep(res) == hcat(N[1, 1], N[0, 2], N[0, 0])
     @test expmat(res) == hcat([2 1; 0 1; 1 0], [1; 0; 0], [3 2; 0 1; 1 0])
 
     # case: 0 gens matrix zonotope
@@ -185,7 +185,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     res = overapproximate(MZ * P, SparsePolynomialZonotope)
     @test center(res) == [0, -2]
     @test genmat_dep(res) == hcat(N[1 0; -1 -2], N[1, -1], N[1 1; 1 -1])
-    @test genmat_indep(res) == hcat([1, 1], [0, 2], [0, 0])
+    @test genmat_indep(res) == hcat(N[1, 1], N[0, 2], N[0, 0])
     @test expmat(res) == hcat([2 1; 0 1; 1 0; 0 0], [0, 0, 0, 1], [2 1; 0 1; 1 0; 1 1])
 
     #case: matrix zonotope product
