@@ -276,6 +276,18 @@ ispolyhedral(::LazySet)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
+ispolyhedraltype(::Type{<:LazySet})
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+ispolyhedraltype(::Type{<:LazySet})
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
 low(::LazySet)
 ```
 ```@meta
