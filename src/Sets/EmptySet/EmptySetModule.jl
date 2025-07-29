@@ -17,8 +17,8 @@ using ReachabilityBase.Require: require
                         rectify, reflect, sample, scale, scale!, ρ, σ,
                         translate, translate!, vertices, vertices_list, volume,
                         cartesian_product, convex_hull, difference, distance,
-                        intersection, ≈, isdisjoint, ⊆, linear_combination,
-                        minkowski_difference, minkowski_sum
+                        intersection, isapprox, isdisjoint, ⊆,
+                        linear_combination, minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, constrained_dimensions,
                              linear_map_inverse, rationalize, triangulate
 import ..LazySets: plot_recipe

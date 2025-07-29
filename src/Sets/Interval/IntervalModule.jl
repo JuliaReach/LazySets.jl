@@ -17,7 +17,7 @@ using ReachabilityBase.Require: require
                         exponential_map, extrema, high, ∈, isoperationtype,
                         linear_map, low, norm, permute, project, radius, rand,
                         rectify, reflect, scale, ρ, σ, translate, vertices_list,
-                        volume, difference, distance, intersection, ≈,
+                        volume, difference, distance, intersection, isapprox,
                         isdisjoint, isequivalent, ⊂, ⊆, minkowski_difference,
                         minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens,

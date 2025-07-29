@@ -1,7 +1,7 @@
 """
 # Extended help
 
-    ≈(X::LazySet, Y::LazySet)
+    isapprox(X::LazySet, Y::LazySet)
 
 ### Algorithm
 
@@ -21,7 +21,7 @@ julia> BallInf([0.0], 1.0) ≈ Hyperrectangle([0.0], [1.0])
 false
 ```
 """
-function ≈(X::LazySet, Y::LazySet)
+function isapprox(X::LazySet, Y::LazySet)
     # if the common supertype of X and Y is abstract, they cannot be compared
     if isabstracttype(promote_type(typeof(X), typeof(Y)))
         return false
