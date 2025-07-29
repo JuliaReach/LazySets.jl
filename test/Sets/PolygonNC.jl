@@ -26,7 +26,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isuniversal
     res, w = isuniversal(P, true)
-    @test !isuniversal(P) && w ∉ P1
+    @test !isuniversal(P) && w ∉ P
 
     # support vector/function
     d = N[1, 1]
