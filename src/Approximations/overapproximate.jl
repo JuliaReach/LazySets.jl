@@ -849,7 +849,7 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT},
     Z = Zonotope(zeros(T, n), genmat_indep(P))
     Zi = overapproximate(MZ * Z, Zonotope)
 
-    return SparsePolynomialZonotope(center(Pd), genmat_dep(Pd), genmat(Z), expmat(Pd), indexvector(Pd))
+    return SparsePolynomialZonotope(center(Pd), genmat_dep(Pd), genmat(Zi), expmat(Pd), indexvector(Pd))
 end
 
 """
