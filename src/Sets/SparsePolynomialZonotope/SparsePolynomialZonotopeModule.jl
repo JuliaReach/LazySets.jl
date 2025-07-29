@@ -7,6 +7,7 @@ using ..LazySets: AbstractSparsePolynomialZonotope, AbstractReductionMethod,
                   MatrixZonotope, MatrixZonotopeProduct, ngens, generators,
                   factors, @validate
 import IntervalArithmetic as IA
+import LazySets: _indexvector
 using LinearAlgebra: I
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: remove_zero_columns
@@ -60,5 +61,6 @@ Return a collection of n unique identifiers (integers 1, …, n).
 `1:n`.
 """
 uniqueID(n::Int) = collect(1:n)
+_indexvector(P::SparsePolynomialZonotope) = indexvector(P)
 
 end  # module

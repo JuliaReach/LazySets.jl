@@ -78,4 +78,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test PP isa HPolytope{N} && isequivalent(PP, XX)
     QQ = cartesian_product(Q, Q)
     @test QQ isa HPolyhedron{N} && isequivalent(QQ, XX)
+
+    P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], N[1 0; 0 -1], [2 1; 0 1; 1 0], [3, 4, 5])
+    Z = Zonotope(N[0, 1], N[2 1; 1 -1])
+    cp = cartesian_product(P, Z)
+    @test indexvector(cp) == indexvector(P)
 end

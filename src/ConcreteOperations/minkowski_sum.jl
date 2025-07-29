@@ -327,7 +327,7 @@ end
     G = genmat_dep(PZ)
     GI = hcat(genmat_indep(PZ), genmat(Z))
     E = expmat(PZ)
-    return SparsePolynomialZonotope(c, G, GI, E)
+    return SparsePolynomialZonotope(c, G, GI, E, _indexvector(PZ))
 end
 
 """

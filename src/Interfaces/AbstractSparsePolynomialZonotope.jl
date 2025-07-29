@@ -227,3 +227,5 @@ function load_RangeEnclosures_support_function()
         end
     end
 end  # load_RangeEnclosures_support_function
+
+_indexvector(P::AbstractPolynomialZonotope) = uniqueID(size(expmat(P), 1))
