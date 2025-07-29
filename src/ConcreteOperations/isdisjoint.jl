@@ -98,7 +98,7 @@ end
 @validate function isdisjoint(S1::AbstractSingleton, S2::AbstractSingleton,
                               witness::Bool=false)
     s1 = element(S1)
-    empty_intersection = !isapprox(s1, element(S2))
+    empty_intersection = !_isapprox(s1, element(S2))
     return _witness_result_empty(witness, empty_intersection, S1, S2, s1)
 end
 
