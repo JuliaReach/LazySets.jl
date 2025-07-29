@@ -21,7 +21,9 @@ export approximate,
        SphericalDirections,
        CustomDirections,
        isbounding,
-       overapproximate_norm
+       overapproximate_norm,
+       taylor_expmap_truncation,
+       taylor_expmap_remainder
 
 using ..LazySets, ReachabilityBase.Arrays, Requires, LinearAlgebra, SparseArrays
 import IntervalArithmetic as IA
@@ -49,6 +51,7 @@ include("approximate.jl")
 include("decompositions.jl")
 include("hausdorff_distance.jl")
 include("overapproximate_norm.jl")
+include("overapproximate_expmap.jl")
 include("init.jl")
 
 end # module

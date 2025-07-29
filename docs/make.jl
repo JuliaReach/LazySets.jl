@@ -12,6 +12,7 @@ makedocs(; sitename="LazySets.jl",
                                 assets=["assets/aligned.css", "assets/citations.css"],
                                 size_threshold_warn=150 * 2^10),
          pagesonly=true,
+         checkdocs = :exports,
          plugins=[bib],
          pages=[
                 #
@@ -138,7 +139,8 @@ makedocs(; sitename="LazySets.jl",
                                                    "lib/approximations/approximate.md",
                                                    "lib/approximations/decompose.md",
                                                    "lib/approximations/hausdorff_distance.md",
-                                                   "lib/approximations/overapproximate_norm.md"
+                                                   "lib/approximations/overapproximate_norm.md",
+                                                   "lib/approximations/overapproximate_expmap.md",
                                                    #
                                                    ],
                               "MatrixSets" => [
