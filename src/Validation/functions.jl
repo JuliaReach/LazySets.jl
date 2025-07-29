@@ -1,6 +1,7 @@
 const args1 = (1,)
 const args12 = (1, 2)
 const args123 = (1, 2, 3)
+const args2 = (2,)
 const global VALIDATE_DICT = Dict{Symbol,Tuple{Function,Any}}()
 
 # unary set operations
@@ -26,20 +27,20 @@ push!(VALIDATE_DICT, :area => (validate_area, args1))
 # push!(VALIDATE_DICT, :constraints_list => (validate_constraints_list, args1))
 # push!(VALIDATE_DICT, :constraints => (validate_constraints, args1))
 
-# function validate_diameter(X::LazySet)
-#     # require p ≥ 1?
-# end
-# push!(VALIDATE_DICT, :diameter => (validate_diameter, args1))
+function validate_diameter(p::Real)
+    return validate_pnorm(p; fun=diameter)
+end
+push!(VALIDATE_DICT, :diameter => (validate_diameter, args2))
 
-# function validate_norm(X::LazySet)
-#     # require p ≥ 1?
-# end
-# push!(VALIDATE_DICT, :norm => (validate_norm, args1))
+function validate_norm(p::Real)
+    return validate_pnorm(p; fun=norm)
+end
+push!(VALIDATE_DICT, :norm => (validate_norm, args2))
 
-# function validate_radius(X::LazySet)
-#     # require p ≥ 1?
-# end
-# push!(VALIDATE_DICT, :radius => (validate_radius, args1))
+function validate_radius(p::Real)
+    return validate_pnorm(p; fun=radius)
+end
+push!(VALIDATE_DICT, :radius => (validate_radius, args2))
 
 # function validate_vertices_list(X::LazySet)
 #     # require polytopic set?
@@ -60,10 +61,10 @@ function validate_affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
 end
 push!(VALIDATE_DICT, :affine_map => (validate_affine_map, args123))
 
-function validate_distance(x::AbstractVector, X::LazySet)
-    return validate_same_dim(x, X; fun=distance)
+function validate_distance(x::AbstractVector, X::LazySet, p::Real)
+    return validate_same_dim(x, X; fun=distance) && validate_pnorm(p; fun=distance)
 end
-push!(VALIDATE_DICT, :distance => (validate_distance, args12))
+push!(VALIDATE_DICT, :distance => (validate_distance, (1, 2, :p)))
 
 function validate_exponential_map(M::AbstractMatrix, X::LazySet)
     m, n = size(M)
@@ -80,15 +81,15 @@ function validate_in(x::AbstractVector, X::LazySet)
 end
 push!(VALIDATE_DICT, :∈ => (validate_in, args12))
 
-function validate_is_interior_point(x::AbstractVector, X::LazySet, ε::N) where {N<:Number}
-    if !validate_same_dim(x, X; fun=is_interior_point)
+function validate_is_interior_point(x::AbstractVector, X::LazySet, p::Real, ε::Number)
+    if !validate_same_dim(x, X; fun=is_interior_point) || !validate_pnorm(p; fun=is_interior_point)
         return false
-    elseif ε <= zero(N)
+    elseif ε <= zero(ε)
         throw(ArgumentError("the tolerance must be strictly positive but is $ε"))
     end
     return true
 end
-push!(VALIDATE_DICT, :is_interior_point => (validate_is_interior_point, (1, 2, :ε)))
+push!(VALIDATE_DICT, :is_interior_point => (validate_is_interior_point, (1, 2, :p, :ε)))
 
 function validate_linear_map(M::AbstractMatrix, X::LazySet)
     return validate_map_dim(M, X; fun=exponential_map)
@@ -144,11 +145,11 @@ function validate_difference(X::LazySet, Y::LazySet)
 end
 push!(VALIDATE_DICT, :difference => (validate_difference, args12))
 
-function validate_distance(X::LazySet, Y::LazySet)
-    return validate_same_dim(X, Y; fun=distance)
+function validate_distance(X::LazySet, Y::LazySet, p::Real)
+    return validate_same_dim(X, Y; fun=distance) && validate_pnorm(p; fun=distance)
 end
 # NOTE: dictionary entry was already added above for other `distance` method
-# push!(VALIDATE_DICT, :distance => (validate_distance, args12))
+# push!(VALIDATE_DICT, :distance => (validate_distance, (1, 2, :p)))
 
 function validate_exact_sum(X::LazySet, Y::LazySet)
     return validate_same_dim(X, Y; fun=exact_sum)

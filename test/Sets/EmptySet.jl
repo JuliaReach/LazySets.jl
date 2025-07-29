@@ -84,6 +84,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(E, E2)
 
     # diameter
+    @test_throws ArgumentError diameter(E, N(1 // 2))
     for res in (diameter(E), diameter(E, Inf), diameter(E, 2))
         @test res isa N && res == N(0)
     end
@@ -135,6 +136,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError low(E, 1)
 
     # norm
+    @test_throws ArgumentError norm(E, N(1 // 2))
     for res in (norm(E), norm(E, Inf), norm(E, 2))
         @test res isa N && res == N(0)
     end
@@ -145,6 +147,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # radius
+    @test_throws ArgumentError radius(E, N(1 // 2))
     for res in (radius(E), radius(E, Inf), radius(E, 2))
         @test res isa N && res == N(0)
     end
@@ -198,6 +201,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # distance (between point and set)
     @test_throws DimensionMismatch distance(E, N[0])
+    @test_throws ArgumentError distance(E, N[0, 0]; p=N(1 // 2))
     x = N[0, 0]
     for res in (distance(E, x), distance(x, E))
         @test res isa N && res == N(Inf)
@@ -215,7 +219,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # is_interior_point
     @test_throws DimensionMismatch is_interior_point(N[0], E)
-    @test_throws DimensionMismatch is_interior_point(N[0], E; ε=N(0))
+    @test_throws ArgumentError is_interior_point(N[0, 0], E; ε=N(0))
+    @test_throws ArgumentError is_interior_point(N[0, 0], E; p=N(1 // 2))
     if N <: AbstractFloat
         @test !is_interior_point(N[0, 0], E)
     else
@@ -318,6 +323,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # distance (between two sets)
     @test_throws DimensionMismatch distance(E, E3)
+    @test_throws ArgumentError distance(E, E; p=N(1 // 2))
     for v in (distance(E, E), distance(B1, E), distance(E, B1), distance(U, E), distance(E, U),
               distance(E, B), distance(B, E), distance(E, Z), distance(Z, E))
         @test v isa N && v == N(Inf)
