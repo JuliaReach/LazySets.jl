@@ -178,7 +178,7 @@ function load_intervalmatrices_overapproximation_expmap()
             end
 
             tayexp = taylor_expmap_truncation(MZP, P, k)
-            lagrem = lagrange_remainder(P, matnorm, k)
+            lagrem = taylor_expmap_remainder(P, matnorm, k)
             P_approx = minkowski_sum(tayexp, lagrem)
 
             return remove_redundant_generators(P_approx)
