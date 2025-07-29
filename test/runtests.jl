@@ -353,6 +353,9 @@ if test_suite_basic
     @testset "LazySets.Approximations.overapproximate_norm" begin
         include("Approximations/overapproximate_norm.jl")
     end
+    @testset "LazySets.Approximations.overapproximate_expmap" begin
+        include("Approximations/overapproximate_expmap.jl")
+    end
 
     # ================================
     # Testing shared utility functions
