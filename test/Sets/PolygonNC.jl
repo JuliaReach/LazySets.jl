@@ -25,8 +25,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isbounded(P)
 
     # isuniversal
-    @test !isuniversal(P)
-    @test_broken isuniversal(P, true)
+    res, w = isuniversal(P, true)
+    @test !isuniversal(P) && w ∉ P
 
     # support vector/function
     d = N[1, 1]

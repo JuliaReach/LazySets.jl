@@ -413,12 +413,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
     for X in (B, Pnc)
         @test U ⊈ X
-        if X === B  # TODO remove branching once witness production is supported for Polygon
-            res, w = ⊆(U, X, true)
-            @test !res && w isa Vector{N} && w ∈ U && w ∉ X
-        else
-            @test_broken ⊆(U, X, true)
-        end
+        res, w = ⊆(U, X, true)
+        @test !res && w isa Vector{N} && w ∈ U && w ∉ X
     end
     # TODO test `U ⊆ X` with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
 

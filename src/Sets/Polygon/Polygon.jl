@@ -26,8 +26,8 @@ julia> P.vertices
 """
 struct Polygon{N,VN<:AbstractVector{N}} <: LazySet{N}
     vertices::Vector{VN}
-
     function Polygon(vertices::Vector{VN}) where {N,VN<:AbstractVector{N}}
+        @assert all(x -> length(x) == 2, vertices) "a polygon must have 2 dimensions"
         return new{N,VN}(vertices)
     end
 end

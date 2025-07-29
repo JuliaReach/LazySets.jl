@@ -1,8 +1,7 @@
 function isuniversal(P::Polygon, witness::Bool=false)
-    # TODO support witness generation
-    # return witness ? (false, non_element(P)) : false
-    if witness
-        throw(ArgumentError("witness generation is currently not supported"))
-    end
-    return false
+    return witness ? (false, _non_element(P)) : false
+end
+
+function _non_element(P::Polygon)
+    return high(P) + ones(eltype(P), 2)
 end
