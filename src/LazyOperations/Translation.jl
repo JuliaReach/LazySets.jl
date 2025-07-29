@@ -26,6 +26,9 @@ linear map ``A`` is the identity matrix and the translation vector ``b`` is
 Translation preserves convexity: if `X` is convex, then any translation of `X`
 is convex as well.
 
+The convenience aliases `⊕` and `+` are also available. `⊕` can be typed by
+`\\oplus<tab>`.
+
 ### Example
 
 ```jldoctest translation
@@ -170,34 +173,9 @@ Translation(∅::EmptySet, v::AbstractVector) = ∅
 # Universe is absorbing for Translation
 Translation(U::Universe, v::AbstractVector) = U
 
-"""
-    +(X::LazySet, v::AbstractVector)
+@commutative +(X::LazySet, v::AbstractVector) = Translation(X, v)
 
-Convenience constructor for a translation.
-
-### Input
-
-- `X` -- set
-- `v` -- vector
-
-### Output
-
-The symbolic translation of ``X`` along vector ``v``.
-"""
-+(X::LazySet, v::AbstractVector) = Translation(X, v)
-
-# translation from the left
-+(v::AbstractVector, X::LazySet) = Translation(X, v)
-
-"""
-    ⊕(X::LazySet, v::AbstractVector)
-
-Unicode alias constructor ⊕ (`oplus`) for the lazy translation operator.
-"""
-⊕(X::LazySet, v::AbstractVector) = Translation(X, v)
-
-# translation from the left
-⊕(v::AbstractVector, X::LazySet) = Translation(X, v)
+@commutative ⊕(X::LazySet, v::AbstractVector) = Translation(X, v)
 
 function matrix(tr::Translation{N}) where {N}
     return Diagonal(ones(N, dim(tr)))

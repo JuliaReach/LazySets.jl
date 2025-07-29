@@ -25,6 +25,9 @@ for `MinkowskiSum`.
 
 The Minkowski sum preserves convexity: if the set arguments are convex, then
 their Minkowski sum is convex as well.
+
+The convenience aliases `⊕` and `+` are also available. `⊕` can be typed by
+`\\oplus<tab>`.
 """
 struct MinkowskiSum{N,S1<:LazySet{N},S2<:LazySet{N}} <: LazySet{N}
     X::S1
@@ -37,22 +40,8 @@ struct MinkowskiSum{N,S1<:LazySet{N},S2<:LazySet{N}} <: LazySet{N}
     end
 end
 
-"""
-    +(X::LazySet, Y::LazySet)
-
-Alias for the Minkowski sum.
-"""
 +(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
 
-"""
-    ⊕(X::LazySet, Y::LazySet)
-
-Alias for the Minkowski sum.
-
-### Notes
-
-The function symbol can be typed via `\\oplus<tab>`.
-"""
 ⊕(X::LazySet, Y::LazySet) = MinkowskiSum(X, Y)
 
 isoperationtype(::Type{<:MinkowskiSum}) = true

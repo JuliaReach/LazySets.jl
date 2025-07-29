@@ -8,8 +8,6 @@ CurrentModule = LazySets
 
 ```@docs
 MinkowskiSum
-⊕(::LazySet, ::LazySet)
-+(::LazySet, ::LazySet)
 swap(::MinkowskiSum)
 dim(::MinkowskiSum)
 ρ(::AbstractVector, ::MinkowskiSum)
@@ -34,8 +32,6 @@ Inherited from [`LazySet`](@ref):
 ```@docs
 MinkowskiSumArray
 MinkowskiSum!
-⊕(::LazySet, ::LazySet...)
-+(::LazySet, ::LazySet...)
 dim(::MinkowskiSumArray)
 ρ(::AbstractVector, ::MinkowskiSumArray)
 σ(::AbstractVector, ::MinkowskiSumArray)

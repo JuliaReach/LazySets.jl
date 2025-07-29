@@ -41,7 +41,8 @@ A tight hyperrectangle.
 
 ### Notes
 
-An alias for this function is `interval_hull`.
+The convenience aliases `interval_hull` and `□` are also available. `□` can be
+typed by `\\square<tab>`.
 
 ### Algorithm
 
@@ -90,18 +91,8 @@ function box_approximation(cap::Intersection{N,T1,T2}) where {N,T1,T2}
     return _box_approximation_extrema(S)
 end
 
-"""
-    interval_hull
-
-Alias for `box_approximation`.
-"""
 interval_hull = box_approximation
 
-"""
-    □(X::LazySet)
-
-Alias for `box_approximation(X)`.
-"""
 □(X::LazySet) = box_approximation(X)
 
 # AbstractHyperrectangle specialization

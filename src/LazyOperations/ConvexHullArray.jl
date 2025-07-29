@@ -16,6 +16,8 @@ The `EmptySet` is the neutral element for `ConvexHullArray`.
 
 A `ConvexHullArray` is always convex.
 
+The convenience alias `CHArray` is also available.
+
 ### Examples
 
 Convex hull of 100 two-dimensional balls whose centers follow a sinusoidal:
@@ -56,11 +58,6 @@ end
 # add functions connecting ConvexHull and ConvexHullArray
 @declare_array_version(ConvexHull, ConvexHullArray)
 
-"""
-    CHArray
-
-Alias for `ConvexHullArray`.
-"""
 const CHArray = ConvexHullArray
 
 """
