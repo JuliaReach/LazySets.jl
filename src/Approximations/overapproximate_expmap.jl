@@ -191,7 +191,7 @@ function load_intervalmatrices_overapproximation_expmap()
                                                   MAT<:AbstractMatrixZonotope{N}}
 
         Overapproximate the exponential map of a sparse polynomial zonotope through a composition of matrix 
-        zonotopes, following Proposition 1 of [HuangLBS2025](@citet).
+        zonotopes, following Proposition 3 of [HuangLBS2025](@citet).
 
         ### Input
 
@@ -214,7 +214,7 @@ function load_intervalmatrices_overapproximation_expmap()
                                                   MAT<:AbstractMatrixZonotope{N}}
 
         Overapproximate the exponential map of a zonotope through a composition of matrix 
-        zonotopes, following Proposition 1 of [HuangLBS2025](@citet).
+        zonotopes, following Proposition 3 of [HuangLBS2025](@citet).
 
         ### Input
 
