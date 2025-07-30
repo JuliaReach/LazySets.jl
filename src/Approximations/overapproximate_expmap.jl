@@ -150,8 +150,9 @@ function load_intervalmatrices_overapproximation_expmap()
 
         A zonotope over-approximating the remainder term of the Taylor expansion.
         """
-        function taylor_expmap_remainder(P::S, matnorm::Real, k::Int) where{S<:Union{SparsePolynomialZonotope,
-                                                                AbstractZonotope}}
+        function taylor_expmap_remainder(P::S, matnorm::Real,
+                                         k::Int) where {S<:Union{SparsePolynomialZonotope,
+                                                                 AbstractZonotope}}
             n = dim(P)
             N = eltype(P)
 
@@ -165,13 +166,14 @@ function load_intervalmatrices_overapproximation_expmap()
         end
 
         function _overapproximate_emz(em::ExponentialMap{N,S,MAT},
-                                      k::Int=2) where {N,S<:Union{SparsePolynomialZonotope,
-                                                                AbstractZonotope},
-                                                       MAT<:AbstractMatrixZonotope{N}}
+                                      k::Int,
+                                      matnorm::Real) where {N,
+                                                            S<:Union{SparsePolynomialZonotope,
+                                                                     AbstractZonotope},
+                                                            MAT<:AbstractMatrixZonotope{N}}
             MZP = matrix(em).M
             P = set(em)
 
-            matnorm = N(overapproximate_norm(MZP, Inf))
             ϵ = matnorm / (k + 2)
             if ϵ > 1
                 @warn "k should be chosen such that ϵ<1 " ϵ
@@ -186,48 +188,62 @@ function load_intervalmatrices_overapproximation_expmap()
 
         """
         	overapproximate(em::ExponentialMap{N,S,MAT},
-                                 T::Type{<:SparsePolynomialZonotope},
-                                 k::Int=2) where {N,S<:SparsePolynomialZonotope,
-                                                  MAT<:AbstractMatrixZonotope{N}}
+                                 ::Type{<:SparsePolynomialZonotope},
+                                 k::Int=2;
+                                 [matnorm]::Union{Real,Nothing}=nothing) where {N,
+                                                                              S<:SparsePolynomialZonotope,
+                                                                              MAT<:AbstractMatrixZonotope{N}}
 
         Overapproximate the exponential map of a sparse polynomial zonotope through a composition of matrix 
         zonotopes, following Proposition 3 of [HuangLBS2025](@citet).
 
         ### Input
 
-        - `em` -- an expontial map of a sparse polynomial zonotope through a product of matrix zonotopes
+        - `em`      -- an expontial map of a sparse polynomial zonotope through a product of matrix zonotopes
+        - `SparsePolynomialZonotope` -- target type
+        - `k`       -- (default: `2`) the order of the taylor expansion 
+        - `matnorm` -- (Optional, default: `nothing`) Pre-computed induced ``\\infty``-norm of the matrix zonotope
 
         ### Output
 
         A sparse polynomial zonotope overapproximating the exponential map.
         """
-        function overapproximate(em::ExponentialMap{N,S,MAT},
-                                 T::Type{<:SparsePolynomialZonotope},
-                                 k::Int=2) where {N,S<:SparsePolynomialZonotope,
-                                                  MAT<:AbstractMatrixZonotope{N}}
-            return _overapproximate_emz(em, k)
+        function overapproximate(em::ExponentialMap{N,S,MAT}, 
+                                 ::Type{<:SparsePolynomialZonotope},
+                                 k::Int=2;
+                                 matnorm::Union{Real,Nothing}=nothing) where {N,
+                                                                              S<:SparsePolynomialZonotope,
+                                                                              MAT<:AbstractMatrixZonotope{N}}
+            _matnorm = isnothing(matnorm) ? N(overapproximate_norm(matrix(em).M, Inf)) : N(matnorm)
+            return _overapproximate_emz(em, k, _matnorm)
         end
 
         """
-        	overapproximate(em::ExponentialMap{N,S,MAT}, T::Type{<:Zonotope},
-                                 k::Int=2) where {N,S<:AbstractZonotope,
-                                                  MAT<:AbstractMatrixZonotope{N}}
+        	overapproximate(em::ExponentialMap{N,S,MAT}, ::Type{<:Zonotope},
+                                 k::Int=2;
+                                 [matnorm]::Union{Real,Nothing}=nothing) where {N,S<:AbstractZonotope,
+                                                                              MAT<:AbstractMatrixZonotope{N}}
 
         Overapproximate the exponential map of a zonotope through a composition of matrix 
         zonotopes, following Proposition 3 of [HuangLBS2025](@citet).
 
         ### Input
 
-        - `em` -- an expontial map of a zonotope through a product of matrix zonotopes
-
+        - `em`       -- an expontial map of a zonotope through a product of matrix zonotopes
+        - `Zonotope` -- target type
+        - `k`        -- (default: `2`) the order of the taylor expansion 
+        - `matnorm`  -- (Optional, default: `nothing`) Pre-computed induced ``\\infty``-norm of the matrix zonotope
+        
         ### Output
 
         A zonotope overapproximating the exponential map.
         """
-        function overapproximate(em::ExponentialMap{N,S,MAT}, T::Type{<:Zonotope},
-                                 k::Int=2) where {N,S<:AbstractZonotope,
-                                                  MAT<:AbstractMatrixZonotope{N}}
-            return _overapproximate_emz(em, k)
+        function overapproximate(em::ExponentialMap{N,S,MAT}, ::Type{<:Zonotope},
+                                 k::Int=2;
+                                 matnorm::Union{Real,Nothing}=nothing) where {N,S<:AbstractZonotope,
+                                                                              MAT<:AbstractMatrixZonotope{N}}
+            _matnorm = isnothing(matnorm) ? N(overapproximate_norm(matrix(em).M, Inf)) : N(matnorm)
+            return _overapproximate_emz(em, k, _matnorm)
         end
     end
 end

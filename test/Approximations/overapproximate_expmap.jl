@@ -31,11 +31,17 @@ for N in @tN([Float32, Float64])
     MZ = MatrixZonotope(N[1 -1; -1 2], [N[1.001 -0.999; -0.999 2.005]])
     mzexp =MatrixZonotopeExp(MZ)
     em_spz = ExponentialMap(mzexp, P)
-    Pex = overapproximate(em_spz,SparsePolynomialZonotope, 3)
+    Pex = overapproximate(em_spz,SparsePolynomialZonotope, 5)
+
+    matnorm = norm(MZ, Inf) #in this case the exact norm is the same as the approximated up to rounding errors 
+    Pexnorm = overapproximate(em_spz,SparsePolynomialZonotope, 5, matnorm= matnorm)
+    @test isapprox(center(Pexnorm), center(Pex); atol=1e-2)
+    @test isapprox(genmat_dep(Pexnorm), genmat_dep(Pex); atol=1e-2)
+    @test isapprox(genmat_indep(Pexnorm), genmat_indep(Pex); atol=1e-2)
 
     Z = overapproximate(convert(SimpleSparsePolynomialZonotope, P), Zonotope)
     em_z = ExponentialMap(mzexp, Z)
-    Zex = overapproximate(em_z, Zonotope, 3)
+    Zex = overapproximate(em_z, Zonotope, 5)
 
     # samples from the SPZ and check if the points are contained in the overapproximation
     sampler = LazySets.PolynomialZonotopeSampler()
