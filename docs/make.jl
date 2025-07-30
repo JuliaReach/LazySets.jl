@@ -1,6 +1,6 @@
 using Documenter, LazySets, DocumenterCitations
 import Polyhedra, Optim, ExponentialUtilities, TaylorModels, Distributions,
-       MiniQhull, Symbolics, SymEngine
+       MiniQhull, Symbolics, SymEngine, IntervalMatrices
 
 include("init.jl")
 
@@ -12,7 +12,6 @@ makedocs(; sitename="LazySets.jl",
                                 assets=["assets/aligned.css", "assets/citations.css"],
                                 size_threshold_warn=150 * 2^10),
          pagesonly=true,
-         checkdocs = :exports,
          plugins=[bib],
          pages=[
                 #
