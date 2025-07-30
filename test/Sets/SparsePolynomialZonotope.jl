@@ -14,15 +14,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     G = N[2 1 2; 0 2 2]
     GI = hcat(N[1; 0])
     E = [1 0 3; 0 1 1]
-    PZ = SparsePolynomialZonotope(c, G, GI, E)
+    idx = [1, 3]
+    PZ = SparsePolynomialZonotope(c, G, GI, E, idx)
     # Example 3.1.21 from thesis
-    PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1; 1 2 1], zeros(N, 2, 0), [1 0 1; 0 1 3])
+    PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1; 1 2 1], zeros(N, 2, 0), [1 0 1; 0 1 3], idx)
 
     @test center(PZ) == c
     @test genmat_dep(PZ) == G
     @test genmat_indep(PZ) == GI
     @test expmat(PZ) == E
-    @test indexvector(PZ) == [1, 2]
+    @test indexvector(PZ) == idx
 
     @test dim(PZ) == 2
     @test ngens_dep(PZ) == 3
@@ -36,6 +37,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test genmat_dep(LM) == [1 0.5 1; 0 1 1]
     @test genmat_indep(LM) == hcat([0.5, 0.0])
     @test expmat(LM) == expmat(PZ)
+    @test indexvector(LM) == indexvector(PZ)
 
     M = N[-0.5 0.2; -0.1 0.6]
     LMPZ = linear_map(M, PZ2)
@@ -54,13 +56,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test indexvector(ESPZ) == indexvector(PZ)
     #exact sum: different IDs
     PZ3 = SparsePolynomialZonotope(N[1, -1], N[1 -1; 0 2],
-                                   hcat(N[0; 1]), [1 0; 2 1], [2, 3])
+                                   hcat(N[0; 1]), [1 0; 2 1], [3, 5])
     ESPZ2 = exact_sum(PZ, PZ3)
     @test center(ESPZ2) == N[5, 3]
     @test genmat_dep(ESPZ2) == N[2 1 2 1 -1; 0 2 2 0 2]
     @test genmat_indep(ESPZ2) == N[1 0; 0 1]
     @test expmat(ESPZ2) == [1 0 3 0 0; 0 1 1 1 0; 0 0 0 2 1]
-    @test indexvector(ESPZ2) == [1, 2, 3]
+    @test indexvector(ESPZ2) == [1, 3, 5]
 
     # translate / translate!
     TPZ = translate(PZ, N[1, 2])
