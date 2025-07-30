@@ -172,7 +172,8 @@ end
     return SparsePolynomialZonotope(M * center(P),
                                     M * genmat_dep(P),
                                     M * genmat_indep(P),
-                                    expmat(P))
+                                    expmat(P),
+                                    _indexvector(P))
 end
 
 """
