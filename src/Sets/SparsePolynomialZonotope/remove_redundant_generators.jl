@@ -22,5 +22,5 @@ function remove_redundant_generators(S::SparsePolynomialZonotope)
     c, G, E = _remove_redundant_generators_polyzono(center(S), genmat_dep(S),
                                                     expmat(S))
     GI = remove_zero_columns(genmat_indep(S))
-    return SparsePolynomialZonotope(c, G, GI, E)
+    return SparsePolynomialZonotope(c, G, GI, E, indexvector(S))
 end

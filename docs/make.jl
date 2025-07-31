@@ -1,6 +1,6 @@
 using Documenter, LazySets, DocumenterCitations
 import Polyhedra, Optim, ExponentialUtilities, TaylorModels, Distributions,
-       MiniQhull, Symbolics, SymEngine
+       MiniQhull, Symbolics, SymEngine, IntervalMatrices
 
 include("init.jl")
 
@@ -138,7 +138,8 @@ makedocs(; sitename="LazySets.jl",
                                                    "lib/approximations/approximate.md",
                                                    "lib/approximations/decompose.md",
                                                    "lib/approximations/hausdorff_distance.md",
-                                                   "lib/approximations/overapproximate_norm.md"
+                                                   "lib/approximations/overapproximate_norm.md",
+                                                   "lib/approximations/overapproximate_expmap.md",
                                                    #
                                                    ],
                               "MatrixSets" => [
