@@ -264,7 +264,7 @@ An element in the reset map.
 
 This method relies on the `an_element` implementation for the wrapped set.
 """
-function an_element(rm::ResetMap)
+@validate function an_element(rm::ResetMap)
     return substitute(rm.resets, an_element(rm.X))
 end
 
