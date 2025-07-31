@@ -368,7 +368,7 @@ function overapproximate(P::AbstractSparsePolynomialZonotope,
     if q == 0
         return UnionSetArray([overapproximate(P, Zonotope)])
     end
-    
+
     dom = IA.IntervalBox(IA.interval(-1, 1), q)
     cells = IA.mince(dom, isnothing(partition) ? nsdiv : partition)
     return UnionSetArray([overapproximate(P, Zonotope, c) for c in cells])
@@ -811,7 +811,6 @@ function overapproximate(cap::Intersection{N,<:AbstractPolyhedron,<:AbstractPoly
     return overapproximate_cap_helper(second(cap), first(cap), dirs; kwargs...)
 end
 
-
 """
 	overapproximate(lm::LinearMap{N,S,NM,MAT},
                          ::Type{<:SparsePolynomialZonotope}) where {N,
@@ -838,8 +837,9 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT},
     MZ = matrix(lm)
     n = dim(P)
     T = promote_type(N, NM)
-    
-    SP = SparsePolynomialZonotope(center(P), genmat_dep(P), zeros(N, n, 0), expmat(P), indexvector(P))
+
+    SP = SparsePolynomialZonotope(center(P), genmat_dep(P), zeros(N, n, 0), expmat(P),
+                                  indexvector(P))
     Pd = linear_map(MZ, SP)
 
     if ngens_indep(P) == 0
@@ -849,7 +849,8 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT},
     Z = Zonotope(zeros(T, n), genmat_indep(P))
     Zi = overapproximate(MZ * Z, Zonotope)
 
-    return SparsePolynomialZonotope(center(Pd), genmat_dep(Pd), genmat(Zi), expmat(Pd), indexvector(Pd))
+    return SparsePolynomialZonotope(center(Pd), genmat_dep(Pd), genmat(Zi), expmat(Pd),
+                                    indexvector(Pd))
 end
 
 """
@@ -870,8 +871,10 @@ by recursively applying the overapproximation rule from the inside out.
 An overapproximation of the linear map as a sparse polynomial zonotope.
 """
 function overapproximate(lm::LinearMap{N,S,NM,MAT},
-                         T::Type{<:SparsePolynomialZonotope}) where {N,S<:SparsePolynomialZonotope{N},NM,
-                                                     MAT<:MatrixZonotopeProduct{NM}}
+                         T::Type{<:SparsePolynomialZonotope}) where {N,
+                                                                     S<:SparsePolynomialZonotope{N},
+                                                                     NM,
+                                                                     MAT<:MatrixZonotopeProduct{NM}}
     MZs = factors(matrix(lm))
     P = set(lm)
     reduced = foldr((A, acc) -> overapproximate(A * acc, T), MZs; init=P)

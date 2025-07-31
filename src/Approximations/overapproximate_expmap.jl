@@ -19,7 +19,7 @@ function _compute_inner_powers(B::MatrixZonotope, P::S,
     powers[1] = P
 
     @inbounds for i in 1:k
-        term = overapproximate(scale(1/i, B) * powers[i], S)
+        term = overapproximate(scale(1 / i, B) * powers[i], S)
         powers[i + 1] = term
     end
     return powers
@@ -46,7 +46,7 @@ function _compute_outer_powers(A::MatrixZonotope, in_powers::Vector{S},
 
     @inbounds for i in 2:(k + 1)
         term = in_powers[i]
-        for _ in 1:(i-1)
+        for _ in 1:(i - 1)
             term = overapproximate(A * term, S)
         end
         out_powers[i] = term
@@ -79,7 +79,8 @@ This function computes the approximation:
 ```
 """
 function taylor_expmap_truncation(A::MatrixZonotope, P::S,
-                        k::Int) where {S<:Union{SparsePolynomialZonotope,AbstractZonotope}}
+                                  k::Int) where {S<:Union{SparsePolynomialZonotope,
+                                                          AbstractZonotope}}
     inner = _compute_inner_powers(A, P, k)
     res = reduce(exact_sum, inner)
     return res
@@ -110,7 +111,8 @@ This function computes the approximation:
 ```
 """
 function taylor_expmap_truncation(MZP::MatrixZonotopeProduct, P::S,
-                        k::Int) where {S<:Union{SparsePolynomialZonotope,AbstractZonotope}}
+                                  k::Int) where {S<:Union{SparsePolynomialZonotope,
+                                                          AbstractZonotope}}
     # inner powers on the last factor
     last_factor = factors(MZP)[end]
     terms = _compute_inner_powers(last_factor, P, k)
@@ -147,10 +149,10 @@ function load_intervalmatrices_overapproximation_expmap()
         function taylor_expmap_remainder(Z::AbstractZonotope{N}, matnorm::Real, k::Int) where {N}
             n = dim(Z)
             ϵ = matnorm / (k + 2)
-            
+
             E = IntervalMatrix(fill(IA.interval(N(-1.0), N(1.0)), n, n))
             E *= matnorm^(k + 1) / (factorial(k + 1) * (1 - ϵ))
-            
+
             res = overapproximate(E * Z, Zonotope)
             return res
         end
@@ -203,7 +205,7 @@ function load_intervalmatrices_overapproximation_expmap()
 
         A sparse polynomial zonotope overapproximating the exponential map.
         """
-        function overapproximate(em::ExponentialMap{N,S,MAT}, 
+        function overapproximate(em::ExponentialMap{N,S,MAT},
                                  ::Type{<:SparsePolynomialZonotope},
                                  k::Int=2;
                                  matnorm::Union{Real,Nothing}=nothing) where {N,
@@ -228,7 +230,7 @@ function load_intervalmatrices_overapproximation_expmap()
         - `Zonotope` -- target type
         - `k`        -- (default: `2`) the order of the taylor expansion 
         - `matnorm`  -- (Optional, default: `nothing`) Pre-computed induced ``\\infty``-norm of the matrix zonotope
-        
+
         ### Output
 
         A zonotope overapproximating the exponential map.
