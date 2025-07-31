@@ -1,76 +1,74 @@
 """
-    _compute_inner_powers(A::MatrixZonotope, P::S,
+    _compute_inner_powers(B::MatrixZonotope, P::S,
                                k::Int) where {S<:Union{SparsePolynomialZonotope,
                                                        AbstractZonotope}}
     
-Compute the first `k` inner powers of the matrix zonotope `A` applied to the set `P`.
+Compute the first `k` powers of the matrix zonotope `B` applied to the set `P`.
 
 This function returns a vector of overapproximated sets of the form:
 
 ```math
-    (1/n!) * \\mathcal{A}^n * P
+    (1/i!) * \\mathcal{B}^i * P
 ```
-for `n = 0` to `k`.
+for `i = 0` to `k`.
 """
-function _compute_inner_powers(A::MatrixZonotope, P::S,
+function _compute_inner_powers(B::MatrixZonotope, P::S,
                                k::Int) where {S<:Union{SparsePolynomialZonotope,
                                                        AbstractZonotope}}
-    T = typeof(P)
-    powers = Vector{T}(undef, k + 1)
-    invfact = 1
+    powers = Vector{S}(undef, k + 1)
     powers[1] = P
 
-    @inbounds for n in 1:k
-        invfact /= n
-        term = overapproximate(scale(invfact, A) * powers[n], T)
-        powers[n + 1] = term
+    @inbounds for i in 1:k
+        term = overapproximate(scale(1/i, B) * powers[i], S)
+        powers[i + 1] = term
     end
     return powers
 end
 
 """
-    _compute_outer_powers(B::MatrixZonotope, in_powers::Vector{S},
+    _compute_outer_powers(A::MatrixZonotope, in_powers::Vector{S},
                                k::Int) where {S<:Union{SparsePolynomialZonotope,
                                                        AbstractZonotope}}
 
-Apply `B` repeatedly to each element in `in_powers`, approximating:
+Apply `A` repeatedly to each element in `in_powers`, approximating:
 
 ```math
-B^n * (A^n * P)
+A^i * (B^i * P)
 ```
 
-for `n = 0` to `k`.
+for `i = 0` to `k`.
 """
-function _compute_outer_powers(B::MatrixZonotope, in_powers::Vector{S},
+function _compute_outer_powers(A::MatrixZonotope, in_powers::Vector{S},
                                k::Int) where {S<:Union{SparsePolynomialZonotope,
                                                        AbstractZonotope}}
     out_powers = similar(in_powers)
     out_powers[1] = in_powers[1]
 
-    @inbounds for n in 2:(k + 1)
-        term = in_powers[n]
-        for _ in 1:n
-            term = overapproximate(B * term, S)
+    @inbounds for i in 2:(k + 1)
+        term = in_powers[i]
+        for _ in 1:(i-1)
+            term = overapproximate(A * term, S)
         end
-        out_powers[n] = term
+        out_powers[i] = term
     end
     return out_powers
 end
 
 """
-    taylor_expmap_truncation(A::MatrixZonotope, P::S, k::Int) where S
+    taylor_expmap_truncation(A::MatrixZonotope, P::S, k::Int)
+        where {S<:Union{SparsePolynomialZonotope,AbstractZonotope}}
 
 Compute the k-th order truncated Taylor expansion of the exponential map of a matrix zonotope
 
 ### Input
 
 - `A` -- a matrix zonotope
-- `P` -- a zonotopic set
+- `P` -- a (potentially polynomial) zonotopic set
 - `k` -- the order of the Taylor expansion
 
 ### Output
 
-A zonotopic set representing the k-th order truncated Taylor expansion.
+A (polynomial) zonotopic set representing the k-th order truncated Taylor expansion.
 
 ### Algorithm
 
@@ -82,37 +80,33 @@ This function computes the approximation:
 """
 function taylor_expmap_truncation(A::MatrixZonotope, P::S,
                         k::Int) where {S<:Union{SparsePolynomialZonotope,AbstractZonotope}}
-    if isempty(generators(A))
-        res = linear_map(exp(center(A)), P)
-    else
-        inner = _compute_inner_powers(A, P, k)
-        res = reduce(exact_sum, inner)
-    end
-
+    inner = _compute_inner_powers(A, P, k)
+    res = reduce(exact_sum, inner)
     return res
 end
 
 """
-    taylor_expmap_truncation(MZP::MatrixZonotopeProduct, P::S, k::Int) where S
+    taylor_expmap_truncation(MZP::MatrixZonotopeProduct, P::S, k::Int)
+        where {S<:Union{SparsePolynomialZonotope,AbstractZonotope}}
 
 Compute the k-th order truncated Taylor expansion of the exponential map of a matrix zonotope product
 
 ### Input
 
 - `MZP` -- a matrix zonotope product
-- `P` -- a zonotopic set
+- `P` -- a (potentially polynomial) zonotopic set
 - `k` -- the order of the Taylor expansion
 
 ### Output
 
-A zonotopic set representing the k-th order truncated Taylor expansion.
+A (potentially polynomial) zonotopic set representing the k-th order truncated Taylor expansion.
 
 ### Algorithm
 
 This function computes the approximation:
 
 ```math
-\\displaystyle\\boxplus_{i=0}^k \\frac{\\mathcal{A}^i \\mathcal{B}^i}{i!} X
+\\displaystyle\\boxplus_{i=0}^k \\frac{\\mathcal{A}^i \\mathcal{B}^i}{i!} P
 ```
 """
 function taylor_expmap_truncation(MZP::MatrixZonotopeProduct, P::S,
@@ -135,9 +129,9 @@ function load_intervalmatrices_overapproximation_expmap()
         using .IntervalMatrices: IntervalMatrix
 
         """
-            taylor_expmap_remainder(P::S, matnorm::Real, k::Int) where S
+            taylor_expmap_remainder(Z::AbstractZonotope{N}, matnorm::Real, Int) where {N}
 
-        Compute the Lagrange remainder term of the k-th order truncated Taylor expansion 
+        Overapproximate the Lagrange remainder term of the k-th order truncated Taylor expansion 
         of the exponential map of a matrix zonotope applied to a zonotopic set.
 
         ### Input
@@ -150,19 +144,15 @@ function load_intervalmatrices_overapproximation_expmap()
 
         A zonotope over-approximating the remainder term of the Taylor expansion.
         """
-        function taylor_expmap_remainder(P::S, matnorm::Real,
-                                         k::Int) where {S<:Union{SparsePolynomialZonotope,
-                                                                 AbstractZonotope}}
-            n = dim(P)
-            N = eltype(P)
-
+        function taylor_expmap_remainder(Z::AbstractZonotope{N}, matnorm::Real, k::Int) where {N}
+            n = dim(Z)
             ϵ = matnorm / (k + 2)
-            ε = IntervalMatrix(fill(IA.interval(N(-1.0), N(1.0)), n, n))
-            ε *= matnorm^(k + 1) / (factorial(k + 1) * (1 - ϵ))
-
-            Zp = overapproximate(P, Zonotope)
-            rhs = overapproximate(ε * Zp, Zonotope)
-            return rhs
+            
+            E = IntervalMatrix(fill(IA.interval(N(-1.0), N(1.0)), n, n))
+            E *= matnorm^(k + 1) / (factorial(k + 1) * (1 - ϵ))
+            
+            res = overapproximate(E * Z, Zonotope)
+            return res
         end
 
         function _overapproximate_emz(em::ExponentialMap{N,S,MAT},
@@ -174,13 +164,18 @@ function load_intervalmatrices_overapproximation_expmap()
             MZP = matrix(em).M
             P = set(em)
 
+            if MZP isa MatrixZonotope && isempty(generators(MZP))
+                return exponential_map(center(MZP), P)
+            end
+
             ϵ = matnorm / (k + 2)
-            if ϵ > 1
+            if ϵ >= 1
                 @warn "k should be chosen such that ϵ<1 " ϵ
             end
 
             tayexp = taylor_expmap_truncation(MZP, P, k)
-            lagrem = taylor_expmap_remainder(P, matnorm, k)
+            Z = P isa AbstractZonotope ? P : overapproximate(P, Zonotope)
+            lagrem = taylor_expmap_remainder(Z, matnorm, k)
             P_approx = minkowski_sum(tayexp, lagrem)
 
             return remove_redundant_generators(P_approx)
