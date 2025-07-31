@@ -118,7 +118,7 @@ for exp_backend in [ExponentialUtilities, Expokit]
                 1.9033524001317403, 0.5475680039922208, 1.3374631184550847]
 
         # matrix zonotope exponential
-        A = rand(MatrixZonotope, N=N, dim= (n, n))
+        A = rand(MatrixZonotope; N=N, dim=(n, n))
         expMZ = MatrixZonotopeExp(A)
         em = ExponentialMap(expMZ, b)
         @test em isa ExponentialMap{N}

@@ -87,7 +87,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # incompatible dimensions
     C_c = N[1 2; 3 4; 5 6]
     C_gens = [N[2 0; 1 -1; -3 0]]
-    C_mz = MatrixZonotope(C_c, C_gens) 
+    C_mz = MatrixZonotope(C_c, C_gens)
     @test_throws AssertionError MatrixZonotopeProduct(A_mz, C_mz)
 
     # constructor from 2
@@ -102,7 +102,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test size(MZP, 2) == 3
 
     # chainable multiplication
-    MZP_chain = A_mz * B_mz * MatrixZonotope(N[1 0; 0 1; 1 1], [N[1 1; 0 0; 0 -2], N[0 1; 1 0; 1 -1]])
+    MZP_chain = A_mz * B_mz *
+                MatrixZonotope(N[1 0; 0 1; 1 1], [N[1 1; 0 0; 0 -2], N[0 1; 1 0; 1 -1]])
     MZP2 = C_mz * B_mz
     @test nfactors(MZP_chain) == 3
     @test MZP_chain isa MatrixZonotopeProduct{N}

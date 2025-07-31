@@ -1,4 +1,3 @@
-
 using Test, LazySets, LinearAlgebra
 using IntervalMatrices: IntervalMatrix
 using RangeEnclosures
@@ -26,12 +25,12 @@ for N in @tN([Float32, Float64])
     @test Pex == P
 
     MZ = MatrixZonotope(N[1 -1; -1 2], [N[1.001 -0.999; -0.999 2.005]])
-    mzexp =MatrixZonotopeExp(MZ)
+    mzexp = MatrixZonotopeExp(MZ)
     em_spz = ExponentialMap(mzexp, P)
-    Pex = overapproximate(em_spz,SparsePolynomialZonotope, 5)
+    Pex = overapproximate(em_spz, SparsePolynomialZonotope, 5)
 
-    matnorm = norm(MZ, Inf) #in this case the exact norm is the same as the approximated up to rounding errors 
-    Pexnorm = overapproximate(em_spz,SparsePolynomialZonotope, 5, matnorm= matnorm)
+    matnorm = norm(MZ, Inf) #in this case the exact norm is the same as the approximated up to rounding errors
+    Pexnorm = overapproximate(em_spz, SparsePolynomialZonotope, 5; matnorm=matnorm)
     @test isapprox(center(Pexnorm), center(Pex); atol=1e-2)
     @test isapprox(genmat_dep(Pexnorm), genmat_dep(Pex); atol=1e-2)
     @test isapprox(genmat_indep(Pexnorm), genmat_indep(Pex); atol=1e-2)

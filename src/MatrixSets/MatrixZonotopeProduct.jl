@@ -32,7 +32,9 @@ MatrixZonotopeProduct(ms::MatrixZonotope...) = MatrixZonotopeProduct(collect(ms)
 Base.:*(A::MatrixZonotope, B::MatrixZonotope) = MatrixZonotopeProduct([A, B])
 Base.:*(P::MatrixZonotopeProduct, B::MatrixZonotope) = MatrixZonotopeProduct(vcat(P.factors, B))
 Base.:*(A::MatrixZonotope, P::MatrixZonotopeProduct) = MatrixZonotopeProduct(vcat(A, P.factors))
-Base.:*(P1::MatrixZonotopeProduct, P2::MatrixZonotopeProduct) = MatrixZonotopeProduct(vcat(P1.factors, P2.factors))
+function Base.:*(P1::MatrixZonotopeProduct, P2::MatrixZonotopeProduct)
+    return MatrixZonotopeProduct(vcat(P1.factors, P2.factors))
+end
 
 """
     factors(MZP::MatrixZonotopeProduct)
@@ -55,4 +57,4 @@ end
 Base.size(P::MatrixZonotopeProduct) = (size(P.factors[1].A0, 1), size(P.factors[end].A0, 2))
 Base.size(P::MatrixZonotopeProduct, d::Int) = size(P)[d]
 
-Base.:(==)(P1::MatrixZonotopeProduct, P2::MatrixZonotopeProduct)= P1.factors == P2.factors
+Base.:(==)(P1::MatrixZonotopeProduct, P2::MatrixZonotopeProduct) = P1.factors == P2.factors

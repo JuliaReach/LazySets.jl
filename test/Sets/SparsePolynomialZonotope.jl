@@ -17,7 +17,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     idx = [1, 3]
     PZ = SparsePolynomialZonotope(c, G, GI, E, idx)
     # Example 3.1.21 from thesis
-    PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1; 1 2 1], zeros(N, 2, 0), [1 0 1; 0 1 3], idx)
+    PZ2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1; 1 2 1], zeros(N, 2, 0), [1 0 1; 0 1 3],
+                                   idx)
 
     @test center(PZ) == c
     @test genmat_dep(PZ) == G
@@ -211,7 +212,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # linear map with matrix zonotope
     MZ = MatrixZonotope(N[1 1; -1 1], [N[1 0; 1 2]])
-    P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], Matrix{N}(undef, 2, 0), [2 1; 0 1; 1 0], [1, 2, 3])
+    P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], Matrix{N}(undef, 2, 0), [2 1; 0 1; 1 0],
+                                 [1, 2, 3])
     res = linear_map(MZ, P)
     @test center(res) == [0, -2]
     @test genmat_dep(res) == hcat(N[1 0; -1 -2], N[1, -1], N[1 1; 1 -1])
@@ -224,7 +226,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res == linear_map(N[1 1; -1 1], P)
 
     # case: error
-    P_err = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], hcat(N[0, 1]), [2 1; 0 1; 1 0], [1, 2, 3])
+    P_err = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], hcat(N[0, 1]), [2 1; 0 1; 1 0],
+                                     [1, 2, 3])
     @test_throws ErrorException linear_map(MZ, P_err)
 
     #MZP linear map
@@ -234,16 +237,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res == linear_map(MZ, P_in)
 
     # Example 3.1.29 from thesis
-    PZ1 = SparsePolynomialZonotope(N[-5, 0], N[2 0 2; 0 2 2], Matrix{N}(undef, 2, 0), [1 0 1; 0 1 1])
-    PZ2 = SparsePolynomialZonotope(N[3, 3], N[1 -2 2; 2 3 1], hcat(N[1//2; 0]), [1 0 2; 0 1 1])
+    PZ1 = SparsePolynomialZonotope(N[-5, 0], N[2 0 2; 0 2 2], Matrix{N}(undef, 2, 0),
+                                   [1 0 1; 0 1 1])
+    PZ2 = SparsePolynomialZonotope(N[3, 3], N[1 -2 2; 2 3 1], hcat(N[1 // 2; 0]), [1 0 2; 0 1 1])
     PZ_lc = linear_combination(PZ1, PZ2)
     # no reasonable tests available here
     @test PZ_lc isa SimpleSparsePolynomialZonotope{N}
-    @test center(PZ_lc) == N[-1, 3//2]
+    @test center(PZ_lc) == N[-1, 3 // 2]
     PZ_ch = convex_hull(PZ1, PZ2)
     # no reasonable tests available here
     @test PZ_ch isa SimpleSparsePolynomialZonotope{N}
-    @test center(PZ_ch) == N[-1, 3//2]
+    @test center(PZ_ch) == N[-1, 3 // 2]
     # mixed linear_combination
     PZ_lc = linear_combination(PZ1, ZeroSet{N}(2))
     @test PZ_lc isa SimpleSparsePolynomialZonotope{N}

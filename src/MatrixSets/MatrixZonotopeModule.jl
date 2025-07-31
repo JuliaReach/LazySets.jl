@@ -16,14 +16,14 @@ include("AbstractMatrixZonotope.jl")
 include("MatrixZonotope.jl")
 include("MatrixZonotopeProduct.jl")
 include("MatrixZonotopeExp.jl")
+include("center.jl")
+include("norm.jl")
+include("rand.jl")
 include("linear_map.jl")
 include("scale.jl")
-include("center.jl")
-include("rand.jl")
-include("norm.jl")
 
 include("generators.jl")
 include("indexvector.jl")
 include("ngens.jl")
 
-end #module
+end  # module

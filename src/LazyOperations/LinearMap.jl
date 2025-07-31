@@ -96,13 +96,15 @@ EmptySet{Int64}(3)
 ```
 """
 struct LinearMap{N,S<:LazySet{N},NM,
-                 MAT<:Union{AbstractMatrix{NM},AbstractMatrixZonotope{NM}}} <: AbstractAffineMap{N,S}
+                 MAT<:Union{AbstractMatrix{NM},AbstractMatrixZonotope{NM}}} <:
+       AbstractAffineMap{N,S}
     M::MAT
     X::S
 
     # default constructor with dimension check
-    function LinearMap(M::MAT, X::S) where {N,S<:LazySet{N},NM,
-                                            MAT<:Union{AbstractMatrix{NM},AbstractMatrixZonotope{NM}}}
+    function LinearMap(M::MAT,
+                       X::S) where {N,S<:LazySet{N},NM,
+                                    MAT<:Union{AbstractMatrix{NM},AbstractMatrixZonotope{NM}}}
         @assert dim(X) == size(M, 2) "a linear map of size $(size(M)) cannot " *
                                      "be applied to a set of dimension $(dim(X))"
         return new{N,S,NM,MAT}(M, X)
