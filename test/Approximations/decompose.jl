@@ -1,3 +1,10 @@
+using Test, LazySets
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     # =====================================
     # Run decompose for different set types
@@ -78,7 +85,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test length(d.array) == 3
 end
 
-# tests that do not work with Rational{Int}
 for N in @tN([Float64, Float32])
     # =============================
     # Check that Issue #43 is fixed

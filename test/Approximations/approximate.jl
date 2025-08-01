@@ -1,3 +1,10 @@
+using Test, LazySets
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     # approximate rectification by rectifying the vertices
     # - exact approximation

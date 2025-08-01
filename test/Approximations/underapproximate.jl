@@ -1,3 +1,11 @@
+using Test, LazySets
+import Ipopt, Polyhedra, SCS, SetProg
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     X = Hyperrectangle(zeros(N, 2), ones(N, 2))
     U = underapproximate(X, BoxDirections{N}(2))

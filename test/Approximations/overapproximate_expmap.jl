@@ -1,6 +1,10 @@
-using Test, LazySets, LinearAlgebra
-using IntervalMatrices: IntervalMatrix
-using RangeEnclosures
+using Test, LazySets
+import IntervalMatrices, RangeEnclosures
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
 for N in @tN([Float32, Float64, Rational{Int}])
     MZ = MatrixZonotope(N[1 1; -1 1], [N[1 0; 1 2]])

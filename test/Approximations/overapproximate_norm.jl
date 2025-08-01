@@ -1,5 +1,10 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Comparison: _geq
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
 for N in @tN([Float64, Float32])
     for _ in 1:5
