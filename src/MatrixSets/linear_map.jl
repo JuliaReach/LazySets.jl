@@ -14,7 +14,7 @@ A matrix zonotope with transformed center and generators
 function linear_map(M::AbstractMatrix, MZ::MatrixZonotope)
     @assert size(M, 2) == size(MZ, 1) "incompatible dimensions"
     gens = [M * Ai for Ai in generators(MZ)]
-    return MatrixZonotope(M * center(MZ), gens)
+    return MatrixZonotope(M * center(MZ), gens, indexvector(MZ))
 end
 
 """
@@ -33,5 +33,5 @@ A matrix zonotope with transformed center and generators
 function linear_map(MZ::MatrixZonotope, M::AbstractMatrix)
     @assert size(MZ, 2) == size(M, 1) "incompatible dimensions"
     gens = [Ai * M for Ai in generators(MZ)]
-    return MatrixZonotope(center(MZ) * M, gens)
+    return MatrixZonotope(center(MZ) * M, gens, indexvector(MZ))
 end
