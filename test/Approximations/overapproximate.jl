@@ -1,6 +1,17 @@
-using LazySets.Approximations: project
-
+using LazySets, Test, LinearAlgebra, SparseArrays
+using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
+using LazySets.ReachabilityBase.Comparison: _leq, _geq
+using IntervalMatrices: ±, IntervalMatrix
+import IntervalArithmetic as IA
+using IntervalArithmetic: IntervalBox
+import IntervalConstraintProgramming as ICP
+import Optim, Polyhedra, TaylorModels
 using LazySets.Approximations: get_linear_coeffs, _nonlinear_polynomial
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
 for N in @tN([Float64, Float32, Rational{Int}])
     c = N[0, 0]
@@ -180,7 +191,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     res = overapproximate(MZ * P, SparsePolynomialZonotope)
     @test res == linear_map(N[1 1; -1 1], P)
 
-    #case: id_mz ≠ id_spz
+    # case: id_mz ≠ id_spz
     MZ = MatrixZonotope(N[1 1; -1 1], [N[1 0; 1 2]], [4])
     res = overapproximate(MZ * P, SparsePolynomialZonotope)
     @test center(res) == [0, -2]
@@ -188,20 +199,19 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test genmat_indep(res) == hcat(N[1, 1], N[0, 2], N[0, 0])
     @test expmat(res) == hcat([2 1; 0 1; 1 0; 0 0], [0, 0, 0, 1], [2 1; 0 1; 1 0; 1 1])
 
-    #case: matrix zonotope product
+    # case: matrix zonotope product
     MZ2 = MatrixZonotope(N[1.1 0.9; -1.1 1.1], [N[1.1 -0.1; 0.9 2.1]])
     res = overapproximate(MZ * MZ2 * P, SparsePolynomialZonotope)
     P_in = overapproximate(MZ2 * P, SparsePolynomialZonotope)
     @test res == overapproximate(MZ * P_in, SparsePolynomialZonotope)
 
-    #case: no ind generators 
+    # case: no ind generators
     P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], Matrix{N}(undef, 2, 0), [2 1; 0 1; 1 0],
                                  [1, 2, 3])
     res = overapproximate(MZ * P, SparsePolynomialZonotope)
-    @test res == linear_map(MZ, P) #test fallback
+    @test res == linear_map(MZ, P)  # test fallback
 end
 
-# tests that do not work with Rational{Int}
 for N in @tN([Float64, Float32])
     # useful for benchmarking overapproximate and LinearMap's support vector
     # (see #290)

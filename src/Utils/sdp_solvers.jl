@@ -12,8 +12,8 @@ function set_sdp_solver!(solver::Module)
 end
 
 function get_sdp_solver()
-    ismissing(sdp_solver) && error("no semi-definite-SDP solver is loaded; load one of these " *
-                                   "packages: $SUPPORTED_SDP_PACKAGES")
+    ismissing(sdp_solver) && error("no semidefinite-programming (SDP) solver is loaded; load " *
+                                   "one of these packages: $SUPPORTED_SDP_PACKAGES")
     return sdp_solver
 end
 

@@ -1,3 +1,12 @@
+using Test, LazySets, LinearAlgebra
+using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+import Optim
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     # unit vector
     for n in 1:3
@@ -132,8 +141,10 @@ for N in [Float64]
     end
 end
 
-# default Float64 constructors
-BoxDirections(3)
-OctDirections(3)
-BoxDiagDirections(3)
-SphericalDirections(3)
+let
+    # default Float64 constructors
+    BoxDirections(3)
+    OctDirections(3)
+    BoxDiagDirections(3)
+    SphericalDirections(3)
+end

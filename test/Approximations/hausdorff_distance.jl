@@ -1,3 +1,10 @@
+using Test, LazySets
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 _in_interval(v, x, ε) = x - ε <= v <= x + ε
 
 for N in @tN([Float64, Float32, Rational{Int}])
@@ -13,8 +20,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test _in_interval(dist, N(0), ε)
 end
 
-if test_suite_polyhedra
-    for N in [Float64]
+for N in [Float64]
+    @static if isdefined(@__MODULE__, :Polyhedra)
         ε = N(1e-3)
 
         b1 = N[1 0; 0 1] * BallInf(zeros(N, 2), N(1))
