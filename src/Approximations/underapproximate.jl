@@ -125,7 +125,7 @@ Underapproximate a polyhedral set by the maximum-volume ellipsoid.
 - `P`         -- polyhedral set
 - `Ellipsoid` -- type for dispatch
 - `backend`   -- (optional, default: `default_sdp_solver()`) backend to solve
-                 the semi-definite program
+                 the semidefinite program
 - `interior_point` -- (optional, default: `chebyshev_center_radius(P)[1]`) an
                       interior point of the ellipsoid (needed for the algorithm:
                       see below for details)
