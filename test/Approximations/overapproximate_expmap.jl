@@ -1,5 +1,5 @@
-using Test, LazySets
-import IntervalMatrices, RangeEnclosures
+using Test, LazySets, SparseArrays
+import ExponentialUtilities, IntervalMatrices, RangeEnclosures
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -28,7 +28,8 @@ for N in @tN([Float32, Float64])
     Pex = overapproximate(em, SparsePolynomialZonotope, 2)
     @test Pex == P
 
-    MZ = MatrixZonotope(N[1 -1; -1 2], [N[1.001 -0.999; -0.999 2.005]])
+    M = N[1 1; -1 1]
+    MZ = MatrixZonotope(M, [N[1.001 -0.999; -0.999 2.005]])
     mzexp = MatrixZonotopeExp(MZ)
     em_spz = ExponentialMap(mzexp, P)
     Pex = overapproximate(em_spz, SparsePolynomialZonotope, 5)
@@ -47,4 +48,11 @@ for N in @tN([Float32, Float64])
     sampler = LazySets.PolynomialZonotopeSampler()
     pts = sample(Pex, 10; sampler=sampler)
     @test all(p ∈ Zex for p in pts)
+
+    # matrix
+    mzexp = SparseMatrixExp(sparse(M))
+    em = ExponentialMap(mzexp, P)
+    MPex = overapproximate(em, SparsePolynomialZonotope, 2)
+    MZex = overapproximate(MPex, Zonotope)
+    @test MZex ⊆ Zex
 end
