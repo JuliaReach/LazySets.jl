@@ -70,6 +70,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     lm_r = linear_map(MZ, M)
     @test center(lm_r) == [2 -1; 3 0]
     @test generators(lm_r) == [[1 -1; 2 0], [3 -2; -1 1]]
+    @test indexvector(lm_l) == indexvector(lm_r) && indexvector(lm_r) == indexvector(MZ)
 end
 
 for N in @tN([Float64, Float32, Rational{Int}])
