@@ -245,3 +245,9 @@ function overapproximate(em::ExponentialMap{N,S,MAT}, ::Type{<:Zonotope},
     _matnorm = isnothing(matnorm) ? N(overapproximate_norm(matrix(em).M, Inf)) : N(matnorm)
     return _overapproximate_emz(em, k, _matnorm)
 end
+
+function overapproximate(em::ExponentialMap{N,S,MAT}, ::Type{<:SparsePolynomialZonotope}, k::Int=2;
+                         matnorm::Union{Real,Nothing}=nothing) where {N,S<:SparsePolynomialZonotope,
+                                                                      MAT<:SparseMatrixExp{N}}
+    return linear_map(matrix(em), set(em))
+end
