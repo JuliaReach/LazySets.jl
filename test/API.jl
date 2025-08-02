@@ -1,13 +1,9 @@
-@testset "API loading" begin
-    using LazySets.API
-end
+using LazySets.API, Test
 
-@testset "API set" begin
+let
     struct MySet <: API.LazySet end
     MySet()
-end
 
-@testset "API operations" begin
     X = MySet()
 
     # unary set operations
