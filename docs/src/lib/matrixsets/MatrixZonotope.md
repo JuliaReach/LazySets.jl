@@ -56,7 +56,7 @@ factors
 nfactors
 ```
 
-## Operations 
+## Operations
 Undocumented implementations:
 * [`size`](@ref size(::AbstractMatrixZonotope))
 
@@ -64,6 +64,6 @@ Undocumented implementations:
 ```@docs
 MatrixZonotopeExp
 ```
-## Operations 
+## Operations
 Undocumented implementations:
 * [`size`](@ref size(::AbstractMatrixZonotope))

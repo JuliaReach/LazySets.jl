@@ -67,7 +67,7 @@ by recursively applying the `linear_map` method from the inside out.
 ### Input
 
 - `MZ` -- a matrix zonotope product
-- `P` -- a sparse polynomial zonotope 
+- `P` -- a sparse polynomial zonotope
 
 ### Output
 
