@@ -1,5 +1,5 @@
 """
-    merge_id(id1::AbstractVector{Int}, id2::AbstractVector{Int}, 
+    merge_id(id1::AbstractVector{Int}, id2::AbstractVector{Int},
              E₁::AbstractMatrix{N}, E₂::AbstractMatrix{N}) where {N}
 
 Align two identifier vectors and their corresponding exponent matrices in compatible form.
@@ -13,8 +13,8 @@ Align two identifier vectors and their corresponding exponent matrices in compat
 
 ### Output
 
-- `Ē₁::Matrix{N}`: Aligned version of `E₁` 
-- `Ē₂::Matrix{N}`: Aligned version of `E₂` 
+- `Ē₁::Matrix{N}`: Aligned version of `E₁`
+- `Ē₂::Matrix{N}`: Aligned version of `E₂`
 - `idx::Vector{Int}`: Merged identifier vector, containing all elements of `id1` and any new ones from `id2`.
 
 ### Algorithm

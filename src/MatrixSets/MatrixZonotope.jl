@@ -1,5 +1,5 @@
 """
-    MatrixZonotope{N, MN<:AbstractMatrix{N}}(A0::MN, Ai::Vector{MN}, 
+    MatrixZonotope{N, MN<:AbstractMatrix{N}}(A0::MN, Ai::Vector{MN},
                     idx::Vector{Int}=collect(1:length(Aᵢ))) <: AbstractMatrixZonotope{N}
 
 Type that represents a matrix zonotope.
