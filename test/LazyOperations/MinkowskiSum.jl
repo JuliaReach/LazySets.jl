@@ -1,3 +1,11 @@
+using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     # Sum of 2D centered balls in norm 1 and infinity
     b1 = BallInf(N[0, 0], N(2))
@@ -278,7 +286,7 @@ for N in [Float64]
     @test length(clist) == 4 && P ⊆ H && H ⊆ P
 
     # concrete cartesian product
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         X = BallInf(N[0, 0], N(1)) ⊕ Singleton(N[1, 2])
         Y = Ball1(N[1, 1], N(1))
         A = cartesian_product(X, Y; algorithm="vrep")

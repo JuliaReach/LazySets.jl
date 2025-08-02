@@ -1,3 +1,11 @@
+using LazySets, Test, LinearAlgebra
+using LazySets.ReachabilityBase.Arrays: ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     # π/2 trigonometric rotation
     b = BallInf(N[1, 2], N(1))
@@ -146,7 +154,7 @@ end
 for N in [Float64]
     b = BallInf(N[0, 0], N(1))
 
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         # concrete intersection with lazy linear map
         M = N[2 3; 1 2]
         L = M * b

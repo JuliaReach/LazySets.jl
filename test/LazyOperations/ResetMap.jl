@@ -1,3 +1,11 @@
+using LazySets, Test, LinearAlgebra, SparseArrays
+using LazySets.ReachabilityBase.Arrays: ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     # constructor
     b = BallInf(N[2, 2, 2], N(1))
@@ -51,7 +59,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test vector(rm) == sparsevec([1], N[4], 3)
 
     # constraints_list
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         p = HPolytope(constraints_list(rm))
         @test N[4, 1, 0] ∈ p && N[4, 3, 0] ∈ p && N[2, 2, 2] ∉ p
     end
@@ -65,16 +73,18 @@ for N in @tN([Float64, Float32, Rational{Int}])
                          HalfSpace(N[0, 0, -1], N(0))])
 
     # constraints list of a lazy set
-    if test_suite_polyhedra && N == Float64
-        rm_id = ResetMap(Matrix(one(N) * I, 3, 3) * b, r)
-        X = HPolytope(constraints_list(rm))
-        Y = HPolytope(constraints_list(rm_id))
-        @test isequivalent(X, Y)
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        if N == Float64
+            rm_id = ResetMap(Matrix(one(N) * I, 3, 3) * b, r)
+            X = HPolytope(constraints_list(rm))
+            Y = HPolytope(constraints_list(rm_id))
+            @test isequivalent(X, Y)
+        end
     end
 
     # concretize
     Z = concretize(rm)
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         @test isequivalent(Z, VPolytope([N[4, 1, 0], N[4, 3, 0]]))
     end
 end
