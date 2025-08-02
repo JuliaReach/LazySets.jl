@@ -22,7 +22,7 @@ independent generator matrix of `S`. We perform the following simplifications:
 function remove_redundant_generators(S::SparsePolynomialZonotope)
     c, G, E = _remove_redundant_generators_polyzono(center(S), genmat_dep(S),
                                                     expmat(S))
-    Z = Zonotope(zeros(dim(S)), genmat_indep(S))
+    Z = Zonotope(zeros(eltype(S), dim(S)), genmat_indep(S))
     Zred = remove_redundant_generators(Z)
     GI = genmat(Zred)
     return SparsePolynomialZonotope(c, G, GI, E, indexvector(S))
