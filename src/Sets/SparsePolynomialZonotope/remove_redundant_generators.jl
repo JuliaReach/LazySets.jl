@@ -13,17 +13,14 @@ Let `G` be the dependent generator matrix, `E` the exponent matrix, and `GI` the
 independent generator matrix of `S`. We perform the following simplifications:
 
 - Remove zero columns in `G` and the corresponding columns in `E`.
-- For each generator ``g_j`` in `GI`, we find all other generators that are linearly dependent with ``g_j``
-  and  combine those generators into a single generator.
+- For each generator ``g_j`` in `GI`, we find all other generators that are linearly
+  dependent with ``g_j`` and  combine those generators into a single generator.
 - For zero columns in `E`, add the corresponding column in `G` to the center.
 - Group repeated columns in `E` together by summing the corresponding columns in
   `G`.
 """
 function remove_redundant_generators(S::SparsePolynomialZonotope)
-    c, G, E = _remove_redundant_generators_polyzono(center(S), genmat_dep(S),
-                                                    expmat(S))
-    Z = Zonotope(zeros(eltype(S), dim(S)), genmat_indep(S))
-    Zred = remove_redundant_generators(Z)
-    GI = genmat(Zred)
+    c, G, E = _remove_redundant_generators_polyzono(center(S), genmat_dep(S), expmat(S))
+    GI = remove_redundant_generators(genmat_indep(S))
     return SparsePolynomialZonotope(c, G, GI, E, indexvector(S))
 end

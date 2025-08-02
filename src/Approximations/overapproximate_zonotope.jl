@@ -240,12 +240,9 @@ This method implements [Kochdumper21a; Proposition 3.1.14](@citet).
 function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope})
     cnew, Gnew = _zonotope_overapprox(center(P), genmat_dep(P), expmat(P))
     if ngens_indep(P) > 0
-        Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
-        Z = remove_redundant_generators(Z)
-    else
-        Z = Zonotope(cnew, Gnew)
+        Gnew = remove_redundant_generators(hcat(Gnew, genmat_indep(P)))
     end
-    return Z
+    return Zonotope(cnew, Gnew)
 end
 
 """
@@ -290,13 +287,10 @@ function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope}
 
     # handle independent generators
     if ngens_indep(P) > 0
-        Z = Zonotope(cnew, hcat(Gnew, genmat_indep(P)))
-        Z = remove_redundant_generators(Z)
-    else
-        Z = Zonotope(cnew, Gnew)
+        Gnew = remove_redundant_generators(hcat(Gnew, genmat_indep(P)))
     end
 
-    return Z
+    return Zonotope(cnew, Gnew)
 end
 
 """
@@ -644,11 +638,10 @@ function load_taylormodels_overapproximation()
                 G[i, n + i] = abs(rem_nonlin.hi - α)
             end
 
-            Z = Zonotope(c, G)
             if remove_redundant_generators
-                Z = LazySets.remove_redundant_generators(Z)
+                G = LazySets.remove_redundant_generators(G)
             end
-            return Z
+            return Zonotope(c, G)
         end
     end
 end  # quote / load_taylormodels_overapproximation
@@ -1284,7 +1277,7 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT},
     GZ = genmat(Z)
 
     c = center(MZ) * cZ
-    # generator 
+    # generator
     G = Matrix{T}(undef, n, h * (w + 1) + w)
     G[:, 1:h] = center(MZ) * GZ
     @inbounds for (i, Ai) in enumerate(generators(MZ))
