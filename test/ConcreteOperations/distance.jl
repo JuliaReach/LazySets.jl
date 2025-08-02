@@ -1,3 +1,10 @@
+using LazySets, Test
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     H1 = BallInf(N[0, 0], N(1))
     H2 = BallInf(N[-1 // 10, 0], N(1))

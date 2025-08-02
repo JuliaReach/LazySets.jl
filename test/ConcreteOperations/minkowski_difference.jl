@@ -1,3 +1,10 @@
+using LazySets, Test
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     # intervals, nonempty difference
     X = Interval(N(1), N(3))
@@ -53,7 +60,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 end
 
 for N in [Float64]
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         # concrete Minkowski difference for unbounded P (HPolyhedron)
         mx1 = N(2)
         mx2 = N(5)

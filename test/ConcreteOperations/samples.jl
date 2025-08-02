@@ -1,4 +1,4 @@
-using Distributions: Uniform, Normal, MultivariateNormal
+using LazySets, Test
 using LazySets: DefaultUniform
 
 for N in [Float64]
@@ -35,23 +35,31 @@ for N in [Float64]
         @test all(v ∈ P for v in p_samples)
     end
 
-    # specifying a distribution from Distributions.jl
-    @test LazySets.RejectionSampler(P2, Uniform).distribution ==
-          [Uniform(-3.0, 1.0), Uniform(-4.0, 2.0)]
-    @test LazySets.RejectionSampler(P2, Normal).distribution ==
-          [Normal(-3.0, 1.0), Normal(-4.0, 2.0)]
+    @static if isdefined(@__MODULE__, :Distributions)
+        using Distributions: Uniform, Normal
+
+        # specifying a distribution from Distributions.jl
+        @test LazySets.RejectionSampler(P2, Uniform).distribution ==
+              [Uniform(-3.0, 1.0), Uniform(-4.0, 2.0)]
+        @test LazySets.RejectionSampler(P2, Normal).distribution ==
+              [Normal(-3.0, 1.0), Normal(-4.0, 2.0)]
+    end
 
     # test univariate distributions
     X = Interval(1, 2.0)
     v = sample(X, 5)
     @test all(vi ∈ X for vi in v)
-    d = Normal(1.5, 0.5)
 
-    v = sample(X, 5; sampler=LazySets.RejectionSampler(d))
-    @test all(vi ∈ X for vi in v)
+    @static if isdefined(@__MODULE__, :Distributions)
+        using Distributions: Normal
 
-    v = sample(X, 5; sampler=LazySets.RejectionSampler([d]))
-    @test all(vi ∈ X for vi in v)
+        d = Normal(1.5, 0.5)
+        v = sample(X, 5; sampler=LazySets.RejectionSampler(d))
+        @test all(vi ∈ X for vi in v)
+
+        v = sample(X, 5; sampler=LazySets.RejectionSampler([d]))
+        @test all(vi ∈ X for vi in v)
+    end
 
     v = sample(X, 5; sampler=LazySets.RejectionSampler([DefaultUniform(1, 2)]))
     @test all(vi ∈ X for vi in v)
@@ -59,10 +67,14 @@ for N in [Float64]
     v = sample(X, 5; sampler=LazySets.RejectionSampler(DefaultUniform(1, 2)))
     @test all(vi ∈ X for vi in v)
 
-    # test multivariate distribution
-    H = rand(Hyperrectangle; dim=2)
-    sampler = LazySets.RejectionSampler(MultivariateNormal(N[1 0; 0 1.0]); tight=true)
-    v = sample(H, 5; sampler=sampler)
+    @static if isdefined(@__MODULE__, :Distributions)
+        using Distributions: MultivariateNormal
+
+        # test multivariate distribution
+        H = rand(Hyperrectangle; dim=2)
+        sampler = LazySets.RejectionSampler(MultivariateNormal(N[1 0; 0 1.0]); tight=true)
+        v = sample(H, 5; sampler=sampler)
+    end
 
     # including vertices
     for k in 0:4

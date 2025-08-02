@@ -1,3 +1,12 @@
+using LazySets, Test
+IA = LazySets.IA
+using LazySets.IA: IntervalBox
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     # interval in union of intervals
     X = Interval(N(0), N(1))
@@ -78,6 +87,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Z = Zonotope(N[2], zeros(N, 1, 0))
     P = convert(HPolytope, Interval(N(1), N(3)))
     @test Z ⊆ P
+end
+
+for N in [Float64]
     # rounding error
     Z = Zonotope([-8.0, 8.0],
                  [-1.0000000000000002 0.7000000000000002;

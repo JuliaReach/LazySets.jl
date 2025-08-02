@@ -1,3 +1,10 @@
+using LazySets, Test
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     # Interval with HalfSpace
     X = Interval(N(1), N(2))

@@ -1,4 +1,12 @@
-for N in [Float64, Rational{Int}]
+using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: ispermutation, is_cyclic_permutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
+for N in @tN([Float64, Rational{Int}])
     # ====================================
     # Concrete convex hull for point sets
     # ====================================
@@ -8,8 +16,12 @@ for N in [Float64, Rational{Int}]
     @test convex_hull([[N(0)]]) == [[N(0)]]
     @test ispermutation(convex_hull([N[2], N[1]]), [N[2], N[1]])
     @test convex_hull([[N(2)], [N(2)]]) == [[N(2)]]
-    @test convex_hull([SVector{1}([N(2)]), SVector{1}([N(1)])]) ==
-          [SVector{1}([N(1)]), SVector{1}([N(2)])]
+    @static if isdefined(@__MODULE__, :StaticArrays)
+        using StaticArrays: SVector
+
+        @test convex_hull([SVector{1}([N(2)]), SVector{1}([N(1)])]) ==
+              [SVector{1}([N(1)]), SVector{1}([N(2)])]
+    end
 
     # corner cases in dimension 2
     @test convex_hull([[N(0), N(0)]]) == [[N(0), N(0)]]
@@ -24,9 +36,11 @@ for N in [Float64, Rational{Int}]
 
     # corner cases in higher dimension
     @test convex_hull([[N(0), N(0), N(0)]]) == [[N(0), N(0), N(0)]]
-    # there is no sorting in higher dim
-    @test convex_hull([[N(1), N(0), N(0)], [N(0), N(1), N(0)]]) ==
-          [[N(1), N(0), N(0)], [N(0), N(1), N(0)]]
+    # there is no sorting in higher dimension
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        @test convex_hull([[N(1), N(0), N(0)], [N(0), N(1), N(0)]]) ==
+              [[N(1), N(0), N(0)], [N(0), N(1), N(0)]]
+    end
 
     # dimension 1
     points_1D = [[N(2)], [N(1)], [N(1 / 2)], [N(-5)]]
@@ -111,15 +125,17 @@ for N in [Float64, Rational{Int}]
     @test convex_hull([p, p, p, p, p]) == [p]
 
     # higher dimension
-    if test_suite_polyhedra && N != Float32 # no backend supporting Float32
-        points_3D = [[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)],
-                     [N(-1), N(-1), N(-7)], [N(1 / 2), N(1 / 2), N(-8)],
-                     [N(0), N(0), N(0)], [N(1), N(2), N(3)]]
-        sorted = [[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)],
-                  [N(-1), N(-1), N(-7)], [N(1 / 2), N(1 / 2), N(-8)], [N(1), N(2), N(3)]]
-        @test ispermutation(convex_hull(points_3D), sorted)
-        convex_hull!(points_3D) # check in-place version
-        @test ispermutation(points_3D, sorted)
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        if N != Float32 # no backend supporting Float32
+            points_3D = [[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)],
+                         [N(-1), N(-1), N(-7)], [N(1 / 2), N(1 / 2), N(-8)],
+                         [N(0), N(0), N(0)], [N(1), N(2), N(3)]]
+            sorted = [[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)],
+                      [N(-1), N(-1), N(-7)], [N(1 / 2), N(1 / 2), N(-8)], [N(1), N(2), N(3)]]
+            @test ispermutation(convex_hull(points_3D), sorted)
+            convex_hull!(points_3D) # check in-place version
+            @test ispermutation(points_3D, sorted)
+        end
     end
 
     # ============================
@@ -132,22 +148,26 @@ for N in [Float64, Rational{Int}]
     @test ispermutation(vertices_list(ch),
                         [[N(-1), N(-1)], [N(1), N(0)], [N(1), N(1)], [N(0), N(1)]])
 
-    if test_suite_polyhedra && N != Float32 # no backend supporting Float32
-        V1 = VPolytope([[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)]])
-        V2 = VPolytope([[N(-1), N(-1), N(-7)], [N(1 / 2), N(1 / 2), N(-8)], [N(0), N(0), N(0)],
-                        [N(1), N(2), N(3)]])
-        ch = convex_hull(V1, V2)
-        @test ch isa VPolytope
-        @test ispermutation(vertices_list(ch),
-                            [[N(1), N(0), N(4)], [N(1), N(1), N(5)],
-                             [N(0), N(1), N(6)], [N(-1), N(-1), N(-7)],
-                             [N(1 / 2), N(1 / 2), N(-8)], [N(1), N(2), N(3)]])
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        if N != Float32 # no backend supporting Float32
+            V1 = VPolytope([[N(1), N(0), N(4)], [N(1), N(1), N(5)], [N(0), N(1), N(6)]])
+            V2 = VPolytope([[N(-1), N(-1), N(-7)], [N(1 / 2), N(1 / 2), N(-8)], [N(0), N(0), N(0)],
+                            [N(1), N(2), N(3)]])
+            ch = convex_hull(V1, V2)
+            @test ch isa VPolytope
+            @test ispermutation(vertices_list(ch),
+                                [[N(1), N(0), N(4)], [N(1), N(1), N(5)],
+                                 [N(0), N(1), N(6)], [N(-1), N(-1), N(-7)],
+                                 [N(1 / 2), N(1 / 2), N(-8)], [N(1), N(2), N(3)]])
+        end
     end
 
     # general LazySets
     for (n, T) in [(1, Interval), (2, VPolygon), (3, VPolytope)]
-        if n > 2 && !test_suite_polyhedra  # dimensions > 2 require Polyhedra
-            continue
+        @static if !isdefined(@__MODULE__, :Polyhedra)
+            if n > 2  # dimensions > 2 require Polyhedra
+                continue
+            end
         end
         X = BallInf(zeros(N, n), N(1))
         Y = Ball1(ones(N, n), N(3 // 2))
