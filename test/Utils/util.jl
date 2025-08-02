@@ -41,6 +41,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     B = N[1 0 2; 3 0 4]
     @test remove_zero_columns(B) == remove_zero_columns(sparse(B)) == A
 
+    # remove_redundant_generators
+    M = N[1 0 -2]
+    M2 = remove_redundant_generators(M)
+    @test M2 isa Matrix{N} && M2 == hcat(N[3])
+    M = N[1 0 2 -3 4; 2 0 4 -6 1]
+    M2 = remove_redundant_generators(M)
+    @test M2 isa Matrix{N} && M2 == N[6 4; 12 1]
+
     # substitution
     x = N[1, 2, 3]
     substitution = Dict(1 => N(4), 3 => N(0))
