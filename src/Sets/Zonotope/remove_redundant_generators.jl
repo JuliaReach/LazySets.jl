@@ -13,15 +13,23 @@ For one-dimensional zonotopes we use a more efficient implementation where we
 just take the absolute sum of all generators.
 """
 function remove_redundant_generators(Z::Zonotope)
-    if dim(Z) == 1  # more efficient implementation in 1D
-        return _remove_redundant_generators_1d(Z)
+    G = genmat(Z)
+    Gnew = remove_redundant_generators(G)
+
+    if Gnew === G
+        return Z  # return the original zonotope if no generator was removed
+    end
+    return Zonotope(center(Z), Gnew)
+end
+
+function remove_redundant_generators(G::AbstractMatrix)
+    if size(G, 1) == 1  # more efficient implementation in 1D
+        return _remove_redundant_generators_1d(G)
     end
 
-    N = eltype(Z)
-    G = genmat(Z)
+    N = eltype(G)
     G = remove_zero_columns(G)
     p = size(G, 2)
-    removed_zero_generators = p < ngens(Z)
     deleted = false
     done = falses(p)
     G_new = vector_type(typeof(G))[]  # list of new column vectors
@@ -52,16 +60,12 @@ function remove_redundant_generators(Z::Zonotope)
     end
 
     if deleted
-        G_new = reduce(hcat, G_new)  # convert list of column vectors to matrix
-        return Zonotope(center(Z), G_new)
-    elseif removed_zero_generators
-        return Zonotope(center(Z), G)
+        return reduce(hcat, G_new)  # convert list of column vectors to matrix
     end
-    return Z  # return the original zonotope if no generator was removed
+    return G
 end
 
-function _remove_redundant_generators_1d(Z)
-    G = genmat(Z)
+function _remove_redundant_generators_1d(G::AbstractMatrix)
     g = sum(abs, G)
-    return Zonotope(center(Z), hcat(g))
+    return hcat(g)
 end
