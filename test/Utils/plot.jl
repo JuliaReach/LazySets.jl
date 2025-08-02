@@ -1,5 +1,17 @@
-using LinearAlgebra, SparseArrays
-import Optim
+using LazySets, Test, LinearAlgebra, SparseArrays
+import LazySets.RecipesBase
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
+# define `plot` function as `RecipesBase.apply_recipe`
+struct DummyBackend <: RecipesBase.AbstractBackend end
+struct DummyPlot <: RecipesBase.AbstractPlot{DummyBackend} end
+Base.length(::DummyPlot) = 0
+dict = Dict{Symbol,Any}(:plot_object => DummyPlot())
+plot(args...; kwargs...) = RecipesBase.apply_recipe(dict, args...; kwargs...)
 
 for N in @tN([Float64, Float32, Rational{Int}])
     for n in [1, 2]
@@ -133,8 +145,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
         if n == 2
             plot(ncp)
         end
-        if N == Float64 # Float32 requires promotion see #1304
-            plot(its)
+        @static if isdefined(@__MODULE__, :Optim)
+            if N == Float64 # Float32 requires promotion see #1304
+                plot(its)
+            end
         end
         plot(hpg)
         plot(hpgo)
@@ -179,10 +193,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 end
 
-using StaticArrays
-
 for N in [Float64]
-    # test plot with static arrays input
-    Z = Zonotope(SA[N(1), N(0)], SA[N(1) N(0); N(0) N(1)])
-    plot(Z)
+    @static if isdefined(@__MODULE__, :StaticArrays)
+        using StaticArrays: SA
+
+        # test plot with static arrays input
+        Z = Zonotope(SA[N(1), N(0)], SA[N(1) N(0); N(0) N(1)])
+        plot(Z)
+    end
 end

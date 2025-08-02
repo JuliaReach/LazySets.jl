@@ -373,14 +373,6 @@ if test_suite_basic
 end
 
 if test_suite_plotting
-    # define `plot` function as `RecipesBase.apply_recipe`
-    import LazySets.RecipesBase
-    struct DummyBackend <: RecipesBase.AbstractBackend end
-    struct DummyPlot <: RecipesBase.AbstractPlot{DummyBackend} end
-    Base.length(::DummyPlot) = 0
-    dict = Dict{Symbol,Any}(:plot_object => DummyPlot())
-    plot(args...; kwargs...) = RecipesBase.apply_recipe(dict, args...; kwargs...)
-
     @testset "LazySets.plotting" begin
         include("Utils/plot.jl")
     end

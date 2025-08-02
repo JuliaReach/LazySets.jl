@@ -1,10 +1,12 @@
-using LazySets.ReachabilityBase.Arrays: extend,
-                                        vector_type, matrix_type,
-                                        to_negative_vector,
-                                        nonzero_columns,
-                                        remove_zero_columns,
-                                        to_matrix,
-                                        same_sign
+using LazySets, Test, LinearAlgebra, SparseArrays
+using LazySets.ReachabilityBase.Arrays: extend, vector_type, matrix_type, to_negative_vector,
+                                        nonzero_columns, remove_zero_columns, to_matrix, same_sign,
+                                        SingleEntryVector, inner, ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
 let
     # square matrix
