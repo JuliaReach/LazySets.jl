@@ -169,7 +169,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     @static if isdefined(@__MODULE__, :StaticArrays)
+        using StaticArrays: SVector, SMatrix
+
         # order reduction with static arrays
+        Z = Zonotope(N[2, 1], N[-1//2 3//2 1//2 1 0 1; 1//2 3//2 1 1//2 1 0])
         for method in [LazySets.COMB03(), LazySets.GIR05()]
             Zs = Zonotope(SVector{2}(Z.center), SMatrix{2,6}(Z.generators))
             @test reduce_order(Zs, 2, method) isa Zonotope{N,SVector{2,N},SMatrix{2,4,N,8}}
@@ -228,6 +231,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Z1, Z2, Z3, Z4 = split(Z, [1, 2], [1, 1])
     @test Z1 ⊆ Z && Z2 ⊆ Z && Z3 ⊆ Z && Z4 ⊆ Z
     @static if isdefined(@__MODULE__, :StaticArrays)
+        using StaticArrays: SVector, SMatrix
+
         Z = Zonotope(SVector{2}(N[0, 0]), SMatrix{2,2}(N[1 1; -1 1]))
         Z1, Z2 = split(Z, 1)
         @test Z1 ⊆ Z && Z2 ⊆ Z

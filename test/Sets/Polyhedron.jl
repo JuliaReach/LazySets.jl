@@ -1,5 +1,4 @@
-using LazySets, Test
-using LazySets: _isbounded_stiemke, _isbounded_unit_dimensions
+using LazySets, Test, SparseArrays
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation, isinvertible
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
@@ -123,24 +122,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
     P = HPolyhedron(HalfSpace[HalfSpace(N[2, 2], N(-2)), HalfSpace(N[-2, -2], N(-34))])
     @test_throws ArgumentError ρ(N[0, 1], P)
 
-    @static if !isdefined(@__MODULE__, :Polyhedra)
+    @static if isdefined(@__MODULE__, :Polyhedra)
         # concrete linear map of a bounded polyhedron by a non-invertible matrix
-        # throws an assertion error, since tovrep(HPolytope(...)) is required
         H = Hyperrectangle(N[1, 1], N[2, 2])
         P = convert(HPolyhedron, H)
+        Q = linear_map(N[2 3; 0 0], P, algorithm="vrep")
         if N != Float32
-            # conversion to vrep with Float32 fails
-            @test_throws ArgumentError linear_map(N[2 3; 0 0], P, algorithm="vrep")
-        end
-
-        if N != Rational{Int} # in floating-point we can use elimination
-            lm = linear_map(N[2 3; 0 0], P; algorithm="elimination")
-            @test lm isa HPolyhedron{Float64}
-
-            B = N[4e8 2; 0 1]
-            P = CartesianProduct(BallInf(N[0.01], N(0.08)), Singleton(N[1.0]))
-            lm = linear_map(B, P)
-            @test lm isa HPolytope{Float64}
+            @test Q isa VPolytope{N}
+        else
+            @test_broken Q isa VPolytope{N}
         end
     end
 
@@ -221,13 +211,27 @@ for N in @tN([Float64, Float32])
     @test isbounded(p)
     @test !isbounded(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
 
-    @test _isbounded_stiemke(constraints_list(p_univ))
-    @test _isbounded_stiemke(constraints_list(p))
-    @test !_isbounded_stiemke([HalfSpace(N[1, 0], N(1))])
+    @test LazySets._isbounded_stiemke(constraints_list(p_univ))
+    @test LazySets._isbounded_stiemke(constraints_list(p))
+    @test !LazySets._isbounded_stiemke([HalfSpace(N[1, 0], N(1))])
 
-    @test _isbounded_unit_dimensions(p_univ)
-    @test _isbounded_unit_dimensions(p)
-    @test !_isbounded_unit_dimensions(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
+    @test LazySets._isbounded_unit_dimensions(p_univ)
+    @test LazySets._isbounded_unit_dimensions(p)
+    @test !LazySets._isbounded_unit_dimensions(HPolyhedron([HalfSpace(N[1, 0], N(1))]))
+
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        H = Hyperrectangle(N[1, 1], N[2, 2])
+        P = convert(HPolyhedron, H)
+
+        # linear_map of a bounded polyhedron by a non-invertible matrix
+        lm = linear_map(N[2 3; 0 0], P; algorithm="elimination")
+        @test lm isa HPolyhedron{Float64}
+
+        B = N[4e8 2; 0 1]
+        P = CartesianProduct(BallInf(N[0.01], N(0.08)), Singleton(N[1.0]))
+        lm = linear_map(B, P)
+        @test lm isa HPolytope{Float64}
+    end
 end
 
 for N in [Float64]

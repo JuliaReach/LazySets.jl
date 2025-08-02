@@ -324,6 +324,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test permute(P, [3, 1, 2]) == Q
 
     @static if isdefined(@__MODULE__, :StaticArrays)
+        using StaticArrays: SVector
+
         # construction with static arrays
         vlist = [SVector{2}(N[0, 0]), SVector{2}(N[1, 0]), SVector{2}(N[0, 1])]
         V = VPolytope(vlist)
@@ -725,7 +727,7 @@ end
 @test !isoperationtype(HPolytope)
 @test !isoperationtype(VPolytope)
 
-for N in [Float64, Rational{Int}]
+for N in @tN([Float64, Rational{Int}])
     @static if isdefined(@__MODULE__, :MiniQhull)
         # Delaunay triangulation
         vlist = [N[0, 0, 0], N[0, 0, 1], N[0, 1, 0], N[1, 0, 0]]  # tetrahedron

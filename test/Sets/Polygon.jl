@@ -1,8 +1,7 @@
 using LazySets, Test, SparseArrays
 using LazySets: ⪯
-using LazySets.ReachabilityBase.Arrays: is_cyclic_permutation
+using LazySets.ReachabilityBase.Arrays: is_cyclic_permutation, ispermutation, allequal
 using LazySets.ReachabilityBase.Comparison: _isapprox
-using LazySets.ReachabilityBase.Arrays: ispermutation
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -575,9 +574,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test P == VPolygon(Vs)
     @test eltype(P.vertices) == eltype(Vs)
     @static if isdefined(@__MODULE__, :StaticArrays)
+        using StaticArrays: SVector, SMatrix
+
         # StaticArraysCore.SMatrix to VPolygon
-        M = @SMatrix N[0 1 0; 0 0 1]
-        Vs = [@SVector[N(0), N(0)], @SVector[N(1), N(0)], @SVector[N(0), N(1)]]
+        M = SMatrix{2,3}(N[0 1 0; 0 0 1])
+        Vs = [SVector{2}(N[0, 0]), SVector{2}(N[1, 0]), SVector{2}(N[0, 1])]
         Q = VPolygon(M)
         @test Q == VPolygon(Vs) == P
         @test eltype(Q.vertices) == eltype(Vs)

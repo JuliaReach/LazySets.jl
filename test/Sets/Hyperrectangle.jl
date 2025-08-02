@@ -1,8 +1,7 @@
 using LazySets, Test, SparseArrays, LinearAlgebra
-using LazySets.ReachabilityBase.Arrays: ispermutation
-using LazySets.ReachabilityBase.Arrays: SingleEntryVector
-using IntervalArithmetic: IntervalBox
-import IntervalArithmetic as IA
+using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
+IA = LazySets.IA
+using LazySets.IA: IntervalBox
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -126,6 +125,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test □(center(h), radius_hyperrectangle(h)) == h
 
     @static if isdefined(@__MODULE__, :StaticArrays)
+        using StaticArrays: SA, SMatrix
+
         # generators matrix for hyperrectangle with sparse or static arrays
         G1 = genmat(Hyperrectangle(sparsevec(N[3, 2]), sparsevec(N[2, 1])))
         G2 = genmat(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))
@@ -198,6 +199,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test S isa Vector{typeof(H)}
     @test_throws ArgumentError split(H, [0, 4])
     @static if isdefined(@__MODULE__, :StaticArrays)
+        using StaticArrays: SA
+
         H = Hyperrectangle(SA[N(0), N(0)], SA[N(1), N(2)])
         S = split(H, [2, 2])
         @test S isa Vector{typeof(H)}
@@ -330,6 +333,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test Hz == Zonotope(N[129 // 20, 2361 // 20], N[119//20 0//1; 0//1 2349//20])
 
     @static if isdefined(@__MODULE__, :StaticArrays)
+        using StaticArrays: SA
+
         # conversion of a hyperrectangle with static array components to a zonotope
         # the specialized method for 2D static arrays is also tested
         H = Hyperrectangle(; low=SA[N(5 // 10), N(6 // 10)], high=N[N(124 // 10), N(2355 // 10)])
