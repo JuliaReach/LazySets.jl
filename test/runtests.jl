@@ -48,12 +48,11 @@ Random.seed!(1234)
 # Optional dependencies
 # ========================
 @ts begin
-    import Distributions, ExponentialUtilities, Expokit, IntervalMatrices, Ipopt,
-           MiniQhull, Optim, PkgVersion, RangeEnclosures, SCS, SetProg, TaylorModels
-    import IntervalConstraintProgramming as ICP
+    import Distributions, ExponentialUtilities, Expokit, IntervalConstraintProgramming,
+           IntervalMatrices, Ipopt, MiniQhull, Optim, PkgVersion, RangeEnclosures, SCS, SetProg,
+           TaylorModels
     import IntervalArithmetic as IA
     using IntervalArithmetic: IntervalBox
-    using IntervalMatrices: ±, IntervalMatrix
     using SymEngine, Symbolics
 end
 

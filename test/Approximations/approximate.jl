@@ -1,4 +1,4 @@
-using Test, LazySets
+using LazySets, Test
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

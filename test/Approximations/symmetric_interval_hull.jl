@@ -1,5 +1,4 @@
-using Test, LazySets, LinearAlgebra, SparseArrays
-import ExponentialUtilities
+using LazySets, Test, LinearAlgebra, SparseArrays
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -35,20 +34,22 @@ for N in @tN([Float64, Float32, Rational{Int}])
 end
 
 for N in @tN([Float64, Float32])
-    # exponential map of singleton
-    M = sparse(diagm(N[1, 1, 1]))
-    E = SparseMatrixExp(M) * Singleton(N[1, 2, 3])
-    H = Hyperrectangle(zeros(N, 3), N[ℯ, 2ℯ, 3ℯ])
-    @test symmetric_interval_hull(E) ≈ H
+    @static if isdefined(@__MODULE__, :ExponentialUtilities) || isdefined(@__MODULE__, :Expokit)
+        # exponential map of singleton
+        M = sparse(diagm(N[1, 1, 1]))
+        E = SparseMatrixExp(M) * Singleton(N[1, 2, 3])
+        H = Hyperrectangle(zeros(N, 3), N[ℯ, 2ℯ, 3ℯ])
+        @test symmetric_interval_hull(E) ≈ H
 
-    # exponential map of hyperrectangle
-    M = sparse(diagm(N[1, 1, 1]))
-    E = SparseMatrixExp(M) * Hyperrectangle(N[1, 2, 3], N[1, 2, 3])
-    H = symmetric_interval_hull(E)
-    @test H ≈ Hyperrectangle(zeros(N, 3), N[2ℯ, 4ℯ, 6ℯ])
-    # matrix with negative entries
-    M = sparse(diagm(N[1, -1]))
-    E = SparseMatrixExp(M) * Hyperrectangle(N[1, 1], N[1, 1])
-    H = symmetric_interval_hull(E)
-    @test H ≈ Hyperrectangle(zeros(N, 2), N[2ℯ, 2ℯ^(-1)])
+        # exponential map of hyperrectangle
+        M = sparse(diagm(N[1, 1, 1]))
+        E = SparseMatrixExp(M) * Hyperrectangle(N[1, 2, 3], N[1, 2, 3])
+        H = symmetric_interval_hull(E)
+        @test H ≈ Hyperrectangle(zeros(N, 3), N[2ℯ, 4ℯ, 6ℯ])
+        # matrix with negative entries
+        M = sparse(diagm(N[1, -1]))
+        E = SparseMatrixExp(M) * Hyperrectangle(N[1, 1], N[1, 1])
+        H = symmetric_interval_hull(E)
+        @test H ≈ Hyperrectangle(zeros(N, 2), N[2ℯ, 2ℯ^(-1)])
+    end
 end
