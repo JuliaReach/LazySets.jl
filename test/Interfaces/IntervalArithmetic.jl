@@ -1,7 +1,7 @@
 using LazySets, Test
-using IntervalArithmetic: IntervalBox
-import IntervalArithmetic as IA
 using LazySets.ReachabilityBase.Arrays: ispermutation
+IA = LazySets.IA
+using LazySets.IA: IntervalBox
 
 for N in @tN([Float64, Float32, Rational{Int}])
     # vertices_list for IA types

@@ -1,3 +1,7 @@
+using LazySets, Test
+using LazySets.GLPK
+using LazySets.JuMP: optimizer_with_attributes
+
 # check solver handling
 for N in [Float64, Rational{Int}, Int]
     LazySets.default_lp_solver(N)

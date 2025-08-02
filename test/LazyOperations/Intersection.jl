@@ -1,3 +1,4 @@
+using LazySet.GLPK
 @static if VERSION >= v"1.9"
     vGLPK = pkgversion(GLPK)
 else

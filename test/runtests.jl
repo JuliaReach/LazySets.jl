@@ -37,8 +37,7 @@ end
     include("API.jl")
 end
 
-using LazySets, LazySets.Approximations, GLPK, LinearAlgebra, SparseArrays, StaticArrays
-using JuMP: optimizer_with_attributes
+using LazySets, LazySets.Approximations, LinearAlgebra, SparseArrays, StaticArrays
 
 # fix random number generator seed
 using Random
@@ -51,8 +50,8 @@ Random.seed!(1234)
     import Distributions, ExponentialUtilities, Expokit, IntervalConstraintProgramming,
            IntervalMatrices, Ipopt, MiniQhull, Optim, PkgVersion, RangeEnclosures, SCS, SetProg,
            TaylorModels
-    import IntervalArithmetic as IA
-    using IntervalArithmetic: IntervalBox
+    IA = LazySets.IA
+    using LazySets.IA: IntervalBox
     using SymEngine, Symbolics
 end
 
@@ -375,7 +374,7 @@ end
 
 if test_suite_plotting
     # define `plot` function as `RecipesBase.apply_recipe`
-    import RecipesBase
+    import LazySets.RecipesBase
     struct DummyBackend <: RecipesBase.AbstractBackend end
     struct DummyPlot <: RecipesBase.AbstractPlot{DummyBackend} end
     Base.length(::DummyPlot) = 0
