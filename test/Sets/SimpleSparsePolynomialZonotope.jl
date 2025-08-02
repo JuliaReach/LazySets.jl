@@ -1,5 +1,5 @@
 using LazySets, Test, LinearAlgebra
-import IntervalArithmetic as IA
+IA = LazySets.IA
 @static if VERSION >= v"1.9"
     vIA = pkgversion(IA)
 else
@@ -120,21 +120,24 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isoperationtype
     @test !isoperationtype(SimpleSparsePolynomialZonotope)
 
-    # extrema approximation
-    l1, u1 = extrema(S; algorithm="zonotope")
-    @test (l1, u1) == extrema(S)  # default algorithm
-    @test_throws ArgumentError extrema(S; algorithm="???")
-    H1 = Hyperrectangle(; low=l1, high=u1)
-    l2, u2 = extrema(S; algorithm="lowhigh")
-    H2 = Hyperrectangle(; low=l2, high=u2)
-    @test H2 ⊆ H1 == Hyperrectangle(N[3, 1], N[2, 3])
-
-    # support function (enclosure)
     P = SimpleSparsePolynomialZonotope(zeros(N, 2), N[2 0 1; 1 2 1], [1 0 1; 0 1 3])
-    for (d, v) in [(N[1, 0], N(3)), (N[1, 1], N(7)), (N[1, -1], N(3))]
-        v1 = ρ(d, P)  # default enclosure method
-        v2 = ρ(d, P; enclosure_method=RangeEnclosures.NaturalEnclosure())
-        @test v <= v1 <= v2
+
+    @static if isdefined(@__MODULE__, :RangeEnclosures)
+        # extrema approximation
+        l1, u1 = extrema(S; algorithm="zonotope")
+        @test (l1, u1) == extrema(S)  # default algorithm
+        @test_throws ArgumentError extrema(S; algorithm="???")
+        H1 = Hyperrectangle(; low=l1, high=u1)
+        l2, u2 = extrema(S; algorithm="lowhigh")
+        H2 = Hyperrectangle(; low=l2, high=u2)
+        @test H2 ⊆ H1 == Hyperrectangle(N[3, 1], N[2, 3])
+
+        # support function (enclosure)
+        for (d, v) in [(N[1, 0], N(3)), (N[1, 1], N(7)), (N[1, -1], N(3))]
+            v1 = ρ(d, P)  # default enclosure method
+            v2 = ρ(d, P; enclosure_method=RangeEnclosures.NaturalEnclosure())
+            @test v <= v1 <= v2
+        end
     end
 
     # translate / translate!

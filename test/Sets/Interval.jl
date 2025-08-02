@@ -1,13 +1,12 @@
 using LazySets, Test
-import IntervalArithmetic as IA
+using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
+IA = LazySets.IA
 @static if VERSION >= v"1.9"
     vIA = pkgversion(IA)
 else
     import PkgVersion
     vIA = PkgVersion.Version(IA)
 end
-using LazySets.ReachabilityBase.Arrays: ispermutation
-using LazySets.ReachabilityBase.Arrays: SingleEntryVector
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

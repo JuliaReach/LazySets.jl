@@ -1,3 +1,10 @@
+using LazySets, Test
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     I1 = Interval(N(-1), N(1))
     I2 = Interval(N(2), N(3))
@@ -113,26 +120,28 @@ for N in [Float64]
     # intersection; if the precision changes, these tests can be replaced by
     # their true (commented out) expected results
 
-    # two right quadrants
-    B = Ball1(N[2, 0], N(1))
-    RB = Rectification(B)
-    for d in [N[1, 0], N[-1, 0], N[0, 1]]
-        @test ρ(d, RB) ≈ ρ(d, B)
+    @static if isdefined(@__MODULE__, :Optim)
+        # two right quadrants
+        B = Ball1(N[2, 0], N(1))
+        RB = Rectification(B)
+        for d in [N[1, 0], N[-1, 0], N[0, 1]]
+            @test ρ(d, RB) ≈ ρ(d, B)
+        end
+        @test_broken ρ(N[0, -1], RB) ≈ N(0)
+        @test N(0) ≤ ρ(N[0, -1], RB) ≤ N(1e-9)
+        # all four quadrants
+        P = VPolygon([N[-1, 1], N[-1.5, 0.5], N[1.5, 0.5], N[1, -0.5]])
+        RP = Rectification(P)
+        @test ρ(N[1, 0], RP) ≈ N(1.5)
+        @test ρ(N[0, 1], RP) ≈ N(1)
+        @test ρ(N[1, 1], RP) ≈ ρ(N[1, 1], P) == N(2)
+        @test_broken ρ(N[-1, 0], RP) ≈ N(0)
+        @test N(0) ≤ ρ(N[-1, 0], RP) ≤ N(1e-8)
+        @test_broken ρ(N[0, -1], RP) ≈ N(0)
+        @test N(0) ≤ ρ(N[0, -1], RP) ≤ N(1e-8)
+        @test_broken ρ(N[-1, -1], RP) ≈ N(0)
+        @test N(0) ≤ ρ(N[-1, -1], RP) ≤ N(1.1e-1)
     end
-    #     @test ρ(N[0, -1], RB) ≈ N(0)
-    @test N(0) ≤ ρ(N[0, -1], RB) ≤ N(1e-9)
-    # all four quadrants
-    P = VPolygon([N[-1, 1], N[-1.5, 0.5], N[1.5, 0.5], N[1, -0.5]])
-    RP = Rectification(P)
-    @test ρ(N[1, 0], RP) ≈ N(1.5)
-    @test ρ(N[0, 1], RP) ≈ N(1)
-    @test ρ(N[1, 1], RP) ≈ ρ(N[1, 1], P) == N(2)
-    #     @test ρ(N[-1, 0], RP) ≈ N(0)
-    @test N(0) ≤ ρ(N[-1, 0], RP) ≤ N(1e-8)
-    #     @test ρ(N[0, -1], RP) ≈ N(0)
-    @test N(0) ≤ ρ(N[0, -1], RP) ≤ N(1e-8)
-    #     @test ρ(N[-1, -1], RP) ≈ N(0)
-    @test N(0) ≤ ρ(N[-1, -1], RP) ≤ N(1.1e-1)
 
     @test σ(N[1, 1], Rectification(Ball1(N[0, 0], N(1)))) == N[0, 1]
 end

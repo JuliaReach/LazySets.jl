@@ -200,6 +200,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test ZB == Zonotope(N[0, 0], Matrix{N}(undef, 2, 0))
 
     @static if isdefined(@__MODULE__, :StaticArrays)
+        using StaticArrays: SA, SVector, SMatrix
+
         # conversion to a zonotope, static arrays
         B = BallInf(SA[N(0), N(0)], N(1))
         ZB = convert(Zonotope, B)

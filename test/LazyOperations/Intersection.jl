@@ -1,8 +1,15 @@
+using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
 @static if VERSION >= v"1.9"
-    vGLPK = pkgversion(GLPK)
+    vGLPK = pkgversion(LazySets.GLPK)
 else
     import PkgVersion
-    vGLPK = PkgVersion.Version(GLPK)
+    vGLPK = PkgVersion.Version(LazySets.GLPK)
+end
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
 end
 
 for N in @tN([Float64, Float32, Rational{Int}])
@@ -178,9 +185,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test intersection(H, B3) == EmptySet{N}(2)
 end
 
-# ======================
-# Tests for Float64 only
-# ======================
 for N in [Float64]
     # constraints_list for polytopic intersection
     B = BallInf(ones(N, 2), N(3))
@@ -204,21 +208,28 @@ for N in [Float64]
     H = HalfSpace(N[-1, 0], N(-1)) # x >= 1
 
     # default algorithm
-    @test ρ(d, X ∩ H) == ρ(d, H ∩ X) == N(1)
+    @static if isdefined(@__MODULE__, :Optim)
+        @test ρ(d, X ∩ H) == ρ(d, H ∩ X) == N(1)
+    end
 
     # intersection at x = 0
     H = HalfSpace(N[1, 0], N(0)) # x <= 0
 
     # default algorithm
-    @test ρ(d, X ∩ H) < 1e-6 && ρ(d, H ∩ X) < 1e-6
+    @static if isdefined(@__MODULE__, :Optim)
+        @test ρ(d, X ∩ H) < 1e-6 && ρ(d, H ∩ X) < 1e-6
+    end
 
     # specify line-search algorithm
-    @test ρ(d, X ∩ H; algorithm="line_search") < 1e-6 &&
-          ρ(d, H ∩ X; algorithm="line_search") < 1e-6
-    # test approximation errors (see #1144)
-    B = Hyperrectangle(N[0.009231278330571413, 0], N[0.009231221669425305, 1])
-    H = HalfSpace(N[1, 0], N(0))
-    @test ρ([1.0, 0], B ∩ H) >= 0
+    @static if isdefined(@__MODULE__, :Optim)
+        @test ρ(d, X ∩ H; algorithm="line_search") < 1e-6 &&
+              ρ(d, H ∩ X; algorithm="line_search") < 1e-6
+
+        # test approximation errors (see #1144)
+        B = Hyperrectangle(N[0.009231278330571413, 0], N[0.009231221669425305, 1])
+        H = HalfSpace(N[1, 0], N(0))
+        @test ρ([1.0, 0], B ∩ H) >= 0
+    end
 
     # boundedness
     @test isbounded(HalfSpace(N[1], N(1)) ∩ HalfSpace(N[-1], N(1)))
@@ -227,19 +238,21 @@ for N in [Float64]
     @test !isbounded(IntersectionArray([HalfSpace(ones(N, 2), N(1)), HalfSpace(ones(N, 2), N(-1))]))
 
     # HalfSpace vs. Ball2 intersection
-    B2 = Ball2(zeros(2), N(1))
-    @test ρ(d, B2 ∩ H) < 1e-6 && ρ(d, H ∩ B2) < 1e-6
+    @static if isdefined(@__MODULE__, :Optim)
+        B2 = Ball2(zeros(2), N(1))
+        @test ρ(d, B2 ∩ H) < 1e-6 && ρ(d, H ∩ B2) < 1e-6
 
-    # Ball1 vs. Hyperplane intersection
-    H = Hyperplane(N[1, 0], N(0.5)) # x = 0.5
-    @test isapprox(ρ(d, X ∩ H; algorithm="line_search"), N(0.5), atol=1e-6)
-    # For the projection algorithm, if the linear map is taken lazily we can use Ball1
-    @test isapprox(ρ(d, X ∩ H; algorithm="projection", lazy_linear_map=true), N(0.5), atol=1e-6)
-    # But the default is to take the linear map concretely; in this case, we *may*
-    # need Polyhedra (in the general case), for the concrete linear map. As a valid workaround
-    # if we don't want to load Polyhedra here is to convert the given set to a polygon in V-representation
-    @test isapprox(ρ(d, convert(VPolygon, X) ∩ H; algorithm="projection", lazy_linear_map=false),
-                   N(0.5), atol=1e-6)
+        # Ball1 vs. Hyperplane intersection
+        H = Hyperplane(N[1, 0], N(0.5)) # x = 0.5
+        @test isapprox(ρ(d, X ∩ H; algorithm="line_search"), N(0.5), atol=1e-6)
+        # For the projection algorithm, if the linear map is taken lazily we can use Ball1
+        @test isapprox(ρ(d, X ∩ H; algorithm="projection", lazy_linear_map=true), N(0.5), atol=1e-6)
+        # But the default is to take the linear map concretely; in this case, we *may*
+        # need Polyhedra (in the general case), for the concrete linear map. As a valid workaround
+        # if we don't want to load Polyhedra here is to convert the given set to a polygon in V-representation
+        @test isapprox(ρ(d, convert(VPolygon, X) ∩ H; algorithm="projection",
+                         lazy_linear_map=false), N(0.5), atol=1e-6)
+    end
 
     # =====================
     # concrete operations

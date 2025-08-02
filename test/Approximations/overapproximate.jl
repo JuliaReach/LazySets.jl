@@ -1,12 +1,8 @@
 using LazySets, Test, LinearAlgebra, SparseArrays
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
 using LazySets.ReachabilityBase.Comparison: _leq, _geq
-using IntervalMatrices: ±, IntervalMatrix
-import IntervalArithmetic as IA
-using IntervalArithmetic: IntervalBox
-import IntervalConstraintProgramming as ICP
-import Optim, Polyhedra, TaylorModels
-using LazySets.Approximations: get_linear_coeffs, _nonlinear_polynomial
+IA = LazySets.IA
+using LazySets.IA: IntervalBox
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -115,12 +111,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test overapproximate(d_oa) == oa
     @test typeof(d_oa) == CartesianProductArray{N,Interval{N}}
 
-    # interval linear map of zonotope
-    M = IntervalMatrix([(N(0)±N(1)) (N(0)±N(0)); (N(0)±N(0)) (N(0)±N(1))])
-    Z = Zonotope(N[1, 1], N[1 1; 1 -1])
-    lm = LinearMap(M, Z)
-    Zo = overapproximate(lm, Zonotope)
-    @test box_approximation(Zo) == Hyperrectangle(N[0, 0], N[3, 3])
+    @static if isdefined(@__MODULE__, :IntervalMatrices)
+        using IntervalMatrices: IntervalMatrix
+
+        # interval linear map of zonotope
+        M = IntervalMatrix([IA.interval(N(-1), N(1)) IA.interval(N(0));
+                            IA.interval(N(0)) IA.interval(N(-1), N(1))])
+        Z = Zonotope(N[1, 1], N[1 1; 1 -1])
+        lm = LinearMap(M, Z)
+        Zo = overapproximate(lm, Zonotope)
+        @test box_approximation(Zo) == Hyperrectangle(N[0, 0], N[3, 3])
+    end
 
     # rectification
     r = Rectification(EmptySet{N}(2))
@@ -448,14 +449,16 @@ for N in [Float64]
     @test overapproximate(d_int_cpa, Hyperrectangle) == l_int_cpa
     @test all([X isa CartesianProductArray for X in [d_int_cpa, o_d_int_g, o_d_int_g_3_neg]])
 
-    int_g_comb = Intersection(cpa1, G_comb)
-    o_d_int_g_comb = overapproximate(int_g_comb, CartesianProductArray, Hyperrectangle)
-    o_bd_int_g_comb = overapproximate(int_g_comb, BoxDirections)
-    @test overapproximate(o_d_int_g_comb) ≈ overapproximate(o_bd_int_g_comb)
-    projection = project(o_bd_int_g_comb, [1, 2], BoxDirections)
-    @test vertices_list(projection) ≈ [[0.5, 2.5], [0.0, 2.5], [0.0, 2], [0.5, 2.0]]
-    projection = project(overapproximate(int_g_comb, OctDirections), [1, 2], OctDirections)
-    @test vertices_list(projection) ≈ [[0.0, 2.5], [0.0, 2.0], [0.5, 2.0]]
+    @static if isdefined(@__MODULE__, :Optim)
+        int_g_comb = Intersection(cpa1, G_comb)
+        o_d_int_g_comb = overapproximate(int_g_comb, CartesianProductArray, Hyperrectangle)
+        o_bd_int_g_comb = overapproximate(int_g_comb, BoxDirections)
+        @test overapproximate(o_d_int_g_comb) ≈ overapproximate(o_bd_int_g_comb)
+        projection = project(o_bd_int_g_comb, [1, 2], BoxDirections)
+        @test vertices_list(projection) ≈ [[0.5, 2.5], [0.0, 2.5], [0.0, 2], [0.5, 2.0]]
+        projection = project(overapproximate(int_g_comb, OctDirections), [1, 2], OctDirections)
+        @test vertices_list(projection) ≈ [[0.0, 2.5], [0.0, 2.0], [0.5, 2.0]]
+    end
 
     # Zonotope approximation
     Z1 = Zonotope(ones(N, 2), [N[1, 0], N[0, 1], N[1, 1]])
@@ -477,19 +480,23 @@ for N in [Float64]
     B = BallInf(zeros(N, 3), N(1))
     H = convert(HPolytope, B)
     Z = Zonotope(N[0, 0, 0], N[1 0 0; 0 1 0; 0 0 1])
-    @test overapproximate(H, Zonotope, BoxDirections; algorithm="vrep") == Z
-    @test overapproximate(H, Zonotope, BoxDirections(3); algorithm="vrep") == Z
-    @test overapproximate(H, Zonotope, BoxDirections; algorithm="cpa") == Z
-    @test overapproximate(H, Zonotope, BoxDirections(2); algorithm="cpa") == Z
-    V = convert(VPolytope, B)
-    @test overapproximate(V, Zonotope, BoxDirections; algorithm="vrep") == Z
-    @test overapproximate(V, Zonotope, BoxDirections; algorithm="cpa") == Z
-    # test invalid direction templates
-    @test_throws ErrorException overapproximate(V, Zonotope, SphericalDirections, algorithm="vrep")
-    @test_throws ErrorException overapproximate(V, Zonotope, SphericalDirections, algorithm="cpa")
-    # test dispatch of internal functions
-    @test Approximations._overapproximate_zonotope_vrep(V, BoxDirections) == Z
-    @test convert(Zonotope, Approximations._overapproximate_zonotope_cpa(V, BoxDirections)) == Z
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        @test overapproximate(H, Zonotope, BoxDirections; algorithm="vrep") == Z
+        @test overapproximate(H, Zonotope, BoxDirections(3); algorithm="vrep") == Z
+        @test overapproximate(H, Zonotope, BoxDirections; algorithm="cpa") == Z
+        @test overapproximate(H, Zonotope, BoxDirections(2); algorithm="cpa") == Z
+        V = convert(VPolytope, B)
+        @test overapproximate(V, Zonotope, BoxDirections; algorithm="vrep") == Z
+        @test overapproximate(V, Zonotope, BoxDirections; algorithm="cpa") == Z
+        # test invalid direction templates
+        @test_throws ErrorException overapproximate(V, Zonotope, SphericalDirections,
+                                                    algorithm="vrep")
+        @test_throws ErrorException overapproximate(V, Zonotope, SphericalDirections,
+                                                    algorithm="cpa")
+        # test dispatch of internal functions
+        @test Approximations._overapproximate_zonotope_vrep(V, BoxDirections) == Z
+        @test convert(Zonotope, Approximations._overapproximate_zonotope_cpa(V, BoxDirections)) == Z
+    end
     # lazy intersection
     Z = convert(Zonotope, BallInf(zeros(N, 2), N(2)))
     H = convert(HPolygon, BallInf(3 * ones(N, 2), N(2)))
@@ -510,65 +517,69 @@ for N in [Float64]
     # =======================================
     # Zonotope overapprox. of a Taylor model
     # =======================================
-    local x₁, x₂, x₃ = TaylorModels.set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
-    Dx₁ = IA.interval(N(1.0), N(3.0))
-    Dx₂ = IA.interval(N(-1.0), N(1.0))
-    Dx₃ = IA.interval(N(-1.0), N(0.0))
-    D = Dx₁ × Dx₂ × Dx₃   # domain
-    local x0 = IntervalBox(IA.mid.(D)...)
-    I = IA.interval(N(0.0), N(0.0)) # interval remainder
-    local p₁ = 1 + x₁ - x₂
-    local p₂ = x₃ - x₁
-    local vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
-    Z1 = overapproximate(vTM, Zonotope)
-    @test center(Z1) == N[3, -2.5]
-    @test Matrix(genmat(Z1)) == N[1 -1 0; -1 0 0.5]
+    @static if isdefined(@__MODULE__, :TaylorModels)
+        using LazySets.Approximations: get_linear_coeffs, _nonlinear_polynomial
 
-    # auxiliary function to get the linear coefficients
-    t = TaylorModels.Taylor1(0) # t.order is 0
-    @test get_linear_coeffs(t) == N[0]
-    p = x₁ + 2x₂ - 3x₃
-    @test get_linear_coeffs(p) == N[1, 2, -3]
-    y = TaylorModels.set_variables("y"; numvars=2, order=1)
-    p = zero(y[1])
-    @test get_linear_coeffs(p) == N[0, 0]
+        local x₁, x₂, x₃ = TaylorModels.set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
+        Dx₁ = IA.interval(N(1.0), N(3.0))
+        Dx₂ = IA.interval(N(-1.0), N(1.0))
+        Dx₃ = IA.interval(N(-1.0), N(0.0))
+        D = Dx₁ × Dx₂ × Dx₃   # domain
+        local x0 = IntervalBox(IA.mid.(D)...)
+        I = IA.interval(N(0.0), N(0.0)) # interval remainder
+        local p₁ = 1 + x₁ - x₂
+        local p₂ = x₃ - x₁
+        local vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
+        Z1 = overapproximate(vTM, Zonotope)
+        @test center(Z1) == N[3, -2.5]
+        @test Matrix(genmat(Z1)) == N[1 -1 0; -1 0 0.5]
 
-    # auxiliary function to get nonlinear coefficients of TaylorN
-    x = TaylorModels.set_variables("x"; numvars=2, order=10)
+        # auxiliary function to get the linear coefficients
+        t = TaylorModels.Taylor1(0) # t.order is 0
+        @test get_linear_coeffs(t) == N[0]
+        p = x₁ + 2x₂ - 3x₃
+        @test get_linear_coeffs(p) == N[1, 2, -3]
+        y = TaylorModels.set_variables("y"; numvars=2, order=1)
+        p = zero(y[1])
+        @test get_linear_coeffs(p) == N[0, 0]
 
-    p = (1 + x[1] - 2x[2])^2
-    @test get_linear_coeffs(p) == [2.0, -4.0]
-    @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1] * x[2] + 4x[2]^2
+        # auxiliary function to get nonlinear coefficients of TaylorN
+        x = TaylorModels.set_variables("x"; numvars=2, order=10)
 
-    p = 1234.5 + 0 * x[1] + 0 * x[2]
-    @test get_linear_coeffs(p) == [0.0, 0.0]
-    @test iszero(_nonlinear_polynomial(p))
+        p = (1 + x[1] - 2x[2])^2
+        @test get_linear_coeffs(p) == [2.0, -4.0]
+        @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1] * x[2] + 4x[2]^2
 
-    p = 1234.5 + 6 * x[1] + 7 * x[2]
-    @test get_linear_coeffs(p) == [6.0, 7.0]
-    @test iszero(_nonlinear_polynomial(p))
+        p = 1234.5 + 0 * x[1] + 0 * x[2]
+        @test get_linear_coeffs(p) == [0.0, 0.0]
+        @test iszero(_nonlinear_polynomial(p))
 
-    p = 1234.5 + 6 * x[1] + 7 * x[2] + 8 * x[1] * x[2]^3
-    @test get_linear_coeffs(p) == [6.0, 7.0]
-    @test _nonlinear_polynomial(p) == 8 * x[1] * x[2]^3
+        p = 1234.5 + 6 * x[1] + 7 * x[2]
+        @test get_linear_coeffs(p) == [6.0, 7.0]
+        @test iszero(_nonlinear_polynomial(p))
 
-    p = (1 + x[1] - 2x[2])^2
-    @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1] * x[2] + 4x[2]^2
+        p = 1234.5 + 6 * x[1] + 7 * x[2] + 8 * x[1] * x[2]^3
+        @test get_linear_coeffs(p) == [6.0, 7.0]
+        @test _nonlinear_polynomial(p) == 8 * x[1] * x[2]^3
 
-    x = TaylorModels.set_variables("x"; numvars=2, order=1)
+        p = (1 + x[1] - 2x[2])^2
+        @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1] * x[2] + 4x[2]^2
 
-    p = 1234.5 + 0 * x[1] + 0 * x[2]
-    @test get_linear_coeffs(p) == [0.0, 0.0]
-    @test iszero(_nonlinear_polynomial(p))
+        x = TaylorModels.set_variables("x"; numvars=2, order=1)
 
-    p = 1234.5 + 6 * x[1] + 7 * x[2]
-    @test get_linear_coeffs(p) == [6.0, 7.0]
-    @test iszero(_nonlinear_polynomial(p))
+        p = 1234.5 + 0 * x[1] + 0 * x[2]
+        @test get_linear_coeffs(p) == [0.0, 0.0]
+        @test iszero(_nonlinear_polynomial(p))
 
-    # auxiliary function to get nonlinear coefficients of Taylor1
-    t = TaylorModels.Taylor1(6)
-    qq = 1.0 + 2.0 * t + 3t^2 + 6t^3
-    @test _nonlinear_polynomial(qq) == 3t^2 + 6t^3
+        p = 1234.5 + 6 * x[1] + 7 * x[2]
+        @test get_linear_coeffs(p) == [6.0, 7.0]
+        @test iszero(_nonlinear_polynomial(p))
+
+        # auxiliary function to get nonlinear coefficients of Taylor1
+        t = TaylorModels.Taylor1(6)
+        qq = 1.0 + 2.0 * t + 3t^2 + 6t^3
+        @test _nonlinear_polynomial(qq) == 3t^2 + 6t^3
+    end
 
     # Zonotope approximation of convex hull array of zonotopes
     Z1 = Zonotope(N[3, 0], N[1 2 1; 1 1 2])
@@ -583,29 +594,33 @@ for N in [Float64]
     @test Z3 ⊆ Y
 
     # overapproximation of intersection between vertical line and Zonotope
-    Z = Zonotope(N[0, 0], N[1 0; 0 1])
-    L = Line2D(N[-1, -1], N[1, 1])
-    cap = overapproximate(Z ∩ L, OctDirections)
-    @test isequivalent(cap, (L ∩ Z))
-    Z = Zonotope(N[0, 0], N[1 0; 0 1])
-    L = Line2D(N[-1, -1], N[1, 1 / 2])
-    cap = overapproximate(Z ∩ L, OctDirections)
-    @test (L ∩ Z) ⊆ cap
+    @static if isdefined(@__MODULE__, :Optim)
+        Z = Zonotope(N[0, 0], N[1 0; 0 1])
+        L = Line2D(N[-1, -1], N[1, 1])
+        cap = overapproximate(Z ∩ L, OctDirections)
+        @test isequivalent(cap, (L ∩ Z))
+        Z = Zonotope(N[0, 0], N[1 0; 0 1])
+        L = Line2D(N[-1, -1], N[1, 1 / 2])
+        cap = overapproximate(Z ∩ L, OctDirections)
+        @test (L ∩ Z) ⊆ cap
+    end
 
-    # overapproximate a nonlinear constraint with an HPolyhedron
-    local dom = IntervalBox(IA.interval(-2, 2), IA.interval(-2, 2))
-    C = ICP.@constraint x^2 + y^2 <= 1
-    p = ICP.pave(C, dom, 0.01)
-    dirs = OctDirections(2)
-    H = overapproximate(p, dirs)
-    B2 = Ball2(N[0, 0], N(1))
-    @test B2 ⊆ H
+    @static if isdefined(@__MODULE__, :IntervalConstraintProgramming)
+        # overapproximate a nonlinear constraint with an HPolyhedron
+        local dom = IntervalBox(IA.interval(-2, 2), IA.interval(-2, 2))
+        C = IntervalConstraintProgramming.@constraint x^2 + y^2 <= 1
+        p = IntervalConstraintProgramming.pave(C, dom, 0.01)
+        dirs = OctDirections(2)
+        H = overapproximate(p, dirs)
+        B2 = Ball2(N[0, 0], N(1))
+        @test B2 ⊆ H
 
-    # overapproximate the intersection of a zonotope with an axis-aligned
-    # half-space by a zonotope using ICP
-    Z = Zonotope(N[0, 2], N[1//2 1//2; 1 0])
-    H = HalfSpace(SingleEntryVector(1, 2, N(1)), N(0))
-    R = overapproximate(Z ∩ H, Zonotope)
-    R_exact = intersection(Z, H)
-    @test R ⊆ Z && R_exact ⊆ R
+        # overapproximate the intersection of a zonotope with an axis-aligned
+        # half-space by a zonotope using ICP
+        Z = Zonotope(N[0, 2], N[1//2 1//2; 1 0])
+        H = HalfSpace(SingleEntryVector(1, 2, N(1)), N(0))
+        R = overapproximate(Z ∩ H, Zonotope)
+        R_exact = intersection(Z, H)
+        @test R ⊆ Z && R_exact ⊆ R
+    end
 end

@@ -1,5 +1,11 @@
-for N in @tN([Float64, Float32, Rational{Int}])
+using LazySets, Test
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
+for N in @tN([Float64, Float32, Rational{Int}])
     # π/2 trigonometric rotation
     b = BallInf(N[1, 2], N(1))
     M = N[0 -1; 1 0]

@@ -1,7 +1,7 @@
 using LazySets, Test, LinearAlgebra
-import IntervalArithmetic as IA
-using IntervalArithmetic: IntervalBox
 using LazySets.SparsePolynomialZonotopeModule: merge_id
+IA = LazySets.IA
+using LazySets.IA: IntervalBox
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -281,7 +281,7 @@ let
         x₁, x₂, x₃ = TaylorModels.set_variables(Float64, ["x₁", "x₂", "x₃"]; order=3)
         dom1 = IA.interval(N(-1), N(1))
         dom = dom1 × dom1 × dom1
-        x0 = IA.IntervalBox(IA.mid.(dom)...)
+        x0 = IntervalBox(IA.mid.(dom)...)
         rem = IA.interval(N(0), N(0))
         p₁ = 33 + 2x₁ + 3x₂ + 4x₃ + 5x₁^2 + 6x₂ * x₃ + 7x₃^2 + 8x₁ * x₂ * x₃
         p₂ = x₃ - x₁

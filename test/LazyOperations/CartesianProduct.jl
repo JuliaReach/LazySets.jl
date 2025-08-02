@@ -1,4 +1,10 @@
-using LazySets.Approximations: overapproximate
+using LazySets, Test, LinearAlgebra, SparseArrays
+using LazySets.ReachabilityBase.Arrays: ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
 for N in @tN([Float64, Float32, Rational{Int}])
     # Cartesian Product of a centered 1D BallInf and a centered 2D BallInf
@@ -160,18 +166,18 @@ for N in @tN([Float64, Float32, Rational{Int}])
     lm = linear_map(M, cp)
     @test lm isa HPolytope{N} && length(constraints_list(lm)) ==
                                  length(constraints_list(cp)) == 4
-    M = N[2 1; 0 0]  # singular matrix
-    lm = linear_map(M, cp)
-    @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
-    @test box_approximation(lm) == Hyperrectangle(N[7 // 2, 0], N[3 // 2, 0])
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        M = N[2 1; 0 0]  # singular matrix
+        lm = linear_map(M, cp)
+        @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
+        @test box_approximation(lm) == Hyperrectangle(N[7 // 2, 0], N[3 // 2, 0])
+    end
 
     # concretize
     @test LazySets.concrete_function(CartesianProduct) == cartesian_product
     cp = CartesianProduct(VPolytope([N[1]]), VPolytope([N[2]]))
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         @test concretize(cp) == VPolytope([N[1, 2]])
-    else
-        @test concretize(cp) === cp
     end
 
     # inclusion
@@ -346,17 +352,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
     lm = linear_map(M, cpa)
     @test lm isa HPolytope{N} && length(constraints_list(lm)) ==
                                  length(constraints_list(cpa)) == 4
-    M = N[2 1; 0 0]  # singular matrix
-    lm = linear_map(M, cpa)
-    @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
-    @test box_approximation(lm) == Hyperrectangle(N[7 // 2, 0], N[3 // 2, 0])
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        M = N[2 1; 0 0]  # singular matrix
+        lm = linear_map(M, cpa)
+        @test lm isa (N == Float64 ? HPolytope{N} : HPolytope)
+        @test box_approximation(lm) == Hyperrectangle(N[7 // 2, 0], N[3 // 2, 0])
+    end
 
     # concretize
     cpa = CartesianProductArray([VPolytope([N[1]]), VPolytope([N[2]])])
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         @test concretize(cpa) == VPolytope([N[1, 2]])
-    else
-        @test concretize(cpa) === cpa
     end
 
     # projection
@@ -507,7 +513,7 @@ for N in [Float64]
                         [HalfSpace(N[-1, 0], N(-1)),
                          HalfSpace(N[0, -1], N(-2)), HalfSpace(N[1, 1], N(3))])
 
-    if test_suite_polyhedra
+    @static if isdefined(@__MODULE__, :Polyhedra)
         # projection to mixed dimensions
         P = Singleton(N[11, 12])
         Q = Singleton(N[13, 14, 15])

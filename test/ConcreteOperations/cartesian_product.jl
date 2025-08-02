@@ -1,3 +1,11 @@
+using LazySets, Test, SparseArrays
+using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     c1 = N[1, 2]
     c2 = N[3, 4, 5]
@@ -20,7 +28,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     for X in [H1H2, H1B2, B1B2]
         @test X isa Hyperrectangle{N}
     end
-    if test_suite_polyhedra || N <: AbstractFloat
+    if isdefined(@__MODULE__, :Polyhedra) || N <: AbstractFloat
         for X in [Z1Z2, Z1H2, H1Z2, H1H2, H1B2]
             @test isequivalent(X, B1B2)
         end

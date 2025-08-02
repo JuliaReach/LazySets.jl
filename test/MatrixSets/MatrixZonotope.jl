@@ -1,5 +1,9 @@
 using LazySets, Test
-using LazySets.MatrixZonotopeModule: factors
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
 
 for N in @tN([Float64, Float32, Rational{Int}])
     # test constructor
@@ -62,7 +66,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test norm(MZ, Inf) == 7
     @test norm(MZ, 1) == 8
 
-    #linear_map 
+    # linear_map
     M = N[2 -1; 1 0]
     lm_l = linear_map(M, MZ)
     @test center(lm_l) == [2 -3; 1 0]
@@ -71,20 +75,18 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test center(lm_r) == [2 -1; 3 0]
     @test generators(lm_r) == [[1 -1; 2 0], [3 -2; -1 1]]
     @test indexvector(lm_l) == indexvector(lm_r) && indexvector(lm_r) == indexvector(MZ)
-end
 
-for N in @tN([Float64, Float32, Rational{Int}])
     # A: (2x2), B: (2x3)
     A_c = N[1 0; 0 1]
     A_gens = [N[1 -1; 0 2], N[2 -1; -1 1]]
     A_mz = MatrixZonotope(A_c, A_gens)
 
-    #B: (2x3)
+    # B: (2x3)
     B_c = N[1 0 0; 0 1 1]
     B_gens = [N[1 0 -1; -1 2 0], N[1 1 -1; 0 2 -1]]
     B_mz = MatrixZonotope(B_c, B_gens)
 
-    #C: (3, 2)
+    # C: (3, 2)
     # incompatible dimensions
     C_c = N[1 2; 3 4; 5 6]
     C_gens = [N[2 0; 1 -1; -3 0]]
@@ -113,7 +115,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test MZP * C_mz == MatrixZonotopeProduct(A_mz, B_mz, C_mz)
     @test MZP * MZP2 == MatrixZonotopeProduct(A_mz, B_mz, C_mz, B_mz)
 
-    #MatrixZonotopeExp constructor
+    # MatrixZonotopeExp constructor
     expMZ = MatrixZonotopeExp(A_mz)
     @test expMZ.M == A_mz
     @test size(expMZ) == size(A_mz)

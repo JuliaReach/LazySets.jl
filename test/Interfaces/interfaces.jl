@@ -1,4 +1,5 @@
 # check that all interface functions are implemented
+using LazySets, Test
 
 # --- LazySet ---
 

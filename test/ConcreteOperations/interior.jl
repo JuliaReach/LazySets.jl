@@ -1,3 +1,10 @@
+using LazySets, Test
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     P = BallInf(zeros(N, 2), N(1 // 10))
     d = N[1 // 10, 1 // 10]
@@ -18,7 +25,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 end
 
-# tests that do not work with Rational{Int}
 for N in @tN([Float64, Float32])
     P = BallInf(zeros(N, 2), N(1 // 10))
     d = N[1 // 10, 1 // 10]

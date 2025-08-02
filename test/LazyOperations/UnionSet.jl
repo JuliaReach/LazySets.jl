@@ -1,3 +1,11 @@
+using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: ispermutation
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     B1 = BallInf(zeros(N, 2), N(1))
     B2 = Ball1(ones(N, 2), N(1))

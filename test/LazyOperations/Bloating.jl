@@ -1,3 +1,10 @@
+using LazySets, Test, LinearAlgebra
+if !isdefined(@__MODULE__, Symbol("@tN"))
+    macro tN(v)
+        return v
+    end
+end
+
 for N in @tN([Float64, Float32])
     B = BallInf(zeros(N, 2), N(1))
     E = HPolyhedron([HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1))])  # empty

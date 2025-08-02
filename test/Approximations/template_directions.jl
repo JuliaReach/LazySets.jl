@@ -1,6 +1,5 @@
-using Test, LazySets, LinearAlgebra
+using LazySets, Test, LinearAlgebra
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector
-import Optim
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -101,13 +100,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
             spherical = overapproximate(X, dir)
         end
 
-        # overapproximate lazy polyhedral intersections
-        if N in [Float64]
-            Y = B ∩ Ball1(zeros(N, n), N(1))
-            Z = B ∩ HalfSpace(ones(N, n), N(1))
-            for dir in [BoxDirections, OctDirections, BoxDiagDirections]
-                overapproximate(Y, dir)
-                overapproximate(Z, dir)
+        @static if isdefined(@__MODULE__, :Optim)
+            # overapproximate lazy polyhedral intersections
+            if N in [Float64]
+                Y = B ∩ Ball1(zeros(N, n), N(1))
+                Z = B ∩ HalfSpace(ones(N, n), N(1))
+                for dir in [BoxDirections, OctDirections, BoxDiagDirections]
+                    overapproximate(Y, dir)
+                    overapproximate(Z, dir)
+                end
             end
         end
     end
