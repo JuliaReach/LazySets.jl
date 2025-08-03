@@ -5,30 +5,24 @@
     if m == 2
         @inbounds if block[1] == 1 && block[2] == 2
             return L  # no projection
-        elseif block[1] == 2 && block[2] == 1
-            return Line2D(L.a[block], L.b)  # swap a vector
-        else
-            throw(ArgumentError("invalid projection to $block"))
         end
-    elseif m == 1
-        # projection to dimension i
-        cdims = constrained_dimensions(L)
-        if length(cdims) == 1
-            @inbounds if cdims[1] == block[1]
-                # L: aᵢxᵢ = b where aᵢ ≠ 0
-                return Singleton([L.b / L.a[cdims[1]]])
-            else
-                # L: aⱼxⱼ = b where i ≠ j
-                return Universe{N}(1)
-            end
+        # block[1] == 2 && block[2] == 1
+        return Line2D(L.a[block], L.b)  # swap a vector
+    end
+    # projection to 1 dimension
+    cdims = constrained_dimensions(L)
+    if length(cdims) == 1
+        @inbounds if cdims[1] == block[1]
+            # L: aᵢxᵢ = b where aᵢ ≠ 0
+            return Singleton([L.b / L.a[cdims[1]]])
         else
-            # L is constrained in both dimensions
-            @assert length(cdims) == 2
+            # L: aⱼxⱼ = b where i ≠ j
             return Universe{N}(1)
         end
-    else
-        throw(ArgumentError("cannot project a two-dimensional line to $m dimensions"))
     end
+    # L is constrained in both dimensions
+    @assert length(cdims) == 2
+    return Universe{N}(1)
 end
 
 """
