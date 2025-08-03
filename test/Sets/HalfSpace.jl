@@ -203,6 +203,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     clist = [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-1)), HalfSpace(N[-1], N(-1))]
     res = remove_redundant_constraints!(clist)
     @test !res
+    # infeasible constraints
+    clist = [HalfSpace(N[-1], N(-1)), HalfSpace(N[1], N(0))]
+    clist2 = remove_redundant_constraints(clist)
+    @test clist2 isa Vector{HalfSpace{N,Vector{N}}} && isempty(clist2)
 end
 
 for N in @tN([Float64, Float32])

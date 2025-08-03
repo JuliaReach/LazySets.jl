@@ -76,13 +76,15 @@ function remove_redundant_constraints!(constraints::AbstractVector{<:HalfSpace};
                                        backend=nothing)
     if isempty(constraints)
         return true
+    elseif !isfeasible(constraints)
+        return false
     end
     N = eltype(first(constraints))
     if isnothing(backend)
         backend = default_lp_solver(N)
     end
     A, b = tosimplehrep(constraints)
-    m, n = size(A)
+    m = size(A, 1)
     non_redundant_indices = 1:m
 
     i = 1  # counter over reduced (= non-redundant) constraints
@@ -94,10 +96,7 @@ function remove_redundant_constraints!(constraints::AbstractVector{<:HalfSpace};
         @assert br[i] == b[j]
         br[i] += one(N)
         lp = linprog(-α, Ar, '<', br, -Inf, Inf, backend)
-        if is_lp_infeasible(lp.status)
-            # the polyhedron is empty
-            return false
-        elseif is_lp_optimal(lp.status)
+        if is_lp_optimal(lp.status)
             objval = -lp.objval
             if _leq(objval, b[j])
                 # the constraint is redundant
