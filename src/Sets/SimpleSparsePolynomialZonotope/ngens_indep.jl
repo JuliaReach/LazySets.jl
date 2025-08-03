@@ -1,1 +1,3 @@
-ngens_indep(::SimpleSparsePolynomialZonotope) = 0
+function ngens_indep(::SimpleSparsePolynomialZonotope)
+    return 0
+end

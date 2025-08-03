@@ -5,7 +5,6 @@
 @validate function ∈(x::AbstractVector, P::Polygon)
     require(@__MODULE__, :LazySets; fun_name="in")
 
-    N = promote_type(eltype(x), eltype(P))
     vlist = P.vertices
     if length(vlist) < 2
         if isempty(vlist)
@@ -16,6 +15,7 @@
     end
 
     # vertical ray as a vertical line (compare y coordinates later)
+    N = promote_type(eltype(x), eltype(P))
     vline = Line2D([one(N), zero(N)], @inbounds x[1])
 
     p = @inbounds vlist[end]

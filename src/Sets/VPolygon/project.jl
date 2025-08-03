@@ -2,13 +2,12 @@
     if length(block) == 1
         l, h = extrema(V, block[1])
         return Interval(l, h)
-    elseif length(block) == 2
-        if block[1] == 1 && block[2] == 2
-            return V  # no projection
-        else
-            # block[1] == 2 && block[2] == 1
-            return permute(V, block)  # swap dimensions
-        end
     end
-    throw(ArgumentError("invalid projection to $block"))
+    # length(block) == 2
+    if block[1] == 1 && block[2] == 2
+        return V  # no projection
+    else
+        # block[1] == 2 && block[2] == 1
+        return permute(V, block)  # swap dimensions
+    end
 end

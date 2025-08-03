@@ -29,10 +29,9 @@ Then we solve the following ``m``-dimensional linear program.
     vertices = P.vertices
     m = length(vertices)
 
-    # special cases: 0 or 1 vertex
-    if m == 0
-        return false
-    elseif m == 1
+    # @validate ensures `m > 0`
+
+    if m == 1
         return isapprox(x, @inbounds vertices[1])
     end
 

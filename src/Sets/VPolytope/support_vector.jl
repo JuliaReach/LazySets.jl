@@ -14,11 +14,10 @@ Hence it is sufficient to check all vertices.
 end
 
 function _σ_vertices(d, vlist)
-    # base cases
     m = length(vlist)
-    if m == 0
-        error("the support vector of an empty polytope is undefined")
-    elseif m == 1
+    # @validate ensures `m > 0`
+
+    if m == 1
         @inbounds return vlist[1]
     end
 

@@ -28,4 +28,6 @@ julia> expmat(S)
  1  2
 ```
 """
-expmat(P::SimpleSparsePolynomialZonotope) = P.E
+function expmat(P::SimpleSparsePolynomialZonotope)
+    return P.E
+end

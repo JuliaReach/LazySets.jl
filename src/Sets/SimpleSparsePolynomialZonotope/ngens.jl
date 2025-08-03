@@ -8,4 +8,6 @@
 This number corresponds to the number of monomials in the polynomial
 representation of `P`.
 """
-ngens(P::SimpleSparsePolynomialZonotope) = ngens_dep(P)
+function ngens(P::SimpleSparsePolynomialZonotope)
+    return ngens_dep(P)
+end

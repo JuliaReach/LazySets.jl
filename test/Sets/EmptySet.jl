@@ -393,7 +393,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # linear_combination
     @test_throws DimensionMismatch linear_combination(E, E3)
-    for E2 in (linear_combination(E, Pnc), linear_combination(Pnc, E),
+    for E2 in (linear_combination(E, E),
+               linear_combination(E, Pnc), linear_combination(Pnc, E),
                linear_combination(E, B), linear_combination(B, E),
                linear_combination(E, U), linear_combination(U, E))
         @test isidentical(E, E2)

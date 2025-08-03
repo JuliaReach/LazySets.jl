@@ -132,12 +132,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # test concrete linear map of a half-space
     H = HalfSpace(N[1, -1], N(0)) # x <= y
-    M = N[1 0; 0 0] # non-invertible matrix
+    M = N[1 0; 0 0]  # non-invertible matrix
     @test_throws ArgumentError linear_map(M, H, algorithm="vrep")
-    M = N[2 2; 0 1] # invertible matrix
+    M = N[2 2; 0 1]  # invertible matrix
     @test linear_map(M, H) == HalfSpace(N[0.5, -2.0], N(0.0))
+    M = hcat(N[1 1])  # universal
+    @test linear_map(M, H) == Universe{N}(1)
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
-        M = zeros(N, 2, 2) # result is a singleton
+        M = zeros(N, 2, 2)  # result is a singleton
         X = linear_map(M, H)
         @test X isa HPolyhedron && isequivalent(X, ZeroSet{N}(2))
 
@@ -219,6 +221,8 @@ for N in @tN([Float64, Float32])
     # distance
     H = HalfSpace(N[1, -1], N(0))  # x <= y
     y = N[1, 1]  # closest point in the half-space
+    @test_throws ArgumentError distance(H, y; p=N(Inf))
+    @test_throws ArgumentError distance(y, H; p=N(Inf))
     # point outside
     x = N[2, 0]
     @test distance(x, H) == distance(H, x) ≈ distance(x, y; p=N(2))

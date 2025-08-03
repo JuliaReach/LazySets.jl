@@ -422,7 +422,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # linear_combination
     @test_throws DimensionMismatch linear_combination(U, U3)
-    for U2 in (linear_combination(U, Pnc), linear_combination(Pnc, U),
+    for U2 in (linear_combination(U, U),
+               linear_combination(U, Pnc), linear_combination(Pnc, U),
                linear_combination(U, B), linear_combination(B, U))
         @test isidentical(U, U2)
     end
@@ -434,14 +435,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch minkowski_difference(U, U3)
     @test_throws DimensionMismatch minkowski_difference(B, U3)
     @test_throws DimensionMismatch minkowski_difference(U3, B)
-    # Universe
-    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B), minkowski_difference(U, Z))
+    # universal
+    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B), minkowski_difference(U, Z),
+               minkowski_difference(LinearMap(N[1 0; 0 1], U), U))
         @test isidentical(U, U2)
     end
     # empty difference
     E2 = minkowski_difference(B, U)
     @test E2 isa EmptySet{N} && dim(E2) == 2
-    # TODO test `minkowski_difference(X, U)` with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
 
     # minkowski_sum
     @test_throws DimensionMismatch minkowski_sum(U, U3)

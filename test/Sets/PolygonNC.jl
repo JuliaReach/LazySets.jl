@@ -55,6 +55,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test x ∈ P
         @test y ∉ P
     end
+    @test x ∈ Polygon([x])
+    @test x ∉ Polygon([y])
+    @test x ∉ Polygon{N}()
 end
 
 # default Float64 constructor

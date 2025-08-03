@@ -1,1 +1,3 @@
-genmat(P::SimpleSparsePolynomialZonotope) = P.G
+function genmat(P::SimpleSparsePolynomialZonotope)
+    return P.G
+end
