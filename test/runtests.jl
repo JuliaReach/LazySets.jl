@@ -323,15 +323,12 @@ end
         include("Approximations/underapproximate.jl")
     end
 
-    # ========================
-    # Shared utility functions
-    # ========================
+    # ====================
+    # Solver functionality
+    # ====================
 
     @testset "LazySets.lp_solvers" begin
         include("Utils/lp_solvers.jl")
-    end
-    @testset "LazySets.util" begin
-        include("Utils/util.jl")
     end
 
     # ============================
