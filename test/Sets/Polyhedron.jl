@@ -55,6 +55,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test ishyperplanar(P)
     addconstraint!(P, HalfSpace(N[0, 1], N(1)))
     @test !ishyperplanar(P)
+    # contradictory constraints
+    addconstraint!(P, HalfSpace(N[1, 0], N(0)))
+    @test !ishyperplanar(P)
 
     # universality
     @test !isuniversal(p)

@@ -3,10 +3,6 @@
 end
 
 @validate function translate!(P::VPolytope, v::AbstractVector)
-    if isempty(P.vertices)
-        return P
-    end
-
     for x in P.vertices
         x .+= v
     end

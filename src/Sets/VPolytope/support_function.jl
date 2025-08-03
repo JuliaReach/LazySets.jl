@@ -3,9 +3,8 @@
 end
 
 function _ρ_vertices(d, vlist)
-    if isempty(vlist)
-        error("the support function of an empty polytope is undefined")
-    end
+    # @validate ensures `!isempty(vlist)`
+
     # evaluate support function in every vertex
     return maximum(v -> dot(d, v), vlist)
 end

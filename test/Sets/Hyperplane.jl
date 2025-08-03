@@ -163,6 +163,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # projecting a point onto a line
     H = Hyperplane(N[1, -1], N(0))  # x = y
     @test project(N[1, 0], H) ≈ N[1 // 2, 1 // 2]
+
+    # isdisjoint
+    H2 = Hyperplane(N[1, -1], N(1))
+    res, w = isdisjoint(H, H2, true)
+    @test isdisjoint(H, H2) && res && w isa Vector{N} && w == N[]
 end
 
 for N in @tN([Float64, Float32])
@@ -178,7 +183,9 @@ for N in @tN([Float64, Float32])
 
     # distance
     H = Hyperplane(N[1, -1], N(0))  # x <= y
-    y = N[1, 1]  # closest point in the half-space
+    y = N[1, 1]  # closest point on the hyperplane
+    @test_throws ArgumentError distance(H, y; p=N(Inf))
+    @test_throws ArgumentError distance(y, H; p=N(Inf))
     for x in [N[2, 0], N[1, 1], N[0, 2]]
         @test distance(x, H) == distance(H, x) ≈ distance(x, y; p=N(2))
     end
@@ -204,6 +211,12 @@ for N in [Float64]
     b = BallInf(N[2, 2, 2], N(1))
     empty_intersection, v = is_intersection_empty(b, hp, true)
     @test !empty_intersection && !is_intersection_empty(b, hp) && v ∈ hp && v ∈ b
+
+    # isdisjoint
+    H = Hyperplane(N[1, -1], N(0))
+    H2 = Hyperplane(N[1, 1], N(1))
+    res, w = isdisjoint(H, H2, true)
+    @test !isdisjoint(H, H2) && !res && w isa Vector{N} && w ∈ H && w ∈ H2
 
     # tests that require Symbolics
     @static if isdefined(@__MODULE__, :Symbolics)
