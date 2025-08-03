@@ -40,5 +40,9 @@ function validate_index_vector(v::AbstractVector{Int}, X::LazySet; fun::Function
                                     "for dimension $n but received the vector $v"))
         end
     end
+    if length(unique(v)) < length(v)
+        throw(ArgumentError("`$(string(fun))` requires an index vector " *
+                            "without duplicates but received the vector $v"))
+    end
     return true
 end
