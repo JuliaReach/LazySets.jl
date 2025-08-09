@@ -1,6 +1,5 @@
 @validate function intersection(X::Interval, Y::Interval)
-    l = max(min(X), min(Y))
-    h = min(max(X), max(Y))
+    l, h = _intersection_interval_bounds(X, Y)
     if l > h
         require(@__MODULE__, :LazySets; fun_name="intersection")
 
@@ -9,4 +8,10 @@
     else
         return Interval(l, h)
     end
+end
+
+function _intersection_interval_bounds(X::Interval, Y::Interval)
+    l = max(min(X), min(Y))
+    h = min(max(X), max(Y))
+    return (l, h)
 end
