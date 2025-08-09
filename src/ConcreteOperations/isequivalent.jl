@@ -24,11 +24,8 @@ true
 ```
 """
 @validate function isequivalent(X::LazySet, Y::LazySet)
-    try  # TODO temporary try-catch construct until ≈ is fixed for all set types
-        if X ≈ Y
-            return true
-        end
-    catch e
+    if X ≈ Y
+        return true
     end
     return _isequivalent_inclusion(X, Y)
 end
