@@ -1224,7 +1224,7 @@ end
 
 Compute the ``ℓ_p`` norm of a zonotope.
 """
-function norm(Z::AbstractZonotope, p::Real=Inf)
+@validate function norm(Z::AbstractZonotope, p::Real=Inf)
     if p == 1
         return _l1_norm(Z)
     else
