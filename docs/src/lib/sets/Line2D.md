@@ -155,6 +155,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`high`](@ref high(::AbstractPolyhedron))
 * [`high`](@ref high(::AbstractPolyhedron, ::Int))
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
+* [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{AbstractPolyhedron}))
 * [`low`](@ref low(::AbstractPolyhedron))
 * [`low`](@ref low(::AbstractPolyhedron, ::Int))
 * [`vertices_list`](@ref vertices_list(::AbstractPolyhedron))

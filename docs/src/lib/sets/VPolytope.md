@@ -193,6 +193,7 @@ Inherited from [`ConvexSet`](@ref):
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`an_element`](@ref an_element(::AbstractPolyhedron))
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
+* [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{AbstractPolyhedron}))
 * [`isdisjoint`](@ref isdisjoint(::AbstractPolyhedron, ::AbstractPolyhedron))
 
 Inherited from [`AbstractPolytope`](@ref):

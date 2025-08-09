@@ -146,7 +146,13 @@ function isboundedtype(::Type{<:IntersectionArray{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
+function ispolyhedraltype(::Type{<:IntersectionArray{N,S}}) where {N,S}
+    return ispolyhedraltype(S)
+end
+
 function ispolyhedral(ia::IntersectionArray)
+    ispolyhedraltype(typeof(ia)) && return true
+
     return all(ispolyhedral, array(ia))
 end
 

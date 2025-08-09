@@ -56,7 +56,15 @@ ConvexHull(X::LazySet) = ConvexHull(X, X)
 isoperationtype(::Type{<:ConvexHull}) = true
 concrete_function(::Type{<:ConvexHull}) = convex_hull
 
-ispolyhedral(ch::ConvexHull) = ispolyhedral(ch.X) && ispolyhedral(ch.Y)
+function ispolyhedraltype(::Type{<:ConvexHull{N,S1,S2}}) where {N,S1,S2}
+    return ispolyhedraltype(S1) && ispolyhedraltype(S2)
+end
+
+function ispolyhedral(ch::ConvexHull)
+    ispolyhedraltype(typeof(ch)) && return true
+
+    return ispolyhedral(ch.X) && ispolyhedral(ch.Y)
+end
 
 # EmptySet is the neutral element for ConvexHull
 @neutral(ConvexHull, EmptySet)
