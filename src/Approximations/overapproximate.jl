@@ -883,7 +883,7 @@ end
 
 """
     overapproximate(MZP::MatrixZonotopeProduct{N,S},
-                         ::Type{<:MatrixZonotope{N}}) where {N,S<:AbstractMatrix{N}}
+                         ::Type{<:MatrixZonotope}) where {N,S<:AbstractMatrix{N}}
 
 Overapproximate the product of matrix zonotopes, following Equation 4.10 in [AlthoffKS11](@citet).
 
@@ -932,7 +932,7 @@ function overapproximate(MZP::MatrixZonotopeProduct{N,S},
     end
 end
 
-function load_intervalmatrices_conversion()
+function load_intervalmatrices_overapproximation_matrixzonotope()
     return quote
         using .IntervalMatrices: IntervalMatrix
         """
@@ -943,7 +943,7 @@ function load_intervalmatrices_conversion()
         ### Input
 
         - `A` -- a matrix zonotope
-        - `MatrixZonotope` -- target type
+        - `IntervalMatrix` -- target type
 
         ### Output 
 
