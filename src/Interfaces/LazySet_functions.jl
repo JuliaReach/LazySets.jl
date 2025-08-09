@@ -561,13 +561,17 @@ The default implementation computes a support vector along direction
 ``[1, 0, …, 0]``. This may fail for unbounded sets.
 """
 function an_element(X::LazySet)
-    return _an_element_lazySet(X)
+    return _an_element_lazyset(X)
 end
 
-function _an_element_lazySet(X::LazySet)
+function _an_element_lazyset(X::LazySet)
     N = eltype(X)
     e₁ = SingleEntryVector(1, dim(X), one(N))
-    return σ(e₁, X)
+    v = σ(e₁, X)
+    if any(isinf, v)
+        throw(ArgumentError("this implementation assumes a bounded set"))
+    end
+    return v
 end
 
 # hook into random API
