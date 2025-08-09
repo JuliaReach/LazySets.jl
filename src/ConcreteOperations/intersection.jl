@@ -26,13 +26,13 @@ end
 function _intersection_line2d(L1, L2)
     det = right_turn(L1.a, L2.a)
     if isapproxzero(det)
-        if isapprox(L1.b, L2.b) # lines are identical
+        if _isapprox(L1.b, L2.b)  # lines are identical
             return _to_Line2D(L1)
         else
             N = promote_type(eltype(L1), eltype(L2))
-            return EmptySet{N}(dim(L1)) # lines are disjoint
+            return EmptySet{N}(dim(L1))  # lines are disjoint
         end
-    else # intersection is a point
+    else  # intersection is a point
         @inbounds begin
             x = (L1.b * L2.a[2] - L1.a[2] * L2.b) / det
             y = (L1.a[1] * L2.b - L1.b * L2.a[1]) / det
