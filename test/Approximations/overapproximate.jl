@@ -211,6 +211,24 @@ for N in @tN([Float64, Float32, Rational{Int}])
                                  [1, 2, 3])
     res = overapproximate(MZ * P, SparsePolynomialZonotope)
     @test res == linear_map(MZ, P)  # test fallback
+
+    #overapproximate matrix zonotope multiplication
+    A = MatrixZonotope(N[1 1; -1 1], [N[1 0; 1 2]])
+    B = MatrixZonotope(N[2 0; 1 -1], [N[0 1; 1 -1]])
+    res = overapproximate(A * B, MatrixZonotope)
+
+    @test center(res) == N[3 -1; -1 -1]
+    @test generators(res) == [N[1 0; 1 -2], N[0 1; 2 -1]]
+
+    C = MatrixZonotope(N[1 0; 0 -1], [N[0 0; 1 0]])
+    res2 = overapproximate(A * B * C, MatrixZonotope)
+    @test ngens(res2) == 3
+
+    #empty generator
+    D = MatrixZonotope(N[1 0; 0 -1], Matrix{N}[])
+    res3 = overapproximate(A * D, MatrixZonotope)
+    @test center(res3) == N[1 -1; -1 -1]
+    @test generators(res3) == [N[1 0; 1 -2]]
 end
 
 for N in @tN([Float64, Float32])
@@ -392,6 +410,11 @@ for N in @tN([Float64, Float32])
     PZ2 = SparsePolynomialZonotope(N[3, 3], N[1 -2 2; 2 3 1], hcat(N[1 // 2; 0]), [1 0 2; 0 1 1])
     PZ = overapproximate(CH(PZ1, PZ2), SparsePolynomialZonotope)
     @test center(PZ) == N[-1, 3 // 2]   # no reasonable tests available here
+
+    # overapproximate matrix zonotope with interval matrix 
+    MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
+    IM = overapproximate(MZ, IntervalMatrix)
+    @test IM == IntervalMatrix(N[-1.1 -4.1; 3.9 -1.1], N[-0.9 -3.9; 4.1 -0.9])
 end
 
 for N in [Float64]
