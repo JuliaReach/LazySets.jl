@@ -846,19 +846,24 @@ function remove_redundant_generators(G::AbstractMatrix)
         end
     end
 
-    # sort column in ascedning order
-    ord = sortperm(eachcol(Gnorm))
+    # sort column in ascending order
+    cols = eachcol(Gnorm)
+    if VERSION < v"1.9"
+        cols = collect(cols)
+    end
+    ord = sortperm(cols)
     merged = Vector{Vector{eltype(G)}}()
     
-    cur_dir = view(Gnorm, :, ord[1])
-    cur_sum = norms[ord[1]] # accumulated norm of identical cols
+    this = ord[1]
+    cur_dir = view(Gnorm, :, this)
+    cur_sum = norms[this]  # accumulated norm of identical cols
 
-     # traverse the sorted matrix and compare cols
+    # traverse the sorted matrix and compare cols
     @inbounds for i in 2:p
-        prev = ord[i-1]
+        prev = this
         this = ord[i]
 
-        if isapprox(view(Gnorm, :, prev), view(Gnorm, :, this))
+        if _isapprox(view(Gnorm, :, prev), view(Gnorm, :, this))
             cur_sum += norms[this]
         else
             push!(merged, cur_dir .* cur_sum) # merge multiples

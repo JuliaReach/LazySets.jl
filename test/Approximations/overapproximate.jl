@@ -531,7 +531,7 @@ for N in [Float64]
         local p₂ = x₃ - x₁
         local vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
         Z1 = overapproximate(vTM, Zonotope)
-        @test isequivalent(Z1, Zonotope(N[3, -2.5], N[0.0 1.0 1.0; 0.5 -1.0 -0.0])) 
+        @test isequivalent(Z1, Zonotope(N[3, -2.5], N[0 1 1; 0.5 -1 0])) 
 
         # auxiliary function to get the linear coefficients
         t = TaylorModels.Taylor1(0) # t.order is 0
