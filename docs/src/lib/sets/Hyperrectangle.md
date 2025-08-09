@@ -74,7 +74,6 @@ CurrentModule = LazySets
 ```
 
 Inherited from [`LazySet`](@ref):
-* [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
 * [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
@@ -131,6 +130,7 @@ Inherited from [`AbstractZonotope`](@ref):
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`area`](@ref area(::AbstractHyperrectangle))
+* [`chebyshev_center_radius`](@ref chebyshev_center_radius(::AbstractHyperrectangle))
 * [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
