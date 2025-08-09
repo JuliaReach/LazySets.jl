@@ -76,6 +76,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test !isbounded(RI4) && !isboundedtype(typeof(RI4))
     @test !isbounded(Rectification(HalfSpace(N[-1], N(0))))
 
+    # isconvextype
+    @test !isconvextype(typeof(Rectification(Ball1(N[0, 0], N(1)))))
+    @test isconvextype(typeof(RI1))
+    @test isconvextype(typeof(Rectification(EmptySet{N}(2))))
+    @test isconvextype(typeof(Rectification(Universe{N}(2))))
+
     # conversion
     @test convert(Interval, RI1) == Interval(N(0), N(1))
     @test convert(Hyperrectangle, RB1) ==
