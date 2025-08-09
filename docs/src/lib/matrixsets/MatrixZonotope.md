@@ -49,6 +49,10 @@ CurrentModule = LazySets.MatrixZonotopeModule
 
 Undocumented implementations:
 * [`size`](@ref size(::AbstractMatrixZonotope))
+
+```@meta
+CurrentModule = LazySets
+```
 * [`remove_redundant_generators`](@ref remove_redundant_generators(::AbstractZonotope))
 * [`minkowski_sum`](@ref minkowski_sum(::LazySet, LazySet))
 * [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05()))

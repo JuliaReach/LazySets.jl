@@ -218,7 +218,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     res = overapproximate(A * B, MatrixZonotope)
 
     @test center(res) == N[3 -1; -1 -1]
-    @test generators(res) == [N[1 0; 1 -2], N[0 1; 2 -1]]
+    @test generators(res) == [N[0 1; 2 -1], N[1 0; 1 -2]]
 
     C = MatrixZonotope(N[1 0; 0 -1], [N[0 0; 1 0]])
     res2 = overapproximate(A * B * C, MatrixZonotope)

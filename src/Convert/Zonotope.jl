@@ -265,7 +265,7 @@ end
 """
     convert(::Type{Zonotope}, MZ::MatrixZonotope)
 
-Convert a Cartesian product array of zonotopic sets to a zonotope.
+Convert a matrix zonotope to a zonotope.
 
 ### Input
 
