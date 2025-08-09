@@ -1,4 +1,5 @@
 function remove_redundant_generators(A::MatrixZonotope)
+    #TODO make it robust to column permutations
     Z = convert(Zonotope, A)
     Zred = remove_redundant_generators(Z)
 
