@@ -1,20 +1,19 @@
 """
-    convert(::Type{Interval}, r::Rectification{N, IN}) where {N, IN<:Interval}
+    convert(::Type{Interval}, R::Rectification{N,<:Interval}) where {N}
 
 Convert a rectification of an interval to an interval.
 
 ### Input
 
 - `Interval` -- target type
-- `r`        -- rectification of an interval
+- `R`        -- rectification of an interval
 
 ### Output
 
 An `Interval`.
 """
-function convert(::Type{Interval},
-                 r::Rectification{N,IN}) where {N,IN<:Interval}
-    return Interval(rectify([min(r.X), max(r.X)]))
+function convert(::Type{Interval}, R::Rectification{N,<:Interval}) where {N}
+    return rectify(R.X)
 end
 
 """
