@@ -444,13 +444,13 @@ convex_hull(::LazySet, ::LazySet)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-≈(::LazySet, ::LazySet)
+isapprox(::LazySet, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets
 ```
 ```@docs
-≈(::LazySet, ::LazySet)
+isapprox(::LazySet, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets.API

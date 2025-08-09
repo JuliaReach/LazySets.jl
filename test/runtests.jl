@@ -234,6 +234,9 @@ end
     @testset "LazySets.CompactSet" begin
         include("Interfaces/CompactSet.jl")
     end
+    @testset "LazySets.AbstractZonotope" begin
+        include("Interfaces/AbstractZonotope.jl")
+    end
 
     # =======================
     # Concrete set operations

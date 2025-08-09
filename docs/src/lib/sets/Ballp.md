@@ -86,7 +86,7 @@ Inherited from [`LazySet`](@ref):
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
-* [`≈`](@ref ≈(::LazySet, ::LazySet))
+* [`isapprox`](@ref isapprox(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 

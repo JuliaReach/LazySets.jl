@@ -139,7 +139,7 @@ Inherited from [`LazySet`](@ref):
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
-* [`≈`](@ref ≈(::LazySet, ::LazySet))
+* [`isapprox`](@ref isapprox(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))

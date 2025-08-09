@@ -101,7 +101,7 @@ CurrentModule = LazySets.API
 * [`difference`](@ref difference(::LazySet, ::LazySet))
 * [`distance`](@ref distance(::LazySet, ::LazySet; ::Real=2.0))
 * [`intersection`](@ref intersection(::LazySet, ::LazySet))
-* [`≈`](@ref ≈(::LazySet, ::LazySet))
+* [`isapprox`](@ref isapprox(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 * [`⊆`](@ref ⊆(::LazySet, ::LazySet))
 * [`linear_combination`](@ref linear_combination(::LazySet, ::LazySet))
