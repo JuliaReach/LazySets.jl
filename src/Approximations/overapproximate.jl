@@ -880,3 +880,80 @@ function overapproximate(lm::LinearMap{N,S,NM,MAT},
     reduced = foldr((A, acc) -> overapproximate(A * acc, T), MZs; init=P)
     return reduced
 end
+
+"""
+    overapproximate(MZP::MatrixZonotopeProduct{N,S},
+                         ::Type{<:MatrixZonotope}) where {N,S<:AbstractMatrix{N}}
+
+Overapproximate the product of matrix zonotopes, following Equation 4.10 in [AlthoffKS11](@citet).
+
+### Input
+
+- `MZP` -- a `MatrixZonotopeProduct`
+- `MatrixZonotope` -- target type
+
+### Output 
+
+A matrix zonotope overapproximating the matrix zonotope product
+"""
+function overapproximate(MZP::MatrixZonotopeProduct{N,S},
+                         ::Type{<:MatrixZonotope}) where {N,S<:AbstractMatrix{N}}
+    if nfactors(MZP) == 1
+        return factors(MZP)[1]
+    end
+
+    return foldl(factors(MZP)) do A, B
+        nB = ngens(B)
+        nA = ngens(A)
+
+        if nA == 0
+            return linear_map(center(A), B)
+        elseif nB == 0
+            return linear_map(A, center(B))
+        end
+
+        gens = Vector{S}(undef, nB + nA * nB)
+
+        # G₀ · Hⱼ block
+        @inbounds for j in 1:nB
+            gens[j] = center(A) * generators(B)[j]
+        end
+
+        # Gᵢ ⋅ Hⱼ block 
+        idx = nB + 1
+        @inbounds for Gi in generators(A), Hj in generators(B)
+            gens[idx] = Gi * Hj
+            idx += 1
+        end
+
+        c = center(A) * center(B)
+        res = MatrixZonotope(c, gens)
+        return res
+    end
+end
+
+function load_intervalmatrices_overapproximation_matrixzonotope()
+    return quote
+        using .IntervalMatrices: IntervalMatrix
+        """
+            overapproximate(A::MatrixZonotope, ::Type{<:IntervalMatrix})
+
+        Overapproximate a matrix zonotope by an interval matrix
+
+        ### Input
+
+        - `A` -- a matrix zonotope
+        - `IntervalMatrix` -- target type
+
+        ### Output 
+
+        An interval matrix overapproximating the matrix zonotope
+        """
+        function overapproximate(A::MatrixZonotope, ::Type{<:IntervalMatrix})
+            A_abs = sum([abs.(Ai) for Ai in generators(A)])
+            A₊ = center(A) + A_abs
+            A₋ = center(A) - A_abs
+            return IntervalMatrix(A₋, A₊)
+        end
+    end
+end
