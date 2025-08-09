@@ -631,3 +631,15 @@ radius ``r``.
 function reflect(H::AbstractHyperrectangle)
     return Hyperrectangle(-center(H), radius_hyperrectangle(H))
 end
+
+@validate function is_interior_point(v::AbstractVector{N}, H::AbstractHyperrectangle{N};
+                                     p=N(Inf), ε=_rtol(N)) where {N<:Real}
+    @assert ε > zero(N) "the tolerance must be strictly positive"
+
+    @inbounds for (i, vi) in enumerate(v)
+        if low(H, i) + ε >= v[i] || v[i] >= high(H, i) - ε
+            return false
+        end
+    end
+    return true
+end
