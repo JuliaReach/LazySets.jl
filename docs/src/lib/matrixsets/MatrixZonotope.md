@@ -24,6 +24,7 @@ MatrixZonotope
 center(::MatrixZonotope)
 generators(::MatrixZonotope)
 indexvector(::MatrixZonotope)
+order(::MatrixZonotope)
 transpose(::MatrixZonotope)
 ngens(::MatrixZonotope)
 rand(::Type{MatrixZonotope})
@@ -48,6 +49,9 @@ CurrentModule = LazySets.MatrixZonotopeModule
 
 Undocumented implementations:
 * [`size`](@ref size(::AbstractMatrixZonotope))
+* [`remove_redundant_generators`](@ref remove_redundant_generators(::AbstractZonotope))
+* [`minkowski_sum`](@ref minkowski_sum(::LazySet, LazySet))
+* [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
 
 # [MatrixZonotopeProduct](@id def_MatrixZonotopeProduct)
 ```@docs
