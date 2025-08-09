@@ -560,7 +560,7 @@ end
 The default implementation computes a support vector along direction
 ``[1, 0, …, 0]``. This may fail for unbounded sets.
 """
-function an_element(X::LazySet)
+@validate function an_element(X::LazySet)
     return _an_element_lazySet(X)
 end
 

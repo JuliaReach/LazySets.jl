@@ -175,7 +175,7 @@ An element in the bloated set.
 This implementation disregards negative bloating and returns the result of
 `an_element` for the wrapped set.
 """
-function an_element(B::Bloating)
+@validate function an_element(B::Bloating)
     if B.ε < 0
         throw(ArgumentError("negative bloating is not supported"))
     end

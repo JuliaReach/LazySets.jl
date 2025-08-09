@@ -149,7 +149,7 @@ function vertices_list(P::AbstractHPolygon;
     N = eltype(P)
     points = Vector{Vector{N}}(undef, n)
     if n == 0
-        return points
+        throw(ArgumentError("a polygon with no constraints is invalid"))
     end
     @inbounds for i in 1:(n - 1)
         cap = _intersection_line2d(P.constraints[i], P.constraints[i + 1])
@@ -209,7 +209,7 @@ Return some element of a polygon in constraint representation.
 A vertex of the polygon in constraint representation (the first one in the order
 of the constraints).
 """
-function an_element(P::AbstractHPolygon)
+@validate function an_element(P::AbstractHPolygon)
     @assert length(P.constraints) >= 2 "polygon has less than two constraints"
     return element(_intersection_line2d(P.constraints[1], P.constraints[2]))
 end
