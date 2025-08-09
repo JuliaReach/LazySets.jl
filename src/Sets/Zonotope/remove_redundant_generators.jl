@@ -5,9 +5,9 @@
 
 ### Algorithm
 
-For each generator ``g_j`` that has not been checked yet, we find all other
-generators that are linearly dependent with ``g_j``.
-Then we combine those generators into a single generator.
+This method normalizes each generator to have unit norm, sorts the normalized 
+generators lexicographicaly, and then traverses them once to merge consecutive 
+generators that are approximately collinear by summing them into a single generator.
 
 For one-dimensional zonotopes we use a more efficient implementation where we
 just take the absolute sum of all generators.
@@ -16,48 +16,46 @@ function remove_redundant_generators(Z::Zonotope)
     if dim(Z) == 1  # more efficient implementation in 1D
         return _remove_redundant_generators_1d(Z)
     end
-
-    N = eltype(Z)
+    
     G = genmat(Z)
+    if isempty(G)
+        return Z
+    end
     G = remove_zero_columns(G)
     p = size(G, 2)
-    removed_zero_generators = p < ngens(Z)
-    deleted = false
-    done = falses(p)
-    G_new = vector_type(typeof(G))[]  # list of new column vectors
-    @inbounds for j1 in 1:p
-        if done[j1]  # skip if the generator was already removed
-            continue
-        end
-        # "done[j1] = true" not needed because we will never look at it again
-        gj1 = G[:, j1]
-        for j2 in (j1 + 1):p  # look at all generators to the right
-            if done[j2]  # skip if the generator was already removed
-                continue
-            end
-            gj2 = G[:, j2]
-            answer, factor = ismultiple(gj1, gj2)
-            if answer
-                # column j2 is a multiple of column j1
-                if factor > zero(N)
-                    gj1 += gj2
-                else
-                    gj1 -= gj2
-                end
-                done[j2] = true
-                deleted = true
-            end
-        end
-        push!(G_new, gj1)
+
+    if p <= 1
+        return Zonotope(c, G)
     end
 
-    if deleted
-        G_new = reduce(hcat, G_new)  # convert list of column vectors to matrix
-        return Zonotope(center(Z), G_new)
-    elseif removed_zero_generators
-        return Zonotope(center(Z), G)
+    # normalize columns 
+    Gnorm = similar(G)
+    @inbounds for (j, col) in enumerate(eachcol(G))
+        Gnorm[:, j] = col ./ norm(col)
     end
-    return Z  # return the original zonotope if no generator was removed
+
+    # sort column in ascedning order
+    ord = sortperm(eachcol(Gnorm))
+    merged = Vector{Vector{eltype(G)}}()
+
+    # for each sorted column check right neighbour
+    cur = copy(G[:, ord[1]])
+    @inbounds for i in 2:p
+        prev = ord[i-1]
+        this = ord[i]
+
+        if isapprox(view(Gnorm, :, prev), view(Gnorm, :, this))
+            cur .+= G[:, this] # merge multiples
+        else
+            push!(merged, cur) # add column to reduced matrix 
+            cur = copy(G[:, this])
+        end
+    end
+
+    push!(merged, cur)
+    G_new = hcat(merged...)
+    
+    return Zonotope(center(Z), G_new)
 end
 
 function _remove_redundant_generators_1d(Z)
