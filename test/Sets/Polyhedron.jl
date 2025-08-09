@@ -129,7 +129,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         # concrete linear map of a bounded polyhedron by a non-invertible matrix
         H = Hyperrectangle(N[1, 1], N[2, 2])
         P = convert(HPolyhedron, H)
-        Q = linear_map(N[2 3; 0 0], P, algorithm="vrep")
+        Q = linear_map(N[2 3; 0 0], P; algorithm="vrep")
         if N != Float32
             @test Q isa VPolytope{N}
         else
