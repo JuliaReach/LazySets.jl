@@ -249,11 +249,35 @@ Convert a Cartesian product array of zonotopic sets to a zonotope.
 
 ### Output
 
-A zonotope with sparse matrix representation.
+A zonotope.
+
+### Algorithm
+
+The method vectorizes the center and the generators of the matrix zonotope.
 """
 function convert(::Type{Zonotope}, cpa::CartesianProductArray{N,AZ}) where {N,AZ<:AbstractZonotope}
     arr = array(cpa)
     c = reduce(vcat, center.(arr))
     G = reduce(blockdiag, sparse.(genmat.(arr)))
+    return Zonotope(c, G)
+end
+
+"""
+    convert(::Type{Zonotope}, MZ::MatrixZonotope)
+
+Convert a Cartesian product array of zonotopic sets to a zonotope.
+
+### Input
+
+- `Zonotope` -- target type
+- `MZ`       -- a matrix zonotope
+
+### Output
+
+A zonotope with sparse matrix representation.
+"""
+function convert(::Type{Zonotope}, MZ::MatrixZonotope)
+    c = vec(center(MZ))
+    G = hcat([vec(Ai) for Ai in generators(MZ)]...)
     return Zonotope(c, G)
 end

@@ -928,7 +928,7 @@ function overapproximate(MZP::MatrixZonotopeProduct{N,S},
 
         c = center(A) * center(B)
         res = MatrixZonotope(c, gens)
-        return res
+        return remove_redundant_generators(res)
     end
 end
 

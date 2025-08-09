@@ -120,6 +120,23 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test expMZ.M == A_mz
     @test size(expMZ) == size(A_mz)
     @test_throws AssertionError MatrixZonotopeExp(B_mz)
+
+    # conversion
+    c = N[1 0; 0 3]
+    gens = [N[1 -1; 0 2]]
+    MZ = MatrixZonotope(c, gens)
+    Z = convert(Zonotope, MZ)
+    @test Z == Zonotope(N[1, 0, 0, 3], hcat(N[1, 0, -1, 2]))
+
+    # remove redundant generators 
+    MZ2 = MatrixZonotope(c, [N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]])
+    MZred = remove_redundant_generators(MZ2)
+    @test ngens(MZred) == 2
+
+    # minkowski sum
+    ms =minkowski_sum(MZ, MZ2) 
+    @test center(ms) == N[2 0; 0 6]
+    @test generators(ms) == [N[1 -1; 0 2], N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]]
 end
 
 for N in @tN([Float64, Float32])
