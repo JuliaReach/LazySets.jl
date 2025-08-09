@@ -778,45 +778,48 @@ end
 
 function remove_redundant_generators(G::AbstractMatrix)
     if size(G, 1) == 1  # more efficient implementation in 1D
-        return _remove_redundant_generators_1d(G)
+        return _remove_redundant_generators_1d(Z)
     end
-
-    N = eltype(G)
+    
     G = remove_zero_columns(G)
-    p = size(G, 2)
-    deleted = false
-    done = falses(p)
-    G_new = vector_type(typeof(G))[]  # list of new column vectors
-    @inbounds for j1 in 1:p
-        if done[j1]  # skip if the generator was already removed
-            continue
-        end
-        # "done[j1] = true" not needed because we will never look at it again
-        gj1 = G[:, j1]
-        for j2 in (j1 + 1):p  # look at all generators to the right
-            if done[j2]  # skip if the generator was already removed
-                continue
-            end
-            gj2 = G[:, j2]
-            answer, factor = ismultiple(gj1, gj2)
-            if answer
-                # column j2 is a multiple of column j1
-                if factor > zero(N)
-                    gj1 += gj2
-                else
-                    gj1 -= gj2
-                end
-                done[j2] = true
-                deleted = true
-            end
-        end
-        push!(G_new, gj1)
+    if isempty(G)
+        return Z
     end
 
-    if deleted
-        return reduce(hcat, G_new)  # convert list of column vectors to matrix
+    p = size(G, 2)
+
+    if p <= 1
+        return Zonotope(c, G)
     end
-    return G
+
+    # normalize columns 
+    Gnorm = similar(G)
+    @inbounds for (j, col) in enumerate(eachcol(G))
+        Gnorm[:, j] = col ./ norm(col)
+    end
+
+    # sort column in ascedning order
+    ord = sortperm(eachcol(Gnorm))
+    merged = Vector{Vector{eltype(G)}}()
+
+    # for each sorted column check right neighbour
+    cur = copy(G[:, ord[1]])
+    @inbounds for i in 2:p
+        prev = ord[i-1]
+        this = ord[i]
+
+        if isapprox(view(Gnorm, :, prev), view(Gnorm, :, this))
+            cur .+= G[:, this] # merge multiples
+        else
+            push!(merged, cur) # add column to reduced matrix 
+            cur = copy(G[:, this])
+        end
+    end
+
+    push!(merged, cur)
+    G_new = hcat(merged...)
+    
+    return G_new
 end
 
 function _remove_redundant_generators_1d(G::AbstractMatrix)
