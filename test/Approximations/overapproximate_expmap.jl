@@ -51,6 +51,27 @@ for N in @tN([Float32, Float64])
         pts = sample(Pex, 10; sampler=sampler)
         @test all(p ∈ Zex for p in pts)
 
+        # overapproximate MatrixZonotopeExp
+        
+        # test degenerate case
+        A = MatrixZonotope(N[1 -2; 2 -1], [zeros(N, 2, 2)])
+        expA = MatrixZonotopeExp(A)
+        res = overapproximate(expA, MatrixZonotope, 2)
+        @test ngens(res)== 0
+
+        # degenerate case + product 
+        B = MatrixZonotope(N[1 0; 0 1], Matrix{N}[])
+        expAB = MatrixZonotopeExp(A * B)
+        res2 = overapproximate(expA, MatrixZonotope, 2)
+        @test res == res2
+
+        #inclusion 
+        C = MatrixZonotope(N[1 -2; 2 -1], [0.1 0.05; 0 0.1])
+        expC = MatrixZonotopeExp(C)
+        res = overapproximate(expC, MatrixZonotope, 2)
+        res2 = overapproximate(expC, MatrixZonotope, 3)
+        @test convert(Zonotope, res2) ⊆ convert(Zonotope, res)       
+
         @static if isdefined(@__MODULE__, :ExponentialUtilities) || isdefined(@__MODULE__, :Expokit)
             # matrix
             mzexp = SparseMatrixExp(sparse(M))

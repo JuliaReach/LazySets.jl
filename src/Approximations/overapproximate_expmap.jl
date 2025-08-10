@@ -156,6 +156,61 @@ function load_intervalmatrices_overapproximation_expmap()
             res = overapproximate(E * Z, Zonotope)
             return res
         end
+
+        """
+            overapproximate(expA::MatrixZonotopeExp{N,T}, ::Type{<:MatrixZonotope},
+                                 k::Int=2) where {N,T<:AbstractMatrixZonotope{N}}
+        
+        Overapproximate the matrix zonotope exponential ``exp(\\mathacal{A})``
+
+        ### Input
+
+        - `expA` -- A `MatrixZonotopeExp`
+        - `MatrixZonotope` -- target type
+        - `k` -- (default: `2`) the order of the taylor expansion
+
+        ### Output 
+        
+        A matrix zonotope overapproximating the matrix zonotope exponential
+
+        ### Algorithm
+        
+        The algorithm follows [AlthoffKS11](@citet). 
+        The expansion
+
+        ```math 
+        exp(\\mathcal{A}) ⊆ \\sum_i^k \\frac{\\mathcal{A}^i}{i!} + E_k
+        ```
+
+        is computed by overappraximating the matrix zonotope powers ``A^i`` 
+        for ``i=0, \\dots, k``. 
+        The remainder term ``E_k`` is computed through interval arithmetic 
+        following Proposition 4.1 
+        """
+        function overapproximate(expA::MatrixZonotopeExp{N,T}, ::Type{<:MatrixZonotope},
+                                 k::Int=2) where {N,T<:AbstractMatrixZonotope{N}}
+            # overapproximate the exponent A*B*...*D
+            MZP = MatrixZonotopeProduct(expA.M)
+            X = overapproximate(MZP, MatrixZonotope)
+
+            # compute the taylor expansion 
+            powers = Vector{typeof(X)}(undef, k)
+            powers[1] = X
+            @inbounds for i in 2:k
+                term = overapproximate(X * powers[i - 1], MatrixZonotope)
+                powers[i] = scale(1 / i, term)
+            end
+            W = reduce(minkowski_sum, powers)
+            W = MatrixZonotope(center(W) + Matrix{N}(I, size(W)), generators(W))
+
+            # overapproximate mat zon by interval matrix and overapproximate remainder
+            A = overapproximate(X, IntervalMatrix)
+            E = IntervalMatrices._exp_remainder(A, N(1), k)
+            
+            res = minkowski_sum(W, convert(MatrixZonotope, E))
+            #TODO change to remove_redundant_generators(res) after closing #3999 
+            return res
+        end
     end
 end
 
