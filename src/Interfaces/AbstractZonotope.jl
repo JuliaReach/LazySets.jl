@@ -859,9 +859,9 @@ function remove_redundant_generators(G::AbstractMatrix)
     cur_sum = norms[this]  # accumulated norm of identical cols
 
     # traverse the sorted matrix and compare cols
-    @inbounds for i in 2:p
+    @inbounds for j in 2:p
         prev = this
-        this = ord[i]
+        this = ord[j]
 
         if _isapprox(view(Gnorm, :, prev), view(Gnorm, :, this))
             cur_sum += norms[this]
