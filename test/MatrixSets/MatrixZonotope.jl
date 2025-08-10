@@ -125,4 +125,11 @@ end
 for N in @tN([Float64, Float32])
     MZ = rand(MatrixZonotope; N=N)
     @test MZ isa MatrixZonotope{N}
+
+    c = N[1 0; 0 3]
+    gens = [N[1 -1; 0 2], N[1e-5 1e-5; 1e-6 1e-5]]
+    MZ = MatrixZonotope(c, gens)
+    MZred = remove_small_generators(MZ)
+    @test center(MZred) == c
+    @test generators(MZred) == [N[1 -1; 0 2]]
 end

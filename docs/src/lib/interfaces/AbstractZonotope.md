@@ -88,6 +88,7 @@ linear_map(::AbstractMatrix, ::LazySet)
 CurrentModule = LazySets
 ```
 ```@docs
+remove_small_generators
 linear_map(::AbstractMatrix, ::AbstractZonotope)
 reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05())
 split(::AbstractZonotope, ::Int)

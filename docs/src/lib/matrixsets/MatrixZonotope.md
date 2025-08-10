@@ -45,9 +45,12 @@ Undocumented implementations:
 ```@meta
 CurrentModule = LazySets.MatrixZonotopeModule
 ```
-
-Undocumented implementations:
 * [`size`](@ref size(::AbstractMatrixZonotope))
+
+```@meta
+CurrentModule = LazySets
+```
+* [`remove_small_generators](@ref remove_small_generators(::AbstractZonotope, ::Real; ::Real))
 
 # [MatrixZonotopeProduct](@id def_MatrixZonotopeProduct)
 ```@docs
