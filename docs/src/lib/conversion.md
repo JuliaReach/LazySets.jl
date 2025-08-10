@@ -42,4 +42,5 @@ convert(::Type{SimpleSparsePolynomialZonotope}, ::AbstractZonotope)
 convert(::Type{SimpleSparsePolynomialZonotope}, ::AbstractSparsePolynomialZonotope)
 convert(::Type{SparsePolynomialZonotope}, ::AbstractZonotope{N}) where {N}
 convert(::Type{SparsePolynomialZonotope}, ::SimpleSparsePolynomialZonotope{N}) where {N}
+convert(::Type{MatrixZonotope}, ::IntervalMatrix)
 ```
