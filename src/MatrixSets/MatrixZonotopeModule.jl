@@ -6,8 +6,8 @@ using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ..LazySets: Zonotope
 
-@reexport import ..API: center, scale, scale!, rand, norm, linear_map
-@reexport import ..LazySets: generators, ngens
+@reexport import ..API: center, scale, scale!, rand, norm, linear_map,
+@reexport import ..LazySets: generators, ngens, remove_small_generators
 
 export AbstractMatrixZonotope, MatrixZonotope, MatrixZonotopeProduct,
        MatrixZonotopeExp, indexvector, factors, nfactors
@@ -21,6 +21,7 @@ include("norm.jl")
 include("rand.jl")
 include("linear_map.jl")
 include("scale.jl")
+include("remove_small_generators.jl")
 
 include("generators.jl")
 include("indexvector.jl")

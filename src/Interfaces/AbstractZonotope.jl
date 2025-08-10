@@ -5,7 +5,8 @@ export AbstractZonotope,
        generators,
        togrep,
        reduce_order,
-       remove_redundant_generators
+       remove_redundant_generators,
+       remove_small_generators
 
 """
     AbstractZonotope{N} <: AbstractCentrallySymmetricPolytope{N}
@@ -882,6 +883,31 @@ end
 function _remove_redundant_generators_1d(G::AbstractMatrix)
     g = sum(abs, G)
     return hcat(g)
+end
+
+"""
+    remove_small_generators(Z::AbstractZonotope, tol::Real=1e-4; p::Real=Inf)
+    
+Remove generators with norm smaller than a given tolerance.
+
+# Input
+
+- `Z` -- an `AbstractZonotope`
+- `tol` -- (default: `1e-4`) threshold below which a generator column is considered negligible
+- `p`  -- (optional, default: `Inf`) norm
+
+# Output
+
+A zonotope containing only the generators whose ``p``-norm is at least `tol`
+"""
+function remove_small_generators(Z::AbstractZonotope, tol::Real=1e-4, p::Real=Inf)
+    G = remove_small_generators(genmat(Z), tol; p=p)
+    return Zonotope(center(Z), G)
+end
+
+function remove_small_generators(G::AbstractMatrix, tol::Real=1e-4; p::Real=Inf)
+    mask = map(x -> norm(x, p) > tol, eachcol(G))
+    return G[:, mask]
 end
 
 """

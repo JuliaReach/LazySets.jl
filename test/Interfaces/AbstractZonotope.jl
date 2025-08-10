@@ -22,4 +22,7 @@ for N in @tN([Float64, Float32])
 
     H = N[0 0 1; 1 1 0] # equal after sorting
     @test remove_redundant_generators(H) == N[0 1; 2 0]
+
+    G2 = N[0 1 1e-4 2; 0 0 0 0]
+    @test remove_small_generators(G2) == N[1 2; 0 0]
 end
