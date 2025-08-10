@@ -776,12 +776,11 @@ function remove_redundant_generators(Z::AbstractZonotope)
     return Z  # fallback implementation
 end
 
-function remove_redundant_generators(G::AbstractMatrix)
+function remove_redundant_generators(G::AbstractMatrix{N}) where {N<: Rational}
     if size(G, 1) == 1  # more efficient implementation in 1D
         return _remove_redundant_generators_1d(G)
     end
 
-    N = eltype(G)
     G = remove_zero_columns(G)
     p = size(G, 2)
     deleted = false
@@ -817,6 +816,67 @@ function remove_redundant_generators(G::AbstractMatrix)
         return reduce(hcat, G_new)  # convert list of column vectors to matrix
     end
     return G
+end
+
+function remove_redundant_generators(G::AbstractMatrix)
+    if size(G, 1) == 1  # more efficient implementation in 1D
+        return _remove_redundant_generators_1d(G)
+    end
+    
+    G = remove_zero_columns(G)
+    p = size(G, 2)
+
+    if p <= 1
+        return G
+    end
+
+    # normalize columns
+    norms = Vector{eltype(G)}(undef, p)
+    Gnorm = similar(G)
+    @inbounds for (j, col) in enumerate(eachcol(G))
+        norms[j] = norm(col)
+        unit_col = col ./ norms[j]
+        idx = findfirst(!iszero, unit_col)
+
+        # flip the vector if the first element is negative
+        if !isnothing(idx) && unit_col[idx] < 0
+            Gnorm[:, j] = -unit_col
+        else
+            Gnorm[:, j] = unit_col
+        end
+    end
+
+    # sort column in ascending order
+    cols = eachcol(Gnorm)
+    if VERSION < v"1.9"
+        cols = collect(cols)
+    end
+    ord = sortperm(cols)
+    merged = Vector{Vector{eltype(G)}}()
+    
+    this = ord[1]
+    cur_dir = view(Gnorm, :, this)
+    cur_sum = norms[this]  # accumulated norm of identical cols
+
+    # traverse the sorted matrix and compare cols
+    @inbounds for j in 2:p
+        prev = this
+        this = ord[j]
+
+        if _isapprox(view(Gnorm, :, prev), view(Gnorm, :, this))
+            cur_sum += norms[this]
+        else
+            push!(merged, cur_dir .* cur_sum) # merge multiples
+
+            cur_dir = view(Gnorm, :, this)
+            cur_sum = norms[this]
+        end
+    end
+
+    push!(merged, cur_dir .* cur_sum)
+
+    G_new = hcat(merged...)
+    return G_new
 end
 
 function _remove_redundant_generators_1d(G::AbstractMatrix)

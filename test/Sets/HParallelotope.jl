@@ -76,8 +76,7 @@ for N in @tN([Float64, Float32])
 
     # conversion from zonotope
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
-    @test convert(HParallelotope, Z) ==
-          HParallelotope(N[0 -1; 1 0], N[1, 1, 1, 1])
+    @test isequivalent(convert(HParallelotope, Z), HParallelotope(N[0 -1; 1 0], N[1, 1, 1, 1]))
     Z = Zonotope(N[0, 0], N[1 0 1; 0 1 1])
     @test_throws AssertionError convert(HParallelotope, Z)
 end
