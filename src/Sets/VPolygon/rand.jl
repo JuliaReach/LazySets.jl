@@ -68,7 +68,7 @@ function rand(::Type{VPolygon};
         for i in 1:(length(directions) - 1)
             vertices[i + 1] = vertices[i] + directions[i]
         end
-        @assert isapprox(vertices[end] + directions[end], vertices[1], atol=1e-6)
+        @assert _isapprox(vertices[end] + directions[end], vertices[1])
     end
     return VPolygon(vertices; apply_convex_hull=true)
 end
