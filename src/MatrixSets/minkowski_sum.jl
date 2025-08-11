@@ -18,9 +18,14 @@ function minkowski_sum(A::MatrixZonotope, B::MatrixZonotope)
 
     c = center(A) + center(B)
 
-    gensA = [convert(typeof(c), Ai) for Ai in generators(A)]
-    gensB = [convert(typeof(c), Bi) for Bi in generators(B)]
-    gens = vcat(gensA, gensB)
+    if eltype(A) == eltype(B)
+        gensA = generators(A)
+        gensB = generators(B)
+    else
+        gensA = [convert(typeof(c), Ai) for Ai in generators(A)]
+        gensB = [convert(typeof(c), Bi) for Bi in generators(B)]
+    end
 
+    gens = vcat(gensA, gensB)
     return MatrixZonotope(c, gens)
 end

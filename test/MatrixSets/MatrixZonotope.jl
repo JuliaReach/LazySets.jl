@@ -140,6 +140,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     MZred = remove_redundant_generators(MZ2)
     @test ngens(MZred) == 2
     @static if isdefined(@__MODULE__, :Polyhedra)
+        @show vectorize(MZ2)
+        @show vectorize(MZred)
         @test isequivalent(vectorize(MZ2), vectorize(MZred))
     end
 
@@ -147,7 +149,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     ms =minkowski_sum(MZ, MZ2) 
     @test center(ms) == N[2 0; 0 6]
     @test generators(ms) == [N[1 -1; 0 2], N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]]
-    
 end
 
 for N in @tN([Float64, Float32])
