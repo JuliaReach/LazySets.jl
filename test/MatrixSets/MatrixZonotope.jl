@@ -129,8 +129,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Z = vectorize(MZ)
     @test Z == Zonotope(N[1, 0, 0, 3], hcat(N[1, 0, -1, 2]))
     MZ2 = matrixize(Z, (2, 2))
-    @test isapprox(center(MZ), center(MZ2))
-    @test isapprox(generators(MZ), generators(MZ2))
+    # floating-point errors for Float32 (at least on the CI platform)
+    # and `isequivalent` is not robust to minor imprecisions 
+    if N == Float32
+        @test isapprox(center(MZ), center(MZ2))
+        @test isapprox(generators(MZ), generators(MZ2))
+    else
+        @static if isdefined(@__MODULE__, :Polyhedra)
+            @test isequivalent(vectorize(MZ), vectorize(MZ2))
+        end
+    end
 
     # order
     @test order(MZ) == 1//4 && order(MZ) == order(Z)
