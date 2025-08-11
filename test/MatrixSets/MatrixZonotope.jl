@@ -139,7 +139,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     MZ2 = MatrixZonotope(c, [N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]])
     MZred = remove_redundant_generators(MZ2)
     @test ngens(MZred) == 2
-    # `remove_redundant_generators`` introduces floating point errors for Float32
+    # `remove_redundant_generators` introduces floating-point errors for Float32
+    # (at least on the CI platform)
     # and `isequivalent` is not robust to minor imprecisions 
     if N==Float64 
         @static if isdefined(@__MODULE__, :Polyhedra)
