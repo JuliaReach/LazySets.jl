@@ -140,7 +140,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     MZred = remove_redundant_generators(MZ2)
     @test ngens(MZred) == 2
     @static if isdefined(@__MODULE__, :Polyhedra)
-        @test isequivalent(vectorize(MZ2), vectorize(MZred)) == true
+        @test isequivalent(vectorize(MZ2), vectorize(MZred))
     end
 
     # minkowski sum
