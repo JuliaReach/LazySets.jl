@@ -138,8 +138,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # remove redundant generators 
     MZ2 = MatrixZonotope(c, [N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]])
     MZred = remove_redundant_generators(MZ2)
+    @test ngens(MZred) == 2
     @static if isdefined(@__MODULE__, :Polyhedra)
-        @test isequivalent(vectorize(MZ2), vectorize(MZred))
+        @test isequivalent(vectorize(MZ2), vectorize(MZred)) == true
     end
 
     # minkowski sum
