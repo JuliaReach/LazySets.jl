@@ -1,6 +1,6 @@
 function load_intervalmatrices_conversion()
     return quote
-        using .IntervalMatrices: IntervalMatrix, mid, sup
+        using .IntervalMatrices: IntervalMatrix, mid, sup, radius
 
         """
             convert(::Type{MatrixZonotope}, IM::IntervalMatrix)
@@ -30,7 +30,7 @@ function load_intervalmatrices_conversion()
         julia> MZ = convert(MatrixZonotope, IM)
         MatrixZonotope{Float64, Matrix{Float64}}([-1.0 -4.0; 4.0 -1.0],
         [[0.09999999999999998 0.10000000000000009; 0.09999999999999964 0.09999999999999998]], [1])
-        ````
+        ```
         """
         function Base.convert(::Type{MatrixZonotope}, IM::IntervalMatrix)
             c = mid(IM)

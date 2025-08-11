@@ -120,6 +120,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test expMZ.M == A_mz
     @test size(expMZ) == size(A_mz)
     @test_throws AssertionError MatrixZonotopeExp(B_mz)
+
+    # convert IM to MZ
+    @static if isdefined(@__MODULE__, :IntervalMatrices)
+        IM = IntervalMatrix([interval(-N(1.1), -N(0.9)) interval(-N(4.1), -N(3.9));
+                            interval(N(3.9), N(4.1)) interval(-N(1.1), -N(0.9))])
+        MZ = convert(MatrixZonotope, IM)
+        @test isapprox(center(MZ), N[-1.0 -4.0; 4.0 -1.0])
+        @test isapprox(generator(MZ), [N[0.1 0.1; 0.1 0.1]])
+    end
 end
 
 for N in @tN([Float64, Float32])
