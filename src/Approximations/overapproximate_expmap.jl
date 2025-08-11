@@ -161,13 +161,13 @@ function load_intervalmatrices_overapproximation_expmap()
             overapproximate(expA::MatrixZonotopeExp{N,T}, ::Type{<:MatrixZonotope},
                                  k::Int=2) where {N,T<:AbstractMatrixZonotope{N}}
         
-        Overapproximate the matrix zonotope exponential ``exp(\\mathacal{A})``
+        Overapproximate the matrix zonotope exponential ``exp(\\mathcal{A})``
 
         ### Input
 
-        - `expA` -- A `MatrixZonotopeExp`
+        - `expA` -- `MatrixZonotopeExp`
         - `MatrixZonotope` -- target type
-        - `k` -- (default: `2`) the order of the taylor expansion
+        - `k` -- (default: `2`) the order of the Taylor expansion
 
         ### Output 
         
@@ -182,18 +182,18 @@ function load_intervalmatrices_overapproximation_expmap()
         exp(\\mathcal{A}) ⊆ \\sum_i^k \\frac{\\mathcal{A}^i}{i!} + E_k
         ```
 
-        is computed by overappraximating the matrix zonotope powers ``A^i`` 
-        for ``i=0, \\dots, k``. 
+        is computed by overapproximating the matrix zonotope powers ``A^i`` 
+        for ``i=0, …, k``. 
         The remainder term ``E_k`` is computed through interval arithmetic 
-        following Proposition 4.1 
+        following Proposition 4.1.
         """
         function overapproximate(expA::MatrixZonotopeExp{N,T}, ::Type{<:MatrixZonotope},
                                  k::Int=2) where {N,T<:AbstractMatrixZonotope{N}}
-            # overapproximate the exponent A*B*...*D
+            # overapproximate the exponent, which can be a product A*B*…
             MZP = MatrixZonotopeProduct(expA.M)
             X = overapproximate(MZP, MatrixZonotope)
 
-            # compute the taylor expansion 
+            # compute the Taylor expansion
             powers = Vector{typeof(X)}(undef, k)
             powers[1] = X
             @inbounds for i in 2:k

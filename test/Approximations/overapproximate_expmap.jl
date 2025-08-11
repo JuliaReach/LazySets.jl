@@ -66,7 +66,7 @@ for N in @tN([Float32, Float64])
         @test res == res2
 
         #inclusion 
-        C = MatrixZonotope(N[1 -2; 2 -1], [0.1 0.05; 0 0.1])
+        C = MatrixZonotope(N[1 -2; 2 -1], N[0.1 0.05; 0 0.1])
         expC = MatrixZonotopeExp(C)
         res = overapproximate(expC, MatrixZonotope, 2)
         res2 = overapproximate(expC, MatrixZonotope, 3)

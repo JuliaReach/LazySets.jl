@@ -34,7 +34,7 @@ function load_intervalmatrices_conversion()
         """
         function Base.convert(::Type{MatrixZonotope}, IM::IntervalMatrix)
             c = mid(IM)
-            G = [sup(IM) - mid(IM)]
+            G = [radius(IM)]
             return MatrixZonotope(c, G)
         end
     end
