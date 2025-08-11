@@ -1,4 +1,5 @@
 using LazySets, Test
+using LazySets.MatrixZonotopeModule: vectorize, matrixize
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -121,25 +122,40 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test size(expMZ) == size(A_mz)
     @test_throws AssertionError MatrixZonotopeExp(B_mz)
 
-    # conversion
+    # vectorize and matrixize
     c = N[1 0; 0 3]
     gens = [N[1 -1; 0 2]]
     MZ = MatrixZonotope(c, gens)
-    Z = convert(Zonotope, MZ)
+    Z = vectorize(MZ)
     @test Z == Zonotope(N[1, 0, 0, 3], hcat(N[1, 0, -1, 2]))
+    MZ2 = matrixize(Z, (2, 2))
+    @test isapprox(center(MZ), center(MZ2))
+    @test isapprox(generators(MZ), generators(MZ2))
+
+    # order
+    @test order(MZ) == 1//4 && order(MZ) == order(Z)
 
     # remove redundant generators 
     MZ2 = MatrixZonotope(c, [N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]])
     MZred = remove_redundant_generators(MZ2)
-    @test ngens(MZred) == 2
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        @test isequivalent(vectorize(MZ2), vectorize(MZred))
+    end
 
     # minkowski sum
     ms =minkowski_sum(MZ, MZ2) 
     @test center(ms) == N[2 0; 0 6]
     @test generators(ms) == [N[1 -1; 0 2], N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]]
+    
 end
 
 for N in @tN([Float64, Float32])
-    MZ = rand(MatrixZonotope; N=N)
+    MZ = rand(MatrixZonotope, N=N, dim=(2,2), num_generators=8)
     @test MZ isa MatrixZonotope{N}
+
+    # reduce order
+    MZred = reduce_order(MZ, 1)
+    @test order(MZred) ≤ 1
+    @test ngens(MZred) == 4
+    @test center(MZred) == center(MZ)
 end

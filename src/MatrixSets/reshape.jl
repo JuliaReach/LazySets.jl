@@ -30,11 +30,11 @@ Reshape a zonotope zonotope to transform it into a matrix zonotope.
 
 A matrix zonotope.
 """
-function matrixize(Z::Zonotope, dim::Tuple{Int,Int})
-    @assert dim[1] * dim[2] == dim(Z) "cannot reshape a zonotope of dim = $(dim(Z)) into " *
-                                      "a matrix zonotope of size $dim"
+function matrixize(Z::Zonotope, dims::Tuple{Int,Int})
+    @assert dims[1] * dims[2] == dim(Z) "cannot reshape a zonotope of dim = $(dim(Z)) into " *
+                                      "a matrix zonotope of size $dims"
 
-    c = reshape(center(Z), dim)
-    gens = [Matrix(reshape(col, dim)) for col in eachcol(genmat(G))]
+    c = Matrix(reshape(center(Z), dims))
+    gens = [Matrix(reshape(col, dims)) for col in eachcol(genmat(Z))]
     return MatrixZonotope(c, gens)
 end

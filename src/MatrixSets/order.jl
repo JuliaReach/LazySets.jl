@@ -1,11 +1,11 @@
 """
-    order(A::MatrixZonotope)
+    order(MZ::MatrixZonotope)
 
 Return the order of a matrix zonotope.
 
 ### Input
 
-- `A` -- matrix zonotope
+- `MZ` -- matrix zonotope
 
 ### Output
 
@@ -18,7 +18,7 @@ generators and the product of its dimensions. Alternatively it can be thought
 as the order of the zonotopic set constructed from the vectorization of the center 
 and the generators.
 """
-function order(A::MatrixZonotope)
-    m, n = size(A)
-    return ngens(Z) // (m * n)
+function order(MZ::MatrixZonotope)
+    m, n = size(MZ)
+    return ngens(MZ) // (m * n)
 end
