@@ -5,7 +5,7 @@ Vectorize a matrix zonotope to transform it into a zonotope.
 
 ### Input
 
-- `MZ`       -- a matrix zonotope
+- `MZ` -- a matrix zonotope
 
 ### Output
 
@@ -18,13 +18,13 @@ function vectorize(MZ::MatrixZonotope)
 end
 
 """
-    matrixize(Z::Zonotope)
+    matrixize(Z::Zonotope, dims::Tuple{Int,Int})
 
 Reshape a zonotope zonotope to transform it into a matrix zonotope.
 
 ### Input
 
-- `Z`       -- a zonotope
+- `Z` -- a zonotope
 
 ### Output
 

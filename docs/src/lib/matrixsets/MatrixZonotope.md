@@ -35,6 +35,8 @@ norm(::MatrixZonotope, ::Real)
 linear_map(::AbstractMatrix, ::MatrixZonotope)
 linear_map(::MatrixZonotope, ::AbstractMatrix)
 _rowwise_zonotope_norm
+vectorize(::MatrixZonotope)
+matrixize(::Zonotope, ::Tuple{Int, Int})
 ```
 
 ```@meta
