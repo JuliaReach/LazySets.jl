@@ -2,7 +2,7 @@
     reduce_order(MZ::MatrixZonotope, r::Real,
                  [method]::AbstractReductionMethod=GIR05())
 
-Reduce the order of a zonotopic set by overapproximating with a zonotope with
+Reduce the order of a matrix zonotope by overapproximating with a matrix zonotope with
 fewer generators.
 
 ### Input
@@ -36,8 +36,5 @@ function reduce_order(MZ::MatrixZonotope, r::Real,
 
     Z = vectorize(MZ)
     Zred = reduce_order(Z, r, method)
-
-    # reshape to matrix zonotope
-    dim = size(MZ)
-    return matrixize(Zred, dim)
+    return matrixize(Zred, size(MZ))
 end

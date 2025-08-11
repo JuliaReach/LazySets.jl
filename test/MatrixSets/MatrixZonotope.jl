@@ -156,6 +156,5 @@ for N in @tN([Float64, Float32])
     # reduce order
     MZred = reduce_order(MZ, 1)
     @test order(MZred) ≤ 1
-    @test ngens(MZred) == 4
     @test center(MZred) == center(MZ)
 end

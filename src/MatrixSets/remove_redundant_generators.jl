@@ -25,7 +25,5 @@ to a matrix zonotope of the original dimensions.
 function remove_redundant_generators(MZ::MatrixZonotope)
     Z = vectorize(MZ)
     Zred = remove_redundant_generators(Z)
-
-    dim = size(MZ)
-    return matrixize(Zred, dim)
+    return matrixize(Zred, size(MZ))
 end

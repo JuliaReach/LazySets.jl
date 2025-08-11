@@ -20,11 +20,12 @@ end
 """
     matrixize(Z::Zonotope, dims::Tuple{Int,Int})
 
-Reshape a zonotope zonotope to transform it into a matrix zonotope.
+Reshape a zonotope to transform it into a matrix zonotope.
 
 ### Input
 
-- `Z` -- a zonotope
+- `Z`    -- a zonotope
+- `dims` -- target dimensions of the matrix zonotope
 
 ### Output
 
