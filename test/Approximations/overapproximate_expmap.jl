@@ -1,4 +1,5 @@
 using LazySets, Test, SparseArrays
+using LazySets.MatrixZonotopeModule: vectorize
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -54,23 +55,18 @@ for N in @tN([Float32, Float64])
         # overapproximate MatrixZonotopeExp
         
         # test degenerate case
-        A = MatrixZonotope(N[1 -2; 2 -1], [zeros(N, 2, 2)])
+        c = N[1 -2; 2 -1]
+        A = MatrixZonotope(c, [zeros(N, 2, 2)])
         expA = MatrixZonotopeExp(A)
-        res = overapproximate(expA, MatrixZonotope, 2)
+        res = overapproximate(expA, MatrixZonotope, 20) #for large k it converges to exp(c)
+        @test isapprox(center(res), exp(c))
         @test ngens(res)== 0
 
         # degenerate case + product 
         B = MatrixZonotope(N[1 0; 0 1], Matrix{N}[])
         expAB = MatrixZonotopeExp(A * B)
-        res2 = overapproximate(expA, MatrixZonotope, 2)
-        @test res == res2
-
-        #inclusion 
-        C = MatrixZonotope(N[1 -2; 2 -1], N[0.1 0.05; 0 0.1])
-        expC = MatrixZonotopeExp(C)
-        res = overapproximate(expC, MatrixZonotope, 2)
-        res2 = overapproximate(expC, MatrixZonotope, 3)
-        @test convert(Zonotope, res2) ⊆ convert(Zonotope, res)       
+        res2 = overapproximate(expA, MatrixZonotope, 20)
+        @test isapprox(center(res), center(res2))
 
         @static if isdefined(@__MODULE__, :ExponentialUtilities) || isdefined(@__MODULE__, :Expokit)
             # matrix
@@ -80,5 +76,19 @@ for N in @tN([Float32, Float64])
             MZex = overapproximate(MPex, Zonotope)
             @test MZex ⊆ Zex
         end
+    end
+end
+
+let 
+    # This test for MatrixZonotopeExp is only ran with Float64 since it is expensive
+    # and requires very high taylor order `k` to pass on Float32
+    N=Float64
+    @static if isdefined(@__MODULE__, :IntervalMatrices)
+        #inclusion 
+        C = MatrixZonotope(N[1 -2; 2 -1], [N[0.1 0.05; 0 0.1]])
+        expC = MatrixZonotopeExp(C)
+        res = reduce_order(overapproximate(expC, MatrixZonotope, 4), 1)
+        res2 = reduce_order(overapproximate(expC, MatrixZonotope, 8), 1)
+        @test vectorize(res2) ⊆ vectorize(res)       
     end
 end

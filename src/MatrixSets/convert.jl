@@ -28,8 +28,7 @@ function load_intervalmatrices_conversion()
           [3.89999, 4.1]   [-1.10001, -0.9]
         
         julia> MZ = convert(MatrixZonotope, IM)
-        MatrixZonotope{Float64, Matrix{Float64}}([-1.0 -4.0; 4.0 -1.0],
-        [[0.09999999999999998 0.10000000000000009; 0.09999999999999964 0.09999999999999998]], [1])
+        MatrixZonotope{Float64, Matrix{Float64}}([-1.0 -4.0; 4.0 -1.0], [[0.10000000000000009 0.10000000000000009; 0.10000000000000009 0.10000000000000009]], [1])
         ```
         """
         function Base.convert(::Type{MatrixZonotope}, IM::IntervalMatrix)
