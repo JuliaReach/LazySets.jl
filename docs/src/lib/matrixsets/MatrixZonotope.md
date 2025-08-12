@@ -24,13 +24,19 @@ MatrixZonotope
 center(::MatrixZonotope)
 generators(::MatrixZonotope)
 indexvector(::MatrixZonotope)
+order(::MatrixZonotope)
 transpose(::MatrixZonotope)
 ngens(::MatrixZonotope)
+minkowski_sum(::MatrixZonotope, ::MatrixZonotope)
+remove_redundant_generators(::MatrixZonotope)
+reduce_order(::MatrixZonotope, ::Real, ::AbstractReductionMethod)
 rand(::Type{MatrixZonotope})
 norm(::MatrixZonotope, ::Real)
 linear_map(::AbstractMatrix, ::MatrixZonotope)
 linear_map(::MatrixZonotope, ::AbstractMatrix)
 _rowwise_zonotope_norm
+vectorize(::MatrixZonotope)
+matrixize(::Zonotope, ::Tuple{Int, Int})
 ```
 
 ```@meta

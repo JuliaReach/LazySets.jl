@@ -1,4 +1,5 @@
 using LazySets, Test, LinearAlgebra, SparseArrays
+using LazySets.MatrixZonotopeModule: vectorize
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
 using LazySets.ReachabilityBase.Comparison: _leq, _geq
 IA = LazySets.IA
@@ -217,8 +218,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     B = MatrixZonotope(N[2 0; 1 -1], [N[0 1; 1 -1]])
     res = overapproximate(A * B, MatrixZonotope)
 
-    @test center(res) == N[3 -1; -1 -1]
-    @test generators(res) == [N[1 0; 1 -2], N[0 1; 2 -1]]
+    ex_res = MatrixZonotope(N[3 -1; -1 -1], [N[0 1; 2 -1], N[1 0; 1 -2]])
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        @test isequivalent(vectorize(res), vectorize(ex_res))
+    end
 
     C = MatrixZonotope(N[1 0; 0 -1], [N[0 0; 1 0]])
     res2 = overapproximate(A * B * C, MatrixZonotope)
