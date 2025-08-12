@@ -226,9 +226,9 @@ function _three_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N
 
     if isapproxzero(turn)
         # ABC are collinear
-        if isapprox(A[1], B[1]) && isapprox(B[1], C[1]) && isapprox(C[1], A[1])
+        if _isapprox(A[1], B[1]) && _isapprox(B[1], C[1]) && _isapprox(C[1], A[1])
             # points are approximately equal in their first component
-            if isapprox(A[2], B[2]) && isapprox(B[2], C[2]) && isapprox(C[2], A[2])
+            if _isapprox(A[2], B[2]) && _isapprox(B[2], C[2]) && _isapprox(C[2], A[2])
                 # all points are approximately equal
                 pop!(points)
                 pop!(points)
@@ -259,9 +259,9 @@ end
 
 function _collinear_case!(points, A, B, C, D)
     # A, B and C collinear, D is the extra point
-    if isapprox(A[1], B[1]) && isapprox(B[1], C[1]) && isapprox(C[1], A[1])
+    if _isapprox(A[1], B[1]) && _isapprox(B[1], C[1]) && _isapprox(C[1], A[1])
         # points are approximately equal in their first component
-        if isapprox(A[2], B[2]) && isapprox(B[2], C[2]) && isapprox(C[2], A[2])
+        if _isapprox(A[2], B[2]) && _isapprox(B[2], C[2]) && _isapprox(C[2], A[2])
             # the three points are approximately equal
             points[1], points[2] = A, D
             pop!(points)

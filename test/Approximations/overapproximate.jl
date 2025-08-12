@@ -1,4 +1,5 @@
 using LazySets, Test, LinearAlgebra, SparseArrays
+using LazySets.MatrixZonotopeModule: vectorize
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
 using LazySets.ReachabilityBase.Comparison: _leq, _geq
 IA = LazySets.IA
@@ -217,8 +218,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     B = MatrixZonotope(N[2 0; 1 -1], [N[0 1; 1 -1]])
     res = overapproximate(A * B, MatrixZonotope)
 
-    @test center(res) == N[3 -1; -1 -1]
-    @test generators(res) == [N[1 0; 1 -2], N[0 1; 2 -1]]
+    ex_res = MatrixZonotope(N[3 -1; -1 -1], [N[0 1; 2 -1], N[1 0; 1 -2]])
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        @test isequivalent(vectorize(res), vectorize(ex_res))
+    end
 
     C = MatrixZonotope(N[1 0; 0 -1], [N[0 0; 1 0]])
     res2 = overapproximate(A * B * C, MatrixZonotope)
@@ -379,15 +382,15 @@ for N in @tN([Float64, Float32])
 
     # overapprox with an HParallelotope
     Z = Zonotope(N[0, 0], N[1 0 1; 0 1 1])
-    @test overapproximate(Z, HParallelotope) == HParallelotope(N[0 -1; 1 0], N[2, 2, 2, 2])
-    @test overapproximate(Z, HParallelotope, 1:2) == HParallelotope(N[0 -1; 1 0], N[2, 2, 2, 2])
+    @test isequivalent(overapproximate(Z, HParallelotope), HParallelotope(N[0 -1; 1 0], N[2, 2, 2, 2]))
+    @test isequivalent(overapproximate(Z, HParallelotope, 1:2), HParallelotope(N[0 -1; 1 0], N[2, 2, 2, 2]))
     # TODO requires LazySets#2282
     #@test overapproximate(Z, HParallelotope, 2:3) ≈ HParallelotope(N[1 0; 1/√2 -1/√2], N[2, √2, 2, √2])
 
     # order 1 zonotope remains unchanged
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
     @test LazySets.Approximations._overapproximate_hparallelotope(Z) === Z
-    @test overapproximate(Z, HParallelotope) == HParallelotope(N[0 -1; 1 0], N[1, 1, 1, 1])
+    @test isequivalent(overapproximate(Z, HParallelotope), HParallelotope(N[0 -1; 1 0], N[1, 1, 1, 1]))
 
     # intersection of zonotope with hyperplane
     Z = Zonotope(N[2, 2], N[1 0 1//2; 0 1 1//2])
@@ -554,8 +557,7 @@ for N in [Float64]
         local p₂ = x₃ - x₁
         local vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
         Z1 = overapproximate(vTM, Zonotope)
-        @test center(Z1) == N[3, -2.5]
-        @test Matrix(genmat(Z1)) == N[1 -1 0; -1 0 0.5]
+        @test isequivalent(Z1, Zonotope(N[3, -2.5], N[0 1 1; 0.5 -1 0])) 
 
         # auxiliary function to get the linear coefficients
         t = TaylorModels.Taylor1(0) # t.order is 0

@@ -427,8 +427,8 @@ function load_taylormodels_overapproximation()
 
         julia> Matrix(genmat(Z))
         2×3 Matrix{Float64}:
-         2.0  0.5  0.0
-         6.0  0.0  0.5
+         0.0  2.0  0.5
+         0.5  6.0  0.0
         ```
 
         Note how the generators of this zonotope mainly consist of two pieces: one comes
@@ -479,9 +479,9 @@ function load_taylormodels_overapproximation()
 
         julia> Matrix(genmat(Z))
         3×4 Matrix{Float64}:
-         2.0  0.5  0.0  0.0
-         6.0  0.0  0.5  0.0
-         6.0  0.0  0.0  5.0
+         0.0  0.0  2.0  0.5
+         0.0  0.5  6.0  0.0
+         5.0  0.0  6.0  0.0
         ```
 
         The last generator corresponds to the addition of the interval remainder and the
@@ -588,8 +588,8 @@ function load_taylormodels_overapproximation()
 
         julia> Matrix(genmat(Z))
         2×2 Matrix{Float64}:
-           0.0  -6.0
-         124.5   0.0
+           0.0   6.0
+         124.5  -0.0
         ```
 
         ### Algorithm

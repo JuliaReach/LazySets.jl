@@ -38,9 +38,20 @@ function _isequivalent_inclusion(X::LazySet, Y::LazySet)
 end
 
 @validate_commutative function isequivalent(S::AbstractSingleton, Z::AbstractZonotope)
-    return center(Z) == element(S) && iszero(genmat(Z))
+    return _isapprox(center(Z), element(S)) && all(isapproxzero, genmat(Z))
+end
+
+@validate_commutative function isequivalent(S::AbstractSingleton, H::AbstractHyperrectangle)
+    @assert dim(S) == dim(H) "incompatible dimensions"
+
+    @inbounds for i in 1:dim(S)
+        if !(_isapprox(center(H, i), element(S, i)) && isapproxzero(radius_hyperrectangle(H, i)))
+            return false
+        end
+    end
+    return true
 end
 
 @validate function isequivalent(S1::AbstractSingleton, S2::AbstractSingleton)
-    return isapprox(element(S1), element(S2))
+    return _isapprox(element(S1), element(S2))
 end
