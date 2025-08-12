@@ -79,10 +79,9 @@ for N in @tN([Float32, Float64])
     end
 end
 
-let 
-    # This test for MatrixZonotopeExp is only ran with Float64 since it is expensive
-    # and requires very high taylor order `k` to pass on Float32
-    N=Float64
+for N in @tN([Float64])
+    # This test is only run with Float64 since it is expensive
+    # and requires high Taylor order `k` to pass on Float32
     @static if isdefined(@__MODULE__, :IntervalMatrices)
         #inclusion 
         C = MatrixZonotope(N[1 -2; 2 -1], [N[0.1 0.05; 0 0.1]])
