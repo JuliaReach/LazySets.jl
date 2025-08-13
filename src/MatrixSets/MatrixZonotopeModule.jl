@@ -1,6 +1,6 @@
 module MatrixZonotopeModule
 
-using Reexport
+using Reexport, Requires
 
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
@@ -26,10 +26,13 @@ include("minkowski_sum.jl")
 include("reduce_order.jl")
 include("remove_redundant_generators.jl")
 include("reshape.jl")
+include("convert.jl")
 
 include("generators.jl")
 include("indexvector.jl")
 include("ngens.jl")
 include("order.jl")
+
+include("init.jl")
 
 end  # module
