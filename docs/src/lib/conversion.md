@@ -42,5 +42,12 @@ convert(::Type{SimpleSparsePolynomialZonotope}, ::AbstractZonotope)
 convert(::Type{SimpleSparsePolynomialZonotope}, ::AbstractSparsePolynomialZonotope)
 convert(::Type{SparsePolynomialZonotope}, ::AbstractZonotope{N}) where {N}
 convert(::Type{SparsePolynomialZonotope}, ::SimpleSparsePolynomialZonotope{N}) where {N}
+```
+
+```@meta
+CurrentModule = LazySets.MatrixZonotopeModule
+```
+
+```@docs
 convert(::Type{MatrixZonotope}, ::IntervalMatrices.IntervalMatrix)
 ```
