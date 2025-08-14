@@ -35,17 +35,6 @@ function _isdisjoint_convex_sufficient(X::LazySet, Y::LazySet)
     return ρ(d, Y) < -ρ(-d, X)
 end
 
-# conversion for IA types
-isdisjoint(X::LazySet, Y::IA.Interval, witness::Bool=false) = isdisjoint(X, Interval(Y), witness)
-isdisjoint(X::IA.Interval, Y::LazySet, witness::Bool=false) = isdisjoint(Interval(X), Y, witness)
-
-function isdisjoint(X::LazySet, Y::IA.IntervalBox, witness::Bool=false)
-    return isdisjoint(X, convert(Hyperrectangle, Y), witness)
-end
-function isdisjoint(X::IA.IntervalBox, Y::LazySet, witness::Bool=false)
-    return isdisjoint(convert(Hyperrectangle, X), Y, witness)
-end
-
 """
 # Extended help
 

@@ -29,17 +29,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !(X ⊆ Y) && !res && w ∈ X && w ∉ Y
     end
 
-    # using IA types
-    X = IA.interval(N(0), N(1)) # IA
-    Y = Interval(N(-1), N(2))
-    @test X ⊆ Y
-    @test !(Y ⊆ X)
-
-    X = IntervalBox(IA.interval(N(0), N(1)), IA.interval(N(0), N(1)))
-    Y = Hyperrectangle(; low=[N(-1), N(-1)], high=[N(2), N(2)])
-    @test X ⊆ Y
-    @test !(Y ⊆ X)
-
     # interval with union of unbounded sets
     X = Interval(N(1), N(3))
     for H in (HalfSpace(N[1], N(2)), HalfSpace(N[-1], N(-2)))
