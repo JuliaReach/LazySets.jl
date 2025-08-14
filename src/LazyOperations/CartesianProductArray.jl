@@ -285,7 +285,13 @@ function isboundedtype(::Type{<:CartesianProductArray{N,S}}) where {N,S}
     return isboundedtype(S)
 end
 
+function ispolyhedraltype(::Type{<:CartesianProductArray{N,S}}) where {N,S}
+    return ispolyhedraltype(S)
+end
+
 function ispolyhedral(cpa::CartesianProductArray)
+    ispolyhedraltype(typeof(cpa)) && return true
+
     return all(ispolyhedral, array(cpa))
 end
 

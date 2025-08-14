@@ -153,6 +153,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`high`](@ref high(::AbstractPolyhedron, ::Int))
 * [`isbounded`](@ref isbounded(::AbstractPolyhedron))
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
+* [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{AbstractPolyhedron}))
 * [`isuniversal`](@ref isuniversal(::AbstractPolyhedron, ::Bool=false))
 * [`low`](@ref low(::AbstractPolyhedron))
 * [`low`](@ref low(::AbstractPolyhedron, ::Int))

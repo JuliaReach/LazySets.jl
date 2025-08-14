@@ -440,15 +440,27 @@ end
 """
 # Extended help
 
-    ispolyhedral(::LazySet)
+    ispolyhedraltype(T::Type{<:LazySet})
 
 ### Algorithm
 
-The default implementation returns `false`. All set types that can determine the
-polyhedral property should override this behavior.
+The default implementation returns `false`.
 """
-function ispolyhedral(::LazySet)
+function ispolyhedraltype(::Type{<:LazySet})
     return false
+end
+
+"""
+# Extended help
+
+    ispolyhedral(X::LazySet)
+
+### Algorithm
+
+The default implementation checks `ispolyhedraltype(typeof(X))`.
+"""
+function ispolyhedral(X::LazySet)
+    return ispolyhedraltype(typeof(X))
 end
 
 """
