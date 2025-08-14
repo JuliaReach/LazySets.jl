@@ -73,8 +73,14 @@ end
 # generic function for the AbstractPolyhedron interface => returns an HPolyhedron
 function _linear_map_hrep_helper(M::AbstractMatrix, P::LazySet,
                                  algo::AbstractLinearMapAlgorithm)
-    constraints = _linear_map_hrep(M, P, algo)
-    return HPolyhedron(constraints)
+    clist = _linear_map_hrep(M, P, algo)
+    if isempty(clist)
+        N = promote_type(eltype(M), eltype(P))
+        n = size(M, 1)
+        return Universe{N}(n)
+    else
+        return HPolyhedron(clist)
+    end
 end
 
 # internal functions; defined here due to optional dependencies and submodules
