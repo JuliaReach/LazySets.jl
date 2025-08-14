@@ -112,7 +112,6 @@ CurrentModule = LazySets
 * [`radius_ball`](@ref radius_ball(::LazySet))
 
 Inherited from [`LazySet`](@ref):
-* [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
 * [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * `copy(::Type{LazySet})`
@@ -169,6 +168,7 @@ Inherited from [`AbstractZonotope`](@ref):
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle))
+* [`chebyshev_center_radius`](@ref chebyshev_center_radius(::AbstractHyperrectangle))
 * [`distance`](@ref distance(::AbstractVector, ::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
