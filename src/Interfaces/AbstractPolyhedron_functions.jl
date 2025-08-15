@@ -672,8 +672,9 @@ Check whether a polyhedron is bounded.
 
 ### Algorithm
 
-We first check if the polyhedron has more than `dim(P)` constraints, which is a
-necessary condition for boundedness.
+We first check whether the polyhedron has more than `dim(P)` constraints and, if
+so, whether the constraints are feasible, which is a necessary condition for
+boundedness.
 
 If so, we check boundedness via `_isbounded_stiemke`.
 """
@@ -686,7 +687,10 @@ function isbounded(constraints::AbstractVector{<:HalfSpace{N}};
     if isempty(constraints)
         return false
     elseif length(constraints) <= dim(first(constraints))
-        return false  # need at least n+1 constraints to be bounded
+        # need at least n+1 constraints to be bounded unless infeasible
+        if isfeasible(constraints; solver=solver)
+            return false
+        end
     end
     return _isbounded_stiemke(constraints; solver=solver)
 end
