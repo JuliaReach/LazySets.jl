@@ -50,7 +50,11 @@ function triangulate(X::LazySet; algorithm::String="delaunay", kwargs...)
 end
 
 function triangulate_faces(X)
+    dim(X) == 3 || throw(ArgumentError("the dimension of the set should be 3, got $(dim(X))"))
+    @assert ispolyhedral(X) && isbounded(X) "triangulation requires a polytopic set"
+
     require(@__MODULE__, :Polyhedra; fun_name="triangulate_faces")
+
     throw(ArgumentError("`triangulate_faces` not implemented for $(typeof(X))"))
 end
 
