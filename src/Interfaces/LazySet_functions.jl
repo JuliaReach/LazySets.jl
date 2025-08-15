@@ -49,7 +49,7 @@ function triangulate(X::LazySet; algorithm::String="delaunay", kwargs...)
     end
 end
 
-function triangulate_faces(X)
+@validate function triangulate_faces(X)
     require(@__MODULE__, :Polyhedra; fun_name="triangulate_faces")
     throw(ArgumentError("`triangulate_faces` not implemented for $(typeof(X))"))
 end
@@ -1298,11 +1298,7 @@ function load_Polyhedra_GeometryBasics_triangulate_faces()
 
         `X` must contain at least three vertices.
         """
-        function triangulate_faces(X::LazySet)
-            dim(X) == 3 || throw(ArgumentError("the dimension of the set should be " *
-                                               "three, got $(dim(X))"))
-            @assert ispolyhedral(X) && isbounded(X) "triangulation requires a polytopic set"
-
+        @validate function triangulate_faces(X::LazySet)
             P = polyhedron(X)
             mes = Mesh(P)
             coords = GeometryBasics.coordinates(mes)
