@@ -20,6 +20,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # intersection of two sets
     I = Intersection(B, H)
 
+    # emptiness of intersection
+    @test !isempty_known(I)
+    @test !isempty(I)
+    @test isempty_known(I)
+    @test !isempty(I)
+
     # convenience constructors
     @test B ∩ H == I
     cap = IntersectionArray([B, H, B])
@@ -80,12 +86,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
         I2 = Intersection(B, Ball2(N[0, 0], N(1)))
         @test !ispolyhedral(I2)
     end
-
-    # emptiness of intersection
-    @test !isempty_known(I)
-    @test !isempty(I)
-    @test isempty_known(I)
-    @test !isempty(I)
 
     # concretize
     @test LazySets.concrete_function(Intersection) == intersection
@@ -199,6 +199,11 @@ for N in [Float64]
                          HalfSpace(N[0, 1], N(2)),
                          HalfSpace(N[-1, 0], N(0)),
                          HalfSpace(N[0, -1], N(0))])
+
+    # constraints_list with single HalfSpace
+    H2 = HalfSpace(N[1], N(0))
+    IArr = IntersectionArray([H2])
+    @test constraints_list(IArr) == [H2]
 
     # HalfSpace vs. Ball1 intersection
     X = Ball1(zeros(2), N(1))
