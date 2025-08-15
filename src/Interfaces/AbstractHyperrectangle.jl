@@ -352,7 +352,7 @@ maximum of each term ``|c_i + α_i r_i|^p`` is given by
 ``x^* := \\text{argmax}_{x ∈ X} ‖ x ‖_p`` is the vertex
 ``c + \\text{diag}(\\text{sign}(c)) r``.
 """
-function norm(H::AbstractHyperrectangle, p::Real=Inf)
+@validate function norm(H::AbstractHyperrectangle, p::Real=Inf)
     c, r = center(H), radius_hyperrectangle(H)
     return norm((@. c + sign_cadlag(c) * r), p)
 end
@@ -368,7 +368,7 @@ The result is defined as the radius of the enclosing ball of the given
 ``p``-norm of minimal volume with the same center.
 It is the same for all corners of a hyperrectangular set.
 """
-function radius(H::AbstractHyperrectangle, p::Real=Inf)
+@validate function radius(H::AbstractHyperrectangle, p::Real=Inf)
     return norm(radius_hyperrectangle(H), p)
 end
 

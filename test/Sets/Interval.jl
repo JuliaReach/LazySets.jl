@@ -119,6 +119,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(Y, X)
 
     # diameter
+    @test_throws ArgumentError diameter(X, N(1 // 2))
     for res in (diameter(X), diameter(X, Inf), diameter(X, 2))
         @test res isa N && res == N(2)
     end
@@ -210,6 +211,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test ngens(X0) == 0
 
     # norm
+    @test_throws ArgumentError norm(X, N(1 // 2))
     for Y in (X, Interval(N(-2), N(1)))
         for res in (norm(Y), norm(Y, Inf), norm(Y, 2))
             @test res isa N && res == N(2)
@@ -223,6 +225,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # radius
+    @test_throws ArgumentError radius(X, N(1 // 2))
     for res in (radius(X), radius(X, Inf), radius(X, 2))
         @test res isa N && res == N(1)
     end
@@ -297,6 +300,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # distance (between point and set)
     @test_throws DimensionMismatch distance(X, N[0, 0])
+    @test_throws ArgumentError distance(X, N[0]; p=N(1 // 2))
     for (x, v) in ((N[1], N(0)), (N[4], N(2)))
         for res in (distance(X, x), distance(x, X))
             @test res == v
@@ -318,7 +322,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # is_interior_point
     @test_throws DimensionMismatch is_interior_point(N[0, 0], X)
-    @test_throws DimensionMismatch is_interior_point(N[0, 0], X; ε=N(0))
+    @test_throws ArgumentError is_interior_point(N[0], X; ε=N(0))
+    @test_throws ArgumentError is_interior_point(N[0], X; p=N(1 // 2))
     if N <: AbstractFloat
         @test is_interior_point(N[1], X)
         if N == Float64
@@ -458,6 +463,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # distance (between two sets)
     @test_throws DimensionMismatch distance(X, X2)
+    @test_throws ArgumentError distance(X, X; p=N(1 // 2))
     for (Y, v) in ((Interval(N(-1), N(1)), N(0)), (Interval(N(4), N(5)), N(2)))
         for res in (distance(X, Y), distance(Y, X))
             @test res isa N && res == v

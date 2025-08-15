@@ -462,7 +462,7 @@ The default implementation handles the case `p == Inf` using `extrema`.
 Otherwise it checks whether `X` is polytopic, in which case it iterates over all
 vertices.
 """
-function norm(X::LazySet, p::Real=Inf)
+@validate function norm(X::LazySet, p::Real=Inf)
     return _norm_default(X, p)
 end
 
@@ -487,7 +487,7 @@ end
 The default implementation handles the case `p == Inf` using
 `ballinf_approximation`.
 """
-function radius(X::LazySet, p::Real=Inf)
+@validate function radius(X::LazySet, p::Real=Inf)
     if p == Inf
         return radius(Approximations.ballinf_approximation(X), p)
     else
@@ -504,7 +504,7 @@ end
 
 The default implementation applies the function `radius` and doubles the result.
 """
-function diameter(X::LazySet, p::Real=Inf)
+@validate function diameter(X::LazySet, p::Real=Inf)
     return radius(X, p) * 2
 end
 
