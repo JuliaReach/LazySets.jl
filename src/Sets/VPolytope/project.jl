@@ -1,9 +1,8 @@
 @validate function project(P::VPolytope, block::AbstractVector{Int}; kwargs...)
     require(@__MODULE__, :LazySets; fun_name="project")
 
-    if isempty(P.vertices)
-        return P
-    end
+    # the following cannot happen anymore because of `@validate`
+    @assert !isempty(P.vertices) "empty VPolytope cannot be projected"
 
     m = length(block)
     if m == 1
