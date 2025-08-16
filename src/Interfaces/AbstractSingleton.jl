@@ -83,7 +83,7 @@ function low(S::AbstractSingleton)
     return element(S)
 end
 
-function low(S::AbstractSingleton, i::Int)
+@validate function low(S::AbstractSingleton, i::Int)
     return element(S)[i]
 end
 

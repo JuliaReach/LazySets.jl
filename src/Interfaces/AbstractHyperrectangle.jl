@@ -406,7 +406,7 @@ function low(H::AbstractHyperrectangle)
     return center(H) .- radius_hyperrectangle(H)
 end
 
-function low(H::AbstractHyperrectangle, i::Int)
+@validate function low(H::AbstractHyperrectangle, i::Int)
     return center(H, i) - radius_hyperrectangle(H, i)
 end
 

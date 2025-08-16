@@ -195,7 +195,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{N} && res == N[0]
     res = low(X, 1)
     @test res isa N && res == N(0)
-    @test_throws AssertionError low(X, 2)
+    @test_throws DimensionMismatch low(X, 2)
 
     # min
     v = min(X)

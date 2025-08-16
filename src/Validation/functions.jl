@@ -37,6 +37,11 @@ function validate_extrema(X::LazySet, i::Int)
 end
 push!(VALIDATE_DICT, :extrema => (validate_extrema, args12))
 
+function validate_low(X::LazySet, i::Int)
+    return validate_index(i, X; fun=low)
+end
+push!(VALIDATE_DICT, :low => (validate_low, args12))
+
 function validate_norm(p::Real)
     return validate_pnorm(p; fun=norm)
 end
