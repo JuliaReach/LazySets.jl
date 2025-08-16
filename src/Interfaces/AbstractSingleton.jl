@@ -105,7 +105,7 @@ function center(S::AbstractSingleton)
     return element(S)
 end
 
-function center(S::AbstractSingleton, i::Int)
+@validate function center(S::AbstractSingleton, i::Int)
     return element(S, i)
 end
 

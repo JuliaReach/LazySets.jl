@@ -53,7 +53,7 @@ for T in Base.uniontypes(ACS)
     end
 end
 
-@inline function center(S::ACS, i::Int)
+@validate function center(S::ACS, i::Int)
     return center(S)[i]
 end
 

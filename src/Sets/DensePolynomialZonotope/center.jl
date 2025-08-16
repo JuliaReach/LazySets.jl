@@ -1,1 +1,3 @@
-center(P::DensePolynomialZonotope) = P.c
+function center(P::DensePolynomialZonotope)
+    return P.c
+end

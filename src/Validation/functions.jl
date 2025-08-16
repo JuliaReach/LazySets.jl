@@ -21,6 +21,11 @@ function validate_area(X::LazySet)
 end
 push!(VALIDATE_DICT, :area => (validate_area, args1))
 
+function validate_center(X::LazySet, i::Int)
+    return validate_index(i, X; fun=center)
+end
+push!(VALIDATE_DICT, :center => (validate_center, args12))
+
 # function validate_constraints_list(X::LazySet)
 #     # require polyhedral set?
 # end
