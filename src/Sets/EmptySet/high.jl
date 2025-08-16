@@ -2,6 +2,6 @@ function high(::EmptySet)
     throw(ArgumentError("the upper bound of an empty set is undefined"))
 end
 
-function high(::EmptySet, ::Int)
+@validate function high(∅::EmptySet, i::Int)
     throw(ArgumentError("the upper bound of an empty set is undefined"))
 end

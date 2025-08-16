@@ -75,7 +75,7 @@ function high(S::AbstractSingleton)
     return element(S)
 end
 
-function high(S::AbstractSingleton, i::Int)
+@validate function high(S::AbstractSingleton, i::Int)
     return element(S)[i]
 end
 

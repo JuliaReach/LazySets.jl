@@ -83,7 +83,7 @@ function _high_AbstractBallp(B::LazySet)
     return center(B) .+ radius_ball(B)
 end
 
-function high(B::AbstractBallp, i::Int)
+@validate function high(B::AbstractBallp, i::Int)
     return _high_AbstractBallp(B, i)
 end
 

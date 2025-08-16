@@ -398,7 +398,7 @@ function high(H::AbstractHyperrectangle)
     return center(H) .+ radius_hyperrectangle(H)
 end
 
-function high(H::AbstractHyperrectangle, i::Int)
+@validate function high(H::AbstractHyperrectangle, i::Int)
     return center(H, i) + radius_hyperrectangle(H, i)
 end
 
