@@ -776,7 +776,7 @@ function remove_redundant_generators(Z::AbstractZonotope)
     return Z  # fallback implementation
 end
 
-function remove_redundant_generators(G::AbstractMatrix{N}) where {N<: Rational}
+function remove_redundant_generators(G::AbstractMatrix{N}) where {N<:Rational}
     if size(G, 1) == 1  # more efficient implementation in 1D
         return _remove_redundant_generators_1d(G)
     end
@@ -822,7 +822,7 @@ function remove_redundant_generators(G::AbstractMatrix)
     if size(G, 1) == 1  # more efficient implementation in 1D
         return _remove_redundant_generators_1d(G)
     end
-    
+
     G = remove_zero_columns(G)
     p = size(G, 2)
 
@@ -853,7 +853,7 @@ function remove_redundant_generators(G::AbstractMatrix)
     end
     ord = sortperm(cols)
     merged = Vector{Vector{eltype(G)}}()
-    
+
     this = ord[1]
     cur_dir = view(Gnorm, :, this)
     cur_sum = norms[this]  # accumulated norm of identical cols

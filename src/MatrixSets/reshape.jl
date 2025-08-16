@@ -33,7 +33,7 @@ A matrix zonotope.
 """
 function matrixize(Z::Zonotope, dims::Tuple{Int,Int})
     @assert dims[1] * dims[2] == dim(Z) "cannot reshape a zonotope of dim = $(dim(Z)) into " *
-                                      "a matrix zonotope of size $dims"
+                                        "a matrix zonotope of size $dims"
 
     c = Matrix(reshape(center(Z), dims))
     gens = [Matrix(reshape(col, dims)) for col in eachcol(genmat(Z))]

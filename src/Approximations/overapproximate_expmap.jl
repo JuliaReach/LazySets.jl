@@ -160,7 +160,7 @@ function load_intervalmatrices_overapproximation_expmap()
         """
             overapproximate(expA::MatrixZonotopeExp{N,T}, ::Type{<:MatrixZonotope},
                                  k::Int=2) where {N,T<:AbstractMatrixZonotope{N}}
-        
+
         Overapproximate the matrix zonotope exponential ``exp(\\mathcal{A})``
 
         ### Input
@@ -170,11 +170,11 @@ function load_intervalmatrices_overapproximation_expmap()
         - `k` -- (default: `2`) the order of the Taylor expansion
 
         ### Output 
-        
+
         A matrix zonotope overapproximating the matrix zonotope exponential
 
         ### Algorithm
-        
+
         The expansion
 
         ```math 
@@ -205,7 +205,7 @@ function load_intervalmatrices_overapproximation_expmap()
             # overapproximate mat zon by interval matrix and overapproximate remainder
             IM = overapproximate(MZ, IntervalMatrix)
             E = IntervalMatrices._exp_remainder(IM, N(1), k)
-            
+
             res = minkowski_sum(W, convert(MatrixZonotope, E))
             return remove_redundant_generators(res)
         end

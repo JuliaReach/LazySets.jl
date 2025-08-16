@@ -128,9 +128,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @static if isdefined(@__MODULE__, :IntervalMatrices)
         using IntervalMatrices: IntervalMatrix
         IM = IntervalMatrix([interval(-N(1.1), -N(0.9)) interval(-N(4.1), -N(3.9));
-                            interval(N(3.9), N(4.1)) interval(-N(1.1), -N(0.9))])
+                             interval(N(3.9), N(4.1)) interval(-N(1.1), -N(0.9))])
         MZ = convert(MatrixZonotope, IM)
-        if N==Rational{Int} # isapprox is sensitive to minor rounding using Rational{Int}
+        if N == Rational{Int} # isapprox is sensitive to minor rounding using Rational{Int}
             T = Float64
             @test isapprox(convert(Matrix{T}, center(MZ)), T[-1.0 -4.0; 4.0 -1.0])
             @test isapprox(convert(Vector{Matrix{T}}, generators(MZ)), [T[0.1 0.1; 0.1 0.1]])
@@ -150,7 +150,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isequivalent(vectorize(MZ), vectorize(MZ2))
 
     # order
-    @test order(MZ) == 1//4 && order(MZ) == order(Z)
+    @test order(MZ) == 1 // 4 && order(MZ) == order(Z)
 
     # remove redundant generators 
     MZ2 = MatrixZonotope(c, [N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]])
@@ -159,20 +159,20 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # `remove_redundant_generators` introduces floating-point errors for Float32
     # (at least on the CI platform)
     # and `isequivalent` is not robust to minor imprecisions 
-    if N==Float64 
+    if N == Float64
         @static if isdefined(@__MODULE__, :Polyhedra)
             @test isequivalent(vectorize(MZ2), vectorize(MZred))
         end
     end
 
     # minkowski sum
-    ms =minkowski_sum(MZ, MZ2) 
+    ms = minkowski_sum(MZ, MZ2)
     @test center(ms) == N[2 0; 0 6]
     @test generators(ms) == [N[1 -1; 0 2], N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]]
 end
 
 for N in @tN([Float64, Float32])
-    MZ = rand(MatrixZonotope, N=N, dim=(2,2), num_generators=8)
+    MZ = rand(MatrixZonotope; N=N, dim=(2, 2), num_generators=8)
     @test MZ isa MatrixZonotope{N}
 
     # reduce order
