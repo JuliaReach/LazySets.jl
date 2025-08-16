@@ -105,7 +105,7 @@ function default_polyhedra_backend(P::LazySet{N}) where {N}
 end
 
 # Note: this method cannot be documented due to a bug in Julia
-function low(X::LazySet, i::Int)
+@validate function low(X::LazySet, i::Int)
     return _low(X, i)
 end
 

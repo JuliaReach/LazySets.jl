@@ -67,7 +67,7 @@ function _low_AbstractBallp(B::LazySet)
     return center(B) .- radius_ball(B)
 end
 
-function low(B::AbstractBallp, i::Int)
+@validate function low(B::AbstractBallp, i::Int)
     return _low_AbstractBallp(B, i)
 end
 

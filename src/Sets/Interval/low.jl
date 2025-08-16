@@ -1,5 +1,4 @@
-function low(X::Interval, i::Int)
-    @assert i == 1 "an interval has dimension 1, but the index is $i"
+@validate function low(X::Interval, i::Int)
     return min(X)
 end
 

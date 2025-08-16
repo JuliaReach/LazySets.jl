@@ -1029,9 +1029,8 @@ function low(P::AbstractPolyhedron)
     return _low(P)
 end
 
-function low(P::AbstractPolyhedron, i::Int)
+@validate function low(P::AbstractPolyhedron, i::Int)
     if dim(P) == 1
-        @assert i == 1 "invalid index $i for a set of 1 dimension"
         return _low_1d(P)
     end
     return _low(P, i)
