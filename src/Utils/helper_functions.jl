@@ -187,13 +187,6 @@ function _implementing_sets_unary!(dict, op, signature, index, type_args)
     end
 end
 
-# check that the given coordinate i can be used to index an arbitrary element in
-# the set X
-@inline function _check_bounds(X, i)
-    return 1 <= i <= dim(X) || throw(ArgumentError("there is no index at coordinate " *
-                                                   "$i because the set is of dimension $(dim(X))"))
-end
-
 # if `condition` return `(result, N[])`, otherwise return `result`
 # where N is the common numeric type of X and Y
 @inline function _witness_result_empty(condition::Bool, result, X, Y)

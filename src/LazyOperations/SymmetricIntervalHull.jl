@@ -136,7 +136,6 @@ set.
 The center along a given dimension of the symmetric interval hull of a set.
 """
 @inline function center(sih::SymmetricIntervalHull, i::Int)
-    @boundscheck _check_bounds(sih, i)
     N = eltype(sih)
     return zero(N)
 end
