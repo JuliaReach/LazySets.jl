@@ -82,7 +82,7 @@ A nonnegative integer representing the number of independent generators.
 """
 function ngens_indep(::AbstractPolynomialZonotope) end
 
-function center(P::AbstractPolynomialZonotope, i::Int)
+@validate function center(P::AbstractPolynomialZonotope, i::Int)
     return center(P)[i]
 end
 

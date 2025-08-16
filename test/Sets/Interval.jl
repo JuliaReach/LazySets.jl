@@ -83,7 +83,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test c isa Vector{N} && c == [N(1)]
     v = center(X, 1)
     @test v isa N && v == N(1)
-    @test_throws AssertionError center(X, 2)
+    @test_throws DimensionMismatch center(X, 2)
 
     # chebyshev_center_radius
     c, r = chebyshev_center_radius(X)
