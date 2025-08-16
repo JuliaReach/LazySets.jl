@@ -50,7 +50,7 @@ end
 function validate_pnorm(p::Real; fun::Function)
     if p < one(p)
         throw(ArgumentError("`$(string(fun))` requires a p-norm for p ≥ 1 " *
-                                "but received $(p)"))
+                            "but received $(p)"))
     end
     return true
 end

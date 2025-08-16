@@ -53,14 +53,14 @@ for N in @tN([Float32, Float64])
         @test all(p ∈ Zex for p in pts)
 
         # overapproximate MatrixZonotopeExp
-        
+
         # test degenerate case
         c = N[1 -2; 2 -1]
         A = MatrixZonotope(c, [zeros(N, 2, 2)])
         expA = MatrixZonotopeExp(A)
         res = overapproximate(expA, MatrixZonotope, 20) #for large k it converges to exp(c)
         @test isapprox(center(res), exp(c))
-        @test ngens(res)== 0
+        @test ngens(res) == 0
 
         # degenerate case + product 
         B = MatrixZonotope(N[1 0; 0 1], Matrix{N}[])
@@ -88,6 +88,6 @@ for N in @tN([Float64])
         expC = MatrixZonotopeExp(C)
         res = reduce_order(overapproximate(expC, MatrixZonotope, 4), 1)
         res2 = reduce_order(overapproximate(expC, MatrixZonotope, 8), 1)
-        @test vectorize(res2) ⊆ vectorize(res)       
+        @test vectorize(res2) ⊆ vectorize(res)
     end
 end
