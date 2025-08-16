@@ -136,9 +136,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError linear_map(M, H, algorithm="vrep")
     M = N[2 2; 0 1]  # invertible matrix
     @test linear_map(M, H) == HalfSpace(N[0.5, -2.0], N(0.0))
-    M = hcat(N[1 1])  # universal
-    @test linear_map(M, H) == Universe{N}(1)
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        M = hcat(N[1 1])  # universal
+        @test linear_map(M, H) == Universe{N}(1)
         M = zeros(N, 2, 2)  # result is a singleton
         X = linear_map(M, H)
         @test X isa HPolyhedron && isequivalent(X, ZeroSet{N}(2))
