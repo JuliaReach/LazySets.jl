@@ -207,7 +207,7 @@ end
 
 The default implementation computes the extrema via `low` and `high`.
 """
-function extrema(X::LazySet, i::Int)
+@validate function extrema(X::LazySet, i::Int)
     return _extrema_lowhigh(X, i)
 end
 

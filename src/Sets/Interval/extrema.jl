@@ -2,8 +2,7 @@
 # `LazySet`, but more efficient than the more specific implementations for
 # subtypes
 
-function extrema(X::Interval, i::Int)
-    @assert i == 1 "an interval has dimension 1, but the index is $i"
+@validate function extrema(X::Interval, i::Int)
     return (min(X), max(X))
 end
 
