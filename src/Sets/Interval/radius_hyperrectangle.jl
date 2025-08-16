@@ -12,8 +12,7 @@ Return the box radius of an interval in a given dimension.
 
 The box radius in the given dimension.
 """
-function radius_hyperrectangle(X::Interval, i::Int)
-    @assert i == 1 "an interval has dimension 1, but the index is $i"
+@validate function radius_hyperrectangle(X::Interval, i::Int)
     return radius(X)
 end
 

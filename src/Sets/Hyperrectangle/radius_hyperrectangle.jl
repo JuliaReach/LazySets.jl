@@ -29,6 +29,6 @@ Return the box radius of a hyperrectangle in a given dimension.
 
 The box radius in the given dimension.
 """
-function radius_hyperrectangle(H::Hyperrectangle, i::Int)
+@validate function radius_hyperrectangle(H::Hyperrectangle, i::Int)
     return H.radius[i]
 end

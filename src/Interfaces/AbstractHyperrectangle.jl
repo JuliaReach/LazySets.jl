@@ -74,7 +74,7 @@ Return the hyperrectangle radius of a hyperrectangular set in a given dimension.
 The hyperrectangle radius of `H` in dimension `i`.
 
 """
-function radius_hyperrectangle(H::AbstractHyperrectangle, i::Int)
+@validate function radius_hyperrectangle(H::AbstractHyperrectangle, i::Int)
     return radius_hyperrectangle(H)[i]
 end
 
