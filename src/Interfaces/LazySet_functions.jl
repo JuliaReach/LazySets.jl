@@ -152,7 +152,7 @@ function _low_vlist(X::LazySet)
 end
 
 # Note: this method cannot be documented due to a bug in Julia
-function high(X::LazySet, i::Int)
+@validate function high(X::LazySet, i::Int)
     return _high(X, i)
 end
 

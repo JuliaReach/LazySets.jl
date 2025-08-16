@@ -1057,9 +1057,8 @@ function high(P::AbstractPolyhedron)
     return _high(P)
 end
 
-function high(P::AbstractPolyhedron, i::Int)
+@validate function high(P::AbstractPolyhedron, i::Int)
     if dim(P) == 1
-        @assert i == 1 "invalid index $i for a set of 1 dimension"
         return _high_1d(P)
     end
     return _high(P, i)
