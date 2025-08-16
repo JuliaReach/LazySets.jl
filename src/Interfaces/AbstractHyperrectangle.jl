@@ -74,7 +74,7 @@ Return the hyperrectangle radius of a hyperrectangular set in a given dimension.
 The hyperrectangle radius of `H` in dimension `i`.
 
 """
-function radius_hyperrectangle(H::AbstractHyperrectangle, i::Int)
+@validate function radius_hyperrectangle(H::AbstractHyperrectangle, i::Int)
     return radius_hyperrectangle(H)[i]
 end
 
@@ -398,7 +398,7 @@ function high(H::AbstractHyperrectangle)
     return center(H) .+ radius_hyperrectangle(H)
 end
 
-function high(H::AbstractHyperrectangle, i::Int)
+@validate function high(H::AbstractHyperrectangle, i::Int)
     return center(H, i) + radius_hyperrectangle(H, i)
 end
 
@@ -406,7 +406,7 @@ function low(H::AbstractHyperrectangle)
     return center(H) .- radius_hyperrectangle(H)
 end
 
-function low(H::AbstractHyperrectangle, i::Int)
+@validate function low(H::AbstractHyperrectangle, i::Int)
     return center(H, i) - radius_hyperrectangle(H, i)
 end
 
@@ -418,7 +418,7 @@ function extrema(H::AbstractHyperrectangle)
     return (l, h)
 end
 
-function extrema(H::AbstractHyperrectangle, i::Int)
+@validate function extrema(H::AbstractHyperrectangle, i::Int)
     c = center(H, i)
     r = radius_hyperrectangle(H, i)
     l = c - r

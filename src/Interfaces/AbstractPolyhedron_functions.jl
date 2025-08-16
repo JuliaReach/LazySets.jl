@@ -994,9 +994,8 @@ function extrema(P::AbstractPolyhedron)
     return _extrema_lowhigh(P)
 end
 
-function extrema(P::AbstractPolyhedron, i::Int)
+@validate function extrema(P::AbstractPolyhedron, i::Int)
     if dim(P) == 1
-        @assert i == 1 "invalid index $i for a set of 1 dimension"
         return _extrema_1d(P)
     end
     return _extrema_lowhigh(P, i)
@@ -1030,9 +1029,8 @@ function low(P::AbstractPolyhedron)
     return _low(P)
 end
 
-function low(P::AbstractPolyhedron, i::Int)
+@validate function low(P::AbstractPolyhedron, i::Int)
     if dim(P) == 1
-        @assert i == 1 "invalid index $i for a set of 1 dimension"
         return _low_1d(P)
     end
     return _low(P, i)
@@ -1059,9 +1057,8 @@ function high(P::AbstractPolyhedron)
     return _high(P)
 end
 
-function high(P::AbstractPolyhedron, i::Int)
+@validate function high(P::AbstractPolyhedron, i::Int)
     if dim(P) == 1
-        @assert i == 1 "invalid index $i for a set of 1 dimension"
         return _high_1d(P)
     end
     return _high(P, i)

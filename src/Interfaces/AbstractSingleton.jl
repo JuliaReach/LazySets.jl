@@ -58,12 +58,10 @@ Return the i-th entry of the element of a set with a single value.
 The i-th entry of the element.
 """
 function element(S::AbstractSingleton, i::Int)
-    @boundscheck _check_bounds(S, i)
     return element(S)[i]
 end
 
-function radius_hyperrectangle(S::AbstractSingleton, i::Int)
-    @boundscheck _check_bounds(S, i)
+@validate function radius_hyperrectangle(S::AbstractSingleton, i::Int)
     N = eltype(S)
     return zero(N)
 end
@@ -77,8 +75,7 @@ function high(S::AbstractSingleton)
     return element(S)
 end
 
-function high(S::AbstractSingleton, i::Int)
-    @boundscheck _check_bounds(S, i)
+@validate function high(S::AbstractSingleton, i::Int)
     return element(S)[i]
 end
 
@@ -86,8 +83,7 @@ function low(S::AbstractSingleton)
     return element(S)
 end
 
-function low(S::AbstractSingleton, i::Int)
-    @boundscheck _check_bounds(S, i)
+@validate function low(S::AbstractSingleton, i::Int)
     return element(S)[i]
 end
 
@@ -109,8 +105,7 @@ function center(S::AbstractSingleton)
     return element(S)
 end
 
-function center(S::AbstractSingleton, i::Int)
-    @boundscheck _check_bounds(S, i)
+@validate function center(S::AbstractSingleton, i::Int)
     return element(S, i)
 end
 

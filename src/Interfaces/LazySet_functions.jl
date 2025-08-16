@@ -105,7 +105,7 @@ function default_polyhedra_backend(P::LazySet{N}) where {N}
 end
 
 # Note: this method cannot be documented due to a bug in Julia
-function low(X::LazySet, i::Int)
+@validate function low(X::LazySet, i::Int)
     return _low(X, i)
 end
 
@@ -152,7 +152,7 @@ function _low_vlist(X::LazySet)
 end
 
 # Note: this method cannot be documented due to a bug in Julia
-function high(X::LazySet, i::Int)
+@validate function high(X::LazySet, i::Int)
     return _high(X, i)
 end
 
@@ -207,7 +207,7 @@ end
 
 The default implementation computes the extrema via `low` and `high`.
 """
-function extrema(X::LazySet, i::Int)
+@validate function extrema(X::LazySet, i::Int)
     return _extrema_lowhigh(X, i)
 end
 

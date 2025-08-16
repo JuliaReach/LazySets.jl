@@ -21,6 +21,11 @@ function validate_area(X::LazySet)
 end
 push!(VALIDATE_DICT, :area => (validate_area, args1))
 
+function validate_center(X::LazySet, i::Int)
+    return validate_index(i, X; fun=center)
+end
+push!(VALIDATE_DICT, :center => (validate_center, args12))
+
 # function validate_constraints_list(X::LazySet)
 #     # require polyhedral set?
 # end
@@ -32,6 +37,21 @@ function validate_diameter(p::Real)
 end
 push!(VALIDATE_DICT, :diameter => (validate_diameter, args2))
 
+function validate_extrema(X::LazySet, i::Int)
+    return validate_index(i, X; fun=extrema)
+end
+push!(VALIDATE_DICT, :extrema => (validate_extrema, args12))
+
+function validate_high(X::LazySet, i::Int)
+    return validate_index(i, X; fun=high)
+end
+push!(VALIDATE_DICT, :high => (validate_high, args12))
+
+function validate_low(X::LazySet, i::Int)
+    return validate_index(i, X; fun=low)
+end
+push!(VALIDATE_DICT, :low => (validate_low, args12))
+
 function validate_norm(p::Real)
     return validate_pnorm(p; fun=norm)
 end
@@ -41,6 +61,11 @@ function validate_radius(p::Real)
     return validate_pnorm(p; fun=radius)
 end
 push!(VALIDATE_DICT, :radius => (validate_radius, args2))
+
+function validate_radius_hyperrectangle(X::LazySet, i::Int)
+    return validate_index(i, X; fun=radius_hyperrectangle)
+end
+push!(VALIDATE_DICT, :radius_hyperrectangle => (validate_radius_hyperrectangle, args12))
 
 # function validate_vertices_list(X::LazySet)
 #     # require polytopic set?

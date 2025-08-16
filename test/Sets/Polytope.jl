@@ -253,11 +253,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # empty polytope cannot determine dimension and returns empty vectors
     p2 = VPolytope{N}()
     @test low(p2) == N[]
-    @test_throws AssertionError low(p2, 1)
+    @test_throws DimensionMismatch low(p2, 1)
     @test high(p2) == N[]
-    @test_throws AssertionError high(p2, 1)
+    @test_throws DimensionMismatch high(p2, 1)
     @test extrema(p2) == (N[], N[])
-    @test_throws AssertionError extrema(p2, 1)
+    @test_throws DimensionMismatch extrema(p2, 1)
 
     @static if isdefined(@__MODULE__, :Polyhedra)
         # conversion to and from Polyhedra's VRep data structure

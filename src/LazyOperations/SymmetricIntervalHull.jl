@@ -91,7 +91,7 @@ The radius in the given dimension.
 If the radius was computed before, this is just a look-up. Otherwise it is
 computed.
 """
-function radius_hyperrectangle(sih::SymmetricIntervalHull, i::Int)
+@validate function radius_hyperrectangle(sih::SymmetricIntervalHull, i::Int)
     return get_radius!(sih, i)
 end
 
@@ -135,8 +135,7 @@ set.
 
 The center along a given dimension of the symmetric interval hull of a set.
 """
-@inline function center(sih::SymmetricIntervalHull, i::Int)
-    @boundscheck _check_bounds(sih, i)
+@validate function center(sih::SymmetricIntervalHull, i::Int)
     N = eltype(sih)
     return zero(N)
 end

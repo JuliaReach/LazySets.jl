@@ -83,7 +83,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test c isa Vector{N} && c == [N(1)]
     v = center(X, 1)
     @test v isa N && v == N(1)
-    @test_throws AssertionError center(X, 2)
+    @test_throws DimensionMismatch center(X, 2)
 
     # chebyshev_center_radius
     c, r = chebyshev_center_radius(X)
@@ -136,7 +136,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Tuple{Vector{N},Vector{N}} && res[1] == N[0] && res[2] == N[2]
     res = extrema(X, 1)
     @test res isa Tuple{N,N} && res[1] == N(0) && res[2] == N(2)
-    @test_throws AssertionError extrema(X, 2)
+    @test_throws DimensionMismatch extrema(X, 2)
 
     # generators
     @test collect(generators(X)) == [N[1]]
@@ -155,7 +155,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{N} && res == N[2]
     res = high(X, 1)
     @test res isa N && res == N(2)
-    @test_throws AssertionError high(X, 2)
+    @test_throws DimensionMismatch high(X, 2)
 
     # isbounded
     @test isbounded(X)
@@ -195,7 +195,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{N} && res == N[0]
     res = low(X, 1)
     @test res isa N && res == N(0)
-    @test_throws AssertionError low(X, 2)
+    @test_throws DimensionMismatch low(X, 2)
 
     # min
     v = min(X)

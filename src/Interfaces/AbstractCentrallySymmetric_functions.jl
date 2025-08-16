@@ -53,7 +53,7 @@ for T in Base.uniontypes(ACS)
     end
 end
 
-@inline function center(S::ACS, i::Int)
+@validate function center(S::ACS, i::Int)
     return center(S)[i]
 end
 
@@ -99,7 +99,7 @@ for T in Base.uniontypes(ACS)
         We compute `high(S, i)` and then compute the lowest coordinates with the help of
         `center(S, i)` (which is assumed to be cheaper to obtain).
         """
-        function extrema(S::$T, i::Int)
+        @validate function extrema(S::$T, i::Int)
             # h = c + r
             h = high(S, i)
             # l = c - r = -c - r + 2 * c = 2 * c - h
