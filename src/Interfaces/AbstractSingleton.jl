@@ -61,7 +61,7 @@ function element(S::AbstractSingleton, i::Int)
     return element(S)[i]
 end
 
-function radius_hyperrectangle(S::AbstractSingleton, i::Int)
+@validate function radius_hyperrectangle(S::AbstractSingleton, i::Int)
     N = eltype(S)
     return zero(N)
 end

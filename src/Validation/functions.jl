@@ -62,6 +62,11 @@ function validate_radius(p::Real)
 end
 push!(VALIDATE_DICT, :radius => (validate_radius, args2))
 
+function validate_radius_hyperrectangle(X::LazySet, i::Int)
+    return validate_index(i, X; fun=radius_hyperrectangle)
+end
+push!(VALIDATE_DICT, :radius_hyperrectangle => (validate_radius_hyperrectangle, args12))
+
 # function validate_vertices_list(X::LazySet)
 #     # require polytopic set?
 # end

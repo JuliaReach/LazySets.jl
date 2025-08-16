@@ -91,7 +91,7 @@ The radius in the given dimension.
 If the radius was computed before, this is just a look-up. Otherwise it is
 computed.
 """
-function radius_hyperrectangle(sih::SymmetricIntervalHull, i::Int)
+@validate function radius_hyperrectangle(sih::SymmetricIntervalHull, i::Int)
     return get_radius!(sih, i)
 end
 
