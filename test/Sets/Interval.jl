@@ -136,7 +136,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Tuple{Vector{N},Vector{N}} && res[1] == N[0] && res[2] == N[2]
     res = extrema(X, 1)
     @test res isa Tuple{N,N} && res[1] == N(0) && res[2] == N(2)
-    @test_throws AssertionError extrema(X, 2)
+    @test_throws DimensionMismatch extrema(X, 2)
 
     # generators
     @test collect(generators(X)) == [N[1]]
