@@ -121,6 +121,7 @@ Inherited from [`LazySet`](@ref):
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
 * [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{LazySet}))
+* [`ispolytopic`](@ref ispolytopic(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))

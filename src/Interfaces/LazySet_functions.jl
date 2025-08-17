@@ -466,6 +466,20 @@ end
 """
 # Extended help
 
+    ispolytopic(X::LazySet)
+
+### Algorithm
+
+The default implementation checks `ispolyhedral(X)` and `isbounded(X)`. This is
+typically enough, but note that these functions may give a conservative result.
+"""
+function ispolytopic(X::LazySet)
+    return ispolyhedral(X) && isbounded(X)
+end
+
+"""
+# Extended help
+
     norm(X::LazySet, [p]::Real=Inf)
 
 ### Algorithm

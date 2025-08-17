@@ -13,6 +13,7 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
+* [`ispolytopic`](@ref ispolytopic(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
 

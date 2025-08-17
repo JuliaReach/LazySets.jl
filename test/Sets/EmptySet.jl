@@ -130,6 +130,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # ispolyhedraltype
     @test !ispolyhedraltype(typeof(E))  # TODO this should maybe change
 
+    # ispolytopic
+    @test !ispolytopic(E)  # TODO this should maybe change
+
     # isuniversal
     @test !isuniversal(E)
     res, w = isuniversal(E, true)

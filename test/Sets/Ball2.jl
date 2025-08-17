@@ -90,6 +90,9 @@ for N in @tN([Float64, Float32])
     # ispolyhedral
     @test !ispolyhedral(b)
 
+    # ispolytopic
+    @test !ispolytopic(b)
+
     # isempty
     @test !isempty(b)
 
