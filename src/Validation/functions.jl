@@ -67,6 +67,18 @@ function validate_radius_hyperrectangle(X::LazySet, i::Int)
 end
 push!(VALIDATE_DICT, :radius_hyperrectangle => (validate_radius_hyperrectangle, args12))
 
+function validate_triangulate_faces(X::LazySet)
+    n = dim(X)
+    if n != 3
+        throw(DimensionMismatch("`triangulate_faces` requires a set of dimension 3 " *
+                                "but received a $n-dimensional set"))
+    elseif !(ispolyhedral(X) && isbounded(X))
+        throw(ArgumentError("`triangulate_faces` requires a polytopic set"))
+    end
+    return true
+end
+push!(VALIDATE_DICT, :triangulate_faces => (validate_triangulate_faces, args1))
+
 # function validate_vertices_list(X::LazySet)
 #     # require polytopic set?
 # end
