@@ -78,6 +78,7 @@ Inherited from [`LazySet`](@ref):
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
+* [`ispolytopic`](@ref ispolytopic(::LazySet))
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`rationalize`](@ref rationalize(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
