@@ -418,6 +418,11 @@ for N in [Float64]
     vlistZ = vertices_list(Z)
     @test length(vlistZ) == 6
 
+    # test vertices_list with SubArray
+    Z = Zonotope(view(center(Z), 1:2), genmat(Z))
+    vlistZ = vertices_list(Z)
+    @test length(vlistZ) == 6
+
     # option to not apply the convex hull operation
     vlistZ = LazySets._vertices_list_zonotope_iterative(Z.center, Z.generators;
                                                         apply_convex_hull=false)
