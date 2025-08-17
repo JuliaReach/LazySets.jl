@@ -155,12 +155,22 @@ push!(VALIDATE_DICT, :project => (validate_project, args12))
 # push!(VALIDATE_DICT, :scale! => (validate_scale, args12))
 
 function validate_support_function(d::AbstractVector, X::LazySet)
-    return validate_same_dim(d, X; fun=ρ)
+    if !validate_same_dim(d, X; fun=ρ)
+        return false
+    elseif isempty(X)
+        throw(ArgumentError("the support function is only defined for nonempty sets"))
+    end
+    return true
 end
 push!(VALIDATE_DICT, :ρ => (validate_support_function, args12))
 
 function validate_support_vector(d::AbstractVector, X::LazySet)
-    return validate_same_dim(d, X; fun=σ)
+    if !validate_same_dim(d, X; fun=σ)
+        return false
+    elseif isempty(X)
+        throw(ArgumentError("the support vector is only defined for nonempty sets"))
+    end
+    return true
 end
 push!(VALIDATE_DICT, :σ => (validate_support_vector, args12))
 
