@@ -50,15 +50,12 @@ UnionSet{Float64, Interval{Float64}, Interval{Float64}}(Interval{Float64}([1, 2]
 ```
 """
 @validate function difference(X::Interval, Y::Interval)
-    Z = intersection(X, Y)
-    if isempty(Z)
+    l, h = _intersection_interval_bounds(X, Y)
+    if l > h
         return X
     else
-        L = Interval(min(X), min(Z))
-        R = Interval(max(Z), max(X))
-
-        flat_left = isflat(L)
-        flat_right = isflat(R)
+        flat_left = isapproxzero(l - min(X))
+        flat_right = isapproxzero(max(X) - h)
 
         if flat_left && flat_right
             require(@__MODULE__, :LazySets; fun_name="difference")
@@ -66,13 +63,13 @@ UnionSet{Float64, Interval{Float64}, Interval{Float64}}(Interval{Float64}([1, 2]
             N = promote_type(eltype(X), eltype(Y))
             return EmptySet{N}(1)
         elseif flat_left && !flat_right
-            return R
+            return Interval(h, max(X))
         elseif !flat_left && flat_right
-            return L
+            return Interval(min(X), l)
         else
             require(@__MODULE__, :LazySets; fun_name="difference")
 
-            return UnionSet(L, R)
+            return UnionSet(Interval(min(X), l), Interval(h, max(X)))
         end
     end
 end
