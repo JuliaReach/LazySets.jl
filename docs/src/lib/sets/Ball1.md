@@ -127,6 +127,7 @@ Inherited from [`LazySet`](@ref):
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
+* [`ispolytopic`](@ref ispolytopic(::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`radius`](@ref radius(::LazySet, ::Real))

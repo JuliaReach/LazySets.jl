@@ -107,6 +107,7 @@ Inherited from [`LazySet`](@ref):
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
+* [`ispolytopic`](@ref ispolytopic(::LazySet))
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
