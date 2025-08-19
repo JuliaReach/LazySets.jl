@@ -149,6 +149,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     P2 = copy(P)
     translate!(P2, N[1, 2])
     @test P2 == TPZ
+
+    # convert
+    SPZ = SparsePolynomialZonotope(N[4, 4], N[2 1 2; 0 2 2], hcat(N[1; 0]), [1 0 3; 0 1 1])
+    SSPZ = convert(SimpleSparsePolynomialZonotope, SPZ)
+    @test center(SSPZ) == center(SPZ)
+    @test genmat(SSPZ) == hcat(SPZ.G, SPZ.GI)
+    @test expmat(SSPZ) == [1 0 3 0; 0 1 1 0; 0 0 0 1]
 end
 
 for N in @tN([Float64, Float32])
@@ -161,12 +168,4 @@ for Z in [rand(Zonotope), rand(Hyperrectangle)]
     @test center(ZS) == center(Z)
     @test genmat(ZS) == genmat(Z)
     @test expmat(ZS) == I
-end
-
-let
-    SPZ = SparsePolynomialZonotope([4.0, 4], [2.0 1 2; 0 2 2], hcat([1.0; 0]), [1 0 3; 0 1 1])
-    SSPZ = convert(SimpleSparsePolynomialZonotope, SPZ)
-    @test center(SSPZ) == center(SPZ)
-    @test genmat(SSPZ) == hcat(SPZ.G, SPZ.GI)
-    @test expmat(SSPZ) == [1 0 3 0; 0 1 1 0; 0 0 0 1]
 end
