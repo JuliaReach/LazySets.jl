@@ -8,8 +8,10 @@ CurrentModule = LazySets.SimpleSparsePolynomialZonotopeModule
 SimpleSparsePolynomialZonotope
 ```
 
-```@meta
-CurrentModule = LazySets
+## Conversion
+
+```julia
+convert(::Type{SimpleSparsePolynomialZonotope}, ::AbstractSparsePolynomialZonotope)
 ```
 
 ## Operations

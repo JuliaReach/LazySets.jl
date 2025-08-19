@@ -4,7 +4,7 @@ using Reexport
 
 using ..LazySets: AbstractSparsePolynomialZonotope, ngens_dep, nparams,
                   _remove_redundant_generators_polyzono, @validate
-using LinearAlgebra: dot
+using LinearAlgebra: dot, I
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Comparison: isapproxzero
@@ -15,6 +15,7 @@ using ReachabilityBase.Comparison: isapproxzero
 @reexport import ..LazySets: expmat, genmat, genmat_dep, genmat_indep, ngens,
                              ngens_indep, polynomial_order,
                              remove_redundant_generators
+import Base: convert
 @reexport using ..API
 
 export SimpleSparsePolynomialZonotope,
@@ -45,5 +46,7 @@ include("polynomial_order.jl")
 include("remove_redundant_generators.jl")
 include("expmat.jl")
 include("quadratic_map.jl")
+
+include("convert.jl")
 
 end  # module
