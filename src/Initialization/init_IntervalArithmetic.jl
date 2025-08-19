@@ -1,16 +1,3 @@
-# convenience method for IntervalArithmetic.Interval
-function vertices_list(x::IA.Interval{N}) where {N}
-    a = IA.inf(x)
-    b = IA.sup(x)
-    ST = IA.SVector{1,N}
-    return _isapprox(a, b) ? [ST(a)] : [ST(a), ST(b)]
-end
-
-# convenience method for IntervalArithmetic.IntervalBox
-function vertices_list(H::IA.IntervalBox)
-    return vertices_list(convert(Hyperrectangle, H))
-end
-
 const zero_itv_store = Dict{Type,IA.Interval}()
 function zero_itv(N)
     res = get(zero_itv_store, N, nothing)
