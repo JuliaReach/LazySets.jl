@@ -327,23 +327,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test convert(Hyperrectangle, SymmetricIntervalHull(Singleton(N[1, 1]))) ==
           Hyperrectangle(N[0, 0], N[1, 1])
 
-    # conversion to a zonotope
-    H = Hyperrectangle(; low=N[5 // 10, 6 // 10], high=N[124 // 10, 2355 // 10])
-    Hz = convert(Zonotope, H)
-    @test Hz == Zonotope(N[129 // 20, 2361 // 20], N[119//20 0//1; 0//1 2349//20])
-
-    @static if isdefined(@__MODULE__, :StaticArrays)
-        using StaticArrays: SA
-
-        # conversion of a hyperrectangle with static array components to a zonotope
-        # the specialized method for 2D static arrays is also tested
-        H = Hyperrectangle(; low=SA[N(5 // 10), N(6 // 10)], high=N[N(124 // 10), N(2355 // 10)])
-        Hz = convert(Zonotope, H)
-        Hz_sp = LazySets._convert_2D_static(Zonotope, H)
-        Z = Zonotope(SA[N(129 // 20), N(2361 // 20)],
-                     SA[N(119 // 20) N(0 // 1); N(0 // 1) N(2349 // 20)])
-        @test Hz == Z && Hz_sp == Z
-    end
+    # conversion from zonotope
+    c = N[0, 0]
+    H = Hyperrectangle(c, N[4, 5])
+    Z = convert(Zonotope, H)
+    @test convert(Hyperrectangle, Z) == H
+    Z = Zonotope(c, N[2 1; 1 2])
+    @test_throws AssertionError convert(Hyperrectangle, Z)
 
     # rectification
     H = Hyperrectangle(N[-1, 2], N[4, 5])

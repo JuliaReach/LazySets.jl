@@ -43,6 +43,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test X ⊆ U && res && w == N[]
     end
 
+    # AbstractZonotope in AbstractHyperrectangle
+    Z = Zonotope(N[0, 0], N[1 1; -1 1])
+    H = Hyperrectangle(; low=N[-2, -2], high=N[2, 2])
+    @test Z ⊆ H
+    res, w = ⊆(Z, H, true)
+    @test res && w isa Vector{N} && isempty(w)
+    H = Hyperrectangle(; low=N[-2, -2], high=N[2, 0])
+    @test !(Z ⊆ H)
+    @test_broken ⊆(Z, H, true) isa Tuple  # TODO this should work
+
     B = Hyperrectangle(N[0, 0], N[1, 1])
     U = UnionSetArray([Hyperrectangle(N[0, 1], N[3, 1]), Hyperrectangle(N[0, -1], N[3, 1])])
     res, w = ⊆(B, U, true)
@@ -60,7 +70,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     P = HPolyhedron([HalfSpace(N[1, 0], N(1)), HalfSpace(N[-1, 0], N(0)),
                      HalfSpace(N[0, 1], N(1)), HalfSpace(N[0, -1], N(0))])
     @test !(Pnc ⊆ P)
-    @test_throws ArgumentError issubset(Pnc, P, true)  # not implemented
+    @test_throws ArgumentError issubset(Pnc, P, true)  # not implemented; parser requires `issubset`
 
     # zonotope in polyhedron
     Z = Zonotope(N[1, 1], N[1 0; 0 1])
@@ -71,7 +81,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     P = HPolyhedron([HalfSpace(N[1, 0], N(1)), HalfSpace(N[-1, 0], N(0)),
                      HalfSpace(N[0, 1], N(3)), HalfSpace(N[0, -1], N(0))])
     @test !(Z ⊆ P)
-    @test_throws ArgumentError issubset(Z, P, true)  # not implemented
+    @test_throws ArgumentError issubset(Z, P, true)  # not implemented; parser requires `issubset`
     # corner case: no generator
     Z = Zonotope(N[2], zeros(N, 1, 0))
     P = convert(HPolytope, Interval(N(1), N(3)))
