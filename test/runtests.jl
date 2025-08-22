@@ -41,7 +41,9 @@ using LazySets
 
 # fix seed of random number generator (for reproducibility)
 using Random
-Random.seed!(1234)
+seed = rand(Int)
+println("using random seed $seed")
+Random.seed!(seed)
 
 # optional dependencies
 @ts begin
