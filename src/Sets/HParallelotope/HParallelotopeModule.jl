@@ -3,7 +3,7 @@ module HParallelotopeModule
 using Reexport, Requires
 
 using ..LazySets: AbstractZonotope, generators_fallback, order,
-                  _constraints_list_zonotope
+                  _constraints_list_zonotope, @validate
 using LinearAlgebra: checksquare, det
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: to_negative_vector

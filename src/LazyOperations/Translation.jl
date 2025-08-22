@@ -276,7 +276,7 @@ Let the translation be defined by the set of points `y` such that `y = x + v` fo
 all `x ∈ X`. Then, each defining halfspace `a⋅x ≤ b` is transformed to
 `a⋅y ≤ b + a⋅v`.
 """
-function constraints_list(tr::Translation)
+@validate function constraints_list(tr::Translation)
     return _constraints_list_translation(tr.X, tr.v)
 end
 

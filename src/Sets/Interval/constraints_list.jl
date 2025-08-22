@@ -1,4 +1,4 @@
-function constraints_list(X::Interval)
+@validate function constraints_list(X::Interval)
     require(@__MODULE__, :LazySets; fun_name="constraints_list")
 
     N = eltype(X)

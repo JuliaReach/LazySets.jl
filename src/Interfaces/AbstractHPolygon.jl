@@ -191,7 +191,7 @@ Return the list of constraints defining a polygon in constraint representation.
 The list of constraints of the polygon.
 The implementation guarantees that the constraints are sorted counter-clockwise.
 """
-function constraints_list(P::AbstractHPolygon)
+@validate function constraints_list(P::AbstractHPolygon)
     return P.constraints
 end
 

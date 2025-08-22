@@ -1,3 +1,3 @@
-function constraints_list(P::HPoly)
+@validate function constraints_list(P::HPoly)
     return P.constraints
 end
