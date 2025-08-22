@@ -219,7 +219,7 @@ The list of constraints of the Minkowski sum.
 We compute a concrete set representation via `minkowski_sum` and call
 `constraints_list` on the result.
 """
-function constraints_list(ms::MinkowskiSum)
+@validate function constraints_list(ms::MinkowskiSum)
     return constraints_list(minkowski_sum(ms.X, ms.Y))
 end
 

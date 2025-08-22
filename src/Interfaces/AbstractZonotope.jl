@@ -514,7 +514,7 @@ This is the (inefficient) fallback implementation for rational numbers.
 It first computes the vertices and then converts the corresponding polytope
 to constraint representation.
 """
-function constraints_list(Z::AbstractZonotope)
+@validate function constraints_list(Z::AbstractZonotope)
     return _constraints_list_vrep(Z)
 end
 
@@ -545,7 +545,7 @@ to the (slower) computation based on the vertex representation. The third case
 is that the zonotope is flat in some dimensions, in which case we project the
 zonotope to the non-flat dimensions and extend the result later.
 """
-function constraints_list(Z::AbstractZonotope{<:AbstractFloat})
+@validate function constraints_list(Z::AbstractZonotope{<:AbstractFloat})
     return _constraints_list_zonotope(Z)
 end
 

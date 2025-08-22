@@ -13,7 +13,7 @@ The constraints can be defined as ``d_i^T (x-c) ≤ r`` for all ``d_i``, where
 ``d_i`` is a vector with elements ``1`` or ``-1`` in ``n`` dimensions. To span
 all possible ``d_i``, the function `Iterators.product` is used.
 """
-function constraints_list(B::Ball1)
+@validate function constraints_list(B::Ball1)
     require(@__MODULE__, :LazySets; fun_name="constraints_list")
 
     n = dim(B)

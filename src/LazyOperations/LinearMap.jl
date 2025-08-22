@@ -418,7 +418,7 @@ We assume that the underlying set `X` is polyhedral, i.e., offers a method
 
 We fall back to a concrete set representation by applying `linear_map`.
 """
-function constraints_list(lm::LinearMap)
+@validate function constraints_list(lm::LinearMap)
     return constraints_list(linear_map(lm.M, lm.X))
 end
 
