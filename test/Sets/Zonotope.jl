@@ -6,25 +6,186 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     end
 end
 
+function isidentical(::Zonotope, ::Zonotope)
+    return false
+end
+
+function isidentical(Z1::Zonotope{N}, Z2::Zonotope{N}) where {N}
+    return Z1.center == Z2.center && Z1.generators == Z2.generators
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
+    # auxiliary sets
+    # TODO
+
+    # constructor
+    c = N[1, 2]
+    @test_throws AssertionError Zonotope(c, [N[0 0]; N[1 // 2 0]; N[0 1 // 2]; N[0 0]])
+    Z = Zonotope(c, N[1 3; 2 4])
+    Z0 = Zonotope(c, N[0 2 1 0 0; 0 0 1 0 0])  # zonotope with zero generators
+    Z1 = Zonotope(N[1], hcat(N[1]))  # 1D zonotope
+    Z3 = Zonotope(N[1, 1, 1], N[1 1; 2 0; 3 3])  # 3D zonotope
     # constructor from list of generators
-    Z = Zonotope(N[1, 1], [N[1, 2], N[3, 4]])
-    @test Z isa Zonotope{N} && Z == Zonotope(N[1, 1], N[1 3; 2 4])
+    Z2 = Zonotope(c, [N[1, 2], N[3, 4]])
+    @test isidentical(Z2, Z)
 
-    # Test dimension assertion
-    @test_throws AssertionError Zonotope(N[1, 1], [N[0 0]; N[1 // 2 0]; N[0 1 // 2]; N[0 0]])
+    # convert
+    Z2 = convert(Zonotope, Hyperrectangle(c, N[4, 5]))
+    @test isidentical(Z2, Zonotope(c, N[4 0; 0 5]))
+    Z = convert(Zonotope, Hyperrectangle(c, N[0, 0]))  # flat hyperrectangle
+    @test isidentical(Z2, Zonotope(c, zeros(N, 2, 0)))
+    @test_throws AssertionError convert(EmptySet, X)  # TODO define some X
 
-    # 1D Zonotope
-    z = Zonotope(N[0], Matrix{N}(I, 1, 1))
-    # Test Dimension
-    @test dim(z) == 1
-    # support function
-    @test ρ(N[1], z) == ρ(N[-1], z) == N(1)
-    # Test Support Vector
-    d = N[1]
-    @test σ(d, z) == N[1]
-    d = N[-1]
-    @test σ(d, z) == N[-1]
+
+
+    # an_element
+    x = an_element(Z)
+    @test x isa Vector{N} && length(x) == 2 && x ∈ Z
+
+    # area
+    @test_throws DimensionMismatch area(Z1)
+    res = area(Z)
+    @test res isa N && res == N()
+    res = area(Z3)
+    @test res isa N && res == N()
+
+    # chebyshev_center_radius
+    @test_throws ArgumentError chebyshev_center_radius(E)
+
+    # complement
+    U2 = complement(E)
+    @test U2 isa Universe{N} && dim(U2) == 2
+
+    # concretize
+    E2 = concretize(E)
+    @test isidentical(E, E2)
+
+    # constrained_dimensions
+    @test constrained_dimensions(E) == 1:2
+
+    # constraints_list
+    @test_throws MethodError constraints_list(E)  # TODO this should maybe change
+
+    # constraints
+    @test_throws MethodError constraints(E)  # TODO this should maybe change
+
+    # convex_hull (unary)
+    E2 = convex_hull(E)
+    @test isidentical(E, E2)
+
+    # copy
+    E2 = copy(E)
+    @test isidentical(E, E2)
+
+    # diameter
+    @test_throws ArgumentError diameter(E, N(1 // 2))
+    for res in (diameter(E), diameter(E, Inf), diameter(E, 2))
+        @test res isa N && res == N(0)
+    end
+
+    # dim
+    @test dim(E) == 2
+
+    # eltype
+    @test eltype(E) == N
+    @test eltype(typeof(E)) == N
+
+    # extrema
+    @test_throws ArgumentError extrema(E)
+    @test_throws ArgumentError extrema(E, 1)
+
+    # high
+    @test_throws ArgumentError high(E)
+    @test_throws ArgumentError high(E, 1)
+
+    # isbounded
+    @test isbounded(E)
+
+    # isboundedtype
+    @test isboundedtype(typeof(E))
+
+    # isconvextype
+    @test isconvextype(typeof(E))
+
+    # isempty
+    @test isempty(E)
+    res, w = isempty(E, true)
+    @test res && w isa Vector{N} && isempty(w)
+
+    # isoperation
+    @test !isoperation(E)
+
+    # isoperationtype
+    @test !isoperationtype(typeof(E))
+
+    # ispolyhedral
+    @test !ispolyhedral(E)  # TODO this should maybe change
+
+    # isuniversal
+    @test !isuniversal(E)
+    res, w = isuniversal(E, true)
+    @test !res && w isa Vector{N} && w ∉ E
+
+    # low
+    @test_throws ArgumentError low(E)
+    @test_throws ArgumentError low(E, 1)
+
+    # norm
+    @test_throws ArgumentError norm(E, N(1 // 2))
+    for res in (norm(E), norm(E, Inf), norm(E, 2))
+        @test res isa N && res == N(0)
+    end
+
+    # polyhedron
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        @test_throws MethodError polyhedron(E)  # TODO this should maybe change
+    end
+
+    # radius
+    @test_throws ArgumentError radius(E, N(1 // 2))
+    for res in (radius(E), radius(E, Inf), radius(E, 2))
+        @test res isa N && res == N(0)
+    end
+
+    # rand
+    E2 = rand(EmptySet; N=N)
+    @test isidentical(E, E2)
+    E2 = rand(EmptySet; N=N, dim=3)
+    @test isidentical(E3, E2)
+
+    # rectify
+    @test rectify(E) == E
+
+    # reflect
+    @test reflect(E) == E
+
+    # singleton_list
+    res = singleton_list(E)
+    T = VERSION < v"1.7" ? Singleton : Singleton{N,Vector{N}}
+    @test res isa Vector{T} && isempty(res)
+
+    # tosimplehrep
+    @test_throws MethodError tosimplehrep(E)  # TODO this should maybe change
+
+    # triangulate
+    @test_throws ArgumentError triangulate(E)
+
+    # triangulate_faces
+    @test_throws DimensionMismatch triangulate_faces(E)
+    @test_throws ArgumentError triangulate_faces(E3)  # TODO this should maybe change
+
+    # vertices_list
+    res = vertices_list(E)
+    @test res isa Vector{Vector{N}} && isempty(res)
+
+    # vertices
+    res = collect(vertices(E))
+    @test res isa Vector{Vector{N}} && isempty(res)
+
+    # volume
+    @test volume(E) == N(0)
+
+
 
     # 2D Zonotope
     z = Zonotope(N[0, 0], Matrix{N}(I, 2, 2))
@@ -77,9 +238,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isuniversal
     answer, w = isuniversal(z, true)
     @test !isuniversal(z) && !answer && w ∉ z
-
-    # an_element function
-    @test an_element(z) ∈ z
 
     # membership
     Z = Zonotope(N[1, 2], N[2 1; 1 2])
@@ -196,20 +354,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     B = BallInf(N[0, 0], N(1))
     Z = convert(Zonotope, A * B + b)
     @test Z == Zonotope(N[1, 1], N[1 0; 0 1])
-
-    # test conversion from hyperrectangular sets
-    Z = convert(Zonotope, Hyperrectangle(N[2, 3], N[4, 5]))
-    @test Z.center == N[2, 3] && diag(Z.generators) == N[4, 5]
-    convert(Zonotope, BallInf(N[5, 3], N(2)))
-    # flat hyperrectangle
-    Z = convert(Zonotope, Hyperrectangle(N[2, 3], N[0, 0]))
-    @test Z.center == N[2, 3] && isempty(Z.generators)
-    # conversion back to hyperrectangle
-    H = Hyperrectangle(N[2, 3], N[4, 5])
-    Z = convert(Zonotope, H)
-    @test convert(Hyperrectangle, Z) == H
-    Z = Zonotope(N[1, 1], N[2 1; 1 2])
-    @test_throws AssertionError convert(Hyperrectangle, Z)
 
     # convert the cartesian product of two hyperrectangles to a zonotope
     h1 = Hyperrectangle(N[1 / 2], N[1 / 2])

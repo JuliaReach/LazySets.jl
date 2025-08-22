@@ -73,7 +73,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # an_element
     x = an_element(X)
-    @test x isa Vector{N} && length(x) == 1 && x[1] isa N && N(0) <= x[1] <= N(2)
+    @test x isa Vector{N} && length(x) == 1 && N(0) <= x[1] <= N(2)
 
     # area
     @test_throws DimensionMismatch area(X)
