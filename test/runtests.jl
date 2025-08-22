@@ -48,9 +48,10 @@ Random.seed!(seed)
 # optional dependencies
 @ts begin
     # only load the packages (no symbols)
-    import CDDLib, Distributions, ExponentialUtilities, Expokit, IntervalConstraintProgramming,
-           IntervalMatrices, Ipopt, MiniQhull, Optim, PkgVersion, Polyhedra, RangeEnclosures, SCS,
-           SetProg, StaticArrays, TaylorModels
+    import CDDLib, Distributions, ExponentialUtilities, Expokit, GeometryBasics,
+           IntervalConstraintProgramming, IntervalMatrices, Ipopt, MiniQhull,
+           Optim, PkgVersion, Polyhedra, RangeEnclosures, SCS, SetProg,
+           StaticArrays, TaylorModels
 
     # load all symbols from the following packages
     using SymEngine, Symbolics

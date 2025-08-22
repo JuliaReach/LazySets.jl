@@ -84,6 +84,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # check membership error message
     @test_throws ArgumentError S.element ⊆ S
 
+    # togrep
+    Z = togrep(S)
+    @test Z == Zonotope(N[1, 1], zeros(N, 2, 0))
+
     # an_element function
     @test an_element(S) == element(S)
 
