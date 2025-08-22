@@ -73,7 +73,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws MethodError constraints_list(E)  # TODO this should maybe change
 
     # constraints
-    @test_throws MethodError constraints(E)  # TODO this should maybe change
+    @test_throws ArgumentError constraints(E)  # TODO this should maybe change
 
     # convex_hull (unary)
     E2 = convex_hull(E)
