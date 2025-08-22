@@ -417,7 +417,7 @@ for N in @tN([Float64, Float32])
     PZ = overapproximate(CH(PZ1, PZ2), SparsePolynomialZonotope)
     @test center(PZ) == N[-1, 3 // 2]   # no reasonable tests available here
 
-    # overapproximate matrix zonotope with interval matrix 
+    # overapproximate matrix zonotope with interval matrix
     MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
     IM = overapproximate(MZ, IntervalMatrix)
     @test IM == IntervalMatrix(N[-1.1 -4.1; 3.9 -1.1], N[-0.9 -3.9; 4.1 -0.9])
@@ -651,4 +651,17 @@ for N in [Float64]
         R_exact = intersection(Z, H)
         @test R ⊆ Z && R_exact ⊆ R
     end
+
+    # quadratic map
+    Z = Zonotope(N[0, 0], N[1 0; 0 1])
+    Q1 = N[1/2 0; 0 1/2]
+    Q2 = N[0 1/2; 1/2 0]
+    # note that there may be repeated generators (though zero generators are removed)
+    @test overapproximate(QuadraticMap([Q1, Q2], Z), Zonotope) ==
+          Zonotope(N[1 // 2, 0], N[1//4 1//4 0; 0 0 1])
+    Z = Zonotope(N[0, 0], N[1 1; 0 1])
+    Q1 = N[1 1; 1 1]
+    Q2 = N[-1 0; 0 -1]
+    @test overapproximate(QuadraticMap([Q1, Q2], Z), Zonotope) ==
+          Zonotope(N[5 // 2, -3 // 2], N[1//2 2 4; -1//2 -1 -2])
 end
