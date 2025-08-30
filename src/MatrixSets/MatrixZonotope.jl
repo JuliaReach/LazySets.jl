@@ -19,7 +19,7 @@ Mathematically a matrix zonotope is defined as the set of matrices
 ```
 
 It can be written in shorthand notation as ``\\mathcal{A} = \\braket{A^{(0)},A^{(1)}, ..., A^{(p)} }_{MZ}.
-Matrix zonotopes were introduced in [AlthoffGCKH11](@citet).
+Matrix zonotopes were introduced in [AlthoffGK11](@citet).
 
 ### Examples
 

@@ -1251,7 +1251,7 @@ end  # load_overapproximate_ICP()
                                                   MAT<:MatrixZonotope{NM}}
 
 Overapproximate the linear map of a zonotope through a matrix zonotope,
-following Proposition 4 in [AlthoffGCKH11](@citet).
+following [AlthoffGK11; Proposition 4](@citet).
 
 ### Input
 
