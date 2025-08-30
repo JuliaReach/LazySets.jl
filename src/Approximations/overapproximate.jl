@@ -293,7 +293,7 @@ The idea is to solve the univariate optimization problem `ρ(di, X ∩ Hi)` for
 each half-space of the set `P` and then take the minimum.
 This gives an overapproximation of the exact support function.
 
-This algorithm is inspired from [Frehse012](@citet).
+This algorithm is inspired from [FrehseR12](@citet).
 
 ### Notes
 
@@ -885,14 +885,14 @@ end
     overapproximate(MZP::MatrixZonotopeProduct{N,S},
                          ::Type{<:MatrixZonotope}) where {N,S<:AbstractMatrix{N}}
 
-Overapproximate the product of matrix zonotopes, following Equation 4.10 in [AlthoffKS11](@citet).
+Overapproximate the product of matrix zonotopes, following [AlthoffKS11; Equation 4.10](@citet).
 
 ### Input
 
 - `MZP` -- a `MatrixZonotopeProduct`
 - `MatrixZonotope` -- target type
 
-### Output 
+### Output
 
 A matrix zonotope overapproximating the matrix zonotope product
 """
@@ -919,7 +919,7 @@ function overapproximate(MZP::MatrixZonotopeProduct{N,S},
             gens[j] = center(A) * generators(B)[j]
         end
 
-        # Gᵢ ⋅ Hⱼ block 
+        # Gᵢ ⋅ Hⱼ block
         idx = nB + 1
         @inbounds for Gi in generators(A), Hj in generators(B)
             gens[idx] = Gi * Hj
@@ -945,7 +945,7 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
         - `A` -- a matrix zonotope
         - `IntervalMatrix` -- target type
 
-        ### Output 
+        ### Output
 
         An interval matrix overapproximating the matrix zonotope
         """

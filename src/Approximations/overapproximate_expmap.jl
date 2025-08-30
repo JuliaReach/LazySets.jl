@@ -169,7 +169,7 @@ function load_intervalmatrices_overapproximation_expmap()
         - `MatrixZonotope` -- target type
         - `k` -- (default: `2`) the order of the Taylor expansion
 
-        ### Output 
+        ### Output
 
         A matrix zonotope overapproximating the matrix zonotope exponential
 
@@ -177,14 +177,14 @@ function load_intervalmatrices_overapproximation_expmap()
 
         The expansion
 
-        ```math 
+        ```math
         exp(\\mathcal{A}) ⊆ \\sum_i^k \\frac{\\mathcal{A}^i}{i!} + E_k
         ```
 
-        is computed by overapproximating the matrix zonotope powers ``A^i`` 
-        for ``i=0, …, k``. 
-        The remainder term ``E_k`` is computed through interval arithmetic 
-        following Proposition 4.1 by [AlthoffKS11](@citet). 
+        is computed by overapproximating the matrix zonotope powers ``A^i``
+        for ``i=0, …, k``.
+        The remainder term ``E_k`` is computed through interval arithmetic
+        following [AlthoffKS11; Proposition 4.1](@citet).
         """
         function overapproximate(expA::MatrixZonotopeExp{N,T}, ::Type{<:MatrixZonotope},
                                  k::Int=2) where {N,T<:AbstractMatrixZonotope{N}}

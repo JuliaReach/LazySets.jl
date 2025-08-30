@@ -376,7 +376,7 @@ The algorithms are based on solving the associated optimization problem
 where ``D_h = \\{ λ : λ ≥ 0 \\}`` if ``H`` is a half-space or
 ``D_h = \\{ λ : λ ∈ ℝ \\}`` if ``H`` is a hyperplane.
 
-For additional information we refer to [Frehse012, LeGuernic09, RockafellarW98](@citet)
+For additional information we refer to [FrehseR12, LeGuernic09, RockafellarW98](@citet)
 """
 @validate function ρ(d::AbstractVector, cap::Intersection{N,S1,S2};
                      algorithm::String="line_search",
@@ -417,7 +417,7 @@ The idea is to solve the univariate optimization problem `ρ(di, X ∩ Hi)` for
 each half-space in the polyhedron and then take the minimum. This gives an
 overapproximation of the exact support value.
 
-This algorithm is inspired from [Frehse012](@citet).
+This algorithm is inspired from [FrehseR12](@citet).
 
 ### Notes
 
