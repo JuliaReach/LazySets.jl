@@ -259,7 +259,13 @@ for N in @tN([Float64, Float32])
 end
 
 for Z in [rand(Zonotope), rand(Hyperrectangle)]
-    ZS = convert(SparsePolynomialZonotope, Z)
+    ZS = convert(SparsePolynomialZonotope, Z; algorithm="GI")
+    @test center(ZS) == center(Z)
+    @test isempty(genmat_dep(ZS))
+    @test genmat_indep(ZS) == genmat(Z)
+    @test isempty(expmat(ZS))
+
+    ZS = convert(SparsePolynomialZonotope, Z; algorithm="K21")
     @test center(ZS) == center(Z)
     @test genmat_dep(ZS) == genmat(Z)
     @test isempty(genmat_indep(ZS))
