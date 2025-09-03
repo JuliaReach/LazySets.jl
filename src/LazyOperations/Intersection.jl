@@ -608,7 +608,7 @@ This function ignores the boolean output from the in-place
 are infeasible. In that case, the list of constraints at the moment when the
 infeasibility was detected is returned.
 """
-function constraints_list(cap::Intersection)
+@validate function constraints_list(cap::Intersection)
     constraints = [constraints_list(cap.X); constraints_list(cap.Y)]
     remove_redundant_constraints!(constraints)
     return constraints
