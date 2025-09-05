@@ -62,7 +62,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # concretize
     U2 = concretize(U)
-    @test isidentical(U, U2)
+    @test isidentical(U2, U)
 
     # constrained_dimensions
     x = constrained_dimensions(U)
@@ -78,11 +78,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # convex_hull (unary)
     U2 = convex_hull(U)
-    @test isidentical(U, U2)
+    @test isidentical(U2, U)
 
     # copy
     U2 = copy(U)
-    @test isidentical(U, U2)
+    @test isidentical(U2, U)
 
     # diameter
     @test_throws ArgumentError diameter(U, N(1 // 2))
@@ -92,6 +92,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # dim
     @test dim(U) == 2
+    @test dim(U3) == 3
 
     # eltype
     @test eltype(U) == N
@@ -99,10 +100,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # extrema
     @test extrema(U) == (N[-Inf, -Inf], N[Inf, Inf])
+    @test_throws DimensionMismatch extrema(U, 3)
     @test extrema(U, 1) == (N(-Inf), N(Inf))
 
     # high
     @test high(U) == N[Inf, Inf]
+    @test_throws DimensionMismatch high(U, 3)
     @test high(U, 1) == N(Inf)
 
     # isbounded
@@ -141,6 +144,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # low
     @test low(U) == N[-Inf, -Inf]
+    @test_throws DimensionMismatch low(U, 3)
     @test low(U, 1) == N(-Inf)
 
     # norm
@@ -168,7 +172,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # rand
     @test rand(Universe; N=N) isa Universe{N}
     U2 = rand(Universe; N=N, dim=3)
-    @test isidentical(U3, U2)
+    @test isidentical(U2, U3)
 
     # rectify
     P = rectify(U)
@@ -209,9 +213,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
         # TODO this should work, even without Polyhedra
         @test_broken affine_map(ones(N, 2, 2), U, N[1, 1])
         # U2 = affine_map(ones(N, 2, 2), U, N[1, 1])
-        # @test isidentical(U, U2)
+        # @test isidentical(U2, U)
         # U2 = affine_map(ones(N, 3, 2), U, N[1, 1, 3])
-        # @test isidentical(U3, U2)
+        # @test isidentical(U2, U3)
     end
 
     # distance (between point and set)
@@ -247,26 +251,39 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch linear_map(ones(N, 2, 1), U)
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         # TODO this should work, even without Polyhedra
-        @test_broken linear_map(ones(N, 2, 2), U)
-        # U2 = linear_map(ones(N, 2, 2), U)
-        # @test_broken isidentical(U, U2)
-        @test_broken linear_map(ones(N, 3, 2), U)
-        # U2 = linear_map(ones(N, 3, 2), U)
-        # @test U2 isa HPolyhedron{N}  # TODO this should change
-        # @test_broken isidentical(U3, U2)
+        U2 = linear_map(N[1 0; 0 1], U)
+        @test U2 isa HPolyhedron{N}  # TODO this should change
+        @test_broken isidentical(U2, U)
+        if VERSION < v"1.12"
+            # TODO these should work with older versions, see below
+            @test_broken linear_map(ones(N, 2, 2), U)
+            @test_broken linear_map(zeros(N, 2, 2), U)
+            @test_broken linear_map(N[1 0; 0 1; 0 0], U)
+        else
+            U2 = linear_map(ones(N, 2, 2), U)
+            @test U2 isa HPolyhedron{N}
+            @test isequivalent(U2, Line(N[0, 0], N[1, 1]))
+            X = linear_map(zeros(N, 2, 2), U)  # zero map
+            @test isequivalent(X, ZeroSet{N}(2))
+            U2 = linear_map(N[1 0; 0 1; 0 0], U)
+            @test U2 isa HPolyhedron{N}
+            @test isequivalent(U2, Hyperplane(N[0, 0, 1], N(0)))
+        end
     end
 
     # linear_map_inverse
     U2 = LazySets.linear_map_inverse(ones(N, 2, 3), U)
-    @test isidentical(U3, U2)
+    @test isidentical(U2, U3)
 
     # permute
     @test_throws DimensionMismatch permute(U, [1])
     @test_throws DimensionMismatch permute(U, [1, -1])
     @test_throws DimensionMismatch permute(U, [1, 3])
     @test_throws ArgumentError permute(U, [1, 1])
+    U2 = permute(U, [1, 2])
+    @test isidentical(U2, U)
     U2 = permute(U, [2, 1])
-    @test isidentical(U, U2)
+    @test isidentical(U2, U)
 
     # project
     @test_throws DimensionMismatch project(U, [1, 2, 3])
@@ -287,13 +304,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # scale
     U2 = scale(N(2), U)
-    @test isidentical(U, U2)
+    @test isidentical(U2, U)
     Z = scale(N(0), U)
     @test Z isa ZeroSet{N} && Z == ZeroSet{N}(2)
     # scale!
     U2 = copy(U)
     scale!(N(2), U2)
-    @test isidentical(U, U2)
+    @test isidentical(U2, U)
     @test_throws ArgumentError scale!(N(0), U2)
 
     # support_function
@@ -316,12 +333,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # translate
     @test_throws DimensionMismatch translate(U, N[1])
     U2 = translate(U, N[1, 2])
-    @test isidentical(U, U2)
+    @test isidentical(U2, U)
     # translate!
     @test_throws DimensionMismatch translate!(U, N[1])
     U2 = copy(U)
     translate!(U2, N[1, 2])
-    @test isidentical(U, U2)
+    @test isidentical(U2, U)
 
     # cartesian_product
     for U2 in (cartesian_product(U, U3), cartesian_product(U3, U))
@@ -331,15 +348,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # convex_hull (binary)
     @test_throws DimensionMismatch convex_hull(U, U3)
     U2 = convex_hull(U, U)
-    @test isidentical(U, U2)
+    @test isidentical(U2, U)
     for U2 in (convex_hull(U, Pnc), convex_hull(Pnc, U), convex_hull(U, E), convex_hull(E, U))
-        @test isidentical(U, U2)
+        @test isidentical(U2, U)
     end
 
     # difference
     @test_throws DimensionMismatch difference(U, U3)
-    @test_throws DimensionMismatch difference(B, U3)
-    @test_throws DimensionMismatch difference(U3, B)
     for E2 in (difference(U, U), difference(B, U))
         @test E2 isa EmptySet{N} && dim(E2) == 2
     end
@@ -359,13 +374,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # exact_sum
     @test_throws DimensionMismatch exact_sum(U, U3)
     for U2 in (exact_sum(U, U), exact_sum(U, B), exact_sum(B, U))
-        @test isidentical(U, U2)
+        @test isidentical(U2, U)
     end
 
     # intersection
     @test_throws DimensionMismatch intersection(U, U3)
     U2 = intersection(U, U)
-    @test isidentical(U, U2)
+    @test isidentical(U2, U)
     for X in (intersection(U, B), intersection(B, U))
         @test X isa BallInf{N} && X == B
     end
@@ -404,8 +419,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isstrictsubset
     @test_throws DimensionMismatch U ⊂ U3
-    @test_throws DimensionMismatch B ⊂ U3
-    @test_throws DimensionMismatch U3 ⊂ B
     @test !(U ⊂ U)
     res, w = ⊂(U, U, true)
     @test !res && w isa Vector{N} && isempty(w)
@@ -417,8 +430,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res && w isa Vector{N} && w ∉ B && w ∈ U
 
     # issubset
-    @test_throws DimensionMismatch B ⊆ U3
-    @test_throws DimensionMismatch U3 ⊆ B
+    @test_throws DimensionMismatch U ⊆ U3
     for X in (U, B, Pnc)
         @test X ⊆ U
         res, w = ⊆(X, U, true)
@@ -436,7 +448,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     for U2 in (linear_combination(U, U),
                linear_combination(U, Pnc), linear_combination(Pnc, U),
                linear_combination(U, B), linear_combination(B, U))
-        @test isidentical(U, U2)
+        @test isidentical(U2, U)
     end
     for E2 in (linear_combination(U, Pe), linear_combination(Pe, U))
         @test E2 isa HPolygon{N} && E2 == Pe
@@ -444,21 +456,19 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # minkowski_difference
     @test_throws DimensionMismatch minkowski_difference(U, U3)
-    @test_throws DimensionMismatch minkowski_difference(B, U3)
-    @test_throws DimensionMismatch minkowski_difference(U3, B)
-    # universal
-    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B), minkowski_difference(U, Z),
-               minkowski_difference(LinearMap(N[1 0; 0 1], U), U))
-        @test isidentical(U, U2)
-    end
     # empty difference
     E2 = minkowski_difference(B, U)
     @test E2 isa EmptySet{N} && dim(E2) == 2
+    # Universe
+    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B), minkowski_difference(U, Z),
+               minkowski_difference(LinearMap(N[1 0; 0 1], U), U))
+        @test isidentical(U2, U)
+    end
 
     # minkowski_sum
     @test_throws DimensionMismatch minkowski_sum(U, U3)
     for U2 in (minkowski_sum(U, U), minkowski_sum(U, B), minkowski_sum(B, U))
-        @test isidentical(U, U2)
+        @test isidentical(U2, U)
     end
     for X in (minkowski_sum(U, Pe), minkowski_sum(Pe, U))
         @test X isa HPolygon{N} && X == Pe
@@ -479,5 +489,5 @@ for N in @tN([Float64, Float32])
 
     # exponential_map
     U2 = exponential_map(ones(N, 2, 2), U)
-    @test_broken isidentical(U, U2)  # TODO this should change
+    @test_broken isidentical(U2, U)  # TODO this should change
 end
