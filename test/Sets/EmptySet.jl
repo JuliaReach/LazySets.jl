@@ -42,7 +42,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # convert
     E2 = convert(EmptySet, Pe)
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
     @test_throws AssertionError convert(EmptySet, B)
 
     # an_element
@@ -64,7 +64,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # concretize
     E2 = concretize(E)
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
 
     # constrained_dimensions
     @test constrained_dimensions(E) == 1:2
@@ -77,11 +77,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # convex_hull (unary)
     E2 = convex_hull(E)
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
 
     # copy
     E2 = copy(E)
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
 
     # diameter
     @test_throws ArgumentError diameter(E, N(1 // 2))
@@ -91,6 +91,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # dim
     @test dim(E) == 2
+    @test dim(E3) == 3
 
     # eltype
     @test eltype(E) == N
@@ -98,10 +99,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # extrema
     @test_throws ArgumentError extrema(E)
+    @test_throws DimensionMismatch extrema(E, 3)
     @test_throws ArgumentError extrema(E, 1)
 
     # high
     @test_throws ArgumentError high(E)
+    @test_throws DimensionMismatch high(E, 3)
     @test_throws ArgumentError high(E, 1)
 
     # isbounded
@@ -134,6 +137,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # low
     @test_throws ArgumentError low(E)
+    @test_throws DimensionMismatch low(E, 3)
     @test_throws ArgumentError low(E, 1)
 
     # norm
@@ -155,9 +159,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # rand
     E2 = rand(EmptySet; N=N)
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
     E2 = rand(EmptySet; N=N, dim=3)
-    @test isidentical(E3, E2)
+    @test isidentical(E2, E3)
 
     # rectify
     @test rectify(E) == E
@@ -195,9 +199,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch affine_map(ones(N, 2, 3), E, N[1, 1])
     @test_throws DimensionMismatch affine_map(ones(N, 2, 2), E, N[1])
     E2 = affine_map(ones(N, 2, 2), E, N[1, 1])
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
     E2 = affine_map(ones(N, 3, 2), E, N[1, 1, 3])
-    @test isidentical(E3, E2)
+    @test isidentical(E2, E3)
 
     # distance (between point and set)
     @test_throws DimensionMismatch distance(E, N[0])
@@ -211,7 +215,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch exponential_map(ones(N, 1, 1), E)
     @test_throws DimensionMismatch exponential_map(ones(N, 3, 2), E)
     E2 = exponential_map(ones(N, 2, 2), E)
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
 
     # in
     @test_throws DimensionMismatch N[0] ∈ E
@@ -233,21 +237,25 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # linear_map
     @test_throws DimensionMismatch linear_map(ones(N, 2, 1), E)
     E2 = linear_map(ones(N, 2, 2), E)
-    @test isidentical(E, E2)
-    E2 = linear_map(ones(N, 3, 2), E)
-    @test isidentical(E3, E2)
+    @test isidentical(E2, E)
+    E2 = linear_map(zeros(N, 2, 2), E)  # zero map
+    @test isidentical(E2, E)
+    E2 = linear_map(ones(N, 3, 2), E)  # higher dimension
+    @test isidentical(E2, E3)
 
     # linear_map_inverse
     E2 = LazySets.linear_map_inverse(ones(N, 2, 3), E)
-    @test isidentical(E3, E2)
+    @test isidentical(E2, E3)
 
     # permute
     @test_throws DimensionMismatch permute(E, [1])
     @test_throws DimensionMismatch permute(E, [1, -1])
     @test_throws DimensionMismatch permute(E, [1, 3])
     @test_throws ArgumentError permute(E, [1, 1])
-    E2 = permute(E, [2, 1])
-    @test isidentical(E, E2)
+    for v in ([1, 2], [2, 1])
+        E2 = permute(E, v)
+        @test isidentical(E2, E)
+    end
 
     # project
     @test_throws DimensionMismatch project(E, [1, 2, 3])
@@ -263,15 +271,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # scale
     E2 = scale(N(2), E)
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
     E2 = scale(N(0), E)
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
     # scale!
     E2 = copy(E)
     scale!(N(2), E2)
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
     scale!(N(0), E2)
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
 
     # support_function
     @test_throws DimensionMismatch ρ(N[1], E)
@@ -288,12 +296,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # translate
     @test_throws DimensionMismatch translate(E, N[1])
     E2 = translate(E, N[1, 2])
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
     # translate!
     @test_throws DimensionMismatch translate!(E, N[1])
     E2 = copy(E)
     translate!(E2, N[1, 2])
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
 
     # cartesian_product
     for E2 in (cartesian_product(E, E3), cartesian_product(E3, E))
@@ -306,7 +314,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # convex_hull (binary)
     @test_throws DimensionMismatch convex_hull(E, E3)
     E2 = convex_hull(E, E)
-    @test isidentical(E, E2)
+    @test isidentical(E2, E)
     for X in (convex_hull(E, Pnc), convex_hull(Pnc, E))
         @test X isa LazySet{N} && isequivalent(X, Pc)
     end
@@ -316,7 +324,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch difference(B, E3)
     @test_throws DimensionMismatch difference(E3, B)
     for E2 in (difference(E, E), difference(E, B), difference(E, U))
-        @test isidentical(E, E2)
+        @test isidentical(E2, E)
     end
     X = difference(B, E)
     @test X isa BallInf{N} && X == B
@@ -334,14 +342,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # exact_sum
     @test_throws DimensionMismatch exact_sum(E, E3)
     for E2 in (exact_sum(E, E), exact_sum(E, B), exact_sum(B, E))
-        @test isidentical(E, E2)
+        @test isidentical(E2, E)
     end
 
     # intersection
     @test_throws DimensionMismatch intersection(E, E3)
     for E2 in (intersection(E, E), intersection(E, B), intersection(B, E),
                intersection(E, U), intersection(U, E), intersection(E, Z), intersection(Z, E))
-        @test isidentical(E, E2)
+        @test isidentical(E2, E)
     end
 
     # isapprox
@@ -402,7 +410,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
                linear_combination(E, Pnc), linear_combination(Pnc, E),
                linear_combination(E, B), linear_combination(B, E),
                linear_combination(E, U), linear_combination(U, E))
-        @test isidentical(E, E2)
+        @test isidentical(E2, E)
     end
 
     # minkowski_difference
@@ -412,7 +420,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # empty difference
     for E2 in (minkowski_difference(E, E), minkowski_difference(E, B),
                minkowski_difference(E, U), minkowski_difference(E, Z))
-        @test isidentical(E, E2)
+        @test isidentical(E2, E)
     end
     # nonempty difference
     X = minkowski_difference(B, E)
@@ -426,7 +434,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     for E2 in (minkowski_sum(E, E), minkowski_sum(E, B), minkowski_sum(B, E), minkowski_sum(U, E),
                minkowski_sum(E, U), minkowski_sum(E, Z), minkowski_sum(Z, E), minkowski_sum(E, B),
                minkowski_sum(B, E))
-        @test isidentical(E, E2)
+        @test isidentical(E2, E)
     end
 end
 
