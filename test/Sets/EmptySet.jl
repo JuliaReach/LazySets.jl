@@ -91,6 +91,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # dim
     @test dim(E) == 2
+    @test dim(E3) == 3
 
     # eltype
     @test eltype(E) == N
@@ -98,10 +99,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # extrema
     @test_throws ArgumentError extrema(E)
+    @test_throws DimensionMismatch extrema(E, 3)
     @test_throws ArgumentError extrema(E, 1)
 
     # high
     @test_throws ArgumentError high(E)
+    @test_throws DimensionMismatch high(E, 3)
     @test_throws ArgumentError high(E, 1)
 
     # isbounded
@@ -134,6 +137,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # low
     @test_throws ArgumentError low(E)
+    @test_throws DimensionMismatch low(E, 3)
     @test_throws ArgumentError low(E, 1)
 
     # norm

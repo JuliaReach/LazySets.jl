@@ -134,9 +134,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # extrema
     res = extrema(X)
     @test res isa Tuple{Vector{N},Vector{N}} && res[1] == N[0] && res[2] == N[2]
+    @test_throws DimensionMismatch extrema(X, 2)
     res = extrema(X, 1)
     @test res isa Tuple{N,N} && res[1] == N(0) && res[2] == N(2)
-    @test_throws DimensionMismatch extrema(X, 2)
 
     # generators
     @test collect(generators(X)) == [N[1]]
@@ -153,9 +153,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # high
     res = high(X)
     @test res isa Vector{N} && res == N[2]
+    @test_throws DimensionMismatch high(X, 2)
     res = high(X, 1)
     @test res isa N && res == N(2)
-    @test_throws DimensionMismatch high(X, 2)
 
     # isbounded
     @test isbounded(X)
@@ -193,9 +193,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # low
     res = low(X)
     @test res isa Vector{N} && res == N[0]
+    @test_throws DimensionMismatch low(X, 2)
     res = low(X, 1)
     @test res isa N && res == N(0)
-    @test_throws DimensionMismatch low(X, 2)
 
     # min
     v = min(X)
@@ -283,7 +283,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # vertices
     res = collect(vertices(X))
-    @test res isa Vector{Vector{N}} && ispermutation(res, [N[0], N[2]])
+    @test res isa Vector{Vector{N}} && ispermutation(res, vertices_list(X))
 
     # volume
     @test volume(X) == N(2)
