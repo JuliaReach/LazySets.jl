@@ -28,16 +28,22 @@ for N in @tN([Float64, Float32, Rational{Int}])
     P2 = minkowski_sum(P, H2)
     @test indexvector(P2) == indexvector(SPZ)
     # equality is not required but approximates the equivalence check
-    @test P2 == SparsePolynomialZonotope(N[6, 8], zeros(N, 2, 0), N[3 0 7 0; 0 4 0 8], zeros(Int, 0, 0), Int[])
+    @test P2 ==
+          SparsePolynomialZonotope(N[6, 8], zeros(N, 2, 0), N[3 0 7 0; 0 4 0 8], zeros(Int, 0, 0),
+                                   Int[])
     P2 = minkowski_sum(H1, convert(SparsePolynomialZonotope, H2))
-    @test P2 == SparsePolynomialZonotope(N[6, 8], zeros(N, 2, 0), N[7 0 3 0; 0 8 0 4], zeros(Int, 0, 0), Int[])
+    @test P2 ==
+          SparsePolynomialZonotope(N[6, 8], zeros(N, 2, 0), N[7 0 3 0; 0 8 0 4], zeros(Int, 0, 0),
+                                   Int[])
     # SSPZ + Z
     P = convert(SSPZ, SPZ)
     P2 = minkowski_sum(P, H2)
     # equality is not required but approximates the equivalence check
     @test P2 == SparsePolynomialZonotope(N[6, 8], N[3 0; 0 4], N[7 0; 0 8], [1 0; 0 1], 1:2)
     P2 = minkowski_sum(H1, convert(SparsePolynomialZonotope, H2))
-    @test P2 == SparsePolynomialZonotope(N[6, 8], zeros(N, 2, 0), N[7 0 3 0; 0 8 0 4], zeros(Int, 0, 0), Int[])
+    @test P2 ==
+          SparsePolynomialZonotope(N[6, 8], zeros(N, 2, 0), N[7 0 3 0; 0 8 0 4], zeros(Int, 0, 0),
+                                   Int[])
 end
 
 for N in @tN([Float64, Float32])
