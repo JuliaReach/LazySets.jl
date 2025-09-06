@@ -18,5 +18,5 @@ for ``i = 1, …, n``.
 function genmat(P::HParallelotope)
     q = base_vertex(P)
     E = extremal_vertices(P)
-    return 1 / 2 * reduce(hcat, E) .- q / 2
+    return reduce(hcat, E) / 2 .- q / 2
 end
