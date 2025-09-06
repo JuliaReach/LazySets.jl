@@ -15,7 +15,8 @@ vertices with respect to ``q`` given by the set ``\\{v_i\\}`` for
 where ``s := ∑_{i=1}^n v_i`` is the sum of extremal vertices.
 """
 function center(P::HParallelotope)
-    n = dim(P)
+    N = eltype(P)
+    n = N(dim(P))
     q = base_vertex(P)
     E = extremal_vertices(P)
     s = sum(E)

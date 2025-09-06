@@ -50,14 +50,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     P = HParallelotope(N[1 0; 0 1], N[1, 1, 1, 1])
 
     # test center
-    @test center(P) == N[0, 0]
+    c = center(P)
+    @test c isa Vector{N} && c == N[0, 0]
 
     # test vertices functions
     @test base_vertex(P) == N[-1, -1]
     @test extremal_vertices(P) == [N[1, -1], N[-1, 1]]
 
     # test generators getters
-    @test genmat(P) == N[1 0; 0 1]
+    G = genmat(P)
+    @test G isa Matrix{N} && G == N[1 0; 0 1]
 
     # emptiness
     @test !isempty(P)
