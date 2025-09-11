@@ -41,7 +41,7 @@ using LazySets
 
 # fix seed of random number generator (for reproducibility)
 using Random
-seed = rand(Int)
+seed = max(abs(rand(Int)), 0)
 println("using random seed $seed")
 Random.seed!(seed)
 
