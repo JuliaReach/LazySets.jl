@@ -106,7 +106,7 @@ push!(VALIDATE_DICT, :distance => (validate_distance, (1, 2, :p)))
 function validate_exponential_map(M::AbstractMatrix, X::LazySet)
     m, n = size(M)
     if m != n
-        throw(DimensionMismatch("`exponential_map` requires a quadratic matrix " *
+        throw(DimensionMismatch("`exponential_map` requires a square matrix " *
                                 "but received a matrix of size $m × $n"))
     end
     return validate_map_dim(M, X; fun=exponential_map)
