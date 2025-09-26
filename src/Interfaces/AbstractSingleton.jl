@@ -201,7 +201,7 @@ function reflect(S::AbstractSingleton)
     return Singleton(-element(S))
 end
 
-function constraints_list(S::AbstractSingleton; min_constraints::Bool=false)
+@validate function constraints_list(S::AbstractSingleton; min_constraints::Bool=false)
     if min_constraints
         # fewest constraints (n+1) but more expensive to represent (`Vector`)
         return _constraints_list_singleton(S)
