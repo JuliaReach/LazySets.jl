@@ -139,6 +139,7 @@ Inherited from [`LazySet`](@ref):
 * [`isconvextype`](@ref isconvextype(::Type{AbstractPolynomialZonotope}))
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
+* [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{LazySet}))
 * [`low`](@ref low(::LazySet))
 * [`low`](@ref low(::LazySet, ::Int))
 * [`norm`](@ref norm(::LazySet, ::Real=Inf))
