@@ -1000,8 +1000,14 @@ function _reduce_order_zonotope_common(Z, r, n, p, method::Union{ASB10,COMB03,GI
     # the first m generators have greatest weight
     m = floor(Int, n * (r - 1))
 
+    return _absorb_generators_zonotope(c, G, indices, m, method)
+end
+
+# absorb all but the first `m` generators (according to the sorting in `indices`) with a box
+function _absorb_generators_zonotope(c, G, indices, m, method)
+
     # compute interval hull of L
-    Lred = _approximate_reduce_order(c, G, view(indices, (m + 1):p), method)
+    Lred = _approximate_reduce_order(c, G, view(indices, (m + 1):length(indices)), method)
 
     # concatenate non-reduced and reduced generators
     Gred = _hcat_KLred(G, view(indices, 1:m), Lred)
