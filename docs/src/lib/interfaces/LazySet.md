@@ -272,6 +272,15 @@ CurrentModule = LazySets
 ```@docs
 ispolyhedral(::LazySet)
 ```
+```@docs; canonical=false
+ispolytopic(::LazySet)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+ispolytopic(::LazySet)
+```
 ```@meta
 CurrentModule = LazySets.API
 ```
