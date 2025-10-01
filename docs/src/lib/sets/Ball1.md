@@ -13,7 +13,7 @@ Ball1
 ```@meta
 CurrentModule = LazySets.API
 ```
-```@docs; canonical=false; canonical=false
+```@docs; canonical=false
 constraints_list(::LazySet)
 ```
 ```@meta
