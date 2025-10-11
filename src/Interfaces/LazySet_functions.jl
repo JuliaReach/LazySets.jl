@@ -1302,9 +1302,9 @@ function load_Polyhedra_GeometryBasics_triangulate_faces()
             P = polyhedron(X)
             mes = Mesh(P)
             coords = GeometryBasics.coordinates(mes)
-            connec = GeometryBasics.faces(mes)
+            connection = GeometryBasics.faces(mes)
 
-            ntriangles = length(connec)
+            ntriangles = length(connection)
             npoints = length(coords)
             @assert npoints == 3 * ntriangles
             points = Matrix{Float32}(undef, 3, npoints)
@@ -1313,9 +1313,9 @@ function load_Polyhedra_GeometryBasics_triangulate_faces()
                 points[:, i] .= coords[i].data
             end
 
-            connec_tup = getfield.(connec, :data)
+            connection_tup = getfield.(connection, :data)
 
-            return points, connec_tup
+            return points, connection_tup
         end
     end
 end  # quote / load_Polyhedra_GeometryBasics_triangulate_faces()

@@ -1,7 +1,7 @@
 function writevtk(X::LazySet; file="output")
-    points, connec = triangulate_faces(X)
-    ntriangles = length(connec)
-    cell = VTKPolyhedron(1:ntriangles, connec...)
+    points, connection = triangulate_faces(X)
+    ntriangles = length(connection)
+    cell = VTKPolyhedron(1:ntriangles, connection...)
 
     vtk_grid(file, points, [cell]; compress=false) do vtk
         #
@@ -13,10 +13,10 @@ function writevtk(X::AbstractVector{<:LazySet}; file="output")
     cell_list = Vector{VTKPolyhedron}()
     count = 0
     for Xi in X
-        points, connec = triangulate_faces(Xi)
-        ntriangles = length(connec)
-        connec = [c .+ count for c in connec]
-        cell = VTKPolyhedron(1:ntriangles, connec...)
+        points, connection = triangulate_faces(Xi)
+        ntriangles = length(connection)
+        connection = [c .+ count for c in connection]
+        cell = VTKPolyhedron(1:ntriangles, connection...)
         count += size(points, 2)
         push!(points_list, points)
         push!(cell_list, cell)
