@@ -15,7 +15,7 @@ jobs:
       - name: Set up Julia if not already available
         uses: julia-actions/setup-julia@v2
         with:
-          version: '1'
+          version: '1.11'  # currently there are dependency problems on v1.12
           arch: ${{ runner.arch }}
         if: steps.julia_in_path.outcome != 'success'
       - name: Install CompatHelper
