@@ -80,23 +80,34 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test length(dir) == length(boxdiag.constraints) ==
               (n == 1 ? 2 : 2^n + 2 * n)
 
-        # spherical directions approximation
+        # polar directions
         if n == 2 && N in [Float32, Float64]
             dir = PolarDirections{N}(2)
             @test !isbounding(dir)
+            @test length(dir) == 2
+            @test_throws BoundsError dir[0]
+            @test_throws BoundsError dir[3]
+            @test dir[1] == N[1, 0]
+            @test dir[2] ≈ N[-1, 0]
             dir = PolarDirections{N}(5)
             @test isbounding(dir)
             @test dim(dir) == 2
             polar = overapproximate(X, dir)
         end
 
-        # spherical directions approximation
+        # spherical directions
         if n == 3 && N in [Float32, Float64]
             dir = SphericalDirections{N}(2, 2)
             @test !isbounding(dir)
             dir = SphericalDirections{N}(5, 5)
             @test isbounding(dir)
             @test dim(dir) == 3
+            @test length(dir) == 14
+            @test_throws BoundsError dir[0]
+            @test_throws BoundsError dir[15]
+            @test dir[1] == N[0, 0, 1]
+            x = dir[14]
+            @test x isa Vector{N} && length(x) == 3
             spherical = overapproximate(X, dir)
         end
 
@@ -135,6 +146,13 @@ for N in [Float64]
             dirs = [N[-1, 0, 0], N[0, -1, 0], N[0, 0, -1], N[1, 1, 1]]
         end
         dir = CustomDirections(dirs)
+        if n == 1
+            @test length(dir) == 2
+            @test_throws BoundsError dir[0]
+            @test_throws BoundsError dir[3]
+            @test dir[1] == N[-1]
+            @test dir[2] == N[1]
+        end
         @test isbounding(dir)
         @test !isbounding(CustomDirections(dirs[1:(end - 1)]))
         P = overapproximate(X, dir)
