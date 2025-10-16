@@ -170,6 +170,7 @@ Inherited from [`LazySet`](@ref):
 * [`high`](@ref high(::LazySet, ::Int))
 * [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
 * [`isoperation`](@ref isoperation(::LazySet))
+* [`ispolytopic`](@ref ispolytopic(::LazySet))
 * [`low`](@ref low(::LazySet))
 * [`low`](@ref low(::LazySet, ::Int))
 * [`norm`](@ref norm(::LazySet, ::Real=Inf))

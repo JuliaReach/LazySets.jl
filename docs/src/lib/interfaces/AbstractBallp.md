@@ -91,6 +91,7 @@ Inherited from [`LazySet`](@ref):
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
 * [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{LazySet}))
+* [`ispolytopic`](@ref ispolytopic(::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real=Inf))
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`radius`](@ref radius(::LazySet, ::Real=Inf))

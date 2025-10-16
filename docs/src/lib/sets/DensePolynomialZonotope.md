@@ -51,6 +51,7 @@ Inherited from [`LazySet`](@ref):
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
 * [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{LazySet}))
+* [`ispolytopic`](@ref ispolytopic(::LazySet))
 * [`low`](@ref low(::LazySet))
 * [`low`](@ref low(::LazySet, ::Int))
 * [`norm`](@ref norm(::LazySet, ::Real=Inf))
