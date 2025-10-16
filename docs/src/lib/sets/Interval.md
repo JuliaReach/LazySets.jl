@@ -192,7 +192,6 @@ Inherited from [`LazySet`](@ref):
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
-* [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 
@@ -223,6 +222,7 @@ Inherited from [`AbstractZonotope`](@ref):
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
+* [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::AbstractHyperrectangle))
 * [`cartesian_product`](@ref cartesian_product(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 
 Some additional functionality is available for `IntervalArithmetic.Interval`s:
