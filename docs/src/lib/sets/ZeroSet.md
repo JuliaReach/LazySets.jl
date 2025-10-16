@@ -80,6 +80,7 @@ Inherited from [`ConvexSet`](@ref):
 
 Inherited from [`AbstractPolyhedron`](@ref):
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
+* [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{AbstractPolyhedron}))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

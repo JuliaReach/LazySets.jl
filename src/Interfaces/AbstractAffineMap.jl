@@ -81,7 +81,13 @@ isoperationtype(::Type{<:AbstractAffineMap}) = true
 
 isconvextype(::Type{<:AbstractAffineMap{N,S}}) where {N,S} = isconvextype(S)
 
-ispolyhedral(am::AbstractAffineMap) = ispolyhedral(set(am))
+ispolyhedraltype(::Type{<:AbstractAffineMap{N,S}}) where {N,S} = ispolyhedraltype(S)
+
+function ispolyhedral(am::AbstractAffineMap)
+    ispolyhedraltype(typeof(am)) && return true
+
+    return ispolyhedral(set(am))
+end
 
 function dim(am::AbstractAffineMap)
     return length(vector(am))
