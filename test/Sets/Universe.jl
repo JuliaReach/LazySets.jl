@@ -206,12 +206,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch affine_map(ones(N, 2, 3), U, N[1, 1])
     @test_throws DimensionMismatch affine_map(ones(N, 2, 2), U, N[1])
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
-        # TODO this should work, even without Polyhedra
-        @test_broken affine_map(ones(N, 2, 2), U, N[1, 1])
-        # U2 = affine_map(ones(N, 2, 2), U, N[1, 1])
-        # @test isidentical(U, U2)
-        # U2 = affine_map(ones(N, 3, 2), U, N[1, 1, 3])
-        # @test isidentical(U3, U2)
+        # TODO this should work, even without Polyhedra/CDDLib
+        U2 = affine_map(N[2 0; 0 3], U, N[1, 1])
+        @test isidentical(U2, U)
     end
 
     # distance (between point and set)
@@ -246,14 +243,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # linear_map
     @test_throws DimensionMismatch linear_map(ones(N, 2, 1), U)
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
-        # TODO this should work, even without Polyhedra
-        @test_broken linear_map(ones(N, 2, 2), U)
-        # U2 = linear_map(ones(N, 2, 2), U)
-        # @test_broken isidentical(U, U2)
-        @test_broken linear_map(ones(N, 3, 2), U)
-        # U2 = linear_map(ones(N, 3, 2), U)
-        # @test U2 isa HPolyhedron{N}  # TODO this should change
-        # @test_broken isidentical(U3, U2)
+        # TODO this should work, even without Polyhedra/CDDLib
+        U2 = linear_map(N[2 0; 0 3], U)
+        @test isidentical(U2, U)
     end
 
     # linear_map_inverse
@@ -479,5 +471,25 @@ for N in @tN([Float64, Float32])
 
     # exponential_map
     U2 = exponential_map(ones(N, 2, 2), U)
-    @test_broken isidentical(U, U2)  # TODO this should change
+    @test isidentical(U, U2)
+end
+
+for N in @tN([Float64])
+    U = Universe{N}(2)
+
+    # affine_map
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        X = affine_map(ones(N, 2, 2), U, N[2, 1])
+        @test X isa HPolyhedron{N} && isequivalent(X, Hyperplane(N[1, -1], N(1)))
+        X = affine_map(N[1 0; 0 0; 0 1], U, N[1, 1, 3])
+        @test X isa HPolyhedron{N} && isequivalent(X, Hyperplane(N[0, 1, 0], N(1)))
+    end
+
+    # linear_map
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        X = linear_map(ones(N, 2, 2), U)
+        @test X isa HPolyhedron{N} && isequivalent(X, Hyperplane(N[1, -1], N(0)))
+        X = linear_map(N[1 0; 0 0; 0 1], U)
+        @test X isa HPolyhedron{N} && isequivalent(X, Hyperplane(N[0, 1, 0], N(0)))
+    end
 end
