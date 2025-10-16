@@ -205,14 +205,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # affine_map
     @test_throws DimensionMismatch affine_map(ones(N, 2, 3), U, N[1, 1])
     @test_throws DimensionMismatch affine_map(ones(N, 2, 2), U, N[1])
-    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
-        # TODO this should work, even without Polyhedra
-        @test_broken affine_map(ones(N, 2, 2), U, N[1, 1])
-        # U2 = affine_map(ones(N, 2, 2), U, N[1, 1])
-        # @test isidentical(U, U2)
-        # U2 = affine_map(ones(N, 3, 2), U, N[1, 1, 3])
-        # @test isidentical(U3, U2)
-    end
+    U2 = affine_map(ones(N, 2, 2), U, N[1, 1])
+    @test isidentical(U, U2)
+    X = affine_map(N[1 2; 0 0], U, N[1, 1])
+    @test X isa HPolyhedron{N} && isequivalent(X, Hyperplane(N[0, 1], N(1)))
+    U2 = affine_map(ones(N, 3, 2), U, N[1, 1, 3])
+    @test isidentical(U3, U2)
 
     # distance (between point and set)
     @test_throws DimensionMismatch distance(U, N[0])
@@ -245,16 +243,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # linear_map
     @test_throws DimensionMismatch linear_map(ones(N, 2, 1), U)
-    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
-        # TODO this should work, even without Polyhedra
-        @test_broken linear_map(ones(N, 2, 2), U)
-        # U2 = linear_map(ones(N, 2, 2), U)
-        # @test_broken isidentical(U, U2)
-        @test_broken linear_map(ones(N, 3, 2), U)
-        # U2 = linear_map(ones(N, 3, 2), U)
-        # @test U2 isa HPolyhedron{N}  # TODO this should change
-        # @test_broken isidentical(U3, U2)
-    end
+    U2 = linear_map(ones(N, 2, 2), U)
+    @test isidentical(U, U2)
+    U2 = linear_map(ones(N, 3, 2), U)
+    @test isidentical(U3, U2)
+    P = linear_map(N[1 0; 0 0], U)
+    @test P isa HPolyhedron{N} && isequivalent(P, Hyperplane(N[0, 1], N(0)))
+    P = linear_map(N[0 0; 0 0; 0 0], U)
+    @test P isa HPolyhedron{N} && isequivalent(P, ZeroSet{N}(3))
 
     # linear_map_inverse
     U2 = LazySets.linear_map_inverse(ones(N, 2, 3), U)
@@ -479,5 +475,5 @@ for N in @tN([Float64, Float32])
 
     # exponential_map
     U2 = exponential_map(ones(N, 2, 2), U)
-    @test_broken isidentical(U, U2)  # TODO this should change
+    @test isidentical(U, U2)
 end
