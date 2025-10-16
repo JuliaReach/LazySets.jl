@@ -308,7 +308,7 @@ constraints ``x₅ ≤ 0`` and ``-x₅ ≤ 0``.
 We then modify the right-hand side of these constraints to ``x₅ ≤ 4`` and
 ``-x₅ ≤ -4``, respectively.
 """
-function constraints_list(rm::ResetMap)
+@validate function constraints_list(rm::ResetMap)
     constraints = constraints_list(LinearMap(matrix(rm), set(rm)))
     N = eltype(rm)
     for (i, c) in enumerate(constraints)
@@ -332,7 +332,7 @@ function constraints_list(rm::ResetMap)
     return constraints
 end
 
-function constraints_list(rm::ResetMap{N,<:AbstractHyperrectangle}) where {N}
+@validate function constraints_list(rm::ResetMap{N,<:AbstractHyperrectangle}) where {N}
     H = rm.X
     n = dim(H)
     constraints = Vector{HalfSpace{N,SingleEntryVector{N}}}(undef, 2 * n)

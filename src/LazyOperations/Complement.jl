@@ -142,8 +142,8 @@ obtained. Then, each constraint is complemented and returned in the output
 vector. The set union of this array corresponds to the concrete set complement.
 """
 function constraints_list(C::Complement)
-    @assert isconvextype(typeof(C.X)) "the constraints list of a complement " *
-                                      "is only available for the complement of a convex polyhedron"
+    @assert ispolyhedral(C.X) "the constraints list of a complement " *
+                              "is only available for the complement of a convex polyhedron"
 
     clist = constraints_list(C.X)
     out = similar(clist)

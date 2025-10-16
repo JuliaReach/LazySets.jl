@@ -1,4 +1,4 @@
-function constraints_list(hs::HalfSpace)
+@validate function constraints_list(hs::HalfSpace)
     return [hs]
 end
 
