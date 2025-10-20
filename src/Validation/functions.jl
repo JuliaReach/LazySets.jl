@@ -72,7 +72,7 @@ function validate_triangulate_faces(X::LazySet)
     if n != 3
         throw(DimensionMismatch("`triangulate_faces` requires a set of dimension 3 " *
                                 "but received a $n-dimensional set"))
-    elseif !(ispolyhedral(X) && isbounded(X))
+    elseif !ispolytopic(X)
         throw(ArgumentError("`triangulate_faces` requires a polytopic set"))
     end
     return true

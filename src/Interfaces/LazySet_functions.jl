@@ -496,7 +496,7 @@ function _norm_default(X::LazySet, p::Real)
     if p == Inf
         l, h = extrema(X)
         return max(maximum(abs, l), maximum(abs, h))
-    elseif ispolyhedral(X) && isboundedtype(typeof(X))
+    elseif ispolytopic(X)
         return maximum(norm(v, p) for v in vertices_list(X))
     else
         error("the norm for this value of p=$p is not implemented")
@@ -842,7 +842,7 @@ Otherwise, the general Shoelace formula is used; for details see the
 @validate function area(X::LazySet)
     @assert dim(X) == 2 "this implementation only applies to two-dimensional sets, " *
                         "but the given set is $(dim(X))-dimensional"
-    @assert ispolyhedral(X) && isbounded(X) "this method requires a polytope"
+    @assert ispolytopic(X) "this method requires a polytope"
 
     vlist = vertices_list(X)
     return _area_vlist_2D(vlist)
