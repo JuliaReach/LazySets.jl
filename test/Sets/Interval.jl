@@ -73,7 +73,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # an_element
     x = an_element(X)
-    @test x isa Vector{N} && length(x) == 1 && x[1] isa N && N(0) <= x[1] <= N(2)
+    @test x isa Vector{N} && length(x) == 1 && N(0) <= x[1] <= N(2)
 
     # area
     @test_throws DimensionMismatch area(X)
@@ -134,9 +134,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # extrema
     res = extrema(X)
     @test res isa Tuple{Vector{N},Vector{N}} && res[1] == N[0] && res[2] == N[2]
+    @test_throws DimensionMismatch extrema(X, 2)
     res = extrema(X, 1)
     @test res isa Tuple{N,N} && res[1] == N(0) && res[2] == N(2)
-    @test_throws DimensionMismatch extrema(X, 2)
 
     # generators
     @test collect(generators(X)) == [N[1]]
@@ -153,9 +153,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # high
     res = high(X)
     @test res isa Vector{N} && res == N[2]
+    @test_throws DimensionMismatch high(X, 2)
     res = high(X, 1)
     @test res isa N && res == N(2)
-    @test_throws DimensionMismatch high(X, 2)
 
     # isbounded
     @test isbounded(X)
@@ -199,9 +199,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # low
     res = low(X)
     @test res isa Vector{N} && res == N[0]
+    @test_throws DimensionMismatch low(X, 2)
     res = low(X, 1)
     @test res isa N && res == N(0)
-    @test_throws DimensionMismatch low(X, 2)
 
     # min
     v = min(X)
@@ -289,7 +289,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # vertices
     res = collect(vertices(X))
-    @test res isa Vector{Vector{N}} && ispermutation(res, [N[0], N[2]])
+    @test res isa Vector{Vector{N}} && ispermutation(res, vertices_list(X))
 
     # volume
     @test volume(X) == N(2)
@@ -348,17 +348,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # linear_map
     @test_throws DimensionMismatch linear_map(ones(N, 2, 2), X)
     Y = linear_map(2 * ones(N, 1, 1), X)
-    @test Y isa Interval{N} && isequivalent(Y, Interval(N(0), N(4)))
-    Y = linear_map(zeros(N, 1, 1), X)
+    @test isidentical(Y, Interval(N(0), N(4)))
+    Y = linear_map(zeros(N, 1, 1), X)  # zero map
     @test Y isa Interval{N}
     if vIA == v"0.21.0"
         @test_broken isequivalent(Y, Interval(N(0), N(0)))  # bug in IntervalArithmetic: 0 * I == I
     else
         @test isequivalent(Y, Interval(N(0), N(0)))
     end
-    Y = linear_map(ones(N, 2, 1), X)
+    Y = linear_map(ones(N, 2, 1), X)  # higher dimension
     @test Y isa LazySet{N} && isequivalent(Y, LineSegment(N[0, 0], N[2, 2]))
-    Y = linear_map(zeros(N, 2, 1), X)
+    Y = linear_map(zeros(N, 2, 1), X)  # zero map in higher dimension
     @test Y isa LazySet{N} && isequivalent(Y, ZeroSet{N}(2))
 
     # linear_map_inverse
@@ -385,9 +385,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # sample
     res = sample(X)
-    @test res isa Vector{N} && res in X
+    @test res isa Vector{N} && res ∈ X
     res = sample(X, 2)
-    @test res isa Vector{Vector{N}} && length(res) == 2 && all(x in X for x in res)
+    @test res isa Vector{Vector{N}} && length(res) == 2 && all(x ∈ X for x in res)
 
     # scale
     Y = scale(N(2), X)
@@ -416,9 +416,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # support_vector
     @test_throws DimensionMismatch σ(N[1, 1], X)
     res = σ(N[2], X)
-    @test res isa Vector{N} && res == [N(2)]
+    @test res isa Vector{N} && res == N[2]
     res = σ(N[-2], X)
-    @test res isa Vector{N} && res == [N(0)]
+    @test res isa Vector{N} && res == N[0]
 
     # translate
     @test_throws DimensionMismatch translate(X, N[1, 1])
@@ -437,6 +437,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # convex_hull (binary)
     @test_throws DimensionMismatch convex_hull(X, X2)
+    @test_throws DimensionMismatch convex_hull(X2, X)
     Y = convex_hull(X, X)
     @test isidentical(Y, X)
     Y = Interval(N(-3), N(-1))
@@ -467,6 +468,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # distance (between two sets)
     @test_throws DimensionMismatch distance(X, X2)
+    @test_throws DimensionMismatch distance(X2, X)
     @test_throws ArgumentError distance(X, X; p=N(1 // 2))
     for (Y, v) in ((Interval(N(-1), N(1)), N(0)), (Interval(N(4), N(5)), N(2)))
         for res in (distance(X, Y), distance(Y, X))
@@ -476,6 +478,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # exact_sum
     @test_throws DimensionMismatch exact_sum(X, X2)
+    @test_throws DimensionMismatch exact_sum(X2, X)
     Y = Interval(N(3), N(4))
     for Z in (exact_sum(X, Y), exact_sum(Y, X))
         @test isidentical(Z, Interval(N(3), N(6)))
@@ -483,6 +486,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # intersection
     @test_throws DimensionMismatch intersection(X, X2)
+    @test_throws DimensionMismatch intersection(X2, X)
     # disjoint
     Y = intersection(X, Interval(N(3), N(4)))
     @test Y isa EmptySet{N} && Y == EmptySet{N}(1)
@@ -503,6 +507,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isdisjoint
     @test_throws DimensionMismatch isdisjoint(X, X2)
+    @test_throws DimensionMismatch isdisjoint(X2, X)
     # disjoint
     Y = Interval(N(3), N(4))
     @test isdisjoint(X, Y) && isdisjoint(Y, X)
@@ -534,6 +539,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isequivalent
     @test_throws DimensionMismatch isequivalent(X, X2)
+    @test_throws DimensionMismatch isequivalent(X2, X)
     @test isequivalent(X, X)
     @test !isequivalent(X, Interval(N(1), N(2)))
     @test isequivalent(X, B) && isequivalent(B, X)
@@ -568,6 +574,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # linear_combination
     @test_throws DimensionMismatch linear_combination(X, X2)
+    @test_throws DimensionMismatch linear_combination(X2, X)
     @test_broken linear_combination(X, Xnc)
     @test_broken linear_combination(Xnc, X)
     for Z in (linear_combination(X, X), linear_combination(X, B), linear_combination(B, X))
@@ -587,10 +594,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test Z isa EmptySet{N} && Z == EmptySet{N}(1)
     # nonempty difference
     Y = minkowski_difference(X, X)
-    isidentical(Y, Interval(N(0), N(0)))
+    @test isidentical(Y, Interval(N(0), N(0)))
     Y = Interval(N(1), N(3))
     Z = minkowski_difference(X, Y)
     @test isidentical(Z, Interval(N(-1), N(-1)))
+    # equivalent sets
     for Y in (minkowski_difference(X, B), minkowski_difference(B, X))
         @test isequivalent(Y, Interval(N(0), N(0)))
     end
