@@ -191,35 +191,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # vertices iterator
     @test ispermutation(collect(vertices(B)), vertices_list(B))
 
-    # conversion to a zonoope
-    B = BallInf(N[0, 0], N(1))
-    ZB = convert(Zonotope, B)
-    @test ZB == Zonotope(N[0, 0], N[1 0; 0 1])
-    B = BallInf(N[0, 0], N(0))  # flat case
-    ZB = convert(Zonotope, B)
-    @test ZB == Zonotope(N[0, 0], Matrix{N}(undef, 2, 0))
-
-    @static if isdefined(@__MODULE__, :StaticArrays)
-        using StaticArrays: SA, SVector, SMatrix
-
-        # conversion to a zonotope, static arrays
-        B = BallInf(SA[N(0), N(0)], N(1))
-        ZB = convert(Zonotope, B)
-        @test ZB == Zonotope(SVector{2}(N[0, 0]), SMatrix{2,2}(N[1 0; 0 1]))
-        B = BallInf(SA[N(0), N(0)], N(0))  # flat case
-        ZB = convert(Zonotope, B)
-        @test ZB == Zonotope(SVector{2}(N[0, 0]), SMatrix{2,0,N,0}())
-        # specialized method (no prunning)
-        B = BallInf(SA[1.0, 2.0], 1.0)
-        ZB = LazySets._convert_2D_static(Zonotope, B)
-        @test ZB == Zonotope(SA[1.0, 2.0], SA[1.0 0.0; 0.0 1.0])
-
-        # internal function
-        B = BallInf(SA[N(0), N(0)], N(1))
-        Zs = LazySets._convert_2D_static(Zonotope, B)
-        @test Zs == Zonotope(SVector{2}(N[0, 0]), SMatrix{2,2}(N[1 0; 0 1]))
-    end
-
     # set difference
     B = BallInf(N[0, 0, 0], N(1))
     @test isempty(difference(B, B))

@@ -71,6 +71,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     answer, w = isuniversal(l, true)
     @test !isuniversal(l) && !answer && w ∉ l
 
+    # togrep
+    Z = togrep(l)
+    @test Z isa Zonotope{N}
+    @test Z.center == N[3//2, 3//2]
+    G = Z.generators
+    @test size(G) == (2, 1) && G[1, 1] == G[2, 1] && G[1, 1] ∈ (N(-1//2), N(1//2))
+
     # an_element function
     @test an_element(l) ∈ l
 
@@ -188,11 +195,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
                          HalfSpace(N[-1, 1], N(0)),  # x >= y
                          HalfSpace(N[-1, -1], N(0)), # y >= -x
                          HalfSpace(N[1, 1], N(2))])  # y <= 2-x
-
-    # conversion
-    z = convert(Zonotope, l)
-    G = hcat(N[1 // 2, 1 // 2])
-    @test center(z) == N[1 // 2, 1 // 2] && genmat(z) ∈ [G, -G]
 
     # sampling
     L = LineSegment(N[0, 0], N[1, 1])

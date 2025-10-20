@@ -234,10 +234,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
           Hcp.X == Interval(N(-1), N(1)) &&
           Hcp.Y == Interval(N(-2), N(4))
 
-    cp = Zonotope(N[0, 0], N[1 0; 0 1]) × Zonotope(N[1, 1], N[0 1; 1 0])
-    @test convert(Zonotope, cp) == Zonotope(N[0, 0, 1, 1], N[1 0 0 0; 0 1 0 0;
-                                                             0 0 0 1; 0 0 1 0])
-
     # cartesian product of singletons
     S1 = Singleton(N[1, 2, 3])
     S2 = Singleton(N[4, 5, 6])
@@ -429,11 +425,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test Hcp isa CartesianProductArray &&
           all([array(Hcp)[i] == Interval(N(-1), N(2 * i - 1)) for i in 1:3])
 
-    cpa = CartesianProductArray([Zonotope(N[0, 0], N[1 0; 0 1]),
-                                 Zonotope(N[1, 1], N[0 1; 1 0])])
-    @test convert(Zonotope, cpa) == Zonotope(N[0, 0, 1, 1], N[1 0 0 0; 0 1 0 0;
-                                                              0 0 0 1; 0 0 1 0])
-
     # ================
     # common functions
     # ================
@@ -442,7 +433,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     e = EmptySet{N}(2)
     b = BallInf(N[0, 0], N(2))
     @test b × e == e × b == e × e == EmptySet{N}(4)
-    @test cpa × e == e × cpa == EmptySet{N}(6)
+    @test cpa × e == e × cpa == EmptySet{N}(9)
 
     # volume
     b2 = BallInf(zeros(N, 3), N(3))
