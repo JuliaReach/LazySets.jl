@@ -251,6 +251,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # ispolyhedral
     @test ispolyhedral(Z)
 
+    # ispolyhedraltype
+    @test ispolyhedraltype(typeof(Z))
+
+    # ispolytopic
+    @test ispolytopic(Z)
+
     # isuniversal
     @test !isuniversal(Z)
     res, w = isuniversal(Z, true)
