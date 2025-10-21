@@ -745,8 +745,7 @@ end
 
 function _plot_recipe_3d_polytope(P::LazySet, N=eltype(P))
     require(@__MODULE__, :MiniQhull; fun_name="_plot_recipe_3d_polytope")
-    @assert ispolyhedral(P) && isboundedtype(typeof(P)) "3D plotting is " *
-                                                        "only available for polytopes"
+    @assert ispolytopic(P) "3D plotting is only available for polytopes"
 
     vlist, C = triangulate_vlist_connectivity(P; compute_triangles_3d=true)
 
@@ -1255,7 +1254,7 @@ function chebyshev_center_radius(P::LazySet;
                                  backend=default_polyhedra_backend(P),
                                  solver=default_lp_solver_polyhedra(eltype(P); presolve=true))
     require(@__MODULE__, :Polyhedra; fun_name="chebyshev_center")
-    if !ispolyhedral(P) && !isboundedtype(typeof(P))
+    if !ispolytopic(P)
         error("can only compute a Chebyshev center for polytopes")
     end
 
@@ -1512,8 +1511,7 @@ Convert a polytopic set to vertex representation.
 A `VPolytope`.
 """
 function tovrep(P::LazySet)
-    @assert ispolyhedral(P) && isbounded(P) "cannot compute the vertex representation of " *
-                                            "non-polytopic sets"
+    @assert ispolytopic(P) "cannot compute the vertex representation of non-polytopic sets"
 
     return VPolytope(vertices_list(P))
 end
