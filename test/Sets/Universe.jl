@@ -206,17 +206,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     x = volume(U)
     @test x isa N && x == N(Inf)
 
-    # affine_map
+    # affine_map (part 1)
     @test_throws DimensionMismatch affine_map(ones(N, 2, 3), U, N[1, 1])
     @test_throws DimensionMismatch affine_map(ones(N, 2, 2), U, N[1])
-    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
-        # TODO this should work, even without Polyhedra
-        @test_broken affine_map(ones(N, 2, 2), U, N[1, 1])
-        # U2 = affine_map(ones(N, 2, 2), U, N[1, 1])
-        # @test isidentical(U2, U)
-        # U2 = affine_map(ones(N, 3, 2), U, N[1, 1, 3])
-        # @test isidentical(U2, U3)
-    end
 
     # distance (between point and set)
     @test_throws DimensionMismatch distance(U, N[0])
@@ -247,29 +239,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test_throws ArgumentError is_interior_point([0.0, 0.0], U)
     end
 
-    # linear_map
+    # linear_map (part 1)
     @test_throws DimensionMismatch linear_map(ones(N, 2, 1), U)
-    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
-        # TODO this should work, even without Polyhedra
-        U2 = linear_map(N[1 0; 0 1], U)
-        @test U2 isa HPolyhedron{N}  # TODO this should change
-        @test_broken isidentical(U2, U)
-        if VERSION < v"1.12"
-            # TODO these should work with older versions, see below
-            @test_broken linear_map(ones(N, 2, 2), U)
-            @test_broken linear_map(zeros(N, 2, 2), U)
-            @test_broken linear_map(N[1 0; 0 1; 0 0], U)
-        else
-            U2 = linear_map(ones(N, 2, 2), U)
-            @test U2 isa HPolyhedron{N}
-            @test isequivalent(U2, Line(N[0, 0], N[1, 1]))
-            X = linear_map(zeros(N, 2, 2), U)  # zero map
-            @test isequivalent(X, ZeroSet{N}(2))
-            U2 = linear_map(N[1 0; 0 1; 0 0], U)
-            @test U2 isa HPolyhedron{N}
-            @test isequivalent(U2, Hyperplane(N[0, 0, 1], N(0)))
-        end
-    end
 
     # linear_map_inverse
     U2 = LazySets.linear_map_inverse(ones(N, 2, 3), U)
@@ -487,7 +458,70 @@ for N in @tN([Float64, Float32])
     @test U2 isa Universe{Rational{Int}} && dim(U2) == 2
     @test_throws MethodError rationalize(U2)
 
+    # affine_map (part 2)
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        @static if VERSION < v"1.12"
+            # TODO this should work with older versions, see below
+            @test_broken affine_map(N[1 0; 0 1; 0 0], U, N[1, 1, 3])
+        else
+            X = affine_map(N[1 0; 0 1; 0 0], U, N[1, 1, 3])
+            @test X isa LazySet{N}
+            @test isequivalent(X, Hyperplane(N[0, 0, 1], N(3)))
+        end
+    end
+
     # exponential_map
     U2 = exponential_map(ones(N, 2, 2), U)
     @test_broken isidentical(U2, U)  # TODO this should change
+
+    # linear_map (part 2)
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        U2 = linear_map(N[1 0; 0 1], U)
+        @test U2 isa HPolyhedron{N}  # TODO this should change (HPolyhedron has no dimension)
+        @test_broken isequivalent(U2, U)
+        @static if VERSION < v"1.12"
+            # TODO this should work with older versions, see below
+            @test_broken linear_map(N[1 0; 0 1; 0 0], U)
+        else
+            X = linear_map(N[1 0; 0 1; 0 0], U)
+            @test X isa HPolyhedron{N}
+            @test isequivalent(X, Hyperplane(N[0, 0, 1], N(0)))
+        end
+    end
+end
+
+for N in [Float64]
+    U = Universe{N}(2)
+
+    # affine_map (part 3)
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        @static if VERSION < v"1.12"
+            # TODO this should work, even without Polyhedra
+            @test_broken affine_map(ones(N, 2, 2), U, N[2, 0])
+            @test_broken affine_map(zeros(N, 2, 2), U, N[2, 0])
+        else
+            X = affine_map(ones(N, 2, 2), U, N[2, 0])  # projection to line
+            @test X isa HPolyhedron{N}
+            @test isequivalent(X, Line2D(N[1, -1], N(2)))
+            X = affine_map(zeros(N, 2, 2), U, N[2, 0])  # zero map
+            @test X isa HPolyhedron{N}
+            @test isequivalent(X, Singleton(N[2, 0]))
+        end
+    end
+
+    # linear_map (part 3)
+    @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
+        @static if VERSION < v"1.12"
+            # TODO these should work with older versions, see below
+            @test_broken linear_map(ones(N, 2, 2), U)
+            @test_broken linear_map(zeros(N, 2, 2), U)
+        else
+            X = linear_map(ones(N, 2, 2), U)  # projection to line
+            @test X isa HPolyhedron{N}
+            @test isequivalent(X, Line2D(N[1, -1], N(0)))
+            X = linear_map(zeros(N, 2, 2), U)  # zero map
+            @test X isa HPolyhedron{N}
+            @test isequivalent(X, ZeroSet{N}(2))
+        end
+    end
 end
