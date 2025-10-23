@@ -1527,13 +1527,7 @@ function linear_map_inverse(A::AbstractMatrix, P::LazySet)
                                  "cannot be applied to a set of dimension $(dim(P))"
     @assert ispolyhedral(P) "cannot compute the inverse linear map of " *
                             "non-polyhedral sets"
-    constraints = _affine_map_inverse_hrep(A, P)
-    if isempty(constraints)
-        return Universe{eltype(P)}(size(A, 2))
-    elseif length(constraints) == 2 && isempty(constraints)
-        return EmptySet{eltype(P)}(size(A, 2))
-    end
-    return HPolyhedron(constraints)
+    return _affine_map_inverse(A, P)
 end
 
 function affine_map_inverse(A::AbstractMatrix, P::LazySet, b::AbstractVector)
@@ -1542,10 +1536,14 @@ function affine_map_inverse(A::AbstractMatrix, P::LazySet, b::AbstractVector)
                                               "set of dimension $(dim(P))"
     @assert ispolyhedral(P) "cannot compute the inverse affine map of " *
                             "non-polyhedral sets"
+    return _affine_map_inverse(A, P, b)
+end
+
+function _affine_map_inverse(A, P, b=nothing)
     constraints = _affine_map_inverse_hrep(A, P, b)
     if isempty(constraints)
         return Universe{eltype(P)}(size(A, 2))
-    elseif length(constraints) == 2 && isempty(constraints)
+    elseif length(constraints) == 2 && !isfeasible(constraints)
         return EmptySet{eltype(P)}(size(A, 2))
     end
     return HPolyhedron(constraints)
