@@ -163,6 +163,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
         addconstraint!(hp_shallow, c1)
         @test_throws AssertionError an_element(hp_shallow)
 
+        # isapprox
+        @test hp ≈ hp && !(hp ≈ P) && !(P ≈ hp)
+
         # ispolyhedral
         @test ispolyhedral(hp)
 
