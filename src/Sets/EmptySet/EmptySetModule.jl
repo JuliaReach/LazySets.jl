@@ -17,7 +17,7 @@ using ReachabilityBase.Require: require
                         rectify, reflect, sample, scale, scale!, ρ, σ,
                         translate, translate!, vertices, vertices_list, volume,
                         cartesian_product, convex_hull, difference, distance,
-                        intersection, isapprox, isdisjoint, ⊆,
+                        intersection, isapprox, isdisjoint, isequivalent, ⊆,
                         linear_combination, minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, constrained_dimensions,
                              linear_map_inverse, rationalize, triangulate
@@ -69,6 +69,7 @@ include("distance.jl")
 include("intersection.jl")
 include("isapprox.jl")
 include("isdisjoint.jl")
+include("isequivalent.jl")
 include("issubset.jl")
 include("linear_combination.jl")
 include("minkowski_difference.jl")

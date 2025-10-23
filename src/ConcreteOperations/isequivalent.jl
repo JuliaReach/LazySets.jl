@@ -52,3 +52,7 @@ end
 @validate function isequivalent(S1::AbstractSingleton, S2::AbstractSingleton)
     return _isapprox(element(S1), element(S2))
 end
+
+@validate_commutative function isequivalent(∅::EmptySet, X::LazySet, witness::Bool=false)
+    return _issubset_emptyset2(X, ∅, witness)
+end

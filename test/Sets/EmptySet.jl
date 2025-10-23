@@ -376,7 +376,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isequivalent
     @test_throws DimensionMismatch isequivalent(E, E3)
     @test isequivalent(E, E)
+    res, w = isequivalent(E, E, true)
+    @test res && w isa Vector{N} && isempty(w)
     @test !isequivalent(E, B) && !isequivalent(B, E)
+    res, w = isequivalent(E, B, true)
+    @test !res && w isa Vector{N} && w ∈ B && w ∉ E
 
     # isstrictsubset
     @test_throws DimensionMismatch E ⊂ E3
