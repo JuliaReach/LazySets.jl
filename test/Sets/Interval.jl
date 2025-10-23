@@ -510,25 +510,29 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch isdisjoint(X2, X)
     # disjoint
     Y = Interval(N(3), N(4))
-    @test isdisjoint(X, Y) && isdisjoint(Y, X)
-    for (pair, Z) in ((isdisjoint(X, Y, true), Y), (isdisjoint(Y, X, true), Y))
-        res, w = pair
+    for (Z, W) in ((X, Y), (Y, X))
+        @test isdisjoint(Z, W)
+        res, w = isdisjoint(Z, W, true)
         @test res && w isa Vector{N} && isempty(w)
     end
     # overlapping
     Y = Interval(N(1), N(3))
-    @test !isdisjoint(X, X) && !isdisjoint(X, Y) && !isdisjoint(Y, X)
-    for (pair, Z) in ((isdisjoint(X, X, true), X), (isdisjoint(X, Y, true), Y),
-                      (isdisjoint(Y, X, true), Y))
-        res, w = pair
-        @test !res && w isa Vector{N} && w ∈ X && w ∈ Z
+    for (Z, W) in ((X, X), (X, Y), (Y, X))
+        @test !isdisjoint(Z, W)
+        res, w = isdisjoint(Z, W, true)
+        @test !res && w isa Vector{N} && w ∈ Z && w ∈ W
     end
     # tolerance
     if N == Float64
         Y = Interval(2.0 + 1e-9, 3.0)
         @test !isdisjoint(X, Y)
+        res, w = isdisjoint(X, Y, true)
+        # TODO ∈ and isdisjoint should be consistent
+        @test_broken !res && w isa Vector{N} && w ∈ X && w ∈ Y
         LazySets.set_rtol(Float64, 1e-10)
         @test isdisjoint(X, Y)
+        res, w = isdisjoint(X, Y, true)
+        @test res && w isa Vector{N} && isempty(w)
         # restore tolerance
         LazySets.set_rtol(Float64, LazySets.default_tolerance(Float64).rtol)
     end
