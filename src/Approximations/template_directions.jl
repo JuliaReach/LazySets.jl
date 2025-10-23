@@ -682,6 +682,7 @@ end
 
 Base.eltype(::Type{PolarDirections{N,VN}}) where {N,VN} = VN
 Base.length(pd::PolarDirections) = pd.Nφ
+Base.getindex(pd::PolarDirections, inds::Integer...) = pd.directions[inds...]
 
 # interface functions
 LazySets.dim(pd::PolarDirections) = 2
@@ -797,6 +798,7 @@ end
 
 Base.eltype(::Type{SphericalDirections{N,VN}}) where {N,VN} = VN
 Base.length(sd::SphericalDirections) = length(sd.directions)
+Base.getindex(sd::SphericalDirections, inds::Integer...) = sd.directions[inds...]
 
 # interface functions
 LazySets.dim(::SphericalDirections) = 3
@@ -894,6 +896,7 @@ end
 
 Base.eltype(::Type{CustomDirections{N,VN}}) where {N,VN} = VN
 Base.length(cd::CustomDirections) = length(cd.directions)
+Base.getindex(cd::CustomDirections, inds::Integer...) = cd.directions[inds...]
 
 # interface functions
 LazySets.dim(cd::CustomDirections) = cd.n
