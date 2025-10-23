@@ -159,6 +159,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # boundedness
     @test isbounded(H)
 
+    # chebyshev_center_radius
+    c, r = chebyshev_center_radius(H)
+    @test c isa Vector{N} && c == N[1, 1] && r isa N && r == N(2)
+
     # ispolyhedral
     @test ispolyhedral(H)
 
