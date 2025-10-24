@@ -15,6 +15,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # corner case: zero normal vector
     @test_throws AssertionError Hyperplane(N[0, 0], N(1))
 
+    # convert
+    # from Line
+    @test_throws ArgumentError convert(Hyperplane, Line(N[0, 0, 0], N[1, 1, 1]))
+    H2 = convert(Hyperplane, Line(N[0, 0], N[1, 1]))
+    @test H2 isa Hyperplane{N} && isequivalent(H2, Hyperplane(N[1, -1], N(0)))
+
     # dimension
     @test dim(hp) == 3
 

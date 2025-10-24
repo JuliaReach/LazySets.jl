@@ -10,7 +10,7 @@ Type that represents a hyperplane of the form ``a⋅x = b``.
 
 ### Examples
 
-The plane ``y = 0``:
+The line ``y = 0`` in 2D:
 
 ```jldoctest
 julia> Hyperplane([0, 1.], 0.)
