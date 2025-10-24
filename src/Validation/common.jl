@@ -15,14 +15,6 @@ function validate_same_dim(x::AbstractVector, X::LazySet; fun::Function)
     return true
 end
 
-function validate_same_dim(n::Int, X::LazySet; fun::Function)
-    if n != dim(X)
-        throw(DimensionMismatch("`$(string(fun))` requires a $n-dimensional " *
-                                "set but received a $(dim(X))-dimensional set"))
-    end
-    return true
-end
-
 function validate_map_dim(M::AbstractMatrix, X::LazySet; fun::Function)
     if size(M, 2) != dim(X)
         throw(DimensionMismatch("`$(string(fun))` requires a matrix and a set of compatible " *
@@ -53,10 +45,6 @@ function validate_index_vector(v::AbstractVector{Int}, X::LazySet; fun::Function
         else
             b[e] = true
         end
-    end
-    if length(unique(v)) < length(v)
-        throw(ArgumentError("`$(string(fun))` requires an index vector " *
-                            "without duplicates but received the vector $v"))
     end
     return true
 end
