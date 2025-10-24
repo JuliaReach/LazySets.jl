@@ -250,7 +250,7 @@ end
 
 A list of ``2n`` linear constraints, where ``n`` is the dimension of `H`.
 """
-function constraints_list(H::AbstractHyperrectangle)
+@validate function constraints_list(H::AbstractHyperrectangle)
     return _constraints_list_hyperrectangle(H)
 end
 

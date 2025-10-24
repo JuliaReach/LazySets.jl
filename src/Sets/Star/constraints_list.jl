@@ -7,7 +7,7 @@
 
 See [`constraints_list(::LazySets.AbstractAffineMap)`](@ref).
 """
-function constraints_list(X::Star)
+@validate function constraints_list(X::Star)
     require(@__MODULE__, :LazySets; fun_name="constraints_list")
 
     am = convert(STAR, X)

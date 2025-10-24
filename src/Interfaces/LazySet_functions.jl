@@ -951,7 +951,7 @@ end
 
 The default implementation computes all constraints via `constraints_list`.
 """
-function constraints(X::LazySet)
+@validate function constraints(X::LazySet)
     return constraints_list(X)
 end
 

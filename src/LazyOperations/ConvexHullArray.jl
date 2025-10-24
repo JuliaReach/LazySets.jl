@@ -210,7 +210,7 @@ function vertices_list(cha::ConvexHullArray;
 end
 
 # list of constraints of a convex-hull array of singletons
-function constraints_list(X::ConvexHullArray{N,Singleton{N,VT}}) where {N,VT}
+@validate function constraints_list(X::ConvexHullArray{N,Singleton{N,VT}}) where {N,VT}
     n = dim(X)
     ST = n == 2 ? VPolygon : VPolytope
     V = convert(ST, X)

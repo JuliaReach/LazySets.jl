@@ -297,7 +297,7 @@ A list of constraints of the inverse linear map.
 
 We fall back to a concrete set representation and apply `linear_map_inverse`.
 """
-function constraints_list(ilm::InverseLinearMap)
+@validate function constraints_list(ilm::InverseLinearMap)
     return constraints_list(linear_map_inverse(ilm.M, ilm.X))
 end
 

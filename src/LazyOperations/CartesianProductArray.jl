@@ -371,7 +371,7 @@ number of sets.
 
 A list of constraints.
 """
-function constraints_list(cpa::CartesianProductArray)
+@validate function constraints_list(cpa::CartesianProductArray)
     return _constraints_list_cartesian_product(cpa)
 end
 

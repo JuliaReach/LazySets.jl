@@ -1,4 +1,4 @@
-function constraints_list(H::Hyperplane)
+@validate function constraints_list(H::Hyperplane)
     return _constraints_list_hyperplane(H.a, H.b)
 end
 

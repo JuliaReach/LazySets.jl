@@ -8,7 +8,7 @@ For one- and two-dimensional sets, we respectively convert to an `Interval` or a
 For higher-dimensional sets, we use `tohrep` to compute the constraint
 representation and call the corresponding `constraints_list` function.
 """
-function constraints_list(P::VPolytope)
+@validate function constraints_list(P::VPolytope)
     require(@__MODULE__, :LazySets; fun_name="constraints_list")
 
     n = dim(P)

@@ -1,4 +1,4 @@
-function constraints_list(P::HParallelotope)
+@validate function constraints_list(P::HParallelotope)
     D, c = P.directions, P.offset
     N, VN = _parameters(P)
     return _constraints_list_hparallelotope(D, c, N, VN)

@@ -8,7 +8,7 @@
 A list containing `2n-2` half-spaces whose intersection is `L`, where `n` is the
 ambient dimension of `L`.
 """
-function constraints_list(L::Line)
+@validate function constraints_list(L::Line)
     require(@__MODULE__, :LazySets; fun_name="constraints_list")
 
     p = L.p

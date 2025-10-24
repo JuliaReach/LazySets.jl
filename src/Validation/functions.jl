@@ -26,11 +26,21 @@ function validate_center(X::LazySet, i::Int)
 end
 push!(VALIDATE_DICT, :center => (validate_center, args12))
 
-# function validate_constraints_list(X::LazySet)
-#     # require polyhedral set?
-# end
-# push!(VALIDATE_DICT, :constraints_list => (validate_constraints_list, args1))
-# push!(VALIDATE_DICT, :constraints => (validate_constraints, args1))
+function validate_constraints(X::LazySet)
+    if !ispolyhedral(X)
+        throw(ArgumentError("`constraints` requires a polyhedral set"))
+    end
+    return true
+end
+push!(VALIDATE_DICT, :constraints => (validate_constraints, args1))
+
+function validate_constraints_list(X::LazySet)
+    if !ispolyhedral(X)
+        throw(ArgumentError("`constraints_list` requires a polyhedral set"))
+    end
+    return true
+end
+push!(VALIDATE_DICT, :constraints_list => (validate_constraints_list, args1))
 
 function validate_diameter(p::Real)
     return validate_pnorm(p; fun=diameter)

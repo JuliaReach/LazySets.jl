@@ -208,7 +208,7 @@ We assume that the underlying sets are polyhedral, i.e., offer a method
 We create the polyhedron from the `constraints_list`s of the sets and remove
 redundant constraints.
 """
-function constraints_list(ia::IntersectionArray)
+@validate function constraints_list(ia::IntersectionArray)
     N = eltype(ia)
     constraints = Vector{HalfSpace{N,Vector{N}}}() # TODO: use vector type of ia
     for X in ia

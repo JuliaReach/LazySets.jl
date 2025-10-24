@@ -268,7 +268,7 @@ We assume that the underlying set `X` is polyhedral, i.e., offers a method
 This implementation uses the `constraints_list` method to compute the list of
 constraints of the translation of a lazy [`LinearMap`](@ref).
 """
-function constraints_list(am::AbstractAffineMap)
+@validate function constraints_list(am::AbstractAffineMap)
     return _constraints_list_translation(LinearMap(matrix(am), set(am)),
                                          vector(am))
 end
