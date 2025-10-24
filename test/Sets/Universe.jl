@@ -49,12 +49,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # chebyshev_center_radius
-    @static if isdefined(@__MODULE__, :Polyhedra)
-        # behavior differs for Rational solver:
-        # - prints `glp_exact: problem has no rows/columns`
-        # - different error message (reported in Polyhedra.jl#352)
-        @test_throws ErrorException chebyshev_center_radius(U)
-    end
+    @test_throws ArgumentError chebyshev_center_radius(U)
 
     # complement
     E2 = complement(U)
