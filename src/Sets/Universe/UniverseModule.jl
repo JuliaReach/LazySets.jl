@@ -19,8 +19,9 @@ using ReachabilityBase.Require: require
                         translate, translate!, cartesian_product, convex_hull,
                         difference, distance, intersection, isdisjoint, ⊆,
                         linear_combination, minkowski_difference, minkowski_sum
-@reexport import ..LazySets: constrained_dimensions, linear_map_inverse,
-                             rationalize, tosimplehrep, triangulate
+@reexport import ..LazySets: chebyshev_center_radius, constrained_dimensions,
+                             linear_map_inverse, rationalize, tosimplehrep,
+                             triangulate
 import Base: copy
 @reexport using ..API
 
@@ -67,6 +68,7 @@ include("linear_combination.jl")
 include("minkowski_difference.jl")
 include("minkowski_sum.jl")
 
+include("chebyshev_center_radius.jl")
 include("constrained_dimensions.jl")
 include("linear_map_inverse.jl")
 include("tosimplehrep.jl")
