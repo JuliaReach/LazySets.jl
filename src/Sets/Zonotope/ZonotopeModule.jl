@@ -14,7 +14,7 @@ using ReachabilityBase.Require: require
 @reexport import ..API: center, high, isoperationtype, low, rand,
                         permute, scale, scale!, translate!
 @reexport import ..LazySets: generators, genmat, ngens, reduce_order,
-                             remove_redundant_generators, togrep
+                             remove_redundant_generators
 import Base: convert
 @reexport using ..API
 
@@ -40,7 +40,6 @@ include("genmat.jl")
 include("ngens.jl")
 include("reduce_order.jl")
 include("remove_redundant_generators.jl")
-include("togrep.jl")
 include("remove_zero_generators.jl")
 include("split.jl")
 

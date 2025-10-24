@@ -76,13 +76,6 @@ CurrentModule = LazySets
 CurrentModule = LazySets.API
 ```
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
-```@meta
-CurrentModule = LazySets
-```
-* [`togrep`](@ref togrep(::AbstractZonotope))
-```@meta
-CurrentModule = LazySets.API
-```
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 ```@meta
 CurrentModule = LazySets
@@ -171,6 +164,7 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`constraints_list`](@ref constraints_list(::AbstractZonotope{<:AbstractFloat}; ::Bool=true))
 * [`order`](@ref order(::AbstractZonotope))
 * [`reflect`](@ref reflect(::AbstractZonotope))
+* [`togrep`](@ref togrep(::AbstractZonotope))
 * [`vertices_list`](@ref vertices_list(::AbstractZonotope))
 * [`∈`](@ref ∈(::AbstractVector, ::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
