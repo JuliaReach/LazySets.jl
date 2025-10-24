@@ -407,6 +407,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
                             [N[2, 3, 4], N[2, 3, -2], N[2, -1, 4], N[2, -1, -2],
                              N[0, 3, 4], N[0, 3, -2], N[0, -1, 4], N[0, -1, -2]])
     end
+    # SubArray
+    Z2 = Zonotope(view(c, 1:2), genmat(Z))
+    vlistZ = vertices_list(Z2)
+    @test vlistZ == vertices_list(Z)
 
     # vertices
     res = collect(vertices(Z))
