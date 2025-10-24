@@ -508,7 +508,12 @@ function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron, algo::Linear
 
     # append zeros to the existing constraints, in the last m-n coordinates
     # TODO: cast to common vector type instead of Vector(c.a), see #1942, #1952
-    cext = [HalfSpace(vcat(Vector(c.a), zeros(N, m - n)), c.b) for c in constraints_list(P)]
+    clist = constraints_list(P)
+    if isempty(clist)
+        cext = HalfSpace{N,Vector{N}}[]
+    else
+        cext = [HalfSpace(vcat(Vector(c.a), zeros(N, m - n)), c.b) for c in clist]
+    end
 
     # now fix the last m-n coordinates to zero
     id_out = Matrix(one(N) * I, m - n, m - n)
@@ -529,16 +534,20 @@ end
 function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron, algo::LinearMapElimination)
     m, n = size(M)
     N = promote_type(eltype(M), eltype(P))
-    ₋Id_m = Matrix(-one(N) * I, m, m)
+    Id_neg = Matrix(-one(N) * I, m, m)
     backend = algo.backend
     method = algo.method
 
     # extend the polytope storing the y variables first
     # append zeros to the existing constraints, in the last m-n coordinates
     # TODO: cast to common vector type instead of hard-coding Vector(c.a), see #1942 and #1952
-    Ax_leq_b = [Polyhedra.HalfSpace(vcat(zeros(N, m), Vector(c.a)), c.b)
-                for c in constraints_list(P)]
-    y_eq_Mx = [Polyhedra.HyperPlane(vcat(₋Id_m[i, :], Vector(M[i, :])), zero(N)) for i in 1:m]
+    clist = constraints_list(P)
+    if isempty(clist)
+        Ax_leq_b = Polyhedra.HalfSpace{N,Vector{N}}[]
+    else
+        Ax_leq_b = [Polyhedra.HalfSpace(vcat(zeros(N, m), Vector(c.a)), c.b) for c in clist]
+    end
+    y_eq_Mx = [Polyhedra.HyperPlane(vcat(Id_neg[i, :], Vector(M[i, :])), zero(N)) for i in 1:m]
 
     Phrep = Polyhedra.hrep(y_eq_Mx, Ax_leq_b)
     Phrep = polyhedron(Phrep, backend) # define concrete subtype
