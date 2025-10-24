@@ -1,12 +1,6 @@
-function constraints_list(P::HParallelotope)
+function constraints_list(P::HParallelotope{N,VN}) where {N,VN}
     D, c = P.directions, P.offset
-    N, VN = _parameters(P)
     return _constraints_list_hparallelotope(D, c, N, VN)
-end
-
-# reason: `Documenter` cannot annotate `constraints_list` with type parameters
-function _parameters(::HParallelotope{N,VN}) where {N,VN}
-    return (N, VN)
 end
 
 function _constraints_list_hparallelotope(D, c, N, VN)
