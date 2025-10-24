@@ -259,6 +259,8 @@ for N in @tN([Float64, Float32])
 end
 
 for Z in [rand(Zonotope), rand(Hyperrectangle)]
+    @test_throws ArgumentError convert(SparsePolynomialZonotope, Z; algorithm="invalid algorithm")
+
     ZS = convert(SparsePolynomialZonotope, Z; algorithm="GI")
     @test center(ZS) == center(Z)
     @test isempty(genmat_dep(ZS))
