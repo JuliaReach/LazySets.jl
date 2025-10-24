@@ -416,7 +416,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
         res, w = ⊆(U, X, true)
         @test !res && w isa Vector{N} && w ∈ U && w ∉ X
     end
-    # TODO test `U ⊆ X` with non-Universe `X` for which `isuniversal(X) == true` (currently n/a)
+    U2 = Universe{N}(1)
+    X = Line(N[0], N[1])
+    @test U2 ⊆ X
+    res, w = ⊆(U2, X, true)
+    @test res && w isa Vector{N} && isempty(w)
 
     # linear_combination
     @test_throws DimensionMismatch linear_combination(U, U3)
