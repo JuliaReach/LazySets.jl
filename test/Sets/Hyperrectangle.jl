@@ -338,6 +338,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test convert(Hyperrectangle, Z) == H
     Z = Zonotope(c, N[2 1; 1 2])
     @test_throws AssertionError convert(Hyperrectangle, Z)
+    Z = Zonotope(c, N[1 0 0; 0 0 2])  # zero generator
+    H2 = convert(Hyperrectangle, Z)
+    @test H2 == Hyperrectangle(c, N[1, 2])
 
     # rectification
     H = Hyperrectangle(N[-1, 2], N[4, 5])

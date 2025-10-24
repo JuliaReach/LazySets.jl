@@ -24,6 +24,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     A2, b2 = tosimplehrep(p)
     @test A == A2 && b == b2
 
+    # convert
+    # from HPolytope
+    Pt = HPolytope(p.constraints)
+    P2 = convert(HPolyhedron, Pt)
+    @test P2 isa HPolyhedron{N} && P2 == p
+
     # 2D HPolyhedron
     p = HPolyhedron{N}()
     c1 = LinearConstraint(N[2, 2], N(12))

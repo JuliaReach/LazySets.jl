@@ -184,6 +184,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
         # test constraints list of a VPolygon
         vp = tovrep(hp)
+        @test vp == convert(VPolygon, hp)
         @test ispermutation(constraints_list(vp), hp.constraints)
 
         # translation

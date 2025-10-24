@@ -130,6 +130,15 @@ end
 
 for N in @tN([Float64, Float32])
     B = BallInf(zeros(N, 3), N(1))
+    v = N[1, 0, 0] # translation along dimension 1
+    M = Diagonal(N[1, 2, 3])
+    AM = AffineMap(M, B, v)
+
+    # convert
+    # from HPolyhedron
+    P = HPolyhedron(constraints_list(AM))
+    AM2 = convert(LazySets.STAR, P)
+    @test AM2 isa AffineMap{N} && isequivalent(AM2, AM)
 
     # the translation is the origin and the linear map is the identity => constraints remain unchanged
     Id3 = Matrix(one(N) * I, 3, 3)
