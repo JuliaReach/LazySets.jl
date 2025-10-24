@@ -23,7 +23,7 @@ end
 
 for N in @tN([Float64, Float32, Rational{Int}])
     # auxiliary sets
-    X2 = Singleton(N[0, 0])  # 2D set
+    S2 = Singleton(N[0, 0])  # 2D set
     B = BallInf(N[1], N(1))  # equivalent set
     Xnc = UnionSet(B, BallInf(N[3], N(1)))  # nonconvex set
 
@@ -435,8 +435,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test Z isa Hyperrectangle{N} && Z == Hyperrectangle(N[-1, 1], N[2, 1])
 
     # convex_hull (binary)
-    @test_throws DimensionMismatch convex_hull(X, X2)
-    @test_throws DimensionMismatch convex_hull(X2, X)
+    @test_throws DimensionMismatch convex_hull(X, S2)
+    @test_throws DimensionMismatch convex_hull(S2, X)
     Y = convex_hull(X, X)
     @test isidentical(Y, X)
     Y = Interval(N(-3), N(-1))
@@ -446,8 +446,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # difference
-    @test_throws DimensionMismatch difference(X, X2)
-    @test_throws DimensionMismatch difference(X2, X)
+    @test_throws DimensionMismatch difference(X, S2)
+    @test_throws DimensionMismatch difference(S2, X)
     # disjoint
     @test isidentical(difference(X, Interval(N(3), N(4))), X)
     # overlapping
@@ -466,8 +466,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test ispermutation(array(Y), [Interval(N(0), N(1)), Interval(N(1), N(2))])
 
     # distance (between two sets)
-    @test_throws DimensionMismatch distance(X, X2)
-    @test_throws DimensionMismatch distance(X2, X)
+    @test_throws DimensionMismatch distance(X, S2)
+    @test_throws DimensionMismatch distance(S2, X)
     @test_throws ArgumentError distance(X, X; p=N(1 // 2))
     for (Y, v) in ((Interval(N(-1), N(1)), N(0)), (Interval(N(4), N(5)), N(2)))
         for res in (distance(X, Y), distance(Y, X))
@@ -476,16 +476,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # exact_sum
-    @test_throws DimensionMismatch exact_sum(X, X2)
-    @test_throws DimensionMismatch exact_sum(X2, X)
+    @test_throws DimensionMismatch exact_sum(X, S2)
+    @test_throws DimensionMismatch exact_sum(S2, X)
     Y = Interval(N(3), N(4))
     for Z in (exact_sum(X, Y), exact_sum(Y, X))
         @test isidentical(Z, Interval(N(3), N(6)))
     end
 
     # intersection
-    @test_throws DimensionMismatch intersection(X, X2)
-    @test_throws DimensionMismatch intersection(X2, X)
+    @test_throws DimensionMismatch intersection(X, S2)
+    @test_throws DimensionMismatch intersection(S2, X)
     # disjoint
     Y = intersection(X, Interval(N(3), N(4)))
     @test Y isa EmptySet{N} && Y == EmptySet{N}(1)
@@ -502,11 +502,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !res  # zero default tolerance for Rational
     end
     @test !(X ≈ translate(X, N[1 // 1000]))  # above default tolerance for all types
-    @test !(X ≈ X2) && !(X2 ≈ X) && !(X ≈ B) && !(B ≈ X)
+    @test !(X ≈ S2) && !(S2 ≈ X) && !(X ≈ B) && !(B ≈ X)
 
     # isdisjoint
-    @test_throws DimensionMismatch isdisjoint(X, X2)
-    @test_throws DimensionMismatch isdisjoint(X2, X)
+    @test_throws DimensionMismatch isdisjoint(X, S2)
+    @test_throws DimensionMismatch isdisjoint(S2, X)
     # disjoint
     Y = Interval(N(3), N(4))
     for (Z, W) in ((X, Y), (Y, X))
@@ -538,18 +538,18 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isequal
     @test X == X
-    @test X != X2 && X2 != X && X != B && B != X
+    @test X != S2 && S2 != X && X != B && B != X
 
     # isequivalent
-    @test_throws DimensionMismatch isequivalent(X, X2)
-    @test_throws DimensionMismatch isequivalent(X2, X)
+    @test_throws DimensionMismatch isequivalent(X, S2)
+    @test_throws DimensionMismatch isequivalent(S2, X)
     @test isequivalent(X, X)
     @test !isequivalent(X, Interval(N(1), N(2)))
     @test isequivalent(X, B) && isequivalent(B, X)
 
     # isstrictsubset
-    @test_throws DimensionMismatch X ⊂ X2
-    @test_throws DimensionMismatch X2 ⊂ X
+    @test_throws DimensionMismatch X ⊂ S2
+    @test_throws DimensionMismatch S2 ⊂ X
     for Y in (X, B, Interval(N(-1), N(2)), Interval(N(0), N(3)))
         @test !(Y ⊂ X)
         res, w = ⊂(Y, X, true)
@@ -562,8 +562,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # issubset
-    @test_throws DimensionMismatch X ⊆ X2
-    @test_throws DimensionMismatch X2 ⊆ X
+    @test_throws DimensionMismatch X ⊆ S2
+    @test_throws DimensionMismatch S2 ⊆ X
     for Y in (X, B)
         @test X ⊆ Y
         res, w = ⊆(X, Y, true)
@@ -576,8 +576,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # linear_combination
-    @test_throws DimensionMismatch linear_combination(X, X2)
-    @test_throws DimensionMismatch linear_combination(X2, X)
+    @test_throws DimensionMismatch linear_combination(X, S2)
+    @test_throws DimensionMismatch linear_combination(S2, X)
     @test_broken linear_combination(X, Xnc)
     @test_broken linear_combination(Xnc, X)
     for Z in (linear_combination(X, X), linear_combination(X, B), linear_combination(B, X))
@@ -589,8 +589,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # minkowski_difference
-    @test_throws DimensionMismatch minkowski_difference(X, X2)
-    @test_throws DimensionMismatch minkowski_difference(X2, X)
+    @test_throws DimensionMismatch minkowski_difference(X, S2)
+    @test_throws DimensionMismatch minkowski_difference(S2, X)
     # empty difference
     Y = Interval(N(0), N(3))
     Z = minkowski_difference(X, Y)
@@ -611,8 +611,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test U2 isa Universe{N} && dim(U2) == 1
 
     # minkowski_sum
-    @test_throws DimensionMismatch minkowski_sum(X, X2)
-    @test_throws DimensionMismatch minkowski_sum(X2, X)
+    @test_throws DimensionMismatch minkowski_sum(X, S2)
+    @test_throws DimensionMismatch minkowski_sum(S2, X)
     # Interval + Interval = Interval
     Y = minkowski_sum(X, X)
     Z = Interval(N(0), N(4))
