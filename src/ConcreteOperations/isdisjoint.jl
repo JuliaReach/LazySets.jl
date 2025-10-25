@@ -178,7 +178,7 @@ end
 
 The algorithm is taken from [GuibasNZ03](@citet).
 
-``Z1 ∩ Z2 = ∅`` iff ``c_1 - c_2 ∉ Z(0, (g_1, g_2))`` where ``c_i`` and ``g_i``
+``Z1 ∩ Z2 = ∅`` iff ``c_1 - c_2 ∉ Z(0, [g_1, g_2])``, where ``c_i`` and ``g_i``
 are the center and generators of zonotope `Zi` and ``Z(c, g)`` represents the
 zonotope with center ``c`` and generators ``g``.
 """
@@ -189,12 +189,32 @@ zonotope with center ``c`` and generators ``g``.
     end
 
     N = promote_type(eltype(Z1), eltype(Z2))
-    Z = Zonotope(zeros(N, dim(Z1)), hcat(genmat(Z1), genmat(Z2)))
-    result = !∈(center(Z1) - center(Z2), Z; solver=solver)
+    G = hcat(genmat(Z1), genmat(Z2))
+    Z = Zonotope(zeros(N, dim(Z1)), G)
+    c1 = center(Z1)
+    c2 = center(Z2)
+    lp = _in_AbstractZonotope_LP(c1 - c2, Z; solver=solver)
+    result = !is_lp_optimal(lp.status)
     if result
         return _witness_result_empty(witness, true, N)
     elseif witness
-        error("witness production is not supported yet")
+        p1 = ngens(Z1)
+        p2 = ngens(Z2)
+        # optimization: iterate over the smaller number of generators
+        if p1 < p2
+            # reconstruct path from c2 to c1 backward using only the generators from Z1
+            w = copy(c1)
+            @inbounds for j in 1:p1
+                w .-= lp.sol[j] * view(G, :, j)
+            end
+        else
+            # reconstruct path from c2 to c1 using only the generators from Z2
+            w = copy(c2)
+            @inbounds for j in (p1 + 1):length(lp.sol)
+                w .+= lp.sol[j] * view(G, :, j)
+            end
+        end
+        return (false, w)
     else
         return false
     end

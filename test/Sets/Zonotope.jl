@@ -636,19 +636,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # disjoint
     Z2 = Zonotope(N[2, -2], N[1 0; 0 1])
     @test isdisjoint(Z, Z2) && isdisjoint(Z2, Z)
-    for (pair, Z) in ((isdisjoint(Z, Z2, true), Z2), (isdisjoint(Z2, Z, true), Z2))
-        res, w = pair
+    for (Z2a, Z2b) in ((Z, Z2), (Z2, Z))
+        res, w = isdisjoint(Z2a, Z2b, true)
         @test res && w isa Vector{N} && isempty(w)
     end
     # overlapping
-    Z2 = Zonotope(N[2, 2], N[1 0; 0 1])
+    Z2 = Zonotope(N[2, 2], N[1 0 1; 0 1 1])
     @test !isdisjoint(Z, Z) && !isdisjoint(Z, Z2) && !isdisjoint(Z2, Z)
-    @test_throws ErrorException isdisjoint(Z, Z, true)  # TODO this should be an ArgumentError
-    # for (pair, Z) in ((isdisjoint(Z, Z, true), Z), (isdisjoint(Z, Z2, true), Z2),  # TODO this should work
-    #                   (isdisjoint(Z2, Z, true), Z2))
-    #     res, w = pair
-    #     @test !res && w isa Vector{N} && w ∈ Z && w ∈ Z
-    # end
+    for (Z2a, Z2b) in ((Z, Z), (Z, Z2), (Z2, Z))
+        res, w = isdisjoint(Z2a, Z2b, true)
+        @test !res && w isa Vector{N} && w ∈ Z2a && w ∈ Z2b
+    end
     # tolerance
     if N == Float64
         Z2 = Zonotope(N[6 + 1e-9, 8], N[1 0; 0 1])
