@@ -269,6 +269,11 @@ constrained to ``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p`` such that
 ``x-c = Gξ`` holds.
 """
 @validate function ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
+    lp = _in_AbstractZonotope_LP(x, Z; solver=solver)
+    return is_lp_optimal(lp.status) # Infeasible or Unbounded => false
+end
+
+function _in_AbstractZonotope_LP(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
     p = ngens(Z)
     if p == 0
         # no generators can cause trouble in LP solver
@@ -286,8 +291,7 @@ constrained to ``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p`` such that
     if isnothing(solver)
         solver = default_lp_solver(N)
     end
-    lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
-    return is_lp_optimal(lp.status) # Infeasible or Unbounded => false
+    return linprog(obj, A, sense, b, lbounds, ubounds, solver)
 end
 
 """
