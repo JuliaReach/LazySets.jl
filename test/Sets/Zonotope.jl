@@ -651,10 +651,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     if N == Float64
         Z2 = Zonotope(N[6 + 1e-9, 8], N[1 0; 0 1])
         @test !isdisjoint(Z, Z2)
-        LazySets.set_rtol(Float64, 1e-10)
+        r = LazySets._rtol(N)
+        LazySets.set_rtol(N, N(1e-10))
         @test_broken isdisjoint(Z, Z2)  # TODO this should work
         # restore tolerance
-        LazySets.set_rtol(Float64, LazySets.default_tolerance(Float64).rtol)
+        LazySets.set_rtol(N, r)
     end
 
     # isequal

@@ -42,7 +42,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     if N == Float64
         @test N[1.5, 1.5] ∈ LineSegment(N[1.5, 1.50000000000001], N[1.5, 2.0])
         r = LazySets._rtol(N)
-        LazySets.set_rtol(N, 1e-20)
+        LazySets.set_rtol(N, N(1e-20))
         @test !(N[1.5, 1.5] ∈ LineSegment(N[1.5, 1.50000000000001], N[1.5, 2.0]))
         LazySets.set_rtol(N, r)
     end
