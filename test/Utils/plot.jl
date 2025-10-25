@@ -14,9 +14,9 @@ dict = Dict{Symbol,Any}(:plot_object => DummyPlot())
 plot(args...; kwargs...) = RecipesBase.apply_recipe(dict, args...; kwargs...)
 
 for N in @tN([Float64, Float32, Rational{Int}])
+    p0 = zero(N)
+    p1 = one(N)
     for n in [1, 2]
-        p0 = zero(N)
-        p1 = one(N)
         v0 = zeros(N, n)
         v1 = ones(N, n)
 
@@ -190,6 +190,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test_broken plot(sspz)
         @test_broken plot(us)
         @test_broken plot(usa)
+    end
+
+    # 3D
+    @static if isdefined(@__MODULE__, :MiniQhull) && isdefined(@__MODULE__, :Polyhedra)
+        n = 3
+        bi = BallInf(zeros(N, 3), p1)
+        plot(bi)  # TODO the Float32 plot looks wrong (a pyramid)
     end
 end
 

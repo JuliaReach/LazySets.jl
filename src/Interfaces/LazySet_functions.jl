@@ -746,7 +746,7 @@ function _plot_recipe_3d_polytope(P::LazySet, N=eltype(P))
     require(@__MODULE__, :MiniQhull; fun_name="_plot_recipe_3d_polytope")
     @assert ispolytopic(P) "3D plotting is only available for polytopes"
 
-    vlist, C = triangulate_vlist_connectivity(P; compute_triangles_3d=true)
+    vlist, C = _delaunay_vlist_connectivity(P; compute_triangles_3d=true)
 
     m = length(vlist)
     if m == 0
