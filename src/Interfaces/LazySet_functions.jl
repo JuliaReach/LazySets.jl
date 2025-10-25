@@ -818,16 +818,17 @@ end
 """
 # Extended help
 
-    area(X::LazySet)
+    area(P::LazySet)
 
 ### Notes
 
-This algorithm is applicable to any two-dimensional polytopic set `X` whose list
+This algorithm is applicable to any two-dimensional polytopic set `P` whose list
 of vertices can be computed via `vertices_list`.
 
 ### Algorithm
 
-Let `m` be the number of vertices of `X`. We consider the following instances:
+For 2D inputs, we compute the area as follows:
+Let `m` be the number of vertices of `P`. We consider the following instances:
 
 - `m = 0, 1, 2`: the output is zero.
 - `m = 3`: the triangle case is solved using the Shoelace formula with 3 points.
@@ -836,14 +837,21 @@ Let `m` be the number of vertices of `X`. We consider the following instances:
 
 Otherwise, the general Shoelace formula is used; for details see the
 [Wikipedia page](https://en.wikipedia.org/wiki/Shoelace_formula).
-"""
-@validate function area(X::LazySet)
-    @assert dim(X) == 2 "this implementation only applies to two-dimensional sets, " *
-                        "but the given set is $(dim(X))-dimensional"
-    @assert ispolytopic(X) "this method requires a polytope"
 
-    vlist = vertices_list(X)
-    return _area_vlist_2D(vlist)
+For 3D inputs, we triangulate the facets and sum the areas of each triangle.
+"""
+@validate function area(P::LazySet)
+    n = dim(P)
+    @assert n == 2 || n == 3 "this implementation only applies to two-dimensional or " *
+                             "three-dimensional sets, but the given set is $n-dimensional"
+    @assert ispolytopic(P) "this implementation requires a polytope"
+
+    if n == 2
+        vlist = vertices_list(P)
+        return _area_vlist_2D(vlist)
+    else
+        return _area_polytope_3D(P)
+    end
 end
 
 # Notes:
@@ -900,6 +908,54 @@ function _area_polygon(v::Vector{VN}) where {N,VN<:AbstractVector{N}}
         @inbounds res += v[i][1] * v[i + 1][2] - v[i + 1][1] * v[i][2]
     end
     return abs(res / 2)
+end
+
+function _area_polytope_3D(P::LazySet{N}) where {N}
+    require(@__MODULE__, :Polyhedra; fun_name="area")
+    require(@__MODULE__, :GeometryBasics; fun_name="area")
+
+    points, connections = triangulate_faces(P)
+    res = zero(N)
+    M = ones(N, 3, 3)
+    @inbounds for triple in connections
+        x, y, z = points[:, triple[1]], points[:, triple[2]], points[:, triple[3]]
+        res += _area_triangle_3D!(M, x, y, z)
+    end
+    return res
+end
+
+# see https://en.wikipedia.org/wiki/Area_of_a_triangle#Using_coordinates
+function _area_triangle_3D(a, b, c)
+    N = eltype(a)
+    M = ones(N, 3, 3)
+    return _area_triangle_3D!(M, a, b, c)
+end
+
+function _area_triangle_3D!(M, a, b, c)
+    @inbounds begin
+        M[1, 1] = a[1]
+        M[1, 2] = b[1]
+        M[1, 3] = c[1]
+        M[2, 1] = a[2]
+        M[2, 2] = b[2]
+        M[2, 3] = c[2]
+        res = det(M)^2
+        M[1, 1] = a[2]
+        M[1, 2] = b[2]
+        M[1, 3] = c[2]
+        M[2, 1] = a[3]
+        M[2, 2] = b[3]
+        M[2, 3] = c[3]
+        res += det(M)^2
+        M[1, 1] = a[3]
+        M[1, 2] = b[3]
+        M[1, 3] = c[3]
+        M[2, 1] = a[1]
+        M[2, 2] = b[1]
+        M[2, 3] = c[1]
+        res += det(M)^2
+    end
+    return sqrt(res) / 2
 end
 
 """
