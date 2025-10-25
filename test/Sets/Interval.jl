@@ -528,12 +528,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
         res, w = isdisjoint(X, Y, true)
         # TODO ∈ and isdisjoint should be consistent
         @test_broken !res && w isa Vector{N} && w ∈ X && w ∈ Y
-        LazySets.set_rtol(Float64, 1e-10)
+        r = LazySets._rtol(N)
+        LazySets.set_rtol(N, N(1e-10))
         @test isdisjoint(X, Y)
         res, w = isdisjoint(X, Y, true)
         @test res && w isa Vector{N} && isempty(w)
         # restore tolerance
-        LazySets.set_rtol(Float64, LazySets.default_tolerance(Float64).rtol)
+        LazySets.set_rtol(N, r)
     end
 
     # isequal
