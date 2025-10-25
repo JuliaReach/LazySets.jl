@@ -74,9 +74,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # togrep
     Z = togrep(l)
     @test Z isa Zonotope{N}
-    @test Z.center == N[3//2, 3//2]
+    @test Z.center == N[3 // 2, 3 // 2]
     G = Z.generators
-    @test size(G) == (2, 1) && G[1, 1] == G[2, 1] && G[1, 1] ∈ (N(-1//2), N(1//2))
+    @test size(G) == (2, 1) && G[1, 1] == G[2, 1] && G[1, 1] ∈ (N(-1 // 2), N(1 // 2))
 
     # an_element function
     @test an_element(l) ∈ l

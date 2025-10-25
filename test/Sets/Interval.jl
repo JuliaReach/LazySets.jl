@@ -333,7 +333,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !is_interior_point(N[2], X)
         @test !is_interior_point(N[3], X)
         @test is_interior_point(N[1], X; p=N(2))
-        @test is_interior_point(N[1], X; p=N(2), ε=N(1//2))
+        @test is_interior_point(N[1], X; p=N(2), ε=N(1 // 2))
         @test !is_interior_point(N[1], X; ε=N(1))
     else
         @test_throws ArgumentError is_interior_point(N[1], X)
