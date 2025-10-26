@@ -64,13 +64,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test diameter(p, Inf) ≈ N(6 // 10)
 
     # metrics in the 2-norm
+    p33 = VPolytope([N[-1, 0, 0], N[1, 0, 0], N[0, 1, 0]])  # 3D, 3 points
     @test norm(p, 2) ≈ norm(high(p), 2)
+    @test norm(p33, 2) == N(1)
     if N <: AbstractFloat
         @test radius(p, 2) ≈ norm(r, 2)
         @test diameter(p, 2) ≈ 2 * norm(r, 2)
 
-        s = MinkowskiSum(b, b)
-        @test radius(s, 2) ≈ norm(fill(4 // 10, 3))
-        @test diameter(s, 2) ≈ 2 * norm(fill(4 // 10, 3))
+        @test radius(p33, 2) == N(1)
+        @test diameter(p33, 2) == 2 * N(1)
     end
 end

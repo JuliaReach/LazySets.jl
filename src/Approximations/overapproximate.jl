@@ -974,11 +974,12 @@ A `Ball2` overapproximating the polytopic set.
 
 ### Algorithm
 
-We use [Welzl's algorithm](https://en.wikipedia.org/wiki/Smallest-circle_problem#Welzl's_algorithm)
-[Welzl91](@citet).
+We use the algorithm by [Welzl91](@citet). A short description can be found on
+[Wikipedia]](https://en.wikipedia.org/wiki/Smallest-circle_problem#Welzl's_algorithm).
 
 Note that the implementation is unfinished: the circumsphere for ``m > 3``
-points is missing, and hence this method may crash in dimensions 3 and higher.
+points is missing. Because the algorithm never requires more than ``n + 1``
+points, this method may thus crash in dimensions 3 and higher.
 """
 function overapproximate(P::LazySet, ::Type{<:Ball2})
     @assert ispolytopic(P) "this implementation requires a polytope"
