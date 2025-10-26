@@ -510,11 +510,15 @@ end
 
 ### Algorithm
 
-The default implementation handles the case `p == Inf` using
-`ballinf_approximation`.
+The default implementation handles the following cases:
+- `X` is 1D and `p` is any value (using the interval approximation)
+- `X` is any set and `p` is `Inf` (using `ballinf_approximation`)
 """
 @validate function radius(X::LazySet, p::Real=Inf)
-    if p == Inf
+    if dim(X) == 1
+        l, h = extrema(X, 1)
+        return (h - l) / 2
+    elseif p == Inf
         return radius(Approximations.ballinf_approximation(X), p)
     else
         error("the radius for this value of p=$p is not implemented")
