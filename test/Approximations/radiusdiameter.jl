@@ -57,19 +57,20 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # =========
 
     # metrics in the infinity norm (default)
-    p = convert(VPolygon, Hyperrectangle(N[0, 1], N[3 // 10, 2 // 10]))
+    r = N[3 // 10, 2 // 10]
+    p = convert(VPolygon, Hyperrectangle(N[0, 1], r))
     @test norm(p, Inf) ≈ N(6 // 5)
     @test radius(p, Inf) ≈ N(3 // 10)
     @test diameter(p, Inf) ≈ N(6 // 10)
 
     # metrics in the 2-norm
     @test norm(p, 2) ≈ norm(high(p), 2)
+    if N <: AbstractFloat
+        @test radius(p, 2) ≈ norm(r, 2)
+        @test diameter(p, 2) ≈ 2 * norm(r, 2)
 
-    # ====================================
-    #  failing case (not implemented yet)
-    # ====================================
-
-    s = MinkowskiSum(b, b)
-    @test_throws ErrorException radius(s, 2)
-    @test_throws ErrorException diameter(s, 2)
+        s = MinkowskiSum(b, b)
+        @test radius(s, 2) ≈ norm(fill(4 // 10, 3))
+        @test diameter(s, 2) ≈ 2 * norm(fill(4 // 10, 3))
+    end
 end

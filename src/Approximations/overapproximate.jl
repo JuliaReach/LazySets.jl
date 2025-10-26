@@ -938,7 +938,7 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
         """
             overapproximate(A::MatrixZonotope, ::Type{<:IntervalMatrix})
 
-        Overapproximate a matrix zonotope by an interval matrix
+        Overapproximate a matrix zonotope with an interval matrix.
 
         ### Input
 
@@ -947,7 +947,7 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
 
         ### Output
 
-        An interval matrix overapproximating the matrix zonotope
+        An interval matrix overapproximating the matrix zonotope.
         """
         function overapproximate(A::MatrixZonotope, ::Type{<:IntervalMatrix})
             A_abs = sum([abs.(Ai) for Ai in generators(A)])
@@ -956,4 +956,92 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
             return IntervalMatrix(A₋, A₊)
         end
     end
+end
+
+"""
+    overapproximate(P::LazySet, ::Type{<:Ball2})
+
+Overapproximate a polytopic set with a Euclidean ball.
+
+### Input
+
+- `P` -- polytopic set
+- `Ball2` -- target type
+
+### Output
+
+A `Ball2` overapproximating the polytopic set.
+
+### Algorithm
+
+We use [Welzl's algorithm](https://en.wikipedia.org/wiki/Smallest-circle_problem#Welzl's_algorithm)
+[Welzl91](@citet).
+
+Note that the implementation is unfinished: the circumsphere for ``m > 3``
+points is missing, and hence this method may crash in dimensions 3 and higher.
+"""
+function overapproximate(P::LazySet, ::Type{<:Ball2})
+    @assert ispolytopic(P) "this implementation requires a polytope"
+
+    return _welzl(vertices_list(P))
+end
+
+# Welzl's algorithm for computing the circumsphere of a list of points
+function _welzl(vlist)
+    if isempty(vlist)
+        throw(ArgumentError("an empty set cannot be overapproximated"))
+    end
+
+    v1 = @inbounds first(vlist)
+    n = length(v1)
+    if length(vlist) <= n + 1
+        return _circumsphere_trivial(vlist, nothing)
+    end
+
+    N = eltype(v1)
+    B0 = Ball2(N[], N(0))  # illegal ball that is used for a special case later
+    return _welzl!(copy(vlist), Set(empty(vlist)), n + 1, B0)
+end
+
+function _welzl!(P, R, d, B0)  # note that d == n+1
+    if isempty(P) || length(R) == d
+        return _circumsphere_trivial(R, B0)
+    end
+    i = rand(1:length(P))
+    p = @inbounds P[i]  # pick a random vertex
+    P2 = setdiff(P, [p])
+    D = _welzl!(P2, R, d, B0)
+    if !(D === B0) && p ∈ D
+        return D
+    end
+    R2 = copy(R)
+    push!(R2, p)
+    _welzl!(P2, R2, d, B0)
+end
+
+function _circumsphere_trivial(R, B0)
+    m = length(R)
+    if m == 0  # 0 vertices: return dummy ball
+        return B0
+    elseif m == 1  # 1 vertex: singleton ball
+        x = @inbounds first(R)
+        N = eltype(x)
+        return Ball2(x, N(0))
+    elseif m == 2  # 2 vertices: midpoint as center
+        x, y = R
+        c = (x + y) / 2
+        r = norm((x - y) / 2, 2)
+        return Ball2(c, r)
+    elseif m == 3  # 3 vertices: https://en.wikipedia.org/wiki/Circumcircle#Higher_dimensions
+        x, y, z = R
+        a = x - z
+        b = y - z
+        na = norm(a)
+        nb = norm(b)
+        aux = na^2 * nb^2 - dot(a, b)^2
+        c = (na^2 * nb^2 * (a + b) - dot(a, b) * (na^2 * b + nb^2 * a)) / (2 * aux) + z
+        r = (na * nb * norm(a - b)) / (2 * sqrt(aux))
+        return Ball2(c, r)
+    end
+    error("this case is not implemented yet")  # TODO add higher-dimensional cases
 end

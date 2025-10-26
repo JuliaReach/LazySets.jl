@@ -513,6 +513,7 @@ end
 The default implementation handles the following cases:
 - `X` is 1D and `p` is any value (using the interval approximation)
 - `X` is any set and `p` is `Inf` (using `ballinf_approximation`)
+- `X` is polytopic and `p` is `2` (using Welzl's algorithm)
 """
 @validate function radius(X::LazySet, p::Real=Inf)
     if dim(X) == 1
@@ -520,6 +521,8 @@ The default implementation handles the following cases:
         return (h - l) / 2
     elseif p == Inf
         return radius(Approximations.ballinf_approximation(X), p)
+    elseif p == 2
+        return radius(overapproximate(X, Ball2))
     else
         error("the radius for this value of p=$p is not implemented")
     end
