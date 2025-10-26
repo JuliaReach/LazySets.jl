@@ -196,7 +196,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     for res in (diameter(Z), diameter(Z, Inf))
         @test res isa N && res == N(12)
     end
-    @test_broken diameter(Z, 2) isa N  # TODO this should work
+    if N <: AbstractFloat
+        res = diameter(Z, 2)
+        @test res isa N && res == N(14.422205101855958)
+    end
 
     # dim
     @test dim(Z) == 2
@@ -292,7 +295,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     for res in (radius(Z), radius(Z, Inf))
         @test res isa N && res == N(6)
     end
-    @test_broken radius(Z, 2) isa N  # TODO this should work
+        if N <: AbstractFloat
+        res = radius(Z, 2)
+        @test res isa N && res == N(7.211102550927979)
+    end
 
     # rectify
     X = rectify(Z)

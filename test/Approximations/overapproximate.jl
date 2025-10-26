@@ -421,6 +421,26 @@ for N in @tN([Float64, Float32])
     MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
     IM = overapproximate(MZ, IntervalMatrix)
     @test IM == IntervalMatrix(N[-1.1 -4.1; 3.9 -1.1], N[-0.9 -3.9; 4.1 -0.9])
+
+    # circumsphere
+    P = VPolygon()
+    @test_throws ArgumentError overapproximate(P, Ball2)
+    P = VPolygon([N[0, 0]])
+    B = overapproximate(P, Ball2)
+    @test B isa Ball2{N} && B == Ball2(N[0, 0], N(0))
+    P = VPolygon([N[0, 0], N[1, 0]])
+    B = overapproximate(P, Ball2)
+    @test B isa Ball2{N} && B == Ball2(N[1 // 2, 0], N(1 // 2))
+    P = VPolygon([N[0, 0], N[1, 0], N[0, 1]])
+    B = overapproximate(P, Ball2)
+    B2 = Ball2(N[1 // 2, 1 // 2], N(sqrt(1 / 2)))
+    @test B isa Ball2{N} && B ≈ B2
+    P = VPolygon([N[0, 0], N[1, 0], N[0, 1], N[1, 1]])
+    B = overapproximate(P, Ball2)
+    @test B isa Ball2{N} && B ≈ B2
+    P = VPolytope([N[0, 0, 0], N[1, 0, 0], N[0, 1, 0]])  # 3D
+    B = overapproximate(P, Ball2)
+    @test B isa Ball2{N} && B ≈ Ball2(N[1 // 2, 1 // 2, 0], N(sqrt(1 / 2)))
 end
 
 for N in [Float64]
