@@ -318,8 +318,8 @@ function constraints_list(rm::ResetMap)
                 continue  # not a dimension we are interested in
             end
             new_value = rm.resets[constrained_dim]
-            if new_value == zero(N)
-                @assert c.b == zero(N)
+            if iszero(new_value)
+                @assert iszero(c.b) "expected b = 0"
                 continue  # a reset to 0 needs not create a new constraint
             end
             if c.a[constrained_dim] < zero(N)

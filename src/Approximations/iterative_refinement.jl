@@ -144,7 +144,7 @@ convex set by splitting along the normal direction of the approximation.
 The tuple consisting of the refined right and left local approximations.
 """
 function refine(approx::LocalApproximation, S::LazySet)
-    @assert approx.refinable
+    @assert approx.refinable "the approximation object should be refinable"
     ndir = normalize([approx.p2[2] - approx.p1[2], approx.p1[1] - approx.p2[1]])
     s = σ(ndir, S)
     ap1 = new_approx(S, approx.p1, approx.d1, s, ndir)

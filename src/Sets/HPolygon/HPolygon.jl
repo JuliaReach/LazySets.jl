@@ -57,8 +57,7 @@ struct HPolygon{N,VN<:AbstractVector{N}} <: AbstractHPolygon{N}
         else
             P = new{N,VN}(constraints)
         end
-        @assert (!check_boundedness ||
-                 isbounded(P, false)) "the polygon is not bounded"
+        @assert (!check_boundedness || isbounded(P, false)) "the polygon is not bounded"
         return P
     end
 end

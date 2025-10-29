@@ -187,7 +187,7 @@ function sample!(D::Vector{VN}, L::LineSegment,
                  seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     rng = reseed!(rng, seed)
     U = sampler.distribution
-    @assert U.a >= zero(N) && U.b <= one(N)
+    @assert U.a >= zero(N) && U.b <= one(N) "illegal distribution domain"
     p = L.p
     q = L.q
 
