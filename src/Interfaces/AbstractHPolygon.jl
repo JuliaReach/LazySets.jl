@@ -349,7 +349,7 @@ function isredundant(cmid::HalfSpace, cright::HalfSpace, cleft::HalfSpace)
         return false
     end
     cap = _intersection_line2d(cright, cleft)
-    @assert cap isa Singleton
+    @assert cap isa Singleton "lines did not intersect"
     return cap ⊆ cmid
 end
 

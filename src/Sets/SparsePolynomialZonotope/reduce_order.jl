@@ -23,7 +23,7 @@ function reduce_order(P::SparsePolynomialZonotope, r::Real,
     q = ngens_indep(P)
 
     a = ceil(Int, h + q - n * (r - 1))
-    @assert n ≤ a ≤ h + q  # holds because `1 ≤ r < order(P)`
+    @assert n ≤ a ≤ h + q "unexpected state"  # holds because `1 ≤ r < order(P)`
 
     G = genmat_dep(P)
     GI = genmat_indep(P)

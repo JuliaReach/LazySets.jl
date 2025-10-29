@@ -43,7 +43,9 @@ end
         return removevredundancy!(X; ztol=_ztol(N))
     end
 else
-    @assert hasmethod(Polyhedra.detecthlinearity, (Polyhedra.HRepresentation, Any), (:tol,))
+    @assert hasmethod(Polyhedra.detecthlinearity,
+                      (Polyhedra.HRepresentation, Any),
+                      (:tol,)) "there should be a `detecthlinearity` method with `:tol` argument"
 
     function _removevredundancy!(X; N)
         return removevredundancy!(X; tol=_ztol(N))

@@ -20,8 +20,7 @@
             return Universe{N}(1)
         end
     end
-    # L is constrained in both dimensions
-    @assert length(cdims) == 2
+    @assert length(cdims) == 2 "the line should be constrained in both dimensions"
     return Universe{N}(1)
 end
 

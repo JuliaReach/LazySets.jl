@@ -91,7 +91,8 @@ function is_tighter_same_dir_2D(c1::HalfSpace,
 
     lt = strict ? (<) : (<=)
     if isapproxzero(c1.a[1])
-        @assert isapproxzero(c2.a[1])
+        @assert isapproxzero(c2.a[1]) "the second constraint should also be approximately 0 in " *
+                                      "the first entry"
         return lt(c1.b, c1.a[2] / c2.a[2] * c2.b)
     end
     return lt(c1.b, c1.a[1] / c2.a[1] * c2.b)

@@ -73,7 +73,7 @@ This method implements [Kochdumper21a; Proposition 3.1.30](@citet).
 """
 function quadratic_map(Q::Vector{<:AbstractMatrix}, S1::SimpleSparsePolynomialZonotope,
                        S2::SimpleSparsePolynomialZonotope)
-    @assert nparams(S1) == nparams(S2)
+    @assert nparams(S1) == nparams(S2) "the number of parameters must be equal"
 
     c1 = center(S1)
     c2 = center(S2)

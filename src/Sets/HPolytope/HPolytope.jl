@@ -45,8 +45,7 @@ struct HPolytope{N,VN<:AbstractVector{N}} <: AbstractPolytope{N}
     function HPolytope(constraints::Vector{HalfSpace{N,VN}};
                        check_boundedness::Bool=false) where {N,VN<:AbstractVector{N}}
         P = new{N,VN}(constraints)
-        @assert (!check_boundedness ||
-                 isbounded(P, false)) "the polytope is not bounded"
+        @assert (!check_boundedness || isbounded(P, false)) "the polytope is not bounded"
         return P
     end
 end

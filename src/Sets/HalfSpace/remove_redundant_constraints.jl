@@ -93,7 +93,7 @@ function remove_redundant_constraints!(constraints::AbstractVector{<:HalfSpace};
         α = A[j, :]
         Ar = A[non_redundant_indices, :]
         br = b[non_redundant_indices]
-        @assert br[i] == b[j]
+        @assert br[i] == b[j] "unexpected behavior"
         br[i] += one(N)
         lp = linprog(-α, Ar, '<', br, -Inf, Inf, backend)
         if is_lp_optimal(lp.status)

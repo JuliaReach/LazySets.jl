@@ -41,9 +41,8 @@ struct SymmetricIntervalHull{N,S<:LazySet{N}} <: AbstractHyperrectangle{N}
     # default constructor that initializes cache
     function SymmetricIntervalHull(X::S;
                                    check_boundedness::Bool=true) where {N,S<:LazySet{N}}
-        @assert !check_boundedness || isboundedtype(typeof(X)) ||
-                isbounded(X) "the symmetric interval hull is only defined " *
-                             "for bounded sets"
+        @assert !check_boundedness || isbounded(X) "the symmetric interval hull is only defined " *
+                                                   "*for bounded sets"
 
         # fill cache with default value -1 (actual bounds cannot be negative)
         cache = fill(-one(N), dim(X))

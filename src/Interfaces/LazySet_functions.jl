@@ -1393,7 +1393,7 @@ function load_Polyhedra_GeometryBasics_triangulate_faces()
 
             ntriangles = length(connection)
             npoints = length(coords)
-            @assert npoints == 3 * ntriangles
+            @assert npoints == 3 * ntriangles "each triangle should have 3 vertices"
             points = Matrix{Float32}(undef, 3, npoints)
 
             for i in 1:npoints
