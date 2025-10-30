@@ -479,12 +479,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # linear_map_inverse
     @test_throws AssertionError LazySets.linear_map_inverse(ones(N, 1, 1), Z)
-    X = LazySets.linear_map_inverse(N[1 0; 0 1], Z)  # TODO this could be a Zonotope
-    @test_broken isidentical(X, Z)
-    @test X isa LazySet{N} && isequivalent(X, Z)
+    # invertible map
+    Z2 = LazySets.linear_map_inverse(N[1 0; 0 1], Z)
+    @test isidentical(Z2, Z)
+    # noninvertible map
     M = ones(N, 2, 1)
-    X = LazySets.linear_map_inverse(M, Z)  # TODO this could be a Zonotope
-    @test_broken isidentical(X, Zonotope(N[-1], hcat(N[1])))
+    X = LazySets.linear_map_inverse(M, Z)
     A, b = tosimplehrep(Z)
     Y = HPolytope(A * M, b)
     @test X isa LazySet{N} && isequivalent(X, Y)

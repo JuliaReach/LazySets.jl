@@ -452,7 +452,7 @@ function _linear_map_hrep(M::AbstractMatrix, P::LazySet, algo::LinearMapInverse)
 end
 
 # P = {y : Cy <= d}
-# C(Ax + b) <= d  <=> CAx <= d - Cb
+# C(Ax + b) <= d  <=>  CAx <= d - Cb
 function _affine_map_inverse_hrep(A::AbstractMatrix, P::LazySet,
                                   b::Union{AbstractVector,Nothing}=nothing)
     C_leq_d = constraints_list(P)
