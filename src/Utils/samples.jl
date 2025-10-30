@@ -85,7 +85,7 @@ end
 # default sampling for LazySets
 _default_sampler(::LazySet) = CombinedSampler()
 function _default_sampler(::LineSegment{N}) where {N}
-    return RejectionSampler(DefaultUniform(zero(N), one(N)), true, Inf)
+    return RejectionSampler(DefaultUniform(zero(N), one(N)), true, Inf, RejectionSamplerStatus())
 end
 _default_sampler(::HalfSpace) = HalfSpaceSampler()
 _default_sampler(::Hyperplane) = HyperplaneSampler()
@@ -97,6 +97,14 @@ _default_sampler(H::AbstractHyperrectangle) = RejectionSampler(H)
 
 _rand(rng, U) = rand(rng, U)
 _rand(rng, U::AbstractVector) = rand.(Ref(rng), U)
+
+mutable struct RejectionSamplerStatus
+    success::Bool
+
+    function RejectionSamplerStatus()
+        return new(false)
+    end
+end
 
 """
     RejectionSampler{D} <: AbstractSampler
@@ -129,14 +137,24 @@ struct RejectionSampler{D} <: AbstractSampler
     distribution::D
     tight::Bool
     maxiter::Number
+    status::RejectionSamplerStatus
+end
+
+function get_success(S::RejectionSampler)
+    return S.status.success
+end
+
+function set_success!(S::RejectionSampler)
+    S.status.success = true
+    return nothing
 end
 
 function RejectionSampler(distr; tight::Bool=false, maxiter=Inf)
-    return RejectionSampler(distr, tight, maxiter)
+    return RejectionSampler(distr, tight, maxiter, RejectionSamplerStatus())
 end
 
 function RejectionSampler(distr::DefaultUniform; tight::Bool=false, maxiter=Inf)
-    return RejectionSampler([distr], tight, maxiter)
+    return RejectionSampler([distr], tight, maxiter, RejectionSamplerStatus())
 end
 
 function RejectionSampler(X::LazySet, distribution=DefaultUniform;
@@ -148,14 +166,14 @@ function RejectionSampler(X::LazySet, distribution=DefaultUniform;
     # distribution over B
     distr = [distribution(low(B, i), high(B, i)) for i in 1:n]
 
-    return RejectionSampler(distr, tight, maxiter)
+    return RejectionSampler(distr, tight, maxiter, RejectionSamplerStatus())
 end
 
 # the support of this distribution is always tight wrt. X
 function RejectionSampler(X::AbstractHyperrectangle)
     n = dim(X)
     distr = [DefaultUniform(low(X, i), high(X, i)) for i in 1:n]
-    return RejectionSampler(distr, true, Inf)
+    return RejectionSampler(distr, true, Inf, RejectionSamplerStatus())
 end
 
 function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
@@ -178,6 +196,7 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::RejectionSampler;
         end
         D[i] = w
     end
+    set_success!(sampler)
     return D
 end
 
@@ -195,6 +214,7 @@ function sample!(D::Vector{VN}, L::LineSegment,
         λ = _rand(rng, U)
         D[i] = p + λ * (q - p)
     end
+    set_success!(sampler)
     return D
 end
 
@@ -295,9 +315,8 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::CombinedSampler;
     # try rejection sampling 10 times
     tmp_sampler = RejectionSampler(X; maxiter=10)
     D2 = Vector{VN}(undef, 1)
-    D2[1] = fill(N(NaN), dim(X))
     sample!(D2, X, tmp_sampler)
-    if !isnan(D2[1][1])
+    if get_success(tmp_sampler)
         # it worked
         tmp_sampler = RejectionSampler(X)
         return sample!(D, X, tmp_sampler; rng=rng, seed=seed)
