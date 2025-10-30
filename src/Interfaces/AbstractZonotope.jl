@@ -401,6 +401,9 @@ end
 function _vertices_list_zonotope_2D(c::AbstractVector{N}, G::AbstractMatrix{N};
                                     apply_convex_hull::Bool) where {N}
     if same_sign(G)
+        if any(e -> e < 0, G)
+            G = -G
+        end
         return _vertices_list_zonotope_2D_positive(c, G; apply_convex_hull=apply_convex_hull)
     else
         # TODO generalized 2D vertices list function is not implemented yet
@@ -412,8 +415,6 @@ end
 function _vertices_list_zonotope_2D_positive(c::AbstractVector{N}, G::AbstractMatrix{N};
                                              apply_convex_hull::Bool) where {N}
     n, p = size(G)
-
-    # TODO special case p = 1 or p = 2 ?
 
     sorted_G = sortslices(G; dims=2, by=x -> atan(x[2], x[1]))
     index = ones(N, p, 2 * p)

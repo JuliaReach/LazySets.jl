@@ -403,12 +403,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
             Z2.generators .*= -1
         end
         vlistZ = vertices_list(Z2)
-        if i == 1 || N <: AbstractFloat
-            @test ispermutation(vlistZ, [N[2, 0], N[2, 2], N[0, 2], N[-2, 0], N[-2, -2], N[0, -2]])
-        else
-            @test_broken ispermutation(vlistZ,  # TODO this should be fixed
-                                       [N[2, 0], N[2, 2], N[0, 2], N[-2, 0], N[-2, -2], N[0, -2]])
-        end
+        @test ispermutation(vlistZ, [N[2, 0], N[2, 2], N[0, 2], N[-2, 0], N[-2, -2], N[0, -2]])
     end
     # 3D
     @static if isdefined(@__MODULE__, :Polyhedra)
