@@ -1302,3 +1302,35 @@ Compute the ``ℓ_p`` norm of a zonotope.
         return _norm_default(Z, p)
     end
 end
+
+function linear_map_inverse(A::AbstractMatrix, Z::AbstractZonotope)
+    @assert size(A, 1) == dim(Z) "an inverse linear map of size $(size(A)) " *
+                                 "cannot be applied to a set of dimension $(dim(Z))"
+    return _affine_map_inverse_zonotope(A, Z)
+end
+
+function affine_map_inverse(A::AbstractMatrix, Z::AbstractZonotope, b::AbstractVector)
+    @assert size(A, 1) == dim(Z) == length(b) "an inverse affine map of size $(size(A)) " *
+                                              "and $(length(b)) cannot be applied to a " *
+                                              "set of dimension $(dim(Z))"
+    return _affine_map_inverse_zonotope(A, Z, b)
+end
+
+# Z = {y = c + GB}
+# A(c₀ + G₀B) + b = c + GB
+# if A is invertible:
+# <=>  c₀ = A⁻¹(c - b) ∧ G₀ = A⁻¹G
+function _affine_map_inverse_zonotope(A::AbstractMatrix, Z::AbstractZonotope,
+                                      b::Union{AbstractVector,Nothing}=nothing)
+    if !isinvertible(A)
+        # result may not be representable as a zonotope -> use default implementation for polyhedra
+        return _affine_map_inverse(A, Z, b)
+    end
+    Ainv = inv(A)
+    c = Ainv * center(Z)
+    if !isnothing(b)
+        c -= Ainv * b
+    end
+    G = Ainv * genmat(Z)
+    return Zonotope(c, G)
+end
