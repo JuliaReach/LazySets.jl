@@ -532,11 +532,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(Z2, Zonotope(N[2, 4], N[2 6; 4 8]))
     # degenerate case
     Z2 = scale(N(0), Z)
-    @test isidentical(Z2, Zonotope(N[0, 0], zeros(N, 2, 2)))  # TODO remove zero generators
+    @test isidentical(Z2, Zonotope(N[0, 0], zeros(N, 2, 0)))
     # scale!
     Z2 = copy(Z)
     scale!(N(2), Z2)
     @test isidentical(Z2, Zonotope(N[2, 4], N[2 6; 4 8]))
+    # degenerate case
+    Z2 = copy(Z)
+    scale!(N(0), Z2)
+    @test isidentical(Z2, Zonotope(N[0, 0], zeros(N, 2, 2)))
 
     # split
     # split into two zonotopes
