@@ -517,15 +517,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(Z2, Zonotope(zeros(N, 2), N[1 0 3; 4 0 6]))
 
     # sample
-    if N <: AbstractFloat
-        res = sample(Z)
-        @test res isa Vector{N} && res ∈ Z
-        res = sample(Z, 2)
-        @test res isa Vector{Vector{N}} && length(res) == 2 && all(x ∈ Z for x in res)
-    else
-        @test_broken sample(Z) isa Vector{N}  # TODO this should work
-        @test_broken sample(Z, 2) isa Vector{Vector{N}}
-    end
+    res = sample(Z)
+    @test res isa Vector{N} && res ∈ Z
+    res = sample(Z, 2)
+    @test res isa Vector{Vector{N}} && length(res) == 2 && all(x ∈ Z for x in res)
 
     # scale
     Z2 = scale(N(2), Z)
