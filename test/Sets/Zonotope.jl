@@ -674,18 +674,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isstrictsubset
     @test_throws DimensionMismatch Z ⊂ Z3
-    for Z2 in (Z, P)
-        @test !(Z2 ⊂ Z)
-        res, w = ⊂(Z2, Z, true)
+    Z2a = Zonotope(N[1, 2], N[1 0; 0 1])
+    for Z2b in (Z, P, Z2a)
+        @test !(Z2b ⊂ Z)
+        res, w = ⊂(Z2b, Z, true)
         @test !res && w isa Vector{N} && isempty(w)
     end
-    Z2 = Zonotope(N[1, 2], N[1 0; 0 1])
-    @test_broken ⊂(Z2, Z, true) isa Tuple  # TODO support witness production, then integrate in loop above
     Z2 = Zonotope(N[1, 2], N[4 0; 0 6])
     @test Z ⊂ Z2
-    @test_broken ⊂(Z, Z2, true) isa Tuple  # TODO support witness production
-    # res, w = ⊂(Z, Z2, true)
-    # @test res && w isa Vector{N} && w ∉ Z && w ∈ Z2
+    res, w = ⊂(Z, Z2, true)
+    @test res && w isa Vector{N} && w ∉ Z && w ∈ Z2
 
     # issubset
     @test_throws DimensionMismatch Z ⊆ Z3
@@ -696,9 +694,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
     Z2 = Zonotope(N[3, 0], N[1 0; 0 1])
     @test Z ⊈ Z2
-    @test_broken ⊆(Z, Z2, true) isa Tuple  # TODO this should work
-    # res, w = ⊆(Z, Z2, true)
-    # @test !res && w isa Vector{N} && w ∈ Z && w ∉ Z2
+    res, w = ⊆(Z, Z2, true)
+    @test !res && w isa Vector{N} && w ∈ Z && w ∉ Z2
 
     # linear_combination
     @test_throws DimensionMismatch linear_combination(Z, Z3)
