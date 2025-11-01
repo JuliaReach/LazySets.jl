@@ -1017,7 +1017,7 @@ function _welzl!(P, R, d, B0)  # note that d == n+1
     end
     R2 = copy(R)
     push!(R2, p)
-    _welzl!(P2, R2, d, B0)
+    return _welzl!(P2, R2, d, B0)
 end
 
 function _circumsphere_trivial(R, B0)
@@ -1044,5 +1044,5 @@ function _circumsphere_trivial(R, B0)
         r = (na * nb * norm(a - b)) / (2 * sqrt(aux))
         return Ball2(c, r)
     end
-    error("this case is not implemented yet")  # TODO add higher-dimensional cases
+    return error("this case is not implemented yet")  # TODO add higher-dimensional cases
 end

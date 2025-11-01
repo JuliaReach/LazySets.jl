@@ -295,7 +295,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     for res in (radius(Z), radius(Z, Inf))
         @test res isa N && res == N(6)
     end
-        if N <: AbstractFloat
+    if N <: AbstractFloat
         res = radius(Z, 2)
         @test res isa N && res == N(7.211102550927979)
     end
