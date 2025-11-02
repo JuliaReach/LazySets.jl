@@ -236,7 +236,9 @@ function _issubset_zonotope_in_polyhedron(Z::AbstractZonotope, P::LazySet,
     elseif !witness
         return false
     end
-    throw(ArgumentError("witness production is not supported yet"))
+    # fall back to default algorithm for witness production
+    # TODO more efficient implementation
+    return _issubset_constraints_list(Z, P, witness)
 end
 
 # for documentation see

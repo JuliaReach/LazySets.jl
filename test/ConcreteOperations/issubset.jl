@@ -80,8 +80,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test Z ⊆ P && res && w == N[]
     P = HPolyhedron([HalfSpace(N[1, 0], N(1)), HalfSpace(N[-1, 0], N(0)),
                      HalfSpace(N[0, 1], N(3)), HalfSpace(N[0, -1], N(0))])
-    @test !(Z ⊆ P)
-    @test_throws ArgumentError issubset(Z, P, true)  # not implemented; parser requires `issubset`
+    res, w = ⊆(Z, P, true)
+    @test !(Z ⊆ P) && !res && w isa Vector{N} && w ∈ Z && w ∉ P
     # corner case: no generator
     Z = Zonotope(N[2], zeros(N, 1, 0))
     P = convert(HPolytope, Interval(N(1), N(3)))
