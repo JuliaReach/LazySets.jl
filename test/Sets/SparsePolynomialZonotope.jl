@@ -1,7 +1,6 @@
 using LazySets, Test, LinearAlgebra
 using LazySets.SparsePolynomialZonotopeModule: merge_id
 IA = LazySets.IA
-using LazySets.IA: IntervalBox
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -100,7 +99,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # cartesian_product SPZ/Z
     Z = overapproximate(PZ2, Zonotope)
     SSPZ2 = convert(SimpleSparsePolynomialZonotope, PZ2)
-    dom2 = IntervalBox(IA.interval(N(-1), N(1)), IA.interval(N(-1), N(1)))
+    dom2 = [IA.interval(N(-1), N(1)), IA.interval(N(-1), N(1))]
     Z2 = overapproximate(SSPZ2, Zonotope, dom2)
     @test isequivalent(Z, Z2)
     CPPZ = cartesian_product(PZ, Z)
@@ -277,9 +276,8 @@ for Z in [rand(Zonotope), rand(Hyperrectangle)]
     @test expmat(ZS) == I
 end
 
-let
+for N in [Float64]
     @static if isdefined(@__MODULE__, :TaylorModels)
-        N = Float64
         PZS = SimpleSparsePolynomialZonotope(N[0.2, -0.6], N[1 0; 0 0.4], [1 0; 0 1])
         PZ = convert(SparsePolynomialZonotope, PZS)
         @test center(PZ) == center(PZS)
@@ -291,8 +289,8 @@ let
         # conversion from Taylor model
         x₁, x₂, x₃ = TaylorModels.set_variables(Float64, ["x₁", "x₂", "x₃"]; order=3)
         dom1 = IA.interval(N(-1), N(1))
-        dom = dom1 × dom1 × dom1
-        x0 = IntervalBox(IA.mid.(dom)...)
+        dom = [dom1, dom1, dom1]
+        x0 = [IA.interval(IA.mid(di)) for di in dom]
         rem = IA.interval(N(0), N(0))
         p₁ = 33 + 2x₁ + 3x₂ + 4x₃ + 5x₁^2 + 6x₂ * x₃ + 7x₃^2 + 8x₁ * x₂ * x₃
         p₂ = x₃ - x₁
