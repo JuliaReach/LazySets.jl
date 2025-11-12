@@ -21,7 +21,7 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 Distributed = "<0.0.1, 1.6"
 ExprTools = "0.1"
 GLPK = "0.11 - 0.15, 1"
-IntervalArithmetic = "0.15 - 0.21, =0.21.2"  # v0.22 removed IntervalBox
+IntervalArithmetic = "0.22 - 1"
 JuMP = "0.21 - 0.23, 1"
 LinearAlgebra = "<0.0.1, 1.6"
 Random = "<0.0.1, 1.6"

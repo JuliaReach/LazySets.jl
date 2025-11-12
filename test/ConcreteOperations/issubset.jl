@@ -1,6 +1,4 @@
 using LazySets, Test
-IA = LazySets.IA
-using LazySets.IA: IntervalBox
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -54,13 +52,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
     res, w = ⊆(Z, H, true)
     @test !res && w isa Vector{N} && w ∈ Z && w ∉ H
 
-    B = Hyperrectangle(N[0, 0], N[1, 1])
-    U = UnionSetArray([Hyperrectangle(N[0, 1], N[3, 1]), Hyperrectangle(N[0, -1], N[3, 1])])
-    res, w = ⊆(B, U, true)
-    @test B ⊆ U && res && w == N[]
-    U = UnionSetArray([Hyperrectangle(N[0, 1], N[3, 1]), Hyperrectangle(N[3, -1], N[3, 1])])
-    res, w = ⊆(B, U, true)
-    @test !(B ⊆ U) && !res && w ∈ B && w ∉ U
+    if isdefined(@__MODULE__, :IntervalBoxes)
+        B = Hyperrectangle(N[0, 0], N[1, 1])
+        U = UnionSetArray([Hyperrectangle(N[0, 1], N[3, 1]), Hyperrectangle(N[0, -1], N[3, 1])])
+        res, w = ⊆(B, U, true)
+        @test B ⊆ U && res && w == N[]
+        U = UnionSetArray([Hyperrectangle(N[0, 1], N[3, 1]), Hyperrectangle(N[3, -1], N[3, 1])])
+        res, w = ⊆(B, U, true)
+        @test !(B ⊆ U) && !res && w ∈ B && w ∉ U
+    end
 
     # polytope in union of polytopes
     P = VPolytope([N[3 // 2, 0], [0, 3 // 2], [-3 // 2, 0], [0, -3 // 2]])

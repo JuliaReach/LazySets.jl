@@ -18,7 +18,7 @@ function isidentical(::Interval, ::Interval)
 end
 
 function isidentical(X1::Interval{N}, X2::Interval{N}) where {N}
-    return X1.dat == X2.dat
+    return X1 == X2
 end
 
 for N in @tN([Float64, Float32, Rational{Int}])
@@ -30,7 +30,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # default constructor from IntervalArithmetic.Interval
     itv = IA.interval(N(0), N(2))
     X = Interval(itv)
-    @test X isa Interval{N} && X.dat == itv
+    @test X isa Interval{N} && IA.isequal_interval(X.dat, itv)
 
     # constructors from two numbers, from a vector, and with promotion
     for Y in (Interval(N(0), N(2)), Interval(N[0, 2]), Interval(0, N(2)))
@@ -48,7 +48,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # convert
     # to and from IntervalArithmetic.Interval
     Y = convert(IA.Interval, X)
-    @test Y == X.dat
+    @test IA.isequal_interval(Y, X.dat)
     Z = convert(Interval, Y)
     @test isidentical(Z, X)
     # from hyperrectangular set

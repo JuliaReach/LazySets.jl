@@ -227,9 +227,3 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::AbstractHyperrectangle))
 * [`cartesian_product`](@ref cartesian_product(::AbstractHyperrectangle, ::AbstractHyperrectangle))
-
-Some additional functionality is available for `IntervalArithmetic.Interval`s:
-
-```@docs
-fast_interval_pow(::IA.Interval, ::Int)
-```

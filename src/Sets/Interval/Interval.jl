@@ -27,13 +27,13 @@ of numbers:
 
 ```jldoctest interval_constructor
 julia> x = Interval(0.0, 1.0)
-Interval{Float64}([0, 1])
+Interval{Float64}([0.0, 1.0])
 ```
 A 2-vector is also possible:
 
 ```jldoctest interval_constructor
 julia> x = Interval([0.0, 1.0])
-Interval{Float64}([0, 1])
+Interval{Float64}([0.0, 1.0])
 ```
 
 An interval can also be constructed from an `IntervalArithmetic.Interval`.
@@ -45,7 +45,7 @@ conflict otherwise.
 julia> using IntervalArithmetic
 
 julia> x = LazySets.Interval(IntervalArithmetic.interval(0.0, 1.0))
-LazySets.IntervalModule.Interval{Float64}([0, 1])
+LazySets.IntervalModule.Interval{Float64}([0.0, 1.0])
 
 julia> dim(x)
 1

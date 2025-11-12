@@ -1,5 +1,4 @@
 using LazySets: substitute_blocks,
-                fast_interval_pow,
                 get_constrained_lowdimset
 
 """
@@ -368,7 +367,7 @@ function overapproximate(P::AbstractSparsePolynomialZonotope,
         return UnionSetArray([overapproximate(P, Zonotope)])
     end
 
-    dom = IA.IntervalBox(IA.interval(-1, 1), q)
+    dom = fill(IA.interval(-1, 1), q)
     cells = IA.mince(dom, isnothing(partition) ? nsdiv : partition)
     return UnionSetArray([overapproximate(P, Zonotope, c) for c in cells])
 end
@@ -676,50 +675,46 @@ function overapproximate(P::AbstractSparsePolynomialZonotope{N}, ::Type{<:VPolyt
     return VPolytope(vlist)
 end
 
-# function to be loaded by Requires
-function load_paving_overapproximation()
+function load_IntervalBoxes_overapproximate_paving()
     return quote
-        using .IntervalConstraintProgramming: Paving
+        import .IntervalBoxes as IB
 
         """
-            overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN})
-                where {L, N, VN}
+            overapproximate(boundary::Vector{<:IB.IntervalBox}, dirs::AbstractDirections)
 
-        Overapproximate a Paving-type set representation with a polyhedron in constraint
+        Overapproximate a vector of `IntervalBox`es ("paving") with a polyhedron in constraint
         representation.
 
         ### Input
 
-        - `p`    -- paving
-        - `dirs` -- template directions
+        - `boundary` -- vector of `IntervalBox`es
+        - `dirs`     -- template directions
 
         ### Output
 
-        An overapproximation of a paving using a polyhedron in constraint representation
-        (`HPolyhedron`) with constraints in direction `dirs`.
+        An overapproximation in constraint representation (`HPolyhedron`) with constraints in
+        direction `dirs`.
 
         ### Algorithm
 
-        This function takes the union of the elements at the boundary of `p`, first
-        converted into hyperrectangles, and then calculates the support function of the
-        set along each  direction in dirs, to compute the `HPolyhedron` constraints.
-
-        This algorithm requires the IntervalConstraintProgramming package.
+        This implementation first converts the boxes into `Hyperrectangle`s and then calculates the
+        support function of the set along each  direction in `dirs` to compute the `HPolyhedron`
+        constraints.
         """
-        function overapproximate(p::Paving{L,N}, dirs::AbstractDirections{N,VN}) where {L,N,VN}
+        function overapproximate(boundary::Vector{<:IB.IntervalBox}, dirs::AbstractDirections)
             # enclose outer approximation
-            Uouter = UnionSetArray(convert.(Hyperrectangle, p.boundary))
+            Uouter = UnionSetArray(convert.(Hyperrectangle, boundary))
             constraints = [HalfSpace(d, ρ(d, Uouter)) for d in dirs]
             return HPolyhedron(constraints)
         end
 
         # alias with HPolyhedron type as second argument
-        function overapproximate(p::Paving{L,N}, ::Type{<:HPolyhedron},
-                                 dirs::AbstractDirections{N,VN}) where {L,N,VN}
-            return overapproximate(p, dirs)
+        function overapproximate(boundary::Vector{<:IB.IntervalBox}, ::Type{<:HPolyhedron},
+                                 dirs::AbstractDirections)
+            return overapproximate(boundary, dirs)
         end
     end
-end  # quote / load_paving_overapproximation
+end  # quote / load_IntervalBoxes_overapproximate_paving
 
 """
 # Extended help
