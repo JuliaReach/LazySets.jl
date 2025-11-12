@@ -421,8 +421,8 @@ function load_taylormodels_box_approximation()
         box_approximation(vTM::Vector{<:TaylorModelN}) = _box_approximation_vTM(vTM)
 
         function _box_approximation_vTM(vTM)
-            B = IA.IntervalBox([evaluate(vTM[i], domain(p)) for (i, p) in enumerate(vTM)]...)
-            return convert(Hyperrectangle, B)
+            bounds = [evaluate(vTM[i], domain(p)) for (i, p) in enumerate(vTM)]
+            return Hyperrectangle(low=IA.inf.(bounds), high=IA.sup.(bounds))
         end
     end
 end  # quote / load_taylormodels_box_approximation

@@ -3,7 +3,6 @@ using LazySets.MatrixZonotopeModule: vectorize
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
 using LazySets.ReachabilityBase.Comparison: _leq, _geq
 IA = LazySets.IA
-using LazySets.IA: IntervalBox
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -587,8 +586,8 @@ for N in [Float64]
         Dx₁ = IA.interval(N(1.0), N(3.0))
         Dx₂ = IA.interval(N(-1.0), N(1.0))
         Dx₃ = IA.interval(N(-1.0), N(0.0))
-        D = Dx₁ × Dx₂ × Dx₃   # domain
-        local x0 = IntervalBox(IA.mid.(D)...)
+        D = [Dx₁, Dx₂, Dx₃]   # domain
+        local x0 = [IA.interval(IA.mid(di)) for di in D]
         I = IA.interval(N(0.0), N(0.0)) # interval remainder
         local p₁ = 1 + x₁ - x₂
         local p₂ = x₃ - x₁
@@ -641,6 +640,19 @@ for N in [Float64]
         t = TaylorModels.Taylor1(6)
         qq = 1.0 + 2.0 * t + 3t^2 + 6t^3
         @test _nonlinear_polynomial(qq) == 3t^2 + 6t^3
+
+        # overapproximate with non-thin interval
+        local x₁, x₂ = TaylorModels.set_variables(N, ["x₁", "x₂"]; order=5)
+        D = [IA.interval(N(0), N(1)), IA.interval(N(0), N(1))]
+        local x0 = [IA.interval(N(0)) for di in D]
+        local p₁ = -0.5889978124894689 + 1.1134797677046997 * x₁ + 0.3335653797529812 * x₂
+        local p₂ = -0.2491731179254906 + 1.7154248320430348 * x₁ - 1.4331637467176936 * x₂
+        local vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
+        Z = overapproximate(vTM, Zonotope)
+        @test isequivalent(Z,
+                           Zonotope([0.13452476123937152, -0.10804257526282007],
+                                    [0.1667826898764906 0.5567398838523498;
+                                     -0.7165818733588468 0.8577124160215174]))
     end
 
     # Zonotope approximation of convex hull array of zonotopes
@@ -667,23 +679,33 @@ for N in [Float64]
         @test (L ∩ Z) ⊆ cap
     end
 
-    @static if isdefined(@__MODULE__, :IntervalConstraintProgramming)
+    @static if isdefined(@__MODULE__, :IntervalConstraintProgramming) &&
+               isdefined(@__MODULE__, :IntervalBoxes)
         # overapproximate a nonlinear constraint with an HPolyhedron
-        local dom = IntervalBox(IA.interval(-2, 2), IA.interval(-2, 2))
-        C = IntervalConstraintProgramming.@constraint x^2 + y^2 <= 1
-        p = IntervalConstraintProgramming.pave(C, dom, 0.01)
+        vars = IntervalConstraintProgramming.@variables x, y
+        dom = IntervalBoxes.IntervalBox([IA.interval(-2, 2), IA.interval(-2, 2)]...)
+        C = IntervalConstraintProgramming.constraint(x^2 + y^2 <= 1, vars)
+        # (`invokelatest` to avoid world-age issue)
+        inner, boundary = invokelatest(IntervalConstraintProgramming.pave, dom, C, 0.01)
         dirs = OctDirections(2)
-        H = overapproximate(p, dirs)
+        H = overapproximate(boundary, dirs)
         B2 = Ball2(N[0, 0], N(1))
         @test B2 ⊆ H
+    end
 
+    @static if isdefined(@__MODULE__, :IntervalConstraintProgramming)
         # overapproximate the intersection of a zonotope with an axis-aligned
         # half-space by a zonotope using ICP
-        Z = Zonotope(N[0, 2], N[1//2 1//2; 1 0])
-        H = HalfSpace(SingleEntryVector(1, 2, N(1)), N(0))
-        R = overapproximate(Z ∩ H, Zonotope)
-        R_exact = intersection(Z, H)
-        @test R ⊆ Z && R_exact ⊆ R
+        G = N[1//2 1//2; 1 0]
+        for G2 in [-G]  # (G, -G)  TODO replace once ICP can redefine constraints
+            Z = Zonotope(N[0, 2], G2)
+            for v in [N(-1)]  # (N(1), N(-1))  TODO replace once ICP can redefine constraints
+                H = HalfSpace(SingleEntryVector(1, 2, v), N(0))
+                R = overapproximate(Z ∩ H, Zonotope)
+                R_exact = intersection(Z, H)
+                @test R ⊆ Z && R_exact ⊆ R
+            end
+        end
     end
 
     # quadratic map

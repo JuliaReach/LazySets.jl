@@ -43,10 +43,10 @@ julia> difference(X, X)
 ∅(1)
 
 julia> difference(X, Y)
-Interval{Float64}([0, 1])
+Interval{Float64}([0.0, 1.0])
 
 julia> difference(Y, Z)
-UnionSet{Float64, Interval{Float64}, Interval{Float64}}(Interval{Float64}([1, 2]), Interval{Float64}([3, 4]))
+UnionSet{Float64, Interval{Float64}, Interval{Float64}}(Interval{Float64}([1.0, 2.0]), Interval{Float64}([3.0, 4.0]))
 ```
 """
 @validate function difference(X::Interval, Y::Interval)
