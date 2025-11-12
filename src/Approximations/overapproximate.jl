@@ -1,6 +1,5 @@
 using LazySets: block_to_dimension_indices,
                 substitute_blocks,
-                fast_interval_pow,
                 get_constrained_lowdimset
 
 """

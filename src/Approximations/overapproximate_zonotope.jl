@@ -247,7 +247,7 @@ end
 
 """
     overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope},
-                    dom::IntervalBox)
+                    dom::AbstractVector{<:IA.Interval})
 
 Overapproximate a sparse polynomial zonotope over the parameter domain `dom`
 with a zonotope.
@@ -264,9 +264,10 @@ with a zonotope.
 A zonotope.
 """
 function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope},
-                         dom::IA.IntervalBox)
-    @assert dom ⊆ IA.IntervalBox(IA.interval(-1, 1), nparams(P)) "dom should " *
-                                                                 "be a subset of [-1, 1]^q"
+    dom::AbstractVector{<:IA.Interval})
+    @assert length(dom) == nparams(P) &&
+            all(IA.issubset_interval(vi, IA.interval(-1, 1)) for vi in dom) "dom should be a " *
+                                                                            "subset of [-1, 1]^q"
 
     # handle dependent generators
     G = genmat_dep(P)
@@ -275,12 +276,11 @@ function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope}
     Gnew = similar(G)
     @inbounds for (j, g) in enumerate(eachcol(G))
         # monomial value over the domain
-        # α = mapreduce(x -> _fast_interval_pow(x[1],  x[2]), *, zip(dom, E[:, i]))
         α = IA.interval(1, 1)
         for (i, vi) in enumerate(dom)
-            α *= fast_interval_pow(vi, E[i, j])
+            α *= vi^E[i, j]
         end
-        m, r = IA.midpoint_radius(α)
+        m, r = IA.midradius(α)
         cnew .+= m * g
         Gnew[:, j] .= r * g
     end
