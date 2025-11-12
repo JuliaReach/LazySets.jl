@@ -24,8 +24,8 @@ function load_intervalmatrices_conversion()
         julia> IM = IntervalMatrix([interval(-1.1, -0.9) interval(-4.1, -3.9);
                     interval(3.9, 4.1) interval(-1.1, -0.9)])
         2×2 IntervalMatrix{Float64, IntervalArithmetic.Interval{Float64}, Matrix{IntervalArithmetic.Interval{Float64}}}:
-         [-1.10001, -0.9]  [-4.1, -3.89999]
-          [3.89999, 4.1]   [-1.10001, -0.9]
+         [-1.1, -0.9]  [-4.1, -3.9]
+          [3.9, 4.1]   [-1.1, -0.9]
 
         julia> MZ = convert(MatrixZonotope, IM)
         MatrixZonotope{Float64, Matrix{Float64}}([-1.0 -4.0; 4.0 -1.0], [[0.10000000000000009 0.0; 0.0 0.0], [0.0 0.0; 0.10000000000000009 0.0], [0.0 0.10000000000000009; 0.0 0.0], [0.0 0.0; 0.0 0.10000000000000009]], [1, 2, 3, 4])
