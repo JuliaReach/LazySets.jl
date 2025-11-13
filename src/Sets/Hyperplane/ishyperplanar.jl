@@ -64,12 +64,17 @@ end  # load_SymEngine_ishyperplanar
 
 function load_Symbolics_ishyperplanar()
     return quote
-        using .Symbolics: Symbolic
+        if isdefined(Symbolics, :Symbolic)
+            import .Symbolics: Symbolic
+            const BasicSymbolic = Symbolic
+        else
+            import .Symbolics: BasicSymbolic
+        end
 
         # returns `(true, sexpr)` if expr represents a hyperplane,
         # where sexpr is the simplified expression sexpr := LHS - RHS == 0
         # otherwise returns `(false, expr)`
-        function _ishyperplanar(expr::Symbolic)
+        function _ishyperplanar(expr::BasicSymbolic)
             got_hyperplane = Symbolics.operation(expr) == ==
             if got_hyperplane
                 # simplify to the form a*x + b == 0
