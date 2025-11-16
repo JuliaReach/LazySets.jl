@@ -1168,12 +1168,7 @@ function _overapproximate_zonotope_hyperplane(Z::AbstractZonotope, H::Hyperplane
 
     s = G' * a
     d = b - dot(a, c)
-    @static if VERSION >= v"1.7"
-        sT = s'
-    else
-        sT = s' .+ 0  # convert to Vector (`nullspace` fails for lazy transpose)
-    end
-    V0 = nullspace(sT)
+    V0 = nullspace(s')
 
     cs = s * d / dot(s, s)
     Gs = V0 * V0'
@@ -1260,8 +1255,8 @@ function load_overapproximate_ICP()
                                  ICP.Separator($e, $vars)
                              end)
             # smallest box containing all points in domain X satisfying constraint
-            # (`invokelatest` to avoid world-age issue; `Base.` for VERSION < v"1.9")
-            boundary, _, _ = Base.invokelatest(separator, IB.IntervalBox(X...))  # NOTE: this is an internal function
+            # (`invokelatest` to avoid world-age issue)
+            boundary, _, _ = invokelatest(separator, IB.IntervalBox(X...))  # NOTE: this is an internal function
             return boundary
         end
     end
