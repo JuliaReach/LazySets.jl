@@ -675,47 +675,6 @@ function overapproximate(P::AbstractSparsePolynomialZonotope{N}, ::Type{<:VPolyt
     return VPolytope(vlist)
 end
 
-function load_IntervalBoxes_overapproximate_paving()
-    return quote
-        import .IntervalBoxes as IB
-
-        """
-            overapproximate(boundary::Vector{<:IB.IntervalBox}, dirs::AbstractDirections)
-
-        Overapproximate a vector of `IntervalBox`es ("paving") with a polyhedron in constraint
-        representation.
-
-        ### Input
-
-        - `boundary` -- vector of `IntervalBox`es
-        - `dirs`     -- template directions
-
-        ### Output
-
-        An overapproximation in constraint representation (`HPolyhedron`) with constraints in
-        direction `dirs`.
-
-        ### Algorithm
-
-        This implementation first converts the boxes into `Hyperrectangle`s and then calculates the
-        support function of the set along each  direction in `dirs` to compute the `HPolyhedron`
-        constraints.
-        """
-        function overapproximate(boundary::Vector{<:IB.IntervalBox}, dirs::AbstractDirections)
-            # enclose outer approximation
-            Uouter = UnionSetArray(convert.(Hyperrectangle, boundary))
-            constraints = [HalfSpace(d, ρ(d, Uouter)) for d in dirs]
-            return HPolyhedron(constraints)
-        end
-
-        # alias with HPolyhedron type as second argument
-        function overapproximate(boundary::Vector{<:IB.IntervalBox}, ::Type{<:HPolyhedron},
-                                 dirs::AbstractDirections)
-            return overapproximate(boundary, dirs)
-        end
-    end
-end  # quote / load_IntervalBoxes_overapproximate_paving
-
 """
 # Extended help
 
