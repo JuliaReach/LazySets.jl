@@ -1,12 +1,6 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
 IA = LazySets.IA
-@static if VERSION >= v"1.9"
-    vIA = pkgversion(IA)
-else
-    import PkgVersion
-    vIA = PkgVersion.Version(IA)
-end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -360,11 +354,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(Y, Interval(N(0), N(4)))
     Y = linear_map(zeros(N, 1, 1), X)  # zero map
     @test Y isa Interval{N}
-    if vIA == v"0.21.0"
-        @test_broken isequivalent(Y, Interval(N(0), N(0)))  # bug in IntervalArithmetic: 0 * I == I
-    else
-        @test isequivalent(Y, Interval(N(0), N(0)))
-    end
+    @test isequivalent(Y, Interval(N(0), N(0)))
     Y = linear_map(ones(N, 2, 1), X)  # higher dimension
     @test Y isa LazySet{N} && isequivalent(Y, LineSegment(N[0, 0], N[2, 2]))
     Y = linear_map(zeros(N, 2, 1), X)  # zero map in higher dimension

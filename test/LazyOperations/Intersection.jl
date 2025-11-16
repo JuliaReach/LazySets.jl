@@ -1,11 +1,5 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
-@static if VERSION >= v"1.9"
-    vGLPK = pkgversion(LazySets.GLPK)
-else
-    import PkgVersion
-    vGLPK = PkgVersion.Version(LazySets.GLPK)
-end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -70,7 +64,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     I2 = Hyperplane(ones(N, 2), N(1)) ∩ HalfSpace(ones(N, 2), N(1))
     # the next test fails with the "EXACT" solver GLPK older than v0.15.3
     # see https://github.com/jump-dev/GLPK.jl/issues/207
-    if N != Rational{Int} || vGLPK >= v"0.15.3"
+    if N != Rational{Int} || pkgversion(LazySets.GLPK) >= v"0.15.3"
         @test !isbounded(I2) && !isboundedtype(typeof(I2))
     end
 
