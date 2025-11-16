@@ -418,9 +418,11 @@ for N in @tN([Float64, Float32])
     @test center(PZ) == N[-1, 3 // 2]   # no reasonable tests available here
 
     # overapproximate matrix zonotope with interval matrix
-    MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
-    IM = overapproximate(MZ, IntervalMatrix)
-    @test IM == IntervalMatrix(N[-1.1 -4.1; 3.9 -1.1], N[-0.9 -3.9; 4.1 -0.9])
+    @static if isdefined(@__MODULE__, :IntervalMatrices)
+        MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
+        IM = overapproximate(MZ, IntervalMatrix)
+        @test IM == IntervalMatrix(N[-1.1 -4.1; 3.9 -1.1], N[-0.9 -3.9; 4.1 -0.9])
+    end
 
     # circumsphere
     P = VPolygon()

@@ -465,7 +465,7 @@ end
 This implementation is general and successively removes parts from `X` that are
 covered by the sets in the union ``U`` using the `difference` function. For the
 resulting subsets, this implementation relies on the methods `isdisjoint`, `⊆`,
-and `intersection`.
+`intersection`, and `difference`.
 
 As a preprocessing, this implementation checks if `X` is contained in any of the
 sets in `U`.
