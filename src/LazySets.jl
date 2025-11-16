@@ -33,10 +33,6 @@ import IntervalArithmetic as IA
 using LinearAlgebra: checksquare
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, randperm
 
-@static if VERSION < v"1.9"
-    stack(vecs) = hcat(vecs...)  # COV_EXCL_LINE
-end
-
 # ================
 # ReachabilityBase
 # ================
