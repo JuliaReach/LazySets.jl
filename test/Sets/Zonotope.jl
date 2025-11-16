@@ -115,10 +115,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch area(Z1)
     res = area(Z)
     @test res isa N && res == N(8)
-    res = area(Z3)
-    @test res == N(88)
-    if N isa AbstractFloat
-        @test res isa N
+    if isdefined(@__MODULE__, :Polyhedra)
+        res = area(Z3)
+        @test res == N(88)
+        if N isa AbstractFloat
+            @test res isa N
+        end
     end
 
     # complement
