@@ -688,7 +688,8 @@ for N in [Float64]
         # (`invokelatest` to avoid world-age issue)
         inner, boundary = invokelatest(IntervalConstraintProgramming.pave, dom, C, 0.01)
         dirs = OctDirections(2)
-        H = overapproximate(boundary, dirs)
+        Uouter = UnionSetArray(convert.(Hyperrectangle, boundary))
+        H = overapproximate(Uouter, dirs)
         B2 = Ball2(N[0, 0], N(1))
         @test B2 ⊆ H
     end
