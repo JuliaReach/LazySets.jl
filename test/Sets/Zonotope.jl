@@ -701,7 +701,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # linear_combination
     @test_throws DimensionMismatch linear_combination(Z, Z3)
-    @test_broken linear_combination(Z, Xnc)
+    @test_broken linear_combination(Z, Xnc)  # TODO implement `linear_combination` for non-convex sets
     @test_broken linear_combination(Xnc, Z)
     for X in (linear_combination(Z, Z), linear_combination(Z, P), linear_combination(P, Z))
         @test X isa LazySet{N} && isequivalent(X, Z)
