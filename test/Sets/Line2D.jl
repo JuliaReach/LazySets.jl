@@ -100,7 +100,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test lm.a ≈ N[1 / 2, -2] && lm.b ≈ N(0)
     # map to a single point
     M = zeros(N, 2, 2)
-    @test_broken linear_map(M, L)
+    lm = linear_map(M, L)
+    @test lm == Singleton(N[0, 0])
 
     # projection
     L = Line2D(N[1, -1], N(0))  # x = y
