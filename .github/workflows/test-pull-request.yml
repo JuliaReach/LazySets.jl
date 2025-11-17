@@ -19,7 +19,6 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '1.11'  # currently there are dependency problems on v1.12
           - '1'
         os:
           - ubuntu-latest
