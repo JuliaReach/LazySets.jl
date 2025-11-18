@@ -281,6 +281,9 @@ end
     @testset "LazySets.issubset" begin
         include("ConcreteOperations/issubset.jl")
     end
+    @testset "LazySets.linear_combination" begin
+        include("ConcreteOperations/linear_combination.jl")
+    end
     @testset "LazySets.minkowski_difference" begin
         include("ConcreteOperations/minkowski_difference.jl")
     end

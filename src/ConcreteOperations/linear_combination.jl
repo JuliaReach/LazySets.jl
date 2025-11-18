@@ -2,6 +2,10 @@
     if isconvextype(typeof(X)) && isconvextype(typeof(Y))
         return _linear_combination_convex(X, Y)
     end
+    if dim(X) == 1
+        # equivalent to convex hull in 1D
+        return _linear_combination_convex(X, Y)
+    end
     throw(ArgumentError("the linear combination of non-convex sets is not implemented"))
 end
 
@@ -9,6 +13,7 @@ end
     return _linear_combination_convex(X, Y)
 end
 
+# handle `linear_combination` cases when one set is empty
 function _linear_combination_convex(X, Y)
     if isempty(X)
         return X

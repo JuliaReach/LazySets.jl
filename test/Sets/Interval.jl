@@ -25,7 +25,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # auxiliary sets
     S2 = Singleton(N[0, 0])  # 2D set
     B = BallInf(N[1], N(1))  # equivalent set
-    Xnc = UnionSet(B, BallInf(N[3], N(1)))  # nonconvex set
+    Xnc = UnionSet(B, BallInf(N[4], N(1)))  # nonconvex set
 
     # default constructor from IntervalArithmetic.Interval
     itv = IA.interval(N(0), N(2))
@@ -579,8 +579,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # linear_combination
     @test_throws DimensionMismatch linear_combination(X, S2)
     @test_throws DimensionMismatch linear_combination(S2, X)
-    @test_broken linear_combination(X, Xnc)
-    @test_broken linear_combination(Xnc, X)
+    for Y in (linear_combination(X, Xnc), linear_combination(Xnc, X))
+        @test isidentical(Y, Interval(N(0), N(5)))
+    end
     for Z in (linear_combination(X, X), linear_combination(X, B), linear_combination(B, X))
         @test isidentical(Z, X)
     end
