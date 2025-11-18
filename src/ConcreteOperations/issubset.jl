@@ -51,12 +51,12 @@ function _issubset_in_hyperrectangle(S, H, witness)
             return false
         elseif lS < lH
             # outside in negative direction
-            v = σ(SingleEntryVector(i, n, -one(N)), S)
-            return (false, v)
+            w = σ(SingleEntryVector(i, n, -one(N)), S)
+            return (false, w)
         elseif hS > hH
             # outside in positive direction
-            v = σ(SingleEntryVector(i, n, one(N)), S)
-            return (false, v)
+            w = σ(SingleEntryVector(i, n, one(N)), S)
+            return (false, w)
         end
     end
     return _witness_result_empty(witness, true, N)
@@ -772,6 +772,8 @@ end
 The algorithm is based on [MitchellBB19; Lemma 3.1](@citet).
 """
 @validate function ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, witness::Bool=false)
+    # TODO is this implementation really more efficient than `_issubset_in_hyperrectangle`?
+    #      if yes, part of the code could still be shared
     c = center(Z)
     G = genmat(Z)
     n, m = size(G)
@@ -783,9 +785,18 @@ The algorithm is based on [MitchellBB19; Lemma 3.1](@citet).
         end
         ubound = c[i] + aux
         lbound = c[i] - aux
-        if !_leq(ubound, high(H, i)) || !_geq(lbound, low(H, i))
+        if !_leq(ubound, high(H, i))
             if witness
-                throw(ArgumentError("witness production is not supported yet"))
+                # outside in positive direction
+                w = σ(SingleEntryVector(i, n, one(N)), Z)
+                return (false, w)
+            end
+            return false
+        elseif !_geq(lbound, low(H, i))
+            if witness
+                # outside in negative direction
+                w = σ(SingleEntryVector(i, n, -one(N)), Z)
+                return (false, w)
             end
             return false
         end

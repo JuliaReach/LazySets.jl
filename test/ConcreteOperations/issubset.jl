@@ -51,7 +51,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res && w isa Vector{N} && isempty(w)
     H = Hyperrectangle(; low=N[-2, -2], high=N[2, 0])
     @test !(Z ⊆ H)
-    @test_broken ⊆(Z, H, true) isa Tuple  # TODO this should work
+    res, w = ⊆(Z, H, true)
+    @test !res && w isa Vector{N} && w ∈ Z && w ∉ H
 
     B = Hyperrectangle(N[0, 0], N[1, 1])
     U = UnionSetArray([Hyperrectangle(N[0, 1], N[3, 1]), Hyperrectangle(N[0, -1], N[3, 1])])
