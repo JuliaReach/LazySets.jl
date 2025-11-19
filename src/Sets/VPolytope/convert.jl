@@ -19,7 +19,13 @@ This method uses `vertices_list`. Use the option `prune` to select whether to
 remove redundant vertices before constructing the polytope.
 """
 function convert(::Type{VPolytope}, X::LazySet; prune::Bool=true)
-    return VPolytope(vertices_list(X; prune=prune))
+    # TODO there should be a better mechanism to choose the right method
+    if hasmethod(vertices_list, tuple(typeof(X)), (:prune,))
+        vlist = vertices_list(X; prune=prune)
+    else
+        vlist = vertices_list(X)
+    end
+    return VPolytope(vlist)
 end
 
 function load_Polyhedra_convert_VPolytope()

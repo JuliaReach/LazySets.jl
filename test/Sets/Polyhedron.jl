@@ -136,14 +136,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     @static if isdefined(@__MODULE__, :Polyhedra)
         # concrete linear map of a bounded polyhedron by a non-invertible matrix
-        H = Hyperrectangle(N[1, 1], N[2, 2])
-        P = convert(HPolyhedron, H)
+        P = convert(HPolyhedron, Hyperrectangle(N[1, 1], N[2, 2]))
         Q = linear_map(N[2 3; 0 0], P; algorithm="vrep")
-        if N != Float32
-            @test Q isa VPolytope{N}
-        else
-            @test_broken Q isa VPolytope{N}
-        end
+        @test isequivalent(Q, VPolytope([N[-5, 0], N[3, 0], N[7, 0], N[15, 0]])) &&
+              Q isa VPolytope{N}
     end
 
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)

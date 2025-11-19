@@ -428,22 +428,11 @@ end
 function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron,
                           algo::LinearMapVRep=LinearMapVRep(nothing);
                           apply_convex_hull::Bool=false)
-    if !isbounded(P)
-        throw(ArgumentError("the linear map in vertex representation for an " *
-                            "unbounded set is not defined"))
-    end
     require(@__MODULE__, :Polyhedra; fun_name="linear_map",
             explanation="of a $(typeof(P)) by a non-invertible matrix")
-    # since P is bounded, we pass an HPolytope and then convert it to vertex
-    # representation
 
-    P_hpoly = HPolytope(constraints_list(P); check_boundedness=false)
-    backend = algo.backend
-    if isnothing(backend)
-        backend = default_polyhedra_backend(P)
-    end
-    P = HPolyhedronModule.tovrep(P_hpoly; backend=backend)
-    return _linear_map_vrep(M, P, algo; apply_convex_hull=apply_convex_hull)
+    Q = convert(VPolytope, P)
+    return _linear_map_vrep(M, Q, algo; apply_convex_hull=apply_convex_hull)
 end
 
 # preconditions should have been checked in the caller function
