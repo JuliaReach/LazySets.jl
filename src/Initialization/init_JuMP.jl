@@ -38,7 +38,9 @@ function linprog(c, A, sense, b, l, u, solver_or_model)
     x = lin_prog_variable!(model, n, l, u)
     lin_prog_constraints!(model, A, sense, b, x)
 
-    @objective(model, Min, c' * x)
+    if !iszero(c)  # default is a feasibility query
+        @objective(model, Min, c' * x)
+    end
 
     optimize!(model)
     return (status = termination_status(model),
