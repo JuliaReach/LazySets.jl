@@ -131,6 +131,16 @@ end
 The volume is computed by the `Polyhedra` library.
 """
 function volume(P::AbstractPolytope; backend=nothing)
+    n = dim(P)
+    if n <= 2
+        if n == 1
+            return _volume_1D(P)
+        elseif n == 2
+            return area(P)
+        end
+        throw(ArgumentError("invalid dimension $n"))
+    end
+
     require(@__MODULE__, :Polyhedra; fun_name="volume")
     if isnothing(backend)
         backend = default_polyhedra_backend(P)
