@@ -428,7 +428,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(Z2, Zonotope(N[4, 5, 6], N[3 7; 3 7; 3 7]))
 
     # distance (between point and set)
-    @test_broken distance(Z, N[0, 0]) isa LazySet{N}  # TODO this should work
+    @test_broken distance(Z, N[0, 0]) isa LazySet{N}  # TODO implement `distance` for polytopes
     # @test_throws DimensionMismatch distance(Z, N[0])
     # @test_throws ArgumentError distance(Z, N[0]; p=N(1 // 2))
     # for (x, v) in ((N[1], N(0)), (N[4], N(2)))
@@ -602,10 +602,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # difference
-    @test_broken difference(Z, Z3) isa LazySet{N}  # TODO this should work (add more tests later)
+    @test_broken difference(Z, Z3) isa LazySet{N}  # TODO implement `difference` for polytopes (add more tests later)
 
     # distance (between two sets)
-    @test_broken distance(Z, Z3) isa LazySet{N}  # TODO this should work (add more tests later)
+    @test_broken distance(Z, Z3) isa LazySet{N}  # TODO implement `distance` for polytopes (add more tests later)
 
     # exact_sum
     @test_throws DimensionMismatch exact_sum(Z, Z3)
@@ -658,8 +658,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
         Z2 = Zonotope(N[6 + 1e-9, 8], N[1 0; 0 1])
         @test !isdisjoint(Z, Z2)
         r = LazySets._rtol(N)
+        @assert r > N(1e-10) "default tolerance changed; adapt test"
         LazySets.set_rtol(N, N(1e-10))
-        @test_broken isdisjoint(Z, Z2)  # TODO this should work
+        @test_broken isdisjoint(Z, Z2)  # cannot adapt tolerance of LP solver
         # restore tolerance
         LazySets.set_rtol(N, r)
     end
@@ -701,8 +702,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # linear_combination
     @test_throws DimensionMismatch linear_combination(Z, Z3)
-    @test_broken linear_combination(Z, Xnc)  # TODO implement `linear_combination` for non-convex sets
-    @test_broken linear_combination(Xnc, Z)
+    @test_broken linear_combination(Z, Xnc) isa LazySet{N}  # TODO implement `linear_combination` for non-convex sets
+    @test_broken linear_combination(Xnc, Z) isa LazySet{N}
     for X in (linear_combination(Z, Z), linear_combination(Z, P), linear_combination(P, Z))
         @test X isa LazySet{N} && isequivalent(X, Z)
     end
