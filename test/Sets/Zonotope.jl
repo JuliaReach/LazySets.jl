@@ -419,6 +419,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     res = collect(vertices(Z))
     @test res isa Vector{Vector{N}} && ispermutation(res, vertices_list(Z))
 
+    # volume (part 1)
+    res = volume(Z)
+    @test res isa N && res == N(8)
+
     # affine_map
     @test_throws DimensionMismatch affine_map(ones(N, 2, 1), Z, N[1, 1])
     @test_throws DimensionMismatch affine_map(ones(N, 2, 2), Z, N[1])
@@ -763,6 +767,7 @@ end
 
 for N in @tN([Float64, Rational{Int}])
     Z = Zonotope(N[1, 2], N[1 3; 2 4])
+    Z3 = Zonotope(N[1, 1, 1], N[1 0 0; 0 2 0; 0 0 3])  # 3D zonotope, a hyperrectangle
 
     # polyhedron
     @static if isdefined(@__MODULE__, :Polyhedra)
@@ -781,10 +786,10 @@ for N in @tN([Float64, Rational{Int}])
         end
     end
 
-    # volume
+    # volume (part 2)
     @static if isdefined(@__MODULE__, :Polyhedra)
-        res = volume(Z)
-        @test res isa N && res ≈ N(8)  # TODO this should work without Polyhedra in 2D
+        res = volume(Z3)
+        @test res isa N && res == N(48)
     end
 end
 

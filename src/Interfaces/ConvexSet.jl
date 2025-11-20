@@ -16,3 +16,8 @@ Every concrete `ConvexSet` must define the following function:
 abstract type ConvexSet{N} <: LazySet{N} end
 
 isconvextype(X::Type{<:ConvexSet}) = true
+
+function _volume_1D(X::ConvexSet)
+    l, u = extrema(X)
+    return u - l
+end
