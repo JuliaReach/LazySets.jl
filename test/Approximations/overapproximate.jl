@@ -218,20 +218,32 @@ for N in @tN([Float64, Float32, Rational{Int}])
     B = MatrixZonotope(N[2 0; 1 -1], [N[0 1; 1 -1]])
     res = overapproximate(A * B, MatrixZonotope)
 
-    ex_res = MatrixZonotope(N[3 -1; -1 -1], [N[0 1; 2 -1], N[1 0; 1 -2]])
+    ex_res = MatrixZonotope(N[3 -1; -1 -1], [N[0 1; 2 -1], N[2 0;4 -2], N[1 0; 1 -2]])
     @static if isdefined(@__MODULE__, :Polyhedra)
         @test isequivalent(vectorize(res), vectorize(ex_res))
     end
 
     C = MatrixZonotope(N[1 0; 0 -1], [N[0 0; 1 0]])
     res2 = overapproximate(A * B * C, MatrixZonotope)
-    @test ngens(res2) == 3
-
+    @test res2 isa MatrixZonotope
+    
     #empty generator
     D = MatrixZonotope(N[1 0; 0 -1], Matrix{N}[])
     res3 = overapproximate(A * D, MatrixZonotope)
     @test center(res3) == N[1 -1; -1 -1]
     @test generators(res3) == [N[1 0; 1 -2]]
+
+    # more generators
+    A = MatrixZonotope(N[1 2; 0 -1], [N[1 0; 0 1], N[0 2; 1 0]])
+    B = MatrixZonotope(N[2 -1; 1 3], [N[0 1; 1 0], N[1 0; 0 -1], N[2 2; -1 0]])
+
+    R = overapproximate(A * B, MatrixZonotope)
+    @test center(R) == center(A) * center(B)
+    @test ngens(R) == 11   # 3 + 2 + 6
+    # spot checks
+    @test any(==(center(A) * generators(B)[1]), generators(R))
+    @test any(==(generators(A)[2] * center(B)), generators(R))
+    @test any(==(generators(A)[1] * generators(B)[3]), generators(R))
 end
 
 for N in @tN([Float64, Float32])
