@@ -196,7 +196,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @static if isdefined(@__MODULE__, :MiniQhull) && isdefined(@__MODULE__, :Polyhedra)
         n = 3
         bi = BallInf(zeros(N, 3), p1)
-        plot(bi)  # TODO the Float32 plot looks wrong (a pyramid)
+        if N != Float32
+            plot(bi)
+        else
+            # TODO the Float32 plot looks wrong (a pyramid) and randomly crashes in CI runs
+            @test_broken false
+        end
     end
 end
 
