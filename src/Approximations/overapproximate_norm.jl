@@ -36,15 +36,14 @@ The problem ``\\max_{z ∈ Z} ‖z‖_1`` is NP-hard in general.
 
 ### Algorithm
 
-This method computes a convex relaxation by combining the MILP formulation
-described in [JordanD21; Theorem 5](@citet) with the convex-hull construction in
-the supplement section §C.3. We replace each coordinate's absolute value
+This method computes the convex relaxation described in [JordanD21; §C.3](@citet)
+Each coordinate's absolute value
 
 ```math
 |z_i|\\quad z_i ∈ [ℓ_i, u_i]
 ```
 
-by its convex-hull secant upper envelope: the line through the two points
+is replaced by its convex-hull secant upper envelope: the line through the two points
 ``((ℓ_i,|ℓ_i|)`` and ``((u_i,|u_i|)``. This yields a linear-programming
 relaxation of complexity \\(O(p·n)\\), where `p` is the number of generators and
 `n` the ambient dimension.
