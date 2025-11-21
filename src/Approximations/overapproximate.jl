@@ -898,11 +898,12 @@ A matrix zonotope overapproximating the matrix zonotope product
 """
 function overapproximate(MZP::MatrixZonotopeProduct{N,S},
                          ::Type{<:MatrixZonotope}) where {N,S<:AbstractMatrix{N}}
-    if nfactors(MZP) == 1
-        return factors(MZP)[1]
+    facs = factors(MZP)
+    if length(facs) == 1
+        return facs[1]
     end
 
-    return foldl(factors(MZP)) do A, B
+    return foldl(facs) do A, B
         nB = ngens(B)
         nA = ngens(A)
 
@@ -912,15 +913,22 @@ function overapproximate(MZP::MatrixZonotopeProduct{N,S},
             return linear_map(A, center(B))
         end
 
-        gens = Vector{S}(undef, nB + nA * nB)
+        gens = Vector{S}(undef, nB + nA + nA * nB)
+        idx = 1
 
-        # G₀ · Hⱼ block
-        @inbounds for j in 1:nB
-            gens[j] = center(A) * generators(B)[j]
+        # G₀ * Hⱼ 
+        @inbounds for Hj in generators(B)
+            gens[idx] = center(A) * Hj
+            idx += 1
         end
 
-        # Gᵢ ⋅ Hⱼ block
-        idx = nB + 1
+        # Gᵢ * H₀
+        @inbounds for Gi in generators(A)
+            gens[idx] = Gi * center(B)
+            idx += 1
+        end
+
+        # Gᵢ * Hⱼ
         @inbounds for Gi in generators(A), Hj in generators(B)
             gens[idx] = Gi * Hj
             idx += 1
