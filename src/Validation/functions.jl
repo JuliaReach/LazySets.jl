@@ -214,9 +214,9 @@ end
 push!(VALIDATE_DICT, :⊂ => (validate_isstrictsubset, args12))
 
 function validate_issubset(X::LazySet, Y::LazySet)
-    return validate_same_dim(X, Y; fun=⊆)
+    return validate_same_dim(X, Y; fun=issubset)
 end
-push!(VALIDATE_DICT, :⊆ => (validate_issubset, args12))
+push!(VALIDATE_DICT, :issubset => (validate_issubset, args12))
 
 function validate_linear_combination(X::LazySet, Y::LazySet)
     return validate_same_dim(X, Y; fun=linear_combination)

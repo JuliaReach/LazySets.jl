@@ -18,8 +18,8 @@ using ReachabilityBase.Require: require
                         linear_map, low, norm, permute, project, radius, rand,
                         rectify, reflect, scale, ρ, σ, translate, vertices_list,
                         volume, difference, distance, intersection, isapprox,
-                        isdisjoint, isequivalent, ⊂, ⊆, minkowski_difference,
-                        minkowski_sum
+                        isdisjoint, isequivalent, ⊂, issubset,
+                        minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens,
                              radius_hyperrectangle, rationalize, split
 import ..LazySets: plot_recipe

@@ -1,6 +1,6 @@
 # this operation is invalid, but it is a common error, so we give a detailed
 # error message
-function ⊆(::AbstractVector, ::LazySet)
+function issubset(::AbstractVector, ::LazySet)
     throw(ArgumentError("cannot make an inclusion check if the left-hand side " *
                         "is a vector; either wrap it as a set with one element, as in " *
                         "`Singleton(v) ⊆ X`, or check for set membership, as in `v ∈ X` " *
@@ -10,7 +10,7 @@ end
 """
 # Extended help
 
-    ⊆(X::LazySet, Y::LazySet, witness::Bool=false)
+    issubset(X::LazySet, Y::LazySet, witness::Bool=false)
 
 ### Algorithm
 
@@ -18,7 +18,7 @@ The default implementation assumes that `Y` is polyhedral, i.e., that
 `constraints_list(Y)` is available, and checks inclusion of `X` in every
 constraint of `Y`.
 """
-@validate function ⊆(X::LazySet, Y::LazySet, witness::Bool=false)
+@validate function issubset(X::LazySet, Y::LazySet, witness::Bool=false)
     if ispolyhedral(Y)
         return _issubset_constraints_list(X, Y, witness)
     else
@@ -30,14 +30,14 @@ end
 """
 # Extended help
 
-    ⊆(S::LazySet, H::AbstractHyperrectangle, [witness]::Bool=false)
+    issubset(S::LazySet, H::AbstractHyperrectangle, [witness]::Bool=false)
 
 ### Algorithm
 
 ``S ⊆ H`` iff ``\\operatorname{ihull}(S) ⊆ H``, where  ``\\operatorname{ihull}``
 is the interval-hull operator.
 """
-@validate function ⊆(S::LazySet, H::AbstractHyperrectangle, witness::Bool=false)
+@validate function issubset(S::LazySet, H::AbstractHyperrectangle, witness::Bool=false)
     return _issubset_in_hyperrectangle(S, H, witness)
 end
 
@@ -65,7 +65,7 @@ end
 """
 # Extended help
 
-    ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
+    issubset(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
       [witness]::Bool=false)
 
 ### Algorithm
@@ -73,7 +73,7 @@ end
 ``H1 ⊆ H2`` iff ``c_1 + r_1 ≤ c_2 + r_2 ∧ c_1 - r_1 ≥ c_2 - r_2`` iff
 ``r_1 - r_2 ≤ c_1 - c_2 ≤ -(r_1 - r_2)``, where ``≤`` is taken component-wise.
 """
-@validate function ⊆(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
+@validate function issubset(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
                      witness::Bool=false)
     N = promote_type(eltype(H1), eltype(H2))
     @inbounds for i in 1:dim(H1)
@@ -101,7 +101,7 @@ end
 """
 # Extended help
 
-    ⊆(P::AbstractPolytope, S::LazySet, [witness]::Bool=false;
+    issubset(P::AbstractPolytope, S::LazySet, [witness]::Bool=false;
       [algorithm]="constraints")
 
 ### Input
@@ -124,7 +124,7 @@ end
 - `"vertices"`:
 Since ``S`` is convex, ``P ⊆ S`` iff ``v ∈ S`` for all vertices ``v`` of ``P``.
 """
-@validate function ⊆(P::AbstractPolytope, S::LazySet, witness::Bool=false;
+@validate function issubset(P::AbstractPolytope, S::LazySet, witness::Bool=false;
                      algorithm=nothing)
     if !isconvextype(typeof(S))
         error("an inclusion check for the given combination of set types is " *
@@ -160,7 +160,7 @@ function _issubset_vertices_list(P, S, witness)
 end
 
 """
-    ⊆(X::LazySet, P::AbstractPolyhedron, [witness]::Bool=false)
+    issubset(X::LazySet, P::AbstractPolyhedron, [witness]::Bool=false)
 
 Check whether a convex set is contained in a polyhedral set, and if not,
 optionally compute a witness.
@@ -188,7 +188,7 @@ above check fails.
 
 See [WetzlingerKBA23; Proposition 7](@citet).
 """
-@validate function ⊆(X::LazySet, P::AbstractPolyhedron, witness::Bool=false)
+@validate function issubset(X::LazySet, P::AbstractPolyhedron, witness::Bool=false)
     if !isconvextype(typeof(X))
         return _issubset_in_polyhedron_high(X, P, witness)
     end
@@ -210,7 +210,7 @@ function _issubset_in_polyhedron_high(S::LazySet, P::LazySet, witness::Bool=fals
     throw(ArgumentError("witness production is not supported yet"))
 end
 
-@validate function ⊆(Z::AbstractZonotope, P::AbstractPolyhedron, witness::Bool=false)
+@validate function issubset(Z::AbstractZonotope, P::AbstractPolyhedron, witness::Bool=false)
     return _issubset_zonotope_in_polyhedron(Z, P, witness)
 end
 
@@ -255,13 +255,13 @@ function _issubset_constraints_list(S::LazySet, P::LazySet, witness::Bool=false)
     return _witness_result_empty(witness, true, S, P)
 end
 
-@validate function ⊆(S1::AbstractSingleton, S2::AbstractSingleton, witness::Bool=false)
+@validate function issubset(S1::AbstractSingleton, S2::AbstractSingleton, witness::Bool=false)
     s1 = element(S1)
     result = _isapprox(s1, element(S2))
     return _witness_result_empty(witness, result, S1, S2, s1)
 end
 
-@validate function ⊆(S::AbstractSingleton, X::LazySet, witness::Bool=false)
+@validate function issubset(S::AbstractSingleton, X::LazySet, witness::Bool=false)
     return _issubset_singleton(S, X, witness)
 end
 
@@ -271,7 +271,7 @@ function _issubset_singleton(S, X, witness)
     return _witness_result_empty(witness, result, S, X, s)
 end
 
-@validate function ⊆(B::Union{Ball2,Ballp}, S::AbstractSingleton, witness::Bool=false)
+@validate function issubset(B::Union{Ball2,Ballp}, S::AbstractSingleton, witness::Bool=false)
     result = isapproxzero(B.radius) && _isapprox(B.center, element(S))
     if result
         return _witness_result_empty(witness, true, B, S)
@@ -292,14 +292,14 @@ end
 """
 # Extended help
 
-    ⊆(L::LineSegment, S::LazySet, witness::Bool=false)
+    issubset(L::LineSegment, S::LazySet, witness::Bool=false)
 
 ### Algorithm
 
 Since ``S`` is convex, ``L ⊆ S`` iff ``p ∈ S`` and ``q ∈ S``, where ``p, q`` are
 the end points of ``L``.
 """
-@validate function ⊆(L::LineSegment, S::LazySet, witness::Bool=false)
+@validate function issubset(L::LineSegment, S::LazySet, witness::Bool=false)
     if !isconvextype(typeof(S))
         error("an inclusion check for the given combination of set types is " *
               "not available")
@@ -319,7 +319,7 @@ function _issubset_line_segment(L, S, witness)
 end
 
 """
-    ⊆(X::Interval, U::UnionSet, [witness]::Bool=false)
+    issubset(X::Interval, U::UnionSet, [witness]::Bool=false)
 
 Check whether an interval is contained in the union of two convex sets.
 
@@ -345,7 +345,7 @@ If the lower bound of ``X`` is to the left of ``Y``, we have a counterexample.
 Otherwise we compute the set difference ``W = X \\ Y`` and check whether
 ``W ⊆ Z`` holds.
 """
-@validate function ⊆(X::Interval, U::UnionSet, witness::Bool=false)
+@validate function issubset(X::Interval, U::UnionSet, witness::Bool=false)
     if !isconvextype(typeof(first(U))) || !isconvextype(typeof(second(U)))
         error("an inclusion check for the given combination of set types is " *
               "not available")
@@ -354,7 +354,7 @@ Otherwise we compute the set difference ``W = X \\ Y`` and check whether
                               convert(Interval, second(U)), witness)
 end
 
-@validate function ⊆(X::Interval, U::UnionSet{N,<:Interval,<:Interval},
+@validate function issubset(X::Interval, U::UnionSet{N,<:Interval,<:Interval},
                      witness::Bool=false) where {N}
     return _issubset_interval(X, first(U), second(U), witness)
 end
@@ -382,7 +382,7 @@ function _issubset_interval(X::Interval{N}, Y::Interval, Z::Interval,
     return (false, w)
 end
 
-@validate function ⊆(X::Interval, U::UnionSetArray, witness::Bool=false)
+@validate function issubset(X::Interval, U::UnionSetArray, witness::Bool=false)
     V = _get_interval_array_copy(U)
     return _issubset_interval!(X, V, witness)
 end
@@ -452,7 +452,7 @@ end
 """
 # Extended help
 
-    ⊆(X::LazySet{N}, U::UnionSetArray, witness::Bool=false;
+    issubset(X::LazySet{N}, U::UnionSetArray, witness::Bool=false;
       filter_redundant_sets::Bool=true) where {N}
 
 ### Input
@@ -473,7 +473,7 @@ sets in `U`.
 The `filter_redundant_sets` option controls whether sets in `U` that do not
 intersect with `X` should be ignored.
 """
-@validate function ⊆(X::LazySet, U::UnionSetArray, witness::Bool=false;
+@validate function issubset(X::LazySet, U::UnionSetArray, witness::Bool=false;
                      filter_redundant_sets::Bool=true)
     return _issubset_unionsetarray(X, U, witness;
                                    filter_redundant_sets=filter_redundant_sets)
@@ -553,47 +553,47 @@ function _inclusion_in_union_isflat(H::AbstractHyperrectangle)
     return isflat(H)
 end
 
-@validate function ⊆(∅::EmptySet, X::LazySet, witness::Bool=false)
+@validate function issubset(∅::EmptySet, X::LazySet, witness::Bool=false)
     return _issubset_emptyset(∅, X, witness)
 end
 
 """
 # Extended help
 
-    ⊆(X::LazySet, ∅::EmptySet, [witness]::Bool=false)
+    issubset(X::LazySet, ∅::EmptySet, [witness]::Bool=false)
 
 ### Algorithm
 
 We rely on `isempty(X)` for the emptiness check and on `an_element(X)` for
 witness production.
 """
-@validate function ⊆(X::LazySet, ∅::EmptySet, witness::Bool=false)
+@validate function issubset(X::LazySet, ∅::EmptySet, witness::Bool=false)
     return _issubset_emptyset2(X, ∅, witness)
 end
 
 """
 # Extended help
 
-    ⊆(U::UnionSet, X::LazySet, [witness]::Bool=false)
+    issubset(U::UnionSet, X::LazySet, [witness]::Bool=false)
 
 ### Notes
 
 This implementation assumes that the sets in the union `U` are convex.
 """
-@validate function ⊆(U::UnionSet, X::LazySet, witness::Bool=false)
+@validate function issubset(U::UnionSet, X::LazySet, witness::Bool=false)
     return _issubset_union_in_set(U, X, witness)
 end
 
 """
 # Extended help
 
-    ⊆(U::UnionSetArray, X::LazySet, [witness]::Bool=false)
+    issubset(U::UnionSetArray, X::LazySet, [witness]::Bool=false)
 
 ### Notes
 
 This implementation assumes that the sets in the union `U` are convex.
 """
-@validate function ⊆(U::UnionSetArray, X::LazySet, witness::Bool=false)
+@validate function issubset(U::UnionSetArray, X::LazySet, witness::Bool=false)
     return _issubset_union_in_set(U, X, witness)
 end
 
@@ -618,24 +618,24 @@ end
 """
 # Extended help
 
-    ⊆(U::Universe, X::LazySet, [witness]::Bool=false)
+    issubset(U::Universe, X::LazySet, [witness]::Bool=false)
 
 ### Algorithm
 
 We fall back to `isuniversal(X)`.
 """
-@validate function ⊆(U::Universe, X::LazySet, witness::Bool=false)
+@validate function issubset(U::Universe, X::LazySet, witness::Bool=false)
     return _issubset_universe(U, X, witness)
 end
 
-@validate function ⊆(X::LazySet, U::Universe, witness::Bool=false)
+@validate function issubset(X::LazySet, U::Universe, witness::Bool=false)
     return _issubset_universe2(X, U, witness)
 end
 
 """
 # Extended help
 
-    ⊆(X::LazySet, C::Complement, [witness]::Bool=false)
+    issubset(X::LazySet, C::Complement, [witness]::Bool=false)
 
 ### Algorithm
 
@@ -645,14 +645,14 @@ We fall back to `isdisjoint(X, C.X)`, which can be justified as follows.
     X ⊆ Y^C ⟺ X ∩ Y = ∅
 ```
 """
-@validate function ⊆(X::LazySet, C::Complement, witness::Bool=false)
+@validate function issubset(X::LazySet, C::Complement, witness::Bool=false)
     return isdisjoint(X, C.X, witness)
 end
 
 """
 # Extended help
 
-    ⊆(X::CartesianProduct, Y::CartesianProduct, [witness]::Bool=false;
+    issubset(X::CartesianProduct, Y::CartesianProduct, [witness]::Bool=false;
       check_block_equality::Bool=true)
 
 ### Input
@@ -676,7 +676,7 @@ For witness production, we obtain a witness in one of the blocks.
 We then construct a high-dimensional witness by obtaining any point in the other
 blocks (using `an_element`) and concatenating these (lower-dimensional) points.
 """
-@validate function ⊆(X::CartesianProduct, Y::CartesianProduct, witness::Bool=false;
+@validate function issubset(X::CartesianProduct, Y::CartesianProduct, witness::Bool=false;
                      check_block_equality::Bool=true)
     n1 = dim(first(X))
     n2 = dim(second(X))
@@ -709,7 +709,7 @@ end
 """
 # Extended help
 
-    ⊆(X::CartesianProductArray, Y::CartesianProductArray, [witness]::Bool=false;
+    issubset(X::CartesianProductArray, Y::CartesianProductArray, [witness]::Bool=false;
       check_block_equality::Bool=true)
 
 ### Input
@@ -733,7 +733,7 @@ For witness production, we obtain a witness in one of the blocks.
 We then construct a high-dimensional witness by obtaining any point in the other
 blocks (using `an_element`) and concatenating these (lower-dimensional) points.
 """
-@validate function ⊆(X::CartesianProductArray, Y::CartesianProductArray,
+@validate function issubset(X::CartesianProductArray, Y::CartesianProductArray,
                      witness::Bool=false; check_block_equality::Bool=true)
     aX = array(X)
     aY = array(Y)
@@ -765,13 +765,13 @@ end
 """
 # Extended help
 
-    ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, [witness]::Bool=false)
+    issubset(Z::AbstractZonotope, H::AbstractHyperrectangle, [witness]::Bool=false)
 
 ### Algorithm
 
 The algorithm is based on [MitchellBB19; Lemma 3.1](@citet).
 """
-@validate function ⊆(Z::AbstractZonotope, H::AbstractHyperrectangle, witness::Bool=false)
+@validate function issubset(Z::AbstractZonotope, H::AbstractHyperrectangle, witness::Bool=false)
     # TODO is this implementation really more efficient than `_issubset_in_hyperrectangle`?
     #      if yes, part of the code could still be shared
     c = center(Z)
@@ -805,20 +805,20 @@ The algorithm is based on [MitchellBB19; Lemma 3.1](@citet).
 end
 
 for T in (AbstractZonotope, AbstractSingleton, LineSegment)
-    @eval @validate function ⊆(Z::$(T), C::CartesianProduct{N,<:LazySet,<:Universe}) where {N}
+    @eval @validate function issubset(Z::$(T), C::CartesianProduct{N,<:LazySet,<:Universe}) where {N}
         X = first(C)
         Zp = project(Z, 1:dim(X))
         return ⊆(Zp, X)
     end
 
-    @eval @validate function ⊆(Z::$(T), C::CartesianProduct{N,<:Universe,<:LazySet}) where {N}
+    @eval @validate function issubset(Z::$(T), C::CartesianProduct{N,<:Universe,<:LazySet}) where {N}
         Y = second(C)
         Zp = project(Z, (dim(first(C)) + 1):dim(C))
         return ⊆(Zp, Y)
     end
 
     # disambiguation
-    @eval @validate function ⊆(X::$(T), Y::CartesianProduct{N,<:Universe,<:Universe}) where {N}
+    @eval @validate function issubset(X::$(T), Y::CartesianProduct{N,<:Universe,<:Universe}) where {N}
         return true
     end
 end
@@ -827,56 +827,56 @@ end
 # disambiguation #
 # ============== #
 
-@validate function ⊆(P::AbstractPolytope, H::AbstractHyperrectangle, witness::Bool=false)
+@validate function issubset(P::AbstractPolytope, H::AbstractHyperrectangle, witness::Bool=false)
     return _issubset_in_hyperrectangle(P, H, witness)
 end
 
 for T in (:AbstractPolytope, :AbstractHyperrectangle, :LineSegment)
-    @eval @validate function ⊆(X::($T), P::AbstractPolyhedron, witness::Bool=false)
+    @eval @validate function issubset(X::($T), P::AbstractPolyhedron, witness::Bool=false)
         return _issubset_constraints_list(X, P, witness)
     end
 end
 
 for T in (:AbstractHyperrectangle, :AbstractPolyhedron, :UnionSetArray, :Complement)
-    @eval @validate function ⊆(X::AbstractSingleton, Y::($T), witness::Bool=false)
+    @eval @validate function issubset(X::AbstractSingleton, Y::($T), witness::Bool=false)
         return _issubset_singleton(X, Y, witness)
     end
 end
 
-@validate function ⊆(L::LineSegment, H::AbstractHyperrectangle, witness::Bool=false)
+@validate function issubset(L::LineSegment, H::AbstractHyperrectangle, witness::Bool=false)
     return _issubset_line_segment(L, H, witness)
 end
 
-@validate function ⊆(X::Interval, U::UnionSetArray{N,<:AbstractHyperrectangle},
+@validate function issubset(X::Interval, U::UnionSetArray{N,<:AbstractHyperrectangle},
                      witness::Bool=false) where {N}
     V = _get_interval_array_copy(U)
     return _issubset_interval!(X, V, witness)
 end
 
-@validate function ⊆(X::LineSegment, U::UnionSetArray, witness::Bool=false)
+@validate function issubset(X::LineSegment, U::UnionSetArray, witness::Bool=false)
     return _issubset_unionsetarray(X, U, witness)
 end
 
 # with additional kwarg
-@validate function ⊆(X::AbstractPolytope, U::UnionSetArray, witness::Bool=false; algorithm=nothing)
+@validate function issubset(X::AbstractPolytope, U::UnionSetArray, witness::Bool=false; algorithm=nothing)
     return _issubset_unionsetarray(X, U, witness)
 end
 
 for T in (:AbstractPolyhedron, :AbstractHyperrectangle, :Complement, :UnionSet, :UnionSetArray)
-    @eval @validate function ⊆(∅::EmptySet, X::($T), witness::Bool=false)
+    @eval @validate function issubset(∅::EmptySet, X::($T), witness::Bool=false)
         return _issubset_emptyset(∅, X, witness)
     end
 end
 
 for T in (:AbstractPolytope, :UnionSet, :UnionSetArray, :AbstractSingleton, :LineSegment)
-    @eval @validate function ⊆(X::($T), ∅::EmptySet, witness::Bool=false)
+    @eval @validate function issubset(X::($T), ∅::EmptySet, witness::Bool=false)
         return _issubset_emptyset2(X, ∅, witness)
     end
 end
 
 for TU in (:UnionSet, :UnionSetArray)
     for T in (:AbstractHyperrectangle, :AbstractPolyhedron, :UnionSet, :UnionSetArray)
-        @eval @validate function ⊆(U::($TU), X::($T), witness::Bool=false)
+        @eval @validate function issubset(U::($TU), X::($T), witness::Bool=false)
             return _issubset_union_in_set(U, X, witness)
         end
     end
@@ -884,20 +884,20 @@ end
 
 for T in (:AbstractPolyhedron, :AbstractPolytope, :AbstractHyperrectangle,
           :AbstractSingleton, :EmptySet, :UnionSetArray, :Complement)
-    @eval @validate function ⊆(U::Universe, X::($T), witness::Bool=false)
+    @eval @validate function issubset(U::Universe, X::($T), witness::Bool=false)
         return _issubset_universe(U, X, witness)
     end
 end
 
 for T in (:AbstractPolytope, :AbstractZonotope, :AbstractHyperrectangle,
           :AbstractSingleton, :LineSegment, :EmptySet, :UnionSet, :UnionSetArray)
-    @eval @validate function ⊆(X::($T), U::Universe, witness::Bool=false)
+    @eval @validate function issubset(X::($T), U::Universe, witness::Bool=false)
         return _issubset_universe2(X, U, witness)
     end
 end
 
 for T in (:AbstractPolytope, :LineSegment, :UnionSet, :UnionSetArray)
-    @eval @validate function ⊆(X::($T), C::Complement, witness::Bool=false)
+    @eval @validate function issubset(X::($T), C::Complement, witness::Bool=false)
         return isdisjoint(X, C.X, witness)
     end
 end

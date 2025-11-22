@@ -103,7 +103,7 @@ CurrentModule = LazySets.API
 * [`intersection`](@ref intersection(::LazySet, ::LazySet))
 * [`isapprox`](@ref isapprox(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
-* [`⊆`](@ref ⊆(::LazySet, ::LazySet))
+* [`issubset`](@ref issubset(::LazySet, ::LazySet))
 * [`linear_combination`](@ref linear_combination(::LazySet, ::LazySet))
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 * [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))

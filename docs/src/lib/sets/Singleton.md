@@ -155,6 +155,6 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`intersection`](@ref intersection(::AbstractSingleton, ::AbstractSingleton))
 * [`isdisjoint`](@ref isdisjoint(::AbstractSingleton, ::AbstractSingleton))
 * [`isequivalent`](@ref isequivalent(::AbstractSingleton, ::AbstractSingleton))
-* [`⊆`](@ref ⊆(::AbstractSingleton, ::AbstractSingleton))
+* [`issubset`](@ref issubset(::AbstractSingleton, ::AbstractSingleton))
 * [`minkowski_difference`](@ref minkowski_difference(::AbstractSingleton, ::AbstractSingleton))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractSingleton, ::AbstractSingleton))

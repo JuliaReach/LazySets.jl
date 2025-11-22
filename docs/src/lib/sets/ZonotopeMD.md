@@ -113,6 +113,6 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`ρ`](@ref ρ(::AbstractVector, ::AbstractZonotope))
 * [`σ`](@ref σ(::AbstractVector, ::AbstractZonotope))
 * [`isdisjoint`](@ref isdisjoint(::AbstractZonotope, ::AbstractZonotope))
-* [`⊆`](@ref ⊆(::AbstractZonotope, ::AbstractZonotope))
+* [`issubset`](@ref issubset(::AbstractZonotope, ::AbstractZonotope))
 * [`minkowski_difference`](@ref minkowski_difference(::AbstractZonotope, ::AbstractZonotope))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractZonotope, ::AbstractZonotope))

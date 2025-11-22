@@ -161,7 +161,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{AbstractPolyhedron}))
 * [`intersection`](@ref intersection(::AbstractPolyhedron, ::AbstractPolyhedron))
 * [`isdisjoint`](@ref isdisjoint(::AbstractPolyhedron, ::AbstractPolyhedron))
-* [`⊆`](@ref ⊆(::AbstractPolyhedron, ::AbstractPolyhedron))
+* [`issubset`](@ref issubset(::AbstractPolyhedron, ::AbstractPolyhedron))
 
 Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))

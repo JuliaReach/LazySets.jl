@@ -203,4 +203,4 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolytope, ::Bool=false))
 * [`volume`](@ref volume(::AbstractPolytope))
-* [`⊆`](@ref ⊆(::AbstractPolytope, ::AbstractPolyhedron))
+* [`issubset`](@ref issubset(::AbstractPolytope, ::AbstractPolyhedron))

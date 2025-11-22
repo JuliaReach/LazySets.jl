@@ -167,7 +167,7 @@ Inherited from [`LazySet`](@ref):
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
-* [`⊆`](@ref ⊆(::LazySet, ::LazySet))
+* [`issubset`](@ref issubset(::LazySet, ::LazySet))
 * [`linear_combination`](@ref linear_combination(::LazySet, ::LazySet))
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 

@@ -525,13 +525,13 @@ CurrentModule = LazySets
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-⊆(::LazySet, ::LazySet)
+issubset(::LazySet, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets
 ```
 ```@docs
-⊆(::LazySet, ::LazySet, ::Bool=false)
+issubset(::LazySet, ::LazySet, ::Bool=false)
 minkowski_difference(::LazySet, ::LazySet)
 minkowski_sum(::LazySet, ::LazySet)
 ```

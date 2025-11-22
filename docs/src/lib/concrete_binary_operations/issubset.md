@@ -62,28 +62,28 @@ plot1
 
 ```@example binary_set_operations
 println(B1 ⊆ B2)
-w1 = ⊆(B1, B2, true)[2]
+w1 = issubset(B1, B2, true)[2]
 println(B1 ⊆ BI)
-w2 = ⊆(B1, BI, true)[2]
+w2 = issubset(B1, BI, true)[2]
 println(B1 ⊆ H)
-w3 = ⊆(B1, H, true)[2]
+w3 = issubset(B1, H, true)[2]
 # 'B2 ⊆ B1' is not supported yet
-# w11 = ⊆(B2, B1, true)[2]
+# w11 = issubset(B2, B1, true)[2]
 println(B2 ⊆ BI)
-w4 = ⊆(B2, BI, true)[2]
+w4 = issubset(B2, BI, true)[2]
 println(B2 ⊆ H)
 println(BI ⊆ B1)
-w5 = ⊆(BI, B1, true)[2]
+w5 = issubset(BI, B1, true)[2]
 println(BI ⊆ B2)
-w6 = ⊆(BI, B2, true)[2]
+w6 = issubset(BI, B2, true)[2]
 println(BI ⊆ H)
-w7 = ⊆(BI, H, true)[2]
+w7 = issubset(BI, H, true)[2]
 println(H ⊆ B1)
-w8 = ⊆(H, B1, true)[2]
+w8 = issubset(H, B1, true)[2]
 println(H ⊆ B2)
-w9 = ⊆(H, B2, true)[2]
+w9 = issubset(H, B2, true)[2]
 println(H ⊆ BI)
-w10 = ⊆(H, BI, true)[2];
+w10 = issubset(H, BI, true)[2];
 ```
 
 ```@example binary_set_operations
@@ -102,7 +102,7 @@ CurrentModule = LazySets.API
 ```
 
 ```@docs; canonical=false
-⊆(::LazySet, ::LazySet)
+issubset(::LazySet, ::LazySet)
 ```
 
 ```@meta
@@ -110,23 +110,23 @@ CurrentModule = LazySets
 ```
 
 ```@docs
-⊆(::LazySet, ::AbstractHyperrectangle, ::Bool=false)
-⊆(::AbstractPolytope, ::AbstractHyperrectangle, ::Bool=false)
-⊆(::AbstractZonotope, ::AbstractHyperrectangle)
-⊆(::LazySet, ::AbstractPolyhedron, ::Bool=false)
-⊆(::AbstractSingleton, ::AbstractHyperrectangle, ::Bool=false)
-⊆(::LineSegment, ::LazySet, ::Bool=false)
-⊆(::LineSegment, ::AbstractHyperrectangle, ::Bool=false)
-⊆(::Interval, ::UnionSet, ::Bool=false)
-⊆(::LazySet, ::EmptySet, ::Bool=false)
-⊆(::UnionSet, ::LazySet, ::Bool=false)
-⊆(::UnionSetArray, ::LazySet, ::Bool=false)
-⊆(::Universe, ::LazySet, ::Bool=false)
-⊆(::LazySet, ::Complement, ::Bool=false)
-⊆(::CartesianProduct, ::CartesianProduct, ::Bool=false)
-⊆(::CartesianProductArray, ::CartesianProductArray, ::Bool=false)
-⊆(::AbstractZonotope, ::AbstractHyperrectangle, ::Bool=false)
-⊆(::LazySet, ::UnionSetArray, ::Bool=false; ::Bool=true)
+issubset(::LazySet, ::AbstractHyperrectangle, ::Bool=false)
+issubset(::AbstractPolytope, ::AbstractHyperrectangle, ::Bool=false)
+issubset(::AbstractZonotope, ::AbstractHyperrectangle)
+issubset(::LazySet, ::AbstractPolyhedron, ::Bool=false)
+issubset(::AbstractSingleton, ::AbstractHyperrectangle, ::Bool=false)
+issubset(::LineSegment, ::LazySet, ::Bool=false)
+issubset(::LineSegment, ::AbstractHyperrectangle, ::Bool=false)
+issubset(::Interval, ::UnionSet, ::Bool=false)
+issubset(::LazySet, ::EmptySet, ::Bool=false)
+issubset(::UnionSet, ::LazySet, ::Bool=false)
+issubset(::UnionSetArray, ::LazySet, ::Bool=false)
+issubset(::Universe, ::LazySet, ::Bool=false)
+issubset(::LazySet, ::Complement, ::Bool=false)
+issubset(::CartesianProduct, ::CartesianProduct, ::Bool=false)
+issubset(::CartesianProductArray, ::CartesianProductArray, ::Bool=false)
+issubset(::AbstractZonotope, ::AbstractHyperrectangle, ::Bool=false)
+issubset(::LazySet, ::UnionSetArray, ::Bool=false; ::Bool=true)
 ```
 
 ## Strict subset check

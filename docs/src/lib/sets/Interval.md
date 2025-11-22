@@ -173,7 +173,7 @@ Undocumented implementations:
 * [`isapprox`](@ref isapprox(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
-* [`⊆`](@ref ⊆(::LazySet, ::LazySet, ::Bool=false))
+* [`issubset`](@ref issubset(::LazySet, ::LazySet, ::Bool=false))
 * [`minkowski_sum`](@ref minkowski_sum(::LazySet, ::LazySet))
 
 ```@meta

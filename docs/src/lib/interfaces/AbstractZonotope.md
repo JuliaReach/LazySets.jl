@@ -231,7 +231,7 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolytope}))
 * [`volume`](@ref volume(::AbstractPolytope))
-* [`⊆`](@ref ⊆(::AbstractPolytope, ::LazySet, ::Bool=false))
+* [`issubset`](@ref issubset(::AbstractPolytope, ::LazySet, ::Bool=false))
 
 Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`an_element`](@ref an_element(::AbstractCentrallySymmetricPolytope))
