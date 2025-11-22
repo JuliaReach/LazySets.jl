@@ -150,7 +150,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle))
 * [`volume`](@ref volume(::AbstractHyperrectangle))
 * [`distance`](@ref distance(::AbstractVector, ::AbstractHyperrectangle))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractHyperrectangle))
+* [`in`](@ref in(::AbstractVector, ::AbstractHyperrectangle))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::AbstractHyperrectangle))
 * [`project`](@ref project(::AbstractHyperrectangle, ::AbstractVector{Int}))
 * [`split`](@ref split(::AbstractHyperrectangle, ::AbstractVector{Int}))

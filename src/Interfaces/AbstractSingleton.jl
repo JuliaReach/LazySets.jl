@@ -138,19 +138,19 @@ end
 """
 # Extended help
 
-    ∈(x::AbstractVector, S::AbstractSingleton)
+    in(x::AbstractVector, S::AbstractSingleton)
 
 ### Notes
 
 This implementation performs an approximate comparison to account for
 imprecision in floating-point computations.
 """
-@validate function ∈(x::AbstractVector, S::AbstractSingleton)
+@validate function in(x::AbstractVector, S::AbstractSingleton)
     return _isapprox(x, element(S))
 end
 
 # this operation is forbidden, but it is a common error
-function ∈(S::AbstractSingleton, X::LazySet)
+function in(S::AbstractSingleton, X::LazySet)
     throw(ArgumentError("cannot make a point-in-set check if the left-hand " *
                         "side is a set; either check for set inclusion, as in `S ⊆ X`, or " *
                         "check for membership, as in `element(S) ∈ X` (the results are " *

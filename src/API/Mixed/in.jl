@@ -1,5 +1,5 @@
 """
-    ∈(x::AbstractVector, X::LazySet)
+    in(x::AbstractVector, X::LazySet)
 
 Check whether a point lies in a set.
 
@@ -12,4 +12,4 @@ Check whether a point lies in a set.
 
 `true` iff ``x ∈ X``.
 """
-function ∈(::AbstractVector, ::LazySet) end
+function in(::AbstractVector, ::LazySet) end

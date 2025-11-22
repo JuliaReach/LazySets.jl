@@ -110,7 +110,7 @@ Inherited from [`AbstractCentrallySymmetric`](@ref):
 Inherited from [`AbstractBallp`](@ref):
 * [`low`](@ref low(::AbstractBallp, ::Int))
 * [`high`](@ref high(::AbstractBallp, ::Int))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractBallp))
+* [`in`](@ref in(::AbstractVector, ::AbstractBallp))
 * [`ρ`](@ref ρ(::AbstractVector, ::AbstractBallp))
 * [`σ`](@ref σ(::AbstractVector, ::AbstractBallp))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractBallp, ::AbstractBallp))

@@ -157,7 +157,7 @@ function ispolyhedral(ia::IntersectionArray)
 end
 
 """
-    ∈(x::AbstractVector, ia::IntersectionArray)
+    in(x::AbstractVector, ia::IntersectionArray)
 
 Check whether a given point is contained in an intersection of a finite number
 of sets.
@@ -175,7 +175,7 @@ of sets.
 
 A point ``x`` is in the intersection iff it is in each set.
 """
-@validate function ∈(x::AbstractVector, ia::IntersectionArray)
+@validate function in(x::AbstractVector, ia::IntersectionArray)
     for S in ia.array
         if x ∉ S
             return false

@@ -1,7 +1,7 @@
 """
 # Extended help
 
-    ∈(x::AbstractVector, L::LineSegment)
+    in(x::AbstractVector, L::LineSegment)
 
 ### Algorithm
 
@@ -18,7 +18,7 @@ let ``x`` be the given point.
 
 The algorithm is inspired from [here](https://stackoverflow.com/a/328110).
 """
-@validate function ∈(x::AbstractVector, L::LineSegment)
+@validate function in(x::AbstractVector, L::LineSegment)
     # check if point x is on the line through the line segment (p, q)
     p = L.p
     q = L.q

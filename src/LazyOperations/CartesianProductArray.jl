@@ -296,7 +296,7 @@ function ispolyhedral(cpa::CartesianProductArray)
 end
 
 """
-    ∈(x::AbstractVector, cpa::CartesianProductArray)
+    in(x::AbstractVector, cpa::CartesianProductArray)
 
 Check whether a given point is contained in a Cartesian product of a finite
 number of sets.
@@ -310,7 +310,7 @@ number of sets.
 
 `true` iff ``x ∈ \\text{cpa}``.
 """
-@validate function ∈(x::AbstractVector, cpa::CartesianProductArray)
+@validate function in(x::AbstractVector, cpa::CartesianProductArray)
     i0 = 1
     for Xi in cpa.array
         i1 = i0 + dim(Xi) - 1

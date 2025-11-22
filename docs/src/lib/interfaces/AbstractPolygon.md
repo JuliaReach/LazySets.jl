@@ -85,7 +85,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{AbstractPolyhedron}))
 * [`low`](@ref low(::AbstractPolyhedron))
 * [`low`](@ref low(::AbstractPolyhedron, ::Int))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractPolyhedron))
+* [`in`](@ref in(::AbstractVector, ::AbstractPolyhedron))
 * [`project`](@ref project(::AbstractPolyhedron, ::AbstractVector{Int}))
 * [`isdisjoint`](@ref isdisjoint(::AbstractPolyhedron, ::AbstractPolyhedron))
 

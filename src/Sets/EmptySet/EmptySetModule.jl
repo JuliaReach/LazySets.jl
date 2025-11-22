@@ -11,7 +11,7 @@ using ReachabilityBase.Iteration: EmptyIterator
 using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, area, complement, diameter, dim,
-                        exponential_map, high, ∈, is_interior_point, isbounded,
+                        exponential_map, high, in, is_interior_point, isbounded,
                         isboundedtype, isempty, isoperationtype, isuniversal,
                         linear_map, low, norm, permute, project, radius, rand,
                         rectify, reflect, sample, scale, scale!, ρ, σ,

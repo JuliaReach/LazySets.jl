@@ -1,7 +1,7 @@
 """
 # Extended help
 
-    ∈(x::AbstractVector, B::Ball1, [failfast]::Bool=false)
+    in(x::AbstractVector, B::Ball1, [failfast]::Bool=false)
 
 ### Input
 
@@ -35,7 +35,7 @@ julia> [0.5, 1.5] ∈ B
 true
 ```
 """
-@validate function ∈(x::AbstractVector, B::Ball1, failfast::Bool=false)
+@validate function in(x::AbstractVector, B::Ball1, failfast::Bool=false)
     N = promote_type(eltype(x), eltype(B))
     sum = zero(N)
     @inbounds for (i, xi) in enumerate(x)

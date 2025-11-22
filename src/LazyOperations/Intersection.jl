@@ -567,7 +567,7 @@ function isboundedtype(::Type{<:Intersection{N,S1,S2}}) where {N,S1,S2}
 end
 
 """
-    ∈(x::AbstractVector, cap::Intersection)
+    in(x::AbstractVector, cap::Intersection)
 
 Check whether a given point is contained in the intersection of two sets.
 
@@ -584,7 +584,7 @@ Check whether a given point is contained in the intersection of two sets.
 
 A point ``x`` is in the intersection iff it is in each set.
 """
-@validate function ∈(x::AbstractVector, cap::Intersection)
+@validate function in(x::AbstractVector, cap::Intersection)
     return (x ∈ cap.X) && (x ∈ cap.Y)
 end
 

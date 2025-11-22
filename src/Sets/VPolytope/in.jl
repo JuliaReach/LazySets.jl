@@ -1,7 +1,7 @@
 """
 # Extended help
 
-    ∈(x::AbstractVector{N}, P::VPolytope{N};
+    in(x::AbstractVector{N}, P::VPolytope{N};
       solver=default_lp_solver(N)) where {N}
 
 ### Input
@@ -24,7 +24,7 @@ Then we solve the following ``m``-dimensional linear program.
 ∧ ⋀_{j=1}^m λ_j ≥ 0
 ```
 """
-@validate function ∈(x::AbstractVector{N}, P::VPolytope{N};
+@validate function in(x::AbstractVector{N}, P::VPolytope{N};
                      solver=default_lp_solver(N)) where {N}
     vertices = P.vertices
     m = length(vertices)

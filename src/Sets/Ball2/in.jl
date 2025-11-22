@@ -1,7 +1,7 @@
 """
 # Extended help
 
-    ∈(x::AbstractVector, B::Ball2)
+    in(x::AbstractVector, B::Ball2)
 
 ### Notes
 
@@ -30,7 +30,7 @@ julia> [.5, 1.5] ∈ B
 true
 ```
 """
-@validate function ∈(x::AbstractVector, B::Ball2)
+@validate function in(x::AbstractVector, B::Ball2)
     N = promote_type(eltype(x), eltype(B))
     sum = zero(N)
     @inbounds for i in eachindex(x)

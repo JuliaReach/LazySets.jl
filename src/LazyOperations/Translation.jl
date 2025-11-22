@@ -290,7 +290,7 @@ function _constraints_list_translation(X::LazySet, v::AbstractVector)
 end
 
 """
-    ∈(x::AbstractVector, tr::Translation)
+    in(x::AbstractVector, tr::Translation)
 
 Check whether a given point is contained in the translation of a set.
 
@@ -308,7 +308,7 @@ Check whether a given point is contained in the translation of a set.
 This implementation relies on the set-membership function for the wrapped set
 `tr.X`, since ``x ∈ X ⊕ v`` iff ``x - v ∈ X``.
 """
-@validate function ∈(x::AbstractVector, tr::Translation)
+@validate function in(x::AbstractVector, tr::Translation)
     return x - tr.v ∈ tr.X
 end
 

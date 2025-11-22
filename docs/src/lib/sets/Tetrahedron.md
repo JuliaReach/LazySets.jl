@@ -14,13 +14,13 @@ Tetrahedron
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets.TetrahedronModule
 ```
 ```@docs
-∈(::AbstractVector, ::Tetrahedron)
+in(::AbstractVector, ::Tetrahedron)
 ```
 ```@meta
 CurrentModule = LazySets.API

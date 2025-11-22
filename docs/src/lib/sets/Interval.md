@@ -161,7 +161,7 @@ Undocumented implementations:
 * [`volume`](@ref volume(::LazySet))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
-* [`∈`](@ref ∈(::AbstractVector, ::LazySet))
+* [`in`](@ref in(::AbstractVector, ::LazySet))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`scale`](@ref scale(::Real, ::LazySet))

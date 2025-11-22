@@ -195,7 +195,7 @@ that ``ρ(d, L) = ρ((M^T)^{-1} d, X)`` for any direction ``d``.
 end
 
 """
-    ∈(x::AbstractVector, ilm::InverseLinearMap)
+    in(x::AbstractVector, ilm::InverseLinearMap)
 
 Check whether a given point is contained in the inverse linear map of a set.
 
@@ -225,7 +225,7 @@ julia> [0.1, 0.1] ∈ ilm
 true
 ```
 """
-@validate function ∈(x::AbstractVector, ilm::InverseLinearMap)
+@validate function in(x::AbstractVector, ilm::InverseLinearMap)
     y = ilm.M * x
     return y ∈ ilm.X
 end

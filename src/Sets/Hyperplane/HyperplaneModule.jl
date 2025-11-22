@@ -16,7 +16,7 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
                         isoperationtype, isuniversal, rand, reflect, distance,
-                        ∈, project, ρ, σ, translate, isdisjoint
+                        in, project, ρ, σ, translate, isdisjoint
 @reexport import ..LazySets: constrained_dimensions, ishyperplanar, normalize
 import ..LazySets: _ishyperplanar, _linear_map_hrep_helper
 import ..Base: convert

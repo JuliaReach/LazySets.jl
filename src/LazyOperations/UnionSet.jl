@@ -188,7 +188,7 @@ function an_element(cup::UnionSet)
 end
 
 """
-    ∈(x::AbstractVector, cup::UnionSet)
+    in(x::AbstractVector, cup::UnionSet)
 
 Check whether a given point is contained in the union of two sets.
 
@@ -201,7 +201,7 @@ Check whether a given point is contained in the union of two sets.
 
 `true` iff ``x ∈ cup``.
 """
-@validate function ∈(x::AbstractVector, cup::UnionSet)
+@validate function in(x::AbstractVector, cup::UnionSet)
     return x ∈ cup.X || x ∈ cup.Y
 end
 

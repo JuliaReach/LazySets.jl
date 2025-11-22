@@ -9,7 +9,7 @@ InverseLinearMap
 dim(::InverseLinearMap)
 σ(::AbstractVector, ::InverseLinearMap)
 ρ(::AbstractVector, ::InverseLinearMap)
-∈(::AbstractVector, ::InverseLinearMap)
+in(::AbstractVector, ::InverseLinearMap)
 an_element(::InverseLinearMap)
 vertices_list(::InverseLinearMap)
 constraints_list(::InverseLinearMap)

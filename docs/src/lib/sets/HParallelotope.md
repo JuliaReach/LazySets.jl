@@ -162,7 +162,7 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`togrep`](@ref togrep(::AbstractZonotope))
 * [`vertices_list`](@ref vertices_list(::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractZonotope))
+* [`in`](@ref in(::AbstractVector, ::AbstractZonotope))
 * [`project`](@ref project(::AbstractZonotope, ::AbstractVector{Int}))
 * [`reduce_order`](@ref reduce_order(::AbstractZonotope, ::Real, ::AbstractReductionMethod=GIR05()))
 * [`split`](@ref split(::AbstractZonotope, ::Int))

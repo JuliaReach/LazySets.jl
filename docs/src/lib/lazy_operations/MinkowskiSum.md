@@ -16,7 +16,7 @@ isbounded(::MinkowskiSum)
 isempty(::MinkowskiSum)
 center(::MinkowskiSum)
 constraints_list(::MinkowskiSum)
-∈(::AbstractVector, ::MinkowskiSum{N,<:AbstractSingleton}) where {N}
+in(::AbstractVector, ::MinkowskiSum{N,<:AbstractSingleton}) where {N}
 vertices_list(::MinkowskiSum)
 ```
 Inherited from [`LazySet`](@ref):

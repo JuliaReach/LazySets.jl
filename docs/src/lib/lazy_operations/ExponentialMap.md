@@ -11,7 +11,7 @@ ExponentialMap
 dim(::ExponentialMap)
 ρ(::AbstractVector, ::ExponentialMap)
 σ(::AbstractVector, ::ExponentialMap)
-∈(::AbstractVector, ::ExponentialMap)
+in(::AbstractVector, ::ExponentialMap)
 isbounded(::ExponentialMap)
 vertices_list(::ExponentialMap)
 ```
@@ -58,7 +58,7 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractAffineMap`](@ref):
 * [`an_element`](@ref an_element(::AbstractAffineMap))
 * [`isempty`](@ref isempty(::AbstractAffineMap))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractAffineMap))
+* [`in`](@ref in(::AbstractVector, ::AbstractAffineMap))
 * [`vertices_list`](@ref vertices_list(::AbstractAffineMap))
 * [`constraints_list`](@ref constraints_list(::AbstractAffineMap))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractAffineMap))

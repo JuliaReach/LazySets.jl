@@ -11,7 +11,7 @@ Translation
 an_element(::Translation)
 constraints_list(::Translation)
 linear_map(::AbstractMatrix, ::Translation)
-∈(::AbstractVector, ::Translation)
+in(::AbstractVector, ::Translation)
 center(::Translation)
 ```
 Inherited from [`LazySet`](@ref):

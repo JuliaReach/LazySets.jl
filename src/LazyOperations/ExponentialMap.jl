@@ -404,7 +404,7 @@ function concretize(em::ExponentialMap)
 end
 
 """
-    ∈(x::AbstractVector, em::ExponentialMap;
+    in(x::AbstractVector, em::ExponentialMap;
       [backend]=get_exponential_backend())
 
 Check whether a given point is contained in an exponential map of a set.
@@ -440,7 +440,7 @@ julia> [1.0, 1.0] ∈ em
 true
 ```
 """
-@validate function ∈(x::AbstractVector, em::ExponentialMap;
+@validate function in(x::AbstractVector, em::ExponentialMap;
                      backend=get_exponential_backend())
     N = promote_type(eltype(x), eltype(em))
     y = _expmv(backend, -one(N), em.expmat.M, x)

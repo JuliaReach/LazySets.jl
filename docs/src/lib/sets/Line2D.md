@@ -51,13 +51,13 @@ rand(::Type{Line2D})
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets.Line2DModule
 ```
 ```@docs
-∈(::AbstractVector, ::Line2D)
+in(::AbstractVector, ::Line2D)
 project(::AbstractVector, ::Line2D)
 ```
 ```@meta

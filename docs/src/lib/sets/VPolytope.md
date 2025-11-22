@@ -75,13 +75,13 @@ linear_map(::AbstractMatrix, ::VPolytope)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets.VPolytopeModule
 ```
 ```@docs
-∈(::AbstractVector{N}, ::VPolytope{N}) where {N}
+in(::AbstractVector{N}, ::VPolytope{N}) where {N}
 ```
 ```@meta
 CurrentModule = LazySets.API

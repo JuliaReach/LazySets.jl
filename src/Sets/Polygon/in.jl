@@ -2,7 +2,7 @@
 # Choose an arbitrary ray through `x`` and count whether the number of
 # intersections with edges is odd. We choose the ray that is vertical upward.
 # Vertical line segments are ignored (after checking whether `x` is a member).
-@validate function ∈(x::AbstractVector, P::Polygon)
+@validate function in(x::AbstractVector, P::Polygon)
     require(@__MODULE__, :LazySets; fun_name="in")
 
     vlist = P.vertices

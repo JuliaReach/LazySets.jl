@@ -90,7 +90,7 @@ CurrentModule = LazySets.API
 * [`rectify`](@ref rectify(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
 * [`distance`](@ref distance(::AbstractVector, ::LazySet))
-* [`∈`](@ref ∈(::AbstractVector, ::LazySet))
+* [`in`](@ref in(::AbstractVector, ::LazySet))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))

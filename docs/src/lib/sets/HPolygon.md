@@ -124,5 +124,5 @@ Inherited from [`AbstractHPolygon`](@ref):
 * [`tovrep`](@ref tovrep(::AbstractHPolygon))
 * [`vertices_list`](@ref vertices_list(::AbstractHPolygon))
 * [`addconstraint!`](@ref addconstraint!(::AbstractHPolygon, ::HalfSpace))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractHPolygon))
+* [`in`](@ref in(::AbstractVector, ::AbstractHPolygon))
 * [`intersection`](@ref intersection(::AbstractHPolygon, ::AbstractHPolygon))

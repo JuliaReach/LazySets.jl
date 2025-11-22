@@ -34,7 +34,7 @@ Inherited from [`AbstractZonotope`](@ref):
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`ρ`](@ref ρ(::AbstractVector, ::AbstractHyperrectangle))
 * [`σ`](@ref σ(::AbstractVector, ::AbstractHyperrectangle))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractHyperrectangle))
+* [`in`](@ref in(::AbstractVector, ::AbstractHyperrectangle))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 * [`constraints_list`](@ref constraints_list(::AbstractHyperrectangle))

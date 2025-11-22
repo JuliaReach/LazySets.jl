@@ -28,13 +28,13 @@ This interface defines the following functions:
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets
 ```
 ```@docs
-∈(::AbstractVector, ::AbstractBallp)
+in(::AbstractVector, ::AbstractBallp)
 ```
 ```@meta
 CurrentModule = LazySets.API

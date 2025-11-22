@@ -70,7 +70,7 @@ function dim(C::Complement)
 end
 
 """
-    ∈(x::AbstractVector, C::Complement)
+    in(x::AbstractVector, C::Complement)
 
 Check whether a given point is contained in the complement of a set.
 
@@ -89,7 +89,7 @@ Check whether a given point is contained in the complement of a set.
     x ∈ X^C ⟺ x ∉ X
 ```
 """
-@validate function ∈(x::AbstractVector, C::Complement)
+@validate function in(x::AbstractVector, C::Complement)
     return x ∉ C.X
 end
 

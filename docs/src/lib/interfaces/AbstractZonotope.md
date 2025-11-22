@@ -70,13 +70,13 @@ vertices_list(::AbstractZonotope)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets
 ```
 ```@docs
-∈(::AbstractVector, ::AbstractZonotope)
+in(::AbstractVector, ::AbstractZonotope)
 ```
 ```@meta
 CurrentModule = LazySets.API

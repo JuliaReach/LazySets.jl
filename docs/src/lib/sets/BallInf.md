@@ -178,7 +178,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`rectify`](@ref rectify(::AbstractHyperrectangle))
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractHyperrectangle))
+* [`in`](@ref in(::AbstractVector, ::AbstractHyperrectangle))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::AbstractHyperrectangle))
 * [`cartesian_product`](@ref cartesian_product(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 * [`difference`](@ref difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))

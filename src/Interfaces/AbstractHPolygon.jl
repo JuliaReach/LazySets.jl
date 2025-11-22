@@ -215,7 +215,7 @@ function an_element(P::AbstractHPolygon)
 end
 
 """
-    ∈(x::AbstractVector, P::AbstractHPolygon)
+    in(x::AbstractVector, P::AbstractHPolygon)
 
 Check whether a given two-dimensional point is contained in a polygon in
 constraint representation.
@@ -233,7 +233,7 @@ constraint representation.
 
 This implementation checks if the point lies inside each constraint.
 """
-@validate function ∈(x::AbstractVector, P::AbstractHPolygon)
+@validate function in(x::AbstractVector, P::AbstractHPolygon)
     for c in P.constraints
         if !_leq(dot(c.a, x), c.b)
             return false

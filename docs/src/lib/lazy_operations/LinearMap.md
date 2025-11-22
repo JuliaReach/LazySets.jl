@@ -10,7 +10,7 @@ LinearMap
 dim(::LinearMap)
 ρ(::AbstractVector, ::LinearMap)
 σ(::AbstractVector, ::LinearMap)
-∈(::AbstractVector, ::LinearMap)
+in(::AbstractVector, ::LinearMap)
 an_element(::LinearMap)
 vertices_list(::LinearMap)
 constraints_list(::LinearMap)

@@ -25,6 +25,6 @@ Inherited from [`LazySet`](@ref):
 Inherited from [`AbstractAffineMap`](@ref):
 * [`isempty`](@ref isempty(::AbstractAffineMap))
 * [`isbounded`](@ref isbounded(::AbstractAffineMap))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractAffineMap))
+* [`in`](@ref in(::AbstractVector, ::AbstractAffineMap))
 * [`vertices_list`](@ref vertices_list(::AbstractAffineMap))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractAffineMap))

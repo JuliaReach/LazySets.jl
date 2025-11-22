@@ -15,7 +15,7 @@ using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
 @reexport import ..API: constraints_list, dim, extrema, high, isoperationtype,
-                        low, rand, reflect, vertices_list, ∈, linear_map,
+                        low, rand, reflect, vertices_list, in, linear_map,
                         permute, project, scale, scale!, ρ, σ, translate,
                         translate!, cartesian_product, convex_hull,
                         minkowski_sum

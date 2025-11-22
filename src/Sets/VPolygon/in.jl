@@ -1,7 +1,7 @@
 """
 # Extended help
 
-    ∈(x::AbstractVector, P::VPolygon)
+    in(x::AbstractVector, P::VPolygon)
 
 ### Algorithm
 
@@ -23,7 +23,7 @@ julia> [4.4, 3.4] ∈ P  #  point lies on the edge
 true
 ```
 """
-@validate function ∈(x::AbstractVector, P::VPolygon)
+@validate function in(x::AbstractVector, P::VPolygon)
     # special cases: 0 or 1 vertex
     @inbounds begin
         if length(P.vertices) == 0

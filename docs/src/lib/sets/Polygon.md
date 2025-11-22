@@ -23,7 +23,7 @@ Undocumented implementations:
 * [`isempty`](@ref isempty(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`isuniversal`](@ref isuniversal(::LazySet))
-* [`∈`](@ref ∈(::AbstractVector, ::LazySet))
+* [`in`](@ref in(::AbstractVector, ::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
 

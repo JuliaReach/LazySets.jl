@@ -27,7 +27,7 @@ Inherited from [`AbstractPolygon`](@ref):
 
 Inherited from [`AbstractHPolygon`](@ref):
 * [`an_element`](@ref an_element(::AbstractHPolygon))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractHPolygon))
+* [`in`](@ref in(::AbstractVector, ::AbstractHPolygon))
 * [`vertices_list`](@ref vertices_list(::AbstractHPolygon))
 * [`tohrep`](@ref tohrep(::HPOLYGON) where {HPOLYGON<:AbstractHPolygon})
 * [`tovrep`](@ref tovrep(::AbstractHPolygon))

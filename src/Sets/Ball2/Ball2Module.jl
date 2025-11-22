@@ -10,7 +10,7 @@ using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require
 
 @reexport import ..API: area, center, isoperationtype, rand, reflect, sample,
-                        volume, ∈, project, scale, ρ, σ, translate!,
+                        volume, in, project, scale, ρ, σ, translate!,
                         isdisjoint, ⊆
 @reexport import ..LazySets: ball_norm, chebyshev_center_radius, ○, radius_ball
 @reexport using ..API
