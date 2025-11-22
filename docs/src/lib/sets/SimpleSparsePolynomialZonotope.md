@@ -116,6 +116,7 @@ CurrentModule = LazySets.API
 ```
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
+* [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets
@@ -178,7 +179,6 @@ Inherited from [`AbstractPolynomialZonotope`](@ref):
 * [`isempty`](@ref isempty(::AbstractPolynomialZonotope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolynomialZonotope))
 * [`order`](@ref order(::AbstractPolynomialZonotope))
-* [`convex_hull`](@ref convex_hull(::AbstractPolynomialZonotope, ::AbstractPolynomialZonotope))
 
 Inherited from [`AbstractSparsePolynomialZonotope`](@ref):
 * [`ngens_dep`](@ref ngens_dep(::AbstractSparsePolynomialZonotope))
