@@ -25,28 +25,37 @@ for N in @tN([Float64, Float32, Rational{Int}])
         # ---------------
 
         # bounded basic set types
+        es = EmptySet{N}(n)
         b1 = Ball1(v0, p1)
         bi = BallInf(v0, p1)
         hr = Hyperrectangle(v0, v1)
         st = Singleton(v1)
         zt = Zonotope(v0, Diagonal(ones(N, n)))
+        ztmd = ZonotopeMD(v0, zeros(N, n, n), ones(N, n))
         zs = ZeroSet{N}(n)
         itv = Interval(p0, p1)
         if n == 2
             ls = LineSegment(v0, v1)
         end
-        if N <: AbstractFloat  # `convert` not available for non-float
+        if N <: AbstractFloat
             hpa = convert(HParallelotope, hr)
+        else
+            @test_broken convert(HParallelotope, hr) isa HParallelotope  # TODO `convert` not available for non-float
+            hpa = HParallelotope(n == 1 ? hcat(N[1]) : N[0 -1; 1 0], ones(N, 2 * n))
         end
 
         # -------------------------------------------
         # plot polytopes
         # -------------------------------------------
+        plot(es)
         plot(b1)
         plot(bi)
         plot(hr)
         plot(st)
         plot(zt)
+        if n == 2
+            plot(ztmd)  # TODO crashes in 1D
+        end
         plot(zs)
         if n == 1
             plot(itv)
@@ -66,7 +75,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         b2 = Ball2(v0, p1)
         bp = Ballp(N(1.5), v0, p1)
         el = Ellipsoid(v0, Diagonal(ones(N, n)))
-        # dpz = convert(DensePolynomialZonotope, zt)  # TODO conversion currently missing
+        dpz = convert(DensePolynomialZonotope, zt)
         spz = convert(SparsePolynomialZonotope, zt)
         sspz = convert(SimpleSparsePolynomialZonotope, zt)
         if n == 2
@@ -100,10 +109,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         end
         vpt = VPolytope(vlist)
 
-        # empty set
-        es = EmptySet{N}(n)
-
-        # bounded sets
+        # unbounded sets
         hs = HalfSpace(v1, p1)
         hp = Hyperplane(v1, p1)
         hph = HPolyhedron(constraints)
@@ -129,12 +135,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
         ms = MinkowskiSum(b1, bi)
         msa = MinkowskiSumArray([b1, bi])
         cms = CachedMinkowskiSumArray([b1, bi])
-        us = UnionSet(b1, bi)
-        usa = UnionSetArray([b1, bi])
         if n == 2
             cp = CartesianProduct(itv, itv)
             cpa = CartesianProductArray([itv, itv])
         end
+        us = UnionSet(b1, bi)
+        usa = UnionSetArray([b1, bi])
 
         # ------------------------------------------------------------------
         # plot using epsilon-close approximation (default threshold ε value)
@@ -145,10 +151,21 @@ for N in @tN([Float64, Float32, Rational{Int}])
         if n == 2
             plot(ncp)
         end
+        @static if isdefined(@__MODULE__, :ExponentialUtilities) || isdefined(@__MODULE__, :Expokit)
+            plot(em)
+            plot(epm)
+        end
         @static if isdefined(@__MODULE__, :Optim)
-            if N == Float64 # Float32 requires promotion see #1304
+            if N == Float64 || n == 1  # Float32 in 2D requires promotion
                 plot(its)
+            else
+                @test_broken plot(its) isa Vector{RecipesBase.RecipeData}
             end
+        end
+        if N == Float64 || n == 1  # Float32 in 2D requires promotion
+            plot(itsa)
+        else
+            @test_broken plot(itsa) isa Vector{RecipesBase.RecipeData}
         end
         plot(hpg)
         plot(hpgo)
@@ -158,7 +175,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
             plot(vpg)
         end
         plot(vpt)
-        plot(es)
         plot(hs)
         plot(hp)
         plot(hph)
@@ -168,11 +184,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
             plot(l2D)
         end
         plot(sta)
-        plot(ch)
-        plot(cha)
         plot(sih)
         plot(lm)
         plot(rm)
+        plot(ch)
+        plot(cha)
         plot(ms)
         plot(msa)
         plot(cms)
@@ -180,12 +196,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
             plot(cp)
             plot(cpa)
         end
-        if N == Float64
-            plot(itsa)
-        end
 
-        # recipes using kwargs are not supported with the workaround we use here
-        # @test_broken plot(dpz)
+        # TODO recipes using kwargs are not supported with the workaround we use here
+        @test_broken plot(dpz)
         @test_broken plot(spz)
         @test_broken plot(sspz)
         @test_broken plot(us)
@@ -196,12 +209,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @static if isdefined(@__MODULE__, :MiniQhull) && isdefined(@__MODULE__, :Polyhedra)
         n = 3
         bi = BallInf(zeros(N, 3), p1)
+        t = Tetrahedron([N[0, 0, 0], N[1, 0, 0], N[0, 1, 0], N[0, 0, 1]])
         if N != Float32
             plot(bi)
         else
             # TODO the Float32 plot looks wrong (a pyramid) and randomly crashes in CI runs
             @test_broken false
         end
+        plot(t)
     end
 end
 
