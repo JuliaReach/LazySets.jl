@@ -451,6 +451,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # in
     @test_throws DimensionMismatch N[0] ∈ Z
     @test N[1, 2] ∈ Z && N[5, 8] ∈ Z && N[3, 3] ∉ Z
+    @test N[1, 2] ∈ Z0 && N[2, 3] ∉ Z0
 
     # is_interior_point
     @test_throws DimensionMismatch is_interior_point(N[0], Z)
@@ -657,6 +658,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
         res, w = isdisjoint(Z2a, Z2b, true)
         @test !res && w isa Vector{N} && w ∈ Z2a && w ∈ Z2b
     end
+    # no generators
+    Z2 = Zonotope(N[2, 3], zeros(N, 2, 0))
+    @test isdisjoint(Z0, Z2) && isdisjoint(Z2, Z0)
+    for (Z2a, Z2b) in ((Z0, Z2), (Z2, Z0))
+        res, w = isdisjoint(Z2a, Z2b, true)
+        @test res && w isa Vector{N} && isempty(w)
+    end
+    @test !isdisjoint(Z0, Z0)
+    res, w = isdisjoint(Z0, Z0, true)
+    @test !res && w isa Vector{N} && w ∈ Z0
     # tolerance
     if N == Float64
         Z2 = Zonotope(N[6 + 1e-9, 8], N[1 0; 0 1])

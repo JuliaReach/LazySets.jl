@@ -193,8 +193,8 @@ zonotope with center ``c`` and generators ``g``.
     Z = Zonotope(zeros(N, dim(Z1)), G)
     c1 = center(Z1)
     c2 = center(Z2)
-    lp = _in_AbstractZonotope_LP(c1 - c2, Z; solver=solver)
-    result = !is_lp_optimal(lp.status)
+    res_in, lp = _in_AbstractZonotope_LP(c1 - c2, Z; solver=solver)
+    result = !res_in
     if result
         return _witness_result_empty(witness, true, N)
     elseif witness
@@ -207,6 +207,10 @@ zonotope with center ``c`` and generators ``g``.
             @inbounds for j in 1:p1
                 w .-= lp.sol[j] * view(G, :, j)
             end
+        elseif p1 == 0
+            # no generators, i.e., zonotopes are identical points; `lp === nothing`
+            @assert isnothing(lp) "expected skipped LP"
+            w = c1
         else
             # reconstruct path from c2 to c1 using only the generators from Z2
             w = copy(c2)
