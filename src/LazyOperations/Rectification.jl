@@ -611,5 +611,5 @@ function construct_projection(X::LazySet{N}, negative_dimensions,
 end
 
 function concretize(R::Rectification)
-    return rectify(concretize(R.X))
+    return concretize(rectify(concretize(R.X)))
 end
