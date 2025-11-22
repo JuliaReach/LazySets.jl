@@ -14,7 +14,7 @@ using ReachabilityBase.Require: require
 @reexport import ..API: an_element, area, complement, constraints,
                         constraints_list, diameter, dim, isbounded,
                         isboundedtype, isempty, isoperationtype, isuniversal,
-                        norm, radius, rand, rectify, reflect, volume, ∈,
+                        norm, radius, rand, rectify, reflect, volume, in,
                         linear_map, permute, project, scale, scale!, ρ, σ,
                         translate, translate!, cartesian_product, convex_hull,
                         difference, distance, intersection, isdisjoint, ⊆,

@@ -43,7 +43,7 @@ remove_redundant_vertices(::VPolygon; ::String="monotone_chain")
 remove_redundant_vertices!(::VPolygon; ::String="monotone_chain")
 tohrep(::VPolygon, ::Type{HPOLYGON}=HPolygon) where {HPOLYGON<:AbstractHPolygon}
 tovrep(::VPolygon)
-∈(::AbstractVector, ::VPolygon)
+in(::AbstractVector, ::VPolygon)
 linear_map(::AbstractMatrix, ::VPolygon)
 ```
 ```@meta

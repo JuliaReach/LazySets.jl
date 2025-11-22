@@ -237,7 +237,7 @@ end
 """
 # Extended help
 
-    ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
+    in(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
 
 ### Input
 
@@ -268,7 +268,7 @@ We consider the ``p``-dimensional space of elements ``(ξ_1, …, ξ_p)``
 constrained to ``ξ_i ∈ [-1, 1]`` for all ``i = 1, …, p`` such that
 ``x-c = Gξ`` holds.
 """
-@validate function ∈(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
+@validate function in(x::AbstractVector, Z::AbstractZonotope; solver=nothing)
     lp = _in_AbstractZonotope_LP(x, Z; solver=solver)
     return is_lp_optimal(lp.status) # Infeasible or Unbounded => false
 end

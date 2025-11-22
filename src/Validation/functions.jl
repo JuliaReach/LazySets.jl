@@ -114,9 +114,9 @@ end
 push!(VALIDATE_DICT, :exponential_map => (validate_exponential_map, args12))
 
 function validate_in(x::AbstractVector, X::LazySet)
-    return validate_same_dim(x, X; fun=∈)
+    return validate_same_dim(x, X; fun=in)
 end
-push!(VALIDATE_DICT, :∈ => (validate_in, args12))
+push!(VALIDATE_DICT, :in => (validate_in, args12))
 
 function validate_is_interior_point(x::AbstractVector, X::LazySet, p::Real, ε::Number)
     validate_same_dim(x, X; fun=is_interior_point) && validate_pnorm(p; fun=is_interior_point)

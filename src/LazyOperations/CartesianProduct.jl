@@ -241,7 +241,7 @@ function isboundedtype(::Type{<:CartesianProduct{N,S1,S2}}) where {N,S1,S2}
 end
 
 """
-    ∈(x::AbstractVector, cp::CartesianProduct)
+    in(x::AbstractVector, cp::CartesianProduct)
 
 Check whether a given point is contained in a Cartesian product.
 
@@ -254,7 +254,7 @@ Check whether a given point is contained in a Cartesian product.
 
 `true` iff ``x ∈ cp``.
 """
-@validate function ∈(x::AbstractVector, cp::CartesianProduct)
+@validate function in(x::AbstractVector, cp::CartesianProduct)
     n1 = dim(cp.X)
     return view(x, 1:n1) ∈ cp.X &&
            view(x, (n1 + 1):length(x)) ∈ cp.Y

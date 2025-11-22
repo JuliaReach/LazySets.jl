@@ -159,7 +159,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`low`](@ref low(::AbstractPolyhedron))
 * [`low`](@ref low(::AbstractPolyhedron, ::Int))
 * [`vertices_list`](@ref vertices_list(::AbstractPolyhedron, ::Bool=false))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractPolyhedron))
+* [`in`](@ref in(::AbstractVector, ::AbstractPolyhedron))
 * [`project`](@ref project(::AbstractPolyhedron, ::AbstractVector{Int}))
 * [`intersection`](@ref intersection(::AbstractPolyhedron, ::AbstractPolyhedron))
 * [`isdisjoint`](@ref isdisjoint(::AbstractPolyhedron, ::AbstractPolyhedron))

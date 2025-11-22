@@ -1,3 +1,3 @@
-@validate function ∈(x::AbstractVector, Z::ZeroSet)
+@validate function in(x::AbstractVector, Z::ZeroSet)
     return iszero(x)
 end

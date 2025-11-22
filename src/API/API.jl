@@ -7,7 +7,7 @@ not provide implementations.
 """
 module API
 
-import Base: eltype, extrema, isdisjoint, isempty, ∈, isapprox, ==, ⊆
+import Base: eltype, extrema, isdisjoint, isempty, in, isapprox, ==, ⊆
 import Random: rand
 import LinearAlgebra: norm
 import SparseArrays: permute

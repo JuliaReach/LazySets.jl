@@ -16,7 +16,7 @@ using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, area, constraints_list, extrema, high,
-                        isoperationtype, low, rand, vertices_list, ∈,
+                        isoperationtype, low, rand, vertices_list, in,
                         linear_map, permute, project, σ, translate, translate!,
                         convex_hull, intersection, minkowski_sum
 @reexport import ..LazySets: remove_redundant_vertices,

@@ -13,7 +13,7 @@ using ReachabilityBase.Require
 
 @reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
                         isoperationtype, isuniversal, project, rand, distance,
-                        ∈, linear_map, ρ, σ, translate!
+                        in, linear_map, ρ, σ, translate!
 @reexport import ..LazySets: normalize
 @reexport import LinearAlgebra: normalize!
 @reexport using ..API

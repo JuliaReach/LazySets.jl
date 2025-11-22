@@ -29,7 +29,7 @@ tovrep(::AbstractHPolygon)
 vertices_list(::AbstractHPolygon)
 addconstraint!(::AbstractHPolygon, ::HalfSpace)
 addconstraint!(::Vector{<:HalfSpace}, ::HalfSpace)
-∈(::AbstractVector, ::AbstractHPolygon)
+in(::AbstractVector, ::AbstractHPolygon)
 isredundant(::HalfSpace, ::HalfSpace, ::HalfSpace)
 ```
 

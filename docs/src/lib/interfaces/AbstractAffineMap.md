@@ -101,13 +101,13 @@ isuniversal(::AbstractAffineMap)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets
 ```
 ```@docs
-∈(::AbstractVector, ::AbstractAffineMap)
+in(::AbstractVector, ::AbstractAffineMap)
 ```
 ```@meta
 CurrentModule = LazySets.API

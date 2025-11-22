@@ -70,13 +70,13 @@ rand(::Type{Star})
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets.StarModule
 ```
 ```@docs
-∈(::AbstractVector, ::Star)
+in(::AbstractVector, ::Star)
 ```
 
 ```@meta

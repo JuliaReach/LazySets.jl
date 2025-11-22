@@ -7,7 +7,7 @@ using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
-@reexport import ..API: dim, isoperationtype, rand, rectify, reflect, ∈,
+@reexport import ..API: dim, isoperationtype, rand, rectify, reflect, in,
                         linear_map, scale, scale!, ρ, translate, minkowski_sum
 @reexport import ..LazySets: element
 import Base: copy

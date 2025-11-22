@@ -200,7 +200,7 @@ function an_element(cup::UnionSetArray)
 end
 
 """
-   ∈(x::AbstractVector, cup::UnionSetArray)
+    in(x::AbstractVector, cup::UnionSetArray)
 
 Check whether a given point is contained in the union of a finite number of
 sets.
@@ -214,7 +214,7 @@ sets.
 
 `true` iff ``x ∈ cup``.
 """
-@validate function ∈(x::AbstractVector, cup::UnionSetArray)
+@validate function in(x::AbstractVector, cup::UnionSetArray)
     return any(X -> x ∈ X, array(cup))
 end
 

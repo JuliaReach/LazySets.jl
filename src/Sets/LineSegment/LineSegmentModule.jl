@@ -12,7 +12,7 @@ using ReachabilityBase.Iteration: EmptyIterator, SingletonIterator
 using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, center, constraints_list, dim,
-                        isoperationtype, rand, vertices_list, ∈, scale, scale!,
+                        isoperationtype, rand, vertices_list, in, scale, scale!,
                         ρ, σ, translate, intersection, isdisjoint
 @reexport import ..LazySets: generators, genmat, ngens, halfspace_left,
                              halfspace_right

@@ -120,13 +120,13 @@ volume(::AbstractHyperrectangle)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets
 ```
 ```@docs
-∈(::AbstractVector, ::AbstractHyperrectangle)
+in(::AbstractVector, ::AbstractHyperrectangle)
 split(::AbstractHyperrectangle, ::AbstractVector{Int})
 ```
 ```@meta

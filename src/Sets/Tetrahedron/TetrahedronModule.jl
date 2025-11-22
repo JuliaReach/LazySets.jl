@@ -9,7 +9,7 @@ using ReachabilityBase.Comparison: isapproxzero
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
-@reexport import ..API: constraints_list, dim, isoperationtype, rand, ∈, σ
+@reexport import ..API: constraints_list, dim, isoperationtype, rand, in, σ
 @reexport using ..API
 
 export Tetrahedron

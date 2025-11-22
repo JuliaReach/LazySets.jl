@@ -52,13 +52,13 @@ vertices_list(::AbstractPolyhedron)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets
 ```
 ```@docs
-∈(::AbstractVector, ::AbstractPolyhedron)
+in(::AbstractVector, ::AbstractPolyhedron)
 project(::AbstractPolyhedron, ::AbstractVector{Int})
 intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N}
 minkowski_sum(::AbstractPolyhedron, ::AbstractPolyhedron)

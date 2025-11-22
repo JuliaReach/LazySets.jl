@@ -11,7 +11,7 @@ using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
 @reexport import ..API: center, constraints_list, high, isoperationtype, low,
-                        rand, reflect, vertices_list, ∈, project, scale, ρ, σ,
+                        rand, reflect, vertices_list, in, project, scale, ρ, σ,
                         translate!
 @reexport import ..LazySets: ball_norm, radius_ball
 @reexport using ..API

@@ -9,7 +9,7 @@ using Reexport
 
 include("API/API.jl")
 @reexport using .API
-import .API: eltype, extrema, isdisjoint, isempty, \, ∈, isapprox, ==, ⊆,
+import .API: eltype, extrema, isdisjoint, isempty, \, in, isapprox, ==, ⊆,
              rand, norm, permute, distance, rectify,
              affine_map, an_element, area, center, complement, concretize,
              constraints_list, constraints, convex_hull, diameter, dim, exponential_map,

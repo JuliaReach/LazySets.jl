@@ -14,7 +14,7 @@ dim(::Rectification)
 σ(::AbstractVector, ::Rectification{N, <:CartesianProductArray}) where {N}
 ρ(::AbstractVector, ::Rectification)
 an_element(::Rectification)
-∈(::AbstractVector, ::Rectification)
+in(::AbstractVector, ::Rectification)
 isempty(::Rectification)
 isbounded(::Rectification)
 to_union_of_projections(::Rectification, ::Bool=false)

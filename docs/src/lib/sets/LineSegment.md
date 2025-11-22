@@ -52,13 +52,13 @@ rand(::Type{LineSegment})
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets.LineSegmentModule
 ```
 ```@docs
-∈(::AbstractVector, ::LineSegment)
+in(::AbstractVector, ::LineSegment)
 ```
 ```@meta
 CurrentModule = LazySets.API

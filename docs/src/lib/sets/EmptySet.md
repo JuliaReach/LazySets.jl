@@ -84,7 +84,7 @@ CurrentModule = LazySets.API
 * [`volume`](@ref volume(::LazySet))
 * [`distance`](@ref distance(::AbstractVector, ::LazySet))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
-* [`∈`](@ref ∈(::AbstractVector, ::LazySet))
+* [`in`](@ref in(::AbstractVector, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))

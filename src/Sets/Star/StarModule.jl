@@ -11,7 +11,7 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, center, constraints_list, dim, isbounded,
                         isempty, isoperationtype, rand, vertices_list,
-                        affine_map, ∈, linear_map, ρ, σ
+                        affine_map, in, linear_map, ρ, σ
 import Base: convert
 @reexport using ..API
 

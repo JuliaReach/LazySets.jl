@@ -81,13 +81,13 @@ tosimplehrep(::AbstractVector{<:HalfSpace})
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets.HalfSpaceModule
 ```
 ```@docs
-∈(::AbstractVector, ::HalfSpace)
+in(::AbstractVector, ::HalfSpace)
 ```
 ```@meta
 CurrentModule = LazySets.API

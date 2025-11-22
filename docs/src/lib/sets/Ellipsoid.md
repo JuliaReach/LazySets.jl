@@ -27,13 +27,13 @@ shape_matrix(::Ellipsoid)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets.EllipsoidModule
 ```
 ```@docs
-∈(::AbstractVector, ::Ellipsoid)
+in(::AbstractVector, ::Ellipsoid)
 ```
 ```@meta
 CurrentModule = LazySets.API

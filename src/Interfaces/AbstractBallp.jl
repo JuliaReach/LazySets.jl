@@ -157,7 +157,7 @@ end
 """
 # Extended help
 
-    ∈(x::AbstractVector, B::AbstractBallp)
+    in(x::AbstractVector, B::AbstractBallp)
 
 ### Notes
 
@@ -186,7 +186,7 @@ julia> [0.5, 1.5] ∈ B
 true
 ```
 """
-@validate function ∈(x::AbstractVector, B::AbstractBallp)
+@validate function in(x::AbstractVector, B::AbstractBallp)
     N = promote_type(eltype(x), eltype(B))
     p = ball_norm(B)
     sum = zero(N)

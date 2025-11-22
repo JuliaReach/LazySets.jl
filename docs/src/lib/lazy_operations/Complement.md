@@ -10,7 +10,7 @@ lower-case "c").
 ```@docs
 Complement
 dim(::Complement)
-∈(::AbstractVector, ::Complement)
+in(::AbstractVector, ::Complement)
 isempty(::Complement)
 constraints_list(::Complement)
 ```

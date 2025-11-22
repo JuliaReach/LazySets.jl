@@ -72,13 +72,13 @@ rand(::Type{Hyperplane})
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets.HyperplaneModule
 ```
 ```@docs
-∈(::AbstractVector, ::Hyperplane)
+in(::AbstractVector, ::Hyperplane)
 project(::AbstractVector, ::Hyperplane)
 reflect(::AbstractVector, ::Hyperplane)
 ```

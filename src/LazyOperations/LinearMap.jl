@@ -299,7 +299,7 @@ function _ρ_linear_map(d::AbstractVector, M::AbstractMatrix, X::LazySet;
 end
 
 """
-    ∈(x::AbstractVector, lm::LinearMap)
+    in(x::AbstractVector, lm::LinearMap)
 
 Check whether a given point is contained in a linear map.
 
@@ -340,7 +340,7 @@ julia> [0.5, 0.5] ∈ M*B
 true
 ```
 """
-@validate function ∈(x::AbstractVector, lm::LinearMap)
+@validate function in(x::AbstractVector, lm::LinearMap)
     if !iswellconditioned(matrix(lm))
         # ill-conditioned matrix; use concrete set representation
         return x ∈ linear_map(matrix(lm), set(lm))

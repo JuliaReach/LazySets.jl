@@ -9,13 +9,13 @@ ispolyhedraltype(::Type{<:AbstractPolyhedron}) = true
 """
 # Extended help
 
-    ∈(x::AbstractVector, P::AbstractPolyhedron)
+    in(x::AbstractVector, P::AbstractPolyhedron)
 
 ### Algorithm
 
 This implementation checks if the point lies inside each defining half-space.
 """
-@validate function ∈(x::AbstractVector, P::AbstractPolyhedron)
+@validate function in(x::AbstractVector, P::AbstractPolyhedron)
     for c in constraints_list(P)
         if !_leq(dot(c.a, x), c.b)
             return false

@@ -166,7 +166,7 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`reflect`](@ref reflect(::AbstractZonotope))
 * [`togrep`](@ref togrep(::AbstractZonotope))
 * [`vertices_list`](@ref vertices_list(::AbstractZonotope))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractZonotope))
+* [`in`](@ref in(::AbstractVector, ::AbstractZonotope))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractZonotope))
 * [`project`](@ref project(::AbstractZonotope, ::AbstractVector{Int}))
 * [`ρ`](@ref ρ(::AbstractVector, ::AbstractZonotope))

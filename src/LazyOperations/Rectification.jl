@@ -332,7 +332,7 @@ function an_element(R::Rectification)
 end
 
 """
-    ∈(x::AbstractVector, R::Rectification)
+    in(x::AbstractVector, R::Rectification)
 
 Check whether a given point is contained in a rectification.
 
@@ -361,7 +361,7 @@ the answer is negative.
 Finally, if there are zero entries in the vector and the vector is not contained
 in the wrapped set, we give up and throw an error.
 """
-@validate function ∈(x::AbstractVector, R::Rectification)
+@validate function in(x::AbstractVector, R::Rectification)
     N = promote_type(eltype(x), eltype(R))
     # scan for negative entries
     if any(xi -> xi < zero(N), x)

@@ -42,13 +42,13 @@ reflect(::AbstractSingleton)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets
 ```
 ```@docs
-∈(::AbstractVector, ::AbstractSingleton)
+in(::AbstractVector, ::AbstractSingleton)
 ```
 ```@meta
 CurrentModule = LazySets.API

@@ -147,7 +147,7 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`reflect`](@ref reflect(::AbstractSingleton))
 * [`vertices`](@ref vertices(::AbstractSingleton))
 * [`vertices_list`](@ref vertices_list(::AbstractSingleton))
-* [`∈`](@ref ∈(::AbstractVector, ::AbstractSingleton))
+* [`in`](@ref in(::AbstractVector, ::AbstractSingleton))
 * [`ρ`](@ref σ(::AbstractVector, ::AbstractSingleton))
 * [`σ`](@ref σ(::AbstractVector, ::AbstractSingleton))
 * [`cartesian_product`](@ref cartesian_product(::AbstractSingleton, ::AbstractSingleton))

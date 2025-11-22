@@ -53,13 +53,13 @@ volume(::Ball2)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets.Ball2Module
 ```
 ```@docs
-∈(::AbstractVector, ::Ball2)
+in(::AbstractVector, ::Ball2)
 ```
 ```@meta
 CurrentModule = LazySets.API

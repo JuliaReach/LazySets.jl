@@ -7,8 +7,8 @@ using ReachabilityBase.Comparison: _leq, _geq, _isapprox
 using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, convex_hull, dim, isconvextype, isbounded,
-                        isboundedtype, isempty, isoperationtype, isuniversal, ∈,
-                        ρ, σ
+                        isboundedtype, isempty, isoperationtype, isuniversal,
+                        in, ρ, σ
 import ..LazySets: plot_recipe
 @reexport using ..API
 

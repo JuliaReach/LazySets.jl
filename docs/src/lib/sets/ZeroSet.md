@@ -37,7 +37,7 @@ Undocumented implementations:
 * [`dim`](@ref dim(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
 * [`rectify`](@ref rectify(::LazySet))
-* [`∈`](@ref ∈(::AbstractVector, ::LazySet))
+* [`in`](@ref in(::AbstractVector, ::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{<:LazySet}))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`scale`](@ref scale(::Real, ::LazySet))

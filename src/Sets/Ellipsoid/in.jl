@@ -1,7 +1,7 @@
 """
 # Extended help
 
-    ∈(x::AbstractVector, E::Ellipsoid)
+    in(x::AbstractVector, E::Ellipsoid)
 
 ### Algorithm
 
@@ -12,7 +12,7 @@ if and only if
 (x-c)^\\mathrm{T} Q^{-1} (x-c) ≤ 1.
 ```
 """
-@validate function ∈(x::AbstractVector, E::Ellipsoid)
+@validate function in(x::AbstractVector, E::Ellipsoid)
     w = x - E.center
     Q = E.shape_matrix
     return dot(w, Q \ w) ≤ 1

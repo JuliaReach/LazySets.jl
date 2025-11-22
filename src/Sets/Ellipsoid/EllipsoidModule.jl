@@ -8,7 +8,7 @@ using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: inner
 using ReachabilityBase.Distribution: reseed!
 
-@reexport import ..API: center, isoperationtype, rand, affine_map, ∈,
+@reexport import ..API: center, isoperationtype, rand, affine_map, in,
                         linear_map, ρ, σ, translate!
 @reexport import ..LazySets: ○
 @reexport using ..API

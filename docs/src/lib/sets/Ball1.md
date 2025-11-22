@@ -62,13 +62,13 @@ vertices_list(::Ball1)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-∈(::AbstractVector, ::LazySet)
+in(::AbstractVector, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets.Ball1Module
 ```
 ```@docs
-∈(::AbstractVector, ::Ball1, ::Bool=false)
+in(::AbstractVector, ::Ball1, ::Bool=false)
 ```
 ```@meta
 CurrentModule = LazySets.API
