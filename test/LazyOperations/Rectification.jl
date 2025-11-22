@@ -121,33 +121,42 @@ for N in @tN([Float64, Float32, Rational{Int}])
 end
 
 for N in [Float64]
-    # support function
-    # some of the tests do not work because of insufficient precision in the
-    # intersection; if the precision changes, these tests can be replaced by
-    # their true (commented out) expected results
-
-    @static if isdefined(@__MODULE__, :Optim)
+    # support_function
+    # some of the tests do not work because of insufficient precision in the intersection
+    @static if isdefined(@__MODULE__, :Optim) && isdefined(@__MODULE__, :Polyhedra) &&
+               isdefined(@__MODULE__, :CDDLib)
         # two right quadrants
         B = Ball1(N[2, 0], N(1))
         RB = Rectification(B)
+        RB2 = concretize(RB)
         for d in [N[1, 0], N[-1, 0], N[0, 1]]
-            @test ρ(d, RB) ≈ ρ(d, B)
+            @test ρ(d, RB) ≈ ρ(d, RB2) == ρ(d, B)
         end
-        @test_broken ρ(N[0, -1], RB) ≈ N(0)
-        @test N(0) ≤ ρ(N[0, -1], RB) ≤ N(1e-9)
+        d = N[0, -1]
+        @test_broken ρ(d, RB) ≈ N(0)
+        @test abs(ρ(d, RB)) ≤ N(1e-9)
+        @test ρ(d, RB2) == N(0)
         # all four quadrants
         P = VPolygon([N[-1, 1], N[-1.5, 0.5], N[1.5, 0.5], N[1, -0.5]])
         RP = Rectification(P)
-        @test ρ(N[1, 0], RP) ≈ N(1.5)
-        @test ρ(N[0, 1], RP) ≈ N(1)
-        @test ρ(N[1, 1], RP) ≈ ρ(N[1, 1], P) == N(2)
-        @test_broken ρ(N[-1, 0], RP) ≈ N(0)
-        @test N(0) ≤ ρ(N[-1, 0], RP) ≤ N(1e-8)
-        @test_broken ρ(N[0, -1], RP) ≈ N(0)
-        @test N(0) ≤ ρ(N[0, -1], RP) ≤ N(1e-8)
-        @test_broken ρ(N[-1, -1], RP) ≈ N(0)
-        @test N(0) ≤ ρ(N[-1, -1], RP) ≤ N(1.1e-1)
+        RP2 = concretize(RP)
+        @test ρ(N[1, 0], RP) ≈ ρ(N[1, 0], RP2) == N(1.5)
+        @test ρ(N[0, 1], RP) ≈ ρ(N[0, 1], RP2) == N(1)
+        @test ρ(N[1, 1], RP) ≈ ρ(N[1, 1], RP2) == ρ(N[1, 1], P) == N(2)
+        d = N[-1, 0]
+        @test_broken ρ(d, RP) ≈ N(0)
+        @test abs(ρ(d, RP)) ≤ N(1e-8)
+        @test ρ(d, RP2) == N(0)
+        d = N[0, -1]
+        @test_broken ρ(d, RP) ≈ N(0)
+        @test abs(ρ(d, RP)) ≤ N(1e-8)
+        @test ρ(d, RP2) == N(0)
+        d = N[-1, -1]
+        @test_broken ρ(d, RP) ≈ N(0)
+        @test abs(ρ(d, RP)) ≤ N(0.1 + 1e-8)  # TODO too coarse solution; improve `ρ` of Intersection
+        @test ρ(d, RP2) == N(0)
     end
 
+    # support_vector
     @test σ(N[1, 1], Rectification(Ball1(N[0, 0], N(1)))) == N[0, 1]
 end
