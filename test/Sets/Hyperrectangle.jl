@@ -1,7 +1,6 @@
 using LazySets, Test, SparseArrays, LinearAlgebra
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
 IA = LazySets.IA
-using LazySets.IA: IntervalBox
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -308,14 +307,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
                          HalfSpace(N[-1, 0], N(1)), HalfSpace(N[0, -1], N(1))])
 
     # conversion to and from IntervalArithmetic's IntervalBox type
-    B = IntervalBox(IA.interval(0, 1), IA.interval(0, 1))
-    H = convert(Hyperrectangle, B)
-    @test convert(IntervalBox, H) == B
+    @static if isdefined(@__MODULE__, :IntervalBoxes)
+        import IntervalBoxes as IB
+        B = IB.IntervalBox(IA.interval(0, 1), IA.interval(0, 1))
+        H = convert(Hyperrectangle, B)
+        @test convert(IB.IntervalBox, H) == B
+    end
 
     # conversion to and from IntervalArithmetic's Interval type
     I = IA.interval(N(0), N(1))
     H = convert(Hyperrectangle, I)
-    @test convert(IA.Interval, H) == I
+    @test IA.isequal_interval(convert(IA.Interval, H), I)
     # conversion from Interval
     I = Interval(I)
     H = convert(Hyperrectangle, I)
@@ -353,9 +355,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test minkowski_sum(H1, H2) == Hyperrectangle(N[3, 3], N[3, 3])
 
     # set difference
-    h = Hyperrectangle(; low=N[0], high=N[1])
-    q = Hyperrectangle(; low=N[0], high=N[0.5])
-    @test convert(Interval, difference(h, q).array[1]) == Interval(N(0.5), N(1))
+    @static if isdefined(@__MODULE__, :IntervalBoxes)
+        h = Hyperrectangle(; low=N[0], high=N[1])
+        q = Hyperrectangle(; low=N[0], high=N[0.5])
+        @test convert(Interval, difference(h, q).array[1]) == Interval(N(0.5), N(1))
+    end
 
     # concrete projection
     @test project(Hyperrectangle(N[4, 3, 2, 1], N[8, 7, 6, 5]), [2, 4]) ==

@@ -3,7 +3,6 @@ using LazySets.MatrixZonotopeModule: vectorize
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
 using LazySets.ReachabilityBase.Comparison: _leq, _geq
 IA = LazySets.IA
-using LazySets.IA: IntervalBox
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -587,8 +586,8 @@ for N in [Float64]
         Dx₁ = IA.interval(N(1.0), N(3.0))
         Dx₂ = IA.interval(N(-1.0), N(1.0))
         Dx₃ = IA.interval(N(-1.0), N(0.0))
-        D = Dx₁ × Dx₂ × Dx₃   # domain
-        local x0 = IntervalBox(IA.mid.(D)...)
+        D = [Dx₁, Dx₂, Dx₃]   # domain
+        local x0 = [IA.interval(IA.mid(di)) for di in D]
         I = IA.interval(N(0.0), N(0.0)) # interval remainder
         local p₁ = 1 + x₁ - x₂
         local p₂ = x₃ - x₁
@@ -667,16 +666,22 @@ for N in [Float64]
         @test (L ∩ Z) ⊆ cap
     end
 
-    @static if isdefined(@__MODULE__, :IntervalConstraintProgramming)
+    @static if isdefined(@__MODULE__, :IntervalConstraintProgramming) &&
+               isdefined(@__MODULE__, :IntervalBoxes)
         # overapproximate a nonlinear constraint with an HPolyhedron
-        local dom = IntervalBox(IA.interval(-2, 2), IA.interval(-2, 2))
-        C = IntervalConstraintProgramming.@constraint x^2 + y^2 <= 1
-        p = IntervalConstraintProgramming.pave(C, dom, 0.01)
+        vars = IntervalConstraintProgramming.@variables x, y
+        dom = IntervalBoxes.IntervalBox([IA.interval(-2, 2), IA.interval(-2, 2)]...)
+        C = IntervalConstraintProgramming.constraint(x^2 + y^2 <= 1, vars)
+        # (`invokelatest` to avoid world-age issue)
+        inner, boundary = invokelatest(IntervalConstraintProgramming.pave, dom, C, 0.01)
         dirs = OctDirections(2)
-        H = overapproximate(p, dirs)
+        Uouter = UnionSetArray(convert.(Hyperrectangle, boundary))
+        H = overapproximate(Uouter, dirs)
         B2 = Ball2(N[0, 0], N(1))
         @test B2 ⊆ H
+    end
 
+    @static if isdefined(@__MODULE__, :IntervalConstraintProgramming)
         # overapproximate the intersection of a zonotope with an axis-aligned
         # half-space by a zonotope using ICP
         Z = Zonotope(N[0, 2], N[1//2 1//2; 1 0])

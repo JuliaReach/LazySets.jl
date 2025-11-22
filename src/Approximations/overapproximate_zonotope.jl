@@ -247,7 +247,7 @@ end
 
 """
     overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope},
-                    dom::IntervalBox)
+                    dom::AbstractVector{<:IA.Interval})
 
 Overapproximate a sparse polynomial zonotope over the parameter domain `dom`
 with a zonotope.
@@ -264,9 +264,10 @@ with a zonotope.
 A zonotope.
 """
 function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope},
-                         dom::IA.IntervalBox)
-    @assert dom ⊆ IA.IntervalBox(IA.interval(-1, 1), nparams(P)) "dom should " *
-                                                                 "be a subset of [-1, 1]^q"
+                         dom::AbstractVector{<:IA.Interval})
+    @assert length(dom) == nparams(P) &&
+            all(IA.issubset_interval(vi, IA.interval(-1, 1)) for vi in dom) "dom should be a " *
+                                                                            "subset of [-1, 1]^q"
 
     # handle dependent generators
     G = genmat_dep(P)
@@ -275,12 +276,11 @@ function overapproximate(P::AbstractSparsePolynomialZonotope, ::Type{<:Zonotope}
     Gnew = similar(G)
     @inbounds for (j, g) in enumerate(eachcol(G))
         # monomial value over the domain
-        # α = mapreduce(x -> _fast_interval_pow(x[1],  x[2]), *, zip(dom, E[:, i]))
         α = IA.interval(1, 1)
         for (i, vi) in enumerate(dom)
-            α *= fast_interval_pow(vi, E[i, j])
+            α *= vi^E[i, j]
         end
-        m, r = IA.midpoint_radius(α)
+        m, r = IA.midradius(α)
         cnew .+= m * g
         Gnew[:, j] .= r * g
     end
@@ -396,10 +396,10 @@ function load_taylormodels_overapproximation()
         [-0.5, 0.5]
 
         julia> x₀ = IA.interval(0.0) # expansion point
-        [0, 0]
+        [0.0, 0.0]
 
         julia> D = IA.interval(-3.0, 1.0)
-        [-3, 1]
+        [-3.0, 1.0]
 
         julia> p1 = Taylor1([2.0, 1.0], 2) # define a linear polynomial
          2.0 + 1.0 t + 𝒪(t³)
@@ -440,11 +440,10 @@ function load_taylormodels_overapproximation()
         julia> X = box_approximation(Z)
         Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([1.0, -2.1], [2.5, 6.5])
 
-        julia> Y = evaluate(vTM[1], vTM[1].dom) × evaluate(vTM[2], vTM[2].dom)
-        [-1.5, 3.5] × [-8.60001, 4.40001]
-
-        julia> H = convert(Hyperrectangle, Y) # this IntervalBox is the same as X
-        Hyperrectangle{Float64, StaticArraysCore.SVector{2, Float64}, StaticArraysCore.SVector{2, Float64}}([1.0, -2.1000000000000005], [2.5, 6.500000000000001])
+        julia> Y = [evaluate(vTM[1], vTM[1].dom), evaluate(vTM[2], vTM[2].dom)]
+        2-element Vector{IntervalArithmetic.Interval{Float64}}:
+   │     [-1.50001, 3.50001]
+         [-8.60001, 4.40001]
         ```
         However, the zonotope returns better results if we want to approximate the
         Taylor model because it is not axis-aligned:
@@ -553,17 +552,21 @@ function load_taylormodels_overapproximation()
           1.0 x₁ + 𝒪(‖x‖⁹)
           1.0 x₂ + 𝒪(‖x‖⁹)
 
-        julia> x₀ = IA.IntervalBox(0..0, 2) # expansion point
-        [0, 0]²
+        julia> x₀ = fill(0..0, 2) # expansion point
+        2-element Vector{IntervalArithmetic.Interval{Float64}}:
+│        [0.0, 0.0]
+│        [0.0, 0.0]
 
         julia> Dx₁ = IA.interval(0.0, 3.0) # domain for x₁
-        [0, 3]
+        [0.0, 3.0]
 
         julia> Dx₂ = IA.interval(-1.0, 1.0) # domain for x₂
-        [-1, 1]
+        [-1.0, 1.0]
 
-        julia> D = Dx₁ × Dx₂ # take the Cartesian product of the domain on each variable
-        [0, 3] × [-1, 1]
+        julia> D = [Dx₁, Dx₂]
+        2-element Vector{IntervalArithmetic.Interval{Float64}}:
+│         [0.0, 3.0]
+│        [-1.0, 1.0]
 
         julia> r = IA.interval(-0.5, 0.5) # interval remainder
         [-0.5, 0.5]
@@ -629,13 +632,17 @@ function load_taylormodels_overapproximation()
 
                 # build the generators
                 α = mid(rem_nonlin)
-                c[i] = constant_term(pol_lin_norm) + α  # constant terms
-                G[i, 1:n] = get_linear_coeffs(pol_lin_norm)  # linear terms
+                cterm = constant_term(pol_lin_norm)
+                @assert IA.isthin(cterm) "unexpected interval value"
+                c[i] = mid(cterm) + α  # constant terms
+                lin_coeffs = get_linear_coeffs(pol_lin_norm)
+                @assert all(IA.isthin, lin_coeffs) "unexpected interval value"
+                G[i, 1:n] = mid.(lin_coeffs)  # linear terms
                 # interval generator
                 for j in (n + 1):(n + m)
                     G[i, j] = zero(N)
                 end
-                G[i, n + i] = abs(rem_nonlin.hi - α)
+                G[i, n + i] = abs(IA.sup(rem_nonlin) - α)
             end
 
             if remove_redundant_generators
@@ -1160,12 +1167,7 @@ function _overapproximate_zonotope_hyperplane(Z::AbstractZonotope, H::Hyperplane
 
     s = G' * a
     d = b - dot(a, c)
-    @static if VERSION >= v"1.7"
-        sT = s'
-    else
-        sT = s' .+ 0  # convert to Vector (`nullspace` fails for lazy transpose)
-    end
-    V0 = nullspace(sT)
+    V0 = nullspace(s')
 
     cs = s * d / dot(s, s)
     Gs = V0 * V0'
@@ -1194,6 +1196,8 @@ end
 # - the resulting zonotope is G * D + c
 function _overapproximate_zonotope_halfspace_ICP(Z::AbstractZonotope{N},
                                                  H::HalfSpace{N,SingleEntryVector{N}}) where {N}
+    require(@__MODULE__, :IntervalConstraintProgramming; fun_name="overapproximate")
+
     c = center(Z)
     G = genmat(Z)
     p = size(G, 2)
@@ -1201,19 +1205,22 @@ function _overapproximate_zonotope_halfspace_ICP(Z::AbstractZonotope{N},
 
     a = G[d, :]
     io = IOBuffer()
-    first = true
     v = H.a.v
     negate = v < zero(N)
     if negate
         v = -v
     end
+    vars = ""
+    first = true
     for (i, ai) in enumerate(a)
         if first
             first = false
         elseif ai >= 0
             write(io, "+")
+            vars *= ", "
         end
         write(io, "$(v * ai)*x$(i)")
+        vars *= "x$(i)"
     end
     if negate
         write(io, ">=$(-H.b + c[d])")
@@ -1221,8 +1228,8 @@ function _overapproximate_zonotope_halfspace_ICP(Z::AbstractZonotope{N},
         write(io, "<=$(H.b - c[d])")
     end
     e = Meta.parse(String(take!(io)))
-    X = IA.IntervalBox(IA.interval(-1, 1), p)
-    newD = _contract_zonotope_halfspace_ICP(e, X)
+    X = fill(IA.interval(-1, 1), p)
+    newD = _contract_zonotope_halfspace_ICP(e, X, vars)
     if isempty(newD)
         return EmptySet{N}(length(c))
     end
@@ -1232,15 +1239,22 @@ end
 function load_overapproximate_ICP()
     return quote
         import .IntervalConstraintProgramming as ICP
+        import .IntervalConstraintProgramming.IntervalBoxes as IB
 
-        function _contract_zonotope_halfspace_ICP(e, X)
+        function _contract_zonotope_halfspace_ICP(e, X, vars_string)
+            n = length(X)
+            prefix = "IntervalConstraintProgramming.Symbolics.@variables "
+            sym = Meta.parse(prefix * vars_string)
+            vars = eval(quote
+                            $sym
+                        end)
             separator = eval(quote
-                                 ICP.@constraint $e
+                                 ICP.Separator($e, $vars)
                              end)
             # smallest box containing all points in domain X satisfying constraint
-            # (`invokelatest` to avoid world-age issue; `Base.` for VERSION < v"1.9")
-            out, _ = Base.invokelatest(separator, X)
-            return out
+            # (`invokelatest` to avoid world-age issue)
+            boundary, _, _ = invokelatest(separator, IB.IntervalBox(X...))
+            return boundary
         end
     end
 end  # load_overapproximate_ICP()
