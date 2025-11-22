@@ -125,13 +125,13 @@ isdisjoint(::Ball2, ::Ball2, ::Bool=false)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-⊆(::LazySet, ::LazySet, ::Bool=false)
+issubset(::LazySet, ::LazySet, ::Bool=false)
 ```
 ```@meta
 CurrentModule = LazySets.Ball2Module
 ```
 ```@docs
-⊆(::Ball2, ::Ball2, ::Bool=false)
+issubset(::Ball2, ::Ball2, ::Bool=false)
 ```
 
 ```@meta

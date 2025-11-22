@@ -161,6 +161,6 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`distance`](@ref distance(::AbstractHyperrectangle, ::AbstractHyperrectangle; ::Real=2.0))
 * [`intersection`](@ref intersection(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 * [`isdisjoint`](@ref isdisjoint(::AbstractHyperrectangle, ::AbstractHyperrectangle))
-* [`⊆`](@ref ⊆(::AbstractHyperrectangle, ::AbstractHyperrectangle))
+* [`issubset`](@ref issubset(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 * [`minkowski_difference`](@ref minkowski_difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractHyperrectangle, ::AbstractHyperrectangle))

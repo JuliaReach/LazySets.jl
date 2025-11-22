@@ -134,4 +134,4 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`intersection`](@ref intersection(::AbstractSingleton, ::AbstractSingleton))
 * [`isdisjoint`](@ref isdisjoint(::AbstractSingleton, ::AbstractSingleton))
 * [`isequivalent`](@ref isequivalent(::AbstractSingleton, ::AbstractSingleton))
-* [`⊆`](@ref ⊆(::AbstractSingleton, ::AbstractSingleton))
+* [`issubset`](@ref issubset(::AbstractSingleton, ::AbstractSingleton))

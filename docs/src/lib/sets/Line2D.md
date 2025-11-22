@@ -160,5 +160,5 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`low`](@ref low(::AbstractPolyhedron))
 * [`low`](@ref low(::AbstractPolyhedron, ::Int))
 * [`vertices_list`](@ref vertices_list(::AbstractPolyhedron))
-* [`⊆`](@ref ⊆(::LazySet, ::AbstractPolyhedron))
+* [`issubset`](@ref issubset(::LazySet, ::AbstractPolyhedron))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractPolyhedron, ::AbstractPolyhedron))

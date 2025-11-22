@@ -11,7 +11,7 @@ using ReachabilityBase.Require
 
 @reexport import ..API: area, center, isoperationtype, rand, reflect, sample,
                         volume, in, project, scale, ρ, σ, translate!,
-                        isdisjoint, ⊆
+                        isdisjoint, issubset
 @reexport import ..LazySets: ball_norm, chebyshev_center_radius, ○, radius_ball
 @reexport using ..API
 

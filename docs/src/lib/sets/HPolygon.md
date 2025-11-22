@@ -106,7 +106,7 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolytope, ::Bool=false))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolytope}))
-* [`⊆`](@ref ⊆(::AbstractPolytope, ::AbstractPolyhedron))
+* [`issubset`](@ref issubset(::AbstractPolytope, ::AbstractPolyhedron))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractPolytope, ::AbstractPolytope))
 
 Inherited from [`AbstractPolygon`](@ref):

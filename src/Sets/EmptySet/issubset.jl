@@ -1,4 +1,4 @@
-@validate function ⊆(∅₁::EmptySet, ∅₂::EmptySet, witness::Bool=false)
+@validate function issubset(∅₁::EmptySet, ∅₂::EmptySet, witness::Bool=false)
     return _issubset_emptyset(∅₁, ∅₂, witness)
 end
 

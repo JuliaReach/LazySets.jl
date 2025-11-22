@@ -181,13 +181,13 @@ isdisjoint(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-⊆(::LazySet, ::LazySet)
+issubset(::LazySet, ::LazySet)
 ```
 ```@meta
 CurrentModule = LazySets
 ```
 ```@docs
-⊆(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
+issubset(::AbstractHyperrectangle, ::AbstractHyperrectangle, ::Bool=false)
 ```
 ```@meta
 CurrentModule = LazySets.API

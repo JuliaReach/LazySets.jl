@@ -160,7 +160,7 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolytope, ::Bool=false))
 * [`isdisjoint`](@ref isdisjoint(::AbstractPolytope, ::AbstractPolytope))
-* [`⊆`](@ref ⊆(::AbstractPolytope, ::AbstractPolyhedron))
+* [`issubset`](@ref issubset(::AbstractPolytope, ::AbstractPolyhedron))
 
 Inherited from [`AbstractPolygon`](@ref):
 * [`dim`](@ref dim(::AbstractPolygon))

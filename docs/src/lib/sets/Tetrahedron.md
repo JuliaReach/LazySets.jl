@@ -116,5 +116,5 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolytope, ::Bool=false))
 * [`volume`](@ref volume(::AbstractPolytope))
-* [`⊆`](@ref ⊆(::AbstractPolytope, ::AbstractPolytope))
+* [`issubset`](@ref issubset(::AbstractPolytope, ::AbstractPolytope))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractPolytope, ::AbstractPolytope))

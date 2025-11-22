@@ -158,5 +158,5 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`project`](@ref project(::AbstractPolyhedron, ::AbstractVector{Int}))
 * [`intersection`](@ref intersection(::AbstractPolyhedron, ::AbstractPolyhedron))
 * [`isdisjoint`](@ref isdisjoint(::AbstractPolyhedron, ::AbstractPolyhedron))
-* [`⊆`](@ref ⊆(::AbstractPolyhedron, ::AbstractPolyhedron))
+* [`issubset`](@ref issubset(::AbstractPolyhedron, ::AbstractPolyhedron))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractPolyhedron, ::AbstractPolyhedron))

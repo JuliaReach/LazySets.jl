@@ -185,5 +185,5 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`distance`](@ref distance(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 * [`intersection`](@ref intersection(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 * [`isdisjoint`](@ref isdisjoint(::AbstractHyperrectangle, ::AbstractHyperrectangle))
-* [`⊆`](@ref ⊆(::AbstractHyperrectangle, ::AbstractHyperrectangle))
+* [`issubset`](@ref issubset(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 * [`minkowski_difference`](@ref minkowski_difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))

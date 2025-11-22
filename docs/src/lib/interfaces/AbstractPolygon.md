@@ -94,7 +94,7 @@ Inherited from [`AbstractPolytope`](@ref):
 * [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
 * [`isempty`](@ref isempty(::LazySet, ::Bool=false))
 * [`isuniversal`](@ref isuniversal(::LazySet, ::Bool=false))
-* [`⊆`](@ref ⊆(::AbstractPolytope, ::LazySet, ::Bool=false))
+* [`issubset`](@ref issubset(::AbstractPolytope, ::LazySet, ::Bool=false))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractPolytope, ::AbstractPolytope))
 
 The following helper functions are used for sorting directions:

@@ -127,7 +127,7 @@ Inherited from [`LazySet`](@ref):
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
 * [`⊂`](@ref ⊂(::LazySet, ::LazySet))
-* [`⊆`](@ref ⊆(::LazySet, ::LazySet))
+* [`issubset`](@ref issubset(::LazySet, ::LazySet))
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 
 Inherited from [`ConvexSet`](@ref):

@@ -163,5 +163,5 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`project`](@ref project(::AbstractPolyhedron, ::AbstractVector{Int}))
 * [`intersection`](@ref intersection(::AbstractPolyhedron, ::AbstractPolyhedron))
 * [`isdisjoint`](@ref isdisjoint(::AbstractPolyhedron, ::AbstractPolyhedron))
-* [`⊆`](@ref ⊆(::LazySet, ::AbstractPolyhedron))
+* [`issubset`](@ref issubset(::LazySet, ::AbstractPolyhedron))
 * [`minkowski_sum`](@ref minkowski_sum(::AbstractPolyhedron, ::AbstractPolyhedron))

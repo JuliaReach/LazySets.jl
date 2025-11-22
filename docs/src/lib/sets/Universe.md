@@ -126,7 +126,7 @@ Inherited from [`LazySet`](@ref):
 * [`sample`](@ref sample(::LazySet, ::Int=1))
 * [`isapprox`](@ref isapprox(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
-* [`⊆`](@ref ⊆(::LazySet, ::LazySet))
+* [`issubset`](@ref issubset(::LazySet, ::LazySet))
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
