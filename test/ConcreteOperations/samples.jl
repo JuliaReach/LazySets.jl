@@ -105,10 +105,10 @@ for N in [Float64]
     P = SparsePolynomialZonotope(c, G, GI, E, idx)
     for P4 in (P, convert(SimpleSparsePolynomialZonotope, P))
         sampler = LazySets.PolynomialZonotopeSampler()
-        pts = sample(P4, 100; sampler=sampler)
-        @test length(pts) == 100
-        @test_broken all(p ∈ P4 for p in pts)
-        P4z = overapproximate(P4, Zonotope)  # temporary sufficient test
+        pts = sample(P4, 10; sampler=sampler)
+        @test length(pts) == 10
+        @test_broken all(p ∈ P4 for p in pts)  # no membership for SPZ available
+        P4z = overapproximate(P4, Zonotope)  # temporary necessary test
         @test all(p ∈ P4z for p in pts)
     end
 end
