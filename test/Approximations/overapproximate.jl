@@ -218,7 +218,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     B = MatrixZonotope(N[2 0; 1 -1], [N[0 1; 1 -1]])
     res = overapproximate(A * B, MatrixZonotope)
 
-    ex_res = MatrixZonotope(N[3 -1; -1 -1], [N[0 1; 2 -1], N[2 0;4 -2], N[1 0; 1 -2]])
+    ex_res = MatrixZonotope(N[3 -1; -1 -1], [N[0 1; 2 -1], N[2 0; 4 -2], N[1 0; 1 -2]])
     @static if isdefined(@__MODULE__, :Polyhedra)
         @test isequivalent(vectorize(res), vectorize(ex_res))
     end
@@ -226,7 +226,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     C = MatrixZonotope(N[1 0; 0 -1], [N[0 0; 1 0]])
     res2 = overapproximate(A * B * C, MatrixZonotope)
     @test res2 isa MatrixZonotope
-    
+
     #empty generator
     D = MatrixZonotope(N[1 0; 0 -1], Matrix{N}[])
     res3 = overapproximate(A * D, MatrixZonotope)
