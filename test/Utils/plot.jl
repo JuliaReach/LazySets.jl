@@ -12,6 +12,7 @@ struct DummyPlot <: RecipesBase.AbstractPlot{DummyBackend} end
 Base.length(::DummyPlot) = 0
 dict = Dict{Symbol,Any}(:plot_object => DummyPlot())
 plot(args...; kwargs...) = RecipesBase.apply_recipe(dict, args...; kwargs...)
+RecipesBase.is_key_supported(s::Symbol) = true
 
 for N in @tN([Float64, Float32, Rational{Int}])
     p0 = zero(N)
@@ -197,12 +198,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
             plot(cpa)
         end
 
-        # TODO recipes using kwargs are not supported with the workaround we use here
-        @test_broken plot(dpz)
-        @test_broken plot(spz)
-        @test_broken plot(sspz)
-        @test_broken plot(us)
-        @test_broken plot(usa)
+        @test_broken plot(dpz) isa Vector{RecipesBase.RecipeData}  # TODO DensePolynomialZonotope plot recipe is broken
+        plot(spz)
+        plot(sspz)
+        plot(us)
+        plot(usa)
     end
 
     # 3D
