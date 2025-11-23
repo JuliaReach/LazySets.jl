@@ -32,6 +32,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test order(S) == 1 // 1
     @test polynomial_order(S) == 6
 
+    # isbounded
+    @test isbounded(S)
+
     Z = Zonotope(N[3.0, 1], N[1 1; 2 1.0])
     @test overapproximate(S, Zonotope) == Z
     @test overapproximate(S, UnionSetArray{Zonotope}; nsdiv=1) == UnionSetArray([Z])

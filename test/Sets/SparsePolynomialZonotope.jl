@@ -32,6 +32,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test nparams(PZ) == 2
     @test order(PZ) == 2 // 1
 
+    # isbounded
+    @test isbounded(PZ)
+
     LM = linear_map(N[1//2 0; 0 1//2], PZ)
     @test LM isa SparsePolynomialZonotope{N}
     @test center(LM) == [2, 2]

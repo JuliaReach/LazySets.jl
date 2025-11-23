@@ -131,6 +131,8 @@ isempty(PZ::AbstractPolynomialZonotope) = false
 
 isuniversal(PZ::AbstractPolynomialZonotope) = false
 
+isbounded(PZ::AbstractPolynomialZonotope) = true
+
 function convex_hull(PZ::AbstractPolynomialZonotope)
     return convex_hull(convert(SimpleSparsePolynomialZonotope, PZ))
 end

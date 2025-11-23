@@ -33,6 +33,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test ngens_indep(P) == 1
     @test order(P) == 3 // 1
 
+    # isbounded
+    @test isbounded(P)
+
     # type-specific concrete methods
     # TODO these commands do not test anything
     P2 = copy(P)
