@@ -581,7 +581,7 @@ end
     end
 end
 
-@recipe function plot_polyzono(P::AbstractPolynomialZonotope{N}, ε::Real=N(PLOT_PRECISION);  # COV_EXCL_LINE
+@recipe function plot_polyzono(P::AbstractSparsePolynomialZonotope{N}, ε::Real=N(PLOT_PRECISION);  # COV_EXCL_LINE
                                nsdiv=10, partition=nothing) where {N}
     label --> DEFAULT_LABEL
     grid --> DEFAULT_GRID

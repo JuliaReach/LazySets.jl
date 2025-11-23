@@ -198,7 +198,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
             plot(cpa)
         end
 
-        @test_broken plot(dpz) isa Vector{RecipesBase.RecipeData}  # TODO DensePolynomialZonotope plot recipe is broken
+        @test_broken plot(dpz) isa Vector{RecipesBase.RecipeData}  # TODO add plot recipe for DensePolynomialZonotope
         plot(spz)
         plot(sspz)
         plot(us)
