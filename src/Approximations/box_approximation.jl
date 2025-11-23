@@ -228,7 +228,7 @@ column-sum of the absolute values of the ``i``-th row of ``G`` for
 ``i = 1,…, p``, where ``p`` is the number of generators of ``Z``.
 """
 function box_approximation(Z::AbstractZonotope)
-    r = sum(abs, genmat(Z); dims=2)[:]
+    r = _box_radius(Z)
     return Hyperrectangle(center(Z), r)
 end
 

@@ -1337,3 +1337,23 @@ function _affine_map_inverse_zonotope(A::AbstractMatrix, Z::AbstractZonotope,
     G = Ainv * genmat(Z)
     return Zonotope(c, G)
 end
+
+function _box_radius(Z::AbstractZonotope)
+    return sum(abs, genmat(Z); dims=2)[:]
+end
+
+function high(Z::AbstractZonotope)
+    return center(Z) .+ _box_radius(Z)
+end
+
+function high(Z::AbstractZonotope, i::Int)
+    return center(Z, i) .+ _box_radius(Z)[i]
+end
+
+function low(Z::AbstractZonotope)
+    return center(Z) .- _box_radius(Z)
+end
+
+function low(Z::AbstractZonotope, i::Int)
+    return center(Z, i) .- _box_radius(Z)[i]
+end
