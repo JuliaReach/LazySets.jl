@@ -1049,8 +1049,8 @@ end
 
 function high(P::AbstractPolyhedron)
     if dim(P) == 1
-        l = _high_1d(P)
-        return [l]
+        h = _high_1d(P)
+        return [h]
     end
     return _high(P)
 end

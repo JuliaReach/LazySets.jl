@@ -134,12 +134,8 @@ Inherited from [`ConvexSet`](@ref):
 * [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
-* [`high`](@ref high(::AbstractPolyhedron))
-* [`high`](@ref high(::AbstractPolyhedron, ::Int))
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
 * [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{AbstractPolyhedron}))
-* [`low`](@ref low(::AbstractPolyhedron))
-* [`low`](@ref low(::AbstractPolyhedron, ::Int))
 * [`intersection`](@ref intersection(::AbstractPolyhedron, ::AbstractPolyhedron))
 
 Inherited from [`AbstractPolytope`](@ref):
@@ -155,6 +151,10 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 * [`isuniversal`](@ref isuniversal(::AbstractCentrallySymmetricPolytope, ::Bool=false))
 
 Inherited from [`AbstractZonotope`](@ref):
+* [`high`](@ref high(::AbstractZonotope))
+* [`high`](@ref high(::AbstractZonotope, ::Int))
+* [`low`](@ref low(::AbstractZonotope))
+* [`low`](@ref low(::AbstractZonotope, ::Int))
 * [`ngens`](@ref ngens(::AbstractZonotope))
 * [`order`](@ref order(::AbstractZonotope))
 * [`reflect`](@ref reflect(::AbstractZonotope))

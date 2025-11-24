@@ -54,9 +54,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         plot(hr)
         plot(st)
         plot(zt)
-        if n == 2
-            plot(ztmd)  # TODO crashes in 1D
-        end
+        plot(ztmd)
         plot(zs)
         if n == 1
             plot(itv)

@@ -172,6 +172,10 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 
+* [`high`](@ref high(::LazySet))
+* [`high`](@ref high(::LazySet, ::Int))
+* [`low`](@ref low(::LazySet))
+* [`low`](@ref low(::LazySet, ::Int))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 
@@ -219,12 +223,8 @@ Inherited from [`ConvexSet`](@ref):
 * [`linear_combination`](@ref linear_combination(::ConvexSet, ::ConvexSet))
 
 Inherited from [`AbstractPolyhedron`](@ref):
-* [`high`](@ref high(::AbstractPolyhedron))
-* [`high`](@ref high(::AbstractPolyhedron, ::Int))
 * [`ispolyhedral`](@ref ispolyhedral(::AbstractPolyhedron))
 * [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{AbstractPolyhedron}))
-* [`low`](@ref low(::AbstractPolyhedron))
-* [`low`](@ref low(::AbstractPolyhedron, ::Int))
 * [`intersection`](@ref intersection(::AbstractPolyhedron{N}, ::AbstractPolyhedron{N}) where {N})
 
 Inherited from [`AbstractPolytope`](@ref):

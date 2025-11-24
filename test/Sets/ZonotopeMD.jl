@@ -23,6 +23,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     G = hcat(M, Diagonal(d))
     @test genmat(Z) == G
 
+    Z1 = ZonotopeMD([N(1)], hcat([N(1)]), [N(2)])  # 1D zonotope
+
     # dim
     @test dim(Z) == 2
 
@@ -40,6 +42,18 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Zstd = convert(Zonotope, Z)
     @test center(Zstd) == c
     @test genmat(Zstd) == G
+
+    # high/low
+    res = high(Z1)
+    @test res isa Vector{N} && res == N[4]
+    @test_throws DimensionMismatch high(Z1, 2)
+    res = high(Z1, 1)
+    @test res isa N && res == N(4)
+    res = low(Z1)
+    @test res isa Vector{N} && res == N[-2]
+    @test_throws DimensionMismatch low(Z1, 2)
+    res = low(Z1, 1)
+    @test res isa N && res == N(-2)
 
     # cartesian_product
     c2 = [N(3), N(4)]

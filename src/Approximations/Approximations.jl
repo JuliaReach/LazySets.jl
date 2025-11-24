@@ -30,7 +30,7 @@ using ReachabilityBase.Comparison: _isapprox, _leq, _geq, _rtol, isapproxzero
 using ReachabilityBase.Subtypes: subtypes
 using ..LazySets: ACS, default_lp_solver, _isbounded_stiemke, require, linprog,
                   is_lp_optimal, _normal_Vector, default_sdp_solver,
-                  get_exponential_backend, _expmv, second, @assert
+                  get_exponential_backend, _expmv, second, @assert, _box_radius
 using ..LazySets.JuMP: Model, set_silent, @variable, @constraint, optimize!,
                        value, @NLobjective, @objective
 using ..LazySets.MatrixZonotopeModule: _rowwise_zonotope_norm
