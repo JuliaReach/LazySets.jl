@@ -128,15 +128,33 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @static if isdefined(@__MODULE__, :IntervalMatrices)
         using IntervalMatrices: IntervalMatrix
         IM = IntervalMatrix([interval(-N(1.1), -N(0.9)) interval(-N(4.1), -N(3.9));
-                             interval(N(3.9), N(4.1)) interval(-N(1.1), -N(0.9))])
+                            interval( N(3.9),  N(4.1)) interval(-N(1.1), -N(0.9))])
         MZ = convert(MatrixZonotope, IM)
-        if N == Rational{Int} # isapprox is sensitive to minor rounding using Rational{Int}
+        if N == Rational{Int}
             T = Float64
-            @test isapprox(convert(Matrix{T}, center(MZ)), T[-1.0 -4.0; 4.0 -1.0])
-            @test isapprox(convert(Vector{Matrix{T}}, generators(MZ)), [T[0.1 0.1; 0.1 0.1]])
+            @test isapprox(
+                convert(Matrix{T}, center(MZ)),
+                T[-1.0 -4.0;
+                4.0 -1.0])
+            expected = [
+                T[0.1 0.0; 0.0 0.0],
+                T[0.0 0.1; 0.0 0.0],
+                T[0.0 0.0; 0.1 0.0],
+                T[0.0 0.0; 0.0 0.1]
+            ]
+            @test isapprox(convert(Vector{Matrix{T}}, generators(MZ)), expected)
         else
-            @test isapprox(center(MZ), N[-1.0 -4.0; 4.0 -1.0])
-            @test isapprox(generators(MZ), [N[0.1 0.1; 0.1 0.1]])
+            @test isapprox(
+                center(MZ),
+                N[-1.0 -4.0;
+                4.0 -1.0])
+            expected = [
+                N[0.1 0.0; 0.0 0.0],
+                N[0.0 0.1; 0.0 0.0],
+                N[0.0 0.0; 0.1 0.0],
+                N[0.0 0.0; 0.0 0.1]
+            ]
+            @test isapprox(generators(MZ), expected)
         end
     end
 
