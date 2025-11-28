@@ -17,7 +17,7 @@ if no generator could be removed.
 
 The function discards generators whose absolute entry values do not exceed the tolerance`tol`.
 """
-function remove_redundant_generators(MZ::MatrixZonotope; tol=1e-9)
+function remove_redundant_generators(MZ::MatrixZonotope; tol::Real=1e-9)
     Gs = generators(MZ)
     idx = indexvector(MZ)
     

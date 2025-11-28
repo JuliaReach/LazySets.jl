@@ -58,7 +58,7 @@ for N in @tN([Float32, Float64])
         c = N[1 -2; 2 -1]
         A = MatrixZonotope(c, [zeros(N, 2, 2)])
         expA = MatrixZonotopeExp(A)
-        res = overapproximate(expA, MatrixZonotope, 20) #for large k it converges to exp(c)
+        res = overapproximate(expA, MatrixZonotope, 20; tol=1e-5) #for large k it converges to exp(c)
         @test isapprox(center(res), exp(c))
         @test ngens(res) == 0
 

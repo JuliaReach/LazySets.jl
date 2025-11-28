@@ -168,6 +168,7 @@ function load_intervalmatrices_overapproximation_expmap()
         - `expA` -- `MatrixZonotopeExp`
         - `MatrixZonotope` -- target type
         - `k` -- (default: `2`) the order of the Taylor expansion
+        - `tol` -- (default: `1e-9`)tolerance used when pruning generators after the overapproximation
 
         ### Output
 
@@ -186,13 +187,15 @@ function load_intervalmatrices_overapproximation_expmap()
         The remainder term ``E_k`` is computed through interval arithmetic
         following [AlthoffKS11; Proposition 4.1](@citet).
         """
-        function overapproximate(expA::MatrixZonotopeExp{N,T}, ::Type{<:MatrixZonotope},
-                                 k::Int=2) where {N,T<:AbstractMatrixZonotope{N}}
-            # overapproximate the exponent, which can be a product A*B*…
+        function overapproximate(expA::MatrixZonotopeExp{N,T},
+                                 ::Type{<:MatrixZonotope},
+                                 k::Int=2; tol::Real=1e-9) where {N,T<:AbstractMatrixZonotope{N}}
+
+            # overapproximate the product MZP = A*B*... ---
             MZP = MatrixZonotopeProduct(expA.M)
             MZ = overapproximate(MZP, MatrixZonotope)
 
-            # compute the Taylor expansion
+            Id = MatrixZonotope(Matrix{N}(I, size(MZ)), Matrix{N}[])
             powers = Vector{typeof(MZ)}(undef, k)
             powers[1] = MZ
             @inbounds for i in 2:k
@@ -200,14 +203,14 @@ function load_intervalmatrices_overapproximation_expmap()
                 powers[i] = scale(1 / i, term)
             end
             W = reduce(minkowski_sum, powers)
-            W = MatrixZonotope(center(W) + Matrix{N}(I, size(W)), generators(W))
+            W = minkowski_sum(W, Id)
 
-            # overapproximate mat zon by interval matrix and overapproximate remainder
             IM = overapproximate(MZ, IntervalMatrix)
             E = IntervalMatrices._exp_remainder(IM, N(1), k)
+            E_MZ = convert(MatrixZonotope, E)
+            res = minkowski_sum(W, E_MZ)
 
-            res = minkowski_sum(W, convert(MatrixZonotope, E))
-            return remove_redundant_generators(res)
+            return remove_redundant_generators(res; tol=tol)
         end
     end
 end
