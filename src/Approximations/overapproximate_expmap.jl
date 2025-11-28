@@ -207,10 +207,14 @@ function load_intervalmatrices_overapproximation_expmap()
 
             IM = overapproximate(MZ, IntervalMatrix)
             E = IntervalMatrices._exp_remainder(IM, N(1), k)
-            E_MZ = convert(MatrixZonotope, E)
-            res = minkowski_sum(W, E_MZ)
+            res = minkowski_sum(W, E)
 
             return remove_redundant_generators(res; tol=tol)
+        end
+
+        # TODO avoid `convert`
+        function LazySets.minkowski_sum(MZ::MatrixZonotope, IM::IntervalMatrix)
+            return minkowski_sum(MZ, convert(MatrixZonotope, IM))
         end
     end
 end
