@@ -168,7 +168,7 @@ function load_intervalmatrices_overapproximation_expmap()
         - `expA` -- `MatrixZonotopeExp`
         - `MatrixZonotope` -- target type
         - `k` -- (default: `2`) the order of the Taylor expansion
-        - `tol` -- (default: `1e-9`)tolerance used when pruning generators after the overapproximation
+        - `tol` -- (default: `1e-9`) tolerance used when pruning generators after the overapproximation
 
         ### Output
 
