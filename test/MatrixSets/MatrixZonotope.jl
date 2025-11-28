@@ -154,16 +154,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # remove redundant generators 
     MZ2 = MatrixZonotope(c, [N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]])
-    MZred = remove_redundant_generators(MZ2)
-    @test ngens(MZred) == 2
-    # `remove_redundant_generators` introduces floating-point errors for Float32
-    # (at least on the CI platform)
-    # and `isequivalent` is not robust to minor imprecisions 
-    if N == Float64
-        @static if isdefined(@__MODULE__, :Polyhedra)
-            @test isequivalent(vectorize(MZ2), vectorize(MZred))
-        end
-    end
+    MZred = remove_redundant_generators(MZ2) # all gens should be preserved 
+    @test ngens(MZred) == 3
+    
+    MZ3 = MatrixZonotope(c, [N[1 4; 0 -2], N[1e-10 1e-10; 1e-10 1e-10], N[1 -1; 0 1]])
+    MZred = remove_redundant_generators(MZ3; tol= 1e-8)
+    @test generators(MZred) == [N[1 4; 0 -2], N[1 -1; 0 1]]
+    @test indexvector(MZred) == [1, 3]
 
     # minkowski sum
     ms = minkowski_sum(MZ, MZ2)
