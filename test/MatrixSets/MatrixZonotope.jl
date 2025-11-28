@@ -135,25 +135,25 @@ for N in @tN([Float64, Float32, Rational{Int}])
             @test isapprox(
                 convert(Matrix{T}, center(MZ)),
                 T[-1.0 -4.0;
-                4.0 -1.0])
-            expected = [
-                T[0.1 0.0; 0.0 0.0],
+                4.0 -1.0]
+            )
+
+            expected = [T[0.1 0.0; 0.0 0.0],
+                T[0.0 0.0; 0.1 0.0], 
                 T[0.0 0.1; 0.0 0.0],
-                T[0.0 0.0; 0.1 0.0],
-                T[0.0 0.0; 0.0 0.1]
-            ]
+                T[0.0 0.0; 0.0 0.1]]
             @test isapprox(convert(Vector{Matrix{T}}, generators(MZ)), expected)
         else
             @test isapprox(
                 center(MZ),
                 N[-1.0 -4.0;
-                4.0 -1.0])
-            expected = [
-                N[0.1 0.0; 0.0 0.0],
-                N[0.0 0.1; 0.0 0.0],
-                N[0.0 0.0; 0.1 0.0],
-                N[0.0 0.0; 0.0 0.1]
-            ]
+                4.0 -1.0]
+            )
+
+            expected = [N[0.1 0.0; 0.0 0.0],
+                N[0.0 0.0; 0.1 0.0], 
+                N[0.0 0.1; 0.0 0.0], 
+                N[0.0 0.0; 0.0 0.1]]
             @test isapprox(generators(MZ), expected)
         end
     end
