@@ -1,11 +1,12 @@
 """
-    remove_redundant_generators(MZ::MatrixZonotope)
+    remove_redundant_generators(MZ::MatrixZonotope; tol=1e-9)
 
 Remove redundant generators from a matrix zonotope.
 
 # Input
 
 - `MZ` -- a matrix zonotope
+- `tol` -- (default: `1e-9`) tolerance
 
 # Output
 
@@ -14,16 +15,17 @@ if no generator could be removed.
 
 # Algorithm 
 
-This function first vectorizes the matrix zonotope into a standard zonotope, 
-removes redundant generators from the resulting zonotope, and then converts it back 
-to a matrix zonotope of the original dimensions.
-
-# Extended help
-
-    remove_redundant_generators(Z::Zonotope)
+The function discards generators whose absolute entry values do not exceed the tolerance `tol`.
 """
-function remove_redundant_generators(MZ::MatrixZonotope)
-    Z = vectorize(MZ)
-    Zred = remove_redundant_generators(Z)
-    return matrixize(Zred, size(MZ))
+function remove_redundant_generators(MZ::MatrixZonotope; tol::Real=1e-9)
+    Gs = copy(generators(MZ))
+    idx = copy(indexvector(MZ))
+    
+    @inbounds for i in reverse(eachindex(Gs))
+        if maximum(abs, Gs[i]) < tol
+            deleteat!(Gs, i)
+            deleteat!(idx, i)
+        end
+    end
+    return MatrixZonotope(center(MZ), Gs, idx)
 end
