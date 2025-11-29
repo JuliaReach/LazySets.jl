@@ -197,7 +197,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Q = convert(typeof(P), P)
     @test P == Q
     @static if isdefined(@__MODULE__, :Polyhedra)
-        Q = convert(HPolytope{N,Vector{N}}, tovrep(P))
+        Q = convert(HPolytope, tovrep(P))
         @test P == Q
     end
     H = HalfSpace(N[1], N(1))
@@ -476,6 +476,33 @@ for N in [Float64]
     P2 = linear_map_inverse(M2, Q)
     @test isequivalent(P2, P)
 
+    # tohrep/tovrep from 1D & 2D HPolytope
+    for (A, b) in ((hcat(N[1, -1]), N[1, 0]), (N[1 0; 0 1; -1 -1], N[1, 1, 0]))
+        P = HPolytope(A, b)
+        Q = tovrep(P)
+        @test Q isa VPolytope{N} && isequivalent(Q, P)
+        @test tohrep(P) == P  # no-op
+    end
+    for n in 1:2
+        P = convert(HPolytope, EmptySet{N}(n))
+        Q = tovrep(P)
+        @test Q isa VPolytope{N} && isempty(Q.vertices)
+        @test tohrep(P) == P  # no-op
+    end
+
+    # tohrep/tovrep from 1D & 2D VPolytope
+    for vlist in ([N[0], N[1]], [N[0, 0], N[1, 1]])
+        P = VPolytope(vlist)
+        Q = tohrep(P)
+        @test Q isa HPolytope{N} && isequivalent(Q, P)
+        @test tovrep(P) == P  # no-op
+    end
+    for n in 1:2
+        P = VPolytope{N}()
+        @test_throws AssertionError tohrep(P)
+        @test tovrep(P) == P  # no-op
+    end
+
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         # -----
         # H-rep
@@ -553,12 +580,15 @@ for N in [Float64]
                        HalfSpace(N[-1, -1], N(-1))])
         @test an_element(P) ∈ P
 
-        # tovrep from HPolytope
-        A = N[0 1; 1 0; -1 -1]
-        b = N[0.25, 0.25, -0]
+        # tohrep/tovrep from 3D HPolytope
+        A = N[1 0 0; 0 1 0; 0 0 1; -1 -1 -1]
+        b = N[1, 1, 1, 0]
         P = HPolytope(A, b)
         @test tovrep(P) isa VPolytope{N}
-        @test tohrep(P) isa HPolytope{N}  # no-op
+        @test tohrep(P) == P  # no-op
+        P = convert(HPolytope, EmptySet{N}(3))
+        @test tovrep(P) isa VPolytope{N}
+        @test tohrep(P) == P  # no-op
 
         # linear map
         H = BallInf(N[0, 0], N(1))
@@ -637,10 +667,13 @@ for N in [Float64]
         vl = vertices_list(cp)
         @test ispermutation(vl, [N[0, 0, 2], N[1, 1, 2]])
 
-        # tohrep from VPolytope
-        P = VPolytope([v1, v2, v3, v4, v5])
+        # tohrep/tovrep from 3D VPolytope
+        P = VPolytope([N[0, 0, 0], N[1, 1, 1]])
         @test tohrep(P) isa HPolytope{N}
-        @test tovrep(P) isa VPolytope{N}  # no-op
+        @test tovrep(P) == P  # no-op
+        P = VPolytope{N}()
+        @test_throws AssertionError tohrep(P)
+        @test tovrep(P) == P  # no-op
 
         # subset (see #974)
         H = BallInf(N[0, 0], N(1))
