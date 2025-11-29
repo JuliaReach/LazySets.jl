@@ -36,7 +36,7 @@ Given the unit ball in the 2-norm, below we plot the local approximation along
 the East and North directions.
 
 ```@example example_iterative_refinement
-using Plots, LazySets, LazySets.Approximations
+using Plots, LazySets
 
 b = Ball2(zeros(2), 1.)
 

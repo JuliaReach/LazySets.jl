@@ -853,7 +853,7 @@ julia> dirs.directions
  [0.0, 1.0]
  [0.0, -1.0]
 
-julia> LazySets.Approximations.isbounding(dirs)
+julia> isbounding(dirs)
 true
 
 julia> LazySets.Approximations.isnormalized(dirs)

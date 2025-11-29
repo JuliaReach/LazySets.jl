@@ -21,7 +21,7 @@ The operator can be used in infix notation (`X ⊆ Y`).
 We use the following four sets for illustration.
 
 ```@example binary_set_operations
-using LazySets, LazySets.Approximations, Plots
+using LazySets, Plots
 B1 = Ball1(-ones(2), 1.)
 B2 = Ball2(ones(2), 1.)
 BI = BallInf(zeros(2), 1.)

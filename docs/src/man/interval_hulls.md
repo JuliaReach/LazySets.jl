@@ -66,8 +66,6 @@ It overapproximates a convex set by a tight ball in the infinity norm by
 evaluating the support vector in the canonical directions.
 
 ```@example example_ih
-import LazySets.Approximations.ballinf_approximation
-
 plot(X, 1e-3, aspectratio=1)
 plot!(Y, 1e-3)
 plot!(Z, 1e-3, alpha=0.2)
@@ -89,8 +87,6 @@ If we want to have different lengths for each dimension, instead of the
 through the `interval_hull` function.
 
 ```@example example_ih
-import LazySets.Approximations.interval_hull
-
 plot(X, 1e-3, aspectratio=1)
 plot!(Y, 1e-3)
 plot!(Z, 1e-3, alpha=0.2)
@@ -119,7 +115,6 @@ around the origin.
 It is defined in the `Approximations` module as well.
 
 ```@example example_ih
-import LazySets.Approximations.symmetric_interval_hull
 using SparseArrays
 
 plot(X, 1e-3, aspectratio=1)
@@ -167,8 +162,6 @@ of minimal volume.
 For instance:
 
 ```@example example_ih
-import LazySets.Approximations: norm, radius, diameter
-
 norm(X), norm(Y), norm(Z)
 ```
 
