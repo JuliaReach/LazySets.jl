@@ -43,10 +43,9 @@ conflict otherwise.
 
 ```jldoctest interval_constructor
 julia> using IntervalArithmetic
-WARNING: using IntervalArithmetic.Interval in module Main conflicts with an existing identifier.
 
 julia> x = LazySets.Interval(IntervalArithmetic.Interval(0.0, 1.0))
-Interval{Float64}([0, 1])
+LazySets.IntervalModule.Interval{Float64}([0, 1])
 
 julia> dim(x)
 1
@@ -63,7 +62,7 @@ Note that `+` is generally used for the lazy Minkowksi sum in this library.
 Intervals of other numeric types can be created as well, e.g., a rational
 interval:
 
-```jldoctest interval_constructor
+```jldoctest
 julia> Interval(0//1, 2//1)
 Interval{Rational{Int64}}([0//1, 2//1])
 ```

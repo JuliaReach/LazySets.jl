@@ -53,7 +53,7 @@ identity matrix). Scaling by ``1`` is ignored and simplified to a pure
 julia> using LinearAlgebra
 
 julia> am = AffineMap(2I, X, b2)
-AffineMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Diagonal{Int64, Vector{Int64}}, Vector{Int64}}([2 0; 0 2], BallInf{Int64, Vector{Int64}}([0, 0], 1), [1, 2])
+AffineMap{Int64, BallInf{Int64, Vector{Int64}}, Int64, Diagonal{Int64, Vector{Int64}}, Vector{Int64}}(Diagonal([2, 2]), BallInf{Int64, Vector{Int64}}([0, 0], 1), [1, 2])
 
 julia> AffineMap(2, X, b2) == am
 true

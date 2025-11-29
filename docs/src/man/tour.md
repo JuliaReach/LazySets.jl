@@ -100,7 +100,7 @@ IntervalArithmetic.jl represents multi-dimensional intervals with the type
 `IntervalBox`, to which we can also `convert`:
 
 ```@example tour
-using IntervalArithmetic
+using IntervalArithmetic: IntervalBox
 
 Hbox = convert(IntervalBox, H)
 
