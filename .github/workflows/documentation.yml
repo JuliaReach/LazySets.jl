@@ -27,7 +27,7 @@ jobs:
       - name: Set up Julia
         uses: julia-actions/setup-julia@v2
         with:
-          version: '1.11'  # currently there are dependency problems on v1.12
+          version: '1'
       - name: Check out repository
         uses: actions/checkout@v6
       - name: Cache artifacts
