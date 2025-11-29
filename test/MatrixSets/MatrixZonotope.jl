@@ -156,7 +156,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     MZ2 = MatrixZonotope(c, [N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]])
     MZred = remove_redundant_generators(MZ2) # all gens should be preserved 
     @test ngens(MZred) == 3
-    
+
     MZ3 = MatrixZonotope(c, [N[1 4; 0 -2], N[1e-10 1e-10; 1e-10 1e-10], N[1 -1; 0 1]])
     MZred = remove_redundant_generators(MZ3; tol=1e-8)
     @test generators(MZred) == [N[1 4; 0 -2], N[1 -1; 0 1]]

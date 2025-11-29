@@ -257,13 +257,13 @@ end
 
 # symmetric method
 @validate function in(x::AbstractVector,
-                     ms::MinkowskiSum{N,<:LazySet,<:AbstractSingleton}) where {N}
+                      ms::MinkowskiSum{N,<:LazySet,<:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.Y, ms.X)
 end
 
 # disambiguation
 @validate function in(x::AbstractVector,
-                     ms::MinkowskiSum{N,<:AbstractSingleton,<:AbstractSingleton}) where {N}
+                      ms::MinkowskiSum{N,<:AbstractSingleton,<:AbstractSingleton}) where {N}
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 

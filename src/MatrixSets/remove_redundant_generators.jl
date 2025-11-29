@@ -20,7 +20,7 @@ The function discards generators whose absolute entry values do not exceed the t
 function remove_redundant_generators(MZ::MatrixZonotope; tol::Real=1e-9)
     Gs = copy(generators(MZ))
     idx = copy(indexvector(MZ))
-    
+
     @inbounds for i in reverse(eachindex(Gs))
         if maximum(abs, Gs[i]) < tol
             deleteat!(Gs, i)

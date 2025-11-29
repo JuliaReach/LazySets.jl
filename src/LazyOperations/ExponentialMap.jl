@@ -441,7 +441,7 @@ true
 ```
 """
 @validate function in(x::AbstractVector, em::ExponentialMap;
-                     backend=get_exponential_backend())
+                      backend=get_exponential_backend())
     N = promote_type(eltype(x), eltype(em))
     y = _expmv(backend, -one(N), em.expmat.M, x)
     return y ∈ em.X

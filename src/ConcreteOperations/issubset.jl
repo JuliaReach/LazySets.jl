@@ -74,7 +74,7 @@ end
 ``r_1 - r_2 ≤ c_1 - c_2 ≤ -(r_1 - r_2)``, where ``≤`` is taken component-wise.
 """
 @validate function issubset(H1::AbstractHyperrectangle, H2::AbstractHyperrectangle,
-                     witness::Bool=false)
+                            witness::Bool=false)
     N = promote_type(eltype(H1), eltype(H2))
     @inbounds for i in 1:dim(H1)
         c_dist = center(H1, i) - center(H2, i)
@@ -125,7 +125,7 @@ end
 Since ``S`` is convex, ``P ⊆ S`` iff ``v ∈ S`` for all vertices ``v`` of ``P``.
 """
 @validate function issubset(P::AbstractPolytope, S::LazySet, witness::Bool=false;
-                     algorithm=nothing)
+                            algorithm=nothing)
     if !isconvextype(typeof(S))
         error("an inclusion check for the given combination of set types is " *
               "not available")
@@ -355,7 +355,7 @@ Otherwise we compute the set difference ``W = X \\ Y`` and check whether
 end
 
 @validate function issubset(X::Interval, U::UnionSet{N,<:Interval,<:Interval},
-                     witness::Bool=false) where {N}
+                            witness::Bool=false) where {N}
     return _issubset_interval(X, first(U), second(U), witness)
 end
 
@@ -474,7 +474,7 @@ The `filter_redundant_sets` option controls whether sets in `U` that do not
 intersect with `X` should be ignored.
 """
 @validate function issubset(X::LazySet, U::UnionSetArray, witness::Bool=false;
-                     filter_redundant_sets::Bool=true)
+                            filter_redundant_sets::Bool=true)
     return _issubset_unionsetarray(X, U, witness;
                                    filter_redundant_sets=filter_redundant_sets)
 end
@@ -677,7 +677,7 @@ We then construct a high-dimensional witness by obtaining any point in the other
 blocks (using `an_element`) and concatenating these (lower-dimensional) points.
 """
 @validate function issubset(X::CartesianProduct, Y::CartesianProduct, witness::Bool=false;
-                     check_block_equality::Bool=true)
+                            check_block_equality::Bool=true)
     n1 = dim(first(X))
     n2 = dim(second(X))
     if check_block_equality && (n1 != dim(first(Y)) || n2 != dim(second(Y)))
@@ -734,7 +734,7 @@ We then construct a high-dimensional witness by obtaining any point in the other
 blocks (using `an_element`) and concatenating these (lower-dimensional) points.
 """
 @validate function issubset(X::CartesianProductArray, Y::CartesianProductArray,
-                     witness::Bool=false; check_block_equality::Bool=true)
+                            witness::Bool=false; check_block_equality::Bool=true)
     aX = array(X)
     aY = array(Y)
     if check_block_equality && !same_block_structure(aX, aY)
@@ -805,20 +805,23 @@ The algorithm is based on [MitchellBB19; Lemma 3.1](@citet).
 end
 
 for T in (AbstractZonotope, AbstractSingleton, LineSegment)
-    @eval @validate function issubset(Z::$(T), C::CartesianProduct{N,<:LazySet,<:Universe}) where {N}
+    @eval @validate function issubset(Z::$(T),
+                                      C::CartesianProduct{N,<:LazySet,<:Universe}) where {N}
         X = first(C)
         Zp = project(Z, 1:dim(X))
         return ⊆(Zp, X)
     end
 
-    @eval @validate function issubset(Z::$(T), C::CartesianProduct{N,<:Universe,<:LazySet}) where {N}
+    @eval @validate function issubset(Z::$(T),
+                                      C::CartesianProduct{N,<:Universe,<:LazySet}) where {N}
         Y = second(C)
         Zp = project(Z, (dim(first(C)) + 1):dim(C))
         return ⊆(Zp, Y)
     end
 
     # disambiguation
-    @eval @validate function issubset(X::$(T), Y::CartesianProduct{N,<:Universe,<:Universe}) where {N}
+    @eval @validate function issubset(X::$(T),
+                                      Y::CartesianProduct{N,<:Universe,<:Universe}) where {N}
         return true
     end
 end
@@ -848,7 +851,7 @@ end
 end
 
 @validate function issubset(X::Interval, U::UnionSetArray{N,<:AbstractHyperrectangle},
-                     witness::Bool=false) where {N}
+                            witness::Bool=false) where {N}
     V = _get_interval_array_copy(U)
     return _issubset_interval!(X, V, witness)
 end
@@ -858,7 +861,8 @@ end
 end
 
 # with additional kwarg
-@validate function issubset(X::AbstractPolytope, U::UnionSetArray, witness::Bool=false; algorithm=nothing)
+@validate function issubset(X::AbstractPolytope, U::UnionSetArray, witness::Bool=false;
+                            algorithm=nothing)
     return _issubset_unionsetarray(X, U, witness)
 end
 
