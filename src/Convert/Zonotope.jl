@@ -257,3 +257,9 @@ function convert(::Type{Zonotope}, cpa::CartesianProductArray{N,AZ}) where {N,AZ
     G = reduce(blockdiag, sparse.(genmat.(arr)))
     return Zonotope(c, G)
 end
+
+function convert(::Type{Zonotope}, P::AbstractPolynomialZonotope)
+    @assert iszero(ngens_dep(P)) "cannot convert a general polynomial zonotope to a Zonotope"
+
+    return Zonotope(center(P), genmat_indep(P))
+end

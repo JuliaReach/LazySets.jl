@@ -583,14 +583,18 @@ end
 
 @recipe function plot_polyzono(P::AbstractSparsePolynomialZonotope{N}, ε::Real=N(PLOT_PRECISION);  # COV_EXCL_LINE
                                nsdiv=10, partition=nothing) where {N}
-    label --> DEFAULT_LABEL
-    grid --> DEFAULT_GRID
-    if DEFAULT_ASPECT_RATIO != :none
-        aspect_ratio --> DEFAULT_ASPECT_RATIO
+    if iszero(ngens_dep(P))  # optimization
+        return convert(Zonotope, P)
+    else
+        label --> DEFAULT_LABEL
+        grid --> DEFAULT_GRID
+        if DEFAULT_ASPECT_RATIO != :none
+            aspect_ratio --> DEFAULT_ASPECT_RATIO
+        end
+        seriesalpha --> DEFAULT_ALPHA
+        seriescolor --> DEFAULT_COLOR
+        seriestype --> :shape
+        Poa = overapproximate(P, UnionSetArray{Zonotope}; nsdiv, partition)
+        return _plot_list_same_recipe(array(Poa), ε)
     end
-    seriesalpha --> DEFAULT_ALPHA
-    seriescolor --> DEFAULT_COLOR
-    seriestype --> :shape
-    Poa = overapproximate(P, UnionSetArray{Zonotope}; nsdiv, partition)
-    return _plot_list_same_recipe(array(Poa), ε)
 end
