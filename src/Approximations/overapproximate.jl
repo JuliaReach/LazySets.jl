@@ -365,7 +365,7 @@ function overapproximate(P::AbstractSparsePolynomialZonotope,
                          ::Type{<:UnionSetArray{Zonotope}};
                          nsdiv=10, partition=nothing)
     q = nparams(P)
-    if q == 0
+    if iszero(q) || iszero(ngens_dep(P))
         return UnionSetArray([overapproximate(P, Zonotope)])
     end
 
@@ -916,7 +916,7 @@ function overapproximate(MZP::MatrixZonotopeProduct{N,S},
         gens = Vector{S}(undef, nB + nA + nA * nB)
         idx = 1
 
-        # G₀ * Hⱼ 
+        # G₀ * Hⱼ
         @inbounds for Hj in generators(B)
             gens[idx] = center(A) * Hj
             idx += 1

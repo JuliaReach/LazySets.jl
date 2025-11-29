@@ -79,6 +79,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
         Z2 = convert(Zonotope, Hyperrectangle(SVector{2}(c), SVector{2}(r2)))
         @test isidentical(Z2, Zonotope(SVector{2}(c), SMatrix{2,0,N,0}()))
     end
+    # from AbstractSparsePolynomialZonotope
+    Z2 = convert(Zonotope, convert(SparsePolynomialZonotope, Z))
+    @test isidentical(Z2, Z)
     # from CartesianProduct of AbstractHyperrectangles
     H1 = Hyperrectangle([c[1]], [r[1]])
     H2 = Hyperrectangle([c[2]], [r[2]])
