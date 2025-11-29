@@ -25,7 +25,7 @@ Then we solve the following ``m``-dimensional linear program.
 ```
 """
 @validate function in(x::AbstractVector{N}, P::VPolytope{N};
-                     solver=default_lp_solver(N)) where {N}
+                      solver=default_lp_solver(N)) where {N}
     vertices = P.vertices
     m = length(vertices)
 
