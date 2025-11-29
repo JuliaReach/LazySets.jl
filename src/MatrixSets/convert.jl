@@ -31,25 +31,19 @@ function load_intervalmatrices_conversion()
         MatrixZonotope{Float64, Matrix{Float64}}([-1.0 -4.0; 4.0 -1.0], [[0.10000000000000009 0.0; 0.0 0.0], [0.0 0.0; 0.10000000000000009 0.0], [0.0 0.10000000000000009; 0.0 0.0], [0.0 0.0; 0.0 0.10000000000000009]], [1, 2, 3, 4])
         ```
         """
-        function Base.convert(::Type{MatrixZonotope}, IM::IntervalMatrix{N}) where {N}
-            # TODO change to sparse matrix -> problem: all the generators of a MZ should have the same type
+        function Base.convert(::Type{MatrixZonotope}, IM::IntervalMatrix{N}) where N
             m, n = size(IM)
-
-            # center must be the midpoint matrix
             center = mid(IM)
-
-            # radius matrix gives the half-widths
             halfIM = radius(IM)
 
-            gens = Vector{Matrix{N}}(undef, m * n)
-            idx = 1
-            @inbounds for j in 1:n
-                for i in 1:m
-                    G = zeros(N, m, n)
-                    G[i, j] = halfIM[i, j]
-                    gens[idx] = G
-                    idx += 1
-                end
+            gens = Vector{Matrix{N}}()
+            sizehint!(gens, m*n)
+
+            @inbounds for (I, val) in pairs(halfIM)
+                iszero(val) && continue
+                G = zeros(N, m, n)
+                G[I] = val
+                push!(gens, G)
             end
 
             return MatrixZonotope(center, gens)

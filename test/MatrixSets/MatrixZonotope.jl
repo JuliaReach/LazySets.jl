@@ -158,6 +158,29 @@ for N in @tN([Float64, Float32, Rational{Int}])
         end
     end
 
+    # zero-interval test
+    @static if isdefined(@__MODULE__, :IntervalMatrices)
+        using IntervalMatrices: IntervalMatrix
+
+        IM = IntervalMatrix([interval(0) interval(N(-1), N(2));
+                             interval(N(3), N(5)) interval(0)])
+
+        MZ = convert(MatrixZonotope, IM)
+
+        if N == Rational{Int}
+            T = Float64
+
+            @test isapprox(convert(Matrix{T}, center(MZ)), T[0.0 0.5; 4.0 0.0])
+            expected = [T[0.0 0.0; 1.0 0.0], T[0.0 1.5; 0.0 0.0]]
+            @test isapprox(convert(Vector{Matrix{T}}, generators(MZ)), expected)
+
+        else
+            @test isapprox(center(MZ), N[0 1//2; 4 0])
+            expected = [N[0 0; 1 0], N[0 3//2; 0 0]]
+            @test isapprox(generators(MZ), expected)
+        end
+    end
+
     # vectorize and matrixize
     c = N[1 0; 0 3]
     gens = [N[1 -1; 0 2]]
