@@ -65,10 +65,8 @@ println(B1 ⊆ B2)
 w1 = issubset(B1, B2, true)[2]
 println(B1 ⊆ BI)
 w2 = issubset(B1, BI, true)[2]
-println(B1 ⊆ H)
-w3 = issubset(B1, H, true)[2]
-# 'B2 ⊆ B1' is not supported yet
-# w11 = issubset(B2, B1, true)[2]
+println(B2 ⊆ B1)
+w3 = issubset(B2, B1, true)[2]
 println(B2 ⊆ BI)
 w4 = issubset(B2, BI, true)[2]
 println(B2 ⊆ H)
@@ -78,18 +76,14 @@ println(BI ⊆ B2)
 w6 = issubset(BI, B2, true)[2]
 println(BI ⊆ H)
 w7 = issubset(BI, H, true)[2]
-println(H ⊆ B1)
-w8 = issubset(H, B1, true)[2]
 println(H ⊆ B2)
-w9 = issubset(H, B2, true)[2]
-println(H ⊆ BI)
-w10 = issubset(H, BI, true)[2];
+w8 = issubset(H, B2, true)[2];
 ```
 
 ```@example binary_set_operations
-witnesses = [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10]
+witnesses = [w1, w2, w3, w4, w5, w6, w7, w8]
 
-plot1 = plot()
+plot1 = plot(xlims=(-2, 2.3))
 plot_sets(sets)
 plot_points(witnesses, "w")
 plot1
