@@ -39,7 +39,7 @@ function load_intervalmatrices_conversion()
             gens = Vector{Matrix{N}}()
             sizehint!(gens, m*n)
 
-            @inbounds for (I, val) in pairs(halfIM)
+            @inbounds for (I, val) in enumerate(halfIM)
                 iszero(val) && continue
                 G = zeros(N, m, n)
                 G[I] = val
