@@ -15,7 +15,7 @@ Consider the matrix-valued function
 ``θ ∈ [π, π]``.
 
 ```@example deco_label
-using LazySets, LazySets.Approximations, Plots
+using LazySets, Plots
 
 Φ(theta) = [cos(theta) -sin(theta); sin(theta) cos(theta)]
 ```

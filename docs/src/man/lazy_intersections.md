@@ -60,8 +60,6 @@ hasmethod(intersection, Tuple{HPolytope{Float64}, HPolytope{Float64}})
 ```
 
 ```@example ellipsoids
-import LazySets.Approximations.overapproximate
-
 # the parameter epsilon controls the accuracy of the iterative refinement,
 # with respect to the Hausdorff distance
 H₁(ε) = overapproximate(E₁, HPolygon, ε)
