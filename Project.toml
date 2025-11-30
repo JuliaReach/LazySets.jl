@@ -23,7 +23,7 @@ Distributed = "<0.0.1, 1.6"
 ExprTools = "0.1"
 GLPK = "1"
 IntervalArithmetic = "0.15 - 0.21, =0.21.2"  # v0.22 removed IntervalBox
-JuMP = "0.21 - 0.23, 1"
+JuMP = "0.23, 1"
 LinearAlgebra = "<0.0.1, 1.6"
 Random = "<0.0.1, 1.6"
 ReachabilityBase = "0.3.5"
