@@ -13,10 +13,23 @@ union is in general not convex.
 This implementation uses `IntervalArithmetic.setdiff`.
 """
 @validate function difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
-    Xib = convert(IA.IntervalBox, X)
-    Yib = convert(IA.IntervalBox, Y)
-    return UnionSetArray(convert.(Hyperrectangle, IA.setdiff(Xib, Yib)))
+    require(@__MODULE__, :IntervalBoxes; fun_name="difference")
+
+    return _difference(X, Y)
 end
+
+function load_IntervalBoxes_difference()
+    return quote
+        import .IntervalBoxes as IB
+
+        function _difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
+            Xib = convert(IB.IntervalBox, X)
+            Yib = convert(IB.IntervalBox, Y)
+            Zibs = IB.setdiff(Xib, Yib)
+            return UnionSetArray(convert.(Hyperrectangle, Zibs))
+        end
+    end
+end  # quote / load_IntervalBoxes_difference
 
 @validate function difference(X::Interval{N}, H::HalfSpace) where {N}
     if H.a[1] < zero(N)
