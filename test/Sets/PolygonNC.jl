@@ -1,4 +1,5 @@
 using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: is_cyclic_permutation
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -12,6 +13,20 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # constructor from nonempty vertex list
     P = Polygon([N[0, 0], N[0, 2], N[2, 2], N[2, 0], N[1, 1]])
+
+    # convert
+    B1 = Hyperrectangle(zeros(N, 2), N[2, 1])
+    B2 = Hyperrectangle(zeros(N, 2), N[1, 2])
+    B3 = Hyperrectangle(N[0, 3], N[2, 1])
+    for U in (UnionSet(B1, B3), UnionSetArray([B1, B3]))
+        @test_throws AssertionError convert(Polygon, U)
+    end
+    for U in (UnionSet(B1, B2), UnionSetArray([B1, B2]))
+        P2 = convert(Polygon, U)
+        @test is_cyclic_permutation(P2.vertices,
+                                    [N[-2, -1], N[-1, -1], N[-1, -2], N[1, -2], N[1, -1], N[2, -1],
+                                     N[2, 1], N[1, 1], N[1, 2], N[-1, 2], N[-1, 1], N[-2, 1]])
+    end
 
     # an_element
     @test_throws AssertionError an_element(P_empty)
