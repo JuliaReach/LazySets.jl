@@ -31,13 +31,13 @@ function load_intervalmatrices_conversion()
         MatrixZonotope{Float64, Matrix{Float64}}([-1.0 -4.0; 4.0 -1.0], [[0.10000000000000009 0.0; 0.0 0.0], [0.0 0.0; 0.10000000000000009 0.0], [0.0 0.10000000000000009; 0.0 0.0], [0.0 0.0; 0.0 0.10000000000000009]], [1, 2, 3, 4])
         ```
         """
-        function Base.convert(::Type{MatrixZonotope}, IM::IntervalMatrix{N}) where N
+        function Base.convert(::Type{MatrixZonotope}, IM::IntervalMatrix{N}) where {N}
             m, n = size(IM)
             center = mid(IM)
             halfIM = radius(IM)
 
             gens = Vector{Matrix{N}}()
-            sizehint!(gens, m*n)
+            sizehint!(gens, m * n)
 
             @inbounds for (I, val) in enumerate(halfIM)
                 iszero(val) && continue
