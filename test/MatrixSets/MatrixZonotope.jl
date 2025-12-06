@@ -132,28 +132,24 @@ for N in @tN([Float64, Float32, Rational{Int}])
         MZ = convert(MatrixZonotope, IM)
         if N == Rational{Int}
             T = Float64
-            @test isapprox(
-                convert(Matrix{T}, center(MZ)),
-                T[-1.0 -4.0;
-                4.0 -1.0]
-            )
+            @test isapprox(convert(Matrix{T}, center(MZ)),
+                           T[-1.0 -4.0;
+                             4.0 -1.0])
 
             expected = [T[0.1 0.0; 0.0 0.0],
-                T[0.0 0.0; 0.1 0.0], 
-                T[0.0 0.1; 0.0 0.0],
-                T[0.0 0.0; 0.0 0.1]]
+                        T[0.0 0.0; 0.1 0.0],
+                        T[0.0 0.1; 0.0 0.0],
+                        T[0.0 0.0; 0.0 0.1]]
             @test isapprox(convert(Vector{Matrix{T}}, generators(MZ)), expected)
         else
-            @test isapprox(
-                center(MZ),
-                N[-1 -4;
-                  4 -1]
-            )
+            @test isapprox(center(MZ),
+                           N[-1 -4;
+                             4 -1])
 
             expected = [N[1//10 0; 0 0],
-                N[0 0; 1//10 0], 
-                N[0 1//10; 0 0], 
-                N[0 0; 0 1//10]]
+                        N[0 0; 1//10 0],
+                        N[0 1//10; 0 0],
+                        N[0 0; 0 1//10]]
             @test isapprox(generators(MZ), expected)
         end
     end
