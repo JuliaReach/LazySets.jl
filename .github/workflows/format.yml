@@ -16,7 +16,7 @@ jobs:
         run: julia -e 'import Pkg; Pkg.add(name="JuliaFormatter", version=v"1.0.62"); using JuliaFormatter; format(".")'
       - name: Create pull request
         id: cpr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Format .jl files
