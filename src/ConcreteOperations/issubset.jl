@@ -141,7 +141,7 @@ Since ``S`` is convex, ``P ⊆ S`` iff ``v ∈ S`` for all vertices ``v`` of ``P
     elseif algorithm == "vertices"
         return _issubset_vertices_list(P, S, witness)
     else
-        error("algorithm $algorithm unknown")
+        throw(ArgumentError("algorithm $algorithm unknown"))
     end
 end
 

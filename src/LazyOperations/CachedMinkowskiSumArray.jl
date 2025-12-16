@@ -22,7 +22,7 @@ function getindex(cp::CachedPair, idx::Int)
     elseif idx == 2
         return cp.vec
     end
-    return error("invalid index $idx, can only access a pair at index 1 or 2")
+    return throw(ArgumentError("invalid index $idx, can only access a pair at index 1 or 2"))
 end
 
 """

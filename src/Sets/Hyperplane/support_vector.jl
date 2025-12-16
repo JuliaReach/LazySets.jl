@@ -103,9 +103,9 @@ to ``d``.
             return (_an_element_helper_hyperplane(a, b, first_nonzero_entry_a), false)
         end
         if error_unbounded
-            error("the support vector for the " *
-                  (halfspace ? "halfspace" : "hyperplane") * " with normal " *
-                  "direction $a is not defined along a direction $d")
+            throw(ArgumentError("the support vector for the " *
+                                (halfspace ? "halfspace" : "hyperplane") * " with normal " *
+                                "direction $a is not defined along the direction $d"))
         end
         # the first return value does not have a meaning here
         return (d, true)

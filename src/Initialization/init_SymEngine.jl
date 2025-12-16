@@ -91,6 +91,6 @@ function _free_symbols(expr::Expr)
     elseif _ishalfspace(expr)
         return free_symbols(expr, HalfSpace)
     else
-        error("the `free_symbols` method for the expression $expr is not implemented")
+        throw(ArgumentError("the `free_symbols` method for the expression $expr is not implemented"))
     end
 end

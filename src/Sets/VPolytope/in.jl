@@ -56,5 +56,5 @@ Then we solve the following ``m``-dimensional linear program.
     elseif is_lp_infeasible(lp.status)
         return false
     end
-    return error("LP returned status $(lp.status) unexpectedly")  # COV_EXCL_LINE
+    return throw(ArgumentError("unexpected LP solver status: $(lp.status)"))  # COV_EXCL_LINE
 end
