@@ -129,8 +129,7 @@ one of the ``Xᵢ``.
         return σ(d, arr[m])
 
     else
-        error("algorithm $algorithm for the support vector of a " *
-              "`UnionSetArray` is unknown")
+        throw(ArgumentError("algorithm $algorithm unknown"))
     end
 end
 
@@ -196,7 +195,7 @@ function an_element(cup::UnionSetArray)
             return an_element(Xi)
         end
     end
-    return error("an empty set does not have any element")
+    return throw(ArgumentError("an empty set does not have any element"))
 end
 
 """
