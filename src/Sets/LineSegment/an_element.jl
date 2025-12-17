@@ -7,6 +7,6 @@
 
 The output is the first vertex of the line segment.
 """
-function an_element(L::LineSegment)
+@validate function an_element(L::LineSegment)
     return L.p
 end

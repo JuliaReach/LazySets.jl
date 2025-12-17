@@ -7,6 +7,6 @@
 
 Return the left border (`low(X)`) of the interval.
 """
-function an_element(X::Interval)
+@validate function an_element(X::Interval)
     return low(X)
 end

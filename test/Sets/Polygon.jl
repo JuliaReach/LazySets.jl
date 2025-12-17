@@ -158,10 +158,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
         # an_element function
         @test an_element(hp) ∈ hp
-        hp_shallow = t_hp{N}()
-        @test_throws AssertionError an_element(hp_shallow)
-        addconstraint!(hp_shallow, c1)
-        @test_throws AssertionError an_element(hp_shallow)
+        # no constraints
+        hp_invalid = t_hp{N}()
+        @test_throws ArgumentError an_element(hp_invalid)
+        # only one constraint
+        addconstraint!(hp_invalid, c1)
+        @test_broken an_element(hp_invalid) isa ArgumentError
 
         # isapprox
         @test hp ≈ hp && !(hp ≈ P) && !(P ≈ hp)

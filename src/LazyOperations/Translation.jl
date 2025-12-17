@@ -244,7 +244,7 @@ An element in the translation.
 This function first asks for `an_element` of the wrapped set, then translates
 this element according to the given translation vector.
 """
-function an_element(tr::Translation)
+@validate function an_element(tr::Translation)
     return an_element(tr.X) + tr.v
 end
 

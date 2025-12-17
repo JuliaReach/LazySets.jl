@@ -635,7 +635,7 @@ An element of the polyhedron, or an error if the polyhedron is empty.
 
 An element is obtained by solving a feasibility linear program.
 """
-function an_element(P::AbstractPolyhedron; solver=default_lp_solver(eltype(P)))
+@validate function an_element(P::AbstractPolyhedron; solver=default_lp_solver(eltype(P)))
     A, b = tosimplehrep(P)
     N = eltype(P)
 

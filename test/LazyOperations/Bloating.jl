@@ -35,7 +35,7 @@ for N in @tN([Float64, Float32])
         @test v isa AbstractVector{N} && length(v) == dim(S)
     end
     @test_throws ArgumentError an_element(X⁻)
-    @test_throws ErrorException an_element(Y)
+    @test_throws ArgumentError an_element(Y)
 
     # center
     @test center(X) == center(B)

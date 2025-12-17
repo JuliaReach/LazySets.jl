@@ -10,7 +10,7 @@ We compute a point on the hyperplane ``a⋅x = b`` as follows:
 - We set ``x[i] = b / a[i]``.
 - We set ``x[j] = 0`` for all ``j ≠ i``.
 """
-function an_element(H::Hyperplane)
+@validate function an_element(H::Hyperplane)
     return _an_element_helper_hyperplane(H.a, H.b)
 end
 
