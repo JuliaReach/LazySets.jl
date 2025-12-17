@@ -82,6 +82,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # from AbstractSparsePolynomialZonotope
     Z2 = convert(Zonotope, convert(SparsePolynomialZonotope, Z))
     @test isidentical(Z2, Z)
+    # from ZonotopeMD
+    Z2 = convert(Zonotope, convert(ZonotopeMD, Z))
+    @test isequivalent(Z2, Z)
+    # from ZonotopeMD with no non-diagonal entry
+    Z2 = convert(Zonotope, ZonotopeMD(N[1, 2], N[1 0; 0 1], N[2, 3]))
+    @test isequivalent(Z2, Zonotope(N[1, 2], N[3 0; 0 4]))
     # from CartesianProduct of AbstractHyperrectangles
     H1 = Hyperrectangle([c[1]], [r[1]])
     H2 = Hyperrectangle([c[2]], [r[2]])
