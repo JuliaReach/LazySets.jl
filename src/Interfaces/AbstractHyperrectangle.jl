@@ -219,7 +219,7 @@ entry `1` (but changing it to `-1`).
 This way we only need to change the vertex in those dimensions where `v` has
 changed, which usually is a smaller number than `n`.
 """
-function vertices_list(H::AbstractHyperrectangle; kwargs...)
+@validate function vertices_list(H::AbstractHyperrectangle; kwargs...)
     n = dim(H)
 
     # identify flat dimensions and store them in a binary vector whose entry in

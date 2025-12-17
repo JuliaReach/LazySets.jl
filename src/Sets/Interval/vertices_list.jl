@@ -9,7 +9,7 @@ The list of vertices of the interval, which are two one-dimensional vectors,
 or just one if the interval is degenerate (the endpoints match within the
 working tolerance).
 """
-function vertices_list(X::Interval; kwargs...)
+@validate function vertices_list(X::Interval; kwargs...)
     a = min(X)
     b = max(X)
     return _isapprox(a, b) ? [[a]] : [[a], [b]]
