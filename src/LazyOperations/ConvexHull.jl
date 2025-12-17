@@ -211,9 +211,9 @@ Return a list of vertices of the convex hull of two sets.
 
 A list of vertices.
 """
-function vertices_list(ch::ConvexHull;
-                       apply_convex_hull::Bool=true,
-                       backend=nothing)
+@validate function vertices_list(ch::ConvexHull;
+                                 apply_convex_hull::Bool=true,
+                                 backend=nothing)
     vlist = vcat(vertices_list(ch.X), vertices_list(ch.Y))
     if apply_convex_hull
         convex_hull!(vlist; backend=backend)

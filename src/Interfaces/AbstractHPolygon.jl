@@ -142,9 +142,9 @@ polygon were actually feasible (i.e., they pointed in the *right* direction).
 For this we compute the *average* of all vertices and check membership in each
 constraint.
 """
-function vertices_list(P::AbstractHPolygon;
-                       apply_convex_hull::Bool=true,  # see docstring and #1405
-                       check_feasibility::Bool=true)
+@validate function vertices_list(P::AbstractHPolygon;
+                                 apply_convex_hull::Bool=true,  # see docstring and #1405
+                                 check_feasibility::Bool=true)
     n = length(P.constraints)
     N = eltype(P)
     points = Vector{Vector{N}}(undef, n)

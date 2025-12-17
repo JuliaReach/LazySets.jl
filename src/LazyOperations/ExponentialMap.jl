@@ -467,7 +467,7 @@ A list of vertices.
 We assume that the underlying set `X` is polytopic.
 Then the result is just the exponential map applied to the vertices of `X`.
 """
-function vertices_list(em::ExponentialMap; backend=get_exponential_backend())
+@validate function vertices_list(em::ExponentialMap; backend=get_exponential_backend())
     # collect vertices lists of wrapped set
     vlist_X = vertices_list(em.X)
 
