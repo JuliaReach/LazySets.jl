@@ -132,6 +132,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
         end
     end
 
+    # center
+    c2 = center(Z)
+    @test c2 isa AbstractVector{N} && c2 == c
+
     # complement
     if isdefined(@__MODULE__, :Polyhedra) || N <: AbstractFloat
         X = complement(Z3)
