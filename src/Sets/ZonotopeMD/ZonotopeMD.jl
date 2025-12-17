@@ -18,9 +18,9 @@ A *structured* zonotope is defined as the set
 Z = \\left\\{ x ∈ ℝ^n : x = c + Mξ + dIη, ~~ ξ ∈ [-1, 1]^m, ~~ η ∈ [-1, 1]^n \\right\\},
 ```
 
-where ``M ∈ ℝ^{n×m}`` is a matrix of general generators with ``m = n (k - 1)`` and ``d ∈ ℝⁿ`` is a
-vector of axis-aligned generators. Equivalently, this can be seen as a zonotope with generator
-matrix ``[M D]``, where ``D`` is the diagonal matrix formed from the vector ``d``.
+where ``M ∈ ℝ^{n×m}`` is a matrix of general generators and ``d ∈ ℝⁿ`` is a vector representing
+axis-aligned generators. Equivalently, this can be seen as a zonotope with generator matrix
+``[M D]``, where ``D`` is the diagonal matrix formed from the vector ``d``.
 
 A `ZonotopeMD` can be constructed in two ways: by passing ``M`` and a vector ``d`` separately or by
 passing the full generator matrix ``[M D]``.
@@ -68,6 +68,7 @@ matrix.
 julia> genmat(Z2) == G
 true
 ```
+
 One can also convert back to a standard `Zonotope` if needed:
 
 ```jldoctest zonotopemd_label
