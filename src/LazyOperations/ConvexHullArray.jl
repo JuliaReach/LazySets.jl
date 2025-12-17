@@ -154,12 +154,25 @@ Check whether a convex hull of a finite number of sets is bounded.
 `true` iff all wrapped sets are bounded.
 """
 function isbounded(cha::ConvexHullArray)
+    isboundedtype(typeof(cha)) && return true
+
     return all(isbounded, cha.array)
 end
 
 function isboundedtype(::Type{<:ConvexHullArray{N,S}}) where {N,S}
     return isboundedtype(S)
 end
+
+function ispolyhedral(cha::ConvexHullArray)
+    ispolyhedraltype(typeof(cha)) && return true
+
+    return all(ispolyhedral, array(cha))
+end
+
+function ispolyhedraltype(::Type{<:ConvexHullArray{N,S}}) where {N,S}
+    return ispolyhedraltype(S)
+end
+
 
 """
     isempty(cha::ConvexHullArray)
