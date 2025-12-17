@@ -231,7 +231,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # case: error
     P_err = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], hcat(N[0, 1]), [2 1; 0 1; 1 0],
                                      [1, 2, 3])
-    @test_throws ErrorException linear_map(MZ, P_err)
+    @test_throws ArgumentError linear_map(MZ, P_err)
 
     #MZP linear map
     MZ2 = MatrixZonotope(N[1.1 0.9; -1.1 1.1], [N[1.1 -0.1; 0.9 2.1]])

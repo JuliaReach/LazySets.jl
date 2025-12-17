@@ -201,11 +201,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test P == Q
     end
     H = HalfSpace(N[1], N(1))
-    @test_throws ErrorException convert(HPolytope, H)
-    @test_throws ErrorException convert(HPolytope{N,Vector{N}}, H)
+    @test_throws AssertionError convert(HPolytope, H)
+    @test_throws AssertionError convert(HPolytope{N,Vector{N}}, H)
     Z = SimpleSparsePolynomialZonotope(N[2, 0], N[1 2; 2 2.0], [1 4; 1 2])
-    @test_throws ErrorException convert(HPolytope, Z)
-    @test_throws ErrorException convert(HPolytope{N,Vector{N}}, Z)
+    @test_throws AssertionError convert(HPolytope, Z)
+    @test_throws AssertionError convert(HPolytope{N,Vector{N}}, Z)
     P = convert(HPolytope, EmptySet{N}(2))
     @test P isa HPolytope{N} && dim(P) == 2 && isempty(P)
 
@@ -278,7 +278,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
         # convert empty VPolytope to a polyhedron
         Vempty = VPolytope()
-        @test_throws ErrorException polyhedron(Vempty) # needs to pass the (relative) dim
+        @test_throws ArgumentError polyhedron(Vempty) # needs to pass the (relative) dim
         Pe = polyhedron(Vempty; relative_dimension=2)
 
         # remove_redundant_vertices
@@ -510,8 +510,8 @@ for N in [Float64]
         # support function/vector
         d = N[1, 0]
         p_unbounded = HPolytope([LinearConstraint(N[-1, 0], N(0))])
-        @test_throws ErrorException σ(d, p_unbounded)
-        @test_throws ErrorException ρ(d, p_unbounded)
+        @test_throws ArgumentError σ(d, p_unbounded)
+        @test_throws ArgumentError ρ(d, p_unbounded)
         p_infeasible = HPolytope([LinearConstraint(N[1], N(0)),
                                   LinearConstraint(N[-1], N(-1))])
         @test_throws ArgumentError σ(N[1], p_infeasible)
