@@ -5,8 +5,9 @@
 
 ### Output
 
-A `UnionSetArray` consisting of the union of hyperrectangles. Note that this
-union is in general not convex.
+A `UnionSetArray` consisting of a union of hyperrectangles describing the
+difference, or an `EmptySet` if the difference is empty. Note that the union is
+in general not convex.
 
 ### Algorithm
 
@@ -15,7 +16,11 @@ This implementation uses `IntervalArithmetic.setdiff`.
 @validate function difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
     Xib = convert(IA.IntervalBox, X)
     Yib = convert(IA.IntervalBox, Y)
-    return UnionSetArray(convert.(Hyperrectangle, IA.setdiff(Xib, Yib)))
+    U = IA.setdiff(Xib, Yib)
+    if isempty(U)
+        return EmptySet(dim(X))
+    end
+    return UnionSetArray(convert.(Hyperrectangle, U))
 end
 
 @validate function difference(X::Interval{N}, H::HalfSpace) where {N}

@@ -532,8 +532,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test X isa LazySet{N} && isequivalent(X, H)
     # empty set
     X = difference(H, H)
-    @test X isa LazySet{N} && isempty(X)
-    @test_broken isequivalent(X, EmptySet{N}(2))  # TODO empty result should be an EmptSet
+    @test isequivalent(X, EmptySet{N}(2))
     # one hyperrectangle
     X = difference(H, Hyperrectangle(N[2, -1], N[1, 2]))
     @test X isa LazySet{N} && isequivalent(X, Hyperrectangle(N[1 // 2, -1], N[1 // 2, 2]))
