@@ -384,11 +384,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isstrictsubset
     @test_throws DimensionMismatch E ⊂ E3
-    for X in (E, B)
-        @test !(X ⊂ E)
-        res, w = ⊂(X, E, true)
-        @test !res && w isa Vector{N} && isempty(w)
-    end
+    @test !(E ⊂ E)
+    res, w = ⊂(E, E, true)
+    @test !res && w isa Vector{N} && isempty(w)
+    @test !(B ⊂ E)
+    res, w = ⊂(B, E, true)
+    @test !res && w isa Vector{N} && w ∈ B && w ∉ E
     @test E ⊂ B
     res, w = ⊂(E, B, true)
     @test res && w isa Vector{N} && w ∉ E && w ∈ B

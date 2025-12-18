@@ -394,7 +394,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test !res && w isa Vector{N} && isempty(w)
     @test !(U ⊂ B)
     res, w = ⊂(U, B, true)
-    @test !res && w isa Vector{N} && isempty(w)
+    @test !res && w isa Vector{N} && w ∈ U && w ∉ B
     @test B ⊂ U
     res, w = ⊂(B, U, true)
     @test res && w isa Vector{N} && w ∉ B && w ∈ U

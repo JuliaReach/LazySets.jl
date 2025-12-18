@@ -6,7 +6,7 @@
 ### Algorithm
 
 The default implementation first checks inclusion of `X` in `Y` and then checks
-noninclusion of `Y` in `X`:
+inclusion of `Y` in `X`:
 """
 @validate function ⊂(X::LazySet, Y::LazySet, witness::Bool=false)
     if witness
@@ -20,7 +20,7 @@ noninclusion of `Y` in `X`:
                 return (true, w)
             end
         else
-            return (false, N[])
+            return (false, w)
         end
     end
     return (X ⊆ Y) && !(Y ⊆ X)

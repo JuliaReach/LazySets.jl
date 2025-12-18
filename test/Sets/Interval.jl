@@ -551,11 +551,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isstrictsubset
     @test_throws DimensionMismatch X ⊂ S2
-    @test_throws DimensionMismatch S2 ⊂ X
-    for Y in (X, B, Interval(N(-1), N(2)), Interval(N(0), N(3)))
+    for Y in (X, B)
         @test !(Y ⊂ X)
         res, w = ⊂(Y, X, true)
         @test !res && w isa Vector{N} && isempty(w)
+    end
+    for Y in (Interval(N(-1), N(2)), Interval(N(0), N(3)))
+        @test !(Y ⊂ X)
+        res, w = ⊂(Y, X, true)
+        @test !res && w isa Vector{N} && w ∈ Y && w ∉ X
     end
     for Y in (Interval(N(-1), N(2)), Interval(N(0), N(3)))
         @test X ⊂ Y
