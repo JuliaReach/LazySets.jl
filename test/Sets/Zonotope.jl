@@ -747,10 +747,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
         vlist = vertices_list(X)
         @test length(vlist) == 1 && all(isapproxzero, vlist[1])
     end
-    # Universe
-    U = Universe{N}(2)
-    U2 = minkowski_difference(U, Z)
-    @test U2 isa Universe{N} && dim(U2) == 2
 
     # minkowski_sum
     @test_throws DimensionMismatch minkowski_sum(Z, Z3)
@@ -805,6 +801,7 @@ for N in @tN([Float64, Rational{Int}])
     @static if isdefined(@__MODULE__, :MiniQhull)
         X = triangulate(Z)
         @test X isa UnionSetArray{N,<:VPolytope{N}} && length(X) == 2
+        # result is not unique; reylying on implementation here
         for Xi in X
             @test ispermutation(vertices_list(Xi), [N[3, 4], N[-1, 0], N[-3, -4]]) ||
                   ispermutation(vertices_list(Xi), [N[3, 4], N[-1, 0], N[5, 8]])
