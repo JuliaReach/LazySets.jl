@@ -637,11 +637,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isstrictsubset
     @test_throws DimensionMismatch H ⊂ H3
-    for X in (H, P, Hyperrectangle(N[1, 2], N[1, 1]))
+    for X in (H, P)
         @test !(X ⊂ H)
         res, w = ⊂(X, H, true)
         @test !res && w isa Vector{N} && isempty(w)
     end
+    H2 = Hyperrectangle(N[1, 2], N[1, 1])
+    @test !(H2 ⊂ H)
+    res, w = ⊂(H2, H, true)
+    @test !res && w isa Vector{N} && w ∈ H2 && w ∉ H
     H2 = Hyperrectangle(N[1, -1], N[2, 3])
     @test H ⊂ H2
     res, w = ⊂(H, H2, true)

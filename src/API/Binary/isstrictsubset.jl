@@ -14,8 +14,9 @@ witness.
 
 * If the `witness` option is deactivated: `true` iff ``X ⊂ Y``
 * If the `witness` option is activated:
-  * `(true, v)` iff ``X ⊂ Y`` for some ``v ∈ Y ∖ X``
-  * `(false, [])` iff ``X ⊂ Y`` does not hold
+  * `(true, v)` iff ``X ⊂ Y`` holds, witnessed by some ``v ∈ Y ∖ X``
+  * `(false, v)` iff ``X ⊂ Y`` does not hold; if ``X = Y``, the witness is
+    ``v = []``, and otherwise (``X ≠ Y``), the witness is some ``v ∈ X ∖ Y``
 
 ### Notes
 

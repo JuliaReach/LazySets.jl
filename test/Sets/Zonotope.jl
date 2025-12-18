@@ -705,10 +705,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isstrictsubset
     @test_throws DimensionMismatch Z ⊂ Z3
-    Z2a = Zonotope(N[1, 2], N[1 0; 0 1])
-    for Z2b in (Z, P, Z2a)
-        @test !(Z2b ⊂ Z)
-        res, w = ⊂(Z2b, Z, true)
+    Z2 = Zonotope(N[1, 2], N[1 0; 0 1])
+    @test !(Z2 ⊂ Z)
+    res, w = ⊂(Z2, Z, true)
+    @test !res && w isa Vector{N} && w ∈ Z2 && w ∉ Z
+    for Z2 in (Z, P)
+        @test !(Z2 ⊂ Z)
+        res, w = ⊂(Z2, Z, true)
         @test !res && w isa Vector{N} && isempty(w)
     end
     Z2 = Zonotope(N[1, 2], N[4 0; 0 6])
