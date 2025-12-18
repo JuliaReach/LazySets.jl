@@ -81,10 +81,9 @@ struct Hyperrectangle{N,VNC<:AbstractVector{N},VNR<:AbstractVector{N}} <: Abstra
     function Hyperrectangle(center::VNC, radius::VNR;
                             check_bounds::Bool=true) where
              {N,VNC<:AbstractVector{N},VNR<:AbstractVector{N}}
-        @assert length(center) == length(radius) "length of center and " *
-                                                 "radius must be equal"
+        @assert length(center) == length(radius) "length of center and radius must be equal"
         if check_bounds
-            @assert all(v -> v >= zero(N), radius) "radius must not be negative"
+            @assert all(v -> v >= zero(N), radius) "radius must be nonnegative but is $radius"
         end
         return new{N,VNC,VNR}(center, radius)
     end

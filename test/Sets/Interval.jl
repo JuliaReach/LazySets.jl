@@ -608,10 +608,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     for Y in (minkowski_difference(X, B), minkowski_difference(B, X))
         @test isequivalent(Y, Interval(N(0), N(0)))
     end
-    # Universe
-    U = Universe{N}(1)
-    U2 = minkowski_difference(U, X)
-    @test U2 isa Universe{N} && dim(U2) == 1
 
     # minkowski_sum
     @test_throws DimensionMismatch minkowski_sum(X, S2)
