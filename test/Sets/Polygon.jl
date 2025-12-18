@@ -112,6 +112,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test subset && p ⊆ l2 && point == N[]
     @test p ⊆ p
 
+    # convert Hyperrectangle to HPolygon
+    H1pol = convert(HPolygon, Hyperrectangle(N[1, 1], N[2, 2]))
+    vlist = vertices_list(H1pol)
+    @test ispermutation(vlist, [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]])
+
     # HPolygon/HPolygonOpt tests
     for (hp, t_hp) in [(p, HPolygon), (po, HPolygonOpt)]
         # constructors
