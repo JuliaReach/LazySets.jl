@@ -351,7 +351,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test Q isa VPolytope{N} && ispermutation(vertices_list(Q), vlist)
 
     # scale/scale!
-    P2 = copy(P)
+    P2 = deepcopy(P)
     scale!(N(2), P2)
     @test scale(N(2), P) == P2 == VPolytope([N[2, 4, 6], N[8, 10, 12]])
 
