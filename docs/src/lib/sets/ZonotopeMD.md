@@ -12,6 +12,18 @@ ZonotopeMD
 
 ```@docs
 genmat(::ZonotopeMD)
+```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+rand(::Type{LazySet})
+```
+```@meta
+CurrentModule = LazySets.ZonotopeMDModule
+```
+```@docs
+rand(::Type{ZonotopeMD})
 cartesian_product(::ZonotopeMD, ::ZonotopeMD)
 ```
 
