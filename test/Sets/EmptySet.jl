@@ -136,6 +136,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # ispolytopic
     @test !ispolytopic(E)  # TODO this should maybe change
 
+    # ispolytopictype
+    @test !ispolytopictype(typeof(E))  # TODO this should maybe change
+
     # isuniversal
     @test !isuniversal(E)
     res, w = isuniversal(E, true)
