@@ -1,5 +1,5 @@
 function scale(α::Real, H::Hyperrectangle)
-    return _scale_copy_inplace(α, H)
+    return Hyperrectangle(α * H.center, abs(α) * H.radius)
 end
 
 function scale!(α::Real, H::Hyperrectangle)
