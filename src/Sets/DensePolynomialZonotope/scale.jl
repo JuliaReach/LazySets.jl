@@ -1,5 +1,5 @@
 function scale(α::Real, P::DensePolynomialZonotope)
-    return _scale_copy_inplace(α, P)
+    return DensePolynomialZonotope(α * P.c, α * P.E, α * P.F, α * P.G)
 end
 
 function scale!(α::Real, P::DensePolynomialZonotope)
