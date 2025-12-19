@@ -9,6 +9,7 @@ end
 for N in @tN([Float64, Float32, Rational{Int}])
     # invalid inputs
     @test_throws AssertionError Ball1(N[0], N(-1))
+    @test_throws AssertionError Ball1(N[0], N(Inf))
     if N <: AbstractFloat
         @test_throws AssertionError Ball1(N[0], N(NaN))
     end

@@ -11,6 +11,7 @@ for N in @tN([Float64, Float32])
 
     # invalid inputs
     @test_throws AssertionError Ballp(N(3), N[0], N(-1))
+    @test_throws AssertionError Ballp(N(3), N[0], N(Inf))
     @test_throws AssertionError Ballp(N(3), N[0], N(NaN))
 
     # 1D Ball3

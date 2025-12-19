@@ -84,6 +84,7 @@ struct Hyperrectangle{N,VNC<:AbstractVector{N},VNR<:AbstractVector{N}} <: Abstra
         @assert length(center) == length(radius) "length of center and radius must be equal"
         if check_bounds
             @assert all(v -> v >= zero(N), radius) "radius must be nonnegative but is $radius"
+            @assert all(isfinite, radius) "the radius must be finite but is $radius"
         end
         return new{N,VNC,VNR}(center, radius)
     end

@@ -26,6 +26,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     r = N[1, 2]
     @test_throws AssertionError Hyperrectangle(c, N[1])
     @test_throws AssertionError Hyperrectangle(c, N[1, -1])
+    @test_throws AssertionError Hyperrectangle(c, N[1, Inf])
     H = Hyperrectangle(c, r)
     H1 = Hyperrectangle(N[0], N[1])  # 1D hyperrectangle
     H3 = Hyperrectangle(N[0, 0, 0], N[1, 2, 3])  # 3D hyperrectangle
