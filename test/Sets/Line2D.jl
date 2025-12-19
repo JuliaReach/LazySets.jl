@@ -115,6 +115,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError project(L, [1, 1])
     @test_throws DimensionMismatch project(L, [1, 2, 1])
 
+    # scale / scale!
+    L2 = scale(N(2), L)
+    L3 = copy(L)
+    scale!(N(2), L3)
+    @test isequivalent(L2, Line2D(L.a, 2 * L.b)) && isequivalent(L2, L3)
+
     # translation
     @test translate(l1, N[1, 2]) == Line2D(a1, N(3))
 

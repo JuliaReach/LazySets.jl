@@ -96,6 +96,8 @@ Undocumented implementations:
 * [`isempty`](@ref isempty(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
+* [`scale`](@ref scale(::Real, ::LazySet))
+* [`scale!`](@ref scale!(::Real, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 
@@ -135,7 +137,6 @@ Inherited from [`LazySet`](@ref):
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
-* [`scale`](@ref scale(::Real, ::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))

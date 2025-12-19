@@ -14,8 +14,8 @@ using ReachabilityBase.Comparison: isapproxzero, _isapprox
 using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
-                        isoperationtype, isuniversal, rand, in, project, σ,
-                        translate, intersection, isdisjoint
+                        isoperationtype, isuniversal, rand, in, project, scale,
+                        scale!, σ, translate, intersection, isdisjoint
 @reexport import ..LazySets: constrained_dimensions
 import ..LazySets: _linear_map_hrep_helper
 @reexport using ..API
@@ -35,6 +35,7 @@ include("rand.jl")
 include("in.jl")
 include("linear_map.jl")
 include("project.jl")
+include("scale.jl")
 include("support_vector.jl")
 include("translate.jl")
 include("intersection.jl")
