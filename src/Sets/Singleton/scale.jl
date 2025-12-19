@@ -1,5 +1,5 @@
 function scale(α::Real, S::Singleton)
-    return _scale_copy_inplace(α, S)
+    return Singleton(α * S.element)
 end
 
 function scale!(α::Real, S::Singleton)
