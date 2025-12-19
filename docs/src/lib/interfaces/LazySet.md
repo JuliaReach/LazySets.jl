@@ -272,6 +272,21 @@ CurrentModule = LazySets
 ```@docs
 ispolyhedral(::LazySet)
 ```
+```@meta
+CurrentModule = LazySets.API
+```
+```@docs; canonical=false
+ispolyhedraltype(::Type{<:LazySet})
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
+ispolyhedraltype(::Type{<:LazySet})
+```
+```@meta
+CurrentModule = LazySets.API
+```
 ```@docs; canonical=false
 ispolytopic(::LazySet)
 ```
@@ -285,13 +300,13 @@ ispolytopic(::LazySet)
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-ispolyhedraltype(::Type{<:LazySet})
+ispolytopictype(::Type{<:LazySet})
 ```
 ```@meta
 CurrentModule = LazySets
 ```
 ```@docs
-ispolyhedraltype(::Type{<:LazySet})
+ispolytopictype(::Type{<:LazySet})
 ```
 ```@meta
 CurrentModule = LazySets.API

@@ -23,7 +23,8 @@ let
     end
 
     # unary set-type operations
-    for f in (eltype, isboundedtype, isconvextype, isoperationtype, ispolyhedraltype, rand)
+    for f in (eltype, isboundedtype, isconvextype, isoperationtype, ispolyhedraltype,
+              ispolytopictype, rand)
         @test isnothing(f(MySet))
     end
 

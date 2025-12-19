@@ -15,10 +15,10 @@ import .API: eltype, extrema, isdisjoint, isempty, \, in, isapprox, ==, issubset
              constraints_list, constraints, convex_hull, diameter, dim, exponential_map,
              high, is_interior_point, isbounded, isboundedtype, isconvextype,
              isempty, isoperation, isoperationtype, ispolyhedral, ispolyhedraltype,
-             ispolytopic, isuniversal, linear_map, low, norm, project, radius,
-             reflect, sample, scale, scale!, support_function, ρ, support_vector,
-             σ, translate, translate!, vertices_list, vertices, volume,
-             cartesian_product, difference, distance, exact_sum, intersection,
+             ispolytopic, ispolytopictype, isuniversal, linear_map, low, norm,
+             project, radius, reflect, sample, scale, scale!, support_function,
+             ρ, support_vector, σ, translate, translate!, vertices_list, vertices,
+             volume, cartesian_product, difference, distance, exact_sum, intersection,
              is_intersection_empty, isequivalent, ⊂, linear_combination,
              minkowski_difference, pontryagin_difference, minkowski_sum
 

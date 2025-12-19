@@ -51,13 +51,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     ch2 = CH(Singleton(N[1]), HalfSpace(N[1], N(1)))
     @test !isbounded(ch2) && !isboundedtype(typeof(ch2))
 
-    # ispolyhedral / ispolyhedraltype / ispolytopic
+    # ispolyhedral / ispolyhedraltype / ispolytopic / ispolytopictype
     @test ispolyhedral(ch) && ispolyhedraltype(typeof(ch))
-    @test ispolytopic(ch)
+    @test ispolytopic(ch) && ispolytopictype(typeof(ch))
     if N isa AbstractFloat
         ch2 = CH(b1, Ball2(N[0, 0], N(1)))
         @test !ispolyhedral(ch2) && !ispolyhedraltype(typeof(ch2))
-        @test !ispolytopic(ch2)
+        @test !ispolytopic(ch2) && !ispolytopictype(typeof(ch))
     end
 
     # isempty
@@ -114,13 +114,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     cha2 = ConvexHullArray([Singleton(N[1]), HalfSpace(N[1], N(1))])
     @test !isbounded(cha2) && !isboundedtype(typeof(cha2))
 
-    # ispolyhedral / ispolyhedraltype / ispolytopic
+    # ispolyhedral / ispolyhedraltype / ispolytopic / ispolytopictype
     @test ispolyhedral(cha) && ispolyhedraltype(typeof(cha))
-    @test ispolytopic(cha)
+    @test ispolytopic(cha) && ispolytopictype(typeof(cha))
     if N isa AbstractFloat
         cha2 = ConvexHullArray([b1, Ball2(N[0, 0], N(1))])
         @test !ispolyhedral(cha2) && !ispolyhedraltype(typeof(cha2))
-        @test !ispolytopic(cha2)
+        @test !ispolytopic(cha2) && !ispolytopictype(typeof(cha))
     end
 
     # isempty

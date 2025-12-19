@@ -75,6 +75,7 @@ Inherited from [`LazySet`](@ref):
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
 * [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{LazySet}))
 * [`ispolytopic`](@ref ispolytopic(::LazySet))
+* [`ispolytopictype`](@ref ispolytopictype(::Type{LazySet}))
 * [`low`](@ref low(::LazySet))
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`polyhedron`](@ref polyhedron(::LazySet))

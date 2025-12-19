@@ -18,8 +18,8 @@ export
       an_element, area, center, complement, concretize, constraints_list,
       constraints, convex_hull, diameter, dim, high, isbounded, isboundedtype,
       isconvextype, isoperation, isoperationtype, ispolyhedral,
-      ispolyhedraltype, ispolytopic, isuniversal, low, norm, radius, rectify,
-      reflect, vertices_list, vertices, volume,
+      ispolyhedraltype, ispolytopic, ispolytopictype, isuniversal, low, norm,
+      radius, rectify, reflect, vertices_list, vertices, volume,
 # mixed set operations (typically with vectors or matrices)
       affine_map, distance, exponential_map, is_interior_point, linear_map,
       permute, project, sample, scale!, scale, support_function, ρ,
@@ -53,6 +53,7 @@ include("Unary/isoperationtype.jl")
 include("Unary/ispolyhedral.jl")
 include("Unary/ispolyhedraltype.jl")
 include("Unary/ispolytopic.jl")
+include("Unary/ispolytopictype.jl")
 include("Unary/isuniversal.jl")
 include("Unary/low.jl")
 include("Unary/norm.jl")

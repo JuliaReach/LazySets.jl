@@ -191,6 +191,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # ispolytopic
     @test ispolytopic(X)
 
+    # ispolytopictype
+    @test ispolytopictype(typeof(X))
+
     # isuniversal
     @test !isuniversal(X)
     res, w = isuniversal(X, true)

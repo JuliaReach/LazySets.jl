@@ -466,6 +466,21 @@ end
 """
 # Extended help
 
+    ispolytopictype(T::Type{<:LazySet})
+
+### Algorithm
+
+The default implementation checks `ispolyhedraltype(X)` and `isboundedtype(X)`.
+This is typically enough, but note that these functions may give a conservative
+result.
+"""
+function ispolytopictype(T::Type{<:LazySet})
+    return ispolyhedraltype(T) && isboundedtype(T)
+end
+
+"""
+# Extended help
+
     ispolytopic(X::LazySet)
 
 ### Algorithm
