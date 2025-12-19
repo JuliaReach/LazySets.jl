@@ -57,6 +57,7 @@ struct Ballp{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractBallp{N}
     # default constructor with domain constraint for radius and p
     function Ballp(p::N, center::VN, radius::N) where {N,VN<:AbstractVector{N}}
         @assert radius >= zero(N) "the radius must be nonnegative but is $radius"
+        @assert isfinite(radius) "the radius must be finite but is $radius"
         @assert p >= one(N) "p must not be less than 1"
         if p == N(Inf)
             require(@__MODULE__, :LazySets; fun_name="Ballp")

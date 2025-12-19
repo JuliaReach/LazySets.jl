@@ -52,6 +52,7 @@ struct Ball2{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractBallp{N}
     # default constructor with domain constraint for radius
     function Ball2(center::VN, radius::N) where {N<:AbstractFloat,VN<:AbstractVector{N}}
         @assert radius >= zero(N) "the radius must be nonnegative but is $radius"
+        @assert isfinite(radius) "the radius must be finite but is $radius"
         return new{N,VN}(center, radius)
     end
 end
