@@ -24,6 +24,8 @@ Undocumented implementations:
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`isuniversal`](@ref isuniversal(::LazySet))
 * [`in`](@ref in(::AbstractVector, ::LazySet))
+* [`scale`](@ref scale(::Real, ::LazySet))
+* [`scale!`](@ref scale!(::Real, ::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
 
@@ -69,8 +71,6 @@ Inherited from [`LazySet`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
-* [`scale`](@ref scale(::Real, ::LazySet))
-* [`scale!`](@ref scale!(::Real, ::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))

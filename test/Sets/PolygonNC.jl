@@ -58,6 +58,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test x ∈ Polygon([x])
     @test x ∉ Polygon([y])
     @test x ∉ Polygon{N}()
+
+    # scale/scale!
+    P2 = deepcopy(P3)
+    scale!(N(2), P2)
+    @test scale(N(2), P3) == P2 == Polygon([N[3, 0], N[3, 11 // 5]])
 end
 
 # default Float64 constructor
