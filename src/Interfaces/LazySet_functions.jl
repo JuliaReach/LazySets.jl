@@ -1546,12 +1546,6 @@ function scale(α::Real, X::LazySet)
     return linear_map(α * I, X)
 end
 
-function _scale_copy_inplace(α::Real, X::LazySet)
-    Y = copy(X)
-    scale!(α, Y)
-    return Y
-end
-
 """
     tohrep(P::LazySet)
 
