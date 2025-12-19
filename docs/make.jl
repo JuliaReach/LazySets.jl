@@ -1,5 +1,7 @@
+ENV["GKSwstype"] = "100"  # prevent plots from opening interactively
+
 using Documenter, LazySets, DocumenterCitations
-import Polyhedra, Optim, ExponentialUtilities, TaylorModels, Distributions,
+import Plots, Polyhedra, Optim, ExponentialUtilities, TaylorModels, Distributions,
        MiniQhull, Symbolics, SymEngine, IntervalMatrices
 
 include("init.jl")
