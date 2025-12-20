@@ -114,5 +114,5 @@ end
 
 for N in @tN([Float64, Float32])
     # rand
-    @test rand(ZonotopeMD, N=N) isa ZonotopeMD{N}
+    @test rand(ZonotopeMD; N=N) isa ZonotopeMD{N}
 end
