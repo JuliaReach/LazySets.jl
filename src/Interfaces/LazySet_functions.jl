@@ -294,7 +294,7 @@ function _extrema_vlist(X::LazySet{N}) where {N}
 end
 
 """
-    plot_vlist(X::S, ε::Real) where {S<:LazySet}
+    plot_vlist(X::LazySet, ε::Real)
 
 Return a list of vertices used for plotting a two-dimensional set.
 
@@ -309,8 +309,8 @@ A list of vertices of a polygon `P`.
 For convex `X`, `P` usually satisfies that the Hausdorff distance to `X` is less
 than `ε`.
 """
-function plot_vlist(X::S, ε::Real) where {S<:LazySet}
-    @assert isconvextype(S) "can only plot convex sets"
+function plot_vlist(X::LazySet, ε::Real)
+    @assert isconvex(X) "can only plot convex sets"
 
     P = overapproximate(X, ε)
     return convex_hull(vertices_list(P))
@@ -762,10 +762,9 @@ On the other hand, if you only want to produce a fast box-overapproximation of
 Finally, we use the plot recipe for the constructed set (interval or polygon).
 """
 function plot_recipe(X::LazySet, ε)
-    @assert dim(X) <= 3 "cannot plot a $(dim(X))-dimensional $(typeof(X))"
-    @assert isboundedtype(typeof(X)) || isbounded(X) "cannot plot an " *
-                                                     "unbounded $(typeof(X))"
-    @assert isconvextype(typeof(X)) "can only plot convex sets"
+    @assert dim(X) <= 3 "this implementation cannot plot $(dim(X))-dimensional sets"
+    @assert isbounded(X) "this implementation can only plot bounded sets"
+    @assert isconvex(X) "this implementation can only plot convex sets"
 
     if dim(X) == 1
         Y = convert(Interval, X)

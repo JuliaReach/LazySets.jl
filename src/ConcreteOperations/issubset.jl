@@ -124,12 +124,8 @@ end
 - `"vertices"`:
 Since ``S`` is convex, ``P ⊆ S`` iff ``v ∈ S`` for all vertices ``v`` of ``P``.
 """
-@validate function issubset(P::AbstractPolytope, S::LazySet, witness::Bool=false;
-                            algorithm=nothing)
-    if !isconvextype(typeof(S))
-        error("an inclusion check for the given combination of set types is " *
-              "not available")
-    end
+@validate function issubset(P::AbstractPolytope, S::LazySet, witness::Bool=false; algorithm=nothing)
+    @assert isconvex(S) "this implementation requires a convex set"
 
     if isnothing(algorithm)
         # TODO smarter evaluation which representation is better
@@ -300,10 +296,7 @@ Since ``S`` is convex, ``L ⊆ S`` iff ``p ∈ S`` and ``q ∈ S``, where ``p, q
 the end points of ``L``.
 """
 @validate function issubset(L::LineSegment, S::LazySet, witness::Bool=false)
-    if !isconvextype(typeof(S))
-        error("an inclusion check for the given combination of set types is " *
-              "not available")
-    end
+    @assert isconvex(S) "this implementation requires a convex set"
 
     return _issubset_line_segment(L, S, witness)
 end
@@ -346,10 +339,9 @@ Otherwise we compute the set difference ``W = X \\ Y`` and check whether
 ``W ⊆ Z`` holds.
 """
 @validate function issubset(X::Interval, U::UnionSet, witness::Bool=false)
-    if !isconvextype(typeof(first(U))) || !isconvextype(typeof(second(U)))
-        error("an inclusion check for the given combination of set types is " *
-              "not available")
-    end
+    @assert isconvex(first(U)) && isconvex(second(U)) "this implementation requires a union of " *
+                                                      "convex sets"
+
     return _issubset_interval(X, convert(Interval, first(U)),
                               convert(Interval, second(U)), witness)
 end
@@ -404,9 +396,8 @@ _to_unbounded_interval(H::HalfSpace) = H
 _to_unbounded_interval(U::Universe) = U
 
 function _to_unbounded_interval(X::LazySet{N}) where {N}
-    if !isconvextype(typeof(X))
-        throw(ArgumentError("unions with non-convex sets are not supported"))
-    end
+    @assert isconvex(X) "this implementation requires a convex set"
+
     l, h = extrema(X, 1)
     if isinf(l)
         if isinf(h)

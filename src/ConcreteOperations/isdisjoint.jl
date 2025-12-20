@@ -224,11 +224,8 @@ zonotope with center ``c`` and generators ``g``.
     end
 end
 
-function _isdisjoint_hyperplane(hp::Union{Hyperplane,Line2D}, X::LazySet,
-                                witness::Bool=false)
-    if !isconvextype(typeof(X))
-        error("this implementation requires a convex set")
-    end
+function _isdisjoint_hyperplane(hp::Union{Hyperplane,Line2D}, X::LazySet, witness::Bool=false)
+    @assert isconvex(X) "this implementation requires a convex set"
 
     normal_hp = hp.a
     sv_left = σ(-normal_hp, X)
