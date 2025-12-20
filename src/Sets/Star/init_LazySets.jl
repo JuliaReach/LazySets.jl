@@ -1,2 +1,2 @@
 using .LazySets: STAR
-using ..HPolytopeModule: HPolytope
+using ..HPolyhedronModule: HPolyhedron
