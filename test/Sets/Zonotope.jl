@@ -256,6 +256,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isboundedtype
     @test isboundedtype(typeof(Z))
 
+    # isconvex
+    @test isconvex(Z)
+
     # isconvextype
     @test isconvextype(typeof(Z))
 

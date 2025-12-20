@@ -17,7 +17,7 @@ export
 # unary set operations
       an_element, area, center, complement, concretize, constraints_list,
       constraints, convex_hull, diameter, dim, high, isbounded, isboundedtype,
-      isconvextype, isoperation, isoperationtype, ispolyhedral,
+      isconvex, isconvextype, isoperation, isoperationtype, ispolyhedral,
       ispolyhedraltype, ispolytopic, ispolytopictype, isuniversal, low, norm,
       radius, rectify, reflect, vertices_list, vertices, volume,
 # mixed set operations (typically with vectors or matrices)
@@ -46,6 +46,7 @@ include("Unary/extrema.jl")
 include("Unary/high.jl")
 include("Unary/isbounded.jl")
 include("Unary/isboundedtype.jl")
+include("Unary/isconvex.jl")
 include("Unary/isconvextype.jl")
 include("Unary/isempty.jl")
 include("Unary/isoperation.jl")

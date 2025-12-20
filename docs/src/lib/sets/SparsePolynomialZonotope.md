@@ -89,6 +89,7 @@ Inherited from [`LazySet`](@ref):
 * [`extrema`](@ref extrema(::LazySet, ::Int))
 * [`high`](@ref high(::LazySet))
 * [`high`](@ref high(::LazySet, ::Int))
+* [`isconvex`](@ref isconvex(::LazySet))
 * [`isconvextype`](@ref isconvextype(::Type{LazySet}))
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))

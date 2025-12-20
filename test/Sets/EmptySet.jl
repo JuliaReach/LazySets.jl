@@ -113,6 +113,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isboundedtype
     @test isboundedtype(typeof(E))
 
+    # isconvex
+    @test isconvex(E)
+
     # isconvextype
     @test isconvextype(typeof(E))
 
