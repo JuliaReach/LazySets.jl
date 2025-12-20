@@ -179,3 +179,11 @@ Remove the redundant vertices from a polytope in vertex representation in-place.
 A new polytope with the redundant vertices removed.
 """
 function remove_redundant_vertices!(::AbstractPolytope) end
+
+function ρ(d::AbstractVector{M}, P::AbstractPolytope{N}; solver=default_lp_solver(M, N)) where {M,N}
+    return ρ(d, convert(HPolyhedron, P); solver)  # TODO generalize to choose between H-rep and V-rep
+end
+
+function σ(d::AbstractVector{M}, P::AbstractPolytope{N}; solver=default_lp_solver(M, N)) where {M,N}
+    return σ(d, convert(HPolytope, P); solver)  # TODO generalize to choose between H-rep and V-rep
+end

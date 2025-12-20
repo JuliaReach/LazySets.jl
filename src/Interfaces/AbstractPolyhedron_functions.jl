@@ -1089,3 +1089,11 @@ function _infeasible_constraints_list(n::Int; N=Float64)
     @inbounds clist[n + 1] = c_sum
     return clist
 end
+
+function ρ(d::AbstractVector{M}, P::AbstractPolyhedron{N}; solver=default_lp_solver(M, N)) where {M,N}
+    return ρ(d, convert(HPolyhedron, P); solver)
+end
+
+function σ(d::AbstractVector{M}, P::AbstractPolyhedron{N}; solver=default_lp_solver(M, N)) where {M,N}
+    return σ(d, convert(HPolyhedron, P); solver)
+end
