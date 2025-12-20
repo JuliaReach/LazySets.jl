@@ -7,7 +7,7 @@
 
 In ``n`` dimensions there are ``2n`` vertices (unless the radius is 0).
 """
-function vertices_list(B::Ball1)
+@validate function vertices_list(B::Ball1)
     # fast evaluation if B has radius 0
     if iszero(B.radius)
         return [B.center]

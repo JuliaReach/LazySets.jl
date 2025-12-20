@@ -235,7 +235,7 @@ under the affine map, pass `apply_convex_hull=false` as a keyword argument.
 Note that we assume that the underlying set `X` is polytopic, either concretely
 or lazily, i.e., the function `vertices_list` should be applicable.
 """
-function vertices_list(am::AbstractAffineMap; apply_convex_hull::Bool=true)
+@validate function vertices_list(am::AbstractAffineMap; apply_convex_hull::Bool=true)
     # for a zero linear map, the result is just the affine translation
     A = matrix(am)
     b = vector(am)
