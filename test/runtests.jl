@@ -49,9 +49,9 @@ Random.seed!(seed)
 @ts begin
     # only load the packages (no symbols)
     import CDDLib, Distributions, ExponentialUtilities, Expokit, GeometryBasics,
-           IntervalConstraintProgramming, IntervalMatrices, Ipopt, MiniQhull,
-           Optim, PkgVersion, Polyhedra, RangeEnclosures, SCS, StaticArrays,
-           TaylorModels
+           IntervalBoxes, IntervalConstraintProgramming, IntervalMatrices,
+           Ipopt, MiniQhull, Optim, PkgVersion, Polyhedra, RangeEnclosures, SCS,
+           StaticArrays, TaylorModels
     if VERSION < v"1.12"
         import SetProg  # TODO add back unconditionally once it works in v1.12
     end
