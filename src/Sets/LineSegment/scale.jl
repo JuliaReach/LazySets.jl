@@ -1,5 +1,5 @@
 function scale(α::Real, L::LineSegment)
-    return _scale_copy_inplace(α, L)
+    return LineSegment(α * L.p, α * L.q)
 end
 
 function scale!(α::Real, L::LineSegment)

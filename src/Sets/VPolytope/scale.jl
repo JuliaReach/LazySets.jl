@@ -1,8 +1,10 @@
 function scale(α::Real, P::VPolytope)
-    return _scale_copy_inplace(α, P)
+    return VPolytope([α * v for v in P.vertices])
 end
 
 function scale!(α::Real, P::VPolytope)
-    P.vertices .*= α
+    @inbounds for v in P.vertices
+        v .*= α
+    end
     return P
 end

@@ -4,7 +4,7 @@ function scale(α::Real, Z::Zonotope)
         N = promote_type(typeof(α), eltype(Z))
         return Zonotope(zeros(N, dim(Z)), zeros(N, dim(Z), 0))
     else
-        return _scale_copy_inplace(α, Z)
+        return Zonotope(α * Z.center, α * Z.generators)
     end
 end
 

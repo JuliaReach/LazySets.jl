@@ -273,6 +273,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test extrema(p2) == (N[Inf, Inf], N[-Inf, -Inf]) && extrema(p2, 1) == (N(Inf), N(-Inf)) &&
           extrema(p2, 2) == (N(Inf), N(-Inf))
 
+    # scale/scale!
+    P = VPolygon([N[1, 2], N[3, 4], N[5, 6]])
+    P2 = deepcopy(P)
+    scale!(N(2), P2)
+    @test scale(N(2), P) == P2 == VPolygon([N[2, 4], N[6, 8], N[10, 12]])
+
     # ===================================
     # Concrete intersection
     # ===================================

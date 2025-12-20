@@ -2,8 +2,7 @@ module LineSegmentModule
 
 using Reexport, Requires
 
-using ..LazySets: AbstractZonotope, right_turn, _scale_copy_inplace,
-                  _witness_result_empty, @validate
+using ..LazySets: AbstractZonotope, right_turn, _witness_result_empty, @validate
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: _isapprox, isapproxzero, _leq

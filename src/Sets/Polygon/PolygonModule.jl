@@ -8,7 +8,7 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, convex_hull, dim, isconvextype, isbounded,
                         isboundedtype, isempty, isoperationtype, isuniversal,
-                        in, ρ, σ
+                        in, scale, scale!, ρ, σ
 import ..LazySets: plot_recipe
 @reexport using ..API
 
@@ -26,6 +26,7 @@ include("isempty.jl")
 include("isoperationtype.jl")
 include("isuniversal.jl")
 include("in.jl")
+include("scale.jl")
 include("support_function.jl")
 include("support_vector.jl")
 
