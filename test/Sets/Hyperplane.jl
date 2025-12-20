@@ -36,9 +36,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test σ(d1, hp) ∈ hp
         @test σ(N(2) * d1, hp) ∈ hp
         d2 = N[1, 0, 0]
-        @test_throws ErrorException σ(d2, hp)
+        @test_throws ArgumentError σ(d2, hp)
         d3 = N[1, 1, 2]
-        @test_throws ErrorException σ(d3, hp)
+        @test_throws ArgumentError σ(d3, hp)
         d4 = zeros(N, 3)
         @test σ(d4, hp) ∈ hp
     end
@@ -51,7 +51,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     hp2 = Hyperplane(N[1], N(1))
     @test σ(N[-1], hp2) ∈ hp2
     # support vector in other directions throws an error (but see #750)
-    @test_throws ErrorException σ(N[1, 1], Hyperplane(N[1, 0], N(1)))
+    @test_throws ArgumentError σ(N[1, 1], Hyperplane(N[1, 0], N(1)))
 
     # boundedness
     @test !isbounded(hp)

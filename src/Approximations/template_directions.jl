@@ -922,5 +922,5 @@ function _get_directions(dir::Type{<:Union{BoxDirections,OctDirections,
 end
 
 function _get_directions(dir::Type{<:AbstractDirections}, n::Int)
-    return error("no automatic choice of directions of type $dir possible")
+    return throw(ArgumentError("no automatic choice of directions of type $dir possible"))
 end

@@ -104,7 +104,7 @@ function _binary_support_vector(d::AbstractVector,
             end
             if (b <= a + 1)  # the chain is impossibly small
                 pop!(vlist)  # remove the extra point added
-                error("something went wrong")
+                throw(ArgumentError("something went wrong"))
             end
         end
     end

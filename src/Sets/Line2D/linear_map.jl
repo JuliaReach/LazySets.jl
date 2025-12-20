@@ -13,6 +13,6 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line2D{N},
         @assert isequivalent(LazySets.HPolygon(constraints), S) "unexpected constraints"
         return S
     else
-        error("unexpected number of $(length(constraints)) constraints")
+        throw(ArgumentError("unexpected number of $(length(constraints)) constraints"))
     end
 end

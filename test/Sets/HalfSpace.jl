@@ -27,7 +27,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test σ(d, hs) ∈ hs
         @test σ(N(2) * d, hs) ∈ hs
         d2 = N[1, 0, 0]
-        @test_throws ErrorException σ(d2, hs)
+        @test_throws ArgumentError σ(d2, hs)
         d2 = zeros(N, 3)
         @test σ(d2, hs) ∈ hs
     end
@@ -52,9 +52,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # support vector in other directions throws an error (but see #750)
     # opposite direction
-    @test_throws ErrorException σ(N[-1], HalfSpace(N[1], N(1)))
+    @test_throws ArgumentError σ(N[-1], HalfSpace(N[1], N(1)))
     # any other direction
-    @test_throws ErrorException σ(N[1, 1], HalfSpace(N[1, 0], N(1)))
+    @test_throws ArgumentError σ(N[1, 1], HalfSpace(N[1, 0], N(1)))
 
     # boundedness
     @test !isbounded(hs)

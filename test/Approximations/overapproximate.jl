@@ -133,7 +133,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # HPolytope error messages
     @test_throws ArgumentError overapproximate(Singleton(N[0, 0]), HPolytope)
-    @test_throws ArgumentError overapproximate(Singleton(N[0]), HPolytope)
+    @test_throws DimensionMismatch overapproximate(Singleton(N[0]), HPolytope)
 
     # Hyperrectangle of AffineMap
     A = N[1 2; 1 3; 1 4]
@@ -552,10 +552,10 @@ for N in [Float64]
         @test overapproximate(V, Zonotope, BoxDirections; algorithm="vrep") == Z
         @test overapproximate(V, Zonotope, BoxDirections; algorithm="cpa") == Z
         # test invalid direction templates
-        @test_throws ErrorException overapproximate(V, Zonotope, SphericalDirections,
-                                                    algorithm="vrep")
-        @test_throws ErrorException overapproximate(V, Zonotope, SphericalDirections,
-                                                    algorithm="cpa")
+        @test_throws ArgumentError overapproximate(V, Zonotope, SphericalDirections,
+                                                   algorithm="vrep")
+        @test_throws ArgumentError overapproximate(V, Zonotope, SphericalDirections,
+                                                   algorithm="cpa")
         # test dispatch of internal functions
         @test Approximations._overapproximate_zonotope_vrep(V, BoxDirections) == Z
         @test convert(Zonotope, Approximations._overapproximate_zonotope_cpa(V, BoxDirections)) == Z

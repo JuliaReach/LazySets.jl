@@ -241,7 +241,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # getindex
     cp = LazySets.CachedPair(1, N[2])
     @test cp[1] == 1 && cp[2] == N[2]
-    @test_throws ErrorException cp[3]
+    @test_throws ArgumentError cp[3]
 
     # boundedness
     @test isbounded(cms)
