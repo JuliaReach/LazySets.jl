@@ -109,6 +109,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isboundedtype
     @test !isboundedtype(typeof(U))
 
+    # isconvex
+    @test isconvex(U)
+
     # isconvextype
     @test isconvextype(typeof(U))
 

@@ -8,9 +8,9 @@ let
 
     # unary set operations
     for f in (an_element, area, center, complement, concretize, constraints_list, constraints,
-              convex_hull, diameter, dim, eltype, extrema, high, isbounded, isempty, isoperation,
-              ispolyhedral, ispolytopic, isuniversal, low, norm, radius, rectify, reflect, sample,
-              vertices_list, vertices, volume)
+              convex_hull, diameter, dim, eltype, extrema, high, isbounded, isconvex, isempty,
+              isoperation, ispolyhedral, ispolytopic, isuniversal, low, norm, radius, rectify,
+              reflect, sample, vertices_list, vertices, volume)
         @test isnothing(f(X))
     end
 

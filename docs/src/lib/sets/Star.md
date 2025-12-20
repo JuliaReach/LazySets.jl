@@ -113,6 +113,7 @@ Inherited from [`LazySet`](@ref):
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
 * [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))
+* [`isconvex`](@ref isconvex(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolytopic`](@ref ispolytopic(::LazySet))
 * [`ispolytopictype`](@ref ispolytopictype(::Type{LazySet}))

@@ -44,9 +44,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isdisjoint(C, B1) && res && w == N[]
 
     # test convexity from the type
-    @test isconvextype(typeof(Complement(Universe{N}(2))))
-    @test isconvextype(typeof(Complement(EmptySet{N}(2))))
-    @test isconvextype(typeof(Complement(HalfSpace(N[1], N(0)))))
+    for X in (Universe{N}(2), EmptySet{N}(2), HalfSpace(N[1], N(0)))
+        @test isconvex(X)
+        @test isconvextype(typeof(Complement(X)))
+    end
+    for X in [Complement(Interval(N(0), N(1)))]
+        @test !isconvex(X)
+        @test !isconvextype(typeof(X))
+    end
 
     # ispolyhedral
     @test ispolyhedral(Complement(EmptySet{N}(2)))

@@ -94,6 +94,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
         # boundedness
         @test isbounded(U) && isboundedtype(typeof(U))
 
+        # convexity
+        @test !isconvex(U) && !isconvextype(typeof(U))
+
         # inclusion
         subset, point = ⊆(U, B3, true)
         @test U ⊆ B3 && subset && point == N[]

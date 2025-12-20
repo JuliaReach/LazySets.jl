@@ -13,7 +13,7 @@ import .API: eltype, extrema, isdisjoint, isempty, \, in, isapprox, ==, issubset
              rand, norm, permute, distance, rectify,
              affine_map, an_element, area, center, complement, concretize,
              constraints_list, constraints, convex_hull, diameter, dim, exponential_map,
-             high, is_interior_point, isbounded, isboundedtype, isconvextype,
+             high, is_interior_point, isbounded, isboundedtype, isconvex, isconvextype,
              isempty, isoperation, isoperationtype, ispolyhedral, ispolyhedraltype,
              ispolytopic, ispolytopictype, isuniversal, linear_map, low, norm,
              project, radius, reflect, sample, scale, scale!, support_function,

@@ -94,6 +94,19 @@ true
 """
 isconvextype(::Type{<:LazySet}) = false
 
+"""
+# Extended help
+
+    isconvex(X::LazySet)
+
+### Algorithm
+
+The default implementation checks `isconvextype(typeof(X))`.
+"""
+function isconvex(X::LazySet)
+    return isconvextype(typeof(X))
+end
+
 # Polyhedra backend (fallback method)
 function default_polyhedra_backend(P::LazySet{N}) where {N}
     require(@__MODULE__, :Polyhedra; fun_name="default_polyhedra_backend")

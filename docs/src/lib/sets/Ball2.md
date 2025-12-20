@@ -158,6 +158,7 @@ Inherited from [`LazySet`](@ref):
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`eltype`](@ref eltype(::LazySet))
 * [`high`](@ref high(::LazySet))
+* [`isconvex`](@ref isconvex(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
 * [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{LazySet}))
