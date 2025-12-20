@@ -37,7 +37,7 @@ function cartesian_product(X::LazySet, Y::LazySet; backend=nothing,
                            algorithm::String="hrep")
     if algorithm == "vrep"
         Yv = VPolytope(vertices_list(Y))
-        if dim(X) == 1 && isconvextype(typeof(X))  # special case
+        if dim(X) == 1 && isconvex(typeof(X))  # special case
             Xv = convert(Interval, X)  # works because X is convex
             return cartesian_product(Xv, Yv)
         end

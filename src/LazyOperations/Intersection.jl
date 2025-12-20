@@ -703,9 +703,7 @@ function plot_recipe(cap::Intersection{N}, ε::N=zero(N),
     if isempty(cap)
         return plot_recipe(EmptySet{N}(dim(cap)), ε)
     elseif dim(cap) == 1
-        if !isconvextype(typeof(cap))
-            throw(ArgumentError("cannot plot a one-dimensional $(typeof(cap))"))
-        end
+        @assert isconvex(cap) "cannot plot a one-dimensional $(typeof(cap))"
         return plot_recipe(convert(Interval, cap), ε)
     else
         # construct polygon approximation using polar directions
@@ -812,9 +810,7 @@ function load_optim_intersection()
     return quote
         function _line_search_optim(ℓ, X::LazySet, H::Union{<:HalfSpace,<:Hyperplane,<:Line2D};
                                     kwargs...)
-            if !isconvextype(typeof(X))
-                throw(ArgumentError("the first set in the intersection must be convex"))
-            end
+            @assert isconvex(X) "the first set in the intersection must be convex"
 
             options = Dict(kwargs)
 
@@ -912,9 +908,7 @@ function _projection(ℓ, X::LazySet, H::Union{Hyperplane,Line2D};
                      lazy_2d_intersection=true,
                      algorithm_2d_intersection=nothing,
                      kwargs...)
-    if !isconvextype(typeof(X))
-        throw(ArgumentError("the first set in the intersection must be convex"))
-    end
+    @assert isconvex(X) "the first set in the intersection must be convex"
 
     N = promote_type(eltype(X), eltype(H))
     n = H.a                  # normal vector to the hyperplane

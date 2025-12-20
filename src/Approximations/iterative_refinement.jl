@@ -185,7 +185,7 @@ function tohrep(Ω::PolygonalOverapproximation)
 end
 
 """
-    overapproximate_hausdorff(X::S, ε::Real) where {N<:AbstractFloat, S<:LazySet{N}}
+    overapproximate_hausdorff(X::LazySet{N}, ε::Real) where {N<:AbstractFloat}
 
 Return an ε-close overapproximation of the given 2D convex set (in terms of the
 Hausdorff distance) in the form of a polygon in constraint representation.
@@ -199,12 +199,9 @@ Hausdorff distance) in the form of a polygon in constraint representation.
 
 A polygon in constraint representation.
 """
-function overapproximate_hausdorff(X::S, ε::Real) where {N<:AbstractFloat,S<:LazySet{N}}
-    if !isconvextype(S)
-        error("ε-close overapproximation requires a convex set")
-    elseif dim(X) != 2
-        error("ε-close overapproximation requires a two-dimensional set")
-    end
+function overapproximate_hausdorff(X::LazySet{N}, ε::Real) where {N<:AbstractFloat}
+    @assert isconvex(X) "ε-close overapproximation requires a convex set"
+    @assert dim(X) == 2 "ε-close overapproximation requires a two-dimensional set"
 
     # initialize box directions
     pE = σ(DIR_EAST(N), X)

@@ -1,6 +1,6 @@
 """
-    underapproximate(X::S, dirs::AbstractDirections;
-                    [apply_convex_hull]::Bool=false) where {N, S<:LazySet{N}}
+    underapproximate(X::LazySet{N}, dirs::AbstractDirections;
+                    [apply_convex_hull]::Bool=false) where {N}
 
 Compute the underapproximation of a convex set by sampling support vectors.
 
@@ -21,13 +21,11 @@ Since the support vectors are not always unique, this algorithm may return
 a strict underapproximation even if the set can be exactly approximated using
 the given template.
 """
-function underapproximate(X::S, dirs::AbstractDirections;
-                          apply_convex_hull::Bool=false) where {N,S<:LazySet{N}}
-    if !isconvextype(S)
-        error("this underapproximation is only available for convex sets")
-    end
-    @assert dim(X) == dim(dirs) "the dimension of the set, $(dim(X)), does " *
-                                "not match the dimension of the template directions, $(dim(dirs))"
+function underapproximate(X::LazySet{N}, dirs::AbstractDirections;
+                          apply_convex_hull::Bool=false) where {N}
+    @assert isconvex(X) "this underapproximation requires a convex set"
+    @assert dim(X) == dim(dirs) "the dimension of the set ($(dim(X))) does not match the " *
+                                "dimension of the directions ($(dim(dirs)))"
 
     vlist = Vector{Vector{N}}(undef, length(dirs))
     j = 0

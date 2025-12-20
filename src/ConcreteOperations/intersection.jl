@@ -211,8 +211,7 @@ be of type `Singleton` if the intersection is very small.
 end
 
 function _intersection_interval(X::Interval, Y::LazySet)
-    @assert isconvextype(typeof(Y)) "this implementation requires a convex " *
-                                    "set, but got $(typeof(Y))"
+    @assert isconvex(Y) "this implementation requires a convex set"
 
     N = promote_type(eltype(X), eltype(Y))
     lower = max(min(X), low(Y, 1))

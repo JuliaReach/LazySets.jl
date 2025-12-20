@@ -54,15 +54,12 @@ we use a lazy `Bloating`.
 function hausdorff_distance(X::LazySet{N}, Y::LazySet{N}; p::N=N(Inf),
                             ε=N(1e-3)) where {N}
     @assert ε > zero(N) "the value ε must be positive"
-    @assert isconvextype(typeof(X)) && isconvextype(typeof(Y)) "this " *
-                                                               "implementation requires the sets to be convex"
-    @assert isbounded(X) && isbounded(Y) "the Hausdorff distance is only " *
-                                         "defined for compact sets"
+    @assert isconvex(X) && isconvex(Y) "this implementation requires convex sets"
+    @assert isbounded(X) && isbounded(Y) "the Hausdorff distance is only defined for bounded sets"
 
     n = dim(X)
-    @assert dim(Y) == n "the Hausdorff distance is only defined between sets " *
-                        "of the same dimension, but they have dimensions $n " *
-                        "resp. $(dim(Y))"
+    @assert dim(Y) == n "the Hausdorff distance is only defined between sets of the same " *
+                        "dimension, but they have dimensions $n resp. $(dim(Y))"
 
     # phase 1: find a finite upper bound
     δ_upper = max(maximum(d -> abs(ρ(d, X) - ρ(d, Y)), BoxDirections{N}(n)),

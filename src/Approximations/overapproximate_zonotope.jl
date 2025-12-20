@@ -819,8 +819,7 @@ nonnegativity constraints (last type) are not stated explicitly in [GuibasNZ03](
 function _overapproximate_zonotope_vrep(X::LazySet{N},
                                         dir::AbstractDirections;
                                         solver=default_lp_solver(N)) where {N}
-    @assert isconvextype(typeof(X)) "this algorithm requires a convex " *
-                                    "polytope as input"
+    @assert ispolytopic(X) "this algorithm requires a polytope"
 
     # TODO "normalization" here involves two steps: removing opposite directions
     # and normalizing the direction vector
