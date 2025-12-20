@@ -473,7 +473,7 @@ function _isdisjoint_cpa_polyhedron(cpa::CartesianProductArray, P, witness)
     if !ispolyhedral(cpa_low_dim)
         error("a polyhedral set is required")
     end
-    T = isconvextype(typeof(cpa_low_dim)) ? HPolytope : HPolyhedron
+    T = isboundedtype(typeof(cpa_low_dim)) ? HPolytope : HPolyhedron
     hpoly_low_dim = T(constraints_list(cpa_low_dim))
     return isdisjoint(hpoly_low_dim, project(P, vars), witness)
 end
