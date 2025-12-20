@@ -21,6 +21,10 @@ function rand(::Type{Star};
     c = randn(rng, N, dim)
     if isnothing(P)
         P = rand(HPolyhedron; N=N, dim=dim, rng=rng, seed=seed)
+        # may have no constraints, which is better represented as a Universe
+        if isempty(P.constraints)
+            P = rand(Universe; N=N, dim=dim, rng=rng, seed=seed)
+        end
     end
     V = randn(rng, N, dim, StarModule.dim(P))
     return Star(c, V, P)
