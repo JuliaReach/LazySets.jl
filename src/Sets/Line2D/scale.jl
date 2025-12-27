@@ -4,4 +4,5 @@ end
 
 function scale!(α::Real, L::Line2D)
     L.a ./= α
+    return L
 end
