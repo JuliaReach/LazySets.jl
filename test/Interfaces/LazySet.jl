@@ -18,4 +18,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # an_element default implementation
     U = Universe{N}(2)
     @test_throws ArgumentError LazySets._an_element_lazyset(U)
+
+    # issubset special error message
+    @test_throws ArgumentError N[0, 0] ⊆ Z
 end
