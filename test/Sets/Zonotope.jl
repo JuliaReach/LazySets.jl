@@ -486,7 +486,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !is_interior_point(N[5, 8], Z; ε=1 // 100)
         @test !is_interior_point(N[3, 3], Z; ε=1 // 100)
         # incompatible numeric type
-        @test_throws ArgumentError is_interior_point([1.0], Z)
+        @test_throws ArgumentError is_interior_point([0.0, 0.0], Z)
     end
 
     # linear_map
