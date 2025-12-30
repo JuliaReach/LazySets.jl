@@ -87,6 +87,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Z = Zonotope(N[2], zeros(N, 1, 0))
     P = convert(HPolytope, Interval(N(1), N(3)))
     @test Z ⊆ P
+
+    # AbstractSingleton in LazySet
+    S = Singleton(N[2, -1])
+    P = VPolygon([N[2, -1]])
+    @test S ⊆ P
+    res, w = ⊆(S, P, true)
+    @test res && w isa Vector{N} && w == N[]
+    P = VPolygon([N[3, 1]])
+    @test S ⊈ P
+    res, w = ⊆(S, P, true)
+    @test !res && w isa Vector{N} && w ∈ S && w ∉ P
 end
 
 for N in [Float64]
