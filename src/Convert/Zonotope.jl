@@ -1,75 +1,11 @@
-function Base.convert(::Type{Zonotope}, H::AbstractHyperrectangle)
-    dim(H) == 2 && return _convert_2D(Zonotope, H)
-    return Zonotope(center(H), genmat(H))
-end
-
-# fast conversion from a 2D hyperrectangular set to a zonotope
-function _convert_2D(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
-    c = center(H)
-    rx = radius_hyperrectangle(H, 1)
-    ry = radius_hyperrectangle(H, 2)
-    G = _genmat_2D(c, rx, ry)
-    return Zonotope(c, G)
-end
-
-@inline function _genmat_2D(::AbstractVector{N}, rx, ry) where {N}
-    flat_x = isapproxzero(rx)
-    flat_y = isapproxzero(ry)
-    ncols = !flat_x + !flat_y
-    G = Matrix{N}(undef, 2, ncols)
-    if !flat_x
-        @inbounds begin
-            G[1] = rx
-            G[2] = zero(N)
-        end
-        if !flat_y
-            @inbounds begin
-                G[3] = zero(N)
-                G[4] = ry
-            end
-        end
-    elseif !flat_y
-        @inbounds begin
-            G[1] = zero(N)
-            G[2] = ry
-        end
-    end
-    return G
-end
-
-function load_genmat_2D_static()
+function load_StaticArraysCore_convert_Zonotope_Hyperrectangle_static()
     return quote
-        @inline function _genmat_2D(::SVector{L,N}, rx, ry) where {L,N}
-            flat_x = isapproxzero(rx)
-            flat_y = isapproxzero(ry)
-            if !flat_x && !flat_y
-                G = SMatrix{2,2,N,4}(rx, zero(N), zero(N), ry)
-            elseif !flat_x && flat_y
-                G = SMatrix{2,1,N,2}(rx, zero(N))
-            elseif flat_x && !flat_y
-                G = SMatrix{2,1,N,2}(zero(N), ry)
-            else
-                G = SMatrix{2,0,N,0}()
-            end
-            return G
-        end
-
-        # this function is type-stable but doesn't prune the generators according
-        # to flat dimensions of H
-        function _convert_2D_static(::Type{Zonotope}, H::AbstractHyperrectangle{N}) where {N}
-            c = center(H)
-            rx = radius_hyperrectangle(H, 1)
-            ry = radius_hyperrectangle(H, 2)
-            G = SMatrix{2,2,N,4}(rx, zero(N), zero(N), ry)
-            return Zonotope(c, G)
-        end
-
         function _convert_static(::Type{Zonotope},
                                  H::Hyperrectangle{N,<:SVector,<:SVector}) where {N}
             return Zonotope(center(H), _genmat_static(H))
         end
     end
-end  # quote / load_genmat_2D_static
+end  # quote / load_StaticArraysCore_convert_Zonotope_Hyperrectangle_static
 
 """
     convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N,

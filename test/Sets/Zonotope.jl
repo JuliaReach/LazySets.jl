@@ -65,11 +65,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
         r2 = N[0, 5]
         Z2 = convert(Zonotope, Hyperrectangle(SVector{2}(c), SVector{2}(r2)))
         @test isidentical(Z2, Zonotope(SVector{2}(c), SMatrix{2,1}(hcat(r2))))
-        # specialized method for 2D static arrays
-        Z2b = LazySets._convert_2D_static(Zonotope, H)
-        @test isidentical(Z2b, Z2a)
-        Z2 = LazySets._convert_2D_static(Zonotope, Hyperrectangle(SVector{2}(c), SVector{2}(r2)))
-        @test isidentical(Z2, Zonotope(SVector{2}(c), SMatrix{2,2}(N[0 0; 0 5])))
         # flat second dimension
         r2 = N[4, 0]
         Z2 = convert(Zonotope, Hyperrectangle(SVector{2}(c), SVector{2}(r2)))
