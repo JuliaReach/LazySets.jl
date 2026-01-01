@@ -4,22 +4,21 @@ function genmat(H::Hyperrectangle{N,<:AbstractVector,<:SparseVector{N}}) where {
     return sparse(nze, 1:length(nze), nzv, n, length(nze))
 end
 
-function load_StaticArraysCore_genmat()
+function load_StaticArraysCore_genmat_Hyperrectangle()
     return quote
         using .StaticArraysCore: SVector
 
         function genmat(H::Hyperrectangle{N,SVector{L,N},SVector{L,N}}) where {L,N}
             gens = zeros(StaticArraysCore.MMatrix{L,L,N})
-            nzcol = Vector{Int}()
+            j = 0
             @inbounds for i in 1:L
-                r = H.radius[i]
-                if !isapproxzero(r)
-                    gens[i, i] = r
-                    push!(nzcol, i)
+                ri = radius_hyperrectangle(H, i)
+                if !isapproxzero(ri)
+                    j += 1
+                    gens[i, j] = ri
                 end
             end
-            m = length(nzcol)
-            return StaticArraysCore.SMatrix{L,m}(view(gens, :, nzcol))
+            return StaticArraysCore.SMatrix{L,j}(view(gens, :, 1:j))
         end
 
         # this function is type stable, but it does not prune the generators
@@ -27,10 +26,10 @@ function load_StaticArraysCore_genmat()
         function _genmat_static(H::Hyperrectangle{N,SVector{L,N},SVector{L,N}}) where {L,N}
             gens = zeros(StaticArraysCore.MMatrix{L,L,N})
             @inbounds for i in 1:L
-                r = H.radius[i]
-                gens[i, i] = r
+                ri = radius_hyperrectangle(H, i)
+                gens[i, i] = ri
             end
             return StaticArraysCore.SMatrix{L,L}(gens)
         end
     end
-end  # load_StaticArraysCore_genmat
+end  # load_StaticArraysCore_genmat_Hyperrectangle
