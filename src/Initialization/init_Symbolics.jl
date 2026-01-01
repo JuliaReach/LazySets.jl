@@ -7,11 +7,25 @@ _vec(vars::Vector{Symbolics.Arr{Num,1}}) = reduce(vcat, vars)
 _vec(vars::Vector{Vector{Num}}) = reduce(vcat, vars)
 _vec(vars::Vector{Real}) = reduce(vcat, vars)
 
-# `sort` argument was introduced in Symbolics v6.1
-@static if VERSION < v"1.10"
-    _get_variables(expr::Num) = convert(Vector{Num}, Symbolics.get_variables(expr))
+@static if VERSION >= v"1.9"
+    vSymbolics = pkgversion(Symbolics)
+    if vSymbolics < v"6.1.0"
+        _get_variables(expr::Num) = convert(Vector{Num}, Symbolics.get_variables(expr))
+    elseif vSymbolics < v"7.0.0"
+        # `sort` argument was introduced in Symbolics v6.1
+        _get_variables(expr::Num) = convert(Vector{Num}, Symbolics.get_variables(expr; sort=true))
+    else
+        # `sort` argument removed in v7, so manual sorting is needed
+        function _get_variables(expr::Num)
+            vars_unsorted = Symbolics.get_variables(expr)
+            vars_sorted = collect(vars_unsorted)
+            sort!(vars_sorted; by=Symbolics.SymbolicUtils.get_degrees)
+            return convert(Vector{Num}, vars_sorted)
+        end
+    end
 else
-    _get_variables(expr::Num) = convert(Vector{Num}, Symbolics.get_variables(expr; sort=true))
+    # no case distinction for older Julia versions not supporting `pkgversion`
+    _get_variables(expr::Num) = convert(Vector{Num}, Symbolics.get_variables(expr))
 end
 function _get_variables(expr::Vector{<:Num})
     return unique(reduce(vcat, _get_variables(ex) for ex in expr))

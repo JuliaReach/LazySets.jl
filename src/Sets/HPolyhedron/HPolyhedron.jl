@@ -111,8 +111,8 @@ function load_Symbolics_HPolyhedron()
                     end
                 end
 
-                coeffs = [N(α.val) for α in Symbolics.gradient(sexpr, vars_list)]
-                β = -N(Symbolics.substitute(sexpr, zeroed_vars))
+                coeffs = [N(Symbolics.value(α)) for α in Symbolics.gradient(sexpr, vars_list)]
+                β = -N(Symbolics.value(Symbolics.substitute(sexpr, zeroed_vars)))
 
                 push!(clist, HalfSpace(coeffs, β))
                 if got_hyperplane

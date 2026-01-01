@@ -92,11 +92,11 @@ function load_Symbolics_Hyperplane()
             end
 
             # compute the linear coefficients by taking first order derivatives
-            coeffs = [N(α.val) for α in Symbolics.gradient(sexpr, collect(vars))]
+            coeffs = [N(Symbolics.value(α)) for α in Symbolics.gradient(sexpr, collect(vars))]
 
             # get the constant term by expression substitution
             zeroed_vars = Dict(v => zero(N) for v in vars)
-            β = -N(Symbolics.substitute(sexpr, zeroed_vars))
+            β = -N(Symbolics.value(Symbolics.substitute(sexpr, zeroed_vars)))
 
             return Hyperplane(coeffs, β)
         end
