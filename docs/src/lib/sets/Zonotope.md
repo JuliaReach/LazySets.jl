@@ -146,6 +146,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`intersection`](@ref intersection(::AbstractPolyhedron, ::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolytope))
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`volume`](@ref volume(::AbstractPolytope))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolytope}))

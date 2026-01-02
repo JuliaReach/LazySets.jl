@@ -166,6 +166,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`issubset`](@ref issubset(::AbstractPolyhedron, ::AbstractPolyhedron))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolytope))
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolytope}))
 * [`isoperation`](@ref isoperation(::AbstractPolytope))
