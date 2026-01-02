@@ -55,8 +55,7 @@ function convert(::Type{Zonotope},
 end
 
 """
-    convert(::Type{Zonotope}, S::LinearMap{N, ZN})
-        where {N, ZN<:AbstractZonotope}
+    convert(::Type{Zonotope}, S::LinearMap{N, ZN}) where {N, ZN<:AbstractZonotope}
 
 Convert the lazy linear map of a zonotopic set to a zonotope.
 
@@ -72,24 +71,23 @@ A zonotope.
 ### Algorithm
 
 This method first applies the (concrete) linear map to the zonotopic set and
-then converts the result to a `Zonotope` type.
+then converts the result to a `Zonotope`.
 """
 function convert(::Type{Zonotope}, S::LinearMap{N,ZN}) where {N,ZN<:AbstractZonotope}
     return convert(Zonotope, linear_map(S.M, S.X))
 end
 
 """
-    convert(::Type{Zonotope}, S::LinearMap{N, CartesianProduct{N, HN1, HN2}}
-           ) where {N, HN1<:AbstractHyperrectangle,
-                    HN2<:AbstractHyperrectangle}
+    convert(::Type{Zonotope}, S::LinearMap{N, CartesianProduct{N, ZN1, ZN2}}
+           ) where {N, ZN1<:AbstractZonotope, ZN2<:AbstractZonotope}
 
-Convert the lazy linear map of the Cartesian product of two hyperrectangular
+Convert the lazy linear map of the Cartesian product of two zonotopic
 sets to a zonotope.
 
 ### Input
 
 - `Zonotope` -- target type
-- `S`        -- linear map of the Cartesian product of hyperrectangular sets
+- `S`        -- linear map of the Cartesian product of zonotopic sets
 
 ### Output
 
@@ -97,26 +95,26 @@ A zonotope.
 
 ### Algorithm
 
-This method first converts the Cartesian product to a zonotope, and then
-applies the (concrete) linear map to the zonotope.
+This method first converts the Cartesian product to a zonotope and then applies
+the (concrete) linear map to the zonotope.
 """
 function convert(::Type{Zonotope},
-                 S::LinearMap{N,CartesianProduct{N,HN1,HN2}}) where {N,HN1<:AbstractHyperrectangle,
-                                                                     HN2<:AbstractHyperrectangle}
+                 S::LinearMap{N,CartesianProduct{N,ZN1,ZN2}}) where {N,ZN1<:AbstractZonotope,
+                                                                     ZN2<:AbstractZonotope}
     return linear_map(S.M, convert(Zonotope, S.X))
 end
 
 """
-    convert(::Type{Zonotope},S::LinearMap{N, CartesianProductArray{N, HN}})
-        where {N, HN<:AbstractHyperrectangle}
+    convert(::Type{Zonotope},S::LinearMap{N, CartesianProductArray{N, ZN}})
+        where {N, ZN<:AbstractZonotope}
 
 Convert the lazy linear map of the Cartesian product of a finite number of
-hyperrectangular sets to a zonotope.
+zonotopic sets to a zonotope.
 
 ### Input
 
 - `Zonotope` -- target type
-- `S`        -- linear map of a `CartesianProductArray` of hyperrectangular sets
+- `S`        -- linear map of a `CartesianProductArray` of zonotopic sets
 
 ### Output
 
@@ -124,11 +122,11 @@ A zonotope.
 
 ### Algorithm
 
-This method first converts the Cartesian product array to a zonotope, and then
+This method first converts the Cartesian product array to a zonotope and then
 applies the (concrete) linear map to the zonotope.
 """
 function convert(::Type{Zonotope},
-                 S::LinearMap{N,CartesianProductArray{N,HN}}) where {N,HN<:AbstractHyperrectangle}
+                 S::LinearMap{N,CartesianProductArray{N,ZN}}) where {N,ZN<:AbstractZonotope}
     return linear_map(S.M, convert(Zonotope, S.X))
 end
 

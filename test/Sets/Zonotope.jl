@@ -101,11 +101,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     M = N isa AbstractFloat ? rand(N, 2, 2) : M = N[1 -2; 3 4]
     Z2 = convert(Zonotope, M * Z)
     @test isidentical(Z2, linear_map(M, Z))
-    # from LinearMap of CartesianProduct of AbstractHyperrectangles
-    Z2 = convert(Zonotope, M * (H1 × H2))
+    # from LinearMap of CartesianProduct of AbstractZonotopes
+    Z2 = convert(Zonotope, M * (convert(Zonotope, H1) × convert(Zonotope, H2)))
     @test isidentical(Z2, linear_map(M, Zonotope(c, G)))
-    # from LinearMap of CartesianProductArray of AbstractHyperrectangles
-    Z2 = convert(Zonotope, M * CartesianProductArray([H1, H2]))
+    # from LinearMap of CartesianProductArray of AbstractZonotopes
+    Z2 = convert(Zonotope,
+                 M * CartesianProductArray([convert(Zonotope, H1), convert(Zonotope, H2)]))
     @test isidentical(Z2, linear_map(M, Zonotope(c, G)))
     # from AbstractAffineMap of AbstractZonotope
     Z2 = convert(Zonotope, M * Z + c)
