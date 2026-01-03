@@ -27,12 +27,9 @@ function ballinf_approximation(S::LazySet{N}) where {N}
             r = rcur
         elseif !_geq(rcur, zero(N))
             # contradicting bounds => set is empty
-            return EmptySet{N}(dim(S))
+            throw(ArgumentError("set must be nonempty"))
         end
         c[i] = (hi + lo) / 2
     end
     return BallInf(c, r)
 end
-
-# empty set specialization
-ballinf_approximation(∅::EmptySet) = ∅
