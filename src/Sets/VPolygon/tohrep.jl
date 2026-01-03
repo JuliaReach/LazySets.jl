@@ -28,7 +28,7 @@ function tohrep(P::VPolygon, ::Type{HPOLYGON}=HPolygon) where {HPOLYGON<:Abstrac
     elseif n == 1
         # only one vertex -> use function for singletons
         require(@__MODULE__, :LazySets; fun_name="convert")
-        return convert(HPOLYGON, Singleton(vl[1]))
+        return HPOLYGON(_constraints_list_singleton_Vector(vl[1]))
     elseif n == 2
         # only two vertices -> use function for line segments
         require(@__MODULE__, :LazySets; fun_name="convert")
