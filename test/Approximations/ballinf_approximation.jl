@@ -26,8 +26,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test bi.radius ≈ biexp.radius
 
     # empty set
-    E = EmptySet{N}(2)
-    @test ballinf_approximation(E) == E
+    @test_throws ArgumentError ballinf_approximation(EmptySet{N}(2))
 
     if N == Float64
         # robustness (see issue #2532): the set has two contradicting constraints
@@ -42,6 +41,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
         s1big = HalfSpace([-big(1.0)], -big(1.0000000000000002))
         s2big = HalfSpace([big(1.0)], big(1.0))
         Pbig = HPolytope([s1big, s2big])
-        @test ballinf_approximation(Pbig) == EmptySet{BigFloat}(1)
+        @test_throws ArgumentError ballinf_approximation(Pbig)
     end
 end
