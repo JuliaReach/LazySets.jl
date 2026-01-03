@@ -459,7 +459,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     #     end
     # end
 
-    # exponential_map
+    # exponential_map (part 1)
     @test_throws DimensionMismatch exponential_map(ones(N, 1, 1), Z)
     @test_throws DimensionMismatch exponential_map(ones(N, 2, 1), Z)
 
@@ -776,7 +776,7 @@ for N in @tN([Float64, Float32])
     T = Rational{Int64}
     @test Z2 isa Zonotope{T} && isidentical(Z2, Zonotope(T[1, 2], T[1 3; 2 4]))
 
-    # exponential_map
+    # exponential_map (part 2)
     Z2 = exponential_map(N[1 0; 0 2], Z)
     @test isidentical(Z2, Zonotope(N[exp(1), 2 * exp(2)], N[exp(1) 3*exp(1); 2*exp(2) 4*exp(2)]))
 
