@@ -1003,12 +1003,12 @@ function _welzl(vlist)
 
     v1 = @inbounds first(vlist)
     n = length(v1)
-    if length(vlist) <= n + 1
-        return _circumsphere_trivial(vlist, nothing)
-    end
-
     N = eltype(v1)
     B0 = Ball2(N[], N(0))  # illegal ball that is used for a special case later
+    if length(vlist) <= n + 1
+        return _circumsphere_trivial(vlist, B0)
+    end
+
     return _welzl!(copy(vlist), Set(empty(vlist)), n + 1, B0)
 end
 
