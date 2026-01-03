@@ -402,10 +402,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     vlistZ = vertices_list(Z2)
     @test length(vlistZ) == 6
     @test ispermutation(vlistZ, [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
-    c, G = Z2.center, Z2.generators
-    vlist2 = LazySets._vertices_list_2D(c, G; apply_convex_hull=true)
+    c2, G = Z2.center, Z2.generators
+    vlist2 = LazySets._vertices_list_2D(c2, G; apply_convex_hull=true)
     @test ispermutation(vlistZ, vlist2)
-    vlist2 = LazySets._vertices_list_2D(c, G; apply_convex_hull=false)
+    vlist2 = LazySets._vertices_list_2D(c2, G; apply_convex_hull=false)
     @test ispermutation(vlistZ, vlist2)
     # option to not apply the convex-hull operation
     vlistZ = LazySets._vertices_list_zonotope_iterative(Z2.center, Z2.generators;
@@ -603,6 +603,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Z2 = copy(Z)
     translate!(Z2, N[1, 2])
     @test isidentical(Z2, Zonotope(N[2, 4], N[1 3; 2 4]))
+    # test immutable usage
+    @static if isdefined(@__MODULE__, :StaticArrays)
+        using StaticArrays: SVector, SMatrix
+
+        Z2 = Zonotope(SVector{2}(c), SMatrix{2,2}(N[1 3; 2 4]))
+        Z2b = translate(Z2, N[1, 2])
+        @test isidentical(Z2b, Zonotope(SVector{2}(N[2, 4]), SMatrix{2,2}(N[1 3; 2 4])))
+        @test_throws ErrorException translate!(Z2, N[1, 2])
+    end
 
     # cartesian_product
     Z2 = Zonotope(N[3], hcat(N[1]))
