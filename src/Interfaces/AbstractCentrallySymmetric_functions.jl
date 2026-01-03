@@ -37,15 +37,11 @@ for T in Base.uniontypes(ACS)
 
         ### Algorithm
 
-        A witness is obtained by computing the support vector in direction
-        `d = [1, 0, …, 0]` and adding `d` on top.
+        A witness is obtained via `an_element`.
         """
         function isuniversal(S::$T, witness::Bool=false)
             if witness
-                N = eltype(S)
-                d = SingleEntryVector{N}(1, dim(S))
-                w = σ(d, S) + d
-                return (false, w)
+                return (false, an_element(S))
             else
                 return false
             end
