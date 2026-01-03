@@ -13,7 +13,7 @@ function constraints_list(P::VPolytope)
 
     n = dim(P)
     if n == 1
-        return constraints_list(convert(Interval, P))
+        return _constraints_list_Vector(convert(Interval, P))
     elseif n == 2
         return constraints_list(convert(VPolygon, P))
     else
