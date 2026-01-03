@@ -231,7 +231,9 @@ is returned.
 """
 @validate function σ(d::AbstractVector, Z::AbstractZonotope)
     G = genmat(Z)
-    return center(Z) .+ G * sign_cadlag.(At_mul_B(G, d))
+    v = G * sign_cadlag.(At_mul_B(G, d))
+    v .+= center(Z)
+    return v
 end
 
 """
