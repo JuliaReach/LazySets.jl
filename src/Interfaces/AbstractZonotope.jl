@@ -335,8 +335,8 @@ end
 
 function _linear_map_zonotope_nD(M::AbstractMatrix, Z::LazySet)
     c = M * center(Z)
-    gi = M * genmat(Z)
-    return Zonotope(c, gi)
+    G = M * genmat(Z)
+    return Zonotope(c, G)
 end
 
 """
