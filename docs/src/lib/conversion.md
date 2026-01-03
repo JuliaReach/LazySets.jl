@@ -29,7 +29,6 @@ convert(::Type{VPolygon}, ::AbstractHPolygon)
 convert(::Type{Zonotope}, ::LinearMap{N, ZN}) where {N, ZN<:AbstractZonotope}
 convert(::Type{Zonotope}, ::LinearMap{N, CartesianProduct{N, ZN1, ZN2}}) where {N, ZN1<:AbstractZonotope, ZN2<:AbstractZonotope}
 convert(::Type{Zonotope}, ::LinearMap{N, CartesianProductArray{N, ZN}}) where {N, ZN<:AbstractZonotope}
-convert(::Type{Zonotope}, ::CartesianProduct{N, ZN1, ZN2}) where {N, ZN1<:AbstractZonotope, ZN2<:AbstractZonotope}
 convert(::Type{Zonotope}, ::CartesianProduct{N, HN1, HN2}) where {N, HN1<:AbstractHyperrectangle, HN2<:AbstractHyperrectangle}
 convert(::Type{Zonotope}, ::CartesianProductArray{N, AZ}) where {N, AZ<:AbstractZonotope}
 convert(::Type{Zonotope}, ::CartesianProductArray{N, HN}) where {N, HN<:AbstractHyperrectangle}
