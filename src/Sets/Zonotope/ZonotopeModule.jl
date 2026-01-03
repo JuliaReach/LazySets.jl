@@ -14,7 +14,7 @@ using ReachabilityBase.Require: require
                         permute, scale, scale!, translate!
 @reexport import ..LazySets: generators, genmat, ngens, reduce_order,
                              remove_redundant_generators
-import Base: convert
+import Base: convert, copy
 @reexport using ..API
 
 export Zonotope,
@@ -43,6 +43,7 @@ include("remove_zero_generators.jl")
 include("split.jl")
 
 include("convert.jl")
+include("copy.jl")
 
 include("init.jl")
 
