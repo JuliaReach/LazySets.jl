@@ -1334,7 +1334,7 @@ function _affine_map_inverse_zonotope(A::AbstractMatrix, Z::AbstractZonotope,
     Ainv = inv(A)
     c = Ainv * center(Z)
     if !isnothing(b)
-        c -= Ainv * b
+        c .-= Ainv * b
     end
     G = Ainv * genmat(Z)
     return Zonotope(c, G)
