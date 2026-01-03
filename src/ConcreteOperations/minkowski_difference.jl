@@ -101,7 +101,8 @@ end
 
 ### Output
 
-An `HPolytope`.
+An `HPolytope` for dimensions greater than two, and a `Zonotope` or `EmptySet`
+for lower dimensions.
 
 ### Algorithm
 
