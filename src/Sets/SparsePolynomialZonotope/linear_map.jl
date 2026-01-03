@@ -15,9 +15,9 @@ A sparse polynomial zonotope representing the linear map ``MZ ⋅ P```.
 """
 function linear_map(MZ::MatrixZonotope, P::SparsePolynomialZonotope)
     if ngens_indep(P) > 0
-        error("an exact expression for the linear map is only available for " *
-              "`SparsePolynomialZonotope`s with no independent generators. " *
-              "Try using `overapproximate` instead")
+        throw(ArgumentError("an exact expression for the linear map is only available for " *
+                            "`SparsePolynomialZonotope`s with no independent generators; " *
+                            "try using `overapproximate` instead"))
     end
     @assert size(MZ, 2) == dim(P) "a linear map of size $(size(M)) cannot " *
                                   "be applied to a set of dimension $(dim(X))"

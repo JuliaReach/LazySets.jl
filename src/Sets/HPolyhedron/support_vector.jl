@@ -19,8 +19,8 @@ If `P` is unbounded in the given direction, there are two cases:
     lp, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope
-            error("the support vector in direction $(d) is undefined because " *
-                  "the polytope is unbounded")
+            throw(ArgumentError("the support vector in direction $(d) is undefined because " *
+                                "the polytope is unbounded"))
         end
         return _σ_unbounded_lp(d, P, lp)
     else
@@ -35,7 +35,7 @@ function _σ_unbounded_lp(d, P::HPoly{N}, lp) where {N}
     elseif has_lp_infeasibility_ray(lp.model)
         ray = lp.sol  # infeasibility ray is stored as the solution
     else
-        error("LP solver did not return an infeasibility ray")
+        throw(ArgumentError("LP solver did not return an infeasibility ray"))
     end
 
     res = Vector{N}(undef, length(ray))
@@ -74,7 +74,7 @@ function σ_helper(d::AbstractVector, P::HPoly, solver)
         elseif is_lp_optimal(lp.status)
             unbounded = false
         else
-            error("got unknown LP status $(lp.status)")
+            throw(ArgumentError("got unexpected LP status $(lp.status)"))
         end
     end
     return (lp, unbounded)

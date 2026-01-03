@@ -371,7 +371,7 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N}
         points[1], points[2], points[3] = B, C, D               #  +    -    +    -   BCD
         pop!(points)
     elseif key == 1001
-        points[1], points[2], points[3] = C, A, D               #  +    -    -    +    CAD
+        points[1], points[2], points[3] = C, A, D               #  +    -    -    +   CAD
         pop!(points)
     elseif key == 0110
         points[1], points[2], points[3] = A, C, D               #  -    +    +    -   ACD
@@ -392,7 +392,7 @@ function _four_points_2d!(points::AbstractVector{<:AbstractVector{N}}) where {N}
         points[1], points[2], points[3] = A, C, B               #  -    -    -    -   ACB
         pop!(points)
     else
-        error("unexpected case in convex-hull algorithm")
+        throw(ArgumentError("unexpected case in convex-hull algorithm: $key"))
     end
     return points
 end
@@ -422,7 +422,7 @@ function _convex_hull_2d!(points::Vector{VN};
     elseif algorithm == "monotone_chain_sorted"
         return monotone_chain!(points; sort=false)
     else
-        error("the convex hull algorithm $algorithm is unknown")
+        throw(ArgumentError("algorithm $algorithm unknown"))
     end
 end
 

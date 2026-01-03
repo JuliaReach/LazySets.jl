@@ -118,7 +118,7 @@ for N in @tN([Float64, Rational{Int}])
         points_copy = copy(points)
         @test is_cyclic_permutation(convex_hull!(points_copy; algorithm=algorithm), sorted)
     end
-    @test_throws ErrorException convex_hull!(points, algorithm="")
+    @test_throws ArgumentError convex_hull!(points, algorithm="")
 
     # single-vertex case in 2D (five vertices to test the general algorithm)
     p = N[0, 0]
