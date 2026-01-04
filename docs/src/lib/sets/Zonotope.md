@@ -67,6 +67,7 @@ Undocumented implementations:
 
 * [`center`](@ref center(::LazySet))
 * [`high`](@ref high(::LazySet, ::Int))
+* [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`low`](@ref low(::LazySet, ::Int))
 ```@meta
 CurrentModule = LazySets
@@ -75,7 +76,7 @@ CurrentModule = LazySets
 ```@meta
 CurrentModule = LazySets.API
 ```
-* [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 ```@meta
 CurrentModule = LazySets
@@ -124,7 +125,6 @@ Inherited from [`LazySet`](@ref):
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
-* [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
