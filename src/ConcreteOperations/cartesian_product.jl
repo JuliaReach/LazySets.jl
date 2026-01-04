@@ -121,6 +121,10 @@ function cartesian_product(S1::AbstractSingleton, S2::AbstractSingleton)
 end
 
 function cartesian_product(Z1::AbstractZonotope, Z2::AbstractZonotope)
+    return _cartesian_product_zonotope(Z1, Z2)
+end
+
+function _cartesian_product_zonotope(Z1::AbstractZonotope, Z2::AbstractZonotope)
     N = promote_type(eltype(Z1), eltype(Z2))
     z1 = zeros(N, dim(Z1), ngens(Z2))
     z2 = zeros(N, dim(Z2), ngens(Z1))

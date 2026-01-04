@@ -130,37 +130,11 @@ function convert(::Type{Zonotope},
     return linear_map(S.M, convert(Zonotope, S.X))
 end
 
-"""
-    convert(::Type{Zonotope}, cp::CartesianProduct{N, ZN1, ZN2}
-           ) where {N, ZN1<:AbstractZonotope, ZN2<:AbstractZonotope}
-
-Convert the Cartesian product of two zonotopic sets to a new zonotope.
-
-### Input
-
-- `Zonotope` -- target type
-- `S`        -- Cartesian product of two zonotopic sets
-
-### Output
-
-A zonotope.
-
-### Algorithm
-
-The Cartesian product is obtained by:
-
-- Concatenating the centers of each input zonotope.
-- Arranging the generators in block-diagonal fashion, and filled with zeros in
-  the off-diagonal; for this reason, the generator matrix of the returned
-  zonotope is built as a sparse matrix.
-"""
 function convert(::Type{Zonotope},
                  cp::CartesianProduct{N,ZN1,ZN2}) where {N,ZN1<:AbstractZonotope,
                                                          ZN2<:AbstractZonotope}
     Z1, Z2 = first(cp), second(cp)
-    c = vcat(center(Z1), center(Z2))
-    G = blockdiag(sparse(genmat(Z1)), sparse(genmat(Z2)))
-    return Zonotope(c, G)
+    return _cartesian_product_zonotope(Z1, Z2)
 end
 
 function convert(::Type{Zonotope},
