@@ -354,8 +354,8 @@ function _linear_map_polyhedron(M::AbstractMatrix,
                                 backend=nothing,
                                 elimination_method=nothing)
     N = promote_type(eltype(M), eltype(P))
-    N != eltype(P) && error("conversion between numeric types of polyhedra not " *
-                            "implemented yet (see #1181)")
+    N != eltype(P) && throw(ArgumentError("conversion between numeric types of polyhedra is not " *
+                                          "implemented yet (see #1181)"))
     if eltype(M) != eltype(P)
         M = N.(M)
     end
@@ -647,9 +647,9 @@ function an_element(P::AbstractPolyhedron; solver=default_lp_solver(eltype(P)))
     if is_lp_optimal(lp.status)
         return lp.sol
     elseif is_lp_infeasible(lp.status)
-        error("cannot return an element because the polyhedron is empty")
+        throw(ArgumentError("cannot return an element because the polyhedron is empty"))
     else
-        error("LP returned status $(lp.status) unexpectedly")
+        throw(ArgumentError("unexpected LP solver status: $(lp.status)"))
     end
 end
 

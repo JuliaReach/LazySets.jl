@@ -128,7 +128,7 @@ We convert the `ResetMap` into a `LinearMap` and then call the corresponding
 function overapproximate(rm::ResetMap{N,<:CartesianProductArray},
                          ::Type{<:CartesianProductArray}, oa) where {N}
     if any(!iszero, values(rm.resets))
-        error("this implementation only support resets to zero")
+        throw(ArgumentError("this implementation only support resets to zero"))
     end
 
     lm = matrix(rm) * rm.X
