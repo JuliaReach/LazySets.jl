@@ -54,7 +54,7 @@ for N in @tN([Float64, Rational{Int}])
     @test X isa EmptySet{N} && X == EmptySet{N}(2)
     H = HalfSpace(N[1, 0], N(6))  # fully contained
     X = intersection(H, Z)
-    @test isidentical(X, Z)
+    @test X == Z
     H = HalfSpace(N[1, 0], N(0))  # overlapping
     X = VPolygon([N[-3, -4], N[0, 0], N[0, 4 // 3], N[-1, 0]])
     @test isequivalent(intersection(H, Z), X)
