@@ -33,7 +33,7 @@ IntervalArithmetic = "0.20 - 0.21, =0.21.2"  # v0.22 removed IntervalBox
 IntervalMatrices = "0.8 - 0.12"
 LaTeXStrings = "1"
 MiniQhull = "0.4"
-Optim = "1"
+Optim = "1, 2"
 Plots = "1"
 Polyhedra = "0.7 - 0.8"
 RecipesBase = "1"
