@@ -360,9 +360,9 @@ end
         include("Utils/plot.jl")
     end
 
-    # ====
-    # Aqua
-    # ====
+    # =================
+    # Quality assurance
+    # =================
 
-    include("Aqua.jl")
+    include("quality_assurance.jl")
 end
