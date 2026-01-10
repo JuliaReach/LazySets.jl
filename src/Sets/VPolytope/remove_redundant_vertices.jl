@@ -34,13 +34,13 @@ function remove_redundant_vertices(P::VPolytope; backend=nothing, solver=nothing
     end
     Q = polyhedron(P; backend=backend)
     N = eltype(P)
-    if Polyhedra.supportssolver(typeof(Q))
+    if Polyhedra.supportssolver(typeof(Q))  # NOTE: this is an internal function
         if isnothing(solver)
             # presolver prints warnings about infeasible solutions (#3226)
             solver = default_lp_solver_polyhedra(N; presolve=false)
         end
         vQ = Polyhedra.vrep(Q)
-        Polyhedra.setvrep!(Q, Polyhedra.removevredundancy(vQ, solver))
+        Polyhedra.setvrep!(Q, Polyhedra.removevredundancy(vQ, solver))  # NOTE: this is an internal function
     else
         _removevredundancy!(Q; N=N)
     end

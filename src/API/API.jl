@@ -7,8 +7,7 @@ not provide implementations.
 """
 module API
 
-import Base: eltype, extrema, isdisjoint, isempty, in, isapprox, ==, issubset
-import Random: rand
+import Base: eltype, extrema, isdisjoint, isempty, in, isapprox, ==, issubset, rand
 import LinearAlgebra: norm
 import SparseArrays: permute
 import ReachabilityBase.Arrays: distance, rectify

@@ -105,6 +105,7 @@ CurrentModule = LazySets.HyperplaneModule
 ```
 ```@docs
 σ(::AbstractVector, ::Hyperplane)
+_σ_hyperplane_halfspace
 ```
 ```@meta
 CurrentModule = LazySets.API

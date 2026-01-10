@@ -65,17 +65,18 @@ end  # load_SymEngine_ishalfspace
 
 function load_Symbolics_ishalfspace()
     return quote
-        if isdefined(Symbolics, :Symbolic)
-            import .Symbolics: Symbolic
-            const BasicSymbolic = Symbolic
+        if isdefined(Symbolics.SymbolicUtils, :Symbolic)
+            using .Symbolics.SymbolicUtils: Symbolic
+            const BasicSymbolic2 = Symbolic
         else
-            import .Symbolics: BasicSymbolic
+            using .Symbolics: BasicSymbolic
+            const BasicSymbolic2 = BasicSymbolic
         end
 
         # returns `(true, sexpr)` if expr represents a half-space,
         # where sexpr is the simplified expression sexpr := LHS - RHS <= 0
         # otherwise, returns `(false, expr)`
-        function _ishalfspace(expr::BasicSymbolic)
+        function _ishalfspace(expr::BasicSymbolic2)
             got_halfspace = true
 
             # find sense and normalize

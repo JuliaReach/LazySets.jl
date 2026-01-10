@@ -1,14 +1,13 @@
 module ZonotopeModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractZonotope, generators_fallback, @validate
 using LinearAlgebra: mul!
 using Random: AbstractRNG, GLOBAL_RNG
-using ReachabilityBase.Arrays: ismultiple, remove_zero_columns, to_matrix,
-                               vector_type
+using ReachabilityBase.Arrays: remove_zero_columns, to_matrix
 using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Require: require
 
 @reexport import ..API: center, high, isoperationtype, low, rand, affine_map,
                         permute, scale, scale!, translate, translate!

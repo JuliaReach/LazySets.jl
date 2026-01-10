@@ -271,7 +271,7 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
     if sampler.variant
         @inbounds for i in eachindex(D)
             p = vlist[rand(1:m)]  # start from a random vertex
-            for j in Random.randperm(m)  # choose a random target vertex
+            for j in randperm(m)  # choose a random target vertex
                 p += _rand(rng, U) * (vlist[j] - p)  # move toward next vertex
             end
             D[i] = p

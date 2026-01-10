@@ -137,7 +137,7 @@ end
     # `next_dim = indices[next_idx]` lies in the next block to consider
     # (potentially skipping some blocks).
     svec = similar(d)
-    indices, _ = SparseArrays.findnz(d)
+    indices, _ = findnz(d)
     if isempty(indices)
         # direction is the zero vector
         return an_element(cpa)
@@ -218,7 +218,7 @@ end
     N = promote_type(eltype(d), eltype(cpa))
     # idea: see the σ method for AbstractSparseVector
     sfun = zero(N)
-    indices, _ = SparseArrays.findnz(d)
+    indices, _ = findnz(d)
     if isempty(indices)
         # direction is the zero vector
         return sfun

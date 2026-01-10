@@ -15,7 +15,7 @@ end
     return center(S)[i]
 end
 
-for T in Base.uniontypes(ACS)
+for T in Base.uniontypes(ACS)  # NOTE: this is an internal function
     @eval begin
         """
         # Extended help

@@ -1,6 +1,7 @@
 module VPolytopeModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractPolytope, LazySet, LinearMapVRep, default_lp_solver,
                   default_lp_solver_polyhedra, default_polyhedra_backend,
@@ -10,7 +11,7 @@ using ..LazySets: AbstractPolytope, LazySet, LinearMapVRep, default_lp_solver,
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: projection_matrix
-using ReachabilityBase.Comparison: _isapprox, _ztol
+using ReachabilityBase.Comparison: _isapprox
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 

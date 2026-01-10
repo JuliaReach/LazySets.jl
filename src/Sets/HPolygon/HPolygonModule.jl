@@ -1,6 +1,6 @@
 module HPolygonModule
 
-using Reexport
+using Reexport: @reexport
 
 using ..LazySets: AbstractHPolygon, BINARY_SEARCH_THRESHOLD, addconstraint!,
                   binary_search_constraints, constraints_list, element,

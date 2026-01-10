@@ -3,6 +3,7 @@ function load_TaylorModels_convert_TaylorModelN()
         using .TaylorModels: TaylorModelN
         using .TaylorModels.TaylorSeries: coeff_table, set_variables, HomogeneousPolynomial,
                                           in_base, pos_table, TaylorN
+        # NOTE: `coeff_table`, `in_base`, and `pos_table` are internal functions
 
         # implements Proposition 3.1.13 in thesis
         function convert(::Type{Vector{<:TaylorModelN}}, P::SparsePolynomialZonotope{N}) where {N}

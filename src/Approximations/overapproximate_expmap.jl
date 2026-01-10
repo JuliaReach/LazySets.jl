@@ -128,7 +128,7 @@ end
 
 function load_intervalmatrices_overapproximation_expmap()
     return quote
-        using .IntervalMatrices: IntervalMatrix
+        using .IntervalMatrices: IntervalMatrix, _exp_remainder  # NOTE: `_exp_remainder` is an internal function
 
         """
             taylor_expmap_remainder(Z::AbstractZonotope{N}, matnorm::Real, Int) where {N}
@@ -206,7 +206,7 @@ function load_intervalmatrices_overapproximation_expmap()
             W = minkowski_sum(W, Id)
 
             IM = overapproximate(MZ, IntervalMatrix)
-            E = IntervalMatrices._exp_remainder(IM, N(1), k)
+            E = _exp_remainder(IM, N(1), k)
             res = minkowski_sum(W, E)
 
             return remove_redundant_generators(res; tol=tol)

@@ -1,6 +1,6 @@
 module ZonotopeMDModule
 
-using Reexport, Requires
+using Reexport: @reexport
 
 using ..LazySets: AbstractZonotope, generators
 using LinearAlgebra: isdiag, diag

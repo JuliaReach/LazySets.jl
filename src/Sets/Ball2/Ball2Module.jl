@@ -1,13 +1,14 @@
 module Ball2Module
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractBallp, _witness_result_empty, @validate
 using LinearAlgebra: dot, axpby!
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: _leq, isapproxzero
 using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Require
+using ReachabilityBase.Require: require
 
 @reexport import ..API: area, center, isoperationtype, rand, reflect, sample,
                         volume, in, project, scale, ρ, σ, translate!,

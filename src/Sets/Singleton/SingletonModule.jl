@@ -1,6 +1,6 @@
 module SingletonModule
 
-using Reexport
+using Reexport: @reexport
 
 using ..LazySets: AbstractSingleton, @validate
 using Random: AbstractRNG, GLOBAL_RNG

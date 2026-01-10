@@ -1,10 +1,10 @@
 module UniverseModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
-using ..LazySets: LazySet, AbstractPolyhedron, default_polyhedra_backend,
-                  _linear_map_polyhedron, _witness_result_empty, @validate,
-                  @validate_commutative
+using ..LazySets: LazySet, AbstractPolyhedron, _linear_map_polyhedron,
+                  _witness_result_empty, @validate, @validate_commutative
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: SingleEntryVector, isinvertible
 using ReachabilityBase.Distribution: reseed!

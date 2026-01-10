@@ -1,6 +1,7 @@
 module EmptySetModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: LazySet, ConvexSet, _witness_result_empty, @validate,
                   @validate_commutative

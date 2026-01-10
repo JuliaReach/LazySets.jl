@@ -8,8 +8,7 @@ PLOT_PRECISION = 1e-3
 PLOT_POLAR_DIRECTIONS = 40
 DEFAULT_PLOT_LIMIT = 1000
 
-function _extract_limits(p::RecipesBase.AbstractPlot,
-                         plotattributes::AbstractDict)
+function _extract_limits(p::AbstractPlot, plotattributes::AbstractDict)
     lims = Dict()
     if length(p) > 0
         subplot = p[1]
@@ -32,7 +31,7 @@ function _extract_limits(p::RecipesBase.AbstractPlot,
     return lims
 end
 
-function _extract_extrema(p::RecipesBase.AbstractPlot)
+function _extract_extrema(p::AbstractPlot)
     extrema = Dict()
     if length(p) > 0
         subplot = p[1]

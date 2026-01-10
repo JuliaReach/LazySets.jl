@@ -35,7 +35,7 @@ macro validate_commutative(ex)
     def = _validate(ex)
 
     # apply @commutative effect
-    f2 = ReachabilityBase.Commutative.commutative(def)
+    f2 = ReachabilityBase.Commutative.commutative(def)  # NOTE: this is an internal function
 
     return quote
         $(f2)

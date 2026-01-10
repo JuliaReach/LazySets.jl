@@ -558,7 +558,7 @@ If `prunefunc` is `nothing`, this implementation sets it to
     # general case: convert to half-space representation
     Q1 = polyhedron(P1; backend=backend)
     Q2 = polyhedron(P2; backend=backend)
-    Pint = Polyhedra.intersect(Q1, Q2)
+    Pint = intersect(Q1, Q2)
 
     N = promote_type(eltype(P1), eltype(P2))
     if isnothing(prunefunc)

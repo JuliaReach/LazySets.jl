@@ -1,1 +1,0 @@
-using .LazySets.VPolygonModule: VPolygon

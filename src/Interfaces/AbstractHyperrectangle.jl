@@ -1,5 +1,5 @@
 import Base: split
-using Base: product
+using Base: product  # NOTE: this is an internal function
 
 export AbstractHyperrectangle,
        radius_hyperrectangle,

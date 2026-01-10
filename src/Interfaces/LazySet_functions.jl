@@ -1504,7 +1504,7 @@ Witness production is not supported if `use_polyhedra_interface` is `true`.
 ### Algorithm
 
 The algorithm sets up a feasibility LP for the constraints of `P`.
-If `use_polyhedra_interface` is `true`, we call `Polyhedra.isempty`.
+If `use_polyhedra_interface` is `true`, we call `isempty`.
 Otherwise, we set up the LP internally.
 """
 function isempty(P::LazySet,
@@ -1547,9 +1547,9 @@ function _isempty_polyhedron_polyhedra(P::LazySet{N}, witness::Bool=false;
     end
 
     if isnothing(solver)
-        result = Polyhedra.isempty(polyhedron(P; backend=backend))
+        result = isempty(polyhedron(P; backend=backend))
     else
-        result = Polyhedra.isempty(polyhedron(P; backend=backend), solver)
+        result = isempty(polyhedron(P; backend=backend), solver)
     end
 
     if result

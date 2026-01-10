@@ -1,6 +1,7 @@
 module StarModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractPolyhedron, @validate
 using LinearAlgebra: I, dot

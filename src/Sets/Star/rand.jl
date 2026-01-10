@@ -26,6 +26,6 @@ function rand(::Type{Star};
             P = rand(Universe; N=N, dim=dim, rng=rng, seed=seed)
         end
     end
-    V = randn(rng, N, dim, StarModule.dim(P))
+    V = randn(rng, N, dim, LazySets.API.dim(P))
     return Star(c, V, P)
 end

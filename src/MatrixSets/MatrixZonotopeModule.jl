@@ -1,6 +1,7 @@
 module MatrixZonotopeModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!

@@ -1,6 +1,7 @@
 module LineModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractPolyhedron, @validate, @validate_commutative
 import LinearAlgebra
@@ -9,7 +10,7 @@ using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: ismultiple
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Comparison: _isapprox, isapproxzero
-using ReachabilityBase.Require
+using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
                         isoperationtype, isuniversal, project, rand, distance,
