@@ -458,15 +458,16 @@ On a more technical level, the library aims at a high level of optimization
 to get the best possible performance given the following two restrictions:
 the set type and the set dimension.
 
-The submodule `LazySets.Arrays` exports the "one-hot vector" `SingleEntryVector`
+The package `ReachabilityBase.Arrays` exports the "one-hot vector" `SingleEntryVector`
 that can be used, e.g., to represent polyhedra with axis-aligned half-spaces
 as information on the *type*. If `H` is a (non-flat) 100-dimensional
 hyperrectangle, it has ``2^{100}`` vertices. Computing the support function of
 `M*X` for any square matrix `M` along the canonical direction
 `e_{50} = [0, …, 0, 1, 0, …, 0]` takes around `10us` on a modern computer.
+Below, we access `SingleEntryVector` through LazySets internally.
 
 ```@example tour
-using LazySets.Arrays: SingleEntryVector
+using LazySets: SingleEntryVector
 
 using BenchmarkTools
 
