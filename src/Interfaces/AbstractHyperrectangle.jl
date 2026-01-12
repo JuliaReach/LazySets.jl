@@ -519,7 +519,6 @@ function split(H::AbstractHyperrectangle, num_blocks::AbstractVector{Int})
 
     total_number = 1
     lo = low(H)
-    hi = high(H)
     N = eltype(H)
 
     # precompute center points in each dimension
