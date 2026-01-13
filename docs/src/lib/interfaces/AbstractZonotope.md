@@ -153,18 +153,6 @@ CurrentModule = LazySets
 ```@docs
 minkowski_sum(::AbstractZonotope, ::AbstractZonotope)
 ```
-```@meta
-CurrentModule = LazySets.API
-```
-```@docs; canonical=false
-norm(::LazySet, ::Real=Inf)
-```
-```@meta
-CurrentModule = LazySets
-```
-```@docs
-norm(::AbstractZonotope, ::Real=Inf)
-```
 
 ```@meta
 CurrentModule = LazySets.API
@@ -176,6 +164,7 @@ Undocumented implementations:
 * [`high`](@ref high(::LazySet, ::Int))
 * [`low`](@ref low(::LazySet))
 * [`low`](@ref low(::LazySet, ::Int))
+* [`norm`](@ref norm(::LazySet, ::Real=Inf))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 
@@ -248,7 +237,7 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 ```@docs
 generators_fallback(::AbstractZonotope)
 genmat_fallback(::AbstractZonotope)
-_l1_norm(::AbstractZonotope)
+_norm_1(::AbstractZonotope)
 ```
 
 ## Order-reduction methods
