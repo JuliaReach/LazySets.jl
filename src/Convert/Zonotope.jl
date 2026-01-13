@@ -1,5 +1,7 @@
 function load_StaticArraysCore_convert_Zonotope_Hyperrectangle_static()
     return quote
+        using .StaticArraysCore: SVector
+
         function _convert_static(::Type{Zonotope},
                                  H::Hyperrectangle{N,<:SVector,<:SVector}) where {N}
             return Zonotope(center(H), _genmat_static(H))
