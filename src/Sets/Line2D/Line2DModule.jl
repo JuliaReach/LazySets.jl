@@ -3,9 +3,8 @@ module Line2DModule
 using Reexport, Requires
 
 using ..LazySets: AbstractPolyhedron, AbstractLinearMapAlgorithm,
-                  _constraints_list_hyperplane, _intersection_line2d,
-                  _linear_map_hrep, _non_element_halfspace,
-                  _σ_hyperplane_halfspace, _witness_result_empty, @validate
+                  _intersection_line2d, _linear_map_hrep, _witness_result_empty,
+                  @validate
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: nonzero_indices, right_turn
