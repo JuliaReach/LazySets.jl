@@ -1296,6 +1296,22 @@ function _norm_1(Z::AbstractZonotope)
     return norm
 end
 
+function _norm_Inf(Z::AbstractZonotope)
+    c = center(Z)
+    r = _box_radius(Z)
+    res = zero(eltype(Z))
+    @inbounds for (ci, ri) in zip(c, r)
+        # dominant box edge in dimension i
+        if ci > 0
+            vi = abs(ci + ri)
+        else
+            vi = abs(ci - ri)
+        end
+        res = max(res, vi)
+    end
+    return res
+end
+
 function linear_map_inverse(A::AbstractMatrix, Z::AbstractZonotope)
     @assert size(A, 1) == dim(Z) "an inverse linear map of size $(size(A)) " *
                                  "cannot be applied to a set of dimension $(dim(Z))"
