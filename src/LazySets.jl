@@ -98,8 +98,7 @@ include("Sets/HalfSpace/HalfSpaceModule.jl")  # must come before AbstractPolyhed
 @reexport using ..HalfSpaceModule: HalfSpace, LinearConstraint,
                                    halfspace_left, halfspace_right,
                                    iscomplement
-using ..HalfSpaceModule: is_tighter_same_dir_2D, _non_element_halfspace,
-                         _normalize_halfspace, _normal_Vector
+using ..HalfSpaceModule: is_tighter_same_dir_2D, _normal_Vector
 
 include("Interfaces/AbstractPolyhedron_functions.jl")
 include("Interfaces/AbstractPolytope.jl")
@@ -165,11 +164,8 @@ using ..HPolyhedronModule: HPoly
 
 include("Sets/Hyperplane/HyperplaneModule.jl")
 @reexport using ..HyperplaneModule: Hyperplane
-using ..HyperplaneModule: _an_element_helper_hyperplane,
-                          _constraints_list_hyperplane,
-                          _isdisjoint_hyperplane_hyperplane,
-                          _reflect_point_hyperplane,
-                          _σ_hyperplane_halfspace
+using ..HyperplaneModule: _isdisjoint_hyperplane_hyperplane,
+                          _reflect_point_hyperplane
 
 include("Sets/Hyperrectangle/HyperrectangleModule.jl")
 @reexport using ..HyperrectangleModule: Hyperrectangle
@@ -179,7 +175,6 @@ include("Sets/Line/LineModule.jl")
 
 include("Sets/Line2D/Line2DModule.jl")
 @reexport using ..Line2DModule: Line2D
-using ..Line2DModule: _linear_map_hrep_helper
 
 include("Sets/LineSegment/LineSegmentModule.jl")
 @reexport using ..LineSegmentModule: LineSegment
@@ -230,7 +225,6 @@ using ..UniverseModule: _convex_hull_universe, _difference_universe, _difference
 
 include("Sets/VPolygon/VPolygonModule.jl")
 @reexport using ..VPolygonModule: VPolygon
-using ..VPolygonModule: _σ_helper
 
 include("Sets/VPolytope/VPolytopeModule.jl")
 @reexport using ..VPolytopeModule: VPolytope

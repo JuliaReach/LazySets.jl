@@ -3,8 +3,7 @@ module HyperplaneModule
 using Reexport, Requires
 
 using ..LazySets: AbstractPolyhedron, AbstractLinearMapAlgorithm,
-                  _linear_map_hrep, _non_element_halfspace,
-                  _normalize_halfspace, _witness_result_empty, @validate,
+                  _linear_map_hrep, _witness_result_empty, @validate,
                   @validate_commutative
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
