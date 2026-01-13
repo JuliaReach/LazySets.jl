@@ -517,18 +517,32 @@ Otherwise it checks whether `X` is polytopic, in which case it iterates over all
 vertices.
 """
 @validate function norm(X::LazySet, p::Real=Inf)
-    return _norm_default(X, p)
+    if p == Inf
+        return _norm_Inf(X)
+    elseif isone(p)
+        return _norm_1(X)
+    else
+        return _norm_fallback(X, p)
+    end
 end
 
-function _norm_default(X::LazySet, p::Real)
-    if p == Inf
-        l, h = extrema(X)
-        return max(maximum(abs, l), maximum(abs, h))
-    elseif ispolytopic(X)
+function _norm_fallback(X::LazySet, p::Real)
+    if ispolytopic(X)
         return maximum(norm(v, p) for v in vertices_list(X))
     else
         error("the norm for this value of p=$p is not implemented")
     end
+end
+
+# default for p = Inf: use `extrema`
+function _norm_Inf(X::LazySet)
+    l, h = extrema(X)
+    return max(maximum(abs, l), maximum(abs, h))
+end
+
+# default for p = 1: use fallback
+function _norm_1(X::LazySet)
+    return _norm_fallback(X, 1)
 end
 
 """
