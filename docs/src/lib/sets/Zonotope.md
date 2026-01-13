@@ -73,6 +73,7 @@ Undocumented implementations:
 CurrentModule = LazySets
 ```
 * [`ngens`](@ref ngens(::AbstractZonotope))
+* [`rationalize`](@ref rationalize(::LazySet))
 ```@meta
 CurrentModule = LazySets.API
 ```
@@ -119,7 +120,6 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`radius`](@ref radius(::LazySet, ::Real))
-* [`rationalize`](@ref rationalize(::LazySet))
 * [`rectify`](@ref rectify(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
