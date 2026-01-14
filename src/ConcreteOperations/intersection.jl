@@ -446,8 +446,7 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
                             prune::Bool=true) where {N}
 
     # if one of P1 or P2 is bounded => the result is bounded
-    HPOLY = (P1 isa AbstractPolytope || P2 isa AbstractPolytope) ?
-            HPolytope : HPolyhedron
+    HPOLY = (isboundedtype(typeof(P1)) || isboundedtype(typeof(P2))) ? HPolytope : HPolyhedron
 
     # concatenate the linear constraints
     clist_P1 = _normal_Vector(P1) # TODO fix to similar type
