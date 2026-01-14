@@ -750,16 +750,23 @@ function split(Z::AbstractZonotope, gens::AbstractVector{Int},
     return _split(convert(Zonotope, Z), gens, nparts)
 end
 
-# project via the concrete linear map, which is typically efficient
-@validate function project(Z::AbstractZonotope{N}, block::AbstractVector{Int}; kwargs...) where {N}
-    n = dim(Z)
-    M = projection_matrix(block, n, N)
-    Z2 = linear_map(M, Z)
-
-    if get(kwargs, :remove_zero_generators, true)
-        Z2 = remove_zero_generators(Z2)
+@validate function project(Z::AbstractZonotope, block::AbstractVector{Int}; kwargs...)
+    if length(block) == 1
+        return _project_1D(Z, @inbounds block[1])
     end
-    return Z2
+    c = center(Z)[block]
+    G = genmat(Z)[block, :]
+    if get(kwargs, :remove_zero_generators, true)
+        G = remove_zero_columns(G)
+    end
+    return Zonotope(c, G)
+end
+
+function _project_1D(Z::AbstractZonotope{N}, i::Int) where {N}
+    c = [center(Z)[i]]
+    g = sum(abs, gi[i] for gi in generators(Z))
+    G = iszero(g) ? Matrix{N}(undef, 1, 0) : hcat(g)
+    return Zonotope(c, G)
 end
 
 """

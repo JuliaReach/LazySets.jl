@@ -528,12 +528,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError project(Z, [1, 1])
     Z2 = project(Z, [1])
     @test isidentical(Z2, Zonotope(N[1], hcat(N[4])))
-    # 1D with zero generators (#2147)
+    # 1D projection with zero generators (#2147)
     Z2 = project(convert(Zonotope, BallInf(N[0, 0], N(1))), [1])
     @test isidentical(Z2, Zonotope(N[0], hcat(N[1])))
-    # removing zero generators in projection can be deactivated
+    # 2D projection
     Z2a = Zonotope(zeros(N, 3), N[1 0 3; 4 0 6; 0 0 0])
     Z2 = project(Z2a, [1, 2])
+    # removing zero generators in projection can be deactivated
     @test isidentical(Z2, Zonotope(zeros(N, 2), N[1 3; 4 6]))
     Z2 = project(Z2a, [1, 2]; remove_zero_generators=false)
     @test isidentical(Z2, Zonotope(zeros(N, 2), N[1 0 3; 4 0 6]))
