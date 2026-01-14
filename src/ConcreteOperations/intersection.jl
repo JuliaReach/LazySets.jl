@@ -432,6 +432,8 @@ emptiness of intersection before calling this function in those cases.
 
 This implementation unifies the constraints of the two sets obtained from the
 `constraints_list` method.
+
+There is a more efficient handling of the one- and two-dimensional cases.
 """
 @validate function intersection(P1::AbstractPolyhedron{N},
                                 P2::AbstractPolyhedron{N};
@@ -446,12 +448,42 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
                             prune::Bool=true) where {N}
 
     # if one of P1 or P2 is bounded => the result is bounded
-    HPOLY = (isboundedtype(typeof(P1)) || isboundedtype(typeof(P2))) ? HPolytope : HPolyhedron
+    _isboundedtype = isboundedtype(typeof(P1)) || isboundedtype(typeof(P2))
+    T = _isboundedtype ? HPolytope : HPolyhedron
+
+    n = dim(P1)
+    if n == 1
+        l1, h1 = extrema(P1, 1)
+        l2, h2 = extrema(P2, 1)
+        l = max(l1, l2)
+        h = min(h1, h2)
+        if prune && l > h
+            return EmptySet{N}(n)
+        end
+        if !isfinite(l)
+            clist = [HalfSpace(N[1], h)]
+        elseif !isfinite(h)
+            clist = [HalfSpace(N[-1], -l)]
+        else
+            clist = [HalfSpace(N[1], h), HalfSpace(N[-1], -l)]
+        end
+        return T(clist)
+    end
 
     # concatenate the linear constraints
     clist_P1 = _normal_Vector(P1) # TODO fix to similar type
     clist_P2 = _normal_Vector(P2)
-    Q = HPOLY([clist_P1; clist_P2])
+    clist = vcat(clist_P1, clist_P2)
+
+    if n == 2 && _isboundedtype
+        Q = HPolygon(clist; prune=prune)
+        if prune && isempty(Q)
+            return EmptySet{N}(n)
+        end
+        return T(Q.constraints)
+    end
+
+    Q = T(clist)
 
     # remove redundant constraints
     if _is_polyhedra_backend(backend)
@@ -463,11 +495,11 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
             removehredundancy!(Qph)
         end
 
-        if isempty(Qph)
-            return EmptySet{N}(dim(P1))
+        if prune && isempty(Qph)
+            return EmptySet{N}(n)
         else
             # convert back to HPOLY
-            return convert(HPOLY, Qph)
+            return convert(T, Qph)
         end
     else
         # if Q is empty => the feasiblity LP for the list of constraints of Q
@@ -475,7 +507,7 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
         if !prune || remove_redundant_constraints!(Q; backend=backend)
             return Q
         else
-            return EmptySet{N}(dim(P1))
+            return EmptySet{N}(n)
         end
     end
 end

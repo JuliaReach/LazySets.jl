@@ -44,6 +44,44 @@ for N in @tN([Float64, Float32, Rational{Int}])
     P = Polygon([N[3, 1]])
     X = intersection(S, P)
     @test X isa LazySet{N} && isequivalent(X, EmptySet{N}(2))
+
+    # `_intersection_poly`
+    # test specializations in 1D and 2D plus the general case in 3D
+    # TODO add tests for keyword arguments
+    for n in 1:3
+        a = zeros(N, n)
+        a[1] = 1
+        H1 = HalfSpace(a, N(1))  # x <= 1
+        H4 = HalfSpace(a, N(0))  # x <= 0
+        a = zeros(N, n)
+        a[1] = -1
+        H2 = HalfSpace(a, N(0))  # x >= 0
+        H3 = HalfSpace(a, N(-2))  # x >= 2
+        B = convert(HPolytope, BallInf(zeros(N, n), N(1)))
+
+        # - unbounded inputs
+        #   - bounded output
+        X = intersection(H1, H2)
+        @test isequivalent(X, HPolyhedron([H1, H2]))
+        #   - empty output
+        X = intersection(H1, H3)
+        @test X == EmptySet{N}(n)
+        #   - unbounded output
+        X = intersection(H1, H4)
+        @test isequivalent(X, H4)
+        # - bounded inputs
+        #   - bounded output
+        X = intersection(H1, B)
+        @test isequivalent(X, B)
+        #   - empty output
+        X = intersection(H3, B)
+        @test X == EmptySet{N}(n)
+    end
+    # 1D bounded from below only
+    H1 = HalfSpace(N[-1], N(0))  # x >= 0
+    H2 = HalfSpace(N[-1], N(-1))  # x >= 1
+    X = intersection(H1, H2)
+    @test isequivalent(X, H2)
 end
 
 for N in @tN([Float64, Rational{Int}])
