@@ -68,6 +68,9 @@ mutable struct HPolygonOpt{N,VN<:AbstractVector{N}} <: AbstractHPolygon{N}
             P = new{N,VN}(sorted_constraints, ind)
         else
             P = new{N,VN}(constraints, ind)
+            if prune && !isempty(constraints)
+                remove_redundant_constraints!(P)
+            end
         end
         @assert (!check_boundedness || isbounded(P, false)) "the polygon is not bounded"
         return P

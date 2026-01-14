@@ -378,12 +378,9 @@ Redundancy of constraints is checked with
 
     # TODO see #2187: the above code does *not* sort the constraints correctly.
     # after fixing the above code, we should pass sort_constraints=false again
-    P = HPolygon(c; sort_constraints=true)
-    if prune
-        remove_redundant_constraints!(P)
-        if isempty(P)
-            return EmptySet{N}(2)
-        end
+    P = HPolygon(c; sort_constraints=true, prune=prune)
+    if prune && isempty(P)
+        return EmptySet{N}(2)
     end
     return P
 end

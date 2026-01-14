@@ -34,10 +34,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test LazySets.isredundant(h2, h1, h3)
     @test !LazySets.isredundant(h3, h2, h4)
     @test LazySets.isredundant(h2, h2, h3) && LazySets.isredundant(h3, h2, h3)
-    p2 = HPolygon([h1, h2, h3, h4]; sort_constraints=false) # sorted in the right order
-    @test length(p2.constraints) == 4
+    p2 = HPolygon([h1, h2, h3, h4]; sort_constraints=false, prune=false) # sorted in the right order
+    @test p2.constraints == [h1, h2, h3, h4]
     remove_redundant_constraints!(p2)
-    @test length(p2.constraints) == 3
+    @test p2.constraints == [h1, h3, h4]
+    p2 = HPolygon([h1, h2, h3, h4]; sort_constraints=false, prune=true)
+    @test p2.constraints == [h1, h3, h4]
     h1 = HalfSpace([N(1), N(0)], N(1))
     h2 = HalfSpace([N(0), N(1)], N(1))
     h3 = HalfSpace([N(-1), N(0)], N(1))

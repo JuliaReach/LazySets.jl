@@ -173,10 +173,10 @@ Internally, the constraints of `Ω` are already sorted.
 function tohrep(Ω::PolygonalOverapproximation)
     # already finalized
     if isempty(Ω.approx_stack)
-        return HPolygon(Ω.constraints; sort_constraints=false)
+        return HPolygon(Ω.constraints; sort_constraints=false, prune=false)
     end
     # some constraints not finalized yet
-    P = HPolygon(Ω.constraints; sort_constraints=false)
+    P = HPolygon(Ω.constraints; sort_constraints=false, prune=false)
     for approx in Ω.approx_stack
         # the remaining constraints need to be sorted
         addconstraint!(P, convert(HalfSpace, approx))
