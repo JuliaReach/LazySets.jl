@@ -209,7 +209,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
     if N <: AbstractFloat
         res = diameter(Z, 2)
-        @test res isa N && res == N(14.422205101855958)
+        @test res isa N && res == N(14.422205101855956)
     end
 
     # dim
@@ -314,7 +314,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
     if N <: AbstractFloat
         res = radius(Z, 2)
-        @test res isa N && res == N(7.211102550927979)
+        @test res isa N && res == N(7.211102550927978)
     end
 
     # rectify
