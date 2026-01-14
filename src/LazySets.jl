@@ -234,6 +234,7 @@ include("Sets/ZeroSet/ZeroSetModule.jl")
 
 include("Sets/Interval/IntervalModule.jl")
 @reexport using ..IntervalModule: Interval
+using ..IntervalModule: _constraints_list_Vector
 
 # =================================
 # Types representing set operations
