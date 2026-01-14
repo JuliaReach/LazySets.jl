@@ -2,9 +2,8 @@ export isfeasible
 
 function default_lp_solver(::Type{T}) where {T}
     key = task_local_lp_solver_key(T)
-    LP = get!(() -> JuMP.Model(default_lp_solver_factory(T)), task_local_storage(), key)
-
-    return LP
+    solver = get!(() -> JuMP.Model(default_lp_solver_factory(T)), task_local_storage(), key)
+    return solver
 end
 
 # default LP solver for floating-point numbers
