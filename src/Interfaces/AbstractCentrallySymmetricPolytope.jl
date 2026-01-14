@@ -27,3 +27,15 @@ julia> subtypes(AbstractCentrallySymmetricPolytope)
 ```
 """
 abstract type AbstractCentrallySymmetricPolytope{N} <: AbstractPolytope{N} end
+
+function _radius_2(X::AbstractCentrallySymmetricPolytope{N}) where {N}
+    c = center(X)
+    d = similar(c)
+    r = zero(N)
+    for v in vertices_list(X)
+        copyto!(d, c)
+        d .-= v
+        r = max(r, norm(d, 2))
+    end
+    return r
+end
