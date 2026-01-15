@@ -1,7 +1,6 @@
 import .Polyhedra: polyhedron
 export polyhedron
-using .Polyhedra: HRep, VRep,
-                  removehredundancy!, removevredundancy!
+using .Polyhedra: removehredundancy!, removevredundancy!
 
 function default_polyhedra_backend_1d(N::Type{<:Number}, solver=nothing)
     return Polyhedra.IntervalLibrary{N}()
@@ -33,7 +32,7 @@ function default_lp_solver_polyhedra(N::Type{<:Rational};
 end
 
 # solver interface
-function _is_polyhedra_backend(backend::Polyhedra.Library)
+function _is_polyhedra_backend(backend::Polyhedra.Library)  # NOTE: this is an internal function
     return true
 end
 

@@ -5,7 +5,7 @@ Scalable symbolic-numeric set computations in Julia.
 """
 module LazySets
 
-using Reexport
+using Reexport: @reexport
 
 include("API/API.jl")
 @reexport using .API
@@ -23,15 +23,21 @@ import .API: eltype, extrema, isdisjoint, isempty, \, in, isapprox, ==, issubset
              minkowski_difference, pontryagin_difference, minkowski_sum
 
 @reexport import LinearAlgebra: ×, normalize, normalize!
-import Base: copy, rationalize, \
-import RecipesBase: apply_recipe
+import Base: convert, copy, rationalize, \
+import RecipesBase: apply_recipe  # required for Documenter to find docstrings
+using ReachabilityBase: Arrays  # TODO do not export Arrays
 export Arrays, subtypes
 
-using LinearAlgebra, RecipesBase, Requires, SparseArrays
-import GLPK, JuMP, Random, ReachabilityBase, ExprTools
+import GLPK, JuMP, ExprTools
 import IntervalArithmetic as IA
-using LinearAlgebra: checksquare
-using Random: AbstractRNG, GLOBAL_RNG, SamplerType, randperm
+
+using LinearAlgebra: /, Diagonal, I, UniformScaling, checksquare, copyto!, det,  # NOTE: `checksquare` is an internal symbol
+                     diagm, dot, nullspace, tr, transpose
+using Random: AbstractRNG, GLOBAL_RNG, SamplerType, randperm  # NOTE: `GLOBAL_RNG` and `SamplerType` are internal symbols
+using SparseArrays: AbstractSparseMatrix, AbstractSparseVector, SparseVector,
+                    blockdiag, findnz, issparse, sparse, sparsevec, spzeros
+using RecipesBase: AbstractPlot, @recipe, @series
+using Requires: @require
 
 @static if VERSION < v"1.9"
     stack(vecs) = hcat(vecs...)  # COV_EXCL_LINE
@@ -41,18 +47,31 @@ end
 # ReachabilityBase
 # ================
 
+import ReachabilityBase
 import ReachabilityBase.Assertions
 using ReachabilityBase.Assertions: @assert
 include("Utils/assertions.jl")
 
-using ReachabilityBase.Arrays
-using ReachabilityBase.Basetype
-using ReachabilityBase.Commutative
-using ReachabilityBase.Comparison
-using ReachabilityBase.Distribution
-using ReachabilityBase.Iteration
-using ReachabilityBase.Require
-using ReachabilityBase.Subtypes
+using ReachabilityBase.Arrays: At_ldiv_B, At_mul_B, DEFAULT_COND_TOL,
+                               SingleEntryVector, abs_sum, append_zeros,
+                               cross_product, dot_zero, extend,
+                               extend_with_zeros, is_right_turn, isinvertible,
+                               ismultiple, issquare, isupwards,
+                               iswellconditioned, prepend_zeros,
+                               projection_matrix, rank, remove_zero_columns,
+                               right_turn, same_sign, samedir, similar_type,
+                               substitute, vector_type
+using ReachabilityBase.Basetype: basetype
+using ReachabilityBase.Commutative: @commutative
+using ReachabilityBase.Comparison: Comparison, _geq, _isapprox, _leq, _rtol,
+                                   _ztol, isapproxzero
+using ReachabilityBase.Distribution: Distribution, DefaultUniform, rand!,
+                                     reseed!
+using ReachabilityBase.Iteration: Iteration, CartesianIterator, EmptyIterator,
+                                  NondecreasingIndices, SingletonIterator,
+                                  StrictlyIncreasingIndices
+using ReachabilityBase.Require: require
+using ReachabilityBase.Subtypes: subtypes
 
 # =================
 # External packages
@@ -234,7 +253,6 @@ include("Sets/ZeroSet/ZeroSetModule.jl")
 
 include("Sets/Interval/IntervalModule.jl")
 @reexport using ..IntervalModule: Interval
-using ..IntervalModule: _constraints_list_Vector
 
 # =================================
 # Types representing set operations

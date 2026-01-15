@@ -120,7 +120,7 @@ function load_Symbolics_HalfSpace()
         `[a1, …, an]` and displacement `b`.
         """
         function HalfSpace(expr::Num, vars::AbstractVector{Num}; N::Type{<:Real}=Float64)
-            valid, sexpr = _ishalfspace(Symbolics.value(expr))
+            valid, sexpr = _ishalfspace(Symbolics.value(expr))  # NOTE: this is an internal function
             if !valid
                 throw(ArgumentError("expected an expression describing a half-space, got $expr"))
             end

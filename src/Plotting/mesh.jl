@@ -2,7 +2,7 @@ export plot3d, plot3d!
 
 function load_polyhedra_mesh()
     return quote
-        using .Polyhedra: Mesh
+        using .Polyhedra: Mesh  # NOTE: this is an internal function
     end
 end  # quote / function load_polyhedra_mesh()
 

@@ -1,6 +1,7 @@
 module HyperplaneModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractPolyhedron, AbstractLinearMapAlgorithm,
                   _linear_map_hrep, _witness_result_empty, @validate,

@@ -1,6 +1,7 @@
 module VPolygonModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractPolygon, LazySet, AbstractHPolygon, halfspace_left,
                   is_right_turn, _area_vlist_2D,

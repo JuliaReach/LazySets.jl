@@ -139,7 +139,7 @@ function _minkowski_sum_hrep(A::AbstractMatrix, b::AbstractVector,
 
     if isnothing(algorithm)
         algorithm = Polyhedra.FourierMotzkin()
-    elseif !(algorithm isa Polyhedra.EliminationAlgorithm)
+    elseif !(algorithm isa Polyhedra.EliminationAlgorithm)  # NOTE: this is an internal function
         error("algorithm $algorithm is not a valid elimination algorithm; " *
               "choose among any of $(subtypes(Polyhedra.EliminationAlgorithm))")
     end

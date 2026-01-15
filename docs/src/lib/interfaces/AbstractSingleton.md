@@ -189,7 +189,7 @@ Plotting singletons is available too:
 
 ```@docs
 plot_recipe(::AbstractSingleton{N}, ::Any=zero(N)) where {N}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::Real=zero(N)) where {N}
+LazySets.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::Real=zero(N)) where {N}
 ```
 
 ## Implementations

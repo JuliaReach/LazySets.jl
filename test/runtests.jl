@@ -45,6 +45,9 @@ seed = max(abs(rand(Int)), 0)
 println("using random seed $seed")
 Random.seed!(seed)
 
+# numerical precision
+using LazySets.ReachabilityBase.Comparison: set_rtol
+
 # optional dependencies
 @ts begin
     # only load the packages (no symbols)
@@ -357,9 +360,9 @@ end
         include("Utils/plot.jl")
     end
 
-    # ====
-    # Aqua
-    # ====
+    # =================
+    # Quality assurance
+    # =================
 
-    include("Aqua.jl")
+    include("quality_assurance.jl")
 end

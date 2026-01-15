@@ -1,6 +1,7 @@
 module HParallelotopeModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractZonotope, generators_fallback, order,
                   _constraints_list_zonotope

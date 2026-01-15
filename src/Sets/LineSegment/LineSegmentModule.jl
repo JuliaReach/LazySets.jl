@@ -1,6 +1,7 @@
 module LineSegmentModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractZonotope, right_turn, _witness_result_empty, @validate
 using LinearAlgebra: dot

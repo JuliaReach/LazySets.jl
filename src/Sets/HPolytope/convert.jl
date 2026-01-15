@@ -23,7 +23,7 @@ function load_Polyhedra_convert_HPolytope()
         end
 
         function _convert_HPoly(T, P::HRep{N}) where {N}
-            VT = Polyhedra.hvectortype(P)
+            VT = Polyhedra.hvectortype(P)  # NOTE: this is an internal function
             constraints = Vector{HalfSpace{N,VT}}()
             for hi in Polyhedra.allhalfspaces(P)
                 a, b = hi.a, hi.β

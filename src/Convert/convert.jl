@@ -1,5 +1,3 @@
-import Base.convert
-
 # convert methods for identity (no-ops)
 for T in subtypes(LazySet, true)
     @eval begin

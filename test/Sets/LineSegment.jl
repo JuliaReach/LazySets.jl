@@ -43,9 +43,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test N[1.5, 1.5] ∈ LineSegment(N[1.5, 1.500000001], N[1.5, 2.0])
         r = LazySets._rtol(N)
         @assert r > N(1e-10) "default tolerance changed; adapt test"
-        LazySets.set_rtol(N, N(1e-10))
+        set_rtol(N, N(1e-10))
         @test N[1.5, 1.5] ∉ LineSegment(N[1.5, 1.500000001], N[1.5, 2.0])
-        LazySets.set_rtol(N, r)
+        set_rtol(N, r)
     end
 
     # center

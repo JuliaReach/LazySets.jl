@@ -1,6 +1,7 @@
 module Ball1Module
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractCentrallySymmetricPolytope, _high_AbstractBallp,
                   _low_AbstractBallp, @validate

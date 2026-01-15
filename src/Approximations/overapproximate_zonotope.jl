@@ -1219,7 +1219,7 @@ function _overapproximate_zonotope_halfspace_ICP(Z::AbstractZonotope{N},
     else
         write(io, "<=$(H.b - c[d])")
     end
-    e = Meta.parse(String(take!(io)))
+    e = Meta.parse(String(take!(io)))  # NOTE: this is an internal function
     X = IA.IntervalBox(IA.interval(-1, 1), p)
     newD = _contract_zonotope_halfspace_ICP(e, X)
     if isempty(newD)
@@ -1238,7 +1238,7 @@ function load_overapproximate_ICP()
                              end)
             # smallest box containing all points in domain X satisfying constraint
             # (`invokelatest` to avoid world-age issue; `Base.` for VERSION < v"1.9")
-            out, _ = Base.invokelatest(separator, X)
+            out, _ = Base.invokelatest(separator, X)  # NOTE: this is an internal function
             return out
         end
     end

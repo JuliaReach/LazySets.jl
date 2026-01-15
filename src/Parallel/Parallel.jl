@@ -4,9 +4,8 @@ Module `Parallel.jl` -- LazySets algorithms that are parallelized.
 module Parallel
 
 using LazySets
-using ..LazySets: @assert
 
-using SharedArrays: SharedMatrix, SharedVector, indexpids
+using SharedArrays: SharedVector, indexpids
 using Distributed: remotecall_wait, procs
 
 #=======================================================

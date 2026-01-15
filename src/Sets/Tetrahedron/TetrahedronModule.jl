@@ -1,6 +1,7 @@
 module TetrahedronModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractPolytope, @validate
 using LinearAlgebra: dot, cross

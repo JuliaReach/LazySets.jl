@@ -93,7 +93,7 @@ function _cartesian_product_hrep_polyhedra(P1::PT1, P2::PT2; backend1=nothing,
 
     P1′ = polyhedron(P1; backend=backend1)
     P2′ = polyhedron(P2; backend=backend2)
-    Pout = Polyhedra.hcartesianproduct(P1′, P2′)
+    Pout = Polyhedra.hcartesianproduct(P1′, P2′)  # NOTE: this is an internal function
 
     PT = isboundedtype(PT1) && isboundedtype(PT2) ? HPolytope : HPolyhedron
     return convert(PT, Pout)

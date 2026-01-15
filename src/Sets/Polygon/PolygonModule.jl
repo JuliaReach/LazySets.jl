@@ -1,6 +1,7 @@
 module PolygonModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: LazySet, _plot_recipe_2d_vlist, @validate
 using ReachabilityBase.Comparison: _leq, _geq, _isapprox

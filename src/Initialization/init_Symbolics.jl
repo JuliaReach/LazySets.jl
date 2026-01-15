@@ -19,7 +19,7 @@ _vec(vars::Vector{Real}) = reduce(vcat, vars)
         function _get_variables(expr::Num)
             vars_unsorted = Symbolics.get_variables(expr)
             vars_sorted = collect(vars_unsorted)
-            sort!(vars_sorted; by=Symbolics.SymbolicUtils.get_degrees)
+            sort!(vars_sorted; by=Symbolics.SymbolicUtils.get_degrees)  # NOTE: this is an internal function
             return convert(Vector{Num}, vars_sorted)
         end
     end

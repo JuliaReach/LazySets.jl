@@ -1,4 +1,4 @@
-using .StaticArraysCore: SMatrix, SVector, MMatrix, MVector
+using .StaticArraysCore: MMatrix, SMatrix, SVector
 
 eval(load_StaticArraysCore_convert_Zonotope_Hyperrectangle_static())
 eval(load_reduce_order_static())

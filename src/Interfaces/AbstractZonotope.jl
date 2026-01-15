@@ -1233,7 +1233,6 @@ end
 
 function load_reduce_order_static()
     return quote
-
         # implementation for static arrays
         function _interval_hull(G::SMatrix{n,p,N,L}, indices) where {n,p,N,L}
             Lred = zeros(MMatrix{n,n,N})

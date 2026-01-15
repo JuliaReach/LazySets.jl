@@ -16,7 +16,7 @@ This implementation uses `IntervalArithmetic.setdiff`.
 @validate function difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
     Xib = convert(IA.IntervalBox, X)
     Yib = convert(IA.IntervalBox, Y)
-    U = IA.setdiff(Xib, Yib)
+    U = setdiff(Xib, Yib)
     if isempty(U)
         return EmptySet(dim(X))
     end

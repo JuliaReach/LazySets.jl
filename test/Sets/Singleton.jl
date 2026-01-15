@@ -491,10 +491,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !isdisjoint(S, S2)
         r = LazySets._rtol(N)
         @assert r > N(1e-10) "default tolerance changed; adapt test"
-        LazySets.set_rtol(N, N(1e-10))
+        set_rtol(N, N(1e-10))
         @test isdisjoint(S, S2)
         # restore tolerance
-        LazySets.set_rtol(N, r)
+        set_rtol(N, r)
     end
 
     # isequal
