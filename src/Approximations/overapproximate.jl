@@ -107,7 +107,7 @@ function overapproximate(S::LazySet{N},
         constraints[2] = HalfSpace(DIR_NORTH(N), ρ(DIR_NORTH(N), S))
         constraints[3] = HalfSpace(DIR_WEST(N), ρ(DIR_WEST(N), S))
         constraints[4] = HalfSpace(DIR_SOUTH(N), ρ(DIR_SOUTH(N), S))
-        return HPolygon(constraints; sort_constraints=false)
+        return HPolygon(constraints; sort_constraints=false, prune=false)
     else
         P = overapproximate_hausdorff(S, ε)
         if prune

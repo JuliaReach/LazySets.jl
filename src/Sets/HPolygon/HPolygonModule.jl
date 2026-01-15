@@ -4,7 +4,8 @@ using Reexport
 
 using ..LazySets: AbstractHPolygon, BINARY_SEARCH_THRESHOLD, addconstraint!,
                   binary_search_constraints, constraints_list, element,
-                  isbounded, ⪯, _intersection_line2d, @validate
+                  isbounded, remove_redundant_constraints!, ⪯,
+                  _intersection_line2d, @validate
 using ..HalfSpaceModule: HalfSpace, _normal_Vector
 
 @reexport import ..API: isoperationtype, σ, translate
