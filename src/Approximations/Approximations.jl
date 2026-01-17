@@ -50,6 +50,7 @@ include("decompositions.jl")
 include("hausdorff_distance.jl")
 include("overapproximate_norm.jl")
 include("overapproximate_expmap.jl")
+include("overapproximate_matrixzonotope.jl")
 include("init.jl")
 
 end # module

@@ -319,6 +319,9 @@ end
     @testset "LazySets.Approximations.overapproximate_expmap" begin
         include("Approximations/overapproximate_expmap.jl")
     end
+    @testset "LazySets.Approximations.overapproximate_matrixzonotope" begin
+        include("Approximations/overapproximate_matrixzonotope.jl")
+    end
     @testset "LazySets.Approximations.radiusdiameter" begin
         include("Approximations/radiusdiameter.jl")
     end
