@@ -209,7 +209,7 @@ function load_RangeEnclosures_support_function()
         using .RangeEnclosures: AbstractEnclosureAlgorithm  # NOTE: this is an internal function
 
         function _ρ_range_enclosures(d::AbstractVector, P::AbstractSparsePolynomialZonotope,
-                                     method::Union{AbstractEnclosureAlgorithm, Nothing})
+                                     method::Union{AbstractEnclosureAlgorithm,Nothing})
             # default method: BranchAndBoundEnclosure
             isnothing(method) && (method = RangeEnclosures.BranchAndBoundEnclosure())
 
