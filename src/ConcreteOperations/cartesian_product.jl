@@ -93,7 +93,7 @@ function _cartesian_product_hrep_polyhedra(P1::PT1, P2::PT2; backend1=nothing,
 
     P1′ = polyhedron(P1; backend=backend1)
     P2′ = polyhedron(P2; backend=backend2)
-    Pout = Polyhedra.hcartesianproduct(P1′, P2′)
+    Pout = Polyhedra.hcartesianproduct(P1′, P2′)  # NOTE: this is an internal function
 
     PT = isboundedtype(PT1) && isboundedtype(PT2) ? HPolytope : HPolyhedron
     return convert(PT, Pout)
@@ -121,6 +121,10 @@ function cartesian_product(S1::AbstractSingleton, S2::AbstractSingleton)
 end
 
 function cartesian_product(Z1::AbstractZonotope, Z2::AbstractZonotope)
+    return _cartesian_product_zonotope(Z1, Z2)
+end
+
+function _cartesian_product_zonotope(Z1::AbstractZonotope, Z2::AbstractZonotope)
     N = promote_type(eltype(Z1), eltype(Z2))
     z1 = zeros(N, dim(Z1), ngens(Z2))
     z2 = zeros(N, dim(Z2), ngens(Z1))

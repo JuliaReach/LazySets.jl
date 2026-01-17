@@ -268,6 +268,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{Singleton{N,Vector{N}}}
     @test ispermutation(res, [Singleton(N[0]), Singleton(N[2])])
 
+    # togrep
+    Z = togrep(X)
+    @test Z isa Zonotope{N} && isequivalent(Z, X)
+
     # tosimplehrep
     A, b = tosimplehrep(X)
     @test A isa Matrix{N} && b isa Vector{N}
@@ -347,7 +351,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !is_interior_point(N[2], X; ε=1 // 100)
         @test !is_interior_point(N[3], X; ε=1 // 100)
         # incompatible numeric type
-        @test_throws ArgumentError is_interior_point([1.0], X)
+        @test_throws ArgumentError is_interior_point([0.0], X)
     end
 
     # linear_map
@@ -536,12 +540,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test_broken !res && w isa Vector{N} && w ∈ X && w ∈ Y
         r = LazySets._rtol(N)
         @assert r > N(1e-10) "default tolerance changed; adapt test"
-        LazySets.set_rtol(N, N(1e-10))
+        set_rtol(N, N(1e-10))
         @test isdisjoint(X, Y)
         res, w = isdisjoint(X, Y, true)
         @test res && w isa Vector{N} && isempty(w)
         # restore tolerance
-        LazySets.set_rtol(N, r)
+        set_rtol(N, r)
     end
 
     # isequal

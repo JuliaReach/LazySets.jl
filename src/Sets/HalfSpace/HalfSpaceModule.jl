@@ -1,9 +1,10 @@
 module HalfSpaceModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractPolyhedron, LazySet, AbstractLinearMapAlgorithm,
-                  default_lp_solver, is_lp_infeasible, is_lp_optimal, linprog,
+                  default_lp_solver, is_lp_optimal, linprog,
                   _witness_result_empty, @validate, @validate_commutative
 import LinearAlgebra
 using LinearAlgebra: dot

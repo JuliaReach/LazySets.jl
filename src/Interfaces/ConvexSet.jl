@@ -18,6 +18,6 @@ abstract type ConvexSet{N} <: LazySet{N} end
 isconvextype(X::Type{<:ConvexSet}) = true
 
 function _volume_1D(X::ConvexSet)
-    l, u = extrema(X)
+    l, u = extrema(X, 1)
     return u - l
 end

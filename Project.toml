@@ -16,7 +16,6 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
-StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
 
 [compat]
 Distributed = "<0.0.1, 1.6"
@@ -32,5 +31,4 @@ Reexport = "0.2, 1"
 Requires = "0.5, 1"
 SharedArrays = "<0.0.1, 1.6"
 SparseArrays = "<0.0.1, 1.6"
-StaticArraysCore = "1"
 julia = "1.6"

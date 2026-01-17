@@ -105,6 +105,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`isdisjoint`](@ref isdisjoint(::AbstractPolyhedron, ::AbstractPolyhedron))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolytope))
 * [`isempty`](@ref isempty(::AbstractPolytope))
 * [`isuniversal`](@ref isuniversal(::AbstractPolytope, ::Bool=false))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolytope}))

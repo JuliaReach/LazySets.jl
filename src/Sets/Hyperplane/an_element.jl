@@ -14,8 +14,9 @@ function an_element(H::Hyperplane)
     return _an_element_helper_hyperplane(H.a, H.b)
 end
 
-@inline function _an_element_helper_hyperplane(a::AbstractVector{N}, b,
-                                               nonzero_entry_a::Int=findfirst(!iszero, a)) where {N}
+@inline function _an_element_helper_hyperplane(a::AbstractVector, b,
+                                               nonzero_entry_a::Int=findfirst(!iszero, a))
+    N = promote_type(eltype(a), typeof(b))
     x = zeros(N, length(a))
     x[nonzero_entry_a] = b / a[nonzero_entry_a]
     return x

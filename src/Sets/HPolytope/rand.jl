@@ -11,8 +11,7 @@
 
 ### Algorithm
 
-If `num_vertices == 0`, we create a fixed infeasible polytope (corresponding to
-the `EmptySet`).
+If `num_vertices == 0`, we create a fixed infeasible polytope.
 
 If `num_vertices == 1`, we create a random `Singleton` and convert it.
 

@@ -94,6 +94,7 @@ _default_sampler(::AbstractSingleton) = SingletonSampler()
 _default_sampler(::AbstractPolynomialZonotope) = PolynomialZonotopeSampler()
 _default_sampler(::Universe) = UniverseSampler()
 _default_sampler(H::AbstractHyperrectangle) = RejectionSampler(H)
+_default_sampler(::AbstractZonotope) = PolynomialZonotopeSampler()
 
 _rand(rng, U) = rand(rng, U)
 _rand(rng, U::AbstractVector) = rand.(Ref(rng), U)
@@ -270,7 +271,7 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
     if sampler.variant
         @inbounds for i in eachindex(D)
             p = vlist[rand(1:m)]  # start from a random vertex
-            for j in Random.randperm(m)  # choose a random target vertex
+            for j in randperm(m)  # choose a random target vertex
                 p += _rand(rng, U) * (vlist[j] - p)  # move toward next vertex
             end
             D[i] = p
@@ -547,7 +548,7 @@ function PolynomialZonotopeSampler()
     return PolynomialZonotopeSampler(nothing)
 end
 
-function sample!(D::Vector{VN}, P::AbstractPolynomialZonotope,
+function sample!(D::Vector{VN}, P::Union{AbstractPolynomialZonotope,AbstractZonotope},
                  sampler::PolynomialZonotopeSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
@@ -605,6 +606,13 @@ function _add_generators!(x, P::AbstractSparsePolynomialZonotope, U, rng)
     βₛ = rand(rng, U, q)
     x .+= genmat_indep(P) * βₛ
 
+    return x
+end
+
+function _add_generators!(x, Z::Zonotope, U, rng)
+    p = ngens(Z)
+    ξ = rand(rng, U, p)
+    x .+= genmat(Z) * ξ
     return x
 end
 

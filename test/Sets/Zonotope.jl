@@ -65,11 +65,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
         r2 = N[0, 5]
         Z2 = convert(Zonotope, Hyperrectangle(SVector{2}(c), SVector{2}(r2)))
         @test isidentical(Z2, Zonotope(SVector{2}(c), SMatrix{2,1}(hcat(r2))))
-        # specialized method for 2D static arrays
-        Z2b = LazySets._convert_2D_static(Zonotope, H)
-        @test isidentical(Z2b, Z2a)
-        Z2 = LazySets._convert_2D_static(Zonotope, Hyperrectangle(SVector{2}(c), SVector{2}(r2)))
-        @test isidentical(Z2, Zonotope(SVector{2}(c), SMatrix{2,2}(N[0 0; 0 5])))
         # flat second dimension
         r2 = N[4, 0]
         Z2 = convert(Zonotope, Hyperrectangle(SVector{2}(c), SVector{2}(r2)))
@@ -106,11 +101,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     M = N isa AbstractFloat ? rand(N, 2, 2) : M = N[1 -2; 3 4]
     Z2 = convert(Zonotope, M * Z)
     @test isidentical(Z2, linear_map(M, Z))
-    # from LinearMap of CartesianProduct of AbstractHyperrectangles
-    Z2 = convert(Zonotope, M * (H1 × H2))
+    # from LinearMap of CartesianProduct of AbstractZonotopes
+    Z2 = convert(Zonotope, M * (convert(Zonotope, H1) × convert(Zonotope, H2)))
     @test isidentical(Z2, linear_map(M, Zonotope(c, G)))
-    # from LinearMap of CartesianProductArray of AbstractHyperrectangles
-    Z2 = convert(Zonotope, M * CartesianProductArray([H1, H2]))
+    # from LinearMap of CartesianProductArray of AbstractZonotopes
+    Z2 = convert(Zonotope,
+                 M * CartesianProductArray([convert(Zonotope, H1), convert(Zonotope, H2)]))
     @test isidentical(Z2, linear_map(M, Zonotope(c, G)))
     # from AbstractAffineMap of AbstractZonotope
     Z2 = convert(Zonotope, M * Z + c)
@@ -213,7 +209,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
     if N <: AbstractFloat
         res = diameter(Z, 2)
-        @test res isa N && res == N(14.422205101855958)
+        @test res isa N && res == N(14.422205101855956)
     end
 
     # dim
@@ -318,7 +314,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
     if N <: AbstractFloat
         res = radius(Z, 2)
-        @test res isa N && res == N(7.211102550927979)
+        @test res isa N && res == N(7.211102550927978)
     end
 
     # rectify
@@ -406,10 +402,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     vlistZ = vertices_list(Z2)
     @test length(vlistZ) == 6
     @test ispermutation(vlistZ, [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
-    c, G = Z2.center, Z2.generators
-    vlist2 = LazySets._vertices_list_2D(c, G; apply_convex_hull=true)
+    c2, G = Z2.center, Z2.generators
+    vlist2 = LazySets._vertices_list_2D(c2, G; apply_convex_hull=true)
     @test ispermutation(vlistZ, vlist2)
-    vlist2 = LazySets._vertices_list_2D(c, G; apply_convex_hull=false)
+    vlist2 = LazySets._vertices_list_2D(c2, G; apply_convex_hull=false)
     @test ispermutation(vlistZ, vlist2)
     # option to not apply the convex-hull operation
     vlistZ = LazySets._vertices_list_zonotope_iterative(Z2.center, Z2.generators;
@@ -463,7 +459,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     #     end
     # end
 
-    # exponential_map
+    # exponential_map (part 1)
     @test_throws DimensionMismatch exponential_map(ones(N, 1, 1), Z)
     @test_throws DimensionMismatch exponential_map(ones(N, 2, 1), Z)
 
@@ -486,7 +482,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !is_interior_point(N[5, 8], Z; ε=1 // 100)
         @test !is_interior_point(N[3, 3], Z; ε=1 // 100)
         # incompatible numeric type
-        @test_throws ArgumentError is_interior_point([1.0], Z)
+        @test_throws ArgumentError is_interior_point([0.0, 0.0], Z)
     end
 
     # linear_map
@@ -532,12 +528,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError project(Z, [1, 1])
     Z2 = project(Z, [1])
     @test isidentical(Z2, Zonotope(N[1], hcat(N[4])))
-    # 1D with zero generators (#2147)
+    # 1D projection with zero generators (#2147)
     Z2 = project(convert(Zonotope, BallInf(N[0, 0], N(1))), [1])
     @test isidentical(Z2, Zonotope(N[0], hcat(N[1])))
-    # removing zero generators in projection can be deactivated
+    # 2D projection
     Z2a = Zonotope(zeros(N, 3), N[1 0 3; 4 0 6; 0 0 0])
     Z2 = project(Z2a, [1, 2])
+    # removing zero generators in projection can be deactivated
     @test isidentical(Z2, Zonotope(zeros(N, 2), N[1 3; 4 6]))
     Z2 = project(Z2a, [1, 2]; remove_zero_generators=false)
     @test isidentical(Z2, Zonotope(zeros(N, 2), N[1 0 3; 4 0 6]))
@@ -607,6 +604,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Z2 = copy(Z)
     translate!(Z2, N[1, 2])
     @test isidentical(Z2, Zonotope(N[2, 4], N[1 3; 2 4]))
+    # test immutable usage
+    @static if isdefined(@__MODULE__, :StaticArrays)
+        using StaticArrays: SVector, SMatrix
+
+        Z2 = Zonotope(SVector{2}(c), SMatrix{2,2}(N[1 3; 2 4]))
+        Z2b = translate(Z2, N[1, 2])
+        @test isidentical(Z2b, Zonotope(SVector{2}(N[2, 4]), SMatrix{2,2}(N[1 3; 2 4])))
+        @test_throws ErrorException translate!(Z2, N[1, 2])
+    end
 
     # cartesian_product
     Z2 = Zonotope(N[3], hcat(N[1]))
@@ -693,10 +699,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !isdisjoint(Z, Z2)
         r = LazySets._rtol(N)
         @assert r > N(1e-10) "default tolerance changed; adapt test"
-        LazySets.set_rtol(N, N(1e-10))
+        set_rtol(N, N(1e-10))
         @test_broken isdisjoint(Z, Z2)  # cannot adapt tolerance of LP solver
         # restore tolerance
-        LazySets.set_rtol(N, r)
+        set_rtol(N, r)
     end
 
     # isequal
@@ -780,7 +786,7 @@ for N in @tN([Float64, Float32])
     T = Rational{Int64}
     @test Z2 isa Zonotope{T} && isidentical(Z2, Zonotope(T[1, 2], T[1 3; 2 4]))
 
-    # exponential_map
+    # exponential_map (part 2)
     Z2 = exponential_map(N[1 0; 0 2], Z)
     @test isidentical(Z2, Zonotope(N[exp(1), 2 * exp(2)], N[exp(1) 3*exp(1); 2*exp(2) 4*exp(2)]))
 

@@ -1,6 +1,6 @@
 function load_intervalmatrices_conversion()
     return quote
-        using .IntervalMatrices: IntervalMatrix, mid, sup, radius
+        using .IntervalMatrices: IntervalMatrix, mid, radius
 
         """
             convert(::Type{MatrixZonotope}, IM::IntervalMatrix)
@@ -16,7 +16,7 @@ function load_intervalmatrices_conversion()
 
         A matrix zonotope with one generator
 
-        ### Example 
+        ### Example
 
         ```jldoctest
         julia> using LazySets, IntervalMatrices

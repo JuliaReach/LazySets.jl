@@ -1,13 +1,12 @@
 module SimpleSparsePolynomialZonotopeModule
 
-using Reexport
+using Reexport: @reexport
 
 using ..LazySets: AbstractSparsePolynomialZonotope, ngens_dep, nparams,
                   _remove_redundant_generators_polyzono, @validate
 using LinearAlgebra: dot, I
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Comparison: isapproxzero
 
 @reexport import ..API: convex_hull, center, isoperationtype, rand, linear_map,
                         translate, translate!, cartesian_product,

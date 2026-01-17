@@ -92,7 +92,7 @@ end
 
 # --- AbstractArraySet ---
 
-for T in Base.uniontypes(LazySets.AbstractArraySet)
+for T in Base.uniontypes(LazySets.AbstractArraySet)  # NOTE: this is an internal function
     # array
     @test check_method_implementation(T, array,
                                       Function[S -> (S{Float64},)])

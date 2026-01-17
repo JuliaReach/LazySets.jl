@@ -23,11 +23,18 @@ export approximate,
        isbounding,
        overapproximate_norm
 
-using ..LazySets, ReachabilityBase.Arrays, Requires, LinearAlgebra, SparseArrays
 import IntervalArithmetic as IA
 
+using LinearAlgebra: /, I, dot, norm, normalize, nullspace, transpose
+using SparseArrays: SparseVector, sparsevec, spzeros
+using Requires: @require
+
+using ReachabilityBase.Arrays: At_mul_B, SingleEntryVector, rectify,
+                               remove_zero_columns, uniform_partition
 using ReachabilityBase.Comparison: _isapprox, _leq, _geq, _rtol, isapproxzero
 using ReachabilityBase.Subtypes: subtypes
+
+using ..LazySets
 using ..LazySets: ACS, default_lp_solver, _isbounded_stiemke, require, linprog,
                   is_lp_optimal, _normal_Vector, default_sdp_solver,
                   get_exponential_backend, _expmv, second, @assert, _box_radius

@@ -517,18 +517,32 @@ Otherwise it checks whether `X` is polytopic, in which case it iterates over all
 vertices.
 """
 @validate function norm(X::LazySet, p::Real=Inf)
-    return _norm_default(X, p)
+    if p == Inf
+        return _norm_Inf(X)
+    elseif isone(p)
+        return _norm_1(X)
+    else
+        return _norm_fallback(X, p)
+    end
 end
 
-function _norm_default(X::LazySet, p::Real)
-    if p == Inf
-        l, h = extrema(X)
-        return max(maximum(abs, l), maximum(abs, h))
-    elseif ispolytopic(X)
+function _norm_fallback(X::LazySet, p::Real)
+    if ispolytopic(X)
         return maximum(norm(v, p) for v in vertices_list(X))
     else
         error("the norm for this value of p=$p is not implemented")
     end
+end
+
+# default for p = Inf: use `extrema`
+function _norm_Inf(X::LazySet)
+    l, h = extrema(X)
+    return max(maximum(abs, l), maximum(abs, h))
+end
+
+# default for p = 1: use fallback
+function _norm_1(X::LazySet)
+    return _norm_fallback(X, 1)
 end
 
 """
@@ -540,20 +554,45 @@ end
 
 The default implementation handles the following cases:
 - `X` is 1D and `p` is any value (using the interval approximation)
-- `X` is any set and `p` is `Inf` (using `ballinf_approximation`)
+- `X` is any set and `p` is `Inf` (using `ballinf_approximation` but without allocations)
 - `X` is polytopic and `p` is `2` (using Welzl's algorithm)
 """
 @validate function radius(X::LazySet, p::Real=Inf)
-    if dim(X) == 1
-        l, h = extrema(X, 1)
-        return (h - l) / 2
+    n = dim(X)
+    if n == 1
+        return _radius_1D(X)
     elseif p == Inf
-        return radius(Approximations.ballinf_approximation(X), p)
+        return _radius_Inf(X; n)
     elseif p == 2
-        return radius(overapproximate(X, Ball2))
+        return _radius_2(X)
     else
         error("the radius for this value of p=$p is not implemented")
     end
+end
+
+function _radius_1D(X::LazySet)
+    l, h = extrema(X, 1)
+    return (h - l) / 2
+end
+
+# code is almost identical to `ballinf_approximation` but without the center
+function _radius_Inf(X::LazySet{N}; n=dim(X)) where {N}
+    r = zero(N)
+    @inbounds for i in 1:n
+        l, h = extrema(X, i)
+        rcur = (h - l) / 2
+        if (rcur > r)
+            r = rcur
+        elseif !_geq(rcur, zero(N))
+            # contradicting bounds => set is empty
+            throw(ArgumentError("set must be nonempty"))
+        end
+    end
+    return r
+end
+
+function _radius_2(X::LazySet)
+    return radius(overapproximate(X, Ball2))
 end
 
 """
@@ -1465,7 +1504,7 @@ Witness production is not supported if `use_polyhedra_interface` is `true`.
 ### Algorithm
 
 The algorithm sets up a feasibility LP for the constraints of `P`.
-If `use_polyhedra_interface` is `true`, we call `Polyhedra.isempty`.
+If `use_polyhedra_interface` is `true`, we call `isempty`.
 Otherwise, we set up the LP internally.
 """
 function isempty(P::LazySet,
@@ -1508,9 +1547,9 @@ function _isempty_polyhedron_polyhedra(P::LazySet{N}, witness::Bool=false;
     end
 
     if isnothing(solver)
-        result = Polyhedra.isempty(polyhedron(P; backend=backend))
+        result = isempty(polyhedron(P; backend=backend))
     else
-        result = Polyhedra.isempty(polyhedron(P; backend=backend), solver)
+        result = isempty(polyhedron(P; backend=backend), solver)
     end
 
     if result

@@ -1,6 +1,7 @@
 module HPolyhedronModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractPolyhedron, LazySet, default_lp_solver,
                   default_polyhedra_backend, iscomplement, is_lp_infeasible,

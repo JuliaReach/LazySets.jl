@@ -1,5 +1,5 @@
 import Base: split
-using Base: product
+using Base: product  # NOTE: this is an internal function
 
 export AbstractHyperrectangle,
        radius_hyperrectangle,
@@ -100,8 +100,29 @@ The function symbol can be typed via `\\square<tab>`.
 function □(c, r) end
 
 function genmat(H::AbstractHyperrectangle)
-    gens = generators(H)
-    return genmat_fallback(H; gens=gens, ngens=length(gens))
+    n_flat = _flat_dims(H)
+    n = dim(H)
+    N = eltype(H)
+    G = zeros(N, n, n - n_flat)
+    j = 1
+    for i in 1:dim(H)
+        ri = radius_hyperrectangle(H, i)
+        if !isapproxzero(ri)
+            G[i, j] = ri
+            j += 1
+        end
+    end
+    return G
+end
+
+function _flat_dims(H::AbstractHyperrectangle)
+    n_flat = 0
+    for i in 1:dim(H)
+        if isflat(H, i)
+            n_flat += 1
+        end
+    end
+    return n_flat
 end
 
 # iterator that wraps the generator matrix
@@ -447,7 +468,31 @@ the result of `isapproxzero` when applied to the radius in some dimension.
 Hence this function depends on the absolute zero tolerance `ABSZTOL`.
 """
 function isflat(H::AbstractHyperrectangle)
-    return any(i -> isapproxzero(radius_hyperrectangle(H, i)), 1:dim(H))
+    return any(i -> isflat(H, i), 1:dim(H))
+end
+
+"""
+    isflat(H::AbstractHyperrectangle, i::Int)
+
+Check whether a hyperrectangular set is flat in dimension `i`.
+
+### Input
+
+- `H` -- hyperrectangular set
+- `i` -- dimension
+
+### Output
+
+`true` iff the hyperrectangular set is flat in dimension `i`.
+
+### Notes
+
+For robustness with respect to floating-point inputs, this function relies on
+the result of `isapproxzero`.
+Hence this function depends on the absolute zero tolerance `ABSZTOL`.
+"""
+function isflat(H::AbstractHyperrectangle, i::Int)
+    return isapproxzero(radius_hyperrectangle(H, i))
 end
 
 """
@@ -474,7 +519,6 @@ function split(H::AbstractHyperrectangle, num_blocks::AbstractVector{Int})
 
     total_number = 1
     lo = low(H)
-    hi = high(H)
     N = eltype(H)
 
     # precompute center points in each dimension

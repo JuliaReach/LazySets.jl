@@ -93,5 +93,4 @@ get_radius!
 is_tighter_same_dir_2D
 _leq_trig
 same_block_structure
-_σ_hyperplane_halfspace
 ```

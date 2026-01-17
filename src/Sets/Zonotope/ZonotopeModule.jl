@@ -1,20 +1,19 @@
 module ZonotopeModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractZonotope, generators_fallback, @validate
 using LinearAlgebra: mul!
 using Random: AbstractRNG, GLOBAL_RNG
-using ReachabilityBase.Arrays: ismultiple, remove_zero_columns, to_matrix,
-                               vector_type
+using ReachabilityBase.Arrays: remove_zero_columns, to_matrix
 using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Require: require
 
-@reexport import ..API: center, high, isoperationtype, low, rand,
-                        permute, scale, scale!, translate!
-@reexport import ..LazySets: generators, genmat, ngens, reduce_order,
-                             remove_redundant_generators
-import Base: convert
+@reexport import ..API: center, high, isoperationtype, low, rand, affine_map,
+                        permute, scale, scale!, translate, translate!
+@reexport import ..LazySets: generators, genmat, ngens, rationalize,
+                             reduce_order, remove_redundant_generators
+import Base: convert, copy
 @reexport using ..API
 
 export Zonotope,
@@ -29,6 +28,8 @@ include("high.jl")
 include("isoperationtype.jl")
 include("low.jl")
 include("rand.jl")
+include("rationalize.jl")
+include("affine_map.jl")
 include("linear_map.jl")
 include("permute.jl")
 include("scale.jl")
@@ -43,6 +44,7 @@ include("remove_zero_generators.jl")
 include("split.jl")
 
 include("convert.jl")
+include("copy.jl")
 
 include("init.jl")
 

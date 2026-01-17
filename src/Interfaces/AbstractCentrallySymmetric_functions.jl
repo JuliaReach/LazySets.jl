@@ -7,7 +7,15 @@ const ACS = Union{AbstractCentrallySymmetric,AbstractCentrallySymmetricPolytope}
     return length(center(S))
 end
 
-for T in Base.uniontypes(ACS)
+function isempty(X::ACS, witness::Bool=false)
+    return witness ? (false, an_element(X)) : false
+end
+
+@validate function center(S::ACS, i::Int)
+    return center(S)[i]
+end
+
+for T in Base.uniontypes(ACS)  # NOTE: this is an internal function
     @eval begin
         """
         # Extended help
@@ -21,15 +29,7 @@ for T in Base.uniontypes(ACS)
         function an_element(S::$T)
             return center(S)
         end
-    end
-end
 
-function isempty(X::ACS, witness::Bool=false)
-    return witness ? (false, an_element(X)) : false
-end
-
-for T in Base.uniontypes(ACS)
-    @eval begin
         """
         # Extended help
 
@@ -50,15 +50,7 @@ for T in Base.uniontypes(ACS)
                 return false
             end
         end
-    end
-end
 
-@validate function center(S::ACS, i::Int)
-    return center(S)[i]
-end
-
-for T in Base.uniontypes(ACS)
-    @eval begin
         """
         # Extended help
 
@@ -80,11 +72,7 @@ for T in Base.uniontypes(ACS)
             l = 2 .* center(S) .- h
             return (l, h)
         end
-    end
-end
 
-for T in Base.uniontypes(ACS)
-    @eval begin
         """
         # Extended help
 

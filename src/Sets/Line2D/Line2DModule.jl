@@ -1,17 +1,16 @@
 module Line2DModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractPolyhedron, AbstractLinearMapAlgorithm,
-                  _constraints_list_hyperplane, _intersection_line2d,
-                  _linear_map_hrep, _non_element_halfspace,
-                  _σ_hyperplane_halfspace, _witness_result_empty, @validate
+                  _intersection_line2d, _linear_map_hrep, _witness_result_empty,
+                  @validate
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: nonzero_indices, right_turn
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Comparison: isapproxzero, _isapprox
-using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
                         isoperationtype, isuniversal, rand, in, project, scale,

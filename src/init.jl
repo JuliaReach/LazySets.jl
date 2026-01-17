@@ -13,7 +13,7 @@ function __init__()
     @require Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029" include("Initialization/init_Polyhedra.jl")
     @require RangeEnclosures = "1b4d18b6-9e5d-11e9-236c-f792b01831f8" include("Initialization/init_RangeEnclosures.jl")
     @require SCS = "c946c3f1-0d1f-5ce8-9dea-7daa1f7e2d13" include("Initialization/init_SCS.jl")
-    # @require StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c" include("Initialization/init_StaticArraysCore.jl")
+    @require StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c" include("Initialization/init_StaticArraysCore.jl")
     @require SymEngine = "123dc426-2d89-5057-bbad-38513e3affd8" include("Initialization/init_SymEngine.jl")
     @require Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7" include("Initialization/init_Symbolics.jl")
     @require TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a" include("Initialization/init_TaylorModels.jl")
@@ -21,6 +21,3 @@ function __init__()
 
     return nothing
 end
-
-# there is a conflict with `Revise` and `StaticArrays(Core)`, so it is loaded without `Requires`
-include("Initialization/init_StaticArraysCore.jl")

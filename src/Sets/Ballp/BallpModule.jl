@@ -1,6 +1,7 @@
 module BallpModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractBallp, @validate
 using Random: AbstractRNG, GLOBAL_RNG

@@ -577,8 +577,8 @@ implementation below internally relies on the function `plot_recipe`. For some
 set types (e.g., `Intersection`), the default implementation is overridden.
 
 ```@docs
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::LazySet{N}, ::Real=N(1e-3)) where {N}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::Real=N(1e-3), ::Int=40; ::Bool=false) where {N, VN<:LazySet{N}}
+LazySets.apply_recipe(::AbstractDict{Symbol,Any}, ::LazySet{N}, ::Real=N(1e-3)) where {N}
+LazySets.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::Real=N(1e-3), ::Int=40; ::Bool=false) where {N, VN<:LazySet{N}}
 plot_vlist(::LazySet, ::Real)
 plot_recipe(::LazySet, ::Any)
 ```

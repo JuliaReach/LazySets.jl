@@ -1,6 +1,6 @@
 module DensePolynomialZonotopeModule
 
-using Reexport
+using Reexport: @reexport
 
 using ..LazySets: AbstractPolynomialZonotope, @validate
 

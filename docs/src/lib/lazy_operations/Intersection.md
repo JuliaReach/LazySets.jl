@@ -27,7 +27,7 @@ _line_search
 _projection
 linear_map(::AbstractMatrix, ::Intersection)
 plot_recipe(::Intersection{N}, ::N=zero(N), ::Int=40) where {N}
-RecipesBase.apply_recipe(::AbstractDict{Symbol,Any}, ::Intersection{N}, ::Real=zero(N), ::Int=40) where {N}
+LazySets.apply_recipe(::AbstractDict{Symbol,Any}, ::Intersection{N}, ::Real=zero(N), ::Int=40) where {N}
 ```
 
 Inherited from [`LazySet`](@ref):

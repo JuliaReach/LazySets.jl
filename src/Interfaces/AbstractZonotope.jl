@@ -231,7 +231,9 @@ is returned.
 """
 @validate function σ(d::AbstractVector, Z::AbstractZonotope)
     G = genmat(Z)
-    return center(Z) .+ G * sign_cadlag.(At_mul_B(G, d))
+    v = G * sign_cadlag.(At_mul_B(G, d))
+    v .+= center(Z)
+    return v
 end
 
 """
@@ -335,8 +337,8 @@ end
 
 function _linear_map_zonotope_nD(M::AbstractMatrix, Z::LazySet)
     c = M * center(Z)
-    gi = M * genmat(Z)
-    return Zonotope(c, gi)
+    G = M * genmat(Z)
+    return Zonotope(c, G)
 end
 
 """
@@ -748,16 +750,23 @@ function split(Z::AbstractZonotope, gens::AbstractVector{Int},
     return _split(convert(Zonotope, Z), gens, nparts)
 end
 
-# project via the concrete linear map, which is typically efficient
-@validate function project(Z::AbstractZonotope{N}, block::AbstractVector{Int}; kwargs...) where {N}
-    n = dim(Z)
-    M = projection_matrix(block, n, N)
-    Z2 = linear_map(M, Z)
-
-    if get(kwargs, :remove_zero_generators, true)
-        Z2 = remove_zero_generators(Z2)
+@validate function project(Z::AbstractZonotope, block::AbstractVector{Int}; kwargs...)
+    if length(block) == 1
+        return _project_1D(Z, @inbounds block[1])
     end
-    return Z2
+    c = center(Z)[block]
+    G = genmat(Z)[block, :]
+    if get(kwargs, :remove_zero_generators, true)
+        G = remove_zero_columns(G)
+    end
+    return Zonotope(c, G)
+end
+
+function _project_1D(Z::AbstractZonotope{N}, i::Int) where {N}
+    c = [center(Z)[i]]
+    g = sum(abs, gi[i] for gi in generators(Z))
+    G = iszero(g) ? Matrix{N}(undef, 1, 0) : hcat(g)
+    return Zonotope(c, G)
 end
 
 """
@@ -1224,7 +1233,6 @@ end
 
 function load_reduce_order_static()
     return quote
-
         # implementation for static arrays
         function _interval_hull(G::SMatrix{n,p,N,L}, indices) where {n,p,N,L}
             Lred = zeros(MMatrix{n,n,N})
@@ -1265,25 +1273,26 @@ end
 function _genmat_static(::AbstractZonotope) end
 
 """
-    _l1_norm(Z::AbstractZonotope)
+    _norm_1(Z::AbstractZonotope)
 
 Compute the exact ``ℓ₁`` norm of a zonotope with generator matrix ``G ∈ \\mathbb{R}^{d×n}``
 
 ### Notes
 
-The function exploits the fact that the mapping ``ξ ↦ ‖ c + ∑_{i=1}^n ξ_i g_i ‖_1`` is
+The implementation exploits that the mapping ``ξ ↦ ‖ c + ∑_{i=1}^n ξ_i g_i ‖_1`` is
 a convex function of the coefficients ``ξ_i``.  As a result, its maximum over the hypercube
 ``[-1,1]^n`` is attained at one of the ``2^n`` corners.
 
 This algorithm has time complexity ``\\mathcal{O}(2ⁿ · d)``, and thus is only practical for
 zonotopes with a small number of generators.
 """
-function _l1_norm(Z::AbstractZonotope{N}) where {N}
-    n = ngens(Z)
-    dirs = DiagDirections(n)
-    norm = N(-Inf)
+function _norm_1(Z::AbstractZonotope)
+    N = eltype(Z)
     c = center(Z)
     G = genmat(Z)
+    n = size(G, 2)
+    dirs = DiagDirections(n)
+    norm = N(-Inf)
 
     @inbounds for v in dirs
         aux = sum(abs.((c + G * v)))
@@ -1293,17 +1302,20 @@ function _l1_norm(Z::AbstractZonotope{N}) where {N}
     return norm
 end
 
-"""
-    norm(Z::AbstractZonotope, p::Real=Inf)
-
-Compute the ``ℓ_p`` norm of a zonotope.
-"""
-@validate function norm(Z::AbstractZonotope, p::Real=Inf)
-    if p == 1
-        return _l1_norm(Z)
-    else
-        return _norm_default(Z, p)
+function _norm_Inf(Z::AbstractZonotope)
+    c = center(Z)
+    r = _box_radius(Z)
+    res = zero(eltype(Z))
+    @inbounds for (ci, ri) in zip(c, r)
+        # dominant box edge in dimension i
+        if ci > 0
+            vi = abs(ci + ri)
+        else
+            vi = abs(ci - ri)
+        end
+        res = max(res, vi)
     end
+    return res
 end
 
 function linear_map_inverse(A::AbstractMatrix, Z::AbstractZonotope)
@@ -1332,7 +1344,7 @@ function _affine_map_inverse_zonotope(A::AbstractMatrix, Z::AbstractZonotope,
     Ainv = inv(A)
     c = Ainv * center(Z)
     if !isnothing(b)
-        c -= Ainv * b
+        c .-= Ainv * b
     end
     G = Ainv * genmat(Z)
     return Zonotope(c, G)

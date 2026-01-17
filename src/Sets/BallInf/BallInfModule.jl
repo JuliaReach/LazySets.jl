@@ -1,6 +1,7 @@
 module BallInfModule
 
-using Reexport, Requires
+using Reexport: @reexport
+using Requires: @require
 
 using ..LazySets: AbstractHyperrectangle, _high_AbstractBallp,
                   _low_AbstractBallp, _ρ_sev_hyperrectangle,

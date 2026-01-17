@@ -1,4 +1,4 @@
-import LazySets: dim, inner
+import LazySets: dim
 using LazySets: isapproxzero
 
 """

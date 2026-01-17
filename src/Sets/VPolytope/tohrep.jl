@@ -30,11 +30,9 @@ function tohrep(P::VPolytope; backend=nothing)
 
     n = dim(P)
     if n == 1
-        Q = convert(Interval, P)
-        return convert(HPolytope, Q)
+        return HPolytope(_constraints_list_Vector(convert(Interval, P)))
     elseif n == 2
-        Q = convert(VPolygon, P)
-        return convert(HPolytope, Q)
+        return convert(HPolytope, convert(VPolygon, P))
     end
 
     require(@__MODULE__, :Polyhedra; fun_name="tohrep")
@@ -43,5 +41,16 @@ function tohrep(P::VPolytope; backend=nothing)
         backend = default_polyhedra_backend(P)
     end
 
-    return convert(HPolytope, LazySets.polyhedron(P; backend=backend))
+    Q = LazySets.polyhedron(P; backend=backend)
+    R = convert(HPolytope, Q)
+    T = _output_type(P)  # help with type inference
+    return R::T
+end
+
+function _output_type(::VPolytope)
+    return HPolytope{N,Vector{N}} where {N}
+end
+
+function _output_type(::VPolytope{Float64})
+    return HPolytope{Float64,Vector{Float64}}
 end

@@ -67,15 +67,17 @@ Undocumented implementations:
 
 * [`center`](@ref center(::LazySet))
 * [`high`](@ref high(::LazySet, ::Int))
+* [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`low`](@ref low(::LazySet, ::Int))
 ```@meta
 CurrentModule = LazySets
 ```
 * [`ngens`](@ref ngens(::AbstractZonotope))
+* [`rationalize`](@ref rationalize(::LazySet))
 ```@meta
 CurrentModule = LazySets.API
 ```
-* [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
+* [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`permute`](@ref permute(::LazySet, ::AbstractVector{Int}))
 ```@meta
 CurrentModule = LazySets
@@ -93,6 +95,7 @@ CurrentModule = LazySets
 ```@meta
 CurrentModule = LazySets.API
 ```
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 
 ```@meta
@@ -117,18 +120,15 @@ Inherited from [`LazySet`](@ref):
 * [`norm`](@ref norm(::LazySet, ::Real))
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`radius`](@ref radius(::LazySet, ::Real))
-* [`rationalize`](@ref rationalize(::LazySet))
 * [`rectify`](@ref rectify(::LazySet))
 * [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
-* [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exponential_map`](@ref exponential_map(::AbstractMatrix, ::LazySet))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
-* [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`isapprox`](@ref isapprox(::LazySet, ::LazySet))
@@ -146,6 +146,7 @@ Inherited from [`AbstractPolyhedron`](@ref):
 * [`intersection`](@ref intersection(::AbstractPolyhedron, ::LazySet))
 
 Inherited from [`AbstractPolytope`](@ref):
+* [`constrained_dimensions`](@ref constrained_dimensions(::AbstractPolytope))
 * [`isbounded`](@ref isbounded(::AbstractPolytope))
 * [`volume`](@ref volume(::AbstractPolytope))
 * [`isboundedtype`](@ref isboundedtype(::Type{AbstractPolytope}))

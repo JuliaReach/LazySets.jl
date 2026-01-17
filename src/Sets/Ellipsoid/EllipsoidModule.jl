@@ -1,6 +1,6 @@
 module EllipsoidModule
 
-using Reexport
+using Reexport: @reexport
 
 using ..LazySets: AbstractCentrallySymmetric, @validate
 using LinearAlgebra: dot, I, checksquare, isposdef

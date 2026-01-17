@@ -836,11 +836,7 @@ whole space behaves as expected:
 
 ```jldoctest project_polyhedron
 julia> constrained_dimensions(P)
-4-element Vector{Int64}:
- 1
- 2
- 3
- 4
+1:4
 
 julia> project(P, [1, 2, 3, 4]) == P
 true

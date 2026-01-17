@@ -120,17 +120,17 @@ function load_Symbolics_HalfSpace()
         `[a1, …, an]` and displacement `b`.
         """
         function HalfSpace(expr::Num, vars::AbstractVector{Num}; N::Type{<:Real}=Float64)
-            valid, sexpr = _ishalfspace(Symbolics.value(expr))
+            valid, sexpr = _ishalfspace(Symbolics.value(expr))  # NOTE: this is an internal function
             if !valid
                 throw(ArgumentError("expected an expression describing a half-space, got $expr"))
             end
 
             # compute the linear coefficients by taking first-order derivatives
-            coeffs = [N(α.val) for α in Symbolics.gradient(sexpr, collect(vars))]
+            coeffs = [N(Symbolics.value(α)) for α in Symbolics.gradient(sexpr, collect(vars))]
 
             # get the constant term by expression substitution
             zeroed_vars = Dict(v => zero(N) for v in vars)
-            β = -N(Symbolics.substitute(sexpr, zeroed_vars))
+            β = -N(Symbolics.value(Symbolics.substitute(sexpr, zeroed_vars)))
 
             return HalfSpace(coeffs, β)
         end

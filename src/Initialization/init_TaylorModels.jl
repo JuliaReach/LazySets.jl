@@ -1,5 +1,5 @@
 using .TaylorModels: domain
-using .TaylorModels.TaylorSeries: numtype
+using .TaylorModels.TaylorSeries: numtype  # NOTE: this is an internal function
 
 _eltype_TM(TMi) = numtype(polynomial(TMi))
 

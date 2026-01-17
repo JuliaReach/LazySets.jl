@@ -179,3 +179,7 @@ Remove the redundant vertices from a polytope in vertex representation in-place.
 A new polytope with the redundant vertices removed.
 """
 function remove_redundant_vertices!(::AbstractPolytope) end
+
+function constrained_dimensions(P::AbstractPolytope)
+    return 1:dim(P)
+end

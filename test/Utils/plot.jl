@@ -1,5 +1,5 @@
 using LazySets, Test, LinearAlgebra, SparseArrays
-import LazySets.RecipesBase
+import RecipesBase
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

@@ -300,7 +300,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # togrep
     Z = togrep(H)
-    @test isequivalent(Z, H)
+    @test Z isa Zonotope{N} && isequivalent(Z, H)
 
     # tosimplehrep
     A, b = tosimplehrep(H)
@@ -321,16 +321,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test vlist isa Vector{Vector{N}} &&
           ispermutation(vlist, [N[2, 1], N[0, 1], N[0, -3], N[2, -3]])
     # degenerate case
-    res = vertices_list(H0)
-    @test res isa Vector{Vector{N}} && res == [N[0, 0]]
+    vlist = vertices_list(H0)
+    @test vlist isa Vector{Vector{N}} && vlist == [N[0, 0]]
     # degenerate case: efficient handling (#92; would not be able to compute all 2^100 vertices)
     c2 = fill(N(1), 100)
     r2 = SingleEntryVector(1, 100, N(1))
     @test ispermutation(vertices_list(Hyperrectangle(c2, r2)), [c2 - r2, c2 + r2])
 
     # vertices
-    res = collect(vertices(H))
-    @test res isa Vector{Vector{N}} && ispermutation(res, vertices_list(H))
+    vlist = collect(vertices(H))
+    @test vlist isa Vector{Vector{N}} && ispermutation(vlist, vertices_list(H))
 
     # volume
     res = volume(H)
@@ -393,7 +393,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !is_interior_point(N[5, 8], H; ε=1 // 100)
         @test !is_interior_point(N[2, 1], H; ε=1 // 100)
         # incompatible numeric type
-        @test_throws ArgumentError is_interior_point([1.0], H)
+        @test_throws ArgumentError is_interior_point([0.0, 0.0], H)
     end
 
     # linear_map
@@ -626,10 +626,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !isdisjoint(H, H2)
         r = LazySets._rtol(N)
         @assert r > N(1e-10) "default tolerance changed; adapt test"
-        LazySets.set_rtol(N, N(1e-10))
+        set_rtol(N, N(1e-10))
         @test_broken isdisjoint(H, H2)  # cannot adapt tolerance of LP solver
         # restore tolerance
-        LazySets.set_rtol(N, r)
+        set_rtol(N, r)
     end
 
     # isequal

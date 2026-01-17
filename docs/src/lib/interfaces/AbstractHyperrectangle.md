@@ -36,6 +36,7 @@ CurrentModule = LazySets
 ```@docs
 constraints_list(::AbstractHyperrectangle)
 isflat(::AbstractHyperrectangle)
+isflat(::AbstractHyperrectangle, ::Int)
 ```
 ```@docs; canonical=false
 ngens(::AbstractZonotope)
