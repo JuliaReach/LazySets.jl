@@ -42,6 +42,8 @@ for N in @tN([Float32, Float64, Rational{Int}])
 end
 
 for N in @tN([Float32, Float64])
+    P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], hcat(N[0, 1]), [2 1; 0 1; 1 0], [1, 3, 5])
+    M = N[1 1; -1 1]
     # overapproximate matrix zonotope with interval matrix
     @static if isdefined(@__MODULE__, :IntervalMatrices)
         MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
@@ -64,13 +66,18 @@ for N in @tN([Float32, Float64])
         @test isapprox(center(res), center(res2))
 
         @static if isdefined(@__MODULE__, :ExponentialUtilities) || isdefined(@__MODULE__, :Expokit)
-            # matrix
-            M = N[1 1; -1 1]
-            mzexp = SparseMatrixExp(sparse(M))
-            em = ExponentialMap(mzexp, P)
-            MPex = overapproximate(em, SparsePolynomialZonotope, 2)
-            MZex = overapproximate(MPex, Zonotope)
-            @test MZex ⊆ Zex
+        # monotonicity test
+        mzexp = MatrixZonotopeExp(MZ)
+        em = ExponentialMap(mzexp, P)
+        MPex = overapproximate(em, SparsePolynomialZonotope, 2)
+        MZex = overapproximate(MPex, Zonotope)
+
+        Z = overapproximate(convert(SimpleSparsePolynomialZonotope, P), Zonotope)
+        em_z = ExponentialMap(mzexp, Z)
+        Zex = overapproximate(em_z, Zonotope, 5)
+
+        @test MZex ⊆ Zex
+
         end
     end
 end

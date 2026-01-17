@@ -128,8 +128,7 @@ end
 
 function load_intervalmatrices_overapproximation_expmap()
     return quote
-        using .IntervalMatrices: IntervalMatrix, _exp_remainder  # NOTE: `_exp_remainder` is an internal function
-
+        using .IntervalMatrices: IntervalMatrix
         """
             taylor_expmap_remainder(Z::AbstractZonotope{N}, matnorm::Real, Int) where {N}
 
