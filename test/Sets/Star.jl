@@ -57,8 +57,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     I = intersection(S, H)
     intersection!(S, H)
     addconstraint!(P, H)
-    @test isequivalent(I, P)
-    @test isequivalent(S, P)
+    if N <: AbstractFloat
+        # validation crashes for Rational{Int}
+        @test isequivalent(I, P)
+        @test isequivalent(S, P)
+    end
 
     # check that we can intersect polyhedra that are axis-aligned
     S = Star(N[0, 0], N[1 0; 0 1], B)

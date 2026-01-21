@@ -286,11 +286,6 @@ function ρ_helper(d::AbstractVector{M},
     X = cap.X # compact set
     H = cap.Y # half-space or hyperplane or line
 
-    # if the intersection is empty => stop
-    if isempty(cap)
-        error("the intersection is empty")
-    end
-
     if !use_precise_ρ(cap) || algorithm == "simple"
         return _ρ_min(d, cap)
     elseif algorithm == "line_search"
