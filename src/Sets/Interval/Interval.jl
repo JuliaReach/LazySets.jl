@@ -71,7 +71,7 @@ struct Interval{N} <: AbstractHyperrectangle{N}
     dat::IA.Interval{N}
 
     function Interval(dat::IA.Interval{N}) where {N}
-        @assert isfinite(dat.lo) && isfinite(dat.hi) "intervals must be bounded"
+        @assert isfinite(IA.inf(dat)) && isfinite(IA.sup(dat)) "intervals must be bounded"
 
         return new{N}(dat)
     end

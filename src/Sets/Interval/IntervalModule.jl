@@ -93,7 +93,7 @@ Return the lower component of an interval.
 The lower (`lo`) component of the interval (a number).
 """
 function min(X::Interval)
-    return X.dat.lo
+    return IA.inf(X.dat)
 end
 
 """
@@ -110,7 +110,7 @@ Return the higher or upper component of an interval.
 The higher (`hi`) component of the interval (a number).
 """
 function max(X::Interval)
-    return X.dat.hi
+    return IA.sup(X.dat)
 end
 
 """
