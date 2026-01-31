@@ -10,11 +10,11 @@ An `Interval`, even if it represents a singleton only containing the origin
 """
 function rectify(X::Interval)
     N = eltype(X)
-    if X.dat.lo >= zero(N)
+    if IA.inf(X.dat) >= zero(N)
         # interval is already nonnegative
         return X
     else
         # lower end is negative
-        return Interval(zero(N), Base.max(X.dat.hi, zero(N)))
+        return Interval(zero(N), Base.max(IA.sup(X.dat), zero(N)))
     end
 end

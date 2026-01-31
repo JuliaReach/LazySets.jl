@@ -635,7 +635,7 @@ function load_taylormodels_overapproximation()
                 for j in (n + 1):(n + m)
                     G[i, j] = zero(N)
                 end
-                G[i, n + i] = abs(rem_nonlin.hi - α)
+                G[i, n + i] = abs(IA.sup(rem_nonlin) - α)
             end
 
             if remove_redundant_generators
