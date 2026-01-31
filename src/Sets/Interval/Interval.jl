@@ -44,7 +44,7 @@ conflict otherwise.
 ```jldoctest interval_constructor
 julia> using IntervalArithmetic
 
-julia> x = LazySets.Interval(IntervalArithmetic.Interval(0.0, 1.0))
+julia> x = LazySets.Interval(IntervalArithmetic.interval(0.0, 1.0))
 LazySets.IntervalModule.Interval{Float64}([0, 1])
 
 julia> dim(x)
