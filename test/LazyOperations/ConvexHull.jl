@@ -60,6 +60,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !ispolytopic(ch2) && !ispolytopictype(typeof(ch))
     end
 
+    # constraints_list
+    clist = constraints_list(ch)
+    @test typeof(clist) == Vector{HalfSpace{N,Vector{N}}}
+    @test ispermutation(clist,
+                        [HalfSpace(N[1, 1], N(4)), HalfSpace(N[-1, 1], N(2)),
+                         HalfSpace(N[-2, 1], N(2)), HalfSpace(N[-1, -1], N(1)),
+                         HalfSpace(N[1, -1], N(1)), HalfSpace(N[2, -1], N(2))])
+
     # isempty
     @test !isempty(ch)
 
@@ -122,6 +130,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !ispolyhedral(cha2) && !ispolyhedraltype(typeof(cha2))
         @test !ispolytopic(cha2) && !ispolytopictype(typeof(cha))
     end
+
+    # constraints_list
+    clist = constraints_list(cha)
+    @test typeof(clist) == Vector{HalfSpace{N,Vector{N}}}
+    @test ispermutation(clist,
+                        [HalfSpace(N[1, 1], N(4)), HalfSpace(N[-1, 1], N(2)),
+                         HalfSpace(N[-2, 1], N(2)), HalfSpace(N[-1, -1], N(1)),
+                         HalfSpace(N[1, -1], N(1)), HalfSpace(N[2, -1], N(2))])
 
     # isempty
     @test !isempty(cha)

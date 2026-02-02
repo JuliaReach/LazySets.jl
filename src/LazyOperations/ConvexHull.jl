@@ -221,6 +221,12 @@ function vertices_list(ch::ConvexHull;
     return vlist
 end
 
+function constraints_list(ch::ConvexHull)
+    ST = (dim(ch) == 2) ? VPolygon : VPolytope
+    V = convert(ST, ch)
+    return constraints_list(V)
+end
+
 @validate function translate(ch::ConvexHull, x::AbstractVector)
     X = translate(first(ch), x)
     Y = translate(second(ch), x)
