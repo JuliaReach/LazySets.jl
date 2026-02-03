@@ -67,6 +67,35 @@ end
     return _difference_emptyset2(X, ∅)
 end
 
+# idea: successively carve out a constraint of Q from P and collect the complement intersections
+#
+# let S := []
+# let R := P
+# for each constraint H of Q
+# - add (R \ H^C) to S  (H^C is the complement of H)
+# - let R := R \ H
+#
+# at the end, the following holds:
+# - R = P ∩ Q
+# - S = P \ Q in the form of a union of disjoint polyhedra
+@validate function difference(P::LazySet, Q::LazySet)
+    @assert ispolyhedral(P) && ispolyhedral(Q) "this implementation assumes polyhedral sets but " *
+                                               "got $P and $Q"
+
+    N = promote_type(eltype(P), eltype(Q))
+    sets = Vector{LazySet{N}}()
+    R = P
+    for H in constraints_list(Q)
+        if R ⊆ H
+            # constraint is irrelevant
+            continue
+        end
+        push!(sets, intersection(R, complement(H)))
+        R = intersection(R, H)
+    end
+    return UnionSetArray(sets)
+end
+
 # ============== #
 # disambiguation #
 # ============== #
