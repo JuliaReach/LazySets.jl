@@ -13,10 +13,12 @@ import Aqua, ExplicitImports
                :Library, :get_degrees, :hcartesianproduct, :intersect, :isempty, :_exp_remainder,
                :hvectortype, :value, :setvrep!, :supportssolver, :vcartesianproduct, :Arr,
                :get_variables, :gradient, :Ellipsoid, :InteriorPoint, :Sets, :Translation,
-               :ellipsoid, :invokelatest, :parse)
+               :ellipsoid, :invokelatest, :parse, :inf, :sup)
     @test isnothing(ExplicitImports.check_all_qualified_accesses_are_public(LazySets;
                                                                             ignore=ignores))
-    @test isnothing(ExplicitImports.check_all_qualified_accesses_via_owners(LazySets))
+    ignores = (:inf, :sup)  # defined in IntervalArithmetic but imported through IntervalBoxes
+    @test isnothing(ExplicitImports.check_all_qualified_accesses_via_owners(LazySets;
+                                                                            ignore=ignores))
     @test isnothing(ExplicitImports.check_no_implicit_imports(LazySets))
     @test isnothing(ExplicitImports.check_no_self_qualified_accesses(LazySets))
     ignores = (:apply_recipe,)  # required for documentation

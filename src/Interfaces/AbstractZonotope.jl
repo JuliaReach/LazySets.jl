@@ -640,11 +640,7 @@ end
 
 function flat_dimensions(Z::AbstractZonotope)
     G = genmat(Z)
-    @static if VERSION >= v"1.7"
-        res = findall(iszero, eachrow(G))
-    else
-        res = findall(iszero, collect(eachrow(G)))
-    end
+    res = findall(iszero, eachrow(G))
     return res
 end
 
@@ -865,9 +861,6 @@ function remove_redundant_generators(G::AbstractMatrix)
 
     # sort column in ascending order
     cols = eachcol(Gnorm)
-    if VERSION < v"1.9"
-        cols = collect(cols)
-    end
     ord = sortperm(cols)
     merged = Vector{Vector{eltype(G)}}()
 

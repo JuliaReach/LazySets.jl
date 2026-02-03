@@ -1,6 +1,4 @@
 using LazySets, Test
-IA = LazySets.IA
-using LazySets.IA: IntervalBox
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

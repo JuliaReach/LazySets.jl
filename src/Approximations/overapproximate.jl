@@ -1,5 +1,4 @@
 using LazySets: substitute_blocks,
-                fast_interval_pow,
                 get_constrained_lowdimset
 
 """
@@ -368,7 +367,7 @@ function overapproximate(P::AbstractSparsePolynomialZonotope,
         return UnionSetArray([overapproximate(P, Zonotope)])
     end
 
-    dom = IA.IntervalBox(IA.interval(-1, 1), q)
+    dom = fill(IA.interval(-1, 1), q)
     cells = IA.mince(dom, isnothing(partition) ? nsdiv : partition)
     return UnionSetArray([overapproximate(P, Zonotope, c) for c in cells])
 end
@@ -675,51 +674,6 @@ function overapproximate(P::AbstractSparsePolynomialZonotope{N}, ::Type{<:VPolyt
 
     return VPolytope(vlist)
 end
-
-# function to be loaded by Requires
-function load_paving_overapproximation()
-    return quote
-        using .IntervalConstraintProgramming: Paving
-
-        """
-            overapproximate(p::Paving{L, N}, dirs::AbstractDirections{N, VN})
-                where {L, N, VN}
-
-        Overapproximate a Paving-type set representation with a polyhedron in constraint
-        representation.
-
-        ### Input
-
-        - `p`    -- paving
-        - `dirs` -- template directions
-
-        ### Output
-
-        An overapproximation of a paving using a polyhedron in constraint representation
-        (`HPolyhedron`) with constraints in direction `dirs`.
-
-        ### Algorithm
-
-        This function takes the union of the elements at the boundary of `p`, first
-        converted into hyperrectangles, and then calculates the support function of the
-        set along each  direction in dirs, to compute the `HPolyhedron` constraints.
-
-        This algorithm requires the IntervalConstraintProgramming package.
-        """
-        function overapproximate(p::Paving{L,N}, dirs::AbstractDirections{N,VN}) where {L,N,VN}
-            # enclose outer approximation
-            Uouter = UnionSetArray(convert.(Hyperrectangle, p.boundary))
-            constraints = [HalfSpace(d, ρ(d, Uouter)) for d in dirs]
-            return HPolyhedron(constraints)
-        end
-
-        # alias with HPolyhedron type as second argument
-        function overapproximate(p::Paving{L,N}, ::Type{<:HPolyhedron},
-                                 dirs::AbstractDirections{N,VN}) where {L,N,VN}
-            return overapproximate(p, dirs)
-        end
-    end
-end  # quote / load_paving_overapproximation
 
 """
 # Extended help

@@ -24,7 +24,7 @@ using ReachabilityBase.Require: require
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens,
                              radius_hyperrectangle, rationalize, split
 import ..LazySets: plot_recipe
-import Base: convert, min, max
+import Base: ==, convert, min, max
 @reexport using ..API
 
 export Interval
@@ -78,6 +78,7 @@ include("radius_hyperrectangle.jl")
 include("split.jl")
 
 include("convert.jl")
+include("isequal.jl")
 
 """
     min(X::Interval)

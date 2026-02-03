@@ -1,6 +1,6 @@
 name = "LazySets"
 uuid = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
-version = "5.2.1"
+version = "6.0.0"
 
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
@@ -21,7 +21,7 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 Distributed = "<0.0.1, 1.6"
 ExprTools = "0.1"
 GLPK = "0.11 - 0.15, 1"
-IntervalArithmetic = "0.15 - 0.21, =0.21.2"  # v0.22 removed IntervalBox
+IntervalArithmetic = "0.22 - 1"
 JuMP = "0.21 - 0.23, 1"
 LinearAlgebra = "<0.0.1, 1.6"
 Random = "<0.0.1, 1.6"
@@ -31,4 +31,4 @@ Reexport = "0.2, 1"
 Requires = "0.5, 1"
 SharedArrays = "<0.0.1, 1.6"
 SparseArrays = "<0.0.1, 1.6"
-julia = "1.6"
+julia = "1.10"

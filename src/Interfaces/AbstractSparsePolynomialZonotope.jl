@@ -223,7 +223,7 @@ function load_RangeEnclosures_support_function()
 
             f(x) = sum(d' * gi * prod(x .^ ei) for (gi, ei) in zip(eachcol(G), eachcol(E)))
 
-            dom = IA.IntervalBox(IA.interval(-1, 1), n)
+            dom = fill(IA.interval(-1, 1), n)
             res += IA.sup(RangeEnclosures.enclose(f, dom, method))
             return res
         end

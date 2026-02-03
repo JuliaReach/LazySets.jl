@@ -193,10 +193,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test ispermutation(collect(vertices(B)), vertices_list(B))
 
     # set difference
-    B = BallInf(N[0, 0, 0], N(1))
-    @test isempty(difference(B, B))
+    @static if isdefined(@__MODULE__, :IntervalBoxes)
+        B = BallInf(N[0, 0, 0], N(1))
+        @test isempty(difference(B, B))
+    end
 
     # volume
+    B = BallInf(N[0, 0, 0], N(1))
     @test volume(B) ≈ N(8)
 
     # projection

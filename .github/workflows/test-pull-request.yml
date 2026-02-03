@@ -25,7 +25,7 @@ jobs:
         arch:
           - x64
         include:
-          - version: '1.6'  # test on oldest supported version
+          - version: '1.10'  # test on oldest supported version
             arch: x64
             os: ubuntu-latest
     env:

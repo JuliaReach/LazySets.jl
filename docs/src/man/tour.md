@@ -96,17 +96,6 @@ vector:
 H = convert(Hyperrectangle, C)
 ```
 
-IntervalArithmetic.jl represents multi-dimensional intervals with the type
-`IntervalBox`, to which we can also `convert`:
-
-```@example tour
-using IntervalArithmetic: IntervalBox
-
-Hbox = convert(IntervalBox, H)
-
-typeof(Hbox)
-```
-
 Hyperrectangles are a special subclass of
 [zonotopes](https://juliareach.github.io/LazySets.jl/dev/lib/sets/Zonotope/).
 

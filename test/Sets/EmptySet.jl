@@ -183,8 +183,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # singleton_list
     res = singleton_list(E)
-    T = VERSION < v"1.7" ? Singleton : Singleton{N,Vector{N}}
-    @test res isa Vector{T} && isempty(res)
+    @test res isa Vector{Singleton{N,Vector{N}}} && isempty(res)
 
     # tosimplehrep
     @test_throws MethodError tosimplehrep(E)  # TODO this should maybe change
