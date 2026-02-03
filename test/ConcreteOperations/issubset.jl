@@ -62,6 +62,19 @@ for N in @tN([Float64, Float32, Rational{Int}])
     res, w = ⊆(B, U, true)
     @test !(B ⊆ U) && !res && w ∈ B && w ∉ U
 
+    # polytope in union of polytopes
+    P = VPolytope([N[3 // 2, 0], [0, 3 // 2], [-3 // 2, 0], [0, -3 // 2]])
+    U = UnionSetArray([convert(VPolytope, Hyperrectangle(N[0, 0], N[1, 1]))])
+    @test !(P ⊆ U)
+    res, w = ⊆(P, U, true)
+    @test !res && w ∈ P
+    @test_broken w ∉ U  # TODO implement `_an_element_interior`
+    if N == Float64
+        @test w isa Vector{N}
+    else
+        @test w isa Vector{Float64}
+    end
+
     # nonconvex set in polyhedron
     Pnc = Polygon([N[0, 0], N[0, 2], N[2, 2], N[2, 0], N[1, 1]])
     P = HPolyhedron([HalfSpace(N[1, 0], N(3)), HalfSpace(N[-1, 0], N(0)),

@@ -1676,3 +1676,9 @@ end
 
 # internal function to detect parametric set types
 isparametrictype(::Type{<:LazySet}) = false
+
+# return an element from the interior
+# default: use `an_element`
+function _an_element_interior(X::LazySet)
+    return an_element(X)
+end

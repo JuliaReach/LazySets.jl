@@ -491,22 +491,29 @@ function _issubset_unionsetarray(X, U, witness::Bool=false;
         sets = array(U)
     end
 
+    # queue contains pairs `(S, I)` where `S` is a set and `I` is a list of
+    # indices from `sets` that have been checked; `I` is needed for termination
+    # because when computing the difference `P \ Q`, the result still intersects
+    # with `Q` because sets in this library are closed
     queue = _inclusion_in_union_container(X, U)
-    push!(queue, X)
+    push!(queue, (X, Int[]))
     while !isempty(queue)
-        Y = pop!(queue)
+        Y, indices = pop!(queue)
         # first check if Y is fully contained to avoid splitting/recursion
         # keep track of the first set that intersects with Y
         idx = 0
         contained = false
         for (i, rhs) in enumerate(sets)
-            if Y ⊆ rhs
+            if i ∈ indices
+                continue
+            elseif Y ⊆ rhs
                 contained = true
                 break
             elseif idx == 0 && !isdisjoint(Y, rhs)
-                # does not terminate if the intersection is flat
+                # termination issues if the intersection is flat
+                # (due to remembering the indices, it does terminate, though)
                 cap = intersection(Y, rhs)
-                if !isempty(cap) && !_inclusion_in_union_isflat(cap)
+                if !isempty(cap) && !_isflat_sufficient(cap)
                     idx = i
                 end
             end
@@ -515,32 +522,43 @@ function _issubset_unionsetarray(X, U, witness::Bool=false;
             continue
         end
         if idx == 0
-            return witness ? (false, an_element(Y)) : false
+            # Y does not intersect with `sets`, except at shared facets
+            if witness
+                # w = an_element(Y)  # does not work because w may be on shared facet
+                w = _an_element_interior(Y)
+                return (false, w)
+            else
+                return false
+            end
         end
         # split wrt. the i-th set
         rhs = sets[idx]
-        append!(queue, array(difference(Y, rhs)))
+        indices_new = copy(indices)
+        push!(indices_new, idx)
+        for Z in array(difference(Y, rhs))
+            push!(queue, (Z, indices_new))
+        end
     end
     return _witness_result_empty(witness, true, X, U)
 end
 
 # general container
 function _inclusion_in_union_container(X::LazySet{N}, U::UnionSetArray) where {N}
-    return LazySet{N}[]
+    return Tuple{<:LazySet{N},Vector{Int}}[]
 end
 
 # hyperrectangle container
 function _inclusion_in_union_container(H::AbstractHyperrectangle,
                                        U::UnionSetArray{N,<:AbstractHyperrectangle}) where {N}
-    return AbstractHyperrectangle{N}[]
+    return Tuple{<:AbstractHyperrectangle{N},Vector{Int}}[]
 end
 
-# generally ignore check for flat sets
-function _inclusion_in_union_isflat(X)
+# generally hard to determine
+function _isflat_sufficient(X::LazySet)
     return false
 end
 
-function _inclusion_in_union_isflat(H::AbstractHyperrectangle)
+function _isflat_sufficient(H::AbstractHyperrectangle)
     return isflat(H)
 end
 
