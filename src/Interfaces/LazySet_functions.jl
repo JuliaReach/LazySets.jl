@@ -1093,7 +1093,7 @@ end
 
 The default implementation computes all vertices via `vertices_list`.
 """
-function vertices(X::LazySet)
+@validate function vertices(X::LazySet)
     return vertices_list(X)
 end
 

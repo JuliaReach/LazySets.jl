@@ -287,7 +287,7 @@ A list of vertices of the Minkowski sum of two sets.
 We compute the concrete Minkowski sum (via `minkowski_sum`) and call
 `vertices_list` on the result.
 """
-function vertices_list(ms::MinkowskiSum)
+@validate function vertices_list(ms::MinkowskiSum)
     return vertices_list(minkowski_sum(ms.X, ms.Y))
 end
 

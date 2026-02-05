@@ -79,11 +79,21 @@ function validate_triangulate_faces(X::LazySet)
 end
 push!(VALIDATE_DICT, :triangulate_faces => (validate_triangulate_faces, args1))
 
-# function validate_vertices_list(X::LazySet)
-#     # require polytopic set?
-# end
-# push!(VALIDATE_DICT, :vertices_list => (validate_vertices_list, args1))
-# push!(VALIDATE_DICT, :vertices => (validate_vertices, args1))
+function validate_vertices(X::LazySet)
+    if !ispolytopic(X)
+        throw(ArgumentError("`vertices` requires a polytopic set"))
+    end
+    return true
+end
+push!(VALIDATE_DICT, :vertices => (validate_vertices, args1))
+
+function validate_vertices_list(X::LazySet)
+    if !ispolytopic(X)
+        throw(ArgumentError("`vertices_list` requires a polytopic set"))
+    end
+    return true
+end
+push!(VALIDATE_DICT, :vertices_list => (validate_vertices_list, args1))
 
 # mixed set operations
 

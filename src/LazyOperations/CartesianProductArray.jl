@@ -420,7 +420,7 @@ We assume that the underlying sets are polytopic.
 Then the high-dimensional set of vertices is just the Cartesian product of the
 low-dimensional sets of vertices.
 """
-function vertices_list(cpa::CartesianProductArray)
+@validate function vertices_list(cpa::CartesianProductArray)
     # collect low-dimensional vertices lists
     vlist_low = [vertices_list(X) for X in cpa]
 
