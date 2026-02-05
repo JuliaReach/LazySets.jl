@@ -34,7 +34,7 @@ end
 # interfaces (see #1493)
 function default_lp_solver_polyhedra(N; kwargs...)
     require(@__MODULE__, :Polyhedra; fun_name="default_lp_solver_polyhedra")
-    return error("no default solver for numeric type $N")
+    return throw(ArgumentError("no default solver for numeric type $N"))
 end
 
 """
@@ -77,5 +77,5 @@ function isfeasible(A::AbstractMatrix, b::AbstractVector, witness::Bool=false;
     elseif is_lp_infeasible(lp.status)
         return _witness_result_empty(witness, false, N)
     end
-    return error("LP returned status $(lp.status) unexpectedly")
+    return throw(ArgumentError("unexpected LP solver status: $(lp.status)"))
 end

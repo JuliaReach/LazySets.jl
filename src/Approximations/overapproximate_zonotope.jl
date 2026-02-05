@@ -116,7 +116,7 @@ function _overapproximate_union_zonotope(X::LazySet, algorithm)
     elseif algorithm == "join"
         return _overapproximate_union_zonotope_GGP09(X)
     else
-        error("algorithm $algorithm is not known")
+        throw(ArgumentError("algorithm $algorithm unknown"))
     end
 end
 
@@ -753,7 +753,7 @@ function overapproximate(X::LazySet, ZT::Type{<:Zonotope},
         cpa = _overapproximate_zonotope_cpa(X, dir)
         return convert(Zonotope, cpa)
     else
-        throw(ArgumentError("algorithm $algorithm is not known"))
+        throw(ArgumentError("algorithm $algorithm unknown"))
     end
 end
 
@@ -880,7 +880,7 @@ function _overapproximate_zonotope_vrep(X::LazySet{N},
     lp = linprog(obj, A, sense, b, lbounds, ubounds, solver)
 
     if !is_lp_optimal(lp.status)
-        error("got unexpected status from LP solver: $(lp.status)")
+        throw(ArgumentError("got unexpected status from LP solver: $(lp.status)"))
     end
     c = lp.sol[(col_offset_p + 1):(col_offset_p + n)]
     ck = lp.sol[1:l]

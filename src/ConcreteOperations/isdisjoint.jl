@@ -362,13 +362,13 @@ function _isdisjoint_polyhedron(P::AbstractPolyhedron, X::LazySet,
             end
         end
         if witness
-            error("witness production is not supported yet")
+            throw(ArgumentError("witness production is not supported yet"))
         end
         return false
     elseif algorithm == "exact"
         # exact check for empty intersection using a feasibility LP
         if !ispolyhedral(X)
-            error("this algorithm requires a polyhedral input")
+            throw(ArgumentError("this algorithm requires a polyhedral input"))
         end
         clist_P = _normal_Vector(P) # TODO
         clist_X = _normal_Vector(X) # TODO
@@ -377,7 +377,7 @@ function _isdisjoint_polyhedron(P::AbstractPolyhedron, X::LazySet,
         end
         return _isinfeasible([clist_P; clist_X], witness; solver=solver)
     else
-        error("algorithm $algorithm unknown")
+        throw(ArgumentError("algorithm $algorithm unknown"))
     end
 end
 
@@ -468,7 +468,7 @@ end
 function _isdisjoint_cpa_polyhedron(cpa::CartesianProductArray, P, witness)
     cpa_low_dim, vars, _block_structure = get_constrained_lowdimset(cpa, P)
     if !ispolyhedral(cpa_low_dim)
-        error("a polyhedral set is required")
+        throw(ArgumentError("this implementation requires a polyhedral set"))
     end
     T = isboundedtype(typeof(cpa_low_dim)) ? HPolytope : HPolyhedron
     hpoly_low_dim = T(constraints_list(cpa_low_dim))
@@ -499,7 +499,7 @@ Witness production is currently not supported.
         end
     end
     if witness
-        error("witness production is not supported yet")
+        throw(ArgumentError("witness production is not supported yet"))
     else
         return false
     end
@@ -606,7 +606,7 @@ end
     elseif is_lp_infeasible(lp.status)
         disjoint = true
     else
-        return error("LP returned status $(lp.status) unexpectedly")
+        throw(ArgumentError("unexpected LP solver status: $(lp.status)"))
     end
 
     if disjoint

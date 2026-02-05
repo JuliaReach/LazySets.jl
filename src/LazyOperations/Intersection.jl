@@ -288,7 +288,7 @@ function ρ_helper(d::AbstractVector{M},
 
     # if the intersection is empty => stop
     if isempty(cap)
-        error("the intersection is empty")
+        throw(ArgumentError("the intersection is empty"))
     end
 
     if !use_precise_ρ(cap) || algorithm == "simple"
@@ -303,7 +303,7 @@ function ρ_helper(d::AbstractVector{M},
                                                  "cannot be used with a $(typeof(H)); it only works with hyperplanes"
         return _projection(d, X, H; kwargs...)
     else
-        error("algorithm $algorithm unknown")
+        throw(ArgumentError("algorithm $algorithm unknown"))
     end
 end
 

@@ -4,7 +4,7 @@ end
 
 function _underapproximate_box(X::S, solver) where {S<:LazySet}
     if !ispolytopic(X)
-        error("box underapproximation is only available for convex polytopes")
+        throw(ArgumentError("box underapproximation is only available for convex polytopes"))
     end
 
     n = dim(X)

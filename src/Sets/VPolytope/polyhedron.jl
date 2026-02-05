@@ -42,10 +42,10 @@ function load_Polyhedra_polyhedron()
                             relative_dimension=nothing)
             if isempty(P)
                 if isnothing(relative_dimension)
-                    error("the conversion to a `Polyhedra.polyhedron` requires the " *
-                          "(relative) dimension of the `VPolytope` to be known, but it " *
-                          "cannot be inferred from an empty set; use the keyword " *
-                          "argument `relative_dimension`")
+                    throw(ArgumentError("the conversion to a `Polyhedra.polyhedron` requires the " *
+                                        "(relative) dimension of the `VPolytope` to be known, " *
+                                        "but it cannot be inferred from an empty set; use the " *
+                                        "keyword argument `relative_dimension`"))
                 end
                 return polyhedron(Polyhedra.vrep(P.vertices; d=relative_dimension), backend)
             end

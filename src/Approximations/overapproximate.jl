@@ -123,10 +123,10 @@ function overapproximate(X::S, ::Type{<:HPolytope}) where {S<:LazySet}
                             "using polygons in constraint representation; try " *
                             "`overapproximate(X, HPolygon)`"))
     else
-        throw(ArgumentError("epsilon-close approximation is only available " *
-                            "for two-dimensional sets; try " *
-                            "`overapproximate(X, HPolytope, dirs)` where `dirs` are " *
-                            "template directions, e.g., `BoxDirections` or `OctDirections`"))
+        throw(DimensionMismatch("epsilon-close approximation is only available " *
+                                "for two-dimensional sets; try " *
+                                "`overapproximate(X, HPolytope, dirs)` where `dirs` are " *
+                                "template directions, e.g., `BoxDirections` or `OctDirections`"))
     end
 end
 
@@ -199,8 +199,8 @@ end
 function overapproximate(X::LazySet, ::Type{<:HPolytope},
                          dirs::AbstractDirections; prune::Bool=true)
     P = overapproximate(X, dirs; prune=prune)
-    P isa HPolytope || throw(ArgumentError("cannot overapproximate with an " *
-                                           "`HPolytope` because the set is unbounded; try using an `HPolyhedron`"))
+    P isa HPolytope || throw(ArgumentError("cannot overapproximate with an `HPolytope` because " *
+                                           "the set is unbounded; try using an `HPolyhedron`"))
     return P
 end
 
@@ -402,15 +402,15 @@ function overapproximate(Z::AbstractZonotope, ::Type{<:HParallelotope},
 end
 
 function _overapproximate_hparallelotope(Z::AbstractZonotope, indices=1:dim(Z))
-    length(indices) == dim(Z) || throw(ArgumentError("the number of " *
-                                                     "generator indices is $(length(indices)), but it was expected to be " *
-                                                     "$(dim(Z))"))
+    length(indices) == dim(Z) || throw(ArgumentError("the number of generator indices is " *
+                                                     "$(length(indices)), but it was expected to " *
+                                                     "be $(dim(Z))"))
 
     p, n = ngens(Z), dim(Z)
     if p == n
         return Z
     elseif p < n
-        error("the zonotope order is $(order(Z)) but it should be at least 1")
+        throw(ArgumentError("the zonotope order is $(order(Z)), but it should be at least 1"))
     end
 
     G = genmat(Z)
@@ -443,8 +443,9 @@ This function implements [LeGuernic09; Algorithm 8.1](@citet).
 """
 function overapproximate(X::Intersection{N,<:AbstractZonotope,<:Hyperplane},
                          dirs::AbstractDirections) where {N}
-    dim(X) == dim(dirs) || throw(ArgumentError("the dimension of the set " *
-                                               "$(dim(X)) does not match the dimension of the directions $(dim(dirs))"))
+    dim(X) == dim(dirs) || throw(DimensionMismatch("the dimension of the set $(dim(X)) does not " *
+                                                   "match the dimension of the directions " *
+                                                   "$(dim(dirs))"))
     Z, G = first(X), second(X)
 
     if isdisjoint(Z, G)
@@ -1051,5 +1052,5 @@ function _circumsphere_trivial(R, B0)
         r = (na * nb * norm(a - b)) / (2 * sqrt(aux))
         return Ball2(c, r)
     end
-    return error("this case is not implemented yet")  # TODO add higher-dimensional cases
+    return throw(ArgumentError("this case is not implemented yet"))  # TODO add higher-dimensional cases
 end

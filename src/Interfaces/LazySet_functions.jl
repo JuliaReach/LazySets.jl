@@ -530,7 +530,7 @@ function _norm_fallback(X::LazySet, p::Real)
     if ispolytopic(X)
         return maximum(norm(v, p) for v in vertices_list(X))
     else
-        error("the norm for this value of p=$p is not implemented")
+        throw(ArgumentError("the norm for the value p=$p is not implemented"))
     end
 end
 
@@ -566,7 +566,7 @@ The default implementation handles the following cases:
     elseif p == 2
         return _radius_2(X)
     else
-        error("the radius for this value of p=$p is not implemented")
+        throw(ArgumentError("the radius for the value p=$p is not implemented"))
     end
 end
 
@@ -732,8 +732,8 @@ by calling `minkowski_sum(A, reflect(B))`.
 """
 function reflect(P::LazySet)
     if !ispolyhedral(P)
-        error("this implementation requires a polyhedral set; try " *
-              "overapproximating with an `HPolyhedron` first")
+        throw(ArgumentError("this implementation requires a polyhedral set; try " *
+                            "overapproximating with an `HPolyhedron` first"))
     end
 
     F, g = tosimplehrep(P)
@@ -1383,7 +1383,7 @@ function chebyshev_center_radius(P::LazySet;
                                  solver=default_lp_solver_polyhedra(eltype(P); presolve=true))
     require(@__MODULE__, :Polyhedra; fun_name="chebyshev_center")
     if !ispolytopic(P)
-        error("can only compute a Chebyshev center for polytopes")
+        throw(ArgumentError("can only compute a Chebyshev center for polytopes"))
     end
 
     Q = polyhedron(P; backend=backend)
@@ -1555,7 +1555,7 @@ function _isempty_polyhedron_polyhedra(P::LazySet{N}, witness::Bool=false;
     if result
         return _witness_result_empty(witness, true, N)
     elseif witness
-        error("witness production is not supported yet")
+        throw(ArgumentError("witness production is not supported yet"))
     else
         return false
     end

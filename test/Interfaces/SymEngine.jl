@@ -10,5 +10,5 @@ using LazySets, Test
     # _free_symbols
     @test LazySets._free_symbols(:(x1 = 1)) == [SymEngine.Basic(:(x1))]
     @test LazySets._free_symbols(:(2 * x2 <= 4)) == [SymEngine.Basic(:(x2))]
-    @test_throws ErrorException LazySets._free_symbols(:(x3 != 4))
+    @test_throws ArgumentError LazySets._free_symbols(:(x3 != 4))
 end
