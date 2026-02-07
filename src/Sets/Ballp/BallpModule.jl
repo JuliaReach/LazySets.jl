@@ -10,7 +10,7 @@ using ReachabilityBase.Require: require
 
 @reexport import ..API: center, isoperationtype, rand, reflect, project, scale,
                         translate!
-@reexport import ..LazySets: ball_norm, radius_ball
+@reexport import ..LazySets: norm_ball, radius_ball
 @reexport using ..API
 
 export Ballp
@@ -25,7 +25,7 @@ include("reflect.jl")
 include("scale.jl")
 include("translate.jl")
 
-include("ball_norm.jl")
+include("norm_ball.jl")
 include("radius_ball.jl")
 
 include("init.jl")

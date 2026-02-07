@@ -14,7 +14,7 @@ using ReachabilityBase.Require: require
 @reexport import ..API: center, constraints_list, high, isoperationtype, low,
                         rand, reflect, vertices_list, in, project, scale, ρ, σ,
                         translate!
-@reexport import ..LazySets: ball_norm, radius_ball
+@reexport import ..LazySets: norm_ball, radius_ball
 @reexport using ..API
 
 export Ball1
@@ -36,7 +36,7 @@ include("support_vector.jl")
 include("translate.jl")
 include("vertices_list.jl")
 
-include("ball_norm.jl")
+include("norm_ball.jl")
 include("radius_ball.jl")
 
 include("init.jl")

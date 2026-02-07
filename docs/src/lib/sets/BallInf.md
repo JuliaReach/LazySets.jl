@@ -108,7 +108,7 @@ Undocumented implementations:
 ```@meta
 CurrentModule = LazySets
 ```
-* [`ball_norm`](@ref ball_norm(::LazySet))
+* [`norm_ball`](@ref norm_ball(::LazySet))
 * [`radius_ball`](@ref radius_ball(::LazySet))
 
 Inherited from [`LazySet`](@ref):
