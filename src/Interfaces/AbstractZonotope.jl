@@ -436,9 +436,10 @@ function _vertices_list_zonotope_2D_positive(c::AbstractVector{N}, G::AbstractMa
     return vlist
 end
 
-function _vertices_list_zonotope_iterative(c::VN, G::AbstractMatrix{N};
-                                           apply_convex_hull::Bool) where {N,VN<:AbstractVector{N}}
+function _vertices_list_zonotope_iterative(c::AbstractVector{N}, G::AbstractMatrix{N};
+                                           apply_convex_hull::Bool) where {N}
     p = size(G, 2)
+    VN = vector_type(typeof(c))
     vlist = Vector{VN}()
     sizehint!(vlist, 2^p)
 
@@ -450,9 +451,9 @@ function _vertices_list_zonotope_iterative(c::VN, G::AbstractMatrix{N};
 end
 
 # special case 2D zonotope of order 1/2
-function _vertices_list_zonotope_2D_order_one_half(c::VN, G::AbstractMatrix{N};
-                                                   apply_convex_hull::Bool) where {N,
-                                                                                   VN<:AbstractVector{N}}
+function _vertices_list_zonotope_2D_order_one_half(c::AbstractVector{N}, G::AbstractMatrix{N};
+                                                   apply_convex_hull::Bool) where {N}
+    VN = vector_type(typeof(c))
     vlist = Vector{VN}(undef, 2)
     g = view(G, :, 1)
     @inbounds begin
@@ -463,9 +464,9 @@ function _vertices_list_zonotope_2D_order_one_half(c::VN, G::AbstractMatrix{N};
 end
 
 # special case 2D zonotope of order 1
-function _vertices_list_zonotope_2D_order_one(c::VN, G::AbstractMatrix{N};
-                                              apply_convex_hull::Bool) where {N,
-                                                                              VN<:AbstractVector{N}}
+function _vertices_list_zonotope_2D_order_one(c::AbstractVector{N}, G::AbstractMatrix{N};
+                                              apply_convex_hull::Bool) where {N}
+    VN = vector_type(typeof(c))
     vlist = Vector{VN}(undef, 4)
     a = [one(N), one(N)]
     b = [one(N), -one(N)]
