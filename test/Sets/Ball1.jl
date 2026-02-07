@@ -74,8 +74,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # radius_ball
     @test LazySets.radius_ball(b) == N(2)
 
-    # ball_norm
-    @test LazySets.ball_norm(b) == N(1)
+    # norm_ball
+    @test LazySets.norm_ball(b) == N(1)
 
     # low/high/extrema
     @test extrema(b) == (low(b), high(b)) == (N[-2, -2], N[2, 2])
