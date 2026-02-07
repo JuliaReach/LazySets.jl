@@ -459,15 +459,22 @@ function addconstraint!(constraints::Vector{<:HalfSpace}, new_constraint::HalfSp
     if k > 0
         d = new_constraint.a
         if d ⪯ constraints[1].a
-            k = 0
-        elseif linear_search
-            # linear search
-            while d ⪯ constraints[k].a
-                k -= 1
+            if constraints[1].a ⪯ d
+                # can happen due to floating-point imprecision; try again with normalized directions
+                d1 = normalize(d)
+                d2 = normalize(constraints[1].a)
+                if d1 ⪯ d2
+                    k = 0
+                elseif m == 1
+                    k = 1
+                else
+                    k = _get_insertion_index(m, d, constraints, linear_search)
+                end
+            else
+                k = 0
             end
         else
-            # binary search
-            k = binary_search_constraints(d, constraints; choose_lower=true)
+            k = _get_insertion_index(m, d, constraints, linear_search)
         end
     end
 
@@ -517,6 +524,19 @@ function addconstraint!(constraints::Vector{<:HalfSpace}, new_constraint::HalfSp
         insert!(constraints, k + 1, new_constraint)
     end
     return nothing
+end
+
+function _get_insertion_index(k, d, constraints, linear_search)
+    if linear_search
+        # linear search
+        while d ⪯ constraints[k].a
+            k -= 1
+        end
+    else
+        # binary search
+        k = binary_search_constraints(d, constraints; choose_lower=true)
+    end
+    return k
 end
 
 """

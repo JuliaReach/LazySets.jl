@@ -791,6 +791,18 @@ for N in [Float64]
     @test area(rationalize(P)) == 2 // 3
     Pr = rationalize(BigInt, P, 10 * eps(Float64))
     @test isa(Pr, HPolygon{Rational{BigInt},Vector{Rational{BigInt}}})
+
+    # rounding error makes first two constraints equal according to `⪯`
+    clist = [HalfSpace([0.015002029632632474, 0.002922288635110161], -0.0004461747231474431),
+             HalfSpace([1.7030005339258025e-7, 5.796631764171112e-8], -2.5083390350111008e-9),
+             HalfSpace([0.004578726181206236, 0.007501014816316202], 0.0005453263149111838),
+             HalfSpace([-7.186188031638174e-6, 0.00010768844445240705], 1.2009399405900732e-5),
+             HalfSpace([-0.015011176655164646, -0.002937295239993115], 0.0005458710770986539),
+             HalfSpace([-0.0045682930875895755, -0.007505588327582635], -0.0004466217903534558),
+             HalfSpace([5.674522813567395e-6, -8.811271703615398e-5], -8.030063961921716e-6),
+             HalfSpace([5.5294080189560724e-8, -5.357758450785788e-8], -7.314458428291394e-9)]
+    P = HPolygon(clist)
+    @test length(P.constraints) == 6
 end
 
 let
