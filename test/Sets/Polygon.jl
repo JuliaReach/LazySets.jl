@@ -492,9 +492,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
             @test v1 ∈ h1
         elseif i == 2
             c = h1.constraints[1]
-            @test c.a ≈ N[2 // 5, 1 // 2] && c.b ≈ N(23 // 50)
-            c = h1.constraints[3]
             @test c.a ≈ N[-2 // 5, -1 // 2] && c.b ≈ N(-23 // 50)
+            c = h1.constraints[3]
+            @test c.a ≈ N[2 // 5, 1 // 2] && c.b ≈ N(23 // 50)
         elseif i == 4
             @test length(h1.constraints) == 4
             c = h1.constraints[1]
@@ -512,7 +512,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         for c in h1.constraints
             addconstraint!(h2, c)
         end
-        @test h1.constraints == h2.constraints
+        @test is_cyclic_permutation(h1.constraints, h2.constraints)
     end
 
     # empty VPolygon: conversion to hrep

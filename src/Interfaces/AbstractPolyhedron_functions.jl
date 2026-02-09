@@ -1074,6 +1074,7 @@ end
 # create n+1 contradicting constraints
 # n times ⋀_i x_i ≤ 0
 # 1 times ∑_i x_i ≥ 1
+# Note: constraints are sorted CCW in 2D
 function _infeasible_constraints_list(n::Int; N=Float64)
     c_sum = HalfSpace(fill(N(-1), n), N(-1))  # ∑_i x_i ≥ 1
     clist = Vector{typeof(c_sum)}(undef, n + 1)

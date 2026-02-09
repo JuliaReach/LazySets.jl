@@ -212,6 +212,7 @@ function constraints_list(S::AbstractSingleton; min_constraints::Bool=false)
 end
 
 # fewest constraints (n+1)
+# Note: constraints are sorted CCW in 2D
 function _constraints_list_singleton_Vector(e::AbstractVector{N}) where {N}
     n = length(e)
     constraints = Vector{HalfSpace{N,Vector{N}}}(undef, n + 1)
