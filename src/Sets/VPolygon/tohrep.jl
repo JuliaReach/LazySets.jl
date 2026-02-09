@@ -13,6 +13,6 @@ Build a constraint representation of the given polygon.
 An `HPOLYGON` (polygon in constraint representation).
 """
 function tohrep(P::VPolygon, ::Type{HPOLYGON}=HPolygon) where {HPOLYGON<:AbstractHPolygon}
-    clist = constraints_list(P)
-    return HPOLYGON(clist)
+    clist = constraints_list(P)  # implementation sorts the constraints already
+    return HPOLYGON(clist; sort_constraints=false)
 end
