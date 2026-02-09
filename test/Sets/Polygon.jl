@@ -792,7 +792,7 @@ for N in [Float64]
     Pr = rationalize(BigInt, P, 10 * eps(Float64))
     @test isa(Pr, HPolygon{Rational{BigInt},Vector{Rational{BigInt}}})
 
-    # rounding error makes first two constraints equal according to `⪯`
+    # floating-point precision makes first two constraints equal according to `⪯`
     clist = [HalfSpace([0.015002029632632474, 0.002922288635110161], -0.0004461747231474431),
              HalfSpace([1.7030005339258025e-7, 5.796631764171112e-8], -2.5083390350111008e-9),
              HalfSpace([0.004578726181206236, 0.007501014816316202], 0.0005453263149111838),
@@ -803,6 +803,24 @@ for N in [Float64]
              HalfSpace([5.5294080189560724e-8, -5.357758450785788e-8], -7.314458428291394e-9)]
     P = HPolygon(clist)
     @test length(P.constraints) == 6
+    # similar case but different execution
+    clist = [HalfSpace([1.3865931380863117e-6, 0.0], -7.136890100781972e-7)
+             HalfSpace([0.061993579244849606, 0.19014940476481246], 0.22000017947027908)
+             HalfSpace([0.0, 1.5369446264568154e-6], 2.131414989606841e-6)
+             HalfSpace([-0.0007062436126010763, 0.0013856652801180758], 0.0024194240680782114)
+             HalfSpace([-0.678450966819299, 0.6791312197004191], 1.420482354056193)
+             HalfSpace([-0.0013864208055851535, 0.0007061679244650954], 0.002420417833216579)
+             HalfSpace([-0.9480610932136777, 0.1506449647039243], 1.4204813602910553)
+             HalfSpace([-1.3865931380863117e-6, 0.0], 2.130813486063156e-6)
+             HalfSpace([-0.0015359105961327002, -0.00024335510687278905], 0.0024191213701562457)
+             HalfSpace([-0.8555452271892265, -0.435382253045137], 1.4204826567541158)
+             HalfSpace([-0.001099856520051734, -0.001100218289025623], 0.002420082289985093)
+             HalfSpace([0.0, -0.20000000000000007], 0.22000000000000008)
+             HalfSpace([2.424792139511724, -0.38529313287733], -1.7584904793954887)]
+    P = HPolygon(clist)
+    @test P.constraints == vcat(clist[1:2], clist[4:end])  # 3rd constraint is redundant
+    P = HPolygon(clist; prune=false)
+    @test P.constraints == vcat(clist[1:2], clist[4:end])  # redundant constraint is still detected
 end
 
 let
