@@ -25,8 +25,7 @@ import .API: eltype, extrema, isdisjoint, isempty, \, in, isapprox, ==, issubset
 @reexport import LinearAlgebra: ×, normalize, normalize!
 import Base: convert, copy, rationalize, \
 import RecipesBase: apply_recipe  # required for Documenter to find docstrings
-using ReachabilityBase: Arrays  # TODO do not export Arrays
-export Arrays, subtypes
+export subtypes
 
 import GLPK, JuMP, ExprTools
 import IntervalArithmetic as IA
