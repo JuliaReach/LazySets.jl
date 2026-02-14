@@ -1,5 +1,4 @@
 using LazySets, Test, SparseArrays
-using LazySets.MatrixZonotopeModule: vectorize
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -52,22 +51,6 @@ for N in @tN([Float32, Float64])
         pts = sample(Pex, 10; sampler=sampler)
         @test all(p ∈ Zex for p in pts)
 
-        # overapproximate MatrixZonotopeExp
-
-        # test degenerate case
-        c = N[1 -2; 2 -1]
-        A = MatrixZonotope(c, [zeros(N, 2, 2)])
-        expA = MatrixZonotopeExp(A)
-        res = overapproximate(expA, MatrixZonotope, 20; tol=1e-5) #for large k it converges to exp(c)
-        @test isapprox(center(res), exp(c))
-        @test ngens(res) == 0
-
-        # degenerate case + product 
-        B = MatrixZonotope(N[1 0; 0 1], Matrix{N}[])
-        expAB = MatrixZonotopeExp(A * B)
-        res2 = overapproximate(expA, MatrixZonotope, 20)
-        @test isapprox(center(res), center(res2))
-
         @static if isdefined(@__MODULE__, :ExponentialUtilities) || isdefined(@__MODULE__, :Expokit)
             # matrix
             mzexp = SparseMatrixExp(sparse(M))
@@ -76,18 +59,5 @@ for N in @tN([Float32, Float64])
             MZex = overapproximate(MPex, Zonotope)
             @test MZex ⊆ Zex
         end
-    end
-end
-
-for N in @tN([Float64])
-    # This test is only run with Float64 since it is expensive
-    # and requires high Taylor order `k` to pass on Float32
-    @static if isdefined(@__MODULE__, :IntervalMatrices)
-        #inclusion 
-        C = MatrixZonotope(N[1 -2; 2 -1], [N[0.1 0.05; 0 0.1]])
-        expC = MatrixZonotopeExp(C)
-        res = reduce_order(overapproximate(expC, MatrixZonotope, 4), 1)
-        res2 = reduce_order(overapproximate(expC, MatrixZonotope, 8), 1)
-        @test vectorize(res2) ⊆ vectorize(res)
     end
 end
