@@ -81,6 +81,29 @@ function _overapproximate_emz_generic(MZP::MAT,
     return remove_redundant_generators(minkowski_sum(tayexp, lagrem))
 end
 
+"""
+    overapproximate(em::ExponentialMap{N,S,MAT},
+                         ::Type{<:P},
+                         k::Int=2;
+                         matnorm::Union{Real,Nothing}=nothing) where {N, S,
+                                                                      P<:Union{SparsePolynomialZonotope,
+                                                                               AbstractZonotope},
+                                                                      MAT<:AbstractMatrixZonotope{N}}
+
+Overapproximate the exponential map of a set `X` of type `SparsePolynomialZonotope` or `AbstractZonotope`
+through a composition of matrix zonotopes, following Proposition 3 of [HuangLBS2025](@citet).
+
+### Input
+
+- `em`       -- an expontial map of set `X` through a product of matrix zonotopes
+- `P`        -- target type
+- `k`        -- (default: `2`) the order of the taylor expansion
+- `matnorm`  -- (Optional, default: `nothing`) Pre-computed induced ``\\infty``-norm of the matrix zonotope
+
+### Output
+
+A set overapproximating the exponential map.
+"""
 function overapproximate(em::ExponentialMap{N,S,MAT},
                          ::Type{<:P},
                          k::Int=2;
