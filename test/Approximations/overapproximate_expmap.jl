@@ -50,5 +50,14 @@ for N in @tN([Float32, Float64])
         sampler = LazySets.PolynomialZonotopeSampler()
         pts = sample(Pex, 10; sampler=sampler)
         @test all(p ∈ Zex for p in pts)
+
+        @static if isdefined(@__MODULE__, :ExponentialUtilities) || isdefined(@__MODULE__, :Expokit)
+            # matrix
+            mzexp = SparseMatrixExp(sparse(M))
+            em = ExponentialMap(mzexp, P)
+            MPex = overapproximate(em, SparsePolynomialZonotope, 2)
+            MZex = overapproximate(MPex, Zonotope)
+            @test MZex ⊆ Zex
+        end
     end
 end

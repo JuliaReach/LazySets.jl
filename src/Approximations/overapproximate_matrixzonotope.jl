@@ -85,7 +85,6 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
     end
 end
 
-
 """
     overapproximate(MZP::MatrixZonotopeProduct{N,S},
                          ::Type{<:MatrixZonotope}) where {N,S<:AbstractMatrix{N}}

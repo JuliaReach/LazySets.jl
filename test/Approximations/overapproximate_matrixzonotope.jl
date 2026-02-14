@@ -65,19 +65,18 @@ for N in @tN([Float32, Float64])
         res2 = overapproximate(expA, MatrixZonotope, 20)
         @test isapprox(center(res), center(res2))
 
-        @static if isdefined(@__MODULE__, :ExponentialUtilities) || isdefined(@__MODULE__, :Expokit)
         # monotonicity test
-        mzexp = MatrixZonotopeExp(MZ)
-        em = ExponentialMap(mzexp, P)
-        MPex = overapproximate(em, SparsePolynomialZonotope, 2)
-        MZex = overapproximate(MPex, Zonotope)
+        @static if isdefined(@__MODULE__, :ExponentialUtilities) || isdefined(@__MODULE__, :Expokit)
+            mzexp = MatrixZonotopeExp(MZ)
+            em = ExponentialMap(mzexp, P)
+            MPex = overapproximate(em, SparsePolynomialZonotope, 2)
+            MZex = overapproximate(MPex, Zonotope)
 
-        Z = overapproximate(convert(SimpleSparsePolynomialZonotope, P), Zonotope)
-        em_z = ExponentialMap(mzexp, Z)
-        Zex = overapproximate(em_z, Zonotope, 5)
+            Z = overapproximate(convert(SimpleSparsePolynomialZonotope, P), Zonotope)
+            em_z = ExponentialMap(mzexp, Z)
+            Zex = overapproximate(em_z, Zonotope, 5)
 
-        @test MZex ⊆ Zex
-
+            @test MZex ⊆ Zex
         end
     end
 end
