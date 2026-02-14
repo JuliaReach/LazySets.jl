@@ -1,5 +1,6 @@
-function _compute_series_coefficients(B, S0::S, k::Int) where {S<:Union{SparsePolynomialZonotope,
-                                                                    AbstractZonotope}}
+function _compute_series_coefficients(B, S0::S,
+                                      k::Int) where {S<:Union{SparsePolynomialZonotope,
+                                                              AbstractZonotope}}
     coeffs = Vector{S}(undef, k + 1)
     coeffs[1] = S0
     curr = S0
@@ -11,8 +12,9 @@ function _compute_series_coefficients(B, S0::S, k::Int) where {S<:Union{SparsePo
     return coeffs
 end
 
-@inline function _horner_series(A::MatrixZonotope, coeffs::Vector{S}) where {S<:Union{SparsePolynomialZonotope,
-                                                                                        AbstractZonotope}}
+@inline function _horner_series(A::MatrixZonotope,
+                                coeffs::Vector{S}) where {S<:Union{SparsePolynomialZonotope,
+                                                                   AbstractZonotope}}
     acc = coeffs[end]
     @inbounds for i in (length(coeffs) - 1):-1:1
         acc = exact_sum(overapproximate(A * acc, S), coeffs[i])
@@ -45,7 +47,7 @@ end
 
 function load_intervalmatrices_overapproximation_expmap_spz()
     return quote
-        using .IntervalMatrices: IntervalMatrix
+        using .IntervalMatrices: IntervalMatrix, scale!
 
         function _operator_series_remainder(Z::AbstractZonotope{N},
                                             _matnorm::Real,
@@ -59,7 +61,7 @@ function load_intervalmatrices_overapproximation_expmap_spz()
             E = IntervalMatrix(fill(IA.interval(N(-1.0), N(1.0)), n, n))
             factor = _matnorm^(k + 1) / (factorial(k + 1) * (1 - ϵ))
 
-            return overapproximate(scale(factor, E) * Z, Zonotope)
+            return overapproximate(scale!(E, factor) * Z, Zonotope)
         end
     end
 end
@@ -68,8 +70,8 @@ function _overapproximate_emz_generic(MZP::MAT,
                                       P::S,
                                       k::Int,
                                       _matnorm::Real) where {S<:Union{SparsePolynomialZonotope,
-                                                                       AbstractZonotope},
-                                                              MAT<:AbstractMatrixZonotope}
+                                                                      AbstractZonotope},
+                                                             MAT<:AbstractMatrixZonotope}
     require(@__MODULE__, :IntervalMatrices; fun_name="overapproximate")
 
     tayexp = _truncated_operator_series(MZP, P, k)
@@ -80,12 +82,12 @@ function _overapproximate_emz_generic(MZP::MAT,
 end
 
 function overapproximate(em::ExponentialMap{N,S,MAT},
-                         ::Type{<:S},
+                         ::Type{<:P},
                          k::Int=2;
-                         matnorm::Union{Real,Nothing}=nothing) where {N,
-                                                                       S<:Union{SparsePolynomialZonotope,
-                                                                                AbstractZonotope},
-                                                                       MAT<:AbstractMatrixZonotope{N}}
+                         matnorm::Union{Real,Nothing}=nothing) where {N, S,
+                                                                      P<:Union{SparsePolynomialZonotope,
+                                                                               AbstractZonotope},
+                                                                      MAT<:AbstractMatrixZonotope{N}}
     _matnorm = isnothing(matnorm) ? N(overapproximate_norm(matrix(em).M, Inf)) : N(matnorm)
 
     MZP = matrix(em).M
@@ -97,10 +99,11 @@ function overapproximate(em::ExponentialMap{N,S,MAT},
 end
 
 function overapproximate(em::ExponentialMap{N,S,MAT},
-                         ::Type{<:SparsePolynomialZonotope},
+                         ::Type{<:P},
                          k::Int=2;
-                         matnorm::Union{Real,Nothing}=nothing) where {N,
-                                                                       S<:SparsePolynomialZonotope,
-                                                                       MAT<:SparseMatrixExp{N}}
+                         matnorm::Union{Real,Nothing}=nothing) where {N, S,
+                                                                      P<:Union{SparsePolynomialZonotope,
+                                                                               AbstractZonotope},
+                                                                      MAT<:SparseMatrixExp{N}}
     return linear_map(matrix(em), set(em))
 end
