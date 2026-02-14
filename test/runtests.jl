@@ -319,8 +319,8 @@ end
     @testset "LazySets.Approximations.overapproximate_norm" begin
         include("Approximations/overapproximate_norm.jl")
     end
-    @testset "LazySets.Approximations.overapproximate_expmap_spz" begin
-        include("Approximations/overapproximate_expmap_spz.jl")
+    @testset "LazySets.Approximations.overapproximate_expmap_mz" begin
+        include("Approximations/overapproximate_expmap_mz.jl")
     end
     @testset "LazySets.Approximations.overapproximate_matrixzonotope" begin
         include("Approximations/overapproximate_matrixzonotope.jl")
