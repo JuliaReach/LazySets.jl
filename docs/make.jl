@@ -141,7 +141,6 @@ makedocs(; sitename="LazySets.jl",
                                                    "lib/approximations/decompose.md",
                                                    "lib/approximations/hausdorff_distance.md",
                                                    "lib/approximations/overapproximate_norm.md",
-                                                   "lib/approximations/overapproximate_expmap.md"
                                                    #
                                                    ],
                               "MatrixSets" => [
