@@ -87,10 +87,10 @@ end
                          k::Int=2;
                          matnorm::Union{Real,Nothing}=nothing) where {N, S,
                                                                       P<:Union{SparsePolynomialZonotope,
-                                                                               AbstractZonotope},
+                                                                               Zonotope},
                                                                       MAT<:AbstractMatrixZonotope{N}}
 
-Overapproximate the exponential map of a set `X` of type `SparsePolynomialZonotope` or `AbstractZonotope`
+Overapproximate the exponential map of a set `X` of type `SparsePolynomialZonotope` or `Zonotope`
 through a composition of matrix zonotopes, following Proposition 3 of [HuangLBS2025](@citet).
 
 ### Input
@@ -109,7 +109,7 @@ function overapproximate(em::ExponentialMap{N,S,MAT},
                          k::Int=2;
                          matnorm::Union{Real,Nothing}=nothing) where {N, S,
                                                                       P<:Union{SparsePolynomialZonotope,
-                                                                               AbstractZonotope},
+                                                                               Zonotope},
                                                                       MAT<:AbstractMatrixZonotope{N}}
     _matnorm = isnothing(matnorm) ? N(overapproximate_norm(matrix(em).M, Inf)) : N(matnorm)
 
@@ -126,7 +126,7 @@ function overapproximate(em::ExponentialMap{N,S,MAT},
                          k::Int=2;
                          matnorm::Union{Real,Nothing}=nothing) where {N, S,
                                                                       P<:Union{SparsePolynomialZonotope,
-                                                                               AbstractZonotope},
+                                                                               Zonotope},
                                                                       MAT<:SparseMatrixExp{N}}
     return linear_map(matrix(em), set(em))
 end
