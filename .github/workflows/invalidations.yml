@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   evaluate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     env:
       JULIA_PKG_SERVER: ''
@@ -20,7 +20,7 @@ jobs:
       - name: Set up Julia
         uses: julia-actions/setup-julia@v2
         with:
-          version: '1.11'  # currently there are dependency problems on v1.12
+          version: '1.11'  # broken with v1.12
       # current branch
       - name: Check out repository in current branch
         uses: actions/checkout@v6

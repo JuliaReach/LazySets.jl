@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 jobs:
   format:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
