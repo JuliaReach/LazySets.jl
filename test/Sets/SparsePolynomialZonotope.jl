@@ -144,6 +144,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test expmat(PZscaled) == expmat(PZ)
     @test PZscaled == linear_map(α * Matrix{N}(I, 2, 2), PZ)
 
+    scale!(α, PZ)
+    @test PZ == PZscaled
+
     # remove_redundant_generators
     PZ = SparsePolynomialZonotope(N[-1, 2], N[1 2 0 2; 0 1 2 -1], N[1 0; 2 0], [1 0 1 2; 0 0 0 1])
     PZreduced = remove_redundant_generators(PZ)

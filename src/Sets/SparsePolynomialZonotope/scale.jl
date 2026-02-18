@@ -1,7 +1,10 @@
+function scale!(α::Real, P::SparsePolynomialZonotope)
+    P.c .*= α
+    P.G .*= α
+    P.GI .*= α
+    return P
+end
+
 function scale(α::Real, P::SparsePolynomialZonotope)
-    return SparsePolynomialZonotope(α * center(P),
-                                    α * genmat_dep(P),
-                                    α * genmat_indep(P),
-                                    expmat(P),
-                                    indexvector(P))
+    return scale!(α, copy(P))
 end

@@ -68,6 +68,7 @@ Undocumented implementations:
 * [`center`](@ref center(::LazySet))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
 * [`scale`](@ref scale(::Real, ::LazySet))
+* [`scale!`](@ref scale(::Real, ::LazySet))
 * [`translate`](@ref translate(::LazySet, ::AbstractVector))
 * [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 

@@ -14,8 +14,8 @@ using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
-@reexport import ..API: center, isoperationtype, rand, scale, translate,
-                        translate!, exact_sum, linear_map
+@reexport import ..API: center, isoperationtype, rand, scale, scale!,
+                        translate, translate!, exact_sum, linear_map
 @reexport import ..LazySets: expmat, genmat_dep, genmat_indep, indexvector,
                              ngens_dep, ngens_indep, nparams, polynomial_order,
                              reduce_order, remove_redundant_generators
