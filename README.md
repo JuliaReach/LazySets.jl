@@ -3,7 +3,7 @@
 
 | **Introduction & Documentation** | **Status** | **Community** | **Version-Specific Citation** | **License** |
 |:--------------------------------:|:----------:|:-------------:|:-----------------------------:|:-----------:|
-| [![DOI][paper-img]][paper-url] [![docs-dev][dev-img]][dev-url] | [![CI][ci-img]][ci-url] [![codecov][cov-img]][cov-url] [![PkgEval][pkgeval-img]][pkgeval-url] [![aqua][aqua-img]][aqua-url] [![dev-commits][dev-commits-url]][dev-commits-target] | [![zulip][chat-img]][chat-url] [![JuliaHub][juliahub-img]][juliahub-url] | [![DOI][doi-img]][doi-url] | [![license][lic-img]][lic-url] |
+| [![DOI][paper-img]][paper-url] [![docs-dev][dev-img]][dev-url] | [![CI][ci-img]][ci-url] [![codecov][cov-img]][cov-url] [![PkgEval][pkgeval-img]][pkgeval-url] [![aqua][aqua-img]][aqua-url] [![dev-commits][dev-commits-url]][dev-commits-target] | [![zulip][chat-img]][chat-url] [![JuliaHub][juliahub-img]][juliahub-url] [![JuliaPkgStats][juliapkgstats-img]][juliapkgstats-url] | [![DOI][doi-img]][doi-url] | [![license][lic-img]][lic-url] |
 
 [paper-img]: https://proceedings.juliacon.org/papers/10.21105/jcon.00097/status.svg
 [paper-url]: https://doi.org/10.21105/jcon.00097
@@ -23,6 +23,8 @@
 [chat-url]: https://julialang.zulipchat.com/#narrow/stream/278609-juliareach
 [juliahub-img]: https://juliahub.com/docs/General/LazySets/stable/version.svg
 [juliahub-url]: https://juliahub.com/ui/Packages/General/LazySets
+[juliapkgstats-img]: https://img.shields.io/badge/dynamic/json?url=http%3A%2F%2Fjuliapkgstats.com%2Fapi%2Fv1%2Fmonthly_downloads%2FLazySets&query=total_requests&suffix=%2Fmonth&label=Downloads
+[juliapkgstats-url]: https://juliapkgstats.com/pkg/LazySets
 [doi-img]: https://zenodo.org/badge/105701832.svg
 [doi-url]: https://zenodo.org/badge/latestdoi/105701832
 [lic-img]: https://img.shields.io/github/license/mashape/apistatus.svg
