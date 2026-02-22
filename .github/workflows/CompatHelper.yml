@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 jobs:
   CompatHelper:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Check if Julia is already available
         id: julia_in_path

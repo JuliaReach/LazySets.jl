@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   spell-check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     steps:
       - name: Check out repository

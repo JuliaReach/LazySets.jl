@@ -6,10 +6,12 @@ on:
   workflow_dispatch:
 jobs:
   format:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v2
       - name: Cache artifacts
         uses: julia-actions/cache@v2
       - name: Install JuliaFormatter and format
