@@ -50,7 +50,7 @@ function linprog(c, A, sense, b, l, u, solver_or_model)
 end
 
 @inline function linprog_model(model::JuMP.Model)
-    Base.empty!(model)
+    empty!(model)
     return model
 end
 @inline linprog_model(solver) = Model(solver)

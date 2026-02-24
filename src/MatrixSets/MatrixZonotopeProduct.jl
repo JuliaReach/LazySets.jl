@@ -29,10 +29,19 @@ end
 
 MatrixZonotopeProduct(ms::MatrixZonotope...) = MatrixZonotopeProduct(collect(ms))
 
-Base.:*(A::MatrixZonotope, B::MatrixZonotope) = MatrixZonotopeProduct([A, B])
-Base.:*(P::MatrixZonotopeProduct, B::MatrixZonotope) = MatrixZonotopeProduct(vcat(P.factors, B))
-Base.:*(A::MatrixZonotope, P::MatrixZonotopeProduct) = MatrixZonotopeProduct(vcat(A, P.factors))
-function Base.:*(P1::MatrixZonotopeProduct, P2::MatrixZonotopeProduct)
+function *(A::MatrixZonotope, B::MatrixZonotope)
+    return MatrixZonotopeProduct([A, B])
+end
+
+function *(P::MatrixZonotopeProduct, B::MatrixZonotope)
+    return MatrixZonotopeProduct(vcat(P.factors, B))
+end
+
+function *(A::MatrixZonotope, P::MatrixZonotopeProduct)
+    return MatrixZonotopeProduct(vcat(A, P.factors))
+end
+
+function *(P1::MatrixZonotopeProduct, P2::MatrixZonotopeProduct)
     return MatrixZonotopeProduct(vcat(P1.factors, P2.factors))
 end
 
@@ -54,7 +63,14 @@ function nfactors(MZP::MatrixZonotopeProduct)
     return length(factors(MZP))
 end
 
-Base.size(P::MatrixZonotopeProduct) = (size(P.factors[1].A0, 1), size(P.factors[end].A0, 2))
-Base.size(P::MatrixZonotopeProduct, d::Int) = size(P)[d]
+function size(P::MatrixZonotopeProduct)
+    return (size(P.factors[1].A0, 1), size(P.factors[end].A0, 2))
+end
 
-Base.:(==)(P1::MatrixZonotopeProduct, P2::MatrixZonotopeProduct) = P1.factors == P2.factors
+function size(P::MatrixZonotopeProduct, d::Int)
+    return size(P)[d]
+end
+
+function ==(P1::MatrixZonotopeProduct, P2::MatrixZonotopeProduct)
+    return P1.factors == P2.factors
+end

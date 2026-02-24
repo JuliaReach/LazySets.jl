@@ -1,7 +1,7 @@
 # convert methods for identity (no-ops)
 for T in subtypes(LazySet, true)
     @eval begin
-        Base.convert(::Type{$T}, X::$T) = X
+        convert(::Type{$T}, X::$T) = X
     end
 end
 
@@ -33,12 +33,12 @@ include("Zonotope.jl")
 
 for T in [HPolygon, HPolygonOpt, HPolytope, HPolyhedron]
     @eval begin
-        function Base.convert(::Type{$T}, P::Intersection)
+        function convert(::Type{$T}, P::Intersection)
             clist = vcat(constraints_list(first(P)), constraints_list(second(P)))
             return ($T)(clist)
         end
 
-        function Base.convert(::Type{$T}, P::IntersectionArray)
+        function convert(::Type{$T}, P::IntersectionArray)
             clist = reduce(vcat, constraints_list.(array(P)))
             return ($T)(clist)
         end
@@ -72,7 +72,7 @@ for T in subtypes(AbstractHPolygon, true)
 
         We compute the list of constraints of `X`, then instantiate the polygon.
         """
-        function Base.convert(::Type{$T}, X::LazySet;
+        function convert(::Type{$T}, X::LazySet;
                               check_boundedness::Bool=!isboundedtype(typeof(X)),
                               prune::Bool=true)
             @assert dim(X) == 2 "set must be two-dimensional for conversion, but it " *
@@ -98,7 +98,7 @@ for T in subtypes(AbstractHPolygon, true)
 
         A polygon in constraint representation.
         """
-        function Base.convert(T::Type{$T}, P::VPolygon)
+        function convert(T::Type{$T}, P::VPolygon)
             return VPolygonModule.tohrep(P, T)
         end
 

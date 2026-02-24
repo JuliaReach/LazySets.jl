@@ -24,5 +24,10 @@ struct MatrixZonotopeExp{N,T<:AbstractMatrixZonotope{N}} <: AbstractMatrixZonoto
     end
 end
 
-Base.size(EMZ::MatrixZonotopeExp) = size(EMZ.M)
-Base.size(EMZ::MatrixZonotopeExp, d::Int) = size(EMZ.M, d)
+function size(EMZ::MatrixZonotopeExp)
+    return size(EMZ.M)
+end
+
+function size(EMZ::MatrixZonotopeExp, d::Int)
+    return size(EMZ.M, d)
+end

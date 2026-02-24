@@ -73,7 +73,7 @@ end
 @absorbing(ConvexHull, Universe)
 
 # interface for binary set operations
-Base.first(ch::ConvexHull) = ch.X
+first(ch::ConvexHull) = ch.X
 second(ch::ConvexHull) = ch.Y
 @declare_binary_operation(ConvexHull)
 

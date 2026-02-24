@@ -214,8 +214,13 @@ BoxDirections{N}(n::Int) where {N} = BoxDirections{N,SingleEntryVector{N}}(n)
 # convenience constructor for type Float64
 BoxDirections(n::Int) = BoxDirections{Float64}(n)
 
-Base.eltype(::Type{BoxDirections{N,VN}}) where {N,VN} = VN
-Base.length(bd::BoxDirections) = 2 * bd.n
+function eltype(::Type{BoxDirections{N,VN}}) where {N,VN}
+    return VN
+end
+
+function length(bd::BoxDirections)
+    return 2 * bd.n
+end
 
 # interface functions
 LazySets.dim(bd::BoxDirections) = bd.n
@@ -228,7 +233,7 @@ isnormalized(::Type{<:BoxDirections}) = true
 # (0, 1)   state = 2
 # (0, -1)  state = -2
 # (-1, 0)  state = -1
-function Base.iterate(bd::BoxDirections{N,SingleEntryVector{N}}, state::Int=1) where {N}
+function iterate(bd::BoxDirections{N,SingleEntryVector{N}}, state::Int=1) where {N}
     if state == 0
         return nothing
     end
@@ -237,7 +242,7 @@ function Base.iterate(bd::BoxDirections{N,SingleEntryVector{N}}, state::Int=1) w
     return (vec, state)
 end
 
-function Base.iterate(bd::BoxDirections{N,Vector{N}}, state::Int=1) where {N}
+function iterate(bd::BoxDirections{N,Vector{N}}, state::Int=1) where {N}
     if state == 0
         return nothing
     end
@@ -247,7 +252,7 @@ function Base.iterate(bd::BoxDirections{N,Vector{N}}, state::Int=1) where {N}
     return (vec, state)
 end
 
-function Base.iterate(bd::BoxDirections{N,SparseVector{N,Int}}, state::Int=1) where {N}
+function iterate(bd::BoxDirections{N,SparseVector{N,Int}}, state::Int=1) where {N}
     if state == 0
         return nothing
     end
@@ -329,8 +334,13 @@ OctDirections{N}(n::Int) where {N} = OctDirections{N,SparseVector{N,Int}}(n)
 # constructor for type Float64
 OctDirections(n::Int) = OctDirections{Float64}(n)
 
-Base.eltype(::Type{OctDirections{N,VN}}) where {N,VN} = VN
-Base.length(od::OctDirections) = 2 * od.n^2
+function eltype(::Type{OctDirections{N,VN}}) where {N,VN}
+    return VN
+end
+
+function length(od::OctDirections)
+    return 2 * od.n^2
+end
 
 # interface functions
 LazySets.dim(od::OctDirections) = od.n
@@ -341,7 +351,7 @@ function _zeros_oct(n, ::Type{<:SparseVector{N}}) where {N}
     return spzeros(N, n)
 end
 
-function Base.iterate(od::OctDirections{N,VN}) where {N,VN}
+function iterate(od::OctDirections{N,VN}) where {N,VN}
     if od.n == 1
         # fall back to box directions in 1D case
         return iterate(od, 1)
@@ -391,11 +401,11 @@ function _iterate_state(od::OctDirections{N}, state) where {N}
     return (copy(vec), (vec, i, j))
 end
 
-function Base.iterate(od::OctDirections, state::Tuple)
+function iterate(od::OctDirections, state::Tuple)
     return _iterate_state(od, state)
 end
 
-function Base.iterate(od::OctDirections{N,VN}, state::Int) where {N,VN}
+function iterate(od::OctDirections{N,VN}, state::Int) where {N,VN}
     # continue with box directions
     return iterate(BoxDirections{N,VN}(od.n), state)
 end
@@ -469,19 +479,24 @@ DiagDirections{N}(n::Int) where {N} = DiagDirections{N,Vector{N}}(n)
 # constructor for type Float64
 DiagDirections(n::Int) = DiagDirections{Float64}(n)
 
-Base.eltype(::Type{DiagDirections{N,VN}}) where {N,VN} = VN
-Base.length(dd::DiagDirections) = 2^dd.n
+function eltype(::Type{DiagDirections{N,VN}}) where {N,VN}
+    return VN
+end
+
+function length(dd::DiagDirections)
+    return 2^dd.n
+end
 
 # interface function
 LazySets.dim(dd::DiagDirections) = dd.n
 isbounding(::Type{<:DiagDirections}) = true
 isnormalized(::Type{<:DiagDirections}) = false
 
-function Base.iterate(dd::DiagDirections{N,Vector{N}}) where {N}
+function iterate(dd::DiagDirections{N,Vector{N}}) where {N}
     return (ones(N, dd.n), ones(N, dd.n))
 end
 
-function Base.iterate(dd::DiagDirections{N}, state::Vector{N}) where {N}
+function iterate(dd::DiagDirections{N}, state::Vector{N}) where {N}
     i = 1
     while i <= dd.n && state[i] < 0
         state[i] = -state[i]
@@ -569,8 +584,13 @@ BoxDiagDirections{N}(n::Int) where {N} = BoxDiagDirections{N,Vector{N}}(n)
 # constructor for type Float64
 BoxDiagDirections(n::Int) = BoxDiagDirections{Float64}(n)
 
-Base.eltype(::Type{BoxDiagDirections{N,VN}}) where {N,VN} = VN
-Base.length(bdd::BoxDiagDirections) = bdd.n == 1 ? 2 : 2^bdd.n + 2 * bdd.n
+function eltype(::Type{BoxDiagDirections{N,VN}}) where {N,VN}
+    return VN
+end
+
+function length(bdd::BoxDiagDirections)
+    return bdd.n == 1 ? 2 : 2^bdd.n + 2 * bdd.n
+end
 
 # interface function
 LazySets.dim(bdd::BoxDiagDirections) = bdd.n
@@ -581,7 +601,7 @@ isnormalized(::Type{<:BoxDiagDirections}) = false
 # the state is a pair `(D, S)`, where `D` is the type of directions and `S` is
 # the iteration state of the corresponding iterator; this avoids allocating the
 # iterators repeatedly
-function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}) where {N}
+function iterate(bdd::BoxDiagDirections{N,Vector{N}}) where {N}
     if bdd.n == 1
         # special case: only two directions
         return _iterate_directions(BoxDirections{N,Vector{N}}(bdd.n))
@@ -592,8 +612,8 @@ function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}}) where {N}
 end
 
 # enumerate DiagDirections
-function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}},
-                      state::Tuple{<:DiagDirections,<:Any}) where {N}
+function iterate(bdd::BoxDiagDirections{N,Vector{N}},
+                 state::Tuple{<:DiagDirections,<:Any}) where {N}
     result = iterate(state[1], state[2])
     if isnothing(result)
         # continue enumerating BoxDirections
@@ -604,8 +624,8 @@ function Base.iterate(bdd::BoxDiagDirections{N,Vector{N}},
 end
 
 # enumerate BoxDirections
-function Base.iterate(::BoxDiagDirections{N,Vector{N}},
-                      state::Tuple{<:BoxDirections,<:Any}) where {N}
+function iterate(::BoxDiagDirections{N,Vector{N}},
+                 state::Tuple{<:BoxDirections,<:Any}) where {N}
     result = iterate(state[1], state[2])
     return isnothing(result) ? nothing : (result[1], (state[1], result[2]))
 end
@@ -680,16 +700,24 @@ function PolarDirections{N,Vector{N}}(Nφ::Int) where {N}
     return PolarDirections{N,Vector{N}}(Nφ, directions)
 end
 
-Base.eltype(::Type{PolarDirections{N,VN}}) where {N,VN} = VN
-Base.length(pd::PolarDirections) = pd.Nφ
-Base.getindex(pd::PolarDirections, inds::Integer...) = pd.directions[inds...]
+function eltype(::Type{PolarDirections{N,VN}}) where {N,VN}
+    return VN
+end
+
+function length(pd::PolarDirections)
+    return pd.Nφ
+end
+
+function getindex(pd::PolarDirections, inds::Integer...)
+    return pd.directions[inds...]
+end
 
 # interface functions
 LazySets.dim(pd::PolarDirections) = 2
 isbounding(pd::PolarDirections) = pd.Nφ > 2
 isnormalized(::Type{<:PolarDirections}) = true
 
-function Base.iterate(pd::PolarDirections{N,Vector{N}}, state::Int=1) where {N}
+function iterate(pd::PolarDirections{N,Vector{N}}, state::Int=1) where {N}
     state == pd.Nφ + 1 && return nothing
     return (pd.directions[state], state + 1)
 end
@@ -796,16 +824,24 @@ function SphericalDirections{N,Vector{N}}(Nθ::Int, Nφ::Int) where {N}
     return SphericalDirections{N,Vector{N}}(Nθ, Nφ, directions)
 end
 
-Base.eltype(::Type{SphericalDirections{N,VN}}) where {N,VN} = VN
-Base.length(sd::SphericalDirections) = length(sd.directions)
-Base.getindex(sd::SphericalDirections, inds::Integer...) = sd.directions[inds...]
+function eltype(::Type{SphericalDirections{N,VN}}) where {N,VN}
+    return VN
+end
+
+function length(sd::SphericalDirections)
+    return length(sd.directions)
+end
+
+function getindex(sd::SphericalDirections, inds::Integer...)
+    return sd.directions[inds...]
+end
 
 # interface functions
 LazySets.dim(::SphericalDirections) = 3
 isbounding(sd::SphericalDirections) = sd.Nθ > 2 && sd.Nφ > 2
 isnormalized(::Type{<:SphericalDirections}) = true
 
-function Base.iterate(sd::SphericalDirections, state::Int=1)
+function iterate(sd::SphericalDirections, state::Int=1)
     state == length(sd.directions) + 1 && return nothing
     return (sd.directions[state], state + 1)
 end
@@ -894,9 +930,17 @@ function _isnormalized(directions::Vector{VN}) where {N,VN<:AbstractVector{N}}
     return all(x -> _isapprox(norm(x, 2), one(N)), directions)
 end
 
-Base.eltype(::Type{CustomDirections{N,VN}}) where {N,VN} = VN
-Base.length(cd::CustomDirections) = length(cd.directions)
-Base.getindex(cd::CustomDirections, inds::Integer...) = cd.directions[inds...]
+function eltype(::Type{CustomDirections{N,VN}}) where {N,VN}
+    return VN
+end
+
+function length(cd::CustomDirections)
+    return length(cd.directions)
+end
+
+function getindex(cd::CustomDirections, inds::Integer...)
+    return cd.directions[inds...]
+end
 
 # interface functions
 LazySets.dim(cd::CustomDirections) = cd.n
@@ -905,7 +949,7 @@ isbounding(cd::CustomDirections) = cd.bounded
 isnormalized(cd::Type{<:CustomDirections}) = false  # not a property of the type
 isnormalized(cd::CustomDirections) = cd.normalized
 
-function Base.iterate(cd::CustomDirections{N}, state::Int=1) where {N}
+function iterate(cd::CustomDirections{N}, state::Int=1) where {N}
     if state > length(cd.directions)
         return nothing
     end

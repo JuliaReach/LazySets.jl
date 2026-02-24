@@ -23,7 +23,8 @@ import .API: eltype, extrema, isdisjoint, isempty, \, in, isapprox, ==, issubset
              minkowski_difference, pontryagin_difference, minkowski_sum
 
 @reexport import LinearAlgebra: ×, normalize, normalize!
-import Base: convert, copy, rationalize, \
+import Base: IndexStyle, convert, copy, eltype, first, getindex, iterate,
+             lastindex, length, rationalize, \
 import RecipesBase: apply_recipe  # required for Documenter to find docstrings
 using ReachabilityBase: Arrays  # TODO do not export Arrays
 export Arrays, subtypes

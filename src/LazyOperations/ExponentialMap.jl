@@ -74,9 +74,13 @@ function SparseMatrixExp(M::AbstractMatrix)
     throw(ArgumentError("only sparse matrices can be used to create a `SparseMatrixExp`"))
 end
 
-Base.IndexStyle(::Type{<:SparseMatrixExp}) = IndexCartesian()
+function IndexStyle(::Type{<:SparseMatrixExp})
+    return IndexCartesian()
+end
 
-Base.getindex(spmexp::SparseMatrixExp, I::Vararg{Int,2}) = get_column(spmexp, I[2])[I[1]]
+function getindex(spmexp::SparseMatrixExp, I::Vararg{Int,2})
+    return get_column(spmexp, I[2])[I[1]]
+end
 
 function size(spmexp::SparseMatrixExp)
     return size(spmexp.M)

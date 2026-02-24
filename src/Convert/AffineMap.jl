@@ -33,6 +33,6 @@ Convert a star set to its equivalent representation as a lazy affine map.
 
 A star set.
 """
-function Base.convert(::Type{STAR}, X::Star)
+function convert(::Type{STAR}, X::Star)
     return AffineMap(X.V, X.P, X.c)
 end

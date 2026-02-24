@@ -152,14 +152,16 @@ function _nonflat_dimensions(H::AbstractHyperrectangle{N}) where {N}
     return nonflats
 end
 
-Base.length(it::HyperrectangleGeneratorIterator) = length(it.nonflats)
+function length(it::HyperrectangleGeneratorIterator)
+    return length(it.nonflats)
+end
 
-function Base.eltype(::Type{<:HyperrectangleGeneratorIterator{<:AbstractHyperrectangle{N}}}) where {N}
+function eltype(::Type{<:HyperrectangleGeneratorIterator{<:AbstractHyperrectangle{N}}}) where {N}
     return SingleEntryVector{N}
 end
 
-function Base.iterate(it::HyperrectangleGeneratorIterator{<:AH},
-                      state::Int=1) where {N,AH<:AbstractHyperrectangle{N}}
+function iterate(it::HyperrectangleGeneratorIterator{<:AH},
+                 state::Int=1) where {N,AH<:AbstractHyperrectangle{N}}
     if state > length(it.nonflats)
         return nothing
     end

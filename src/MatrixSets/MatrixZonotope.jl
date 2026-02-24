@@ -51,10 +51,11 @@ struct MatrixZonotope{N,MN<:AbstractMatrix{N}} <: AbstractMatrixZonotope{N}
     end
 end
 
-Base.eltype(::Type{<:MatrixZonotope{N}}) where {N} = N
+function eltype(::Type{<:MatrixZonotope{N}}) where {N} return N end
 
-Base.size(MZ::MatrixZonotope) = size(center(MZ))
-Base.size(MZ::MatrixZonotope, d::Int) = size(center(MZ), d)
+function size(MZ::MatrixZonotope) return size(center(MZ)) end
+
+function size(MZ::MatrixZonotope, d::Int) return size(center(MZ), d) end
 
 """
     transpose(MZ::MatrixZonotope)
@@ -69,13 +70,13 @@ The transpose of a matrix zonotope is defined as:
     \\mathcal{A}ᵀ = \\braket{(A^{(0)})ᵀ,(A^{(1)})ᵀ, \\dots, (A^{(p)})ᵀ }
 ```
 """
-Base.transpose(MZ::MatrixZonotope{N}) where {N} = begin
+function transpose(MZ::MatrixZonotope{N}) where {N}
     Ct = transpose(center(MZ))
     Gts = map(transpose, generators(MZ))
     MatrixZonotope(Ct, Gts)
 end
 
-function Base.copy(MZ::MatrixZonotope)
+function copy(MZ::MatrixZonotope)
     return MatrixZonotope(copy(MZ.A0),
                           [copy(Aij) for Aij in MZ.Ai],
                           copy(MZ.idx))

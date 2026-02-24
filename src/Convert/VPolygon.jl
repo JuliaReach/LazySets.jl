@@ -13,6 +13,6 @@ representation.
 
 A polygon in vertex representation.
 """
-function Base.convert(::Type{VPolygon}, P::AbstractHPolygon)
+function convert(::Type{VPolygon}, P::AbstractHPolygon)
     return tovrep(P)
 end

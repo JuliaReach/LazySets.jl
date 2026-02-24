@@ -45,7 +45,7 @@ end
 @absorbing(UnionSet, Universe)
 
 # interface for binary set operations
-Base.first(U::UnionSet) = U.X
+first(U::UnionSet) = U.X
 second(U::UnionSet) = U.Y
 @declare_binary_operation(UnionSet)
 

@@ -138,7 +138,7 @@ end
 @absorbing(Intersection, EmptySet)
 
 # interface for binary set operations
-Base.first(cap::Intersection) = cap.X
+first(cap::Intersection) = cap.X
 second(cap::Intersection) = cap.Y
 @declare_binary_operation(Intersection)
 
