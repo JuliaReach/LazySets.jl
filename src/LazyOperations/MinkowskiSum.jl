@@ -67,7 +67,7 @@ end
 # @absorbing(MinkowskiSum, Universe)  # TODO problematic
 
 # interface for binary set operations
-Base.first(ms::MinkowskiSum) = ms.X
+first(ms::MinkowskiSum) = ms.X
 second(ms::MinkowskiSum) = ms.Y
 @declare_binary_operation(MinkowskiSum)
 

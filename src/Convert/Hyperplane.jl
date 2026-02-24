@@ -1,4 +1,4 @@
-function Base.convert(::Type{Hyperplane}, P::HPolyhedron; skip_check::Bool=false)
+function convert(::Type{Hyperplane}, P::HPolyhedron; skip_check::Bool=false)
     # check that the number of constraints is fine
     if !skip_check && !ishyperplanar(P)
         throw(ArgumentError("the polyhedron is not hyperplanar: $P"))
@@ -9,7 +9,7 @@ function Base.convert(::Type{Hyperplane}, P::HPolyhedron; skip_check::Bool=false
     return Hyperplane(c1.a, c1.b)
 end
 
-function Base.convert(::Type{Hyperplane}, L::Line)
+function convert(::Type{Hyperplane}, L::Line)
     if dim(L) != 2
         throw(ArgumentError("can only convert a 2D Line to a Hyperplane"))
     end

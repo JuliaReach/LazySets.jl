@@ -1,2 +1,4 @@
 # make a copy of the constraints
-Base.convert(::Type{HPolyhedron}, P::HPolytope) = HPolyhedron(copy(constraints_list(P)))
+function convert(::Type{HPolyhedron}, P::HPolytope)
+    return HPolyhedron(copy(constraints_list(P)))
+end

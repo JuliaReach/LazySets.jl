@@ -182,7 +182,7 @@ This macro generates seven methods. See the example below.
 """
 macro declare_binary_operation(SET)
     @eval begin
-        function Base.iterate(X::$SET, state=1)
+        function iterate(X::$SET, state=1)
             if state == 1
                 return (first(X), 2)
             elseif state == 2
@@ -192,15 +192,15 @@ macro declare_binary_operation(SET)
             end
         end
 
-        function Base.length(::$SET)
+        function length(::$SET)
             return 2
         end
 
-        function Base.lastindex(X::$SET)
+        function lastindex(X::$SET)
             return 2
         end
 
-        function Base.getindex(X::$SET, i::Int)
+        function getindex(X::$SET, i::Int)
             if i == 1
                 return first(X)
             elseif i == 2
@@ -209,7 +209,7 @@ macro declare_binary_operation(SET)
             throw(ArgumentError("invalid index $i for binary set operation"))
         end
 
-        function Base.getindex(X::$SET, indices::AbstractVector{Int})
+        function getindex(X::$SET, indices::AbstractVector{Int})
             return [X[i] for i in indices]
         end
 

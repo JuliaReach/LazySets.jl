@@ -11,6 +11,8 @@ using ..LazySets: Zonotope, genmat, AbstractReductionMethod, dim, GIR05
 @reexport import ..LazySets: generators, ngens, order, remove_redundant_generators,
                              reduce_order
 
+import Base: ==, *, convert, copy, eltype, size, transpose
+
 export AbstractMatrixZonotope, MatrixZonotope, MatrixZonotopeProduct,
        MatrixZonotopeExp, indexvector, factors, nfactors
 

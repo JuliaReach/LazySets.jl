@@ -97,7 +97,7 @@ function CartesianProduct(∅1::EmptySet, ∅2::EmptySet)
 end
 
 # interface for binary set operations
-Base.first(cp::CartesianProduct) = cp.X
+first(cp::CartesianProduct) = cp.X
 second(cp::CartesianProduct) = cp.Y
 @declare_binary_operation(CartesianProduct)
 

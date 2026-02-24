@@ -3,7 +3,7 @@ Module `Approximations.jl` -- polygonal approximation of sets.
 """
 module Approximations
 
-import Base: convert
+import Base: convert, eltype, getindex, iterate, length
 import ..LazySets: dim, project, □
 
 export approximate,
