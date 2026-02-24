@@ -184,7 +184,6 @@ Inherited from [`LazySet`](@ref):
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
-* [`eltype`](@ref eltype(::LazySet))
 * [`isconvex`](@ref isconvex(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolytopic`](@ref ispolytopic(::LazySet))

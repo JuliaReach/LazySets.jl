@@ -87,7 +87,6 @@ Inherited from [`LazySet`](@ref):
 * `copy(::Type{LazySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
-* [`eltype`](@ref eltype(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolyhedral`](@ref ispolyhedral(::LazySet))
 * [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{LazySet}))

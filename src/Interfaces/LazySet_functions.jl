@@ -352,19 +352,9 @@ end
 The default implementation assumes that the first type parameter is the numeric
 type.
 """
-eltype(::Type{<:LazySet{N}}) where {N} = N
-
-"""
-# Extended help
-
-    eltype(::LazySet{N}) where {N}
-
-### Algorithm
-
-The default implementation assumes that the first type parameter is the numeric
-type.
-"""
-eltype(::LazySet{N}) where {N} = N
+function eltype(::Type{<:LazySet{N}}) where {N}
+    return N
+end
 
 """
 # Extended help

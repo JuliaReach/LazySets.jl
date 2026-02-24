@@ -115,7 +115,6 @@ CurrentModule = LazySets
 Inherited from [`LazySet`](@ref):
 * [`concretize`](@ref concretize(::LazySet))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
-* [`eltype`](@ref eltype(::LazySet))
 * [`extrema`](@ref extrema(::LazySet))
 * [`extrema`](@ref extrema(::LazySet, ::Int))
 * [`isconvex`](@ref isconvex(::LazySet))

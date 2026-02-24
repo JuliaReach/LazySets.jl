@@ -155,18 +155,6 @@ eltype(::Type{<:LazySet})
 CurrentModule = LazySets.API
 ```
 ```@docs; canonical=false
-eltype(::LazySet)
-```
-```@meta
-CurrentModule = LazySets
-```
-```@docs
-eltype(::LazySet)
-```
-```@meta
-CurrentModule = LazySets.API
-```
-```@docs; canonical=false
 extrema(::LazySet)
 ```
 ```@meta
