@@ -750,13 +750,14 @@ function split(Z::AbstractZonotope, gens::AbstractVector{Int},
     return _split(convert(Zonotope, Z), gens, nparts)
 end
 
-@validate function project(Z::AbstractZonotope, block::AbstractVector{Int}; kwargs...)
+@validate function project(Z::AbstractZonotope, block::AbstractVector{Int};
+                           remove_zero_generators::Bool=true)
     if length(block) == 1
         return _project_1D(Z, @inbounds block[1])
     end
     c = center(Z)[block]
     G = genmat(Z)[block, :]
-    if get(kwargs, :remove_zero_generators, true)
+    if remove_zero_generators
         G = remove_zero_columns(G)
     end
     return Zonotope(c, G)
