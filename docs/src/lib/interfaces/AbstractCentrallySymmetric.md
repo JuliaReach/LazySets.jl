@@ -100,7 +100,6 @@ Inherited from [`LazySet`](@ref):
 * `copy(::Type{LazySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
-* [`eltype`](@ref eltype(::LazySet))
 * [`high`](@ref high(::LazySet))
 * [`high`](@ref high(::LazySet, ::Int))
 * [`isoperation`](@ref isoperation(::LazySet))

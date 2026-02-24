@@ -57,7 +57,6 @@ Inherited from [`LazySet`](@ref):
 * [`convex_hull`](@ref convex_hull(::LazySet))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
-* [`eltype`](@ref eltype(::LazySet))
 * [`isconvex`](@ref isconvex(::LazySet))
 * [`isoperation`](@ref isoperation(::LazySet))
 * [`ispolytopic`](@ref ispolytopic(::LazySet))
