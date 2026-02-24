@@ -396,9 +396,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test !(B ⊂ E)
     res, w = ⊂(B, E, true)
     @test !res && w isa Vector{N} && w ∈ B && w ∉ E
+    @test !(Pe ⊂ E)
+    res, w = ⊂(Pe, E, true)
+    @test !res && w isa Vector{N} && isempty(w)
     @test E ⊂ B
     res, w = ⊂(E, B, true)
     @test res && w isa Vector{N} && w ∉ E && w ∈ B
+    @test !(E ⊂ Pe)
+    res, w = ⊂(E, Pe, true)
+    @test !res && w isa Vector{N} && isempty(w)
 
     # issubset
     @test_throws DimensionMismatch E ⊆ E3

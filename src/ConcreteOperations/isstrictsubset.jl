@@ -25,3 +25,11 @@ inclusion of `Y` in `X`:
     end
     return (X ⊆ Y) && !(Y ⊆ X)
 end
+
+@validate function ⊂(∅::EmptySet, X::LazySet, witness::Bool=false)
+    return _isstrictsubset_emptyset(∅, X, witness)
+end
+
+@validate function ⊂(X::LazySet, ∅::EmptySet, witness::Bool=false)
+    return _isstrictsubset_emptyset2(X, ∅, witness)
+end
