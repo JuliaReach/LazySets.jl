@@ -103,6 +103,7 @@ CurrentModule = LazySets.API
 * [`intersection`](@ref intersection(::LazySet, ::LazySet))
 * [`isapprox`](@ref isapprox(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
+* [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 * [`issubset`](@ref issubset(::LazySet, ::LazySet))
 * [`linear_combination`](@ref linear_combination(::LazySet, ::LazySet))
 * [`minkowski_difference`](@ref minkowski_difference(::LazySet, ::LazySet))
@@ -128,7 +129,6 @@ Inherited from [`LazySet`](@ref):
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
-* [`⊂`](@ref ⊂(::LazySet, ::LazySet))
 
 Inherited from [`LazySet`](@ref) but does not apply:
 * [`polyhedron`](@ref polyhedron(::LazySet))

@@ -3,8 +3,8 @@ module EmptySetModule
 using Reexport: @reexport
 using Requires: @require
 
-using ..LazySets: LazySet, ConvexSet, _witness_result_empty, @validate,
-                  @validate_commutative
+using ..LazySets: LazySet, ConvexSet, _witness_result, _witness_result_empty,
+                  @validate, @validate_commutative
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: _rtol
 using ReachabilityBase.Distribution: reseed!
@@ -19,7 +19,7 @@ using ReachabilityBase.Require: require
                         translate, translate!, vertices, vertices_list, volume,
                         cartesian_product, convex_hull, difference, distance,
                         intersection, isapprox, isdisjoint, isequivalent,
-                        issubset, linear_combination, minkowski_difference,
+                        ⊂, issubset, linear_combination, minkowski_difference,
                         minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, constrained_dimensions,
                              linear_map_inverse, rationalize, triangulate
@@ -72,6 +72,7 @@ include("intersection.jl")
 include("isapprox.jl")
 include("isdisjoint.jl")
 include("isequivalent.jl")
+include("isstrictsubset.jl")
 include("issubset.jl")
 include("linear_combination.jl")
 include("minkowski_difference.jl")
