@@ -36,6 +36,23 @@ function constraints_list(P::VPolygon; sort_constraints::Bool=false)
         mid_hull = [halfspace_left(vl[end], vl[1])]
         lower_hull = [halfspace_left(vl[j], vl[j + 1]) for j in 1:(i - 1)]
         clist = vcat(upper_hull, mid_hull, lower_hull)
+
+        if sort_constraints
+            # result is not sorted according to `⪯` yet, so sort it
+            # TODO can the code be changed to get rid of the sorting? here is a counterexample:
+            # `VPolygon{Float64, Vector{Float64}}([[0.0, 0.0], [-1.0, -1.0], [1.0, -1.0]])`
+            # julia> constraints_list(R; sort_constraints=true)
+            # 3-element Vector{HalfSpace{Float64, Vector{Float64}}}:
+            # HalfSpace{Float64, Vector{Float64}}([1.0, 1.0], 0.0)
+            # HalfSpace{Float64, Vector{Float64}}([-1.0, 1.0], 0.0)
+            # HalfSpace{Float64, Vector{Float64}}([0.0, -2.0], 2.0)
+            # julia> constraints_list(R; sort_constraints=false)
+            # 3-element Vector{HalfSpace{Float64, Vector{Float64}}}:
+            # HalfSpace{Float64, Vector{Float64}}([-1.0, 1.0], 0.0)
+            # HalfSpace{Float64, Vector{Float64}}([0.0, -2.0], 2.0)
+            # HalfSpace{Float64, Vector{Float64}}([1.0, 1.0], 0.0)
+            clist = _sort_constraints(clist)
+        end
     end
     return clist
 end
