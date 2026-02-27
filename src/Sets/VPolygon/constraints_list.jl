@@ -1,7 +1,7 @@
 # The algorithm adds an edge for each consecutive pair of vertices.
 # Since the vertices are already ordered in counter-clockwise fashion (CCW), the
 # constraints will be sorted (CCW) as well.
-function constraints_list(P::VPolygon)
+function constraints_list(P::VPolygon; sort_constraints::Bool=false)
     vl = P.vertices
     m = length(vl)
     if m == 0
@@ -15,7 +15,7 @@ function constraints_list(P::VPolygon)
     elseif m == 2
         # only two vertices -> use function for line segments
         require(@__MODULE__, :LazySets; fun_name="convert")
-        clist = constraints_list(LineSegment(vl[1], vl[2]))
+        clist = constraints_list(LineSegment(vl[1], vl[2]); sort_constraints)
     else
         # find right-most vertex
         i = div(m, 2)
