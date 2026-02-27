@@ -2,10 +2,10 @@ module HPolygonModule
 
 using Reexport: @reexport
 
-using ..LazySets: AbstractHPolygon, BINARY_SEARCH_THRESHOLD, addconstraint!,
+using ..LazySets: AbstractHPolygon, BINARY_SEARCH_THRESHOLD,
                   binary_search_constraints, constraints_list, element,
                   isbounded, remove_redundant_constraints!, ⪯,
-                  _intersection_line2d, @validate
+                  _intersection_line2d, _sort_constraints, @validate
 using ..HalfSpaceModule: HalfSpace, _normal_Vector
 
 @reexport import ..API: isoperationtype, σ, translate

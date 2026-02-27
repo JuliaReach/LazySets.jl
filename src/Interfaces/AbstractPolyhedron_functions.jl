@@ -1086,3 +1086,13 @@ function _infeasible_constraints_list(n::Int; N=Float64)
     @inbounds clist[end] = HalfSpace(fill(-one(N), n), -one(N))  # ∑_i x_i ≥ 1
     return clist
 end
+
+function _sort_constraints(constraints::AbstractVector{<:HalfSpace{N,VN}};
+                           prune::Bool=true) where {N,VN}
+    sorted_constraints = Vector{HalfSpace{N,VN}}()
+    sizehint!(sorted_constraints, length(constraints))
+    for ci in constraints
+        addconstraint!(sorted_constraints, ci; prune=prune)
+    end
+    return sorted_constraints
+end

@@ -61,11 +61,7 @@ mutable struct HPolygonOpt{N,VN<:AbstractVector{N}} <: AbstractHPolygon{N}
                          check_boundedness::Bool=false,
                          prune::Bool=true) where {N,VN<:AbstractVector{N}}
         if sort_constraints
-            sorted_constraints = Vector{HalfSpace{N,VN}}()
-            sizehint!(sorted_constraints, length(constraints))
-            for ci in constraints
-                addconstraint!(sorted_constraints, ci; prune=prune)
-            end
+            sorted_constraints = _sort_constraints(constraints; prune)
             P = new{N,VN}(sorted_constraints, ind)
         else
             P = new{N,VN}(constraints, ind)
