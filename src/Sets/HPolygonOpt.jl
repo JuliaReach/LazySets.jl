@@ -4,13 +4,14 @@ export HPolygonOpt
     HPolygonOpt{N, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
 
 Type that represents a convex polygon in constraint representation whose edges
-are sorted in counter-clockwise fashion with respect to their normal directions.
+are sorted according to the order `⪯`, i.e., in counter-clockwise fashion with
+respect to their normal directions such that the smallest direction is `[1, 0]`.
 This implementation is a refined version of [`HPolygon`](@ref).
 
 ### Fields
 
-- `constraints` -- list of linear constraints, sorted by the normal direction in
-                   counter-clockwise fashion
+- `constraints` -- list of linear constraints, sorted by the normal direction
+                   according to `⪯`
 - `ind`         -- index in the list of constraints to begin the search to
                    evaluate the support vector/function
 
@@ -33,7 +34,7 @@ index that can be used to warm-start the search for optimal values in the
 support-vector computation.
 
 The option `sort_constraints` can be used to deactivate automatic sorting of
-constraints in counter-clockwise fashion, which is an invariant of this type.
+constraints according to `⪯`, which is an invariant of this type.
 Alternatively, one can construct an `HPolygonOpt` with empty constraints list,
 which can then be filled iteratively using `addconstraint!`.
 
