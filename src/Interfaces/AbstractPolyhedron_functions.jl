@@ -1075,14 +1075,14 @@ end
 # n times ⋀_i x_i ≤ 0
 # 1 times ∑_i x_i ≥ 1
 # Note: constraints are sorted CCW in 2D
+# Note: code is similar to `_constraints_list_singleton_Vector`
 function _infeasible_constraints_list(n::Int; N=Float64)
-    c_sum = HalfSpace(fill(N(-1), n), N(-1))  # ∑_i x_i ≥ 1
-    clist = Vector{typeof(c_sum)}(undef, n + 1)
+    clist = Vector{HalfSpace{N,Vector{N}}}(undef, n + 1)
     @inbounds for i in 1:n
         a = zeros(N, n)
         a[i] = one(N)
         clist[i] = HalfSpace(a, N(0))  # x_i ≤ 0
     end
-    @inbounds clist[n + 1] = c_sum
+    @inbounds clist[end] = HalfSpace(fill(-one(N), n), -one(N))  # ∑_i x_i ≥ 1
     return clist
 end
