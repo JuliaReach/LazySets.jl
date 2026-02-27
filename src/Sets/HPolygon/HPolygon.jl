@@ -2,12 +2,13 @@
     HPolygon{N, VN<:AbstractVector{N}} <: AbstractHPolygon{N}
 
 Type that represents a convex polygon in constraint representation whose edges
-are sorted in counter-clockwise fashion with respect to their normal directions.
+are sorted according to the order `⪯`, i.e., in counter-clockwise fashion with
+respect to their normal directions such that the smallest direction is `[1, 0]`.
 
 ### Fields
 
-- `constraints` -- list of linear constraints, sorted by the normal direction in
-                   counter-clockwise fashion
+- `constraints` -- list of linear constraints, sorted by the normal direction
+                   according to `⪯`
 
 ### Notes
 
@@ -23,7 +24,7 @@ Further constructor arguments:
                          constraints
 
 The option `sort_constraints` can be used to deactivate automatic sorting of
-constraints in counter-clockwise fashion, which is an invariant of this type.
+constraints according to `⪯`, which is an invariant of this type.
 Alternatively, one can construct an `HPolygon` with empty constraints list,
 which can then be filled iteratively using `addconstraint!`.
 
@@ -48,11 +49,7 @@ struct HPolygon{N,VN<:AbstractVector{N}} <: AbstractHPolygon{N}
                       check_boundedness::Bool=false,
                       prune::Bool=true) where {N,VN<:AbstractVector{N}}
         if sort_constraints
-            sorted_constraints = Vector{HalfSpace{N,VN}}()
-            sizehint!(sorted_constraints, length(constraints))
-            for ci in constraints
-                addconstraint!(sorted_constraints, ci; prune=prune)
-            end
+            sorted_constraints = _sort_constraints(constraints; prune)
             P = new{N,VN}(sorted_constraints)
         else
             P = new{N,VN}(constraints)

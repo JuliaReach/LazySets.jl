@@ -1,7 +1,7 @@
 # The algorithm adds an edge for each consecutive pair of vertices.
 # Since the vertices are already ordered in counter-clockwise fashion (CCW), the
 # constraints will be sorted (CCW) as well.
-function constraints_list(P::VPolygon)
+function constraints_list(P::VPolygon; sort_constraints::Bool=false)
     vl = P.vertices
     m = length(vl)
     if m == 0
@@ -15,7 +15,7 @@ function constraints_list(P::VPolygon)
     elseif m == 2
         # only two vertices -> use function for line segments
         require(@__MODULE__, :LazySets; fun_name="convert")
-        clist = constraints_list(LineSegment(vl[1], vl[2]))
+        clist = constraints_list(LineSegment(vl[1], vl[2]); sort_constraints)
     else
         # find right-most vertex
         i = div(m, 2)
@@ -36,6 +36,23 @@ function constraints_list(P::VPolygon)
         mid_hull = [halfspace_left(vl[end], vl[1])]
         lower_hull = [halfspace_left(vl[j], vl[j + 1]) for j in 1:(i - 1)]
         clist = vcat(upper_hull, mid_hull, lower_hull)
+
+        if sort_constraints
+            # result is not sorted according to `⪯` yet, so sort it
+            # TODO can the code be changed to get rid of the sorting? here is a counterexample:
+            # `VPolygon{Float64, Vector{Float64}}([[0.0, 0.0], [-1.0, -1.0], [1.0, -1.0]])`
+            # julia> constraints_list(R; sort_constraints=true)
+            # 3-element Vector{HalfSpace{Float64, Vector{Float64}}}:
+            # HalfSpace{Float64, Vector{Float64}}([1.0, 1.0], 0.0)
+            # HalfSpace{Float64, Vector{Float64}}([-1.0, 1.0], 0.0)
+            # HalfSpace{Float64, Vector{Float64}}([0.0, -2.0], 2.0)
+            # julia> constraints_list(R; sort_constraints=false)
+            # 3-element Vector{HalfSpace{Float64, Vector{Float64}}}:
+            # HalfSpace{Float64, Vector{Float64}}([-1.0, 1.0], 0.0)
+            # HalfSpace{Float64, Vector{Float64}}([0.0, -2.0], 2.0)
+            # HalfSpace{Float64, Vector{Float64}}([1.0, 1.0], 0.0)
+            clist = _sort_constraints(clist)
+        end
     end
     return clist
 end

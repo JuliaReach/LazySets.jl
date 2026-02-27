@@ -492,9 +492,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
             @test v1 ∈ h1
         elseif i == 2
             c = h1.constraints[1]
-            @test c.a ≈ N[-2 // 5, -1 // 2] && c.b ≈ N(-23 // 50)
-            c = h1.constraints[3]
             @test c.a ≈ N[2 // 5, 1 // 2] && c.b ≈ N(23 // 50)
+            c = h1.constraints[3]
+            @test c.a ≈ N[-2 // 5, -1 // 2] && c.b ≈ N(-23 // 50)
         elseif i == 4
             @test length(h1.constraints) == 4
             c = h1.constraints[1]
@@ -792,7 +792,7 @@ for N in [Float64]
     Pr = rationalize(BigInt, P, 10 * eps(Float64))
     @test isa(Pr, HPolygon{Rational{BigInt},Vector{Rational{BigInt}}})
 
-    # rounding error makes first two constraints equal according to `⪯`
+    # floating-point precision makes first two constraints equal according to `⪯`
     clist = [HalfSpace([0.015002029632632474, 0.002922288635110161], -0.0004461747231474431),
              HalfSpace([1.7030005339258025e-7, 5.796631764171112e-8], -2.5083390350111008e-9),
              HalfSpace([0.004578726181206236, 0.007501014816316202], 0.0005453263149111838),

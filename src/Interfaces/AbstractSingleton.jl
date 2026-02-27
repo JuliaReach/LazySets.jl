@@ -212,17 +212,18 @@ function constraints_list(S::AbstractSingleton; min_constraints::Bool=false)
 end
 
 # fewest constraints (n+1)
+# n times ⋀_i x_i ≤ e_i
+# 1 times ∑_i x_i ≥ ∑_i e_i
 # Note: constraints are sorted CCW in 2D
+# Note: code is similar to `_infeasible_constraints_list`
 function _constraints_list_singleton_Vector(e::AbstractVector{N}) where {N}
     n = length(e)
-    constraints = Vector{HalfSpace{N,Vector{N}}}(undef, n + 1)
+    clist = Vector{HalfSpace{N,Vector{N}}}(undef, n + 1)
     @inbounds for i in 1:n
-        # x_i >= e
         ai = zeros(N, n)
-        ai[i] = -one(N)
-        constraints[i] = HalfSpace(ai, -e[i])
+        ai[i] = one(N)
+        clist[i] = HalfSpace(ai, e[i])  # x_i ≤ e_i
     end
-    # (∑_i x_i) <= ∑_i e_i
-    @inbounds constraints[end] = HalfSpace(ones(N, n), sum(e))
-    return constraints
+    @inbounds clist[end] = HalfSpace(fill(-one(N), n), -sum(e))  # ∑_i x_i ≥ ∑_i e_i
+    return clist
 end

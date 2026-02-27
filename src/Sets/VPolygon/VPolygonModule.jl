@@ -8,7 +8,8 @@ using ..LazySets: AbstractPolygon, LazySet, AbstractHPolygon, halfspace_left,
                   _constraints_list_singleton_Vector, _extrema_vlist,
                   _high_vlist, _infeasible_constraints_list,
                   _intersection_vrep_2d, _linear_map_vrep, _low_vlist,
-                  _minkowski_sum_vrep_2d, _to_colVector, @validate
+                  _minkowski_sum_vrep_2d, _sort_constraints, _to_colVector,
+                  @validate
 using ..HPolygonModule: HPolygon
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG, shuffle
