@@ -450,10 +450,16 @@ constraints sorted by their normal directions.
 If `prune` is active, we check if the new constraint is redundant.
 If the constraint is not redundant, we perform the same check to the left and to
 the right until we find the first constraint that is not redundant.
+
+!!! note
+
+    `linear_search` is currently fixed to `true` due to incorrectness of the
+    binary search.
 """
 function addconstraint!(constraints::Vector{<:HalfSpace}, new_constraint::HalfSpace;
                         linear_search::Bool=length(constraints) < BINARY_SEARCH_THRESHOLD,
                         prune::Bool=true)
+    linear_search = true  # TODO fix binary search and then remove this line
     m = length(constraints)
     k = m
     if k > 0
