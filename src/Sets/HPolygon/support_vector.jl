@@ -21,9 +21,15 @@ Comparison of directions is performed using polar angles; see the definition of
 
 For polygons with $BINARY_SEARCH_THRESHOLD or more constraints we use a binary
 search by default.
+
+!!! note
+
+    `linear_search` is currently fixed to `true` due to incorrectness of the
+    binary search.
 """
 @validate function σ(d::AbstractVector, P::HPolygon;
                      linear_search::Bool=(length(P.constraints) < BINARY_SEARCH_THRESHOLD))
+    linear_search = true  # TODO fix binary search and then remove this line
     n = length(P.constraints)
     @assert n > 0 "the polygon has no constraints"
 
