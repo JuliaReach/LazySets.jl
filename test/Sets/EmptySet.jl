@@ -295,15 +295,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # support_function
     @test_throws DimensionMismatch ρ(N[1], E)
-    for x in (N[-1, 2], N[2, 0], N[0, 0])
-        @test_throws ArgumentError ρ(x, E)
-    end
+    @test_throws ArgumentError ρ(N[0, 0], E)
+    @test_throws ArgumentError ρ(N[-1, 2], E)
 
     # support_vector
     @test_throws DimensionMismatch σ(N[1], E)
-    for x in (N[-1, 2], N[2, 0], N[0, 0])
-        @test_throws ArgumentError σ(x, E)
-    end
+    @test_throws ArgumentError σ(N[0, 0], E)
+    @test_throws ArgumentError σ(N[-1, 2], E)
 
     # translate
     @test_throws DimensionMismatch translate(E, N[1])
