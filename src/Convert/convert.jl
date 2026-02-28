@@ -73,8 +73,8 @@ for T in subtypes(AbstractHPolygon, true)
         We compute the list of constraints of `X`, then instantiate the polygon.
         """
         function convert(::Type{$T}, X::LazySet;
-                              check_boundedness::Bool=!isboundedtype(typeof(X)),
-                              prune::Bool=true)
+                         check_boundedness::Bool=!isboundedtype(typeof(X)),
+                         prune::Bool=true)
             @assert dim(X) == 2 "set must be two-dimensional for conversion, but it " *
                                 "has dimension $(dim(X))"
             if check_boundedness && !isbounded(X)
