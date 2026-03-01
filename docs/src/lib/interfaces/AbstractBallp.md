@@ -18,7 +18,7 @@ AbstractBallp
 This interface requires to implement the following functions:
 
 ```@docs
-ball_norm(::AbstractBallp)
+norm_ball(::AbstractBallp)
 radius_ball(::AbstractBallp)
 ```
 

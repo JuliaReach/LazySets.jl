@@ -13,7 +13,7 @@ using ReachabilityBase.Require: require
 @reexport import ..API: area, center, isoperationtype, rand, reflect, sample,
                         volume, in, project, scale, ρ, σ, translate!,
                         isdisjoint, issubset
-@reexport import ..LazySets: ball_norm, chebyshev_center_radius, ○, radius_ball
+@reexport import ..LazySets: ○, chebyshev_center_radius, norm_ball, radius_ball
 @reexport using ..API
 
 export Ball2
@@ -36,8 +36,8 @@ include("volume.jl")
 include("isdisjoint.jl")
 include("issubset.jl")
 
-include("ball_norm.jl")
 include("chebyshev_center_radius.jl")
+include("norm_ball.jl")
 include("radius_ball.jl")
 
 function ○(c::VN, r::N) where {N<:AbstractFloat,VN<:AbstractVector{N}}

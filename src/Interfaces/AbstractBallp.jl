@@ -11,7 +11,7 @@ See [`Ballp`](@ref) for a standard implementation of this interface.
 
 Every concrete `AbstractBallp` must define the following methods:
 
-- `ball_norm(::AbstractBallp)` -- return the characteristic norm
+- `norm_ball(::AbstractBallp)` -- return the characteristic norm
 - `radius_ball(::AbstractBallp)` -- return the ball radius
 
 The subtypes of `AbstractBallp`:
@@ -45,7 +45,7 @@ A number representing the radius.
 function radius_ball(::AbstractBallp) end
 
 """
-    ball_norm(B::AbstractBallp)
+    norm_ball(B::AbstractBallp)
 
 Determine the norm (p) of a p-norm ball.
 
@@ -57,7 +57,7 @@ Determine the norm (p) of a p-norm ball.
 
 A number representing the norm.
 """
-function ball_norm(::AbstractBallp) end
+function norm_ball(::AbstractBallp) end
 
 function low(B::AbstractBallp)
     return _low_AbstractBallp(B)
@@ -118,7 +118,7 @@ otherwise, for all ``i = 1, …, n``.
 If the direction has norm zero, the center of the ball is returned.
 """
 @validate function σ(d::AbstractVector, B::AbstractBallp)
-    p = ball_norm(B)
+    p = norm_ball(B)
     q = p / (p - 1)
     v = similar(d)
     N = promote_type(eltype(d), eltype(B))
@@ -149,7 +149,7 @@ respectively, and let ``q = \\frac{p}{p-1}``. Then:
 ```
 """
 @validate function ρ(d::AbstractVector, B::AbstractBallp)
-    p = ball_norm(B)
+    p = norm_ball(B)
     q = p / (p - 1)
     return dot(d, center(B)) + radius_ball(B) * norm(d, q)
 end
@@ -188,7 +188,7 @@ true
 """
 @validate function in(x::AbstractVector, B::AbstractBallp)
     N = promote_type(eltype(x), eltype(B))
-    p = ball_norm(B)
+    p = norm_ball(B)
     sum = zero(N)
     @inbounds for i in eachindex(x)
         sum += abs(center(B, i) - x[i])^p

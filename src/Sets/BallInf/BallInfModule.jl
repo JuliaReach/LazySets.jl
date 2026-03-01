@@ -14,8 +14,8 @@ using ReachabilityBase.Distribution: reseed!
 
 @reexport import ..API: area, center, isoperationtype, high, low, radius, rand,
                         reflect, volume, project, scale, ρ, σ, translate!
-@reexport import ..LazySets: ball_norm, isflat, ngens, radius_ball,
-                             radius_hyperrectangle, □
+@reexport import ..LazySets: □, isflat, ngens, norm_ball, radius_ball,
+                             radius_hyperrectangle
 @reexport using ..API
 
 export BallInf
@@ -37,10 +37,10 @@ include("support_function.jl")
 include("support_vector.jl")
 include("translate.jl")
 
-include("ball_norm.jl")
 include("genmat.jl")
 include("isflat.jl")
 include("ngens.jl")
+include("norm_ball.jl")
 include("radius_ball.jl")
 include("radius_hyperrectangle.jl")
 

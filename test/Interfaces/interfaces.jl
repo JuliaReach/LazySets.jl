@@ -83,8 +83,8 @@ end
 
 # --- AbstractBallp ---
 
-# ball_norm
-@test check_method_implementation(AbstractBallp, LazySets.ball_norm,
+# norm_ball
+@test check_method_implementation(AbstractBallp, LazySets.norm_ball,
                                   Function[S -> (S{Float64},)])
 # radius_ball
 @test check_method_implementation(AbstractBallp, LazySets.radius_ball,

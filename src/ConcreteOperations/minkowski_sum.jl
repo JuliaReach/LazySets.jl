@@ -365,8 +365,8 @@ end
 #
 # where Bp³ = Ball(center(Bp¹) + center(Bp²), radius(Bp¹) + radius(Bp²))
 @validate function minkowski_sum(B1::BT1, B2::BT2) where {BT<:AbstractBallp,BT1<:BT,BT2<:BT}
-    p = ball_norm(B1)
-    if ball_norm(B2) != p
+    p = norm_ball(B1)
+    if norm_ball(B2) != p
         throw(ArgumentError("this method only applies to balls of the same norm"))
     end
     return Ballp(p, center(B1) + center(B2), radius_ball(B1) + radius_ball(B2))
