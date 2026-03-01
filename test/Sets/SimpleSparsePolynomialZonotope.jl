@@ -1,11 +1,5 @@
 using LazySets, Test, LinearAlgebra
 IA = LazySets.IA
-@static if VERSION >= v"1.9"
-    vIA = pkgversion(IA)
-else
-    import PkgVersion
-    vIA = PkgVersion.Version(IA)
-end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -39,9 +33,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test overapproximate(S, Zonotope) == Z
     @test overapproximate(S, UnionSetArray{Zonotope}; nsdiv=1) == UnionSetArray([Z])
     @test length(overapproximate(S, UnionSetArray{Zonotope}; nsdiv=3)) == 9
-    if vIA >= v"0.19.0"  # `mince` with non-uniform partition was introduced in IA v0.19.0
-        @test length(overapproximate(S, UnionSetArray{Zonotope}; partition=(2, 3))) == 6
-    end
+    @test length(overapproximate(S, UnionSetArray{Zonotope}; partition=(2, 3))) == 6
 
     LMS = linear_map(N[1 2; 3 4], S)
     @test LMS isa SimpleSparsePolynomialZonotope{N}

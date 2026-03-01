@@ -1,7 +1,6 @@
 using LazySets, Test, SparseArrays, LinearAlgebra
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
 IA = LazySets.IA
-using LazySets.IA: IntervalBox
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -49,10 +48,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     H2 = convert(Hyperrectangle, BallInf(N[2, 3], N(1)))
     @test isidentical(H2, Hyperrectangle(N[2, 3], N[1, 1]))
     # between IntervalBox
-    X = convert(IntervalBox, H)
-    @test X isa IntervalBox{2,N} && X[1] == IA.interval(N(0), N(2)) &&
-          X[2] == IA.interval(N(-3), N(1))
-    @test isidentical(convert(Hyperrectangle, X), H)
+    @static if isdefined(@__MODULE__, :IntervalBoxes)
+        import IntervalBoxes as IB
+
+        X = convert(IB.IntervalBox, H)
+        @test X isa IB.IntervalBox{2,N} && Interval(X[1]) == Interval(N(0), N(2)) &&
+              Interval(X[2]) == Interval(N(-3), N(1))
+        @test isidentical(convert(Hyperrectangle, X), H)
+    end
     # from IA.Interval
     H2 = convert(Hyperrectangle, IA.interval(N(-1), N(1)))
     @test isidentical(H2, H1)
@@ -535,19 +538,21 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # difference
     @test_throws DimensionMismatch difference(H, H3)
     # full set
-    X = difference(H, Hyperrectangle(N[4, 3], N[1, 1]))
-    @test X isa LazySet{N} && isequivalent(X, H)
-    # empty set
-    X = difference(H, H)
-    @test isequivalent(X, EmptySet{N}(2))
-    # one hyperrectangle
-    X = difference(H, Hyperrectangle(N[2, -1], N[1, 2]))
-    @test X isa LazySet{N} && isequivalent(X, Hyperrectangle(N[1 // 2, -1], N[1 // 2, 2]))
-    # multiple hyperrectangles (result is not unique; reylying on implementation here)
-    X = difference(H, Hyperrectangle(N[2, 0], N[1, 2]))
-    @test X isa UnionSetArray{N} &&
-          array(X) == [Hyperrectangle(N[1 // 2, -1], N[1 // 2, 2]),
-                       Hyperrectangle(N[3 // 2, -5 // 2], N[1 // 2, 1 // 2])]
+    @static if isdefined(@__MODULE__, :IntervalBoxes)
+        X = difference(H, Hyperrectangle(N[4, 3], N[1, 1]))
+        @test X isa LazySet{N} && isequivalent(X, H)
+        # empty set
+        X = difference(H, H)
+        @test isequivalent(X, EmptySet{N}(2))
+        # one hyperrectangle
+        X = difference(H, Hyperrectangle(N[2, -1], N[1, 2]))
+        @test X isa LazySet{N} && isequivalent(X, Hyperrectangle(N[1 // 2, -1], N[1 // 2, 2]))
+        # multiple hyperrectangles (result is not unique; reylying on implementation here)
+        X = difference(H, Hyperrectangle(N[2, 0], N[1, 2]))
+        @test X isa UnionSetArray{N} &&
+              array(X) == [Hyperrectangle(N[1 // 2, -1], N[1 // 2, 2]),
+                           Hyperrectangle(N[3 // 2, -5 // 2], N[1 // 2, 1 // 2])]
+    end
 
     # distance (between two sets)
     @test_throws DimensionMismatch distance(H, H3)

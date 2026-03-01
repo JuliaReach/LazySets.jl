@@ -8,16 +8,16 @@ function zero_itv(N)
     return res
 end
 
-const zero_box_store = Dict{Type,Dict{Integer,IA.IntervalBox}}()
+const zero_box_store = Dict{Type,Dict{Integer,Vector{<:IA.Interval}}}()
 function zero_box(n::Int, N=Float64)
     d = get(zero_box_store, N, nothing)
     if isnothing(d)
-        d = Dict{Integer,IA.IntervalBox}()
+        d = Dict{Integer,Vector{<:IA.Interval}}()
         zero_box_store[N] = d
     end
     res = get(d, n, nothing)
     if isnothing(res)
-        res = IA.IntervalBox(zero_itv(N), n)
+        res = fill(zero_itv(N), n)
         d[n] = res
     end
     return res
@@ -33,53 +33,17 @@ function sym_itv(N)
     return res
 end
 
-const sym_box_store = Dict{Type,Dict{Integer,IA.IntervalBox}}()
+const sym_box_store = Dict{Type,Dict{Integer,Vector{<:IA.Interval}}}()
 function sym_box(n::Int, N=Float64)
     d = get(sym_box_store, N, nothing)
     if isnothing(d)
-        d = Dict{Integer,IA.IntervalBox}()
+        d = Dict{Integer,Vector{<:IA.Interval}}()
         sym_box_store[N] = d
     end
     res = get(d, n, nothing)
     if isnothing(res)
-        res = IA.IntervalBox(sym_itv(N), n)
+        res = fill(sym_itv(N), n)
         d[n] = res
     end
     return res
-end
-
-"""
-    fast_interval_pow(a::IntervalArithmetic.Interval, n::Int)
-
-Compute the `n`th power of an interval without using correct rounding.
-
-### Input
-
-- `a` -- interval (from `IntervalArithmetic.jl`)
-- `n` -- integer
-
-### Output
-
-A non-rigorous approximation of `a^n`.
-
-### Notes
-
-For a rigorous approximation with correct rounding, use `a^n` from
-`IntervalArithmetic.jl`.
-"""
-function fast_interval_pow(a::IA.Interval, n::Int)
-    # TODO review after IntervalArithmetic.jl#388
-    if iszero(n)
-        return one(a)
-    elseif isodd(n)
-        return IA.interval(a.lo^n, a.hi^n)
-    else
-        if 0 ∈ a
-            return IA.interval(zero(a.lo), max(abs(a.lo), abs(a.hi))^n)
-        else
-            lon = a.lo^n
-            hin = a.hi^n
-            return IA.interval(min(lon, hin), max(lon, hin))
-        end
-    end
 end

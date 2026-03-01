@@ -39,10 +39,6 @@ using SparseArrays: AbstractSparseMatrix, AbstractSparseVector, SparseVector,
 using RecipesBase: AbstractPlot, @recipe, @series
 using Requires: @require
 
-@static if VERSION < v"1.9"
-    stack(vecs) = hcat(vecs...)  # COV_EXCL_LINE
-end
-
 # ================
 # ReachabilityBase
 # ================

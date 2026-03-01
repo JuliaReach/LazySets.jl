@@ -1,6 +1,5 @@
 using LazySets, Test
 IA = LazySets.IA
-using LazySets.IA: IntervalBox
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -126,8 +125,8 @@ for N in [Float64]
         Dx₁ = IA.interval(N(-1), N(1))
         Dx₂ = IA.interval(N(-1), N(1))
         Dx₃ = IA.interval(N(-1), N(1))
-        D = Dx₁ × Dx₂ × Dx₃
-        local x0 = IntervalBox(IA.mid.(D)...)
+        D = [Dx₁, Dx₂, Dx₃]
+        local x0 = [IA.interval(IA.mid(di)) for di in D]
         local vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
         @test box_approximation(vTM) == Hyperrectangle(N[1, 0], N[2, 2])
     end
