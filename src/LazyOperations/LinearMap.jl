@@ -389,7 +389,7 @@ A list of vertices.
 We assume that the underlying set `X` is polytopic and compute the vertices of
 `X`. The result is just the linear map applied to each vertex.
 """
-function vertices_list(lm::LinearMap; prune::Bool=true)
+@validate function vertices_list(lm::LinearMap; prune::Bool=true)
     # apply the linear map to each vertex
     vlist = broadcast(x -> lm.M * x, vertices(lm.X))
 

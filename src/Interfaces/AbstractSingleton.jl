@@ -109,11 +109,11 @@ end
     return element(S, i)
 end
 
-function vertices(S::AbstractSingleton)
+@validate function vertices(S::AbstractSingleton)
     return SingletonIterator(element(S))
 end
 
-function vertices_list(S::AbstractSingleton)
+@validate function vertices_list(S::AbstractSingleton)
     return [element(S)]
 end
 

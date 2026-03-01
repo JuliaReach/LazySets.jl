@@ -330,7 +330,7 @@ We assume that the underlying sets are polytopic.
 Then the high-dimensional set of vertices is just the Cartesian product of the
 low-dimensional sets of vertices.
 """
-function vertices_list(cp::CartesianProduct)
+@validate function vertices_list(cp::CartesianProduct)
     # collect low-dimensional vertices lists
     vlist1 = vertices_list(cp.X)
     vlist2 = vertices_list(cp.Y)

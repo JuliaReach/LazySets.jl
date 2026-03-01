@@ -374,7 +374,7 @@ There are at most ``2^p`` distinct vertices. Use the flag `apply_convex_hull` to
 control whether a convex-hull algorithm is applied to the vertices computed by
 this method; otherwise, redundant vertices may be present.
 """
-function vertices_list(Z::AbstractZonotope; apply_convex_hull::Bool=true)
+@validate function vertices_list(Z::AbstractZonotope; apply_convex_hull::Bool=true)
     c = center(Z)
     G = genmat(Z)
     n, p = size(G)

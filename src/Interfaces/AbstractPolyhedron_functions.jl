@@ -785,7 +785,7 @@ julia> length(vertices_list(P))
 4
 ```
 """
-function vertices_list(P::AbstractPolyhedron; check_boundedness::Bool=true)
+@validate function vertices_list(P::AbstractPolyhedron; check_boundedness::Bool=true)
     if check_boundedness && !isbounded(P)
         throw(ArgumentError("the list of vertices of an unbounded " *
                             "polyhedron is not defined"))

@@ -210,10 +210,10 @@ Return a list of vertices of the convex hull of a finite number of sets.
 
 A list of vertices.
 """
-function vertices_list(cha::ConvexHullArray;
-                       apply_convex_hull::Bool=true,
-                       backend=nothing,
-                       prune::Bool=apply_convex_hull)
+@validate function vertices_list(cha::ConvexHullArray;
+                                 apply_convex_hull::Bool=true,
+                                 backend=nothing,
+                                 prune::Bool=apply_convex_hull)
     vlist = vcat([vertices_list(Xi) for Xi in cha]...)
     if apply_convex_hull || prune
         convex_hull!(vlist; backend=backend)

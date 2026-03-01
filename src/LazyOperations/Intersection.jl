@@ -645,7 +645,7 @@ bounded.
 We compute the concrete intersection using `intersection` and then take the
 vertices of that representation.
 """
-function vertices_list(cap::Intersection)
+@validate function vertices_list(cap::Intersection)
     return vertices_list(intersection(cap.X, cap.Y))
 end
 
