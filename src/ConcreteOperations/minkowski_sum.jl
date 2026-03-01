@@ -140,8 +140,8 @@ function _minkowski_sum_hrep(A::AbstractMatrix, b::AbstractVector,
     if isnothing(algorithm)
         algorithm = Polyhedra.FourierMotzkin()
     elseif !(algorithm isa Polyhedra.EliminationAlgorithm)  # NOTE: this is an internal function
-        error("algorithm $algorithm is not a valid elimination algorithm; " *
-              "choose among any of $(subtypes(Polyhedra.EliminationAlgorithm))")
+        throw(ArgumentError("algorithm $algorithm is not a valid elimination algorithm; " *
+                            "choose among any of $(subtypes(Polyhedra.EliminationAlgorithm))"))
     end
 
     mP, nP = size(A)
@@ -155,8 +155,8 @@ function _minkowski_sum_hrep(A::AbstractMatrix, b::AbstractVector,
     if prune
         success = remove_redundant_constraints!(W)
         if !success
-            error("the constraints corresponding to the Minkowski sum of the " *
-                  "given sets are infeasible")
+            throw(ArgumentError("the constraints corresponding to the Minkowski sum of the " *
+                                "given sets are infeasible"))
         end
     end
     return W

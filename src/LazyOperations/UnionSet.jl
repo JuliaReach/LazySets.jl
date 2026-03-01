@@ -134,8 +134,7 @@ either ``X`` *or* ``Y``.
         return ρX > ρY ? σ(d, X) : σ(d, Y)
 
     else
-        error("algorithm $algorithm for the support vector of a `UnionSet` is" *
-              "unknown")
+        throw(ArgumentError("algorithm $algorithm unknown"))
     end
 end
 

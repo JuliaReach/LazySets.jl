@@ -920,7 +920,7 @@ function _bound_intersect_2D(Z::Zonotope, L::Line2D)
         P .= P + 2g(j)
         j += 1
         if j > size(G, 2)
-            error("got an unexpected error; check that the sets intersect")
+            throw(ArgumentError("unexpected case; check that the sets intersect"))
         end
     end
     singleton = intersection(LineSegment(P, P + 2g(j)), L)

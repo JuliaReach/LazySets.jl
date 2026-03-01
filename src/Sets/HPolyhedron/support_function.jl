@@ -19,8 +19,8 @@ If `P` is unbounded in the given direction, there are two cases:
     lp, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope
-            error("the support function in direction $(d) is undefined " *
-                  "because the polytope is unbounded")
+            throw(ArgumentError("the support function in direction $(d) is undefined " *
+                                "because the polytope is unbounded"))
         end
         return N(Inf)
     end
