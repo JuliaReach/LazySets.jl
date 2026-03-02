@@ -368,11 +368,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # exponential_map
     @test_throws DimensionMismatch exponential_map(ones(N, 1, 1), H)
     @test_throws DimensionMismatch exponential_map(ones(N, 2, 1), H)
-    if N <: AbstractFloat || VERSION >= v"1.9"
-        X = exponential_map(N[1 0; 0 2], H)
-        @test X isa Zonotope && center(X) == N[exp(1), -exp(2)] &&
-              genmat(X) == N[exp(1) 0; 0 2*exp(2)]
-    end
+    X = exponential_map(N[1 0; 0 2], H)
+    @test X isa Zonotope && center(X) == N[exp(1), -exp(2)] && genmat(X) == N[exp(1) 0; 0 2*exp(2)]
 
     # in
     @test_throws DimensionMismatch N[0] ∈ H
