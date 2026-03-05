@@ -33,7 +33,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Pc = VPolygon([N[0, 0], N[3, 0], N[0, 3]])  # convex hull of `Pnc`
 
     # constructor
-    E = EmptySet{N}(2)
+    E = @inferred EmptySet{N}(2)
     @test E isa EmptySet{N}
     @test E.dim == 2
     E3 = EmptySet{N}(3)
@@ -41,7 +41,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test E3.dim == 3
 
     # convert
-    E2 = convert(EmptySet, Pe)
+    E2 = @inferred convert(EmptySet, Pe)
     @test isidentical(E2, E)
     @test_throws AssertionError convert(EmptySet, B)
 
@@ -51,7 +51,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # area
     @test_throws DimensionMismatch area(EmptySet{N}(1))
     for X in (E, E3)
-        res = area(X)
+        res = @inferred area(X)
         @test res isa N && res == N(0)
     end
 
@@ -59,15 +59,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError chebyshev_center_radius(E)
 
     # complement
-    U2 = complement(E)
+    U2 = @inferred complement(E)
     @test U2 isa Universe{N} && dim(U2) == 2
 
     # concretize
-    E2 = concretize(E)
+    E2 = @inferred concretize(E)
     @test isidentical(E2, E)
 
     # constrained_dimensions
-    @test constrained_dimensions(E) == 1:2
+    @test @inferred constrained_dimensions(E) == 1:2
 
     # constraints_list
     @test_throws MethodError constraints_list(E)  # TODO this should maybe change
@@ -76,26 +76,26 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws MethodError constraints(E)  # TODO this should maybe change
 
     # convex_hull (unary)
-    E2 = convex_hull(E)
+    E2 = @inferred convex_hull(E)
     @test isidentical(E2, E)
 
     # copy
-    E2 = copy(E)
+    E2 = @inferred copy(E)
     @test isidentical(E2, E)
 
     # diameter
     @test_throws ArgumentError diameter(E, N(1 // 2))
-    for res in (diameter(E), diameter(E, Inf), diameter(E, 2))
+    for res in ((@inferred diameter(E)), (@inferred diameter(E, Inf)), @inferred diameter(E, 2))
         @test res isa N && res == N(0)
     end
 
     # dim
-    @test dim(E) == 2
+    @test @inferred dim(E) == 2
     @test dim(E3) == 3
 
     # eltype
-    @test eltype(E) == N
-    @test eltype(typeof(E)) == N
+    @test @inferred eltype(E) == N
+    @test @inferred eltype(typeof(E)) == N
 
     # extrema
     @test_throws ArgumentError extrema(E)
@@ -108,42 +108,44 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError high(E, 1)
 
     # isbounded
-    @test isbounded(E)
+    @test @inferred isbounded(E)
 
     # isboundedtype
-    @test isboundedtype(typeof(E))
+    @test @inferred isboundedtype(typeof(E))
 
     # isconvex
-    @test isconvex(E)
+    @test @inferred isconvex(E)
 
     # isconvextype
-    @test isconvextype(typeof(E))
+    @test @inferred isconvextype(typeof(E))
 
     # isempty
-    @test isempty(E)
+    @test @inferred isempty(E)
+    @test_broken @inferred isempty(E, true)  # TODO make this type-stable
     res, w = isempty(E, true)
     @test res && w isa Vector{N} && isempty(w)
 
     # isoperation
-    @test !isoperation(E)
+    @test @inferred !isoperation(E)
 
     # isoperationtype
-    @test !isoperationtype(typeof(E))
+    @test @inferred !isoperationtype(typeof(E))
 
     # ispolyhedral
-    @test !ispolyhedral(E)  # TODO this should maybe change
+    @test @inferred !ispolyhedral(E)  # TODO this should maybe change
 
     # ispolyhedraltype
-    @test !ispolyhedraltype(typeof(E))  # TODO this should maybe change
+    @test @inferred !ispolyhedraltype(typeof(E))  # TODO this should maybe change
 
     # ispolytopic
-    @test !ispolytopic(E)  # TODO this should maybe change
+    @test @inferred !ispolytopic(E)  # TODO this should maybe change
 
     # ispolytopictype
-    @test !ispolytopictype(typeof(E))  # TODO this should maybe change
+    @test @inferred !ispolytopictype(typeof(E))  # TODO this should maybe change
 
     # isuniversal
-    @test !isuniversal(E)
+    @test @inferred !isuniversal(E)
+    @test_broken @inferred isuniversal(E, true)  # TODO make this type-stable
     res, w = isuniversal(E, true)
     @test !res && w isa Vector{N} && w ∉ E
 
@@ -154,7 +156,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # norm
     @test_throws ArgumentError norm(E, N(1 // 2))
-    for res in (norm(E), norm(E, Inf), norm(E, 2))
+    for res in ((@inferred norm(E)), (@inferred norm(E, Inf)), @inferred norm(E, 2))
         @test res isa N && res == N(0)
     end
 
@@ -165,24 +167,25 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # radius
     @test_throws ArgumentError radius(E, N(1 // 2))
-    for res in (radius(E), radius(E, Inf), radius(E, 2))
+    for res in ((@inferred radius(E)), (@inferred radius(E, Inf)), @inferred radius(E, 2))
         @test res isa N && res == N(0)
     end
 
     # rand
+    @test_broken @inferred rand(EmptySet; N=N)  # TODO make this type-stable
     E2 = rand(EmptySet; N=N)
     @test isidentical(E2, E)
     E2 = rand(EmptySet; N=N, dim=3)
     @test isidentical(E2, E3)
 
     # rectify
-    @test rectify(E) == E
+    @test @inferred rectify(E) == E
 
     # reflect
-    @test reflect(E) == E
+    @test @inferred reflect(E) == E
 
     # singleton_list
-    res = singleton_list(E)
+    res = @inferred singleton_list(E)
     @test res isa Vector{Singleton{N,Vector{N}}} && isempty(res)
 
     # tosimplehrep
@@ -196,66 +199,67 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError triangulate_faces(E3)  # TODO this should maybe change
 
     # vertices_list
-    res = vertices_list(E)
+    res = @inferred vertices_list(E)
     @test res isa Vector{Vector{N}} && isempty(res)
 
     # vertices
-    res = collect(vertices(E))
+    res = collect(@inferred vertices(E))
     @test res isa Vector{Vector{N}} && isempty(res)
 
     # volume
-    @test volume(E) == N(0)
+    @test @inferred volume(E) == N(0)
 
     # affine_map
     @test_throws DimensionMismatch affine_map(ones(N, 2, 3), E, N[1, 1])
     @test_throws DimensionMismatch affine_map(ones(N, 2, 2), E, N[1])
-    E2 = affine_map(ones(N, 2, 2), E, N[1, 1])
+    E2 = @inferred affine_map(ones(N, 2, 2), E, N[1, 1])
     @test isidentical(E2, E)
-    E2 = affine_map(ones(N, 3, 2), E, N[1, 1, 3])
+    E2 = @inferred affine_map(ones(N, 3, 2), E, N[1, 1, 3])
     @test isidentical(E2, E3)
 
     # distance (between point and set)
     @test_throws DimensionMismatch distance(E, N[0])
     @test_throws ArgumentError distance(E, N[0, 0]; p=N(1 // 2))
     x = N[0, 0]
-    for res in (distance(E, x), distance(x, E))
+    for res in ((@inferred distance(E, x)), @inferred distance(x, E))
         @test res isa N && res == N(Inf)
     end
 
     # exponential_map
     @test_throws DimensionMismatch exponential_map(ones(N, 1, 1), E)
     @test_throws DimensionMismatch exponential_map(ones(N, 3, 2), E)
-    E2 = exponential_map(ones(N, 2, 2), E)
+    E2 = @inferred exponential_map(ones(N, 2, 2), E)
     @test isidentical(E2, E)
 
     # in
     @test_throws DimensionMismatch N[0] ∈ E
-    @test N[0, 0] ∉ E
+    @test @inferred N[0, 0] ∉ E
 
     # is_interior_point
     @test_throws DimensionMismatch is_interior_point(N[0], E)
-    @test_throws ArgumentError is_interior_point(N[0, 0], E; ε=N(0))
-    @test_throws ArgumentError is_interior_point(N[0, 0], E; p=N(1 // 2))
+    v = N[0, 0]
+    @test_throws ArgumentError is_interior_point(v, E; ε=N(0))
+    @test_throws ArgumentError is_interior_point(v, E; p=N(1 // 2))
     if N <: AbstractFloat
-        @test !is_interior_point(N[0, 0], E)
+        @test @inferred !is_interior_point(v, E)
     else
-        @test_throws ArgumentError is_interior_point(N[0, 0], E)
-        @test !is_interior_point(N[0, 0], E; ε=1 // 100)
+        @test_throws ArgumentError is_interior_point(v, E)
+        @test @inferred !is_interior_point(v, E; ε=1 // 100)
         # incompatible numeric type
         @test_throws ArgumentError is_interior_point([0.0, 0.0], E)
     end
 
     # linear_map
     @test_throws DimensionMismatch linear_map(ones(N, 2, 1), E)
-    E2 = linear_map(ones(N, 2, 2), E)
+    E2 = @inferred linear_map(ones(N, 2, 2), E)
     @test isidentical(E2, E)
-    E2 = linear_map(zeros(N, 2, 2), E)  # zero map
+    E2 = @inferred linear_map(zeros(N, 2, 2), E)  # zero map
     @test isidentical(E2, E)
-    E2 = linear_map(ones(N, 3, 2), E)  # higher dimension
+    E2 = @inferred linear_map(ones(N, 3, 2), E)  # higher dimension
     @test isidentical(E2, E3)
 
     # linear_map_inverse
-    E2 = LazySets.linear_map_inverse(ones(N, 2, 3), E)
+    E2 = @inferred LazySets.linear_map_inverse(ones(N, 2, 3), E)
     @test isidentical(E2, E3)
 
     # permute
@@ -264,7 +268,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch permute(E, [1, 3])
     @test_throws ArgumentError permute(E, [1, 1])
     for v in ([1, 2], [2, 1])
-        E2 = permute(E, v)
+        E2 = @inferred permute(E, v)
         @test isidentical(E2, E)
     end
 
@@ -273,7 +277,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch project(E, [1, -1])
     @test_throws DimensionMismatch project(E, [1, 3])
     @test_throws ArgumentError project(E, [1, 1])
-    E2 = project(E, [2])
+    E2 = @inferred project(E, [2])
     @test E2 isa EmptySet{N} && dim(E2) == 1
 
     # sample
@@ -281,15 +285,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError sample(E, 2)
 
     # scale
-    E2 = scale(N(2), E)
+    E2 = @inferred scale(N(2), E)
     @test isidentical(E2, E)
-    E2 = scale(N(0), E)
+    E2 = @inferred scale(N(0), E)
     @test isidentical(E2, E)
     # scale!
     E2 = copy(E)
-    scale!(N(2), E2)
+    @inferred scale!(N(2), E2)
     @test isidentical(E2, E)
-    scale!(N(0), E2)
+    @inferred scale!(N(0), E2)
     @test isidentical(E2, E)
 
     # support_function
@@ -306,90 +310,107 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # translate
     @test_throws DimensionMismatch translate(E, N[1])
-    E2 = translate(E, N[1, 2])
+    E2 = @inferred translate(E, N[1, 2])
     @test isidentical(E2, E)
     # translate!
     @test_throws DimensionMismatch translate!(E, N[1])
     E2 = copy(E)
-    translate!(E2, N[1, 2])
+    @inferred translate!(E2, N[1, 2])
     @test isidentical(E2, E)
 
     # cartesian_product
-    for E2 in (cartesian_product(E, E3), cartesian_product(E3, E))
+    for E2 in ((@inferred cartesian_product(E, E3)), @inferred cartesian_product(E3, E))
         @test E2 isa EmptySet{N} && dim(E2) == 5
     end
-    for E2 in (cartesian_product(E, B), cartesian_product(B, E))
+    for E2 in ((@inferred cartesian_product(E, B)), @inferred cartesian_product(B, E))
         @test E2 isa EmptySet{N} && dim(E2) == 4
     end
 
     # convex_hull (binary)
     @test_throws DimensionMismatch convex_hull(E, E3)
-    E2 = convex_hull(E, E)
+    E2 = @inferred convex_hull(E, E)
     @test isidentical(E2, E)
-    for X in (convex_hull(E, Pnc), convex_hull(Pnc, E))
+    for X in ((@inferred convex_hull(E, Pnc)), @inferred convex_hull(Pnc, E))
         @test X isa LazySet{N} && isequivalent(X, Pc)
     end
 
     # difference
     @test_throws DimensionMismatch difference(E, E3)
-    for E2 in (difference(E, E), difference(E, B), difference(E, U))
+    E2 = @inferred difference(E, E)
+    @test isidentical(E2, E)
+    for X in (B, U)
+        E2 = @inferred difference(E, X)
         @test isidentical(E2, E)
     end
-    X = difference(B, E)
+    X = @inferred difference(B, E)
     @test X isa BallInf{N} && X == B
-    U2 = difference(U, E)
+    U2 = @inferred difference(U, E)
     @test U2 isa Universe{N} && U2 == U
 
     # distance (between two sets)
     @test_throws DimensionMismatch distance(E, E3)
     @test_throws ArgumentError distance(E, E; p=N(1 // 2))
-    for v in (distance(E, E), distance(B1, E), distance(E, B1), distance(U, E), distance(E, U),
-              distance(E, B), distance(B, E), distance(E, Z), distance(Z, E))
+    v = @inferred distance(E, E)
+    @test v isa N && v == N(Inf)
+    for X in (B1, U, B, Z)
+        v = @inferred distance(X, E)
+        @test v isa N && v == N(Inf)
+        v = @inferred distance(E, X)
         @test v isa N && v == N(Inf)
     end
 
     # exact_sum
     @test_throws DimensionMismatch exact_sum(E, E3)
-    for E2 in (exact_sum(E, E), exact_sum(E, B), exact_sum(B, E))
+    for E2 in ((@inferred exact_sum(E, E)), (@inferred exact_sum(E, B)), @inferred exact_sum(B, E))
         @test isidentical(E2, E)
     end
 
     # intersection
     @test_throws DimensionMismatch intersection(E, E3)
-    for E2 in (intersection(E, E), intersection(E, B), intersection(B, E),
-               intersection(E, U), intersection(U, E), intersection(E, Z), intersection(Z, E))
+    E2 = @inferred intersection(E, E)
+    @test isidentical(E2, E)
+    for X in (B, U, Z)
+        E2 = @inferred intersection(X, E)
+        @test isidentical(E2, E)
+        E2 = @inferred intersection(E, X)
         @test isidentical(E2, E)
     end
 
     # isapprox
-    @test E ≈ EmptySet{N}(2)
-    @test !(E ≈ E3) && !(E3 ≈ E) && !(E ≈ Pe) && !(Pe ≈ E)
+    @test @inferred E ≈ EmptySet{N}(2)
+    @test (@inferred !(E ≈ E3)) && (@inferred !(E3 ≈ E)) && (@inferred !(E ≈ Pe)) && @inferred !(Pe ≈ E)
 
     # isdisjoint
     @test_throws DimensionMismatch isdisjoint(E, E3)
-    @test isdisjoint(E, E) && isdisjoint(E, B) && isdisjoint(B, E) &&
-          isdisjoint(E, Pnc) && isdisjoint(Pnc, E)
+    @test @inferred isdisjoint(E, E)
+    for X in (B, Pnc)
+        @test (@inferred isdisjoint(E, X)) && @inferred isdisjoint(X, E)
+    end
+    @test_broken @inferred isdisjoint(E, E, true)  # TODO make this type-stable
     for (res, w) in (isdisjoint(E, E, true), isdisjoint(E, B, true), isdisjoint(B, E, true),
                      isdisjoint(E, Pnc, true), isdisjoint(Pnc, E, true))
         @test res && w isa Vector{N} && isempty(w)
     end
 
     # isequal
-    @test E == EmptySet{N}(2)
-    @test E != E3 && E3 != E && E != B && B != E
+    @test @inferred E == EmptySet{N}(2)
+    @test (@inferred E != E3) && (@inferred E3 != E) && (@inferred E != B) && @inferred B != E
 
     # isequivalent
     @test_throws DimensionMismatch isequivalent(E, E3)
-    @test isequivalent(E, E)
+    @test @inferred isequivalent(E, E)
+    @test_broken @inferred isequivalent(E, E, true)  # TODO make this type-stable
     res, w = isequivalent(E, E, true)
     @test res && w isa Vector{N} && isempty(w)
-    @test !isequivalent(E, B) && !isequivalent(B, E)
+    @test (@inferred !isequivalent(E, B)) && @inferred !isequivalent(B, E)
     res, w = isequivalent(E, B, true)
     @test !res && w isa Vector{N} && w ∈ B && w ∉ E
 
     # isstrictsubset
     @test_throws DimensionMismatch E ⊂ E3
+    @test_broken @inferred E ⊂ E  # TODO make this type-stable
     @test !(E ⊂ E)
+    @test_broken @inferred ⊂(E, E, true)  # TODO make this type-stable
     res, w = ⊂(E, E, true)
     @test !res && w isa Vector{N} && isempty(w)
     @test !(B ⊂ E)
@@ -407,15 +428,19 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # issubset
     @test_throws DimensionMismatch E ⊆ E3
+    @test_broken @inferred ⊆(E, E, true)  # TODO make this type-stable
     for X in (E, B, Pnc)
-        @test E ⊆ X
+        @test @inferred E ⊆ X
         res, w = ⊆(E, X, true)
         @test res && w isa Vector{N} && isempty(w)
     end
     for X in (B, Pnc)
-        @test X ⊈ E
+        @test @inferred X ⊈ E
         res, w = ⊆(X, E, true)
         @test !res && w isa Vector{N} && w ∈ X && w ∉ E
+    end
+    @static if VERSION >= v"1.12"
+        @test_broken @inferred Pe ⊆ E  # TODO make this type-stable
     end
     @test Pe ⊆ E
     res, w = ⊆(Pe, E, true)
@@ -423,32 +448,37 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # linear_combination
     @test_throws DimensionMismatch linear_combination(E, E3)
-    for E2 in (linear_combination(E, E),
-               linear_combination(E, Pnc), linear_combination(Pnc, E),
-               linear_combination(E, B), linear_combination(B, E),
-               linear_combination(E, U), linear_combination(U, E))
+    E2 = @inferred linear_combination(E, E)
+    @test isidentical(E2, E)
+    for X in (Pnc, B, U)
+        E2 = @inferred linear_combination(X, E)
+        @test isidentical(E2, E)
+        E2 = @inferred linear_combination(E, X)
         @test isidentical(E2, E)
     end
 
     # minkowski_difference
     @test_throws DimensionMismatch minkowski_difference(E, E3)
+    E2 = @inferred minkowski_difference(E, E)
+    @test isidentical(E2, E)
     # empty difference
-    for E2 in (minkowski_difference(E, E), minkowski_difference(E, B),
-               minkowski_difference(E, U), minkowski_difference(E, Z))
+    for X in (B, U, Z)
+        E2 = @inferred minkowski_difference(E, X)
         @test isidentical(E2, E)
     end
     # nonempty difference
-    X = minkowski_difference(B, E)
+    X = @inferred minkowski_difference(B, E)
     @test X isa BallInf{N} && X == B
     # Universe
-    U2 = minkowski_difference(U, E)
+    U2 = @inferred minkowski_difference(U, E)
     @test U2 isa Universe{N} && dim(U2) == 2
 
     # minkowski_sum
     @test_throws DimensionMismatch minkowski_sum(E, E3)
-    for E2 in (minkowski_sum(E, E), minkowski_sum(E, B), minkowski_sum(B, E), minkowski_sum(U, E),
-               minkowski_sum(E, U), minkowski_sum(E, Z), minkowski_sum(Z, E), minkowski_sum(E, B),
-               minkowski_sum(B, E))
+    E2 = @inferred minkowski_sum(E, E)
+    @test isidentical(E2, E)
+    for X in (B, U, Z)
+        E2 = @inferred minkowski_sum(E, E)
         @test isidentical(E2, E)
     end
 end
@@ -457,7 +487,7 @@ for N in @tN([Float64, Float32])
     E = EmptySet{N}(2)
 
     # rationalize
-    E2 = rationalize(E)
+    E2 = @inferred rationalize(E)
     @test E2 isa EmptySet{Rational{Int}} && dim(E2) == 2
     @test_throws MethodError rationalize(E2)
 end
