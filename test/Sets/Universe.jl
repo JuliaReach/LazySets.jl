@@ -30,7 +30,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
                    HalfSpace(N[0, 1], N(0)), HalfSpace(N[0, -1], N(0))])
 
     # constructor
-    U = Universe{N}(2)
+    U = @inferred Universe{N}(2)
     @test U isa Universe{N}
     @test U.dim == 2
     U3 = Universe{N}(3)
@@ -38,13 +38,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test U3.dim == 3
 
     # an_element
-    x = an_element(U)
+    x = @inferred an_element(U)
     @test x isa Vector{N} && length(x) == 2
 
     # area
     @test_throws DimensionMismatch area(Universe{N}(1))
     for X in (U, U3)
-        res = area(X)
+        res = @inferred area(X)
         @test res isa N && res == N(Inf)
     end
 
@@ -52,31 +52,31 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError chebyshev_center_radius(U)
 
     # complement
-    E2 = complement(U)
+    E2 = @inferred complement(U)
     @test E2 isa EmptySet{N} && dim(E2) == 2
 
     # concretize
-    U2 = concretize(U)
+    U2 = @inferred concretize(U)
     @test isidentical(U2, U)
 
     # constrained_dimensions
-    x = constrained_dimensions(U)
+    x = @inferred constrained_dimensions(U)
     @test x isa Vector{Int} && isempty(x)
 
     # constraints_list
-    clist = constraints_list(U)
+    clist = @inferred constraints_list(U)
     @test isempty(clist) && eltype(clist) <: HalfSpace{N}
 
     # constraints
-    citer = constraints(U)
+    citer = @inferred constraints(U)
     @test isempty(citer) && eltype(citer) <: AbstractVector{N}
 
     # convex_hull (unary)
-    U2 = convex_hull(U)
+    U2 = @inferred convex_hull(U)
     @test isidentical(U2, U)
 
     # copy
-    U2 = copy(U)
+    U2 = @inferred copy(U)
     @test isidentical(U2, U)
 
     # diameter
@@ -86,67 +86,69 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError diameter(U, 2)
 
     # dim
-    @test dim(U) == 2
-    @test dim(U3) == 3
+    @test @inferred dim(U) == 2
+    @test @inferred dim(U3) == 3
 
     # eltype
-    @test eltype(U) == N
-    @test eltype(typeof(U)) == N
+    @test @inferred eltype(U) == N
+    @test @inferred eltype(typeof(U)) == N
 
     # extrema
-    @test extrema(U) == (N[-Inf, -Inf], N[Inf, Inf])
+    @test @inferred extrema(U) == (N[-Inf, -Inf], N[Inf, Inf])
     @test_throws DimensionMismatch extrema(U, 3)
-    @test extrema(U, 1) == (N(-Inf), N(Inf))
+    @test @inferred extrema(U, 1) == (N(-Inf), N(Inf))
 
     # high
-    @test high(U) == N[Inf, Inf]
+    @test @inferred high(U) == N[Inf, Inf]
     @test_throws DimensionMismatch high(U, 3)
-    @test high(U, 1) == N(Inf)
+    @test @inferred high(U, 1) == N(Inf)
 
     # isbounded
-    @test !isbounded(U)
+    @test @inferred !isbounded(U)
 
     # isboundedtype
-    @test !isboundedtype(typeof(U))
+    @test @inferred !isboundedtype(typeof(U))
 
     # isconvex
-    @test isconvex(U)
+    @test @inferred isconvex(U)
 
     # isconvextype
-    @test isconvextype(typeof(U))
+    @test @inferred isconvextype(typeof(U))
 
     # isempty
-    @test !isempty(U)
+    @test @inferred !isempty(U)
+    @test_broken @inferred isempty(U, true)  # TODO make this type-stable
     res, w = isempty(U, true)
     @test !res && w isa Vector{N} && w ∈ U
 
     # isoperation
-    @test !isoperation(U)
+    @test @inferred !isoperation(U)
 
     # isoperationtype
-    @test !isoperationtype(typeof(U))
+    @test @inferred !isoperationtype(typeof(U))
 
     # ispolyhedral
-    @test ispolyhedral(U)
+    @test @inferred ispolyhedral(U)
 
     # ispolyhedraltype
-    @test ispolyhedraltype(typeof(U))
+    @test @inferred ispolyhedraltype(typeof(U))
 
     # ispolytopic
-    @test !ispolytopic(U)
+    @test @inferred !ispolytopic(U)
 
     # ispolytopictype
-    @test !ispolytopictype(typeof(U))
+    @test @inferred !ispolytopictype(typeof(U))
 
     # isuniversal
-    @test isuniversal(U)
+    @test @inferred isuniversal(U)
+    @test_broken @inferred isuniversal(U, true)  # TODO make this type-stable
     res, w = isuniversal(U, true)
     @test res && w isa Vector{N} && isempty(w)
 
     # low
-    @test low(U) == N[-Inf, -Inf]
+    @test @inferred low(U) == N[-Inf, -Inf]
     @test_throws DimensionMismatch low(U, 3)
-    @test low(U, 1) == N(-Inf)
+    @test @inferred low(U, 1) == N(-Inf)
 
     # norm
     @test_throws ArgumentError norm(U, N(1 // 2))
@@ -156,6 +158,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # polyhedron
     @static if isdefined(@__MODULE__, :Polyhedra)
+        @test_broken @inferred polyhedron(U)  # TODO make this type-stable
         P = polyhedron(U)
         @test P isa Polyhedra.DefaultPolyhedron
         if N != Float32
@@ -171,23 +174,24 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError radius(U, 2)
 
     # rand
-    @test rand(Universe; N=N) isa Universe{N}
+    @test @inferred rand(Universe; N=N) isa Universe{N}
     U2 = rand(Universe; N=N, dim=3)
     @test isidentical(U2, U3)
 
     # rectify
-    P = rectify(U)
+    P = @inferred rectify(U)
     Q = HPolyhedron([HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
     @test P isa HPolyhedron{N} && isequivalent(P, Q)
 
     # reflect
-    @test reflect(U) == U
+    U2 = @inferred reflect(U)
+    @test U2 == U
 
     # singleton_list
     @test_throws ArgumentError singleton_list(U)
 
     # tosimplehrep
-    C, d = tosimplehrep(U)
+    C, d = @inferred tosimplehrep(U)
     @test C isa Matrix{N} && d isa Vector{N} && size(C) == (0, 2) && isempty(d)
 
     # triangulate
@@ -204,7 +208,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError vertices(U)
 
     # volume
-    x = volume(U)
+    x = @inferred volume(U)
     @test x isa N && x == N(Inf)
 
     # affine_map (part 1)
@@ -217,7 +221,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch distance(U, N[0])
     @test_throws ArgumentError distance(U, N[0, 0]; p=N(1 // 2))
     x = N[0, 0]
-    for res in (distance(U, x), distance(x, U))
+    for res in ((@inferred distance(U, x)), @inferred distance(x, U))
         @test res isa N && res == N(0)
     end
 
@@ -227,17 +231,21 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # in
     @test_throws DimensionMismatch N[0] ∈ U
-    @test N[0, 0] ∈ U
+    @test @inferred N[0, 0] ∈ U
 
     # is_interior_point
     @test_throws DimensionMismatch is_interior_point(N[0], U)
     @test_throws ArgumentError is_interior_point(N[0, 0], U; ε=N(0))
     @test_throws ArgumentError is_interior_point(N[0, 0], U; p=N(1 // 2))
     if N <: AbstractFloat
-        @test is_interior_point(N[0, 0], U)
+        @static if VERSION >= v"1.11"
+            @test @inferred is_interior_point(N[0, 0], U)
+        else
+            @test is_interior_point(N[0, 0], U)
+        end
     else
         @test_throws ArgumentError is_interior_point(N[0, 0], U)
-        @test is_interior_point(N[0, 0], U; ε=1 // 100)
+        @test @inferred is_interior_point(N[0, 0], U; ε=1 // 100)
         # incompatible numeric type
         @test_throws ArgumentError is_interior_point([0.0, 0.0], U)
     end
@@ -248,7 +256,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(U2, U)
 
     # linear_map_inverse
-    U2 = LazySets.linear_map_inverse(ones(N, 2, 3), U)
+    U2 = @inferred LazySets.linear_map_inverse(ones(N, 2, 3), U)
     @test isidentical(U2, U3)
 
     # permute
@@ -256,9 +264,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch permute(U, [1, -1])
     @test_throws DimensionMismatch permute(U, [1, 3])
     @test_throws ArgumentError permute(U, [1, 1])
-    U2 = permute(U, [1, 2])
+    U2 = @inferred permute(U, [1, 2])
     @test isidentical(U2, U)
-    U2 = permute(U, [2, 1])
+    U2 = @inferred permute(U, [2, 1])
     @test isidentical(U2, U)
 
     # project
@@ -266,13 +274,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch project(U, [1, -1])
     @test_throws DimensionMismatch project(U, [1, 3])
     @test_throws ArgumentError project(U, [1, 1])
-    U2 = project(U, [2])
+    U2 = @inferred project(U, [2])
     @test U2 isa Universe{N} && dim(U2) == 1
 
     # sample
-    x = sample(U)
+    x = @inferred sample(U)
     @test x isa Vector{N} && length(x) == 2
-    xs = sample(U, 2)
+    xs = @inferred sample(U, 2)
     @test xs isa Vector{Vector{N}} && length(xs) == 2
     for x in xs
         @test x isa Vector{N} && length(x) == 2
@@ -285,151 +293,186 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test Z isa ZeroSet{N} && Z == ZeroSet{N}(2)
     # scale!
     U2 = copy(U)
-    scale!(N(2), U2)
+    @inferred scale!(N(2), U2)
     @test isidentical(U2, U)
     @test_throws ArgumentError scale!(N(0), U2)
 
     # support_function
     @test_throws DimensionMismatch ρ(N[1], U)
-    v = ρ(N[-1, 2], U)
+    v = @inferred ρ(N[-1, 2], U)
     @test v isa N && v == N(Inf)
-    v = ρ(N[2, 0], U)
+    v = @inferred ρ(N[2, 0], U)
     @test v isa N && v == N(Inf)
-    @test ρ(N[0, 0], U) == N(0)
+    v = @inferred ρ(N[0, 0], U)
+    @test v isa N && v == N(0)
 
     # support_vector
     @test_throws DimensionMismatch σ(N[1], U)
-    x = σ(N[-1, 2], U)
+    x = @inferred σ(N[-1, 2], U)
     @test x isa Vector{N} && x == N[-Inf, Inf]
-    x = σ(N[2, 0], U)
+    x = @inferred σ(N[2, 0], U)
     @test x isa Vector{N} && x == N[Inf, 0]
-    x = σ(N[0, 0], U)
+    x = @inferred σ(N[0, 0], U)
     @test x isa Vector{N} && x == N[0, 0]
 
     # translate
     @test_throws DimensionMismatch translate(U, N[1])
-    U2 = translate(U, N[1, 2])
+    U2 = @inferred translate(U, N[1, 2])
     @test isidentical(U2, U)
     # translate!
     @test_throws DimensionMismatch translate!(U, N[1])
     U2 = copy(U)
-    translate!(U2, N[1, 2])
+    @inferred translate!(U2, N[1, 2])
     @test isidentical(U2, U)
 
     # cartesian_product
-    for U2 in (cartesian_product(U, U3), cartesian_product(U3, U))
+    for U2 in ((@inferred cartesian_product(U, U3)), @inferred cartesian_product(U3, U))
         @test U2 isa Universe{N} && dim(U2) == 5
     end
 
     # convex_hull (binary)
     @test_throws DimensionMismatch convex_hull(U, U3)
-    U2 = convex_hull(U, U)
+    U2 = @inferred convex_hull(U, U)
     @test isidentical(U2, U)
-    for U2 in (convex_hull(U, Pnc), convex_hull(Pnc, U), convex_hull(U, E), convex_hull(E, U))
+    for X in (E, Pnc)
+        U2 = @inferred convex_hull(U, X)
+        @test isidentical(U2, U)
+        U2 = @inferred convex_hull(X, U)
         @test isidentical(U2, U)
     end
 
     # difference
     @test_throws DimensionMismatch difference(U, U3)
-    for E2 in (difference(U, U), difference(B, U))
+    for E2 in ((@inferred difference(U, U)), @inferred difference(B, U))
         @test E2 isa EmptySet{N} && dim(E2) == 2
     end
-    X = difference(U, B)
+    X = @inferred difference(U, B)
     @test X isa UnionSetArray{N,<:HalfSpace} && length(array(X)) == 4 && X == complement(B)
 
     # distance (between two sets)
     @test_throws DimensionMismatch distance(U, U3)
     @test_throws ArgumentError distance(U, U; p=N(1 // 2))
-    for v in (distance(U, U), distance(U, B), distance(B, U), distance(U, Z), distance(Z, U))
+    v = @inferred distance(U, U)
+    @test v isa N && v == N(0)
+    for X in (B, Z)
+        v = @inferred distance(U, X)
+        @test v isa N && v == N(0)
+        v = @inferred distance(X, U)
         @test v isa N && v == N(0)
     end
-    for v in (distance(U, Pe), distance(Pe, U))
+    for v in ((@inferred distance(U, Pe)), @inferred distance(Pe, U))
         @test v isa N && v == N(Inf)
     end
 
     # exact_sum
     @test_throws DimensionMismatch exact_sum(U, U3)
-    for U2 in (exact_sum(U, U), exact_sum(U, B), exact_sum(B, U))
+    for U2 in ((@inferred exact_sum(U, U)), (@inferred exact_sum(U, B)), @inferred exact_sum(B, U))
         @test isidentical(U2, U)
     end
 
     # intersection
     @test_throws DimensionMismatch intersection(U, U3)
-    U2 = intersection(U, U)
+    U2 = @inferred intersection(U, U)
     @test isidentical(U2, U)
-    for X in (intersection(U, B), intersection(B, U))
+    for X in ((@inferred intersection(U, B)), @inferred intersection(B, U))
         @test X isa BallInf{N} && X == B
     end
-    for X in (intersection(U, Pnc), intersection(Pnc, U))
+    for X in ((@inferred intersection(U, Pnc)), @inferred intersection(Pnc, U))
         @test X isa Polygon{N} && X == Pnc
     end
 
     # isapprox
-    @test U ≈ Universe{N}(2)
-    @test !(U ≈ U3) && !(U3 ≈ U) && !(U ≈ B) && !(B ≈ U)
+    @test @inferred U ≈ Universe{N}(2)
+    @test (@inferred !(U ≈ U3)) && (@inferred !(U3 ≈ U)) && (@inferred !(U ≈ B)) &&
+          @inferred !(B ≈ U)
 
     # isdisjoint
     @test_throws DimensionMismatch isdisjoint(U, U3)
-    @test !isdisjoint(U, U)
+    @test @inferred !isdisjoint(U, U)
+    @static if VERSION >= v"1.11"
+        @test_broken @inferred isdisjoint(U, U, true)  # TODO make this type-stable
+    end
     res, w = isdisjoint(U, U, true)
     @test !res && w isa Vector{N} && w ∈ U
-    @test isdisjoint(U, E) && isdisjoint(E, U) && isdisjoint(U, Pe) && isdisjoint(Pe, U)
+    @test (@inferred isdisjoint(U, E)) && (@inferred isdisjoint(E, U))
+    @static if VERSION >= v"1.12"
+        @test_broken @inferred isdisjoint(U, Pe)  # TODO make this type-stable
+    end
+    @test isdisjoint(U, Pe) && isdisjoint(Pe, U)
     for (res, w) in (isdisjoint(U, E, true), isdisjoint(E, U, true),
                      isdisjoint(U, Pe, true), isdisjoint(Pe, U, true))
         @test res && w isa Vector{N} && isempty(w)
     end
-    @test !isdisjoint(U, B) && !isdisjoint(B, U) && !isdisjoint(U, Pnc) && !isdisjoint(Pnc, U)
+    @test (@inferred !isdisjoint(U, B)) && (@inferred !isdisjoint(B, U)) &&
+          (@inferred !isdisjoint(U, Pnc)) && @inferred !isdisjoint(Pnc, U)
     for (res, w) in (isdisjoint(U, B, true), isdisjoint(B, U, true), isdisjoint(U, Pnc, true),
                      isdisjoint(Pnc, U, true))
         @test !res && w isa Vector{N} && w ∈ B && w ∈ U
     end
 
     # isequal
-    @test U == Universe{N}(2)
-    @test U != U3 && U3 != U && U != B && B != U
+    @test @inferred U == Universe{N}(2)
+    @test (@inferred U != U3) && (@inferred U3 != U) && (@inferred U != B) && @inferred B != U
 
     # isequivalent
     @test_throws DimensionMismatch isequivalent(U, U3)
-    @test isequivalent(U, U)
-    @test !isequivalent(U, B) && !isequivalent(B, U)
+    @test @inferred isequivalent(U, U)
+    @test (@inferred !isequivalent(U, B)) && @inferred !isequivalent(B, U)
 
     # isstrictsubset
     @test_throws DimensionMismatch U ⊂ U3
-    @test !(U ⊂ U)
+    @test @inferred !(U ⊂ U)
+    @test_broken @inferred ⊂(U, U, true)  # TODO make this type-stable
     res, w = ⊂(U, U, true)
     @test !res && w isa Vector{N} && isempty(w)
-    @test !(U ⊂ B)
+    @test @inferred !(U ⊂ B)
     res, w = ⊂(U, B, true)
     @test !res && w isa Vector{N} && w ∈ U && w ∉ B
+    @test_broken @inferred B ⊂ U  # TODO make this type-stable
     @test B ⊂ U
     res, w = ⊂(B, U, true)
     @test res && w isa Vector{N} && w ∉ B && w ∈ U
 
     # issubset
     @test_throws DimensionMismatch U ⊆ U3
+    @test_broken @inferred ⊆(U, U, true)  # TODO make this type-stable
     for X in (U, B, Pnc)
-        @test X ⊆ U
+        @test @inferred X ⊆ U
         res, w = ⊆(X, U, true)
         @test res && w isa Vector{N} && isempty(w)
     end
     for X in (B, Pnc)
-        @test U ⊈ X
+        @test @inferred U ⊈ X
         res, w = ⊆(U, X, true)
         @test !res && w isa Vector{N} && w ∈ U && w ∉ X
     end
     U2 = Universe{N}(1)
     X = Line(N[0], N[1])
+    @static if VERSION >= v"1.12"
+        @test_broken @inferred U2 ⊆ X  # TODO make this type-stable
+    end
     @test U2 ⊆ X
     res, w = ⊆(U2, X, true)
     @test res && w isa Vector{N} && isempty(w)
 
     # linear_combination
     @test_throws DimensionMismatch linear_combination(U, U3)
-    for U2 in (linear_combination(U, U),
-               linear_combination(U, Pnc), linear_combination(Pnc, U),
-               linear_combination(U, B), linear_combination(B, U))
+    U2 = @inferred linear_combination(U, U)
+    @test isidentical(U2, U)
+    for X in (B,)
+        U2 = @inferred linear_combination(U, X)
+        @test isidentical(U2, U)
+        U2 = @inferred linear_combination(X, U)
         @test isidentical(U2, U)
     end
+    @test_broken @inferred linear_combination(U, Pnc)  # TODO make this type-stable; then merge with loop above
+    for X in (Pnc,)
+        U2 = linear_combination(U, X)
+        @test isidentical(U2, U)
+        U2 = linear_combination(X, U)
+        @test isidentical(U2, U)
+    end
+    @test_broken @inferred linear_combination(U, Pe)  # TODO make this type-stable
     for E2 in (linear_combination(U, Pe), linear_combination(Pe, U))
         @test E2 isa HPolygon{N} && E2 == Pe
     end
@@ -437,33 +480,47 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # minkowski_difference
     @test_throws DimensionMismatch minkowski_difference(U, U3)
     # empty difference
-    E2 = minkowski_difference(B, U)
+    E2 = @inferred minkowski_difference(B, U)
     @test E2 isa EmptySet{N} && dim(E2) == 2
     # Universe
-    for U2 in (minkowski_difference(U, U), minkowski_difference(U, B), minkowski_difference(U, Z),
-               minkowski_difference(LinearMap(N[1 0; 0 1], U), U))
+    for X in (U, B, Z)
+        U2 = @inferred minkowski_difference(U, X)
         @test isidentical(U2, U)
     end
+    X = LinearMap(N[1 0; 0 1], U)
+    @test_broken @inferred minkowski_difference(X, U)  # TODO make this type-stable
+    U2 = minkowski_difference(X, U)
+    @test isidentical(U2, U)
 
     # minkowski_sum
     @test_throws DimensionMismatch minkowski_sum(U, U3)
-    for U2 in (minkowski_sum(U, U), minkowski_sum(U, B), minkowski_sum(B, U))
+    for U2 in ((@inferred minkowski_sum(U, U)), (@inferred minkowski_sum(U, B)),
+               @inferred minkowski_sum(B, U))
         @test isidentical(U2, U)
     end
+    @test_broken @inferred minkowski_sum(U, Pe)  # TODO make this type-stable
     for X in (minkowski_sum(U, Pe), minkowski_sum(Pe, U))
         @test X isa HPolygon{N} && X == Pe
     end
-    for U2 in (minkowski_sum(U, Z), minkowski_sum(Z, U), minkowski_sum(U, B), minkowski_sum(B, U),
-               minkowski_sum(U, Pnc), minkowski_sum(Pnc, U))
+    for X in (Z, B)
+        U2 = @inferred minkowski_sum(U, X)
+        @test U2 isa Universe{N} && U2 == U
+        U2 = @inferred minkowski_sum(X, U)
         @test U2 isa Universe{N} && U2 == U
     end
+    X = Pnc
+    @test_broken @inferred minkowski_sum(U, X)  # TODO make this type-stable; then merge with loop above
+    U2 = minkowski_sum(U, X)
+    @test U2 isa Universe{N} && U2 == U
+    U2 = minkowski_sum(X, U)
+    @test U2 isa Universe{N} && U2 == U
 end
 
 for N in @tN([Float64, Float32])
     U = Universe{N}(2)
 
     # rationalize
-    U2 = rationalize(U)
+    U2 = @inferred rationalize(U)
     @test U2 isa Universe{Rational{Int}} && dim(U2) == 2
     @test_throws MethodError rationalize(U2)
 
@@ -472,6 +529,7 @@ for N in @tN([Float64, Float32])
     @test X isa HPolyhedron{N} && isequivalent(X, Hyperplane(N[0, 0, 1], N(3)))
 
     # exponential_map
+    @test_broken @inferred exponential_map(ones(N, 2, 2), U)  # TODO make this type-stable
     U2 = exponential_map(ones(N, 2, 2), U)
     @test isidentical(U2, U)
 
