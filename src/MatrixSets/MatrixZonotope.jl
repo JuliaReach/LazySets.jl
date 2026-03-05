@@ -87,3 +87,9 @@ function copy(MZ::MatrixZonotope)
                           [copy(Aij) for Aij in MZ.Ai],
                           copy(MZ.idx))
 end
+
+function ==(MZ1::MatrixZonotope, MZ2::MatrixZonotope)
+    return center(MZ1) == center(MZ2) &&
+           generators(MZ1) == generators(MZ2) &&
+           indexvector(MZ1) == indexvector(MZ2)
+end
