@@ -91,7 +91,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # dim
     @test @inferred dim(E) == 2
-    @test dim(E3) == 3
+    @test @inferred dim(E3) == 3
 
     # eltype
     @test @inferred eltype(E) == N
@@ -478,7 +478,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     E2 = @inferred minkowski_sum(E, E)
     @test isidentical(E2, E)
     for X in (B, U, Z)
-        E2 = @inferred minkowski_sum(E, E)
+        E2 = @inferred minkowski_sum(E, X)
+        @test isidentical(E2, E)
+        E2 = @inferred minkowski_sum(X, E)
         @test isidentical(E2, E)
     end
 end
