@@ -59,10 +59,6 @@ for N in @tN([Float64, Float32])
     @static if isdefined(@__MODULE__, :IntervalMatrices)
         MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
         IM = overapproximate(MZ, IntervalMatrix)
-        
-        #TODO change to == when the equality is implemented for MatrixZonotopes
-        @test center(minkowski_sum(MZ, IM)) == center(minkowski_sum(MZ, convert(MatrixZonotope, IM)))
-        @test generators(minkowski_sum(MZ, IM)) == generators(minkowski_sum(MZ, convert(MatrixZonotope, IM)))
-        @test_broken minkowski_sum(MZ, IM) == minkowski_sum(MZ, convert(MatrixZonotope, IM))
+        @test minkowski_sum(MZ, IM) == minkowski_sum(MZ, convert(MatrixZonotope, IM))
     end
 end

@@ -62,6 +62,7 @@ for N in @tN([Float32, Float64])
 
         # monotonicity test
         @static if isdefined(@__MODULE__, :ExponentialUtilities) || isdefined(@__MODULE__, :Expokit)
+            MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
             mzexp = MatrixZonotopeExp(MZ)
             em = ExponentialMap(mzexp, P)
             MPex = overapproximate(em, SparsePolynomialZonotope, 2)
