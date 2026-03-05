@@ -12,6 +12,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # test constructor
     c = N[1 0; 0 3]
     gens = [N[1 -1; 0 2], N[2 -1; -1 1]]
+
     MZ = MatrixZonotope(c, gens)
     @test MZ isa MatrixZonotope{N}
     @test center(MZ) == c
@@ -23,6 +24,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     idx = [10, 20]
     MZ2 = MatrixZonotope(c, gens, idx)
     @test indexvector(MZ2) == idx
+
+    @test MZ == MatrixZonotope(c, gens, [1, 2])
+    @test MZ !== MZ2
 
     @test size(MZ) == size(c)
     @test eltype(MZ) == N
