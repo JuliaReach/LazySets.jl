@@ -205,6 +205,9 @@ end
     @testset "LazySets.ExponentialMap" begin
         include("LazyOperations/ExponentialMap.jl")
     end
+    @testset "LazySets.ExactSum" begin
+        include("LazyOperations/ExactSum.jl")
+    end
     @testset "LazySets.Intersection" begin
         include("LazyOperations/Intersection.jl")
     end

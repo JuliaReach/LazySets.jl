@@ -10,7 +10,7 @@ Compute the exact sum of two parametric sets.
 
 ### Output
 
-A set representing the exact sum, sometimes written ``X ⊞ Y``.
+A set representing the exact sum.
 
 ### Notes
 
