@@ -412,3 +412,14 @@ for T in (:ZeroSet, :Universe)
         return _minkowski_sum_emptyset(∅, X)
     end
 end
+
+function load_intervalmatrices_minkowski_sum()
+    return quote
+        using .IntervalMatrices: IntervalMatrix
+
+        # TODO avoid `convert`
+        function LazySets.minkowski_sum(MZ::MatrixZonotope, IM::IntervalMatrix)
+            return minkowski_sum(MZ, convert(MatrixZonotope, IM))
+        end
+    end
+end
