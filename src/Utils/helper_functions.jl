@@ -59,6 +59,7 @@ julia> dict["missing"]
 5-element Vector{Type}:
  Complement
  DensePolynomialZonotope
+ ExactSum
  QuadraticMap
  SimpleSparsePolynomialZonotope
  SparsePolynomialZonotope

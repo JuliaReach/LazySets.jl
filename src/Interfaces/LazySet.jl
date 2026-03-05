@@ -41,6 +41,7 @@ julia> subtypes(LazySet, false)
  CartesianProductArray
  Complement
  ConvexSet
+ ExactSum
  Intersection
  IntersectionArray
  MinkowskiSum
@@ -76,6 +77,7 @@ ConvexHullArray
 DensePolynomialZonotope
 Ellipsoid
 EmptySet
+ExactSum
 ExponentialMap
 ExponentialProjectionMap
 HParallelotope
