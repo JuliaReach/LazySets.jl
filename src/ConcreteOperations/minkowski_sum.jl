@@ -418,7 +418,7 @@ function load_intervalmatrices_minkowski_sum()
         using .IntervalMatrices: IntervalMatrix
 
         # TODO avoid `convert`
-        function LazySets.minkowski_sum(MZ::MatrixZonotope, IM::IntervalMatrix)
+        @commutative function minkowski_sum(MZ::MatrixZonotope, IM::IntervalMatrix)
             return minkowski_sum(MZ, convert(MatrixZonotope, IM))
         end
     end

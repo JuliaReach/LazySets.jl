@@ -45,6 +45,9 @@ for N in @tN([Float32, Float64])
     P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], hcat(N[0, 1]), [2 1; 0 1; 1 0], [1, 3, 5])
     M = N[1 1; -1 1]
     @static if isdefined(@__MODULE__, :IntervalMatrices)
+        MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
+        IM = overapproximate(MZ, IntervalMatrix)
+        @test IM == IntervalMatrix(N[-1.1 -4.1; 3.9 -1.1], N[-0.9 -3.9; 4.1 -0.9])
         # overapproximate MatrixZonotopeExp
         # test degenerate case
         c = N[1 -2; 2 -1]
@@ -62,7 +65,6 @@ for N in @tN([Float32, Float64])
 
         # monotonicity test
         @static if isdefined(@__MODULE__, :ExponentialUtilities) || isdefined(@__MODULE__, :Expokit)
-            MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
             mzexp = MatrixZonotopeExp(MZ)
             em = ExponentialMap(mzexp, P)
             MPex = overapproximate(em, SparsePolynomialZonotope, 2)
