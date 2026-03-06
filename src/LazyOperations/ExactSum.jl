@@ -3,9 +3,9 @@ using .SparsePolynomialZonotopeModule: SparsePolynomialZonotope, exact_sum
 export ExactSum, ⊞
 
 """
-    ExactSum{N, S1<:SparsePolynomialZonotope{N}, S2<:SparsePolynomialZonotope{N}} <: LazySet{N}
+    ExactSum{N,S1<:LazySet{N},S2<:LazySet{N}} <: LazySet{N}
 
-Type that represents the exact sum of two sparse polynomial zonotopes [KochdumperA21; Proposition 10](@citet)
+Type that represents the exact sum of two sets [KochdumperA21; Proposition 10](@citet)
 
 ### Fields
 
@@ -35,6 +35,4 @@ end
 isoperationtype(::Type{<:ExactSum}) = true
 concrete_function(::Type{<:ExactSum}) = exact_sum
 
-function concretize(ES::ExactSum)
-    return exact_sum(ES.X, ES.Y)
-end
+@declare_binary_operation(ExactSum)

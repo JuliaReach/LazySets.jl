@@ -56,7 +56,7 @@ Every convex set type implements the function `σ`.
 julia> dict = implementing_sets(σ; signature=Type[AbstractVector], index=2);
 
 julia> dict["missing"]
-5-element Vector{Type}:
+6-element Vector{Type}:
  Complement
  DensePolynomialZonotope
  ExactSum
