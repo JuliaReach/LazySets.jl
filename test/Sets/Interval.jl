@@ -1,5 +1,6 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
+using LazySets.ReachabilityBase.Comparison: set_rtol, _rtol, _ztol
 IA = LazySets.IA
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
@@ -23,16 +24,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # default constructor from IntervalArithmetic.Interval
     itv = IA.interval(N(0), N(2))
-    X = Interval(itv)
+    X = @inferred Interval(itv)
     @test X isa Interval{N} && IA.isequal_interval(X.dat, itv)
 
     # constructors from two numbers, from a vector, and with promotion
-    for Y in (Interval(N(0), N(2)), Interval(N[0, 2]), Interval(0, N(2)))
+    for Y in ((@inferred Interval(N(0), N(2))), (@inferred Interval(N[0, 2])),
+              @inferred Interval(0, N(2)))
         @test isidentical(Y, X)
     end
 
     # constructor from a number
-    X0 = Interval(N(0))
+    X0 = @inferred Interval(N(0))
     @test X0 isa Interval{N} && X0 == Interval(N(0), N(0))
 
     # unbounded intervals are caught
@@ -41,239 +43,241 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # convert
     # to and from IntervalArithmetic.Interval
-    Y = convert(IA.Interval, X)
+    Y = @inferred convert(IA.Interval, X)
     @test IA.isequal_interval(Y, X.dat)
-    Z = convert(Interval, Y)
+    Z = @inferred convert(Interval, Y)
     @test isidentical(Z, X)
     # from hyperrectangular set
     @test_throws AssertionError convert(Interval, Hyperrectangle(N[0, 0], N[1, 1]))
     Y = Hyperrectangle(N[1], N[1])
-    Z = convert(Interval, Y)
+    Z = @inferred convert(Interval, Y)
     @test isidentical(Z, X)
     # from Rectification of Interval
     Y = Interval(N(-1), N(2))
-    Z = convert(Interval, Rectification(Y))
+    Z = @inferred convert(Interval, Rectification(Y))
     @test isidentical(Z, X)
     # from MinkowskiSum of Intervals
-    Z = convert(Interval, Y + Y)
+    Z = @inferred convert(Interval, Y + Y)
     @test isidentical(Z, Interval(N(-2), N(4)))
     # from LazySet
     M = hcat(N[1])
-    Y = convert(Interval, M * X)
+    Y = @inferred convert(Interval, M * X)
     @test isidentical(Y, X)
     # from non-convex set
     Y = UnionSet(Interval(1, 2), Interval(3, 4))
     @test_throws AssertionError convert(Interval, Y)
 
     # an_element
-    x = an_element(X)
+    x = @inferred an_element(X)
     @test x isa Vector{N} && length(x) == 1 && N(0) <= x[1] <= N(2)
 
     # area
     @test_throws DimensionMismatch area(X)
 
     # center
-    c = center(X)
+    c = @inferred center(X)
     @test c isa Vector{N} && c == [N(1)]
-    v = center(X, 1)
+    v = @inferred center(X, 1)
     @test v isa N && v == N(1)
     @test_throws DimensionMismatch center(X, 2)
 
     # chebyshev_center_radius
-    c, r = chebyshev_center_radius(X)
+    c, r = @inferred chebyshev_center_radius(X)
     @test c isa Vector{N} && c == [N(1)]
     @test r isa N && r == N(1)
 
     # complement
-    Y = complement(X)
+    Y = @inferred complement(X)
     @test Y isa UnionSet{N}
     @test ispermutation(array(Y), [HalfSpace(N[1], N(0)), HalfSpace(N[-1], N(-2))])
 
     # concretize
-    Y = concretize(X)
+    Y = @inferred concretize(X)
     @test isidentical(Y, X)
 
     # constrained_dimensions
-    @test constrained_dimensions(X) == 1:1
+    @test @inferred constrained_dimensions(X) == 1:1
 
     # constraints_list
-    cs = constraints_list(X)
+    cs = @inferred constraints_list(X)
     @test ispermutation(cs, [HalfSpace(N[1], N(2)), HalfSpace(N[-1], N(0))])
 
     # constraints
-    cs2 = collect(constraints(X))
+    cs2 = collect(@inferred constraints(X))
     @test ispermutation(cs2, cs)
 
     # convex_hull (unary)
-    Y = convex_hull(X)
+    Y = @inferred convex_hull(X)
     @test isidentical(Y, X)
 
     # copy
-    Y = copy(X)
+    Y = @inferred copy(X)
     @test isidentical(Y, X)
 
     # diameter
     @test_throws ArgumentError diameter(X, N(1 // 2))
-    for res in (diameter(X), diameter(X, Inf), diameter(X, 2))
+    for res in ((@inferred diameter(X)), (@inferred diameter(X, Inf)), @inferred diameter(X, 2))
         @test res isa N && res == N(2)
     end
 
     # dim
-    @test dim(X) == 1
+    @test @inferred dim(X) == 1
 
     # eltype
-    @test eltype(X) == N
-    @test eltype(typeof(X)) == N
+    @test @inferred eltype(X) == N
+    @test @inferred eltype(typeof(X)) == N
 
     # extrema
-    res = extrema(X)
+    res = @inferred extrema(X)
     @test res isa Tuple{Vector{N},Vector{N}} && res[1] == N[0] && res[2] == N[2]
     @test_throws DimensionMismatch extrema(X, 2)
-    res = extrema(X, 1)
+    res = @inferred extrema(X, 1)
     @test res isa Tuple{N,N} && res[1] == N(0) && res[2] == N(2)
 
     # generators
-    @test collect(generators(X)) == [N[1]]
+    @test collect(@inferred generators(X)) == [N[1]]
     # degenerate case
-    gens = collect(generators(X0))
+    gens = collect(@inferred generators(X0))
     @test gens isa Vector{SingleEntryVector{N}} && isempty(gens)
 
     # genmat
-    @test genmat(X) == hcat(N[1])
+    @test @inferred genmat(X) == hcat(N[1])
     # degenerate case
-    gens = genmat(X0)
+    gens = @inferred genmat(X0)
     @test gens isa Matrix{N} && gens == Matrix{N}(undef, 1, 0)
 
     # high
-    res = high(X)
+    res = @inferred high(X)
     @test res isa Vector{N} && res == N[2]
     @test_throws DimensionMismatch high(X, 2)
-    res = high(X, 1)
+    res = @inferred high(X, 1)
     @test res isa N && res == N(2)
 
     # isbounded
-    @test isbounded(X)
+    @test @inferred isbounded(X)
 
     # isboundedtype
-    @test isboundedtype(typeof(X))
+    @test @inferred isboundedtype(typeof(X))
 
     # isconvex
-    @test isconvex(X)
+    @test @inferred isconvex(X)
 
     # isconvextype
-    @test isconvextype(typeof(X))
+    @test @inferred isconvextype(typeof(X))
 
     # isempty
-    @test !isempty(X)
+    @test @inferred !isempty(X)
+    @test_broken @inferred isempty(X, true)  # TODO make this type-stable
     res, w = isempty(X, true)
     @test !res && w ∈ X && w isa Vector{N}
 
     # isflat
-    ztol = LazySets._ztol(N)  # default absolute zero tolerance
-    @test isflat(Interval(N(0), ztol))
-    @test !isflat(Interval(N(0), 2 * ztol + N(1 // 100)))
+    ztol = _ztol(N)  # default absolute zero tolerance
+    @test @inferred isflat(Interval(N(0), ztol))
+    @test @inferred !isflat(Interval(N(0), 2 * ztol + N(1 // 100)))
 
     # isoperation
-    @test !isoperation(X)
+    @test @inferred !isoperation(X)
 
     # isoperationtype
-    @test !isoperationtype(typeof(X))
+    @test @inferred !isoperationtype(typeof(X))
 
     # ispolyhedral
-    @test ispolyhedral(X)
+    @test @inferred ispolyhedral(X)
 
     # ispolyhedraltype
-    @test ispolyhedraltype(typeof(X))
+    @test @inferred ispolyhedraltype(typeof(X))
 
     # ispolytopic
-    @test ispolytopic(X)
+    @test @inferred ispolytopic(X)
 
     # ispolytopictype
-    @test ispolytopictype(typeof(X))
+    @test @inferred ispolytopictype(typeof(X))
 
     # isuniversal
-    @test !isuniversal(X)
+    @test @inferred !isuniversal(X)
+    @test_broken @inferred isuniversal(X, true)  # TODO make this type-stable
     res, w = isuniversal(X, true)
     @test !res && w isa Vector{N} && w ∉ X
 
     # low
-    res = low(X)
+    res = @inferred low(X)
     @test res isa Vector{N} && res == N[0]
     @test_throws DimensionMismatch low(X, 2)
-    res = low(X, 1)
+    res = @inferred low(X, 1)
     @test res isa N && res == N(0)
 
     # min
-    v = min(X)
+    v = @inferred min(X)
     @test v isa N && v == N(0)
 
     # max
-    v = max(X)
+    v = @inferred max(X)
     @test v isa N && v == N(2)
 
     # ngens
-    @test ngens(X) == 1
+    @test @inferred ngens(X) == 1
     # degenerate case
-    @test ngens(X0) == 0
+    @test @inferred ngens(X0) == 0
 
     # norm
     @test_throws ArgumentError norm(X, N(1 // 2))
     for Y in (X, Interval(N(-2), N(1)))
-        for res in (norm(Y), norm(Y, Inf), norm(Y, 2))
+        for res in ((@inferred norm(Y)), (@inferred norm(Y, Inf)), @inferred norm(Y, 2))
             @test res isa N && res == N(2)
         end
     end
 
     # polyhedron
     @static if isdefined(@__MODULE__, :Polyhedra)
-        Y = polyhedron(X)
+        Y = @inferred polyhedron(X)
         @test Y isa Polyhedra.Interval{N} && ispermutation(Y.vrep.points.points, [[N(0)], [N(2)]])
     end
 
     # radius
     @test_throws ArgumentError radius(X, N(1 // 2))
-    for res in (radius(X), radius(X, Inf), radius(X, 2))
+    for res in ((@inferred radius(X)), (@inferred radius(X, Inf)), @inferred radius(X, 2))
         @test res isa N && res == N(1)
     end
 
     # radius_hyperrectangle
-    r = radius_hyperrectangle(X)
+    r = @inferred radius_hyperrectangle(X)
     @test r isa Vector{N} && r == [N(1)]
-    v = radius_hyperrectangle(X, 1)
+    v = @inferred radius_hyperrectangle(X, 1)
     @test v isa N && v == N(1)
 
     # rectify
     Y = Interval(N(-1), N(2))
-    Z = rectify(Y)
+    Z = @inferred rectify(Y)
     @test isidentical(Z, X)
     Y = Interval(N(-2), N(-1))
-    Z = rectify(Y)
+    Z = @inferred rectify(Y)
     @test isidentical(Z, X0)
     Y = Interval(N(1), N(2))
-    Z = rectify(Y)
+    Z = @inferred rectify(Y)
     @test isidentical(Y, Z)
 
     # reflect
-    Y = reflect(X)
+    Y = @inferred reflect(X)
     @test isidentical(Y, Interval(N(-2), N(0)))
 
     # singleton_list
-    res = singleton_list(X)
+    res = @inferred singleton_list(X)
     @test res isa Vector{Singleton{N,Vector{N}}}
     @test ispermutation(res, [Singleton(N[0]), Singleton(N[2])])
 
     # togrep
-    Z = togrep(X)
+    Z = @inferred togrep(X)
     @test Z isa Zonotope{N} && isequivalent(Z, X)
 
     # tosimplehrep
-    A, b = tosimplehrep(X)
+    A, b = @inferred tosimplehrep(X)
     @test A isa Matrix{N} && b isa Vector{N}
     @test (A == hcat(N[1, -1]) && b == N[2, 0]) || (A == hcat(N[-1, 1]) && b == N[0, 2])
 
     # triangulate
     @static if isdefined(@__MODULE__, :MiniQhull)
-        Y = triangulate(X)  # TODO does it make sense to triangulate a set with two vertices?
+        Y = @inferred triangulate(X)  # TODO does it make sense to triangulate a set with two vertices?
         @test Y isa UnionSetArray{N} && length(Y) == 1
         Y = Y[1]
         @test Y isa VPolytope{N}
@@ -285,18 +289,18 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch triangulate_faces(X)
 
     # vertices_list
-    res = vertices_list(X)
+    res = @inferred vertices_list(X)
     @test res isa Vector{Vector{N}} && ispermutation(res, [N[0], N[2]])
     # degenerate case
-    res = vertices_list(X0)
+    res = @inferred vertices_list(X0)
     @test res isa Vector{Vector{N}} && res == [[N(0)]]
 
     # vertices
-    res = collect(vertices(X))
+    res = collect(@inferred vertices(X))
     @test res isa Vector{Vector{N}} && ispermutation(res, vertices_list(X))
 
     # volume
-    @test volume(X) == N(2)
+    @test @inferred volume(X) == N(2)
 
     # affine_map
     @test_throws DimensionMismatch affine_map(ones(N, 1, 2), X, N[1])
@@ -313,7 +317,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
         for res in (distance(X, x), distance(x, X))
             @test res == v
             if N <: AbstractFloat
+                @inferred distance(X, x)
+                @inferred distance(x, X)
                 @test res isa N
+            else
+                @test_broken @inferred distance(X, x)  # TODO make this type-stable
             end
         end
     end
@@ -324,7 +332,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # in
     @test_throws DimensionMismatch N[0, 0] ∈ X
-    @test N[1] ∈ X && N[2] ∈ X && N[3] ∉ X
+    @test (@inferred N[1] ∈ X) && N[2] ∈ X && N[3] ∉ X
     # number in interval is invalid
     @test_throws MethodError N(1) ∈ X
 
@@ -333,17 +341,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError is_interior_point(N[0], X; ε=N(0))
     @test_throws ArgumentError is_interior_point(N[0], X; p=N(1 // 2))
     if N <: AbstractFloat
-        @test is_interior_point(N[1], X)
-        @test !is_interior_point(N[2], X)
-        @test !is_interior_point(N[3], X)
-        @test is_interior_point(N[1], X; p=N(2))
-        @test is_interior_point(N[1], X; p=N(2), ε=N(1 // 2))
-        @test !is_interior_point(N[1], X; ε=N(1))
+        @test @inferred is_interior_point(N[1], X)
+        @test @inferred !is_interior_point(N[2], X)
+        @test @inferred !is_interior_point(N[3], X)
+        @test @inferred is_interior_point(N[1], X; p=N(2))
+        @test @inferred is_interior_point(N[1], X; p=N(2), ε=N(1 // 2))
+        @test @inferred !is_interior_point(N[1], X; ε=N(1))
     else
         @test_throws ArgumentError is_interior_point(N[1], X)
-        @test is_interior_point(N[1], X; ε=1 // 100)
-        @test !is_interior_point(N[2], X; ε=1 // 100)
-        @test !is_interior_point(N[3], X; ε=1 // 100)
+        @test @inferred is_interior_point(N[1], X; ε=1 // 100)
+        @test @inferred !is_interior_point(N[2], X; ε=1 // 100)
+        @test @inferred !is_interior_point(N[3], X; ε=1 // 100)
         # incompatible numeric type
         @test_throws ArgumentError is_interior_point([0.0], X)
     end
@@ -372,27 +380,27 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch permute(X, [1, 1])
     @test_throws DimensionMismatch permute(X, [-1])
     @test_throws DimensionMismatch permute(X, [2])
-    Y = permute(X, [1])
+    Y = @inferred permute(X, [1])
     @test isidentical(Y, X)
 
     # project
     @test_throws DimensionMismatch project(X, [1, 1])
     @test_throws DimensionMismatch project(X, [-1])
     @test_throws DimensionMismatch project(X, [2])
-    Y = project(X, [1])
+    Y = @inferred project(X, [1])
     @test isidentical(Y, X)
 
     # sample
-    res = sample(X)
+    res = @inferred sample(X)
     @test res isa Vector{N} && res ∈ X
-    res = sample(X, 2)
+    res = @inferred sample(X, 2)
     @test res isa Vector{Vector{N}} && length(res) == 2 && all(x ∈ X for x in res)
 
     # scale
-    Y = scale(N(2), X)
+    Y = @inferred scale(N(2), X)
     @test isidentical(Y, Interval(N(0), N(4)))
     # degenerate case
-    Y = scale(N(0), X)
+    Y = @inferred scale(N(0), X)
     @test isidentical(Y, X0)
     # scale!
     @test_throws MethodError scale!(N(2), X)
@@ -402,26 +410,26 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws AssertionError split(X, [4, 4])
     Xs = [Interval(N(0), N(1 // 2)), Interval(N(1 // 2), N(1)),
           Interval(N(1), N(3 // 2)), Interval(N(3 // 2), N(2))]
-    Ys = split(X, 4)
+    Ys = @inferred split(X, 4)
     @test Ys isa Vector{Interval{N}} && Ys == split(X, [4]) == Xs
 
     # support_function
     @test_throws DimensionMismatch ρ(N[1, 1], X)
-    res = ρ(N[2], X)
+    res = @inferred ρ(N[2], X)
     @test res isa N && res == N(4)
-    res = ρ(N[-2], X)
+    res = @inferred ρ(N[-2], X)
     @test res isa N && res == N(0)
 
     # support_vector
     @test_throws DimensionMismatch σ(N[1, 1], X)
-    res = σ(N[2], X)
+    res = @inferred σ(N[2], X)
     @test res isa Vector{N} && res == N[2]
-    res = σ(N[-2], X)
+    res = @inferred σ(N[-2], X)
     @test res isa Vector{N} && res == N[0]
 
     # translate
     @test_throws DimensionMismatch translate(X, N[1, 1])
-    Y = translate(X, N[1])
+    Y = @inferred translate(X, N[1])
     @test isidentical(Y, Interval(N(1), N(3)))
     # translate!
     @test_throws MethodError translate!(X, N[1, 1])  # TODO this should maybe change
@@ -429,19 +437,19 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # cartesian_product
     Y = Interval(N(-3), N(1))
-    Z = cartesian_product(X, Y)
+    Z = @inferred cartesian_product(X, Y)
     @test Z isa Hyperrectangle{N} && Z == Hyperrectangle(N[1, -1], N[1, 2])
-    Z = cartesian_product(Y, X)
+    Z = @inferred cartesian_product(Y, X)
     @test Z isa Hyperrectangle{N} && Z == Hyperrectangle(N[-1, 1], N[2, 1])
 
     # convex_hull (binary)
     @test_throws DimensionMismatch convex_hull(X, S2)
     @test_throws DimensionMismatch convex_hull(S2, X)
-    Y = convex_hull(X, X)
+    Y = @inferred convex_hull(X, X)
     @test isidentical(Y, X)
     Y = Interval(N(-3), N(-1))
     Z = Interval(N(-3), N(2))
-    for W in (convex_hull(X, Y), convex_hull(Y, X))
+    for W in ((@inferred convex_hull(X, Y)), @inferred convex_hull(Y, X))
         @test W isa LazySet{N} && isidentical(W, Z)
     end
 
@@ -470,7 +478,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch distance(S2, X)
     @test_throws ArgumentError distance(X, X; p=N(1 // 2))
     for (Y, v) in ((Interval(N(-1), N(1)), N(0)), (Interval(N(4), N(5)), N(2)))
-        for res in (distance(X, Y), distance(Y, X))
+        for res in ((@inferred distance(X, Y)), @inferred distance(Y, X))
             @test res isa N && res == v
         end
     end
@@ -479,7 +487,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch exact_sum(X, S2)
     @test_throws DimensionMismatch exact_sum(S2, X)
     Y = Interval(N(3), N(4))
-    for Z in (exact_sum(X, Y), exact_sum(Y, X))
+    for Z in ((@inferred exact_sum(X, Y)), @inferred exact_sum(Y, X))
         @test isidentical(Z, Interval(N(3), N(6)))
     end
 
@@ -494,15 +502,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(Y, Interval(N(1), N(2)))
 
     # isapprox
-    @test X ≈ X
-    res = (X ≈ translate(X, N[1 // 100000000]))
+    @test @inferred X ≈ X
+    res = @inferred (X ≈ translate(X, N[1 // 100000000]))
     if N <: AbstractFloat
         @test res  # below default tolerance for AbstractFloat
     else
         @test !res  # zero default tolerance for Rational
     end
-    @test !(X ≈ translate(X, N[1 // 1000]))  # above default tolerance for all types
-    @test !(X ≈ S2) && !(S2 ≈ X) && !(X ≈ B) && !(B ≈ X)
+    @test @inferred !(X ≈ translate(X, N[1 // 1000]))  # above default tolerance for all types
+    @test (@inferred !(X ≈ S2)) && (@inferred !(S2 ≈ X)) && (@inferred !(X ≈ B)) &&
+          @inferred !(B ≈ X)
 
     # isdisjoint
     @test_throws DimensionMismatch isdisjoint(X, S2)
@@ -510,28 +519,29 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # disjoint
     Y = Interval(N(3), N(4))
     for (Z, W) in ((X, Y), (Y, X))
-        @test isdisjoint(Z, W)
+        @test @inferred isdisjoint(Z, W)
+        @test_broken @inferred isdisjoint(Z, W, true)  # TODO make this type-stable
         res, w = isdisjoint(Z, W, true)
         @test res && w isa Vector{N} && isempty(w)
     end
     # overlapping
     Y = Interval(N(1), N(3))
     for (Z, W) in ((X, X), (X, Y), (Y, X))
-        @test !isdisjoint(Z, W)
+        @test @inferred !isdisjoint(Z, W)
         res, w = isdisjoint(Z, W, true)
         @test !res && w isa Vector{N} && w ∈ Z && w ∈ W
     end
     # tolerance
     if N == Float64
         Y = Interval(2.0 + 1e-9, 3.0)
-        @test !isdisjoint(X, Y)
+        @test @inferred !isdisjoint(X, Y)
         res, w = isdisjoint(X, Y, true)
         # TODO ∈ and isdisjoint should be consistent
         @test_broken !res && w isa Vector{N} && w ∈ X && w ∈ Y
-        r = LazySets._rtol(N)
+        r = _rtol(N)
         @assert r > N(1e-10) "default tolerance changed; adapt test"
         set_rtol(N, N(1e-10))
-        @test isdisjoint(X, Y)
+        @test @inferred isdisjoint(X, Y)
         res, w = isdisjoint(X, Y, true)
         @test res && w isa Vector{N} && isempty(w)
         # restore tolerance
@@ -539,29 +549,32 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # isequal
-    @test X == X
-    @test X != S2 && S2 != X && X != B && B != X
+    @test @inferred X == X
+    @test (@inferred X != S2) && (@inferred S2 != X) && (@inferred X != B) && @inferred B != X
 
     # isequivalent
     @test_throws DimensionMismatch isequivalent(X, S2)
     @test_throws DimensionMismatch isequivalent(S2, X)
-    @test isequivalent(X, X)
-    @test !isequivalent(X, Interval(N(1), N(2)))
+    @test @inferred isequivalent(X, X)
+    @test @inferred !isequivalent(X, Interval(N(1), N(2)))
+    @test_broken @inferred isequivalent(X, B)  # TODO make this type-stable
     @test isequivalent(X, B) && isequivalent(B, X)
 
     # isstrictsubset
     @test_throws DimensionMismatch X ⊂ S2
     for Y in (X, B)
-        @test !(Y ⊂ X)
+        @test @inferred !(Y ⊂ X)
+        @test_broken @inferred ⊂(Y, X, true)  # TODO make this type-stable
         res, w = ⊂(Y, X, true)
         @test !res && w isa Vector{N} && isempty(w)
     end
     for Y in (Interval(N(-1), N(2)), Interval(N(0), N(3)))
-        @test !(Y ⊂ X)
+        @test @inferred !(Y ⊂ X)
         res, w = ⊂(Y, X, true)
         @test !res && w isa Vector{N} && w ∈ Y && w ∉ X
     end
     for Y in (Interval(N(-1), N(2)), Interval(N(0), N(3)))
+        @test_broken @inferred ⊂(X, Y, true)  # TODO make this type-stable
         @test X ⊂ Y
         res, w = ⊂(X, Y, true)
         @test res && w isa Vector{N} && w ∉ X && w ∈ Y
@@ -571,7 +584,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch X ⊆ S2
     @test_throws DimensionMismatch S2 ⊆ X
     for Y in (X, B)
+        @test_broken @inferred X ⊆ Y  # TODO make this type-stable
         @test X ⊆ Y
+        @test_broken @inferred ⊆(X, Y, true)  # TODO make this type-stable
         res, w = ⊆(X, Y, true)
         @test res && w isa Vector{N} && w == N[]
     end
@@ -587,11 +602,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     for Y in (linear_combination(X, Xnc), linear_combination(Xnc, X))
         @test isidentical(Y, Interval(N(0), N(5)))
     end
-    for Z in (linear_combination(X, X), linear_combination(X, B), linear_combination(B, X))
+    Z = @inferred linear_combination(X, X)
+    @test isidentical(Z, X)
+    @test_broken @inferred linear_combination(X, B)  # TODO make this type-stable
+    for Z in (linear_combination(X, B), linear_combination(B, X))
         @test isidentical(Z, X)
     end
     Y = Interval(N(3), N(4))
-    for Z in (linear_combination(X, Y), linear_combination(Y, X))
+    for Z in ((@inferred linear_combination(X, Y)), @inferred linear_combination(Y, X))
         @test isidentical(Z, Interval(N(0), N(4)))
     end
 
@@ -617,11 +635,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch minkowski_sum(X, S2)
     @test_throws DimensionMismatch minkowski_sum(S2, X)
     # Interval + Interval = Interval
-    Y = minkowski_sum(X, X)
+    Y = @inferred minkowski_sum(X, X)
     Z = Interval(N(0), N(4))
     @test isidentical(Y, Z)
     # general
-    for Y in (minkowski_sum(X, B), minkowski_sum(B, X))
+    for Y in ((@inferred minkowski_sum(X, B)), @inferred minkowski_sum(B, X))
         @test Y isa LazySet{N} && isequivalent(Y, Z)
     end
 end
@@ -635,10 +653,10 @@ for N in @tN([Float64, Float32])
     @test_throws AssertionError rand(Interval; N=N, dim=2)
 
     # rationalize
-    Y = rationalize(X)
+    Y = @inferred rationalize(X)
     @test Y isa Interval{Rational{Int64}} && Y == Interval(N(0 // 1), N(2 // 1))
 
     # exponential_map
-    Y = exponential_map(ones(N, 1, 1), X)
+    Y = @inferred exponential_map(ones(N, 1, 1), X)
     @test isidentical(Y, Interval(N(0), N(exp(1)) * N(2)))
 end
