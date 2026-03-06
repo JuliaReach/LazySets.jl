@@ -44,6 +44,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test P2 ==
           SparsePolynomialZonotope(N[6, 8], zeros(N, 2, 0), N[7 0 3 0; 0 8 0 4], zeros(Int, 0, 0),
                                    Int[])
+
 end
 
 for N in @tN([Float64, Float32])
@@ -54,4 +55,10 @@ for N in @tN([Float64, Float32])
     B1 = Ballp(N(3), N[1, 2], N(3))
     B2 = Ballp(N(3), N[4, 5], N(6))
     @test minkowski_sum(B1, B2) == Ballp(N(3), N[5, 7], N(9))
+
+    @static if isdefined(@__MODULE__, :IntervalMatrices)
+        MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
+        IM = overapproximate(MZ, IntervalMatrix)
+        @test minkowski_sum(MZ, IM) == minkowski_sum(MZ, convert(MatrixZonotope, IM))
+    end
 end

@@ -57,11 +57,6 @@ function load_intervalmatrices_overapproximation_matrixzonotope()
             return remove_redundant_generators(res; tol=tol)
         end
 
-        # TODO avoid `convert`
-        function LazySets.minkowski_sum(MZ::MatrixZonotope, IM::IntervalMatrix)
-            return minkowski_sum(MZ, convert(MatrixZonotope, IM))
-        end
-
         """
             overapproximate(A::MatrixZonotope, ::Type{<:IntervalMatrix})
 
