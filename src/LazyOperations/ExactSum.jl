@@ -19,18 +19,18 @@ The convenience aliases `⊞` is also available. `⊞` can be typed by `\\boxplu
 struct ExactSum{N,S1,S2} <: LazySet{N}
     X::S1
     Y::S2
+
+    function ExactSum(X::S1, Y::S2) where {N,S1<:LazySet{N},S2<:LazySet{N}}
+        @assert dim(X) == dim(Y) "The sets must have the same ambient dimension."
+        new{N,S1,S2}(X, Y)
+    end
 end
 
-function ExactSum(X::S1, Y::S2) where {
-    N,
-    S1<:SparsePolynomialZonotope{N},
-    S2<:SparsePolynomialZonotope{N}
-}
-    dim(X) == dim(Y) || throw(ArgumentError("sets must have the same dimension"))
-    return ExactSum{N,S1,S2}(X, Y)
+function dim(ES::ExactSum)
+    return dim(ES.X)
 end
 
-⊞(X::SparsePolynomialZonotope, Y::SparsePolynomialZonotope) = ExactSum(X, Y)
+⊞(X::LazySet, Y::LazySet) = ExactSum(X, Y)
 
 isoperationtype(::Type{<:ExactSum}) = true
 concrete_function(::Type{<:ExactSum}) = exact_sum
