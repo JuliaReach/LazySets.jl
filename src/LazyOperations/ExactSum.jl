@@ -33,4 +33,7 @@ end
 isoperationtype(::Type{<:ExactSum}) = true
 concrete_function(::Type{<:ExactSum}) = exact_sum
 
+# interface for binary set operations
+first(ES::ExactSum) = ES.X
+second(ES::ExactSum) = ES.Y
 @declare_binary_operation(ExactSum)
