@@ -1,5 +1,3 @@
-using .SparsePolynomialZonotopeModule: SparsePolynomialZonotope, exact_sum
-
 export ExactSum, ⊞
 
 """
