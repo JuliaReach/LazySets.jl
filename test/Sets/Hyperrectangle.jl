@@ -1,5 +1,6 @@
 using LazySets, Test, SparseArrays, LinearAlgebra
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
+using LazySets.ReachabilityBase.Comparison: set_rtol, _rtol
 IA = LazySets.IA
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
@@ -626,7 +627,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     if N == Float64
         H2 = Hyperrectangle(N[1 + 1e-9, -1], N[1, 2])
         @test !isdisjoint(H, H2)
-        r = LazySets._rtol(N)
+        r = _rtol(N)
         @assert r > N(1e-10) "default tolerance changed; adapt test"
         set_rtol(N, N(1e-10))
         @test_broken isdisjoint(H, H2)  # cannot adapt tolerance of LP solver
