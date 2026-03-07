@@ -2,7 +2,7 @@
     return _isdisjoint_universe(U1, U2, witness)
 end
 
-function _isdisjoint_universe(U::Universe, X::LazySet, witness)
+function _isdisjoint_universe(U::Universe, X::LazySet, witness::Bool=false)
     if isempty(X)
         return _witness_result_empty(witness, true, U, X)
     else

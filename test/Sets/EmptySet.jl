@@ -172,7 +172,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # rand
-    @test_broken @inferred rand(EmptySet; N=N)  # TODO make this type-stable
+    @test_broken @inferred rand(EmptySet; N=N)
     E2 = rand(EmptySet; N=N)
     @test isidentical(E2, E)
     E2 = rand(EmptySet; N=N, dim=3)
@@ -409,8 +409,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isstrictsubset
     @test_throws DimensionMismatch E ⊂ E3
-    @test_broken @inferred E ⊂ E  # TODO make this type-stable
-    @test !(E ⊂ E)
+    @test !(@inferred E ⊂ E)
     @test_broken @inferred ⊂(E, E, true)  # TODO make this type-stable
     res, w = ⊂(E, E, true)
     @test !res && w isa Vector{N} && isempty(w)
