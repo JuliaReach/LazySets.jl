@@ -7,7 +7,8 @@ end
 
 for N in @tN([Float64, Float32, Rational{Int}])
     P1 = SparsePolynomialZonotope(N[4, 4], N[2 1 2; 0 2 2], hcat(N[1; 0]), [1 0 3; 0 1 1], [1, 3])
-    P2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1; 1 2 1], zeros(N, 2, 0), [1 0 1; 0 1 3], [1, 3])
+    P2 = SparsePolynomialZonotope(zeros(N, 2), N[2 0 1; 1 2 1], zeros(N, 2, 0), [1 0 1; 0 1 3],
+                                  [1, 3])
 
     ES = ExactSum(P1, P2)
     @test ES.X == P1

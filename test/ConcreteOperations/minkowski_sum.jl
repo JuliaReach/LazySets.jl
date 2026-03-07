@@ -44,7 +44,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test P2 ==
           SparsePolynomialZonotope(N[6, 8], zeros(N, 2, 0), N[7 0 3 0; 0 8 0 4], zeros(Int, 0, 0),
                                    Int[])
-
 end
 
 for N in @tN([Float64, Float32])
