@@ -85,6 +85,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     H = Hyperrectangle(; low=N[-1, -1], high=N[1, 1])
     HPolygon(constraints_list(H))
     HPolygonOpt(constraints_list(H))
+    H = HalfSpace(N[1, 1], N(1))
+    @test_throws ArgumentError convert(HPolygon, H)
+    @test_throws ArgumentError convert(HPolygonOpt, H)
 
     # support vector of polygon with no constraints
     @test_throws DimensionMismatch σ(N[0], HPolygon{N}())
