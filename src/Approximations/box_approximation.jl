@@ -422,7 +422,7 @@ function load_taylormodels_box_approximation()
 
         function _box_approximation_vTM(vTM)
             bounds = [evaluate(vTM[i], domain(p)) for (i, p) in enumerate(vTM)]
-            return Hyperrectangle(low=IA.inf.(bounds), high=IA.sup.(bounds))
+            return Hyperrectangle(; low=IA.inf.(bounds), high=IA.sup.(bounds))
         end
     end
 end  # quote / load_taylormodels_box_approximation

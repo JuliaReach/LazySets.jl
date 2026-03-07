@@ -20,7 +20,7 @@ struct ExactSum{N,S1,S2} <: LazySet{N}
 
     function ExactSum(X::S1, Y::S2) where {N,S1<:LazySet{N},S2<:LazySet{N}}
         @assert dim(X) == dim(Y) "The sets must have the same ambient dimension."
-        new{N,S1,S2}(X, Y)
+        return new{N,S1,S2}(X, Y)
     end
 end
 

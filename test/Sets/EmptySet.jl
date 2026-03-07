@@ -378,7 +378,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isapprox
     @test @inferred E ≈ EmptySet{N}(2)
-    @test (@inferred !(E ≈ E3)) && (@inferred !(E3 ≈ E)) && (@inferred !(E ≈ Pe)) && @inferred !(Pe ≈ E)
+    @test (@inferred !(E ≈ E3)) && (@inferred !(E3 ≈ E)) && (@inferred !(E ≈ Pe)) &&
+          @inferred !(Pe ≈ E)
 
     # isdisjoint
     @test_throws DimensionMismatch isdisjoint(E, E3)
