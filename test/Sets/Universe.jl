@@ -519,8 +519,7 @@ for N in @tN([Float64, Float32])
     @test X isa HPolyhedron{N} && isequivalent(X, Hyperplane(N[0, 0, 1], N(3)))
 
     # exponential_map
-    @test_broken @inferred exponential_map(ones(N, 2, 2), U)  # TODO make this type-stable
-    U2 = exponential_map(ones(N, 2, 2), U)
+    U2 = @inferred exponential_map(ones(N, 2, 2), U)
     @test isidentical(U2, U)
 
     # linear_map (part 2)
