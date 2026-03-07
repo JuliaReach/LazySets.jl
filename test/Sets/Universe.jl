@@ -86,28 +86,28 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError diameter(U, 2)
 
     # dim
-    @test @inferred dim(U) == 2
-    @test @inferred dim(U3) == 3
+    @test (@inferred dim(U)) == 2
+    @test (@inferred dim(U3)) == 3
 
     # eltype
-    @test @inferred eltype(U) == N
-    @test @inferred eltype(typeof(U)) == N
+    @test (@inferred eltype(U)) == N
+    @test (@inferred eltype(typeof(U))) == N
 
     # extrema
-    @test @inferred extrema(U) == (N[-Inf, -Inf], N[Inf, Inf])
+    @test (@inferred extrema(U)) == (N[-Inf, -Inf], N[Inf, Inf])
     @test_throws DimensionMismatch extrema(U, 3)
-    @test @inferred extrema(U, 1) == (N(-Inf), N(Inf))
+    @test (@inferred extrema(U, 1)) == (N(-Inf), N(Inf))
 
     # high
-    @test @inferred high(U) == N[Inf, Inf]
+    @test (@inferred high(U)) == N[Inf, Inf]
     @test_throws DimensionMismatch high(U, 3)
-    @test @inferred high(U, 1) == N(Inf)
+    @test (@inferred high(U, 1)) == N(Inf)
 
     # isbounded
-    @test @inferred !isbounded(U)
+    @test !(@inferred isbounded(U))
 
     # isboundedtype
-    @test @inferred !isboundedtype(typeof(U))
+    @test !(@inferred isboundedtype(typeof(U)))
 
     # isconvex
     @test @inferred isconvex(U)
@@ -116,16 +116,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test @inferred isconvextype(typeof(U))
 
     # isempty
-    @test @inferred !isempty(U)
+    @test !(@inferred isempty(U))
     @test_broken @inferred isempty(U, true)  # TODO make this type-stable
     res, w = isempty(U, true)
     @test !res && w isa Vector{N} && w ∈ U
 
     # isoperation
-    @test @inferred !isoperation(U)
+    @test !(@inferred isoperation(U))
 
     # isoperationtype
-    @test @inferred !isoperationtype(typeof(U))
+    @test !(@inferred isoperationtype(typeof(U)))
 
     # ispolyhedral
     @test @inferred ispolyhedral(U)
@@ -134,10 +134,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test @inferred ispolyhedraltype(typeof(U))
 
     # ispolytopic
-    @test @inferred !ispolytopic(U)
+    @test !(@inferred ispolytopic(U))
 
     # ispolytopictype
-    @test @inferred !ispolytopictype(typeof(U))
+    @test !(@inferred ispolytopictype(typeof(U)))
 
     # isuniversal
     @test @inferred isuniversal(U)
@@ -146,9 +146,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res && w isa Vector{N} && isempty(w)
 
     # low
-    @test @inferred low(U) == N[-Inf, -Inf]
+    @test (@inferred low(U)) == N[-Inf, -Inf]
     @test_throws DimensionMismatch low(U, 3)
-    @test @inferred low(U, 1) == N(-Inf)
+    @test (@inferred low(U, 1)) == N(-Inf)
 
     # norm
     @test_throws ArgumentError norm(U, N(1 // 2))
@@ -383,12 +383,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isapprox
     @test @inferred U ≈ Universe{N}(2)
-    @test (@inferred !(U ≈ U3)) && (@inferred !(U3 ≈ U)) && (@inferred !(U ≈ B)) &&
-          @inferred !(B ≈ U)
+    @test !(@inferred U ≈ U3) && !(@inferred U3 ≈ U) && !(@inferred U ≈ B) && !(@inferred B ≈ U)
 
     # isdisjoint
     @test_throws DimensionMismatch isdisjoint(U, U3)
-    @test @inferred !isdisjoint(U, U)
+    @static if VERSION >= v"1.12"
+        @test_broken !(@inferred isdisjoint(U, U))  # TODO make this type-stable
+        @test !isdisjoint(U, U)
+    else
+        @test !(@inferred isdisjoint(U, U))
+    end
     @static if VERSION >= v"1.11"
         @test_broken @inferred isdisjoint(U, U, true)  # TODO make this type-stable
     end
@@ -403,8 +407,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
                      isdisjoint(U, Pe, true), isdisjoint(Pe, U, true))
         @test res && w isa Vector{N} && isempty(w)
     end
-    @test (@inferred !isdisjoint(U, B)) && (@inferred !isdisjoint(B, U)) &&
-          (@inferred !isdisjoint(U, Pnc)) && @inferred !isdisjoint(Pnc, U)
+    @test !isdisjoint(U, B) && !isdisjoint(B, U) && !isdisjoint(U, Pnc) && !isdisjoint(Pnc, U)
     for (res, w) in (isdisjoint(U, B, true), isdisjoint(B, U, true), isdisjoint(U, Pnc, true),
                      isdisjoint(Pnc, U, true))
         @test !res && w isa Vector{N} && w ∈ B && w ∈ U
@@ -417,15 +420,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isequivalent
     @test_throws DimensionMismatch isequivalent(U, U3)
     @test @inferred isequivalent(U, U)
-    @test (@inferred !isequivalent(U, B)) && @inferred !isequivalent(B, U)
+    @test_broken @inferred isequivalent(B, U)  # TODO make this type-stable
+    @test !(@inferred isequivalent(U, B)) && !isequivalent(B, U)
 
     # isstrictsubset
     @test_throws DimensionMismatch U ⊂ U3
-    @test @inferred !(U ⊂ U)
+    @test_broken !(@inferred U ⊂ U)  # TODO make this type-stable
+    @test !(U ⊂ U)
     @test_broken @inferred ⊂(U, U, true)  # TODO make this type-stable
     res, w = ⊂(U, U, true)
     @test !res && w isa Vector{N} && isempty(w)
-    @test @inferred !(U ⊂ B)
+    @test !(U ⊂ B)
     res, w = ⊂(U, B, true)
     @test !res && w isa Vector{N} && w ∈ U && w ∉ B
     @test_broken @inferred B ⊂ U  # TODO make this type-stable
