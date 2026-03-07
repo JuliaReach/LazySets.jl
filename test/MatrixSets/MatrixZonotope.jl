@@ -193,9 +193,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # order
     @test order(MZ) == 1 // 4 && order(MZ) == order(Z)
 
-    # remove redundant generators 
+    # remove redundant generators
     MZ2 = MatrixZonotope(c, [N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]])
-    MZred = remove_redundant_generators(MZ2) # all gens should be preserved 
+    MZred = remove_redundant_generators(MZ2) # all gens should be preserved
     @test ngens(MZred) == 3
 
     MZ3 = MatrixZonotope(c, [N[1 4; 0 -2], N[1e-10 1e-10; 1e-10 1e-10], N[1 -1; 0 1]])
@@ -204,9 +204,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test indexvector(MZred) == [1, 3]
 
     # minkowski sum
-    ms = minkowski_sum(MZ, MZ2)
-    @test center(ms) == N[2 0; 0 6]
-    @test generators(ms) == [N[1 -1; 0 2], N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]]
+    for N2 in (Float64, Float32, Rational{Int})  # works with mixed types
+        MZ2 = MatrixZonotope(N2[1 0; 0 3], [N2[1 4; 0 -2], N2[-1 1; 0 -1], N2[1 -1; 0 1]])
+        ms = minkowski_sum(MZ, MZ2)
+        @test center(ms) == [2 0; 0 6]
+        @test generators(ms) == [[1 -1; 0 2], [1 4; 0 -2], [-1 1; 0 -1], [1 -1; 0 1]]
+    end
 end
 
 for N in @tN([Float64, Float32])

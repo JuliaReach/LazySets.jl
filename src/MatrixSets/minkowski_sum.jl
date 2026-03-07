@@ -1,31 +1,21 @@
 """
     minkowski_sum(A::MatrixZonotope, B::MatrixZonotope)
 
-Compute the minkowski sum of two matrix zonotopes.
+Compute the Minkowski sum of two matrix zonotopes.
 
 # Input
 
-- `A` -- a matrix zonotope
-- `B` -- a matrix zonotope
+- `A` -- matrix zonotope
+- `B` -- matrix zonotope
 
 # Output
 
-A matrix zonotope representing the minkowski sum between matrix zonotopes.
+A matrix zonotope representing the Minkowski sum.
 """
 function minkowski_sum(A::MatrixZonotope, B::MatrixZonotope)
-    @assert size(A) == size(B) "cannot sum a matrix zonotope of size $(size(A)) " *
-                               "with one of size $(size(B)) "
+    @assert size(A) == size(B) "cannot sum matrix zonotopes of size $(size(A)) and $(size(B))"
 
     c = center(A) + center(B)
-
-    if eltype(A) == eltype(B)
-        gensA = generators(A)
-        gensB = generators(B)
-    else
-        gensA = [convert(typeof(c), Ai) for Ai in generators(A)]
-        gensB = [convert(typeof(c), Bi) for Bi in generators(B)]
-    end
-
-    gens = vcat(gensA, gensB)
+    gens = vcat(generators(A), generators(B))
     return MatrixZonotope(c, gens)
 end
