@@ -15,10 +15,10 @@ fewer generators.
 
 A new zonotope with fewer generators, if possible.
 
-# Algorithm 
+# Algorithm
 
-This function first vectorizes the matrix zonotope into a standard zonotope, 
-reduces the order of the resulting zonotope, and then converts it back 
+This function first vectorizes the matrix zonotope into a standard zonotope,
+reduces the order of the resulting zonotope, and then converts it back
 to a matrix zonotope of the original dimensions.
 
 # Extended help

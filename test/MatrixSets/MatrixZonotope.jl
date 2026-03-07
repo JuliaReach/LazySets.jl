@@ -70,6 +70,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test generators(MZt) == [transpose(Ai) for Ai in generators(MZ)]
 
     # norm
+    @test_throws ArgumentError norm(MZ, 2)
     @test norm(MZ, Inf) == 7
     @test norm(MZ, 1) == 8
 
@@ -193,9 +194,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # order
     @test order(MZ) == 1 // 4 && order(MZ) == order(Z)
 
-    # remove redundant generators 
+    # remove redundant generators
     MZ2 = MatrixZonotope(c, [N[1 4; 0 -2], N[-1 1; 0 -1], N[1 -1; 0 1]])
-    MZred = remove_redundant_generators(MZ2) # all gens should be preserved 
+    MZred = remove_redundant_generators(MZ2) # all gens should be preserved
     @test ngens(MZred) == 3
 
     MZ3 = MatrixZonotope(c, [N[1 4; 0 -2], N[1e-10 1e-10; 1e-10 1e-10], N[1 -1; 0 1]])
@@ -217,4 +218,6 @@ for N in @tN([Float64, Float32])
     MZred = reduce_order(MZ, 1)
     @test order(MZred) ≤ 1
     @test center(MZred) == center(MZ)
+    MZred2 = reduce_order(MZred, 1)
+    @test MZred2 === MZred
 end
