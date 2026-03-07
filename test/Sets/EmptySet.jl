@@ -67,7 +67,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(E2, E)
 
     # constrained_dimensions
-    @test @inferred constrained_dimensions(E) == 1:2
+    @test (@inferred constrained_dimensions(E)) == 1:2
 
     # constraints_list
     @test_throws MethodError constraints_list(E)  # TODO this should maybe change
@@ -90,12 +90,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # dim
-    @test @inferred dim(E) == 2
-    @test @inferred dim(E3) == 3
+    @test (@inferred dim(E)) == 2
+    @test (@inferred dim(E3)) == 3
 
     # eltype
-    @test @inferred eltype(E) == N
-    @test @inferred eltype(typeof(E)) == N
+    @test (@inferred eltype(E)) == N
+    @test (@inferred eltype(typeof(E))) == N
 
     # extrema
     @test_throws ArgumentError extrema(E)
@@ -126,25 +126,25 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res && w isa Vector{N} && isempty(w)
 
     # isoperation
-    @test @inferred !isoperation(E)
+    @test !(@inferred isoperation(E))
 
     # isoperationtype
-    @test @inferred !isoperationtype(typeof(E))
+    @test !(@inferred isoperationtype(typeof(E)))
 
     # ispolyhedral
-    @test @inferred !ispolyhedral(E)  # TODO this should maybe change
+    @test !(@inferred ispolyhedral(E))  # TODO this should maybe change
 
     # ispolyhedraltype
-    @test @inferred !ispolyhedraltype(typeof(E))  # TODO this should maybe change
+    @test !(@inferred ispolyhedraltype(typeof(E)))  # TODO this should maybe change
 
     # ispolytopic
-    @test @inferred !ispolytopic(E)  # TODO this should maybe change
+    @test !(@inferred ispolytopic(E))  # TODO this should maybe change
 
     # ispolytopictype
-    @test @inferred !ispolytopictype(typeof(E))  # TODO this should maybe change
+    @test !(@inferred ispolytopictype(typeof(E)))  # TODO this should maybe change
 
     # isuniversal
-    @test @inferred !isuniversal(E)
+    @test !(@inferred isuniversal(E))
     @test_broken @inferred isuniversal(E, true)  # TODO make this type-stable
     res, w = isuniversal(E, true)
     @test !res && w isa Vector{N} && w ∉ E
@@ -179,10 +179,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(E2, E3)
 
     # rectify
-    @test @inferred rectify(E) == E
+    @test (@inferred rectify(E)) == E
 
     # reflect
-    @test @inferred reflect(E) == E
+    @test (@inferred reflect(E)) == E
 
     # singleton_list
     res = @inferred singleton_list(E)
@@ -207,7 +207,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{Vector{N}} && isempty(res)
 
     # volume
-    @test @inferred volume(E) == N(0)
+    @test (@inferred volume(E)) == N(0)
 
     # affine_map
     @test_throws DimensionMismatch affine_map(ones(N, 2, 3), E, N[1, 1])
@@ -241,10 +241,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError is_interior_point(v, E; ε=N(0))
     @test_throws ArgumentError is_interior_point(v, E; p=N(1 // 2))
     if N <: AbstractFloat
-        @test @inferred !is_interior_point(v, E)
+        @test !(@inferred is_interior_point(v, E))
     else
         @test_throws ArgumentError is_interior_point(v, E)
-        @test @inferred !is_interior_point(v, E; ε=1 // 100)
+        @test !(@inferred is_interior_point(v, E; ε=1 // 100))
         # incompatible numeric type
         @test_throws ArgumentError is_interior_point([0.0, 0.0], E)
     end
@@ -378,8 +378,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isapprox
     @test @inferred E ≈ EmptySet{N}(2)
-    @test (@inferred !(E ≈ E3)) && (@inferred !(E3 ≈ E)) && (@inferred !(E ≈ Pe)) &&
-          @inferred !(Pe ≈ E)
+    @test !(@inferred E ≈ E3) && !(@inferred E3 ≈ E) && !(@inferred E ≈ Pe) &&
+          !(@inferred Pe ≈ E)
 
     # isdisjoint
     @test_throws DimensionMismatch isdisjoint(E, E3)
@@ -403,7 +403,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_broken @inferred isequivalent(E, E, true)  # TODO make this type-stable
     res, w = isequivalent(E, E, true)
     @test res && w isa Vector{N} && isempty(w)
-    @test (@inferred !isequivalent(E, B)) && @inferred !isequivalent(B, E)
+    @test !(@inferred isequivalent(E, B)) && !(@inferred isequivalent(B, E))
     res, w = isequivalent(E, B, true)
     @test !res && w isa Vector{N} && w ∈ B && w ∉ E
 

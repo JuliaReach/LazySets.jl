@@ -96,7 +96,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(Y, X)
 
     # constrained_dimensions
-    @test @inferred constrained_dimensions(X) == 1:1
+    @test (@inferred constrained_dimensions(X)) == 1:1
 
     # constraints_list
     cs = @inferred constraints_list(X)
@@ -121,11 +121,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # dim
-    @test @inferred dim(X) == 1
+    @test (@inferred dim(X)) == 1
 
     # eltype
-    @test @inferred eltype(X) == N
-    @test @inferred eltype(typeof(X)) == N
+    @test (@inferred eltype(X)) == N
+    @test (@inferred eltype(typeof(X))) == N
 
     # extrema
     res = @inferred extrema(X)
@@ -141,7 +141,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test gens isa Vector{SingleEntryVector{N}} && isempty(gens)
 
     # genmat
-    @test @inferred genmat(X) == hcat(N[1])
+    @test (@inferred genmat(X)) == hcat(N[1])
     # degenerate case
     gens = @inferred genmat(X0)
     @test gens isa Matrix{N} && gens == Matrix{N}(undef, 1, 0)
@@ -166,7 +166,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test @inferred isconvextype(typeof(X))
 
     # isempty
-    @test @inferred !isempty(X)
+    @test !(@inferred isempty(X))
     @test_broken @inferred isempty(X, true)  # TODO make this type-stable
     res, w = isempty(X, true)
     @test !res && w ∈ X && w isa Vector{N}
@@ -174,13 +174,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isflat
     ztol = _ztol(N)  # default absolute zero tolerance
     @test @inferred isflat(Interval(N(0), ztol))
-    @test @inferred !isflat(Interval(N(0), 2 * ztol + N(1 // 100)))
+    @test !(@inferred isflat(Interval(N(0), 2 * ztol + N(1 // 100))))
 
     # isoperation
-    @test @inferred !isoperation(X)
+    @test !(@inferred isoperation(X))
 
     # isoperationtype
-    @test @inferred !isoperationtype(typeof(X))
+    @test !(@inferred isoperationtype(typeof(X)))
 
     # ispolyhedral
     @test @inferred ispolyhedral(X)
@@ -195,7 +195,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test @inferred ispolytopictype(typeof(X))
 
     # isuniversal
-    @test @inferred !isuniversal(X)
+    @test !(@inferred isuniversal(X))
     @test_broken @inferred isuniversal(X, true)  # TODO make this type-stable
     res, w = isuniversal(X, true)
     @test !res && w isa Vector{N} && w ∉ X
@@ -216,9 +216,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test v isa N && v == N(2)
 
     # ngens
-    @test @inferred ngens(X) == 1
+    @test (@inferred ngens(X)) == 1
     # degenerate case
-    @test @inferred ngens(X0) == 0
+    @test (@inferred ngens(X0)) == 0
 
     # norm
     @test_throws ArgumentError norm(X, N(1 // 2))
@@ -300,7 +300,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{Vector{N}} && ispermutation(res, vertices_list(X))
 
     # volume
-    @test @inferred volume(X) == N(2)
+    @test (@inferred volume(X)) == N(2)
 
     # affine_map
     @test_throws DimensionMismatch affine_map(ones(N, 1, 2), X, N[1])
@@ -342,16 +342,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError is_interior_point(N[0], X; p=N(1 // 2))
     if N <: AbstractFloat
         @test @inferred is_interior_point(N[1], X)
-        @test @inferred !is_interior_point(N[2], X)
-        @test @inferred !is_interior_point(N[3], X)
+        @test !(@inferred is_interior_point(N[2], X))
+        @test !(@inferred is_interior_point(N[3], X))
         @test @inferred is_interior_point(N[1], X; p=N(2))
         @test @inferred is_interior_point(N[1], X; p=N(2), ε=N(1 // 2))
-        @test @inferred !is_interior_point(N[1], X; ε=N(1))
+        @test !(@inferred is_interior_point(N[1], X; ε=N(1)))
     else
         @test_throws ArgumentError is_interior_point(N[1], X)
         @test @inferred is_interior_point(N[1], X; ε=1 // 100)
-        @test @inferred !is_interior_point(N[2], X; ε=1 // 100)
-        @test @inferred !is_interior_point(N[3], X; ε=1 // 100)
+        @test !(@inferred is_interior_point(N[2], X; ε=1 // 100))
+        @test !(@inferred is_interior_point(N[3], X; ε=1 // 100))
         # incompatible numeric type
         @test_throws ArgumentError is_interior_point([0.0], X)
     end
@@ -503,15 +503,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isapprox
     @test @inferred X ≈ X
-    res = @inferred (X ≈ translate(X, N[1 // 100000000]))
+    res = (@inferred X ≈ translate(X, N[1 // 100000000]))
     if N <: AbstractFloat
         @test res  # below default tolerance for AbstractFloat
     else
         @test !res  # zero default tolerance for Rational
     end
-    @test @inferred !(X ≈ translate(X, N[1 // 1000]))  # above default tolerance for all types
-    @test (@inferred !(X ≈ S2)) && (@inferred !(S2 ≈ X)) && (@inferred !(X ≈ B)) &&
-          @inferred !(B ≈ X)
+    @test !(@inferred X ≈ translate(X, N[1 // 1000]))  # above default tolerance for all types
+    @test !(@inferred X ≈ S2) && !(@inferred S2 ≈ X) && !(@inferred X ≈ B) &&
+          !(@inferred B ≈ X)
 
     # isdisjoint
     @test_throws DimensionMismatch isdisjoint(X, S2)
@@ -527,14 +527,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # overlapping
     Y = Interval(N(1), N(3))
     for (Z, W) in ((X, X), (X, Y), (Y, X))
-        @test @inferred !isdisjoint(Z, W)
+        @test !(@inferred isdisjoint(Z, W))
         res, w = isdisjoint(Z, W, true)
         @test !res && w isa Vector{N} && w ∈ Z && w ∈ W
     end
     # tolerance
     if N == Float64
         Y = Interval(2.0 + 1e-9, 3.0)
-        @test @inferred !isdisjoint(X, Y)
+        @test !(@inferred isdisjoint(X, Y))
         res, w = isdisjoint(X, Y, true)
         # TODO ∈ and isdisjoint should be consistent
         @test_broken !res && w isa Vector{N} && w ∈ X && w ∈ Y
@@ -556,20 +556,21 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch isequivalent(X, S2)
     @test_throws DimensionMismatch isequivalent(S2, X)
     @test @inferred isequivalent(X, X)
-    @test @inferred !isequivalent(X, Interval(N(1), N(2)))
+    @test !(@inferred isequivalent(X, Interval(N(1), N(2))))
     @test_broken @inferred isequivalent(X, B)  # TODO make this type-stable
     @test isequivalent(X, B) && isequivalent(B, X)
 
     # isstrictsubset
     @test_throws DimensionMismatch X ⊂ S2
     for Y in (X, B)
-        @test @inferred !(Y ⊂ X)
+        @test_broken @inferred Y ⊂ X  # TODO make this type-stable
+        @test !(Y ⊂ X)
         @test_broken @inferred ⊂(Y, X, true)  # TODO make this type-stable
         res, w = ⊂(Y, X, true)
         @test !res && w isa Vector{N} && isempty(w)
     end
     for Y in (Interval(N(-1), N(2)), Interval(N(0), N(3)))
-        @test @inferred !(Y ⊂ X)
+        @test !(Y ⊂ X)
         res, w = ⊂(Y, X, true)
         @test !res && w isa Vector{N} && w ∈ Y && w ∉ X
     end
