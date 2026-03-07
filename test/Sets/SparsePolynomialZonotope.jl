@@ -315,6 +315,32 @@ for N in [Float64]
         # conversion back to Taylor model
         vTM2 = convert(Vector{<:TaylorModels.TaylorModelN}, PZ)
         @test vTM == vTM2
+
+        # proper SparsePolynomialZonotope, but with zero independent generators
+        PZ = SparsePolynomialZonotope(PZ.c, PZ.G, zeros(2, 2), PZ.E, PZ.idx)
+        x₁, x₂, x₃, x₄, x₅ = TaylorModels.set_variables(Float64, ["x₁", "x₂", "x₃", "x₄", "x₅"]; order=5)
+        vTM2 = convert(Vector{<:TaylorModels.TaylorModelN}, PZ)
+        for i in eachindex(vTM)
+            @test vTM2[i].rem == vTM[i].rem
+            @test vTM2[i].rem == vTM[i].rem
+            # modified equality test
+            p = vTM[i].pol
+            q = vTM2[i].pol
+            for j in eachindex(p.coeffs)
+                cp = p.coeffs[j]
+                cq = q.coeffs[j]
+                if cp.order == 0
+                    # constant terms are identical
+                    @test cp == cq
+                    continue
+                end
+                # non-constant terms are identical up to index increase by 2
+                @test cp.order == cq.order
+                for k in eachindex(cp.coeffs)
+                    @test cp.coeffs[end - k + 1] == cq.coeffs[end - k + 1]
+                end
+            end
+        end
     end
 
     # isoperationtype
