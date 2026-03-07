@@ -14,12 +14,12 @@ using ReachabilityBase.Require: require
 @reexport import ..API: an_element, area, complement, constraints,
                         constraints_list, diameter, dim, isbounded,
                         isboundedtype, isempty, isoperationtype, isuniversal,
-                        norm, radius, rand, rectify, reflect, volume, in,
-                        linear_map, permute, project, scale, scale!, ρ, σ,
-                        translate, translate!, cartesian_product, convex_hull,
-                        difference, distance, intersection, isdisjoint,
-                        issubset, linear_combination, minkowski_difference,
-                        minkowski_sum
+                        norm, radius, rand, rectify, reflect, volume,
+                        exponential_map, in, linear_map, permute, project,
+                        scale, scale!, ρ, σ, translate, translate!,
+                        cartesian_product, convex_hull, difference, distance,
+                        intersection, isdisjoint, issubset, linear_combination,
+                        minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, constrained_dimensions,
                              linear_map_inverse, rationalize, tosimplehrep,
                              triangulate
@@ -51,6 +51,7 @@ include("rationalize.jl")
 include("rectify.jl")
 include("reflect.jl")
 include("volume.jl")
+include("exponential_map.jl")
 include("in.jl")
 include("linear_map.jl")
 include("permute.jl")
