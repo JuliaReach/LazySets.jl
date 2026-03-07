@@ -314,14 +314,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch distance(X, N[0, 0])
     @test_throws ArgumentError distance(X, N[0]; p=N(1 // 2))
     for (x, v) in ((N[1], N(0)), (N[4], N(2)))
-        if N <: AbstractFloat
-            for res in ((@inferred distance(X, x)), @inferred distance(x, X))
-                @test res isa N && res == v
-            end
-        else
-            @test_broken @inferred distance(X, x)  # TODO make this type-stable
-            for res in (distance(X, x), distance(x, X))
-                @test res == v
+        for res in ((@inferred distance(X, x)), @inferred distance(x, X))
+        @test res == v
+            if N <: AbstractFloat
+                @test res isa N
+            else
+                @test res isa Float64
             end
         end
     end
