@@ -496,10 +496,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test length(vlistZ) == 6
     @test ispermutation(vlistZ, [N[-2, -2], N[0, -2], N[2, 0], N[2, 2], N[0, 2], N[-2, 0]])
     c2, G = Z2.center, Z2.generators
-    @test_broken @inferred LazySets._vertices_list_2D(c2, G; apply_convex_hull=true)  # TODO make this type-stable
-    vlist2 = LazySets._vertices_list_2D(c2, G; apply_convex_hull=true)
+    vlist2 = @inferred LazySets._vertices_list_2D(c2, G; apply_convex_hull=true)
     @test ispermutation(vlistZ, vlist2)
-    vlist2 = LazySets._vertices_list_2D(c2, G; apply_convex_hull=false)
+    vlist2 = @inferred LazySets._vertices_list_2D(c2, G; apply_convex_hull=false)
     @test ispermutation(vlistZ, vlist2)
     # option to not apply the convex-hull operation
     vlistZ = @inferred LazySets._vertices_list_zonotope_iterative(Z2.center, Z2.generators;
