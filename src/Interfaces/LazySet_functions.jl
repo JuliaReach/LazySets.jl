@@ -905,14 +905,14 @@ For 3D inputs, we triangulate the facets and sum the areas of each triangle.
 """
 @validate function area(P::LazySet)
     n = dim(P)
-    @assert n == 2 || n == 3 "this implementation only applies to two-dimensional or " *
-                             "three-dimensional sets, but the given set is $n-dimensional"
     @assert ispolytopic(P) "this implementation requires a polytope"
 
     if n == 2
         vlist = vertices_list(P)
         return _area_vlist_2D(vlist)
     else
+        @assert n == 3 "this function only applies to 2D or 3D sets, but the "*
+                       "given set is $n-dimensional"
         return _area_polytope_3D(P)
     end
 end
@@ -973,11 +973,12 @@ function _area_polygon(v::Vector{VN}) where {N,VN<:AbstractVector{N}}
     return abs(res / 2)
 end
 
-function _area_polytope_3D(P::LazySet{N}) where {N}
+function _area_polytope_3D(P::LazySet)
     require(@__MODULE__, :Polyhedra; fun_name="area")
     require(@__MODULE__, :GeometryBasics; fun_name="area")
 
     points, connections = triangulate_faces(P)
+    N = (eltype(P) <: AbstractFloat) ? eltype(P) : Float64  # `_area_triangle_3D!` uses `sqrt`
     res = zero(N)
     M = ones(N, 3, 3)
     @inbounds for triple in connections
