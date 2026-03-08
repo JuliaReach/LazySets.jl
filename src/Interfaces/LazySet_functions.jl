@@ -973,11 +973,12 @@ function _area_polygon(v::Vector{VN}) where {N,VN<:AbstractVector{N}}
     return abs(res / 2)
 end
 
-function _area_polytope_3D(P::LazySet{N}) where {N}
+function _area_polytope_3D(P::LazySet)
     require(@__MODULE__, :Polyhedra; fun_name="area")
     require(@__MODULE__, :GeometryBasics; fun_name="area")
 
     points, connections = triangulate_faces(P)
+    N = (eltype(P) <: AbstractFloat) ? eltype(P) : Float64  # `_area_triangle_3D!` uses `sqrt`
     res = zero(N)
     M = ones(N, 3, 3)
     @inbounds for triple in connections
