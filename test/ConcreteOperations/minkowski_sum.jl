@@ -56,6 +56,8 @@ for N in @tN([Float64, Float32])
     @test minkowski_sum(B1, B2) == Ballp(N(3), N[5, 7], N(9))
 
     @static if isdefined(@__MODULE__, :IntervalMatrices)
+        using IntervalMatrices: IntervalMatrix
+
         MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
         IM = overapproximate(MZ, IntervalMatrix)
         @test minkowski_sum(MZ, IM) == minkowski_sum(MZ, convert(MatrixZonotope, IM))

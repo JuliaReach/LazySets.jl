@@ -45,6 +45,8 @@ for N in @tN([Float32, Float64])
     P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], hcat(N[0, 1]), [2 1; 0 1; 1 0], [1, 3, 5])
     M = N[1 1; -1 1]
     @static if isdefined(@__MODULE__, :IntervalMatrices)
+        using IntervalMatrices: IntervalMatrix
+
         MZ = MatrixZonotope(N[-1 -4; 4 -1], [N[0.1 0.1; 0.1 0.1]])
         IM = overapproximate(MZ, IntervalMatrix)
         @test IM == IntervalMatrix(N[-1.1 -4.1; 3.9 -1.1], N[-0.9 -3.9; 4.1 -0.9])
@@ -57,7 +59,7 @@ for N in @tN([Float32, Float64])
         @test isapprox(center(res), exp(c))
         @test ngens(res) == 0
 
-        # degenerate case + product 
+        # degenerate case + product
         B = MatrixZonotope(N[1 0; 0 1], Matrix{N}[])
         expAB = MatrixZonotopeExp(A * B)
         res2 = overapproximate(expA, MatrixZonotope, 20)
@@ -83,7 +85,7 @@ for N in @tN([Float64])
     # This test is only run with Float64 since it is expensive
     # and requires high Taylor order `k` to pass on Float32
     @static if isdefined(@__MODULE__, :IntervalMatrices)
-        #inclusion 
+        #inclusion
         C = MatrixZonotope(N[1 -2; 2 -1], [N[0.1 0.05; 0 0.1]])
         expC = MatrixZonotopeExp(C)
         res = reduce_order(overapproximate(expC, MatrixZonotope, 4), 1)
