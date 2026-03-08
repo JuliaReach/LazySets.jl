@@ -653,7 +653,7 @@ end
 
     if !outside
         # point is inside
-        N = promote_type(eltype(x), eltype(H))
+        N = eltype(norm(x, p))  # help with type inference
         return zero(N)
     end
 

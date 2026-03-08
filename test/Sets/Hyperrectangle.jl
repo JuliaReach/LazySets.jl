@@ -382,20 +382,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     xs = [N[1, 0], N[5, 1], N[1, 3], N[-3, -1], N[-1, -4]]
     ys = [N[1, 0], N[2, 1], N[1, 1], N[0, -1], N[0, -3]]  # closest points in H
     for (x, y) in zip(xs, ys)
-        if N <: AbstractFloat
-            @test (@inferred distance(x, H)) == (@inferred distance(H, x)) ==
-                  @inferred distance(x, y)
-        else
-            @test_broken @inferred distance(x, H)  # TODO make this type-stable
-            @test distance(x, H) == distance(H, x) == distance(x, y)
-        end
+        @test (@inferred distance(x, H)) == (@inferred distance(H, x)) == @inferred distance(x, y)
         for p in N[1, 2, Inf]
-            if N <: AbstractFloat
-                @test (@inferred distance(x, H; p=p)) == (@inferred distance(H, x; p=p)) ==
-                      @inferred distance(x, y; p=p)
-            else
-                @test distance(x, H; p=p) == distance(H, x; p=p) == distance(x, y; p=p)
-            end
+            @test (@inferred distance(x, H; p=p)) == (@inferred distance(H, x; p=p)) ==
+                  @inferred distance(x, y; p=p)
         end
     end
 
