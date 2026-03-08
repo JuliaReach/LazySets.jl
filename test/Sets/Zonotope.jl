@@ -362,12 +362,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
             res = norm(Z, 2)
         end
     else
-        @test_broken @inferred norm(Z)  # TODO make this type-stable
-        for res in (norm(Z), norm(Z, Inf))
+        for res in ((@inferred norm(Z)), @inferred norm(Z, Inf))
             @test res isa N && res == N(8)
         end
-        @test_broken @inferred norm(Z, 2)  # TODO make this type-stable
-        res = norm(Z, 2)
+        res = @inferred norm(Z, 2)
     end
     @test res isa (N <: AbstractFloat ? N : Float64)
     @test res == norm(N[5, 8], 2)
