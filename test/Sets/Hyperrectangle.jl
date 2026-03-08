@@ -180,13 +180,20 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # genmat with sparse or static arrays
     @static if isdefined(@__MODULE__, :StaticArrays)
         using StaticArrays: SA, SMatrix
-
+        # no flat dimension
         G1 = @inferred genmat(Hyperrectangle(sparsevec(N[3, 2]), sparsevec(N[2, 1])))
-        @test_broken @inferred genmat(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))  # TODO make this type-stable
+        @test_broken @inferred genmat(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))  # TODO make this more type-stable (`SMatrix`)
         G2 = genmat(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))
         G3 = @inferred LazySets._genmat_static(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))
         @test G1 isa SparseMatrixCSC && G2 isa SMatrix && G3 isa SMatrix
         @test G1 == G2 == G3 == N[2 0; 0 1]
+        # flat dimension
+        G1 = @inferred genmat(Hyperrectangle(sparsevec(N[3, 1, 2]), sparsevec(N[2, 0, 1])))
+        @test_broken @inferred genmat(Hyperrectangle(SA[N(3), N(1), N(2)], SA[N(2), N(0), N(1)]))  # TODO make this more type-stable (`SMatrix`)
+        G2 = genmat(Hyperrectangle(SA[N(3), N(1), N(2)], SA[N(2), N(0), N(1)]))
+        G3 = @inferred LazySets._genmat_static(Hyperrectangle(SA[N(3), N(1), N(2)], SA[N(2), N(0), N(1)]))
+        @test G1 isa SparseMatrixCSC && G2 isa SMatrix && G3 isa SMatrix
+        @test G1 == G2 == N[2 0; 0 0; 0 1] && G3 == N[2 0 0; 0 0 0; 0 0 1]
     end
 
     # high
@@ -210,7 +217,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isempty
     @test !(@inferred isempty(H))
-    @test_broken @inferred isempty(H, true)  # TODO make this type-stable
+    @test_broken @inferred isempty(H, true)  # TODO make this type-stable (witness)
     res, w = isempty(H, true)
     @test !res && w isa Vector{N} && w ∈ H
 
@@ -239,7 +246,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isuniversal
     @test !(@inferred isuniversal(H))
-    @test_broken @inferred isuniversal(H, true)  # TODO make this type-stable
+    @test_broken @inferred isuniversal(H, true)  # TODO make this type-stable (witness)
     res, w = isuniversal(H, true)
     @test !res && w isa Vector{N} && w ∉ H
 
@@ -374,20 +381,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     xs = [N[1, 0], N[5, 1], N[1, 3], N[-3, -1], N[-1, -4]]
     ys = [N[1, 0], N[2, 1], N[1, 1], N[0, -1], N[0, -3]]  # closest points in H
     for (x, y) in zip(xs, ys)
-        if N <: AbstractFloat
-            @test (@inferred distance(x, H)) == (@inferred distance(H, x)) ==
-                  @inferred distance(x, y)
-        else
-            @test_broken @inferred distance(x, H)  # TODO make this type-stable
-            @test distance(x, H) == distance(H, x) == distance(x, y)
-        end
+        @test (@inferred distance(x, H)) == (@inferred distance(H, x)) == @inferred distance(x, y)
         for p in N[1, 2, Inf]
-            if N <: AbstractFloat
-                @test (@inferred distance(x, H; p=p)) == (@inferred distance(H, x; p=p)) ==
-                      @inferred distance(x, y; p=p)
-            else
-                @test distance(x, H; p=p) == distance(H, x; p=p) == distance(x, y; p=p)
-            end
+            @test (@inferred distance(x, H; p=p)) == (@inferred distance(H, x; p=p)) ==
+                  @inferred distance(x, y; p=p)
         end
     end
 
@@ -550,7 +547,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # convex_hull (binary)
     @test_throws DimensionMismatch convex_hull(H, H3)
-    @test_broken @inferred convex_hull(H, H)  # TODO make this type-stable
     X = convex_hull(H, H)
     @test X isa LazySet{N} && isequivalent(X, H)
     H2 = Hyperrectangle(N[2, 0], N[1, 2])
@@ -629,9 +625,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # disjoint
     H2 = Hyperrectangle(N[4, 3], N[1, 1])
     for (H2a, H2b) in ((H, H2), (H2, H))
-        @test_broken @inferred isdisjoint(H2a, H2b)  # TODO make this type-stable
+        @test_broken @inferred isdisjoint(H2a, H2b)  # TODO make this type-stable (witness)
         @test isdisjoint(H2a, H2b)
-        @test_broken @inferred isdisjoint(H2a, H2b, true)  # TODO make this type-stable
+        @test_broken @inferred isdisjoint(H2a, H2b, true)  # TODO make this type-stable (witness)
         res, w = isdisjoint(H2a, H2b, true)
         @test res && w isa Vector{N} && isempty(w)
     end
@@ -670,7 +666,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isequivalent
     @test_throws DimensionMismatch isequivalent(H, H3)
-    @test_broken @inferred isequivalent(H, H)  # TODO make this type-stable
+    @test_broken @inferred isequivalent(H, H)  # TODO make this type-stable (witness)
     @test isequivalent(H, H)
     @test !isequivalent(H, Hyperrectangle(N[1, 2], N[1, 1]))
     @test isequivalent(H, P) && isequivalent(P, H)
@@ -678,9 +674,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isstrictsubset
     @test_throws DimensionMismatch H ⊂ H3
     for X in (H, P)
-        @test_broken !(@inferred X ⊂ H)  # TODO make this type-stable
+        @test_broken !(@inferred X ⊂ H)  # TODO make this type-stable (witness)
         @test !(X ⊂ H)
-        @test_broken @inferred ⊂(X, H, true)  # TODO make this type-stable
+        @test_broken @inferred ⊂(X, H, true)  # TODO make this type-stable (witness)
         res, w = ⊂(X, H, true)
         @test !res && w isa Vector{N} && isempty(w)
     end
@@ -696,9 +692,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # issubset
     @test_throws DimensionMismatch H ⊆ H3
     for X in (H, P, Hyperrectangle(N[1, -1], N[2, 3]))
-        @test_broken @inferred H ⊆ X  # TODO make this type-stable
+        @test_broken @inferred H ⊆ X  # TODO make this type-stable (witness)
         @test H ⊆ X
-        @test_broken @inferred ⊆(H, X, true)  # TODO make this type-stable
+        @test_broken @inferred ⊆(H, X, true)  # TODO make this type-stable (witness)
         res, w = ⊆(H, X, true)
         @test res && w isa Vector{N} && w == N[]
     end
@@ -711,7 +707,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch linear_combination(H, H3)
     @test_broken linear_combination(H, Xnc) isa LazySet{N}  # TODO implement `linear_combination` for non-convex sets
     @test_broken linear_combination(Xnc, H) isa LazySet{N}
-    @test_broken @inferred linear_combination(H, H)  # TODO make this type-stable
     for X in (linear_combination(H, H), linear_combination(H, P), linear_combination(P, H))
         @test X isa LazySet{N} && isequivalent(X, H)
     end
@@ -757,7 +752,7 @@ for N in @tN([Float64, Float32])
     @test H2 isa Hyperrectangle{N} && dim(H2) == 3
 
     # rationalize
-    @test_broken @inferred rationalize(H)  # TODO make this type-stable
+    @test_broken @inferred rationalize(H)  # TODO make this type-stable (fix in ReachabilityBase)
     H2 = rationalize(H)
     T = Rational{Int64}
     @test H2 isa Hyperrectangle{T} && isidentical(H2, Hyperrectangle(T[1, -1], T[1, 2]))
