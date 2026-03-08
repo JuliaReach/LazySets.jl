@@ -879,10 +879,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # minkowski_difference (part 1)
     # equivalent sets
-    @test_broken @inferred minkowski_difference(Z, P)  # TODO make this type-stable
-    for X in (minkowski_difference(Z, P), minkowski_difference(P, Z))
-        vlist = vertices_list(X)
-        @test length(vlist) == 1 && all(isapproxzero, vlist[1])
+    if VERSION >= v"1.11"
+        for X in ((@inferred minkowski_difference(Z, P)), @inferred minkowski_difference(P, Z))
+            vlist = vertices_list(X)
+            @test length(vlist) == 1 && all(isapproxzero, vlist[1])
+        end
+    else
+        for X in (minkowski_difference(Z, P), minkowski_difference(P, Z))
+            vlist = vertices_list(X)
+            @test length(vlist) == 1 && all(isapproxzero, vlist[1])
+        end
     end
 
     # minkowski_sum
