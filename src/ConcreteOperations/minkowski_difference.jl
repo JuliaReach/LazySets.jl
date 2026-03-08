@@ -51,7 +51,11 @@ lazy `ConvexHull`.
     end
 
     A, b = tosimplehrep(P)
-    g_PminusQ = [b[i] - ρ(A[i, :], Q) for i in eachindex(b)]
+    N = promote_type(eltype(P), eltype(Q))
+    g_PminusQ = Vector{Float64}(undef, length(b))
+    @inbounds for i in eachindex(b)
+        g_PminusQ[i] = N(b[i] - ρ(A[i, :], Q))
+    end
     if isbounded(P)
         return HPolytope(A, g_PminusQ)
     else
