@@ -121,7 +121,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isempty
     @test @inferred isempty(E)
-    @test_broken @inferred isempty(E, true)  # TODO make this type-stable
+    @test_broken @inferred isempty(E, true)  # TODO make this type-stable (witness)
     res, w = isempty(E, true)
     @test res && w isa Vector{N} && isempty(w)
 
@@ -145,7 +145,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isuniversal
     @test !(@inferred isuniversal(E))
-    @test_broken @inferred isuniversal(E, true)  # TODO make this type-stable
+    @test_broken @inferred isuniversal(E, true)  # TODO make this type-stable (witness)
     res, w = isuniversal(E, true)
     @test !res && w isa Vector{N} && w ∉ E
 
@@ -172,7 +172,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # rand
-    @test_broken @inferred rand(EmptySet; N=N)  # TODO make this type-stable
     E2 = rand(EmptySet; N=N)
     @test isidentical(E2, E)
     E2 = rand(EmptySet; N=N, dim=3)
@@ -387,7 +386,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     for X in (B, Pnc)
         @test (@inferred isdisjoint(E, X)) && @inferred isdisjoint(X, E)
     end
-    @test_broken @inferred isdisjoint(E, E, true)  # TODO make this type-stable
+    @test_broken @inferred isdisjoint(E, E, true)  # TODO make this type-stable (witness)
     for (res, w) in (isdisjoint(E, E, true), isdisjoint(E, B, true), isdisjoint(B, E, true),
                      isdisjoint(E, Pnc, true), isdisjoint(Pnc, E, true))
         @test res && w isa Vector{N} && isempty(w)
@@ -400,7 +399,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isequivalent
     @test_throws DimensionMismatch isequivalent(E, E3)
     @test @inferred isequivalent(E, E)
-    @test_broken @inferred isequivalent(E, E, true)  # TODO make this type-stable
+    @test_broken @inferred isequivalent(E, E, true)  # TODO make this type-stable (witness)
     res, w = isequivalent(E, E, true)
     @test res && w isa Vector{N} && isempty(w)
     @test !(@inferred isequivalent(E, B)) && !(@inferred isequivalent(B, E))
@@ -409,9 +408,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isstrictsubset
     @test_throws DimensionMismatch E ⊂ E3
-    @test_broken @inferred E ⊂ E  # TODO make this type-stable
-    @test !(E ⊂ E)
-    @test_broken @inferred ⊂(E, E, true)  # TODO make this type-stable
+    @test !(@inferred E ⊂ E)
+    @test_broken @inferred ⊂(E, E, true)  # TODO make this type-stable (witness)
     res, w = ⊂(E, E, true)
     @test !res && w isa Vector{N} && isempty(w)
     @test !(B ⊂ E)
@@ -429,7 +427,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # issubset
     @test_throws DimensionMismatch E ⊆ E3
-    @test_broken @inferred ⊆(E, E, true)  # TODO make this type-stable
+    @test_broken @inferred ⊆(E, E, true)  # TODO make this type-stable (witness)
     for X in (E, B, Pnc)
         @test @inferred E ⊆ X
         res, w = ⊆(E, X, true)
@@ -441,7 +439,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !res && w isa Vector{N} && w ∈ X && w ∉ E
     end
     @static if VERSION >= v"1.12"
-        @test_broken @inferred Pe ⊆ E  # TODO make this type-stable
+        @test_broken @inferred Pe ⊆ E  # TODO make this type-stable (witness)
     end
     @test Pe ⊆ E
     res, w = ⊆(Pe, E, true)

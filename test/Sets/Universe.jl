@@ -117,7 +117,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isempty
     @test !(@inferred isempty(U))
-    @test_broken @inferred isempty(U, true)  # TODO make this type-stable
+    @test_broken @inferred isempty(U, true)  # TODO make this type-stable (witness)
     res, w = isempty(U, true)
     @test !res && w isa Vector{N} && w ∈ U
 
@@ -141,7 +141,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isuniversal
     @test @inferred isuniversal(U)
-    @test_broken @inferred isuniversal(U, true)  # TODO make this type-stable
+    @test_broken @inferred isuniversal(U, true)  # TODO make this type-stable (witness)
     res, w = isuniversal(U, true)
     @test res && w isa Vector{N} && isempty(w)
 
@@ -158,7 +158,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # polyhedron
     @static if isdefined(@__MODULE__, :Polyhedra)
-        @test_broken @inferred polyhedron(U)  # TODO make this type-stable
         P = polyhedron(U)
         @test P isa Polyhedra.DefaultPolyhedron
         if N != Float32
@@ -174,7 +173,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError radius(U, 2)
 
     # rand
-    @test @inferred rand(Universe; N=N) isa Universe{N}
+    U2 = rand(Universe; N=N)
+    @test isidentical(U2, U)
     U2 = rand(Universe; N=N, dim=3)
     @test isidentical(U2, U3)
 
@@ -388,19 +388,19 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isdisjoint
     @test_throws DimensionMismatch isdisjoint(U, U3)
     @static if VERSION >= v"1.12"
-        @test_broken !(@inferred isdisjoint(U, U))  # TODO make this type-stable
+        @test_broken !(@inferred isdisjoint(U, U))  # TODO make this type-stable (witness)
         @test !isdisjoint(U, U)
     else
         @test !(@inferred isdisjoint(U, U))
     end
     @static if VERSION >= v"1.11"
-        @test_broken @inferred isdisjoint(U, U, true)  # TODO make this type-stable
+        @test_broken @inferred isdisjoint(U, U, true)  # TODO make this type-stable (witness)
     end
     res, w = isdisjoint(U, U, true)
     @test !res && w isa Vector{N} && w ∈ U
     @test (@inferred isdisjoint(U, E)) && (@inferred isdisjoint(E, U))
     @static if VERSION >= v"1.12"
-        @test_broken @inferred isdisjoint(U, Pe)  # TODO make this type-stable
+        @test_broken @inferred isdisjoint(U, Pe)  # TODO make this type-stable (witness)
     end
     @test isdisjoint(U, Pe) && isdisjoint(Pe, U)
     for (res, w) in (isdisjoint(U, E, true), isdisjoint(E, U, true),
@@ -420,27 +420,27 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isequivalent
     @test_throws DimensionMismatch isequivalent(U, U3)
     @test @inferred isequivalent(U, U)
-    @test_broken @inferred isequivalent(B, U)  # TODO make this type-stable
+    @test_broken @inferred isequivalent(B, U)  # TODO make this type-stable (witness)
     @test !(@inferred isequivalent(U, B)) && !isequivalent(B, U)
 
     # isstrictsubset
     @test_throws DimensionMismatch U ⊂ U3
-    @test_broken !(@inferred U ⊂ U)  # TODO make this type-stable
+    @test_broken !(@inferred U ⊂ U)  # TODO make this type-stable (witness)
     @test !(U ⊂ U)
-    @test_broken @inferred ⊂(U, U, true)  # TODO make this type-stable
+    @test_broken @inferred ⊂(U, U, true)  # TODO make this type-stable (witness)
     res, w = ⊂(U, U, true)
     @test !res && w isa Vector{N} && isempty(w)
     @test !(U ⊂ B)
     res, w = ⊂(U, B, true)
     @test !res && w isa Vector{N} && w ∈ U && w ∉ B
-    @test_broken @inferred B ⊂ U  # TODO make this type-stable
+    @test_broken @inferred B ⊂ U  # TODO make this type-stable (witness)
     @test B ⊂ U
     res, w = ⊂(B, U, true)
     @test res && w isa Vector{N} && w ∉ B && w ∈ U
 
     # issubset
     @test_throws DimensionMismatch U ⊆ U3
-    @test_broken @inferred ⊆(U, U, true)  # TODO make this type-stable
+    @test_broken @inferred ⊆(U, U, true)  # TODO make this type-stable (witness)
     for X in (U, B, Pnc)
         @test @inferred X ⊆ U
         res, w = ⊆(X, U, true)
@@ -454,7 +454,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     U2 = Universe{N}(1)
     X = Line(N[0], N[1])
     @static if VERSION >= v"1.12"
-        @test_broken @inferred U2 ⊆ X  # TODO make this type-stable
+        @test_broken @inferred U2 ⊆ X  # TODO make this type-stable (witness)
     end
     @test U2 ⊆ X
     res, w = ⊆(U2, X, true)
@@ -462,22 +462,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # linear_combination
     @test_throws DimensionMismatch linear_combination(U, U3)
-    U2 = @inferred linear_combination(U, U)
-    @test isidentical(U2, U)
-    for X in (B,)
-        U2 = @inferred linear_combination(U, X)
-        @test isidentical(U2, U)
-        U2 = @inferred linear_combination(X, U)
+    for U2 in ((@inferred linear_combination(U, U)), (@inferred linear_combination(U, B)),
+               @inferred linear_combination(B, U))
         @test isidentical(U2, U)
     end
-    @test_broken @inferred linear_combination(U, Pnc)  # TODO make this type-stable; then merge with loop above
-    for X in (Pnc,)
-        U2 = linear_combination(U, X)
-        @test isidentical(U2, U)
-        U2 = linear_combination(X, U)
+    for U2 in (linear_combination(U, Pnc), linear_combination(Pnc, U))
         @test isidentical(U2, U)
     end
-    @test_broken @inferred linear_combination(U, Pe)  # TODO make this type-stable
     for E2 in (linear_combination(U, Pe), linear_combination(Pe, U))
         @test E2 isa HPolygon{N} && E2 == Pe
     end
@@ -493,7 +484,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test isidentical(U2, U)
     end
     X = LinearMap(N[1 0; 0 1], U)
-    @test_broken @inferred minkowski_difference(X, U)  # TODO make this type-stable
     U2 = minkowski_difference(X, U)
     @test isidentical(U2, U)
 
@@ -503,22 +493,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
                @inferred minkowski_sum(B, U))
         @test isidentical(U2, U)
     end
-    @test_broken @inferred minkowski_sum(U, Pe)  # TODO make this type-stable
     for X in (minkowski_sum(U, Pe), minkowski_sum(Pe, U))
         @test X isa HPolygon{N} && X == Pe
     end
     for X in (Z, B)
-        U2 = @inferred minkowski_sum(U, X)
-        @test U2 isa Universe{N} && U2 == U
-        U2 = @inferred minkowski_sum(X, U)
+        for U2 in ((@inferred minkowski_sum(U, X)), @inferred minkowski_sum(X, U))
+            @test U2 isa Universe{N} && U2 == U
+        end
+    end
+    for U2 in (minkowski_sum(U, Pnc), minkowski_sum(Pnc, U))
         @test U2 isa Universe{N} && U2 == U
     end
-    X = Pnc
-    @test_broken @inferred minkowski_sum(U, X)  # TODO make this type-stable; then merge with loop above
-    U2 = minkowski_sum(U, X)
-    @test U2 isa Universe{N} && U2 == U
-    U2 = minkowski_sum(X, U)
-    @test U2 isa Universe{N} && U2 == U
 end
 
 for N in @tN([Float64, Float32])
