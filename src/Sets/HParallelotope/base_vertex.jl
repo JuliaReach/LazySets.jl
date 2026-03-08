@@ -22,5 +22,6 @@ function base_vertex(P::HParallelotope)
     D, c = P.directions, P.offset
     n = dim(P)
     v = to_negative_vector(view(c, (n + 1):(2n))) # converts to a dense vector as well
-    return D \ v
+    res = D \ v
+    return res::Vector{eltype(P)}  # help with type inference: since `D` is square, `\` is type-stable
 end

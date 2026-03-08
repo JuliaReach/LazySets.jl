@@ -33,12 +33,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # convert
     # from AbstractZonotope
-    if N <: AbstractFloat
-        Z2 = @inferred convert(Zonotope, HParallelotope(N[2 -1; 2 -2], N[1, 2, 1, 1]))
-    else
-        @test_broken @inferred convert(Zonotope, HParallelotope(N[2 -1; 2 -2], N[1, 2, 1, 1]))  # TODO make this type-stable
-        Z2 = convert(Zonotope, HParallelotope(N[2 -1; 2 -2], N[1, 2, 1, 1]))
-    end
+    Z2 = @inferred convert(Zonotope, HParallelotope(N[2 -1; 2 -2], N[1, 2, 1, 1]))
     @test isidentical(Z2, Zonotope(N[-1 // 4, -1 // 2], N[1 -3//4; 1 -3//2]))
     # from AbstractHyperrectangle
     r = N[4, 5]
