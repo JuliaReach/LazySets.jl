@@ -1378,6 +1378,10 @@ function chebyshev_center_radius(P::LazySet;
 
     Q = polyhedron(P; backend=backend)
     c, r = Polyhedra.chebyshevcenter(Q, solver)
+    if eltype(P) == Float64  # annotate types for type stability
+        c::Vector{Float64}
+        r::Float64
+    end
     return c, r
 end
 
