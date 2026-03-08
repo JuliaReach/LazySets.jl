@@ -489,11 +489,11 @@ function _vertices_list_2D(c::AbstractVector{N}, G::AbstractMatrix{N};
     perm = sortperm(angles)
     sorted_angles = angles[perm]
     sorted_G = G[:, perm]
-    polygons = Vector{VPolygon{N}}()
+    polygons = Vector{VPolygon{N,Vector{N}}}()
     sizehint!(polygons, 4)
 
-    @inbounds for i in zip(0:90:360, 90:90:360)
-        index = i[1] .<= sorted_angles .< i[2]
+    @inbounds for (i, j) in zip(0:90:360, 90:90:360)
+        index = i .<= sorted_angles .< j
         if sum(index) > 0
             push!(polygons, _single_quadrant_vertices_enum(sorted_G[:, index], true))
         end
