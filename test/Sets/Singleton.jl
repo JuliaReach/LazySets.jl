@@ -1,5 +1,6 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
+using LazySets.ReachabilityBase.Comparison: set_rtol, _rtol
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -489,7 +490,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     if N == Float64
         S2 = Singleton(N[2 + 1e-9, -1])
         @test !isdisjoint(S, S2)
-        r = LazySets._rtol(N)
+        r = _rtol(N)
         @assert r > N(1e-10) "default tolerance changed; adapt test"
         set_rtol(N, N(1e-10))
         @test isdisjoint(S, S2)

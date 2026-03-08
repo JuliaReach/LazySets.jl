@@ -1,6 +1,8 @@
 # check that all interface functions are implemented
 using LazySets, Test
 
+include("../Utils/check_method_implementation.jl")
+
 # --- LazySet ---
 
 # dimension

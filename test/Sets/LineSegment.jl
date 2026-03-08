@@ -1,5 +1,6 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation
+using LazySets.ReachabilityBase.Comparison: set_rtol, _rtol
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -41,7 +42,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # approximate membership test
     if N == Float64
         @test N[1.5, 1.5] ∈ LineSegment(N[1.5, 1.500000001], N[1.5, 2.0])
-        r = LazySets._rtol(N)
+        r = _rtol(N)
         @assert r > N(1e-10) "default tolerance changed; adapt test"
         set_rtol(N, N(1e-10))
         @test N[1.5, 1.5] ∉ LineSegment(N[1.5, 1.500000001], N[1.5, 2.0])

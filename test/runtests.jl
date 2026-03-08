@@ -45,9 +45,6 @@ seed = max(abs(rand(Int)), 0)
 println("using random seed $seed")
 Random.seed!(seed)
 
-# numerical precision
-using LazySets.ReachabilityBase.Comparison: set_rtol
-
 # optional dependencies
 @ts begin
     # only load the packages (no symbols)
@@ -353,7 +350,6 @@ end
     # Common API of all interfaces
     # ============================
 
-    include("Utils/check_method_implementation.jl")
     @testset "LazySets.interfaces" begin
         include("Interfaces/interfaces.jl")
     end
