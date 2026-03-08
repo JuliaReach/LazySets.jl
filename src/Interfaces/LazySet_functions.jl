@@ -905,14 +905,14 @@ For 3D inputs, we triangulate the facets and sum the areas of each triangle.
 """
 @validate function area(P::LazySet)
     n = dim(P)
-    @assert n == 2 || n == 3 "this implementation only applies to two-dimensional or " *
-                             "three-dimensional sets, but the given set is $n-dimensional"
     @assert ispolytopic(P) "this implementation requires a polytope"
 
     if n == 2
         vlist = vertices_list(P)
         return _area_vlist_2D(vlist)
     else
+        @assert n == 3 "this function only applies to 2D or 3D sets, but the "*
+                       "given set is $n-dimensional"
         return _area_polytope_3D(P)
     end
 end
