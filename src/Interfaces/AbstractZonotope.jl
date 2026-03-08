@@ -1285,7 +1285,7 @@ function _norm_1(Z::AbstractZonotope)
     c = center(Z)
     G = genmat(Z)
     n = size(G, 2)
-    dirs = DiagDirections(n)
+    dirs = DiagDirections{N}(n)
     norm = N(-Inf)
 
     @inbounds for v in dirs

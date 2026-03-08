@@ -359,12 +359,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
         else
             res = norm(Z, 2)
         end
+    elseif N == Float32
+        for res in ((@inferred norm(Z)), @inferred norm(Z, Inf))
+            @test res isa N && res == N(8)
+        end
+        res = @inferred norm(Z, 2)
     else
-        @test_broken @inferred norm(Z)  # TODO make this type-stable
         for res in (norm(Z), norm(Z, Inf))
             @test res isa N && res == N(8)
         end
-        @test_broken @inferred norm(Z, 2)  # TODO make this type-stable
         res = norm(Z, 2)
     end
     @test res isa (N <: AbstractFloat ? N : Float64)
