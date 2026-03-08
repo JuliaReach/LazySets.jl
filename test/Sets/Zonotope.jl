@@ -61,7 +61,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
         using StaticArrays: SVector, SMatrix
 
         H = Hyperrectangle(SVector{2}(c), SVector{2}(r))
-        @test_broken @inferred convert(Zonotope, H)  # TODO make this type-stable
         Z2a = convert(Zonotope, H)
         @test isidentical(Z2a, Zonotope(SVector{2}(c), SMatrix{2,2}(G)))
         # _convert_static
@@ -129,7 +128,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     if N <: AbstractFloat && VERSION >= v"1.11"
         res = @inferred area(Z)
     else
-        @test_broken @inferred area(Z)  # TODO make this type-stable
         res = area(Z)
     end
     @test res isa N && res == N(8)
@@ -137,7 +135,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
         if N <: AbstractFloat && VERSION >= v"1.11"
             res = @inferred area(Z3)
         else
-            @test_broken @inferred area(Z3)  # TODO make this type-stable
             res = area(Z3)
         end
         @test res == N(88)
@@ -306,7 +303,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isempty
     @test !(@inferred isempty(Z))
-    @test_broken @inferred isempty(Z, true)  # TODO make this type-stable
+    @test_broken @inferred isempty(Z, true)  # TODO make this type-stable (witness)
     res, w = isempty(Z, true)
     @test !res && w isa Vector{N} && w ∈ Z
 
@@ -330,7 +327,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isuniversal
     @test !(@inferred isuniversal(Z))
-    @test_broken @inferred isuniversal(Z, true)  # TODO make this type-stable
+    @test_broken @inferred isuniversal(Z, true)  # TODO make this type-stable (witness)
     res, w = isuniversal(Z, true)
     @test !res && w isa Vector{N} && w ∉ Z
 
@@ -453,7 +450,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # tosimplehrep
     if (N == Float32) || (VERSION < v"1.11")
-        @test_broken @inferred tosimplehrep(Z)  # TODO make this type-stable
         A, b = tosimplehrep(Z)
     else
         A, b = @inferred tosimplehrep(Z)
@@ -550,7 +546,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     if N == Float64 && VERSION >= v"1.11"
         res = @inferred volume(Z)
     else
-        @test_broken @inferred volume(Z)  # TODO make this type-stable
         res = volume(Z)
     end
     @test res isa N && res == N(8)
@@ -591,13 +586,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError is_interior_point(N[0, 0], Z; p=N(1 // 2))
     if N <: AbstractFloat
         @test is_interior_point(N[1, 2], Z)
-        @test_broken @inferred is_interior_point(N[5, 8], Z)  # TODO make this type-stable
+        @test_broken @inferred is_interior_point(N[5, 8], Z)  # TODO make this type-stable (witness)
         @test !is_interior_point(N[5, 8], Z)
         @test !is_interior_point(N[3, 3], Z)
     else
         @test_throws ArgumentError is_interior_point(N[0, 0], Z)
         @test is_interior_point(N[1, 2], Z; ε=1 // 100)
-        @test_broken !(@inferred is_interior_point(N[5, 8], Z; ε=1 // 100))  # TODO make this type-stable
+        @test_broken !(@inferred is_interior_point(N[5, 8], Z; ε=1 // 100))  # TODO make this type-stable (witness)
         @test !is_interior_point(N[5, 8], Z; ε=1 // 100)
         @test !is_interior_point(N[3, 3], Z; ε=1 // 100)
         # incompatible numeric type
@@ -790,10 +785,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch isdisjoint(Z, Z3)
     # disjoint
     Z2 = Zonotope(N[2, -2], N[1 0; 0 1])
-    @test_broken @inferred isdisjoint(Z, Z2)  # TODO make this type-stable
+    @test_broken @inferred isdisjoint(Z, Z2)  # TODO make this type-stable (witness)
     @test isdisjoint(Z, Z2) && isdisjoint(Z2, Z)
     for (Z2a, Z2b) in ((Z, Z2), (Z2, Z))
-        @test_broken @inferred isdisjoint(Z2a, Z2b, true)  # TODO make this type-stable
+        @test_broken @inferred isdisjoint(Z2a, Z2b, true)  # TODO make this type-stable (witness)
         res, w = isdisjoint(Z2a, Z2b, true)
         @test res && w isa Vector{N} && isempty(w)
     end
@@ -832,7 +827,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isequivalent
     @test_throws DimensionMismatch isequivalent(Z, Z3)
-    @test_broken @inferred isequivalent(Z, Z)  # TODO make this type-stable
+    @test_broken @inferred isequivalent(Z, Z)  # TODO make this type-stable (witness)
     @test isequivalent(Z, Z)
     @test !isequivalent(Z, Zonotope(N[1, 2], N[1 0; 0 1]))
     @test isequivalent(Z, P) && isequivalent(P, Z)
@@ -840,9 +835,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isstrictsubset
     @test_throws DimensionMismatch Z ⊂ Z3
     Z2 = Zonotope(N[1, 2], N[1 0; 0 1])
-    @test_broken !(@inferred Z2 ⊂ Z)  # TODO make this type-stable
+    @test_broken !(@inferred Z2 ⊂ Z)  # TODO make this type-stable (witness)
     @test !(Z2 ⊂ Z)
-    @test_broken @inferred ⊂(Z2, Z, true)  # TODO make this type-stable
+    @test_broken @inferred ⊂(Z2, Z, true)  # TODO make this type-stable (witness)
     res, w = ⊂(Z2, Z, true)
     @test !res && w isa Vector{N} && w ∈ Z2 && w ∉ Z
     for Z2 in (Z, P)
@@ -858,9 +853,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # issubset
     @test_throws DimensionMismatch Z ⊆ Z3
     for X in (Z, P)
-        @test_broken @inferred Z ⊆ X  # TODO make this type-stable
+        @test_broken @inferred Z ⊆ X  # TODO make this type-stable (witness)
         @test Z ⊆ X
-        @test_broken @inferred ⊆(Z, X, true)  # TODO make this type-stable
+        @test_broken @inferred ⊆(Z, X, true)  # TODO make this type-stable (witness)
         res, w = ⊆(Z, X, true)
         @test res && w isa Vector{N} && w == N[]
     end
@@ -909,7 +904,7 @@ for N in @tN([Float64, Float32])
     @test Z2 isa Zonotope{N} && dim(Z2) == 2 && ngens(Z2) == 5
 
     # rationalize
-    @test_broken @inferred rationalize(Z)  # TODO make this type-stable
+    @test_broken @inferred rationalize(Z)  # TODO make this type-stable (fix in ReachabilityBase)
     Z2 = rationalize(Z)
     T = Rational{Int64}
     @test Z2 isa Zonotope{T} && isidentical(Z2, Zonotope(T[1, 2], T[1 3; 2 4]))
@@ -960,7 +955,6 @@ for N in @tN([Float64, Rational{Int}])
         if N <: AbstractFloat && VERSION >= v"1.11"
             res = @inferred volume(Z3)
         else
-            @test_broken @inferred volume(Z3)  # TODO make this type-stable
             res = volume(Z3)
         end
         @test res isa N && res == N(48)
