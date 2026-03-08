@@ -970,8 +970,11 @@ for N in [Float64]
 
     # chebyshev_center_radius
     @static if isdefined(@__MODULE__, :Polyhedra)
-        @test_broken @inferred chebyshev_center_radius(Z3)  # TODO make this type-stable
-        c, r = chebyshev_center_radius(Z3)
+        @static if VERSION >= v"1.12"
+            c, r = @inferred chebyshev_center_radius(Z3)
+        else
+            c, r = chebyshev_center_radius(Z3)
+        end
         @test c isa Vector{N} && c == Z3.center
         @test r isa N && r == N(1)
     end
