@@ -1,7 +1,9 @@
-using LazySets, Test
-import Aqua, ExplicitImports
+using SafeTestsets
 
-@testset "ExplicitImports tests" begin
+@safetestset "ExplicitImports tests" begin
+    using Test
+    import LazySets, ExplicitImports
+
     ignores = (:GLOBAL_RNG, :SamplerType, :invokelatest, :parse, :apply_recipe,
                :product, :checksquare, :Mesh, :coeff_table, :in_base, :numtype,
                :pos_table, :AbstractEnclosureAlgorithm, :_exp_remainder,
@@ -25,6 +27,8 @@ import Aqua, ExplicitImports
     @test isnothing(ExplicitImports.check_no_stale_explicit_imports(LazySets; ignore=ignores))
 end
 
-@testset "Aqua tests" begin
+@safetestset "Aqua tests" begin
+    import LazySets, Aqua
+
     Aqua.test_all(LazySets)
 end
