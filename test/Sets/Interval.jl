@@ -167,7 +167,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isempty
     @test !(@inferred isempty(X))
-    @test_broken @inferred isempty(X, true)  # TODO make this type-stable
+    @test_broken @inferred isempty(X, true)  # TODO make this type-stable (witness)
     res, w = isempty(X, true)
     @test !res && w ∈ X && w isa Vector{N}
 
@@ -196,7 +196,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isuniversal
     @test !(@inferred isuniversal(X))
-    @test_broken @inferred isuniversal(X, true)  # TODO make this type-stable
+    @test_broken @inferred isuniversal(X, true)  # TODO make this type-stable (witness)
     res, w = isuniversal(X, true)
     @test !res && w isa Vector{N} && w ∉ X
 
@@ -314,14 +314,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch distance(X, N[0, 0])
     @test_throws ArgumentError distance(X, N[0]; p=N(1 // 2))
     for (x, v) in ((N[1], N(0)), (N[4], N(2)))
-        for res in (distance(X, x), distance(x, X))
-            @test res == v
-            if N <: AbstractFloat
-                @inferred distance(X, x)
-                @inferred distance(x, X)
-                @test res isa N
-            else
-                @test_broken @inferred distance(X, x)  # TODO make this type-stable
+        if N <: AbstractFloat
+            for res in ((@inferred distance(X, x)), @inferred distance(x, X))
+                @test res isa N && res == v
+            end
+        else
+            @test_broken @inferred distance(X, x)  # TODO make this type-stable
+            for res in (distance(X, x), distance(x, X))
+                @test res == v
             end
         end
     end
@@ -450,7 +450,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Y = Interval(N(-3), N(-1))
     Z = Interval(N(-3), N(2))
     for W in ((@inferred convex_hull(X, Y)), @inferred convex_hull(Y, X))
-        @test W isa LazySet{N} && isidentical(W, Z)
+        @test isidentical(W, Z)
+    end
+    @test_broken @inferred convex_hull(X, Xnc)  # TODO make this type-stable
+    Y = Interval(N(0), N(5))
+    for Z in (convex_hull(X, Xnc), convex_hull(Xnc, X))
+        @test isidentical(Z, Y)
     end
 
     # difference
@@ -520,7 +525,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Y = Interval(N(3), N(4))
     for (Z, W) in ((X, Y), (Y, X))
         @test @inferred isdisjoint(Z, W)
-        @test_broken @inferred isdisjoint(Z, W, true)  # TODO make this type-stable
+        @test_broken @inferred isdisjoint(Z, W, true)  # TODO make this type-stable (witness)
         res, w = isdisjoint(Z, W, true)
         @test res && w isa Vector{N} && isempty(w)
     end
@@ -557,15 +562,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch isequivalent(S2, X)
     @test @inferred isequivalent(X, X)
     @test !(@inferred isequivalent(X, Interval(N(1), N(2))))
-    @test_broken @inferred isequivalent(X, B)  # TODO make this type-stable
+    @test_broken @inferred isequivalent(X, B)  # TODO make this type-stable (witness)
     @test isequivalent(X, B) && isequivalent(B, X)
 
     # isstrictsubset
     @test_throws DimensionMismatch X ⊂ S2
     for Y in (X, B)
-        @test_broken @inferred Y ⊂ X  # TODO make this type-stable
+        @test_broken @inferred Y ⊂ X  # TODO make this type-stable (witness)
         @test !(Y ⊂ X)
-        @test_broken @inferred ⊂(Y, X, true)  # TODO make this type-stable
+        @test_broken @inferred ⊂(Y, X, true)  # TODO make this type-stable (witness)
         res, w = ⊂(Y, X, true)
         @test !res && w isa Vector{N} && isempty(w)
     end
@@ -575,7 +580,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test !res && w isa Vector{N} && w ∈ Y && w ∉ X
     end
     for Y in (Interval(N(-1), N(2)), Interval(N(0), N(3)))
-        @test_broken @inferred ⊂(X, Y, true)  # TODO make this type-stable
         @test X ⊂ Y
         res, w = ⊂(X, Y, true)
         @test res && w isa Vector{N} && w ∉ X && w ∈ Y
@@ -585,9 +589,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch X ⊆ S2
     @test_throws DimensionMismatch S2 ⊆ X
     for Y in (X, B)
-        @test_broken @inferred X ⊆ Y  # TODO make this type-stable
+        @test_broken @inferred X ⊆ Y  # TODO make this type-stable (witness)
         @test X ⊆ Y
-        @test_broken @inferred ⊆(X, Y, true)  # TODO make this type-stable
+        @test_broken @inferred ⊆(X, Y, true)  # TODO make this type-stable (witness)
         res, w = ⊆(X, Y, true)
         @test res && w isa Vector{N} && w == N[]
     end
@@ -600,14 +604,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # linear_combination
     @test_throws DimensionMismatch linear_combination(X, S2)
     @test_throws DimensionMismatch linear_combination(S2, X)
-    for Y in (linear_combination(X, Xnc), linear_combination(Xnc, X))
-        @test isidentical(Y, Interval(N(0), N(5)))
-    end
     Z = @inferred linear_combination(X, X)
     @test isidentical(Z, X)
     @test_broken @inferred linear_combination(X, B)  # TODO make this type-stable
     for Z in (linear_combination(X, B), linear_combination(B, X))
         @test isidentical(Z, X)
+    end
+    for Y in (linear_combination(X, Xnc), linear_combination(Xnc, X))
+        @test isidentical(Y, Interval(N(0), N(5)))
     end
     Y = Interval(N(3), N(4))
     for Z in ((@inferred linear_combination(X, Y)), @inferred linear_combination(Y, X))
