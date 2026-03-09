@@ -533,9 +533,20 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa N && res == N(3)
     res = @inferred ρ(N[-1, -1], H)
     @test res isa N && res == N(3)
-    # SingleEntryVector
+    # SingleEntryVector direction
     res = @inferred ρ(SingleEntryVector(2, 2, N(-1)), H)
     @test res isa N && res == N(3)
+    # SingleEntryVector hyperrectangle radius
+    H2 = Hyperrectangle(N[1, 1], SingleEntryVector(2, 2, N(2)))
+    res = @inferred ρ(N[1, 1], H2)
+    @test res isa N && res == N(4)
+    for (x, v) in ((SingleEntryVector(2, 2, N(1)), N(3)), (SingleEntryVector(2, 2, N(-1)), N(1)),
+                   (SingleEntryVector(1, 2, N(1)), N(1)))
+        res = @inferred ρ(x, H2)
+        @test res isa N && res == v
+        res = @inferred ρ(Vector(x), H2)
+        @test res isa N && res == v
+    end
 
     # support_vector
     @test_throws DimensionMismatch σ(N[1], H)

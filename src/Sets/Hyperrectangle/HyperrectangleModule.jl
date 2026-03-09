@@ -5,6 +5,7 @@ using Requires: @require
 
 using ..LazySets: AbstractHyperrectangle, _ρ_sev_hyperrectangle,
                   _σ_sev_hyperrectangle, @validate
+using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: SingleEntryVector
 using ReachabilityBase.Comparison: isapproxzero
