@@ -920,6 +920,8 @@ end
 
 function _isbounding(directions::Vector{VN}) where {N,VN<:AbstractVector{N}}
     isempty(directions) && return false
+    # bounding n dimensions requires at least n+1 directions
+    length(directions) <= length(@inbounds first(directions)) && return false
 
     # check boundedness of the polyhedron `⋂_d d·x <= 1` for directions `d`
     P = HPolyhedron([HalfSpace(dir, one(N)) for dir in directions])
