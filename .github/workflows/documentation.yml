@@ -31,7 +31,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6
       - name: Cache artifacts
-        uses: julia-actions/cache@v2
+        uses: julia-actions/cache@v3
       - name: Install dependencies
         run: |
           julia --project=docs/ -e 'using Pkg;
