@@ -1,6 +1,15 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
 using LazySets.ReachabilityBase.Comparison: set_rtol, _rtol
+@static if isdefined(Main, :GeometryBasics)
+    import GeometryBasics
+end
+@static if isdefined(Main, :Polyhedra)
+    import Polyhedra
+end
+@static if isdefined(Main, :MiniQhull)
+    import MiniQhull
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

@@ -2,6 +2,18 @@ using LazySets, Test, SparseArrays
 using LazySets: ⪯
 using LazySets.ReachabilityBase.Arrays: is_cyclic_permutation, ispermutation, allequal
 using LazySets.ReachabilityBase.Comparison: _isapprox
+@static if isdefined(Main, :CDDLib)
+    import CDDLib
+end
+@static if isdefined(Main, :Optim)
+    import Optim
+end
+@static if isdefined(Main, :Polyhedra)
+    import Polyhedra
+end
+@static if isdefined(Main, :StaticArrays)
+    import StaticArrays
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

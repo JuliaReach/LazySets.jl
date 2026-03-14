@@ -1,5 +1,8 @@
 using LazySets, Test
 using LazySets: DefaultUniform
+@static if isdefined(Main, :Distributions)
+    import Distributions
+end
 
 for N in [Float64]
     P1 = BallInf([0.6, 0.1, -1.3, -0.4, 0.2], 0.6)

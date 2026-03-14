@@ -1,4 +1,16 @@
 using LazySets, Test
+@static if isdefined(Main, :Ipopt)
+    import Ipopt
+end
+@static if isdefined(Main, :Polyhedra)
+    import Polyhedra
+end
+@static if isdefined(Main, :SCS)
+    import SCS
+end
+@static if isdefined(Main, :SetProg)
+    import SetProg
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

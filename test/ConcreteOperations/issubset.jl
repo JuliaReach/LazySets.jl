@@ -1,4 +1,7 @@
 using LazySets, Test
+@static if isdefined(Main, :IntervalBoxes)
+    import IntervalBoxes
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

@@ -1,5 +1,23 @@
 using LazySets, Test, LinearAlgebra, SparseArrays
 import RecipesBase
+@static if isdefined(Main, :Expokit)
+    import Expokit
+end
+@static if isdefined(Main, :ExponentialUtilities)
+    import ExponentialUtilities
+end
+@static if isdefined(Main, :MiniQhull)
+    import MiniQhull
+end
+@static if isdefined(Main, :Optim)
+    import Optim
+end
+@static if isdefined(Main, :Polyhedra)
+    import Polyhedra
+end
+@static if isdefined(Main, :StaticArrays)
+    import StaticArrays
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

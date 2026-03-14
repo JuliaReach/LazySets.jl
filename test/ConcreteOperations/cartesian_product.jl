@@ -1,5 +1,8 @@
 using LazySets, Test, SparseArrays
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+@static if isdefined(Main, :Polyhedra)
+    import Polyhedra
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

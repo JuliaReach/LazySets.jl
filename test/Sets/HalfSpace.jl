@@ -1,5 +1,20 @@
 using LazySets, Test, SparseArrays
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+@static if isdefined(Main, :CDDLib)
+    import CDDLib
+end
+@static if isdefined(Main, :MiniQhull)
+    import MiniQhull
+end
+@static if isdefined(Main, :Polyhedra)
+    import Polyhedra
+end
+@static if isdefined(Main, :Symbolics)
+    using Symbolics
+end
+@static if isdefined(Main, :SymEngine)
+    import SymEngine
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

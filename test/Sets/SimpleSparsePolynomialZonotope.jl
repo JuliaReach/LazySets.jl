@@ -1,5 +1,8 @@
 using LazySets, Test, LinearAlgebra
 IA = LazySets.IA
+@static if isdefined(Main, :RangeEnclosures)
+    import RangeEnclosures
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
