@@ -911,7 +911,7 @@ For 3D inputs, we triangulate the facets and sum the areas of each triangle.
         vlist = vertices_list(P)
         return _area_vlist_2D(vlist)
     else
-        @assert n == 3 "this function only applies to 2D or 3D sets, but the "*
+        @assert n == 3 "this function only applies to 2D or 3D sets, but the " *
                        "given set is $n-dimensional"
         return _area_polytope_3D(P)
     end
