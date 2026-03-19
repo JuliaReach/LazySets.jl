@@ -3,6 +3,24 @@ using LazySets.MatrixZonotopeModule: vectorize
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
 using LazySets.ReachabilityBase.Comparison: _leq, _geq
 IA = LazySets.IA
+@static if isdefined(Main, :IntervalBoxes)
+    import IntervalBoxes
+end
+@static if isdefined(Main, :IntervalConstraintProgramming)
+    import IntervalConstraintProgramming
+end
+@static if isdefined(Main, :IntervalMatrices)
+    import IntervalMatrices
+end
+@static if isdefined(Main, :Optim)
+    import Optim
+end
+@static if isdefined(Main, :Polyhedra)
+    import Polyhedra
+end
+@static if isdefined(Main, :TaylorModels)
+    import TaylorModels
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

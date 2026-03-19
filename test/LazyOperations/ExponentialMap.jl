@@ -1,5 +1,11 @@
 using LazySets, Test, LinearAlgebra, SparseArrays
 using LazySets.ReachabilityBase.Arrays: ispermutation
+@static if isdefined(Main, :Expokit)
+    import Expokit
+end
+@static if isdefined(Main, :ExponentialUtilities)
+    import ExponentialUtilities
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

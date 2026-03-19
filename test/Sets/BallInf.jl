@@ -1,5 +1,11 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
+@static if isdefined(Main, :IntervalBoxes)
+    import IntervalBoxes
+end
+@static if isdefined(Main, :MiniQhull)
+    import MiniQhull
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

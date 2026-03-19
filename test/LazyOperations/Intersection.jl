@@ -1,5 +1,8 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
+@static if isdefined(Main, :Optim)
+    import Optim
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

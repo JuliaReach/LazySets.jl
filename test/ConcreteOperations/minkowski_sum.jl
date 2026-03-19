@@ -1,4 +1,13 @@
 using LazySets, Test
+@static if isdefined(Main, :CDDLib)
+    import CDDLib
+end
+@static if isdefined(Main, :IntervalMatrices)
+    import IntervalMatrices
+end
+@static if isdefined(Main, :Polyhedra)
+    import Polyhedra
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

@@ -1,6 +1,17 @@
 using LazySets, Test, SparseArrays
 using LazySets.MatrixZonotopeModule: vectorize
-
+@static if isdefined(Main, :Expokit)
+    import Expokit
+end
+@static if isdefined(Main, :ExponentialUtilities)
+    import ExponentialUtilities
+end
+@static if isdefined(Main, :IntervalMatrices)
+    import IntervalMatrices
+end
+@static if isdefined(Main, :Polyhedra)
+    import Polyhedra
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

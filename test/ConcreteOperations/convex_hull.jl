@@ -1,5 +1,11 @@
 using LazySets, Test
 using LazySets.ReachabilityBase.Arrays: ispermutation, is_cyclic_permutation
+@static if isdefined(Main, :Polyhedra)
+    import Polyhedra
+end
+@static if isdefined(Main, :StaticArrays)
+    import StaticArrays
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

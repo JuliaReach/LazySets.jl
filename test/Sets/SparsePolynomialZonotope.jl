@@ -1,6 +1,12 @@
 using LazySets, Test, LinearAlgebra
 using LazySets.SparsePolynomialZonotopeModule: merge_id
 IA = LazySets.IA
+@static if isdefined(Main, :RangeEnclosures)
+    import RangeEnclosures
+end
+@static if isdefined(Main, :TaylorModels)
+    import TaylorModels
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

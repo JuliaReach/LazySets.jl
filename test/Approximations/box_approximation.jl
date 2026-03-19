@@ -1,5 +1,8 @@
 using LazySets, Test
 IA = LazySets.IA
+@static if isdefined(Main, :TaylorModels)
+    import TaylorModels
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

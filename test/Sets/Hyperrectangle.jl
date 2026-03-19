@@ -2,6 +2,21 @@ using LazySets, Test, SparseArrays, LinearAlgebra
 using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
 using LazySets.ReachabilityBase.Comparison: set_rtol, _rtol
 IA = LazySets.IA
+@static if isdefined(Main, :GeometryBasics)
+    import GeometryBasics
+end
+@static if isdefined(Main, :IntervalBoxes)
+    import IntervalBoxes
+end
+@static if isdefined(Main, :MiniQhull)
+    import MiniQhull
+end
+@static if isdefined(Main, :Polyhedra)
+    import Polyhedra
+end
+@static if isdefined(Main, :StaticArrays)
+    import StaticArrays
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

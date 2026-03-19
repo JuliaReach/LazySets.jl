@@ -1,4 +1,7 @@
 using LazySets, Test
+@static if isdefined(Main, :SymEngine)
+    import SymEngine
+end
 
 @static if isdefined(@__MODULE__, :SymEngine)
     # _is_linear_combination

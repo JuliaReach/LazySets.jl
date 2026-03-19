@@ -1,6 +1,21 @@
 using LazySets, Test, LinearAlgebra
 using LazySets: linear_map_inverse, affine_map_inverse
 using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
+@static if isdefined(Main, :CDDLib)
+    import CDDLib
+end
+@static if isdefined(Main, :MiniQhull)
+    import MiniQhull
+end
+@static if isdefined(Main, :Polyhedra)
+    import Polyhedra
+end
+@static if isdefined(Main, :StaticArrays)
+    import StaticArrays
+end
+@static if isdefined(Main, :Symbolics)
+    using Symbolics
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

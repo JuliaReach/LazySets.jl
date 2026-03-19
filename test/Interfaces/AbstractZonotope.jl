@@ -1,4 +1,7 @@
 using LazySets, Test
+@static if isdefined(Main, :StaticArrays)
+    import StaticArrays
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
