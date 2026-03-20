@@ -459,7 +459,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(Z2, Z)
 
     # tosimplehrep
-    if (N == Float32) || (VERSION < v"1.11")
+    if (N == Float32) || (VERSION < v"1.11") ||
+       (N == Rational{Int} && !isdefined(@__MODULE__, :Polyhedra))
         A, b = tosimplehrep(Z)
     else
         A, b = @inferred tosimplehrep(Z)
@@ -552,7 +553,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{Vector{N}} && ispermutation(res, vertices_list(Z))
 
     # volume (part 1)
-    if N == Float64 && VERSION >= v"1.11"
+    if N == Float64 && VERSION >= v"1.11" && isdefined(@__MODULE__, :Polyhedra) &&
+       isdefined(Main, :GeometryBasics)
         res = @inferred volume(Z)
     else
         res = volume(Z)
@@ -888,7 +890,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # minkowski_difference (part 1)
     # equivalent sets
-    if VERSION >= v"1.11"
+    if VERSION >= v"1.11" && isdefined(@__MODULE__, :Polyhedra)
         for X in ((@inferred minkowski_difference(Z, P)), @inferred minkowski_difference(P, Z))
             vlist = vertices_list(X)
             @test length(vlist) == 1 && all(isapproxzero, vlist[1])
