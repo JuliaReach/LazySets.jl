@@ -50,7 +50,7 @@ function triangulate(X::LazySet; algorithm::String="delaunay", kwargs...)
 end
 
 @validate function triangulate_faces(X)
-    require(@__MODULE__, :Polyhedra; fun_name="triangulate_faces")
+    require(@__MODULE__, [:Polyhedra, :GeometryBasics]; fun_name="triangulate_faces")
     throw(ArgumentError("`triangulate_faces` not implemented for $(typeof(X))"))
 end
 

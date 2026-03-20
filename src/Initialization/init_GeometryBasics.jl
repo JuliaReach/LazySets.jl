@@ -1,3 +1,3 @@
-# this file is loaded from `init_Polyhedra.jl`
+# this file is executed when `Polyhedra.jl` is also loaded
 
 eval(load_Polyhedra_GeometryBasics_triangulate_faces())
