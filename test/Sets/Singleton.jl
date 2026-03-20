@@ -31,74 +31,75 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # constructor
     e = N[2, -1]
-    S = Singleton(e)
-    S1 = Singleton(N[2])  # 1D hyperrectangle
-    S3 = Singleton(N[2, -1, 3])  # 3D hyperrectangle
+    S = @inferred Singleton(e)
+    S1 = @inferred Singleton(N[2])  # 1D hyperrectangle
+    S3 = @inferred Singleton(N[2, -1, 3])  # 3D hyperrectangle
     # constructor from scalars
-    S2 = Singleton(N(2), N(-1))
+    S2 = @inferred Singleton(N(2), N(-1))
     @test isidentical(S2, S)
     # constructor from non-Vector
-    e2 = SingleEntryVector(1, 1000, N(2))
-    S2 = Singleton(e2)
+    e2 = @inferred SingleEntryVector(1, 1000, N(2))
+    S2 = @inferred Singleton(e2)
     @test element(S2) == e2
 
     # convert
     # from CartesianProduct of AbstractSingletons
-    X = Singleton(N[2]) × ZeroSet{N}(1)
+    X = @inferred Singleton(N[2]) × ZeroSet{N}(1)
     @test isidentical(convert(Singleton, X), Singleton(N[2, 0]))
 
     # an_element
-    x = an_element(S)
+    x = @inferred an_element(S)
     @test x isa Vector{N} && x ∈ S
 
     # area
     @test_throws DimensionMismatch area(S1)
-    res = area(S)
+    res = @inferred area(S)
     @test res === N(0)
-    res = area(S3)
+    res = @inferred area(S3)
     @test res === N(0)
 
     # center
-    c = center(S)
+    c = @inferred center(S)
     @test c isa AbstractVector{N} && c == e
 
     # chebyshev_center_radius
-    c, r = chebyshev_center_radius(S)
+    c, r = @inferred chebyshev_center_radius(S)
     @test c isa Vector{N} && c == e && r === N(0)
 
     # complement
-    X = complement(S)
+    X = @inferred complement(S)
     @test_broken X isa Universe{N} && dim(X) == 2  # TODO this should maybe change
     @test X isa UnionSetArray{N} && dim(X) == 2
 
     # concretize
-    S2 = concretize(S)
+    S2 = @inferred concretize(S)
     @test isidentical(S2, S)
 
     # constrained_dimensions
-    @test constrained_dimensions(S) == 1:2
+    @test (@inferred constrained_dimensions(S)) == 1:2
 
     # constraints_list
     clist = [HalfSpace(N[1, 0], N(2)), HalfSpace(N[0, 1], N(-1)),
              HalfSpace(N[-1, 0], N(-2)), HalfSpace(N[0, -1], N(1))]
-    @test ispermutation(constraints_list(S), clist)
+    @test ispermutation((@inferred constraints_list(S)), clist)
     clist2 = constraints_list(S; min_constraints=true)
     @test length(clist2) == 3 && isequivalent(HPolygon(clist), HPolygon(clist2))
 
     # constraints
-    @test ispermutation(collect(constraints(S)), clist)
+    @test ispermutation(collect(@inferred constraints(S)), clist)
 
     # convex_hull (unary)
-    S2 = convex_hull(S)
+    S2 = @inferred convex_hull(S)
     @test isidentical(S, S2)
 
     # copy
+    @test_broken @inferred copy(S)  # TODO make this type-stable
     S2 = copy(S)
     @test isidentical(S, S2)
 
     # diameter
     @test_throws ArgumentError diameter(S, N(1 // 2))
-    for res in (diameter(S), diameter(S, Inf), diameter(S, 2))
+    for res in ((@inferred diameter(S)), (@inferred diameter(S, Inf)), @inferred diameter(S, 2))
         if N <: AbstractFloat
             @test res === N(0)
         else
@@ -107,104 +108,106 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # dim
-    @test dim(S) == 2
-    @test dim(S3) == 3
+    @test @inferred dim(S) == 2
+    @test @inferred dim(S3) == 3
 
     # element
-    @test element(S) == e
+    @test (@inferred element(S)) == e
     for i in 1:2
-        @test element(S, i) == e[i]
+        @test (@inferred element(S, i)) == e[i]
     end
 
     # eltype
-    @test eltype(S) == N
-    @test eltype(typeof(S)) == N
+    @test (@inferred eltype(S)) == N
+    @test (@inferred eltype(typeof(S))) == N
 
     # extrema
-    res = extrema(S)
+    res = @inferred extrema(S)
     @test res isa Tuple{Vector{N},Vector{N}} && res[1] == e && res[2] == e
     @test_throws DimensionMismatch extrema(S, 3)
-    res = extrema(S, 1)
+    res = @inferred extrema(S, 1)
     @test res isa Tuple{N,N} && res[1] == e[1] && res[2] == e[1]
 
     # generators
-    gens = collect(generators(S))
+    gens = collect(@inferred generators(S))
     @test gens isa AbstractVector{<:AbstractVector{N}} && isempty(gens)
 
     # genmat
-    gens = genmat(S)
+    gens = @inferred genmat(S)
     @test gens isa Matrix{N} && gens == Matrix{N}(undef, 2, 0)
 
     # high
-    res = high(S)
+    res = @inferred high(S)
     @test res isa Vector{N} && res == e
     @test_throws DimensionMismatch high(S, 3)
-    res = high(S, 1)
+    res = @inferred high(S, 1)
     @test res === e[1]
 
     # isbounded
-    @test isbounded(S)
+    @test @inferred isbounded(S)
 
     # isboundedtype
-    @test isboundedtype(typeof(S))
+    @test @inferred isboundedtype(typeof(S))
 
     # isconvex
-    @test isconvex(S)
+    @test @inferred isconvex(S)
 
     # isconvextype
-    @test isconvextype(typeof(S))
+    @test @inferred isconvextype(typeof(S))
 
     # isempty
-    @test !isempty(S)
+    @test !(@inferred isempty(S))
+    @test_broken @inferred isempty(S, true)  # TODO make this type-stable (witness)
     res, w = isempty(S, true)
     @test !res && w isa Vector{N} && w ∈ S
 
     # isflat
-    @test isflat(S)
+    @test @inferred isflat(S)
 
     # isoperation
-    @test !isoperation(S)
+    @test !(@inferred isoperation(S))
 
     # isoperationtype
-    @test !isoperationtype(typeof(S))
+    @test !(@inferred isoperationtype(typeof(S)))
 
     # ispolyhedral
-    @test ispolyhedral(S)
+    @test @inferred ispolyhedral(S)
 
     # ispolyhedraltype
-    @test ispolyhedraltype(typeof(S))
+    @test @inferred ispolyhedraltype(typeof(S))
 
     # ispolytopic
-    @test ispolytopic(S)
+    @test @inferred ispolytopic(S)
 
     # ispolytopictype
-    @test ispolytopictype(typeof(S))
+    @test @inferred ispolytopictype(typeof(S))
 
     # isuniversal
-    @test !isuniversal(S)
+    @test !(@inferred isuniversal(S))
+    @test_broken @inferred isuniversal(S, true)  # TODO make this type-stable (witness)
     res, w = isuniversal(S, true)
     @test !res && w isa Vector{N} && w ∉ S
 
     # low
-    res = low(S)
+    res = @inferred low(S)
     @test res isa Vector{N} && res == e
     @test_throws DimensionMismatch low(S, 3)
-    res = low(S, 1)
+    res = @inferred low(S, 1)
     @test res === e[1]
 
     # ngens
-    @test ngens(S) == 0
+    @test (@inferred ngens(S)) == 0
 
     # norm
     @test_throws ArgumentError norm(S, N(1 // 2))
-    for res in (norm(S), norm(S, Inf))
+    for res in ((@inferred norm(S)), @inferred norm(S, Inf))
         if N <: AbstractFloat
             @test res === N(2)
         else
             @test res == 2.0
         end
     end
-    res = norm(S, 2)
+    res = @inferred norm(S, 2)
     if N <: AbstractFloat
         @test res isa N
     end
@@ -212,7 +215,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # radius
     @test_throws ArgumentError radius(S, N(1 // 2))
-    for res in (radius(S), radius(S, Inf), radius(S, 2))
+    for res in ((@inferred radius(S)), (@inferred radius(S, Inf)), @inferred radius(S, 2))
         if N <: AbstractFloat
             @test res === N(0)
         else
@@ -221,64 +224,66 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # radius_hyperrectangle
-    res = radius_hyperrectangle(S)
+    res = @inferred radius_hyperrectangle(S)
     @test res isa AbstractVector{N} && res == N[0, 0]
     @test_throws DimensionMismatch radius_hyperrectangle(S, 3)
-    res = radius_hyperrectangle(S, 1)
+    res = @inferred radius_hyperrectangle(S, 1)
     @test res === N(0)
 
     # rectify
-    S2 = rectify(S)
+    S2 = @inferred rectify(S)
     @test isidentical(S2, Singleton(N[2, 0]))
 
     # reflect
-    S2 = reflect(S)
+    S2 = @inferred reflect(S)
     @test isidentical(S2, Singleton(N[-2, 1]))
 
     # remove_redundant_generators
-    @test isidentical(remove_redundant_generators(S), S)
+    @test isidentical((@inferred remove_redundant_generators(S)), S)
 
     # singleton_list
-    res = singleton_list(S)
+    res = @inferred singleton_list(S)
     @test res isa Vector{Singleton{N,Vector{N}}}
     @test res == [S]
 
     # togrep
-    Z = togrep(S)
+    Z = @inferred togrep(S)
     @test Z isa Zonotope{N} && isequivalent(Z, S)
 
     # tosimplehrep
-    A, b = tosimplehrep(S)
+    A, b = @inferred tosimplehrep(S)
     @test A isa Matrix{N} && b isa Vector{N} && size(A) == (4, 2) && length(b) == 4
     # no precise test here; the `tosimplehrep` implementation is tested elsewhere
 
     # triangulate_faces
     @test_throws DimensionMismatch triangulate_faces(S)
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :GeometryBasics)
-        res = triangulate_faces(S3)
+        res = @inferred triangulate_faces(S3)
         @test res isa Tuple{Matrix{Float32},Vector{Tuple{Int,Int,Int}}}
         @test length(res[2]) == 0
     end
 
     # vertices_list
-    vlist = vertices_list(S)
+    vlist = @inferred vertices_list(S)
     @test vlist isa Vector{Vector{N}} && vlist == [e]
 
     # vertices
-    res = collect(vertices(S))
+    res = collect(@inferred vertices(S))
     @test res isa Vector{Vector{N}} && res == vlist
 
     # volume
-    res = volume(S)
+    res = @inferred volume(S)
     @test res === N(0)
-    res = volume(S3)
+    res = @inferred volume(S3)
     @test res === N(0)
 
     # affine_map
     @test_throws DimensionMismatch affine_map(ones(N, 2, 1), S, N[1, 1])
     @test_throws DimensionMismatch affine_map(ones(N, 2, 2), S, N[1])
+    @test_broken @inferred affine_map(ones(N, 1, 2), S, N[1])  # TODO make this type-stable
     S2 = affine_map(ones(N, 1, 2), S, N[1])
     @test isidentical(S2, Singleton(N[2]))
+    @test_broken @inferred affine_map(ones(N, 3, 2), S, N[1, 2, 3])  # TODO make this type-stable
     S2 = affine_map(ones(N, 3, 2), S, N[1, 2, 3])
     @test isidentical(S2, Singleton(N[2, 3, 4]))
 
@@ -286,43 +291,44 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch distance(S, N[0])
     @test_throws ArgumentError distance(S, N[0, 0]; p=N(1 // 2))
     x = N[1, 3]
-    @test distance(x, S) == distance(S, x) == distance(x, e)
+    @test (@inferred distance(x, S)) == (@inferred distance(S, x)) == distance(x, e)
     for p in N[1, 2, Inf]
-        @test distance(x, S; p=p) == distance(S, x; p=p) == distance(x, e; p=p)
+        @test (@inferred distance(x, S; p=p)) == (@inferred distance(S, x; p=p)) ==
+              @inferred distance(x, e; p=p)
     end
 
     # exponential_map
     @test_throws DimensionMismatch exponential_map(ones(N, 1, 1), S)
     @test_throws DimensionMismatch exponential_map(ones(N, 2, 1), S)
     if N <: AbstractFloat
-        S2 = exponential_map(N[1 0; 0 2], S)
+        S2 = @inferred exponential_map(N[1 0; 0 2], S)
         @test S2 isa Singleton && element(S2) == N[2 * exp(1), -exp(2)]
     end
 
     # in
     @test_throws DimensionMismatch N[0] ∈ S
-    @test e ∈ S && N[2, -2] ∉ S
+    @test (@inferred e ∈ S) && (@inferred N[2, -2] ∉ S)
 
     # is_interior_point
     @test_throws DimensionMismatch is_interior_point(N[0], S)
     @test_throws ArgumentError is_interior_point(N[0, 0], S; ε=N(0))
     @test_throws ArgumentError is_interior_point(N[0, 0], S; p=N(1 // 2))
     if N <: AbstractFloat
-        @test !is_interior_point(N[2, -1], S)
-        @test !is_interior_point(N[2, -2], S)
+        @test !(@inferred is_interior_point(N[2, -1], S))
+        @test !(@inferred is_interior_point(N[2, -2], S))
     else
         @test_throws ArgumentError is_interior_point(N[2, -1], S)
-        @test !is_interior_point(N[2, -1], S; ε=1 // 100)
-        @test !is_interior_point(N[2, -2], S; ε=1 // 100)
+        @test !(@inferred is_interior_point(N[2, -1], S; ε=1 // 100))
+        @test !(@inferred is_interior_point(N[2, -2], S; ε=1 // 100))
         # incompatible numeric type
         @test_throws ArgumentError is_interior_point([1.0, 1], S)
     end
 
     # linear_map
     @test_throws DimensionMismatch linear_map(ones(N, 1, 1), S)
-    S2 = linear_map(N[1 0; 0 2], S)
+    S2 = @inferred linear_map(N[1 0; 0 2], S)
     @test isidentical(S2, Singleton(N[2, -2]))
-    S2 = linear_map(zeros(N, 1, 2), S)  # zero map
+    S2 = @inferred linear_map(zeros(N, 1, 2), S)  # zero map
     @test isidentical(S2, Singleton(N[0]))
 
     # linear_map_inverse
@@ -343,8 +349,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch permute(S, [1, -1])
     @test_throws DimensionMismatch permute(S, [1, 3])
     @test_throws ArgumentError permute(S, [1, 1])
-    @test isidentical(permute(S, [1, 2]), S)
-    S2 = permute(S, [2, 1])
+    S2 = @inferred permute(S, [1, 2])
+    @test isidentical(S2, S)
+    S2 = @inferred permute(S, [2, 1])
     @test isidentical(S2, Singleton(N[-1, 2]))
 
     # project
@@ -352,71 +359,72 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch project(S, [1, -1])
     @test_throws DimensionMismatch project(S, [1, 3])
     @test_throws ArgumentError project(S, [1, 1])
-    S2 = project(S, [1])
+    S2 = @inferred project(S, [1])
     @test isidentical(S2, Singleton(N[2]))
-    S2 = project(Singleton(N[4, 3, 2, 1]), [2, 4])
+    S2 = @inferred project(Singleton(N[4, 3, 2, 1]), [2, 4])
     @test isidentical(S2, Singleton(N[3, 1]))
 
     # sample
-    res = sample(S)
+    res = @inferred sample(S)
     @test res isa Vector{N} && res ∈ S
-    res = sample(S, 2)
+    res = @inferred sample(S, 2)
     @test res isa Vector{Vector{N}} && length(res) == 2 && all(x ∈ S for x in res)
 
     # scale
-    S2 = scale(N(2), S)
+    S2 = @inferred scale(N(2), S)
     @test isidentical(S2, Singleton(N[4, -2]))
     # degenerate case
-    S2 = scale(N(0), S)
+    S2 = @inferred scale(N(0), S)
     @test isidentical(S2, Singleton(N[0, 0]))
     # scale!
     S2 = copy(S)
-    scale!(N(2), S2)
+    @inferred scale!(N(2), S2)
     @test isidentical(S2, Singleton(N[4, -2]))
     # degenerate case
     S2 = copy(S)
-    scale!(N(0), S2)
+    @inferred scale!(N(0), S2)
     @test isidentical(S2, Singleton(N[0, 0]))
     # negative factor
     S2 = copy(S)
-    scale!(N(-2), S2)
-    @test isidentical(scale(N(-2), S), S2) && isidentical(S2, Singleton(N[-4, 2]))
+    @inferred scale!(N(-2), S2)
+    @test isidentical((@inferred scale(N(-2), S)), S2) && isidentical(S2, Singleton(N[-4, 2]))
 
     # split
     @test_throws ArgumentError split(S, [0, 2])
     X = Hyperrectangle(N[2, -1], N[0, 0])
-    @test split(S, [2, 2]) == [X, X, X, X]
+    @test (@inferred split(S, [2, 2])) == [X, X, X, X]
     # split at given bounds
-    @test split(S, [N[2], N[-1]]) == [X, X, X, X]
+    @test (@inferred split(S, [N[2], N[-1]])) == [X, X, X, X]
 
     # support_function
     @test_throws DimensionMismatch ρ(N[1], S)
-    res = ρ(N[1, 1], S)
+    res = @inferred ρ(N[1, 1], S)
     @test res === N(1)
-    res = ρ(N[-1, -1], S)
+    res = @inferred ρ(N[-1, -1], S)
     @test res === N(-1)
 
     # support_vector
     @test_throws DimensionMismatch σ(N[1], S)
-    res = σ(N[1, 1], S)
+    res = @inferred σ(N[1, 1], S)
     @test res isa Vector{N} && res == e
-    res = σ(N[-1, -1], S)
+    res = @inferred σ(N[-1, -1], S)
     @test res isa Vector{N} && res == e
 
     # translate
     @test_throws DimensionMismatch translate(S, N[1])
+    @test_broken @inferred translate(S, N[1, 2])  # TODO make this type-stable
     S2 = translate(S, N[1, 2])
     @test isidentical(S2, Singleton(N[3, 1]))
     # translate!
     @test_throws DimensionMismatch translate!(S, N[1])
     S2 = copy(S)
-    translate!(S2, N[1, 2])
+    @inferred translate!(S2, N[1, 2])
     @test isidentical(S2, Singleton(N[3, 1]))
 
     # cartesian_product
     S2a = Singleton(N[2])
     S2b = Singleton(N[-1])
-    S2 = cartesian_product(S2a, S2b)
+    S2 = @inferred cartesian_product(S2a, S2b)
     @test isidentical(S2, S)
 
     # convex_hull (binary)
@@ -444,7 +452,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # distance (between two sets)
     @test_throws DimensionMismatch distance(S, S3)
     @test_throws ArgumentError distance(S, S; p=N(1 // 2))
-    res = distance(S, S)
+    res = @inferred distance(S, S)
     if N <: AbstractFloat
         @test res === N(0)
     else
@@ -452,15 +460,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
     e2 = N[3, 1]
     S2 = Singleton(e2)
-    @test distance(S, S2) == distance(S2, S) == distance(e, e2)
+    @test (@inferred distance(S, S2)) == (@inferred distance(S2, S)) == @inferred distance(e, e2)
     for p in N[1, 2, Inf]
-        @test distance(S, S2; p=p) == distance(S2, S; p=p) == distance(e, e2; p=p)
+        @test (@inferred distance(S, S2; p=p)) == (@inferred distance(S2, S; p=p)) ==
+              @inferred distance(e, e2; p=p)
     end
 
     # exact_sum
     @test_throws DimensionMismatch exact_sum(S, S3)
     S2 = Singleton(N[3, 1])
-    for S2b in (exact_sum(S, S2), exact_sum(S2, S))
+    for S2b in ((@inferred exact_sum(S, S2)), @inferred exact_sum(S2, S))
         @test isidentical(S2b, Singleton(N[5, 0]))
     end
 
@@ -474,22 +483,28 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(S2, S)
 
     # isapprox
-    @test S ≈ S
-    res = (S ≈ translate(S, N[1 // 100000000, 0]))
+    @test @inferred S ≈ S
+    res = @inferred S ≈ translate(S, N[1 // 100000000, 0])
     if N <: AbstractFloat
         @test res  # below default tolerance for AbstractFloat
     else
         @test !res  # zero default tolerance for Rational
     end
-    @test !(S ≈ translate(S, N[1 // 1000, 0]))  # above default tolerance for all types
-    @test !(S ≈ S3) && !(S3 ≈ S) && !(S ≈ P) && !(P ≈ S)
+    @test !(@inferred S ≈ translate(S, N[1 // 1000, 0]))  # above default tolerance for all types
+    @test !(@inferred S ≈ S3) && !(@inferred S3 ≈ S) && !(@inferred S ≈ P) && !(@inferred P ≈ S)
 
     # isdisjoint
     @test_throws DimensionMismatch isdisjoint(S, S3)
     # disjoint
     S2 = Singleton(N[3, 1])
     for (S2a, S2b) in ((S, S2), (S2, S))
-        @test isdisjoint(S2a, S2b)
+        if (N == Float64 && VERSION < v"1.12") || (N == Rational{Int} && VERSION < v"1.11")
+            @test @inferred isdisjoint(S2a, S2b)
+        else
+            @test_broken @inferred isdisjoint(S2a, S2b)  # TODO make this type-stable (witness)
+            @test isdisjoint(S2a, S2b)
+        end
+        @test_broken @inferred isdisjoint(S2a, S2b, true)  # TODO make this type-stable (witness)
         res, w = isdisjoint(S2a, S2b, true)
         @test res && w isa Vector{N} && isempty(w)
     end
@@ -510,18 +525,20 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 
     # isequal
-    @test S == S
-    @test S != S3 && S3 != S && S != P && P != S
+    @test @inferred S == S
+    @test (@inferred S != S3) && (@inferred S3 != S) && (@inferred S != P) && @inferred P != S
 
     # isequivalent
     @test_throws DimensionMismatch isequivalent(S, S3)
-    @test isequivalent(S, S)
-    @test !isequivalent(S, Singleton(N[3, 1]))
+    @test @inferred isequivalent(S, S)
+    @test !(@inferred isequivalent(S, Singleton(N[3, 1])))
+    @test_broken (@inferred isequivalent(S, P)) && @inferred isequivalent(P, S)  # TODO make this type-stable (witness)
     @test isequivalent(S, P) && isequivalent(P, S)
 
     # isstrictsubset
     @test_throws DimensionMismatch S ⊂ S3
     for X in (S, P)
+        @test_broken !(@inferred X ⊂ S)  # TODO make this type-stable (witness)
         @test !(X ⊂ S)
         res, w = ⊂(X, S, true)
         @test !res && w isa Vector{N} && isempty(w)
@@ -533,11 +550,23 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # issubset
     @test_throws DimensionMismatch S ⊆ S3
-    for X in (S, P)
-        @test S ⊆ X
-        res, w = ⊆(S, X, true)
-        @test res && w isa Vector{N} && w == N[]
+    if (N == Float64 && VERSION < v"1.12") || (N == Rational{Int} && VERSION < v"1.11")
+        @test @inferred S ⊆ S
+    else
+        @test_broken @inferred S ⊆ S  # TODO make this type-stable (witness)
+        @test S ⊆ S
     end
+    @test_broken @inferred ⊆(S, S, true)  # TODO make this type-stable (witness)
+    res, w = ⊆(S, S, true)
+    @test res && w isa Vector{N} && w == N[]
+    if VERSION >= v"1.12"
+        @test_broken @inferred S ⊆ P  # TODO make this type-stable (witness)
+        @test S ⊆ P
+    else
+        @test @inferred S ⊆ P
+    end
+    res, w = ⊆(S, P, true)
+    @test res && w isa Vector{N} && w == N[]
     S2 = Singleton(N[3, 1])
     @test S ⊈ S2
     res, w = ⊆(S, S2, true)
@@ -559,20 +588,22 @@ for N in @tN([Float64, Float32, Rational{Int}])
     X = minkowski_difference(S, Hyperrectangle(N[2, -1], N[1, 1]))
     @test X isa EmptySet{N} && X == EmptySet{N}(2)
     # equivalent sets: only the origin remains
+    @test_broken @inferred minkowski_difference(S, S)  # TODO make this type-stable
     S2 = minkowski_difference(S, S)
     @test isidentical(S2, Singleton(N[0, 0]))
-    for X in (minkowski_difference(S, P), minkowski_difference(P, S))
+    for X in ((@inferred minkowski_difference(S, P)), @inferred minkowski_difference(P, S))
         vlist = vertices_list(X)
         @test length(vlist) == 1 && iszero(vlist)
     end
     # nonempty difference
+    @test_broken @inferred minkowski_difference(S, Singleton(N[3, 1]))  # TODO make this type-stable
     S2 = minkowski_difference(S, Singleton(N[3, 1]))
     @test isidentical(S2, Singleton(N[-1, -2]))
 
     # minkowski_sum
     @test_throws DimensionMismatch minkowski_sum(S, S3)
     S2 = Singleton(N[3, 1])
-    for S2b in (minkowski_sum(S, S2), minkowski_sum(S2, S))
+    for S2b in ((@inferred minkowski_sum(S, S2)), @inferred minkowski_sum(S2, S))
         @test isidentical(S2b, Singleton(N[5, 0]))
     end
 end
