@@ -55,7 +55,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch area(EmptySet{N}(1))
     for X in (E, E3)
         res = @inferred area(X)
-        @test res isa N && res == N(0)
+        @test res === N(0)
     end
 
     # chebyshev_center_radius
@@ -89,7 +89,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # diameter
     @test_throws ArgumentError diameter(E, N(1 // 2))
     for res in ((@inferred diameter(E)), (@inferred diameter(E, Inf)), @inferred diameter(E, 2))
-        @test res isa N && res == N(0)
+        @test res === N(0)
     end
 
     # dim
@@ -160,7 +160,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # norm
     @test_throws ArgumentError norm(E, N(1 // 2))
     for res in ((@inferred norm(E)), (@inferred norm(E, Inf)), @inferred norm(E, 2))
-        @test res isa N && res == N(0)
+        @test res === N(0)
     end
 
     # polyhedron
@@ -171,7 +171,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # radius
     @test_throws ArgumentError radius(E, N(1 // 2))
     for res in ((@inferred radius(E)), (@inferred radius(E, Inf)), @inferred radius(E, 2))
-        @test res isa N && res == N(0)
+        @test res === N(0)
     end
 
     # rand
@@ -224,7 +224,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError distance(E, N[0, 0]; p=N(1 // 2))
     x = N[0, 0]
     for res in ((@inferred distance(E, x)), @inferred distance(x, E))
-        @test res isa N && res == N(Inf)
+        @test res === N(Inf)
     end
 
     # exponential_map
@@ -353,12 +353,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch distance(E, E3)
     @test_throws ArgumentError distance(E, E; p=N(1 // 2))
     v = @inferred distance(E, E)
-    @test v isa N && v == N(Inf)
+    @test v === N(Inf)
     for X in (B1, U, B, Z)
         v = @inferred distance(X, E)
-        @test v isa N && v == N(Inf)
+        @test v === N(Inf)
         v = @inferred distance(E, X)
-        @test v isa N && v == N(Inf)
+        @test v === N(Inf)
     end
 
     # exact_sum

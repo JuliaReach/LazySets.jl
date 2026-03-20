@@ -104,22 +104,22 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # area
     @test_throws DimensionMismatch area(H1)
     res = @inferred area(H)
-    @test res isa N && res == N(8)
+    @test res === N(8)
     res = @inferred area(H0)
-    @test res isa N && res == N(0)
+    @test res === N(0)
     res = @inferred area(H3)
-    @test res isa N && res == N(88)
+    @test res === N(88)
 
     # center
     c2 = @inferred center(H)
     @test c2 isa AbstractVector{N} && c2 == c
     @test_throws DimensionMismatch center(H, 3)
     v = @inferred center(H, 1)
-    @test v isa N && v == N(1)
+    @test v === N(1)
 
     # chebyshev_center_radius
     c2, r2 = @inferred chebyshev_center_radius(H)
-    @test c2 isa Vector{N} && c2 == c && r2 isa N && r2 == N(1)
+    @test c2 isa Vector{N} && c2 == c && r2 === N(1)
 
     # complement
     X = @inferred complement(H)
@@ -155,7 +155,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError diameter(H, N(1 // 2))
     for res in ((@inferred diameter(H)), @inferred diameter(H, Inf))
         if N <: AbstractFloat
-            @test res isa N && res == N(4)
+            @test res === N(4)
         else
             @test res == 4.0
         end
@@ -217,7 +217,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{N} && res == N[2, 1]
     @test_throws DimensionMismatch high(H, 3)
     res = @inferred high(H, 1)
-    @test res isa N && res == N(2)
+    @test res === N(2)
 
     # isbounded
     @test @inferred isbounded(H)
@@ -271,7 +271,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{N} && res == N[0, -3]
     @test_throws DimensionMismatch low(H, 3)
     res = @inferred low(H, 1)
-    @test res isa N && res == N(0)
+    @test res === N(0)
 
     # ngens
     @static if VERSION >= v"1.12"
@@ -288,7 +288,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError norm(H, N(1 // 2))
     for res in ((@inferred norm(H)), @inferred norm(H, Inf))
         if N <: AbstractFloat
-            @test res isa N && res == N(3)
+            @test res === N(3)
         else
             @test res == 3.0
         end
@@ -303,7 +303,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError radius(H, N(1 // 2))
     for res in ((@inferred radius(H)), @inferred radius(H, Inf))
         if N <: AbstractFloat
-            @test res isa N && res == N(2)
+            @test res === N(2)
         else
             @test res == 2.0
         end
@@ -319,7 +319,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa AbstractVector{N} && res == N[1, 2]
     @test_throws DimensionMismatch radius_hyperrectangle(H, 3)
     res = @inferred radius_hyperrectangle(H, 1)
-    @test res isa N && res == N(1)
+    @test res === N(1)
 
     # rectify
     H2 = @inferred rectify(H)
@@ -375,11 +375,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # volume
     res = @inferred volume(H)
-    @test res isa N && res == N(8)
+    @test res === N(8)
     res = @inferred volume(H0)
-    @test res isa N && res == N(0)
+    @test res === N(0)
     res = @inferred volume(H3)
-    @test res isa N && res == N(48)
+    @test res === N(48)
 
     # affine_map
     @test_throws DimensionMismatch affine_map(ones(N, 2, 1), H, N[1, 1])
@@ -530,22 +530,22 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # support_function
     @test_throws DimensionMismatch ρ(N[1], H)
     res = @inferred ρ(N[1, 1], H)
-    @test res isa N && res == N(3)
+    @test res === N(3)
     res = @inferred ρ(N[-1, -1], H)
-    @test res isa N && res == N(3)
+    @test res === N(3)
     # SingleEntryVector direction
     res = @inferred ρ(SingleEntryVector(2, 2, N(-1)), H)
-    @test res isa N && res == N(3)
+    @test res === N(3)
     # SingleEntryVector hyperrectangle radius
     H2 = Hyperrectangle(N[1, 1], SingleEntryVector(2, 2, N(2)))
     res = @inferred ρ(N[1, 1], H2)
-    @test res isa N && res == N(4)
+    @test res === N(4)
     for (x, v) in ((SingleEntryVector(2, 2, N(1)), N(3)), (SingleEntryVector(2, 2, N(-1)), N(1)),
                    (SingleEntryVector(1, 2, N(1)), N(1)))
         res = @inferred ρ(x, H2)
-        @test res isa N && res == v
+        @test res === v
         res = @inferred ρ(Vector(x), H2)
-        @test res isa N && res == v
+        @test res === v
     end
 
     # support_vector
@@ -606,7 +606,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError distance(H, H; p=N(1 // 2))
     res = @inferred distance(H, H)
     if N <: AbstractFloat
-        @test res isa N && res == N(0)
+        @test res === N(0)
     else
         @test res isa Float64 && res == 0.0
     end

@@ -84,13 +84,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     c = @inferred center(X)
     @test c isa Vector{N} && c == [N(1)]
     v = @inferred center(X, 1)
-    @test v isa N && v == N(1)
+    @test v === N(1)
     @test_throws DimensionMismatch center(X, 2)
 
     # chebyshev_center_radius
     c, r = @inferred chebyshev_center_radius(X)
     @test c isa Vector{N} && c == [N(1)]
-    @test r isa N && r == N(1)
+    @test r === N(1)
 
     # complement
     Y = @inferred complement(X)
@@ -123,7 +123,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # diameter
     @test_throws ArgumentError diameter(X, N(1 // 2))
     for res in ((@inferred diameter(X)), (@inferred diameter(X, Inf)), @inferred diameter(X, 2))
-        @test res isa N && res == N(2)
+        @test res === N(2)
     end
 
     # dim
@@ -157,7 +157,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{N} && res == N[2]
     @test_throws DimensionMismatch high(X, 2)
     res = @inferred high(X, 1)
-    @test res isa N && res == N(2)
+    @test res === N(2)
 
     # isbounded
     @test @inferred isbounded(X)
@@ -211,15 +211,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{N} && res == N[0]
     @test_throws DimensionMismatch low(X, 2)
     res = @inferred low(X, 1)
-    @test res isa N && res == N(0)
+    @test res isa N && res == N(0)  # -0.0
 
     # min
     v = @inferred min(X)
-    @test v isa N && v == N(0)
+    @test v isa N && res == N(0)  # -0.0
 
     # max
     v = @inferred max(X)
-    @test v isa N && v == N(2)
+    @test v === N(2)
 
     # ngens
     @test (@inferred ngens(X)) == 1
@@ -230,7 +230,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError norm(X, N(1 // 2))
     for Y in (X, Interval(N(-2), N(1)))
         for res in ((@inferred norm(Y)), (@inferred norm(Y, Inf)), @inferred norm(Y, 2))
-            @test res isa N && res == N(2)
+            @test res === N(2)
         end
     end
 
@@ -243,14 +243,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # radius
     @test_throws ArgumentError radius(X, N(1 // 2))
     for res in ((@inferred radius(X)), (@inferred radius(X, Inf)), @inferred radius(X, 2))
-        @test res isa N && res == N(1)
+        @test res === N(1)
     end
 
     # radius_hyperrectangle
     r = @inferred radius_hyperrectangle(X)
     @test r isa Vector{N} && r == [N(1)]
     v = @inferred radius_hyperrectangle(X, 1)
-    @test v isa N && v == N(1)
+    @test v === N(1)
 
     # rectify
     Y = Interval(N(-1), N(2))
@@ -416,9 +416,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # support_function
     @test_throws DimensionMismatch ρ(N[1, 1], X)
     res = @inferred ρ(N[2], X)
-    @test res isa N && res == N(4)
+    @test res === N(4)
     res = @inferred ρ(N[-2], X)
-    @test res isa N && res == N(0)
+    @test res === N(0)
 
     # support_vector
     @test_throws DimensionMismatch σ(N[1, 1], X)
@@ -484,7 +484,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError distance(X, X; p=N(1 // 2))
     for (Y, v) in ((Interval(N(-1), N(1)), N(0)), (Interval(N(4), N(5)), N(2)))
         for res in ((@inferred distance(X, Y)), @inferred distance(Y, X))
-            @test res isa N && res == v
+            @test res === v
         end
     end
 

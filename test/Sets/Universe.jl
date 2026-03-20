@@ -51,7 +51,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch area(Universe{N}(1))
     for X in (U, U3)
         res = @inferred area(X)
-        @test res isa N && res == N(Inf)
+        @test res === N(Inf)
     end
 
     # chebyshev_center_radius
@@ -215,7 +215,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # volume
     x = @inferred volume(U)
-    @test x isa N && x == N(Inf)
+    @test x === N(Inf)
 
     # affine_map (part 1)
     @test_throws DimensionMismatch affine_map(ones(N, 2, 3), U, N[1, 1])
@@ -228,7 +228,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError distance(U, N[0, 0]; p=N(1 // 2))
     x = N[0, 0]
     for res in ((@inferred distance(U, x)), @inferred distance(x, U))
-        @test res isa N && res == N(0)
+        @test res === N(0)
     end
 
     # exponential_map
@@ -306,11 +306,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # support_function
     @test_throws DimensionMismatch ρ(N[1], U)
     v = @inferred ρ(N[-1, 2], U)
-    @test v isa N && v == N(Inf)
+    @test v === N(Inf)
     v = @inferred ρ(N[2, 0], U)
-    @test v isa N && v == N(Inf)
+    @test v === N(Inf)
     v = @inferred ρ(N[0, 0], U)
-    @test v isa N && v == N(0)
+    @test v === N(0)
 
     # support_vector
     @test_throws DimensionMismatch σ(N[1], U)
@@ -359,15 +359,15 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch distance(U, U3)
     @test_throws ArgumentError distance(U, U; p=N(1 // 2))
     v = @inferred distance(U, U)
-    @test v isa N && v == N(0)
+    @test v === N(0)
     for X in (B, Z)
         v = @inferred distance(U, X)
-        @test v isa N && v == N(0)
+        @test v === N(0)
         v = @inferred distance(X, U)
-        @test v isa N && v == N(0)
+        @test v === N(0)
     end
     for v in ((@inferred distance(U, Pe)), @inferred distance(Pe, U))
-        @test v isa N && v == N(Inf)
+        @test v === N(Inf)
     end
 
     # exact_sum
