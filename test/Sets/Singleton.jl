@@ -432,12 +432,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # difference
     @test_throws DimensionMismatch difference(S, S3)
-    # full set
-    X = difference(S, Singleton(N[1, 2]))
-    @test isequivalent(X, S)
-    # empty set
-    X = difference(S, S)
-    @test isequivalent(X, EmptySet{N}(2))
+    @static if isdefined(@__MODULE__, :IntervalBoxes)
+        # full set
+        X = difference(S, Singleton(N[1, 2]))
+        @test isequivalent(X, S)
+        # empty set
+        X = difference(S, S)
+        @test isequivalent(X, EmptySet{N}(2))
+    end
 
     # distance (between two sets)
     @test_throws DimensionMismatch distance(S, S3)
