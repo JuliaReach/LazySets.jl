@@ -623,9 +623,9 @@ for N in [Float64]
         # radius / diameter in 1D
         P = VPolytope(vertices_list(BallInf(N[0], N(1))))
         res = radius(P, 2)
-        @test res isa N && res == N(1)
+        @test res === N(1)
         res = diameter(P, 2)
-        @test res isa N && res == N(2)
+        @test res === N(2)
 
         # intersection
         p1 = VPolytope(vertices_list(BallInf(N[0, 0], N(1))))

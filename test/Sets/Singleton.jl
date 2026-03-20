@@ -54,9 +54,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # area
     @test_throws DimensionMismatch area(S1)
     res = area(S)
-    @test res isa N && res == N(0)
+    @test res === N(0)
     res = area(S3)
-    @test res isa N && res == N(0)
+    @test res === N(0)
 
     # center
     c = center(S)
@@ -64,7 +64,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # chebyshev_center_radius
     c, r = chebyshev_center_radius(S)
-    @test c isa Vector{N} && c == e && r isa N && r == N(0)
+    @test c isa Vector{N} && c == e && r === N(0)
 
     # complement
     X = complement(S)
@@ -100,7 +100,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError diameter(S, N(1 // 2))
     for res in (diameter(S), diameter(S, Inf), diameter(S, 2))
         if N <: AbstractFloat
-            @test res isa N && res == N(0)
+            @test res === N(0)
         else
             @test res == 0.0
         end
@@ -140,7 +140,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{N} && res == e
     @test_throws DimensionMismatch high(S, 3)
     res = high(S, 1)
-    @test res isa N && res == e[1]
+    @test res === e[1]
 
     # isbounded
     @test isbounded(S)
@@ -190,7 +190,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{N} && res == e
     @test_throws DimensionMismatch low(S, 3)
     res = low(S, 1)
-    @test res isa N && res == e[1]
+    @test res === e[1]
 
     # ngens
     @test ngens(S) == 0
@@ -199,7 +199,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError norm(S, N(1 // 2))
     for res in (norm(S), norm(S, Inf))
         if N <: AbstractFloat
-            @test res isa N && res == N(2)
+            @test res === N(2)
         else
             @test res == 2.0
         end
@@ -214,7 +214,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError radius(S, N(1 // 2))
     for res in (radius(S), radius(S, Inf), radius(S, 2))
         if N <: AbstractFloat
-            @test res isa N && res == N(0)
+            @test res === N(0)
         else
             @test res == 0.0
         end
@@ -225,7 +225,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa AbstractVector{N} && res == N[0, 0]
     @test_throws DimensionMismatch radius_hyperrectangle(S, 3)
     res = radius_hyperrectangle(S, 1)
-    @test res isa N && res == N(0)
+    @test res === N(0)
 
     # rectify
     S2 = rectify(S)
@@ -270,9 +270,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # volume
     res = volume(S)
-    @test res isa N && res == N(0)
+    @test res === N(0)
     res = volume(S3)
-    @test res isa N && res == N(0)
+    @test res === N(0)
 
     # affine_map
     @test_throws DimensionMismatch affine_map(ones(N, 2, 1), S, N[1, 1])
@@ -392,9 +392,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # support_function
     @test_throws DimensionMismatch ρ(N[1], S)
     res = ρ(N[1, 1], S)
-    @test res isa N && res == N(1)
+    @test res === N(1)
     res = ρ(N[-1, -1], S)
-    @test res isa N && res == N(-1)
+    @test res === N(-1)
 
     # support_vector
     @test_throws DimensionMismatch σ(N[1], S)
@@ -444,7 +444,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError distance(S, S; p=N(1 // 2))
     res = distance(S, S)
     if N <: AbstractFloat
-        @test res isa N && res == N(0)
+        @test res === N(0)
     else
         @test res isa Float64 && res == 0.0
     end

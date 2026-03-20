@@ -51,12 +51,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{N} && res == N[4]
     @test_throws DimensionMismatch high(Z1, 2)
     res = high(Z1, 1)
-    @test res isa N && res == N(4)
+    @test res === N(4)
     res = low(Z1)
     @test res isa Vector{N} && res == N[-2]
     @test_throws DimensionMismatch low(Z1, 2)
     res = low(Z1, 1)
-    @test res isa N && res == N(-2)
+    @test res === N(-2)
 
     # cartesian_product
     c2 = [N(3), N(4)]

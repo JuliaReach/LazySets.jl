@@ -137,7 +137,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     else
         res = area(Z)
     end
-    @test res isa N && res == N(8)
+    @test res === N(8)
     if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :GeometryBasics)
         if N <: AbstractFloat && VERSION >= v"1.11"
             res = @inferred area(Z3)
@@ -155,7 +155,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test c2 isa AbstractVector{N} && c2 == c
     @test_throws DimensionMismatch center(Z, 3)
     v = @inferred center(Z, 1)
-    @test v isa N && v == N(1)
+    @test v === N(1)
 
     # complement
     if isdefined(@__MODULE__, :Polyhedra) || N <: AbstractFloat
@@ -251,14 +251,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError diameter(Z, N(1 // 2))
     if N <: AbstractFloat
         for res in ((@inferred diameter(Z)), @inferred diameter(Z, Inf))
-            @test res isa N && res == N(12)
+            @test res === N(12)
         end
         res = @inferred diameter(Z, 2)
-        @test res isa N && res == N(14.422205101855956)
+        @test res === N(14.422205101855956)
     else
         @test_broken @inferred diameter(Z)  # TODO make this type-stable
         for res in (diameter(Z), diameter(Z, Inf))
-            @test res isa N && res == N(12)
+            @test res === N(12)
         end
     end
 
@@ -294,7 +294,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{N} && res == N[5, 8]
     @test_throws DimensionMismatch high(Z, 3)
     res = @inferred high(Z, 1)
-    @test res isa N && res == N(5)
+    @test res === N(5)
 
     # isbounded
     @test @inferred isbounded(Z)
@@ -343,7 +343,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res isa Vector{N} && res == N[-3, -4]
     @test_throws DimensionMismatch low(Z, 3)
     res = @inferred low(Z, 1)
-    @test res isa N && res == N(-3)
+    @test res === N(-3)
 
     # ngens
     @test (@inferred ngens(Z)) == 2
@@ -354,13 +354,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError norm(Z, N(1 // 2))
     if N == Float64 || VERSION < v"1.11"
         res = @inferred norm(Z)
-        @test res isa N && res == N(8)
+        @test res === N(8)
         @static if VERSION >= v"1.11"
             res = @inferred norm(Z, Inf)
         else
             res = norm(Z, Inf)
         end
-        @test res isa N && res == N(8)
+        @test res === N(8)
         @static if VERSION >= v"1.11"
             res = @inferred norm(Z, 2)
         else
@@ -368,12 +368,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
         end
     elseif N == Float32
         for res in ((@inferred norm(Z)), @inferred norm(Z, Inf))
-            @test res isa N && res == N(8)
+            @test res === N(8)
         end
         res = @inferred norm(Z, 2)
     else
         for res in (norm(Z), norm(Z, Inf))
-            @test res isa N && res == N(8)
+            @test res === N(8)
         end
         res = norm(Z, 2)
     end
@@ -384,17 +384,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws ArgumentError radius(Z, N(1 // 2))
     if N <: AbstractFloat
         for res in ((@inferred radius(Z)), @inferred radius(Z, Inf))
-            @test res isa N && res == N(6)
+            @test res === N(6)
         end
     else
         @test_broken @inferred radius(Z)  # TODO make this type-stable
         for res in (radius(Z), radius(Z, Inf))
-            @test res isa N && res == N(6)
+            @test res === N(6)
         end
     end
     if N <: AbstractFloat
         res = @inferred radius(Z, 2)
-        @test res isa N && res == N(7.211102550927978)
+        @test res === N(7.211102550927978)
     end
 
     # rectify
@@ -557,7 +557,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     else
         res = volume(Z)
     end
-    @test res isa N && res == N(8)
+    @test res === N(8)
 
     # affine_map
     @test_throws DimensionMismatch affine_map(ones(N, 2, 1), Z, N[1, 1])
@@ -707,9 +707,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # support_function
     @test_throws DimensionMismatch ρ(N[1], Z)
     res = @inferred ρ(N[1, 1], Z)
-    @test res isa N && res == N(13)
+    @test res === N(13)
     res = @inferred ρ(N[-1, -1], Z)
-    @test res isa N && res == N(7)
+    @test res === N(7)
 
     # support_vector
     @test_throws DimensionMismatch σ(N[1], Z)
@@ -972,7 +972,7 @@ for N in @tN([Float64, Rational{Int}])
         else
             res = volume(Z3)
         end
-        @test res isa N && res == N(48)
+        @test res === N(48)
     end
 end
 
@@ -987,6 +987,6 @@ for N in [Float64]
             c, r = chebyshev_center_radius(Z3)
         end
         @test c isa Vector{N} && c == Z3.center
-        @test r isa N && r == N(1)
+        @test r === N(1)
     end
 end
