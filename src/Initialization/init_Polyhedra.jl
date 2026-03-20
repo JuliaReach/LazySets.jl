@@ -53,5 +53,3 @@ end
 
 eval(load_polyhedra_mesh())
 eval(load_Polyhedra_polyhedron())
-
-include("init_GeometryBasics.jl")
