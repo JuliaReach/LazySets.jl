@@ -47,6 +47,7 @@ Undocumented implementations:
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
+* [`==`](@ref ==(::LazySet, ::LazySet))
 
 ```@meta
 CurrentModule = LazySets.MatrixZonotopeModule
