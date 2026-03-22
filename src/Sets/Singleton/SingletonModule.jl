@@ -9,6 +9,7 @@ using ReachabilityBase.Distribution: reseed!
 @reexport import ..API: isoperationtype, rand, rectify, linear_map, permute,
                         project, scale, scale!, translate!
 @reexport import ..LazySets: element, singleton_list
+import Base: copy
 @reexport using ..API
 
 export Singleton
@@ -26,5 +27,7 @@ include("translate.jl")
 
 include("element.jl")
 include("singleton_list.jl")
+
+include("copy.jl")
 
 end  # module

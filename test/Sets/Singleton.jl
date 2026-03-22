@@ -93,8 +93,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(S, S2)
 
     # copy
-    @test_broken @inferred copy(S)  # TODO make this type-stable
-    S2 = copy(S)
+    S2 = @inferred copy(S)
     @test isidentical(S, S2)
 
     # diameter
@@ -280,11 +279,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # affine_map
     @test_throws DimensionMismatch affine_map(ones(N, 2, 1), S, N[1, 1])
     @test_throws DimensionMismatch affine_map(ones(N, 2, 2), S, N[1])
-    @test_broken @inferred affine_map(ones(N, 1, 2), S, N[1])  # TODO make this type-stable
-    S2 = affine_map(ones(N, 1, 2), S, N[1])
+    S2 = @inferred affine_map(ones(N, 1, 2), S, N[1])
     @test isidentical(S2, Singleton(N[2]))
-    @test_broken @inferred affine_map(ones(N, 3, 2), S, N[1, 2, 3])  # TODO make this type-stable
-    S2 = affine_map(ones(N, 3, 2), S, N[1, 2, 3])
+    S2 = @inferred affine_map(ones(N, 3, 2), S, N[1, 2, 3])
     @test isidentical(S2, Singleton(N[2, 3, 4]))
 
     # distance (between point and set)
@@ -412,8 +409,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # translate
     @test_throws DimensionMismatch translate(S, N[1])
-    @test_broken @inferred translate(S, N[1, 2])  # TODO make this type-stable
-    S2 = translate(S, N[1, 2])
+    S2 = @inferred translate(S, N[1, 2])
     @test isidentical(S2, Singleton(N[3, 1]))
     # translate!
     @test_throws DimensionMismatch translate!(S, N[1])
@@ -588,16 +584,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
     X = minkowski_difference(S, Hyperrectangle(N[2, -1], N[1, 1]))
     @test X isa EmptySet{N} && X == EmptySet{N}(2)
     # equivalent sets: only the origin remains
-    @test_broken @inferred minkowski_difference(S, S)  # TODO make this type-stable
-    S2 = minkowski_difference(S, S)
+    S2 = @inferred minkowski_difference(S, S)
     @test isidentical(S2, Singleton(N[0, 0]))
     for X in ((@inferred minkowski_difference(S, P)), @inferred minkowski_difference(P, S))
         vlist = vertices_list(X)
         @test length(vlist) == 1 && iszero(vlist)
     end
     # nonempty difference
-    @test_broken @inferred minkowski_difference(S, Singleton(N[3, 1]))  # TODO make this type-stable
-    S2 = minkowski_difference(S, Singleton(N[3, 1]))
+    S2 = @inferred minkowski_difference(S, Singleton(N[3, 1]))
     @test isidentical(S2, Singleton(N[-1, -2]))
 
     # minkowski_sum
