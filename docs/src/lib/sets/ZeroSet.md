@@ -33,7 +33,7 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 
-* `copy(::Type{ZeroSet})`
+* `copy(::ZeroSet)`
 * [`dim`](@ref dim(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
 * [`rectify`](@ref rectify(::LazySet))

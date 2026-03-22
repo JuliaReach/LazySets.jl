@@ -65,6 +65,7 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 
+* `copy(::Zonotope)`
 * [`center`](@ref center(::LazySet))
 * [`high`](@ref high(::LazySet, ::Int))
 * [`isoperationtype`](@ref isoperationtype(::Type{LazySet}))
@@ -109,7 +110,6 @@ Inherited from [`LazySet`](@ref):
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
-* `copy(::Type{LazySet})`
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`isconvex`](@ref isconvex(::LazySet))
