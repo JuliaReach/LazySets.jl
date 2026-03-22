@@ -69,6 +69,7 @@ CurrentModule = LazySets.API
 
 Undocumented implementations:
 
+* [`area`](@ref area(::LazySet))
 * [`center`](@ref center(::LazySet))
 * [`center`](@ref center(::LazySet, ::Int))
 ```@meta
@@ -102,6 +103,7 @@ CurrentModule = LazySets.API
 ```
 * [`vertices`](@ref vertices(::LazySet))
 * [`vertices_list`](@ref vertices_list(::LazySet))
+* [`volume`](@ref volume(::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`distance`](@ref distance(::LazySet, ::LazySet; ::Real=2.0))
@@ -171,14 +173,12 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`area`](@ref area(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
 * [`isflat`](@ref isflat(::AbstractHyperrectangle))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real=Inf))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real=Inf))
 * [`rectify`](@ref rectify(::AbstractHyperrectangle))
-* [`volume`](@ref volume(::AbstractHyperrectangle))
 * [`distance`](@ref distance(::AbstractVector, ::AbstractHyperrectangle; ::Real=2.0))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::AbstractHyperrectangle))
 * [`difference`](@ref difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))

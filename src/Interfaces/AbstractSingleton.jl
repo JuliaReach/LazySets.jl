@@ -227,3 +227,13 @@ function _constraints_list_singleton_Vector(e::AbstractVector{N}) where {N}
     @inbounds clist[end] = HalfSpace(fill(-one(N), n), -sum(e))  # ∑_i x_i ≥ ∑_i e_i
     return clist
 end
+
+@validate function area(S::AbstractSingleton)
+    N = eltype(S)
+    return zero(N)
+end
+
+function volume(S::AbstractSingleton)
+    N = eltype(S)
+    return zero(N)
+end
