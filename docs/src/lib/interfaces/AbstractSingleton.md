@@ -80,6 +80,8 @@ CurrentModule = LazySets
 CurrentModule = LazySets.API
 ```
 * [`constraints_list`](@ref constraints_list(::LazySet))
+* [`extrema`](@ref extrema(::LazySet))
+* [`extrema`](@ref extrema(::LazySet, ::Int))
 ```@meta
 CurrentModule = LazySets
 ```
@@ -180,8 +182,6 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`extrema`](@ref extrema(::AbstractHyperrectangle))
-* [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
 * [`isflat`](@ref isflat(::AbstractHyperrectangle))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real=Inf))
 * [`rectify`](@ref rectify(::AbstractHyperrectangle))

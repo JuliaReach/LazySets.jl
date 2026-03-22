@@ -123,8 +123,6 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`extrema`](@ref extrema(::AbstractHyperrectangle))
-* [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
 * [`isflat`](@ref isflat(::AbstractHyperrectangle))
 * [`isflat`](@ref isflat(::AbstractHyperrectangle, ::Int))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
@@ -136,6 +134,8 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`center`](@ref center(::AbstractSingleton, ::Int))
 * [`chebyshev_center_radius`](@ref chebyshev_center_radius(::AbstractSingleton))
 * [`constraints_list`](@ref constraints_list(::AbstractSingleton))
+* [`extrema`](@ref extrema(::AbstractSingleton))
+* [`extrema`](@ref extrema(::AbstractSingleton, ::Int))
 * [`generators`](@ref generators(::AbstractSingleton))
 * [`genmat`](@ref genmat(::AbstractSingleton))
 * [`high`](@ref high(::AbstractSingleton))

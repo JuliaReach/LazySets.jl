@@ -242,3 +242,13 @@ end
     N = eltype(S)
     return zero(N)
 end
+
+function extrema(S::AbstractSingleton)
+    e = element(S)
+    return (e, e)
+end
+
+@validate function extrema(S::AbstractSingleton, i::Int)
+    ei = element(S)[i]
+    return (ei, ei)
+end
