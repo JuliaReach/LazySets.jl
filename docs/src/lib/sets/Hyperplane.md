@@ -149,7 +149,7 @@ Inherited from [`LazySet`](@ref):
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
-* `copy(::Type{LazySet})`
+* `copy(::LazySet)`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`isboundedtype`](@ref isboundedtype(::Type{LazySet}))

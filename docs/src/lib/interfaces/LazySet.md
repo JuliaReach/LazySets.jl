@@ -123,7 +123,7 @@ CurrentModule = LazySets
 ```@docs
 convex_hull(::LazySet; kwargs...)
 ```
-`copy(::Type{LazySet})`
+`copy(::LazySet)`
 ```@docs
 triangulate(X::LazySet; ::String="delaunay")
 ```

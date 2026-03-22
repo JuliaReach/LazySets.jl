@@ -90,7 +90,7 @@ Inherited from [`LazySet`](@ref):
 * [`chebyshev_center_radius`](@ref chebyshev_center_radius(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet))
-* `copy(::Type{LazySet})`
+* `copy(::LazySet)`
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`high`](@ref high(::LazySet))

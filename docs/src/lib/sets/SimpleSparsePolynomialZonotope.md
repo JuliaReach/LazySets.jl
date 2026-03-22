@@ -129,7 +129,7 @@ Inherited from [`LazySet`](@ref):
 * [`complement`](@ref complement(::LazySet))
 * [`concretize`](@ref concretize(::LazySet))
 * [`constraints`](@ref constraints(::LazySet))
-* `copy(::Type{LazySet})`
+* `copy(::LazySet)`
 * [`diameter`](@ref diameter(::LazySet, ::Real=Inf))
 * [`eltype`](@ref eltype(::Type{<:LazySet}))
 * [`extrema`](@ref extrema(::LazySet, ::Int))
