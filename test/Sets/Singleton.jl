@@ -99,11 +99,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # diameter
     @test_throws ArgumentError diameter(S, N(1 // 2))
     for res in ((@inferred diameter(S)), (@inferred diameter(S, Inf)), @inferred diameter(S, 2))
-        if N <: AbstractFloat
-            @test res === N(0)
-        else
-            @test res == 0.0
-        end
+        @test res === N(0)
     end
 
     # dim
@@ -215,11 +211,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # radius
     @test_throws ArgumentError radius(S, N(1 // 2))
     for res in ((@inferred radius(S)), (@inferred radius(S, Inf)), @inferred radius(S, 2))
-        if N <: AbstractFloat
-            @test res === N(0)
-        else
-            @test res == 0.0
-        end
+        @test res === N(0)
     end
 
     # radius_hyperrectangle

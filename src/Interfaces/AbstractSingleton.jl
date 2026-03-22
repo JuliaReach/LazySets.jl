@@ -237,3 +237,8 @@ function volume(S::AbstractSingleton)
     N = eltype(S)
     return zero(N)
 end
+
+@validate function radius(S::AbstractSingleton, p::Real=Inf)
+    N = eltype(S)
+    return zero(N)
+end
