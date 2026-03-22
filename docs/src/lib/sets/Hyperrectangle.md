@@ -142,6 +142,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`high`](@ref high(::AbstractHyperrectangle))
 * [`high`](@ref high(::AbstractHyperrectangle, ::Int))
 * [`isflat`](@ref isflat(::Hyperrectangle))
+* [`isflat`](@ref isflat(::AbstractHyperrectangle, ::Int))
 * [`low`](@ref low(::AbstractHyperrectangle))
 * [`low`](@ref low(::AbstractHyperrectangle, ::Int))
 * [`ngens`](@ref ngens(::AbstractHyperrectangle))

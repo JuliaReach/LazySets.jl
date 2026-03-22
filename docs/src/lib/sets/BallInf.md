@@ -177,6 +177,7 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
 * [`generators`](@ref generators(::AbstractHyperrectangle))
 * [`genmat`](@ref genmat(::AbstractHyperrectangle))
+* [`isflat`](@ref isflat(::AbstractHyperrectangle, ::Int))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`rectify`](@ref rectify(::AbstractHyperrectangle))
 * [`vertices_list`](@ref vertices_list(::AbstractHyperrectangle))
