@@ -128,7 +128,6 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`isflat`](@ref isflat(::AbstractHyperrectangle))
 * [`isflat`](@ref isflat(::AbstractHyperrectangle, ::Int))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
-* [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
 * [`difference`](@ref difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 
 Inherited from [`AbstractSingleton`](@ref):
@@ -144,6 +143,7 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`low`](@ref low(::AbstractSingleton))
 * [`low`](@ref low(::AbstractSingleton, ::Int))
 * [`ngens`](@ref ngens(::AbstractSingleton))
+* [`radius`](@ref radius(::AbstractSingleton, ::Real))
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton))
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton, ::Int))
 * [`reflect`](@ref reflect(::AbstractSingleton))
