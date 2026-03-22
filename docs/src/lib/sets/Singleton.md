@@ -123,17 +123,16 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`area`](@ref area(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle))
 * [`extrema`](@ref extrema(::AbstractHyperrectangle, ::Int))
 * [`isflat`](@ref isflat(::AbstractHyperrectangle))
 * [`isflat`](@ref isflat(::AbstractHyperrectangle, ::Int))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`radius`](@ref radius(::AbstractHyperrectangle, ::Real))
-* [`volume`](@ref volume(::AbstractHyperrectangle))
 * [`difference`](@ref difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 
 Inherited from [`AbstractSingleton`](@ref):
+* [`area`](@ref area(::AbstractSingleton))
 * [`center`](@ref center(::AbstractSingleton))
 * [`center`](@ref center(::AbstractSingleton, ::Int))
 * [`chebyshev_center_radius`](@ref chebyshev_center_radius(::AbstractSingleton))
@@ -150,6 +149,7 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`reflect`](@ref reflect(::AbstractSingleton))
 * [`vertices`](@ref vertices(::AbstractSingleton))
 * [`vertices_list`](@ref vertices_list(::AbstractSingleton))
+* [`volume`](@ref volume(::AbstractSingleton))
 * [`in`](@ref in(::AbstractVector, ::AbstractSingleton))
 * [`ρ`](@ref σ(::AbstractVector, ::AbstractSingleton))
 * [`σ`](@ref σ(::AbstractVector, ::AbstractSingleton))
