@@ -30,7 +30,7 @@ Return the i-th entry of the element of a zero set.
 
 The i-th entry of the element of the zero set, i.e., 0.
 """
-function element(Z::ZeroSet, ::Int)
+@validate function element(Z::ZeroSet, i::Int)
     N = eltype(Z)
     return zero(N)
 end

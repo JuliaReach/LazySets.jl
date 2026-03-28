@@ -108,6 +108,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # element
     @test (@inferred element(S)) == e
+    @test_throws DimensionMismatch element(S, 0)
+    @test_throws DimensionMismatch element(S, 3)
     for i in 1:2
         @test (@inferred element(S, i)) == e[i]
     end
