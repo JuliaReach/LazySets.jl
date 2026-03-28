@@ -26,8 +26,8 @@ end
 
 function validate_index(i::Int, X::LazySet; fun::Function)
     if i < 1 || i > dim(X)
-        throw(DimensionMismatch("`$(string(fun))` requires an index for " *
-                                "dimension $(dim(X)) but received $i"))
+        throw(DimensionMismatch("`$(string(fun))` requires an index in " *
+                                "1:$(dim(X)) but received $i"))
     end
     return true
 end
