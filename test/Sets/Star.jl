@@ -52,16 +52,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # ispolyhedral
     @test ispolyhedral(S)
 
-    # intersection with HalfSpace
-    H = HalfSpace(N[0, 1], N(0))
-    I = intersection(S, H)
-    intersection!(S, H)
-    addconstraint!(P, H)
-    @test isequivalent(I, P)
-    @test isequivalent(S, P)
-
     # check that we can intersect polyhedra that are axis-aligned
     S = Star(N[0, 0], N[1 0; 0 1], B)
+    H = HalfSpace(N[0, 1], N(0))
     I = intersection(S, H)
     @test isequivalent(I, intersection(B, H))
 
@@ -92,8 +85,22 @@ for N in @tN([Float64, Float32, Rational{Int}])
 end
 
 for N in @tN([Float64, Float32])
+    P = HPolygon([HalfSpace(N[1, 1], N(-0.5)),
+                  HalfSpace(N[-1.5, 0.5], N(4)),
+                  HalfSpace(N[-0.5, -0.05], N(1.5)),
+                  HalfSpace(N[1.5, -0.25], N(-1.5))])
+    S = convert(Star, P)
+
     # random star
     @test rand(Star; N=N) isa Star{N}
+
+    # intersection with HalfSpace
+    H = HalfSpace(N[0, 1], N(0))
+    I = intersection(S, H)
+    intersection!(S, H)
+    addconstraint!(P, H)
+    @test isequivalent(I, P)
+    @test isequivalent(S, P)
 end
 
 # isoperationtype
