@@ -37,6 +37,11 @@ function validate_diameter(p::Real)
 end
 push!(VALIDATE_DICT, :diameter => (validate_diameter, args2))
 
+function validate_element(X::LazySet, i::Int)
+    return validate_index(i, X; fun=element)
+end
+push!(VALIDATE_DICT, :element => (validate_element, args12))
+
 function validate_extrema(X::LazySet, i::Int)
     return validate_index(i, X; fun=extrema)
 end

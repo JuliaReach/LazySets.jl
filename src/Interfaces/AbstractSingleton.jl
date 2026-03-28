@@ -57,7 +57,7 @@ Return the i-th entry of the element of a set with a single value.
 
 The i-th entry of the element.
 """
-function element(S::AbstractSingleton, i::Int)
+@validate function element(S::AbstractSingleton, i::Int)
     return element(S)[i]
 end
 
