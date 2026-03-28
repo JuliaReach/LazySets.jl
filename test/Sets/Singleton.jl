@@ -332,8 +332,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     X = LazySets.linear_map_inverse(M, S)
     A, b = tosimplehrep(S)
     Y = HPolytope(A * M, b)
-    @test X isa LazySet{N}
-    @test_broken isequivalent(X, Y)  # TODO this should work
+    @test X isa LazySet{N} && isempty(X) && isempty(Y)
+    @test isequivalent(X, Y)
 
     # permute
     @test_throws DimensionMismatch permute(S, [1])

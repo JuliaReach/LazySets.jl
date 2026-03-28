@@ -27,6 +27,11 @@ true
     if X ≈ Y
         return true
     end
+    if isempty(X)
+        return isempty(Y)
+    elseif isempty(Y)
+        return false
+    end
     return _isequivalent_inclusion(X, Y)
 end
 

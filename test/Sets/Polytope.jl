@@ -785,6 +785,11 @@ for N in [Float64]
             @test ispermutation(vertices_list(overapproximate(Projection(X, [1, 2]), 1e-3)), v12)
         end
     end
+
+    E = EmptySet{N}(2)
+    P = convert(HPolytope, E)
+    Q = convert(HPolyhedron, E)
+    @test isequivalent(P, Q) && isequivalent(Q, P)
 end
 
 @test !isoperationtype(HPolytope)
