@@ -6,7 +6,7 @@ end
 
 @validate function intersection(S1::AbstractSingleton, S2::AbstractSingleton)
     N = promote_type(eltype(S1), eltype(S1))
-    return _isapprox(element(S1), element(S2)) ? S1 : EmptySet{N}(dim(S1))
+    return isequivalent(S1, S2) ? S1 : EmptySet{N}(dim(S1))
 end
 
 @validate_commutative function intersection(S::AbstractSingleton, H::AbstractHyperrectangle)
