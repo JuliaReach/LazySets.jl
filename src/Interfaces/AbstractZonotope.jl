@@ -1325,10 +1325,15 @@ function affine_map_inverse(A::AbstractMatrix, Z::AbstractZonotope, b::AbstractV
     return _affine_map_inverse_zonotope(A, Z, b)
 end
 
-# Z = {y = c + GB}
-# A(c₀ + G₀B) + b = c + GB
-# if A is invertible:
-# <=>  c₀ = A⁻¹(c - b) ∧ G₀ = A⁻¹G
+# let Z = {y = c + GB}
+# after applying the affine map Ax + b, we should get Z:
+# A(c₀ + G₀B₀) + b = c + GB
+# separating into vector and matrix parts, we get:
+# <=> Ac₀ = c - b /\ AG₀B = GB
+# we may assume that B₀ = B (i.e., the number of generators is equal) (by adding zero generators):
+# <=> Ac₀ = c - b /\ AG₀ = G
+# now assume that A is invertible:
+# <=> c₀ = A⁻¹(c - b) ∧ G₀ = A⁻¹G
 function _affine_map_inverse_zonotope(A::AbstractMatrix, Z::AbstractZonotope,
                                       b::Union{AbstractVector,Nothing}=nothing)
     if !isinvertible(A)
@@ -1336,10 +1341,7 @@ function _affine_map_inverse_zonotope(A::AbstractMatrix, Z::AbstractZonotope,
         return _affine_map_inverse(A, Z, b)
     end
     Ainv = inv(A)
-    c = Ainv * center(Z)
-    if !isnothing(b)
-        c .-= Ainv * b
-    end
+    c = Ainv * (isnothing(b) ? center(Z) : center(Z) - b)
     G = Ainv * genmat(Z)
     return Zonotope(c, G)
 end
