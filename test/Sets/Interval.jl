@@ -118,7 +118,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # copy
     Y = @inferred copy(X)
-    @test isidentical(Y, X)
+    @test isidentical(Y, X) && X === Y  # `Interval` copies cannot be distinguished
 
     # diameter
     @test_throws ArgumentError diameter(X, N(1 // 2))

@@ -84,7 +84,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # copy
     E2 = @inferred copy(E)
-    @test isidentical(E2, E)
+    @test isidentical(E2, E) && E === E2  # `EmptySet` copies cannot be distinguished
 
     # diameter
     @test_throws ArgumentError diameter(E, N(1 // 2))

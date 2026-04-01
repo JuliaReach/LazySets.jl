@@ -83,7 +83,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # copy
     U2 = @inferred copy(U)
-    @test isidentical(U2, U)
+    @test isidentical(U2, U) && U === U2  # `Universe` copies cannot be distinguished
 
     # diameter
     @test_throws ArgumentError diameter(U, N(1 // 2))
