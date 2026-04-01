@@ -154,6 +154,7 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`ρ`](@ref σ(::AbstractVector, ::AbstractSingleton))
 * [`σ`](@ref σ(::AbstractVector, ::AbstractSingleton))
 * [`cartesian_product`](@ref cartesian_product(::AbstractSingleton, ::AbstractSingleton))
+* [`distance`](@ref distance(::AbstractVector, ::AbstractSingleton; ::Real=2))
 * [`distance`](@ref distance(::AbstractSingleton, ::AbstractSingleton))
 * [`intersection`](@ref intersection(::AbstractSingleton, ::AbstractSingleton))
 * [`isdisjoint`](@ref isdisjoint(::AbstractSingleton, ::AbstractSingleton))
