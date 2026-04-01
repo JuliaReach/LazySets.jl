@@ -149,7 +149,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # copy
     H2 = @inferred copy(H)
-    @test isidentical(H, H2)
+    @test isidentical(H, H2) && H !== H2 && H.center !== H2.center && H.radius !== H2.radius
 
     # diameter
     @test_throws ArgumentError diameter(H, N(1 // 2))

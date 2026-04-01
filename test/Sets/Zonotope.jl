@@ -245,7 +245,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # copy
     Z2 = @inferred copy(Z)
-    @test isidentical(Z, Z2)
+    @test isidentical(Z, Z2) && Z !== Z2 && Z.center !== Z2.center && Z.generators !== Z2.generators
 
     # diameter
     @test_throws ArgumentError diameter(Z, N(1 // 2))

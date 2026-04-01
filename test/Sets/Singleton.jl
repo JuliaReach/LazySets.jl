@@ -94,7 +94,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # copy
     S2 = @inferred copy(S)
-    @test isidentical(S, S2)
+    @test isidentical(S, S2) && S !== S2 && S.element !== S2.element
 
     # diameter
     @test_throws ArgumentError diameter(S, N(1 // 2))
