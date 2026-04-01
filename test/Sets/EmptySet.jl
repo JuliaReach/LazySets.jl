@@ -165,7 +165,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # polyhedron
     @static if isdefined(@__MODULE__, :Polyhedra)
-        @test_throws MethodError polyhedron(E)  # TODO this should maybe change
+        P = polyhedron(E)
+        @test P isa Polyhedra.DefaultPolyhedron
+        if N != Float32
+            @test P isa Polyhedra.DefaultPolyhedron{N}
+        end
+        @test isempty(P)
     end
 
     # radius
