@@ -264,3 +264,7 @@ end
 @validate function norm(S::AbstractSingleton, p::Real=Inf)
     return norm(element(S), p)
 end
+
+@validate_commutative function distance(x::AbstractVector, S::AbstractSingleton; p::Real=2)
+    return distance(x, element(S); p)
+end

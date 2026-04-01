@@ -124,7 +124,8 @@ CurrentModule = LazySets.API
 * [`volume`](@ref volume(::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
-* [`distance`](@ref distance(::LazySet, ::LazySet; ::Real=2.0))
+* [`distance`](@ref distance(::AbstractVector, ::LazySet; ::Real=2))
+* [`distance`](@ref distance(::LazySet, ::LazySet; ::Real=2))
 * [`intersection`](@ref intersection(::LazySet, ::LazySet))
 * [`isdisjoint`](@ref isdisjoint(::LazySet, ::LazySet))
 * [`isequivalent`](@ref isequivalent(::LazySet, ::LazySet))
@@ -192,7 +193,6 @@ Inherited from [`AbstractZonotope`](@ref):
 
 Inherited from [`AbstractHyperrectangle`](@ref):
 * [`rectify`](@ref rectify(::AbstractHyperrectangle))
-* [`distance`](@ref distance(::AbstractVector, ::AbstractHyperrectangle; ::Real=2.0))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::AbstractHyperrectangle))
 * [`difference`](@ref difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 * [`minkowski_difference`](@ref minkowski_difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))
