@@ -123,7 +123,6 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real))
 * [`difference`](@ref difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 
 Inherited from [`AbstractSingleton`](@ref):
@@ -143,6 +142,7 @@ Inherited from [`AbstractSingleton`](@ref):
 * [`low`](@ref low(::AbstractSingleton))
 * [`low`](@ref low(::AbstractSingleton, ::Int))
 * [`ngens`](@ref ngens(::AbstractSingleton))
+* [`norm`](@ref norm(::AbstractSingleton, ::Real))
 * [`radius`](@ref radius(::AbstractSingleton, ::Real))
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton))
 * [`radius_hyperrectangle`](@ref radius_hyperrectangle(::AbstractSingleton, ::Int))

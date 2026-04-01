@@ -260,3 +260,7 @@ end
 function isflat(::AbstractSingleton, ::Int)
     return true
 end
+
+@validate function norm(S::AbstractSingleton, p::Real=Inf)
+    return norm(element(S), p)
+end

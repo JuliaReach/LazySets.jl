@@ -109,6 +109,7 @@ CurrentModule = LazySets
 ```@meta
 CurrentModule = LazySets.API
 ```
+* [`norm`](@ref norm(::LazySet, ::Real=Inf))
 * [`radius`](@ref radius(::LazySet, ::Real=Inf))
 ```@meta
 CurrentModule = LazySets
@@ -190,7 +191,6 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`norm`](@ref norm(::AbstractHyperrectangle, ::Real=Inf))
 * [`rectify`](@ref rectify(::AbstractHyperrectangle))
 * [`distance`](@ref distance(::AbstractVector, ::AbstractHyperrectangle; ::Real=2.0))
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::AbstractHyperrectangle))
