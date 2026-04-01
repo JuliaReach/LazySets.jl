@@ -252,3 +252,11 @@ end
     ei = element(S)[i]
     return (ei, ei)
 end
+
+function isflat(::AbstractSingleton)
+    return true
+end
+
+function isflat(::AbstractSingleton, ::Int)
+    return true
+end

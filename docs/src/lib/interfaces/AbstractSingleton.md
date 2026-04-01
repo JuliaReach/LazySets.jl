@@ -92,6 +92,14 @@ CurrentModule = LazySets.API
 ```
 * [`high`](@ref high(::LazySet))
 * [`high`](@ref high(::LazySet, ::Int))
+```@meta
+CurrentModule = LazySets
+```
+* [`isflat`](@ref isflat(::LazySet))
+* [`isflat`](@ref isflat(::LazySet, ::Int))
+```@meta
+CurrentModule = LazySets.API
+```
 * [`low`](@ref low(::LazySet))
 * [`low`](@ref low(::LazySet, ::Int))
 ```@meta
@@ -182,7 +190,6 @@ Inherited from [`AbstractZonotope`](@ref):
 * [`split`](@ref split(::AbstractZonotope, ::AbstractVector{Int}, ::AbstractVector{Int}))
 
 Inherited from [`AbstractHyperrectangle`](@ref):
-* [`isflat`](@ref isflat(::AbstractHyperrectangle))
 * [`norm`](@ref norm(::AbstractHyperrectangle, ::Real=Inf))
 * [`rectify`](@ref rectify(::AbstractHyperrectangle))
 * [`distance`](@ref distance(::AbstractVector, ::AbstractHyperrectangle; ::Real=2.0))
