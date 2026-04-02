@@ -80,12 +80,12 @@ for N in @tN([Float64, Float32])
         @static if isdefined(@__MODULE__, :ExponentialUtilities) || isdefined(@__MODULE__, :Expokit)
             mzexp = MatrixZonotopeExp(MZ)
             em = ExponentialMap(mzexp, P)
-            MPex = overapproximate(em, SparsePolynomialZonotope, 2)
+            MPex = overapproximate(em, SparsePolynomialZonotope, 4)
             MZex = overapproximate(MPex, Zonotope)
 
             Z = overapproximate(convert(SimpleSparsePolynomialZonotope, P), Zonotope)
             em_z = ExponentialMap(mzexp, Z)
-            Zex = overapproximate(em_z, Zonotope, 5)
+            Zex = overapproximate(em_z, Zonotope, 4)
 
             @test MZex ⊆ Zex
         end
