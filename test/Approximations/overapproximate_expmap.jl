@@ -28,7 +28,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
 end
 
-for N in @tN([Float32, Float64])
+for N in @tN([Float64, Float32])
     P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], hcat(N[0, 1]), [2 1; 0 1; 1 0], [1, 3, 5])
     M = N[1 1; -1 1]
 

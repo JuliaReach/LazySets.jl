@@ -84,7 +84,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
               (n == 1 ? 2 : 2^n + 2 * n)
 
         # polar directions
-        if n == 2 && N in [Float32, Float64]
+        if n == 2 && N in [Float64, Float32]
             dir = PolarDirections{N}(2)
             @test !isbounding(dir)
             @test length(dir) == 2
@@ -99,7 +99,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         end
 
         # spherical directions
-        if n == 3 && N in [Float32, Float64]
+        if n == 3 && N in [Float64, Float32]
             dir = SphericalDirections{N}(2, 2)
             @test !isbounding(dir)
             dir = SphericalDirections{N}(5, 5)
