@@ -240,7 +240,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isflat
     @test !(@inferred isflat(H))
     @test @inferred isflat(H0)
-    @test @inferred isflat(Hyperrectangle(N[1, 2], N[1, 0]))
+    H2 = Hyperrectangle(N[1, 2], N[1, 0])
+    @test @inferred isflat(H2)
+    @test_throws DimensionMismatch isflat(H, 3)
+    @test @inferred !isflat(H2, 1)
+    @test @inferred isflat(H2, 2)
 
     # isoperation
     @test !(@inferred isoperation(H))

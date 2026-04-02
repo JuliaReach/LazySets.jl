@@ -52,6 +52,11 @@ function validate_high(X::LazySet, i::Int)
 end
 push!(VALIDATE_DICT, :high => (validate_high, args12))
 
+function validate_isflat(X::LazySet, i::Int)
+    return validate_index(i, X; fun=isflat)
+end
+push!(VALIDATE_DICT, :isflat => (validate_isflat, args12))
+
 function validate_low(X::LazySet, i::Int)
     return validate_index(i, X; fun=low)
 end

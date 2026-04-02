@@ -18,5 +18,13 @@ the result of `isapproxzero` when applied to the diameter of the interval.
 In other words, this function depends on the absolute zero tolerance `ABSZTOL`.
 """
 function isflat(X::Interval)
+    return _isflat(X)
+end
+
+@validate function isflat(X::Interval, i::Int)
+    return _isflat(X)
+end
+
+function _isflat(X::Interval)
     return isapproxzero(IA.diam(X.dat))
 end
