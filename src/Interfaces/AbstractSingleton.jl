@@ -257,7 +257,7 @@ function isflat(::AbstractSingleton)
     return true
 end
 
-function isflat(::AbstractSingleton, ::Int)
+@validate function isflat(S::AbstractSingleton, i::Int)
     return true
 end
 

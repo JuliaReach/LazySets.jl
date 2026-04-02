@@ -181,6 +181,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     ztol = _ztol(N)  # default absolute zero tolerance
     @test @inferred isflat(Interval(N(0), ztol))
     @test !(@inferred isflat(Interval(N(0), 2 * ztol + N(1 // 100))))
+    @test_throws DimensionMismatch isflat(X, 2)
+    @test @inferred !isflat(X, 1)
 
     # isoperation
     @test !(@inferred isoperation(X))

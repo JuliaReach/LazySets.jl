@@ -160,6 +160,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isflat
     @test @inferred isflat(S)
+    @test_throws DimensionMismatch isflat(S, 3)
+    @test @inferred isflat(S, 1)
 
     # isoperation
     @test !(@inferred isoperation(S))

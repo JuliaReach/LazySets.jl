@@ -493,7 +493,7 @@ For robustness with respect to floating-point inputs, this function relies on
 the result of `isapproxzero`.
 Hence this function depends on the absolute zero tolerance `ABSZTOL`.
 """
-function isflat(H::AbstractHyperrectangle, i::Int)
+@validate function isflat(H::AbstractHyperrectangle, i::Int)
     return isapproxzero(radius_hyperrectangle(H, i))
 end
 
