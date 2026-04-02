@@ -18,7 +18,7 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     end
 end
 
-for N in @tN([Float32, Float64, Rational{Int}])
+for N in @tN([Float64, Float32, Rational{Int}])
     #overapproximate matrix zonotope multiplication
     A = MatrixZonotope(N[1 1; -1 1], [N[1 0; 1 2]])
     B = MatrixZonotope(N[2 0; 1 -1], [N[0 1; 1 -1]])
@@ -52,7 +52,7 @@ for N in @tN([Float32, Float64, Rational{Int}])
     @test any(==(generators(A)[1] * generators(B)[3]), generators(R))
 end
 
-for N in @tN([Float32, Float64])
+for N in @tN([Float64, Float32])
     P = SparsePolynomialZonotope(N[1, -1], N[1 1; 0 -1], hcat(N[0, 1]), [2 1; 0 1; 1 0], [1, 3, 5])
     M = N[1 1; -1 1]
     @static if isdefined(@__MODULE__, :IntervalMatrices)
