@@ -68,6 +68,9 @@ function load_Symbolics_ishalfspace()
         if isdefined(Symbolics.SymbolicUtils, :Symbolic)
             using .Symbolics.SymbolicUtils: Symbolic
             const BasicSymbolic2 = Symbolic
+        elseif isdefined(Symbolics.SymbolicUtils, :BasicSymbolic)
+            using .Symbolics.SymbolicUtils: BasicSymbolic
+            const BasicSymbolic2 = BasicSymbolic
         else
             using .Symbolics: BasicSymbolic
             const BasicSymbolic2 = BasicSymbolic
