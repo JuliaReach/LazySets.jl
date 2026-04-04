@@ -677,9 +677,9 @@ for N in [Float64]
         # overapproximate the intersection of a zonotope with an axis-aligned
         # half-space by a zonotope using ICP
         G = N[1//2 1//2; 1 0]
-        for G2 in [-G]  # (G, -G)  TODO replace once ICP can redefine constraints
+        for G2 in (G, -G)
             Z = Zonotope(N[0, 2], G2)
-            for v in [N(-1)]  # (N(1), N(-1))  TODO replace once ICP can redefine constraints
+            for v in (N(1), N(-1))
                 H = HalfSpace(SingleEntryVector(1, 2, v), N(0))
                 R = overapproximate(Z ∩ H, Zonotope)
                 R_exact = intersection(Z, H)
