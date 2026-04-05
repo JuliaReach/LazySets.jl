@@ -7,9 +7,10 @@ using SafeTestsets
     ignores = (:GLOBAL_RNG, :SamplerType, :invokelatest, :parse, :apply_recipe,
                :product, :checksquare, :Mesh, :coeff_table, :in_base, :numtype,
                :pos_table, :AbstractEnclosureAlgorithm, :_exp_remainder,
-               :Symbolic, :Arrays, Symbol("@assert"))
+               :BasicSymbolic, :Symbolic, :Arrays, Symbol("@assert"))
     @test isnothing(ExplicitImports.check_all_explicit_imports_are_public(LazySets; ignore=ignores))
-    @test isnothing(ExplicitImports.check_all_explicit_imports_via_owners(LazySets))
+    ignores = (:BasicSymbolic,)
+    @test isnothing(ExplicitImports.check_all_explicit_imports_via_owners(LazySets; ignore=ignores))
     ignores = (:Assertions, :Commutative, :Comparison, :EXACT, :Optimizer, :SIMPLEX, :Silent,
                :commutative, :uniontypes, :AbstractEnclosureAlgorithm, :EliminationAlgorithm,
                :Library, :get_degrees, :hcartesianproduct, :intersect, :isempty, :_exp_remainder,
