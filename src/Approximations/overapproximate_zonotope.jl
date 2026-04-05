@@ -325,17 +325,17 @@ function load_taylormodels_overapproximation()
                              polynomial, remainder, domain,
                              normalize_taylor, linear_polynomial,
                              constant_term, evaluate, mid, get_numvars,
-                             HomogeneousPolynomial
+                             HomogeneousPolynomial, get_order
 
         @inline function get_linear_coeffs(p::Taylor1)
-            if p.order == 0
+            if get_order(p) == 0
                 return zeros(eltype(p), 1)
             end
             return linear_polynomial(p).coeffs[2:2]
         end
 
         @inline function get_linear_coeffs(p::TaylorN)
-            if p.order == 0
+            if get_order(p) == 0
                 n = get_numvars()
                 return zeros(eltype(p), n)
             end
@@ -346,7 +346,7 @@ function load_taylormodels_overapproximation()
         @inline function _nonlinear_polynomial(p::Taylor1{T}) where {T}
             pnl = deepcopy(p)
             pnl.coeffs[1] = zero(T)
-            if p.order > 0
+            if get_order(p) > 0
                 pnl.coeffs[2] = zero(T)
             end
             return pnl
@@ -355,7 +355,7 @@ function load_taylormodels_overapproximation()
         @inline function _nonlinear_polynomial(p::TaylorN{T}) where {T}
             pnl = deepcopy(p)
             pnl.coeffs[1] = HomogeneousPolynomial([zero(T)])
-            if p.order > 0
+            if get_order(p) > 0
                 pnl.coeffs[2] = HomogeneousPolynomial([zero(T)])
             end
             return pnl
