@@ -575,7 +575,7 @@ for N in [Float64]
         @test isequivalent(Z1, Zonotope(N[3, -2.5], N[0 1 1; 0.5 -1 0]))
 
         # auxiliary function to get the linear coefficients
-        t = TaylorModels.Taylor1(0) # t.order is 0
+        t = TaylorModels.Taylor1(0) # get_order(t) is 0
         @test get_linear_coeffs(t) == N[0]
         p = x₁ + 2x₂ - 3x₃
         @test get_linear_coeffs(p) == N[1, 2, -3]
