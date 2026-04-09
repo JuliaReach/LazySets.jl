@@ -653,7 +653,7 @@ end
 
     if !outside
         # point is inside
-        N = eltype(norm(x, p))  # help with type inference
+        N = eltype(norm(x, p))  # help with type inference; TODO get inferred type w/o function call
         return zero(N)
     end
 

@@ -858,7 +858,7 @@ Note that the implementation is unfinished: the circumsphere for ``m > 3``
 points is missing. Because the algorithm never requires more than ``n + 1``
 points, this method may thus crash in dimensions 3 and higher.
 """
-function overapproximate(P::LazySet, ::Type{<:Ball2})
+function overapproximate(P::LazySet{N}, ::Type{<:Ball2}) where {N<:AbstractFloat}
     @assert ispolytopic(P) "this implementation requires a polytope"
 
     return _welzl(vertices_list(P))

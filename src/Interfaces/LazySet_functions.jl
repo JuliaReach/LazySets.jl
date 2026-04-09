@@ -581,7 +581,7 @@ function _radius_Inf(X::LazySet{N}; n=dim(X)) where {N}
     return r
 end
 
-function _radius_2(X::LazySet)
+function _radius_2(X::LazySet{N}) where {N<:AbstractFloat}
     return radius(overapproximate(X, Ball2))
 end
 
