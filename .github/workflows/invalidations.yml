@@ -18,7 +18,7 @@ jobs:
       JULIA_PKG_SERVER: ''
     steps:
       - name: Set up Julia
-        uses: julia-actions/setup-julia@v2
+        uses: julia-actions/setup-julia@v3
         with:
           version: '1.11'  # broken with v1.12
       # current branch
