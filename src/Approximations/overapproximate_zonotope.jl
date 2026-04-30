@@ -517,9 +517,9 @@ function load_taylormodels_overapproximation()
         end
 
         """
-            overapproximate(vTM::Vector{TaylorModelN{N, T, S}}, ::Type{<:Zonotope};
+            overapproximate(vTM::Vector{<:TaylorModelN{N, T}}, ::Type{<:Zonotope};
                             [remove_redundant_generators]::Bool=true
-                            [normalize]::Bool=true) where {N, T, S}
+                            [normalize]::Bool=true) where {N,T}
 
 
         Overapproximate a multivariate Taylor model with a zonotope.
@@ -599,9 +599,9 @@ function load_taylormodels_overapproximation()
 
         We refer to the algorithm description for the univariate case.
         """
-        function overapproximate(vTM::Vector{TaylorModelN{N,T,S}}, ::Type{<:Zonotope};
+        function overapproximate(vTM::Vector{<:TaylorModelN{N,T}}, ::Type{<:Zonotope};
                                  remove_redundant_generators::Bool=true,
-                                 normalize::Bool=true) where {N,T,S}
+                                 normalize::Bool=true) where {N,T}
             n = N  # number of variables is get_numvars() in TaylorSeries
             return _overapproximate_vTM_zonotope(vTM, n, T;
                                                  remove_redundant_generators=remove_redundant_generators,
