@@ -229,6 +229,85 @@ for N in @tN([Float64, Float32, Rational{Int}])
                                  [1, 2, 3])
     res = overapproximate(MZ * P, SparsePolynomialZonotope)
     @test res == linear_map(MZ, P)  # test fallback
+
+    # =======================================
+    # Zonotope overapprox. of a Taylor model
+    # =======================================
+    @static if isdefined(@__MODULE__, :TaylorModels)
+        using LazySets.Approximations: get_linear_coeffs, _nonlinear_polynomial
+
+        local x₁, x₂, x₃ = TaylorModels.set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
+        Dx₁ = IA.interval(N(1.0), N(3.0))
+        Dx₂ = IA.interval(N(-1.0), N(1.0))
+        Dx₃ = IA.interval(N(-1.0), N(0.0))
+        D = [Dx₁, Dx₂, Dx₃]   # domain
+        local x0 = [IA.interval(IA.mid(di)) for di in D]
+        I = IA.interval(N(0.0), N(0.0)) # interval remainder
+        local p₁ = 1 + x₁ - x₂
+        local p₂ = x₃ - x₁
+        local vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
+        Z1 = overapproximate(vTM, Zonotope)
+        @test isequivalent(Z1, Zonotope(N[3, -2.5], N[0 1 1; 0.5 -1 0]))
+
+        # auxiliary function to get the linear coefficients
+        t = TaylorModels.Taylor1(N, 0) # get_order(t) is 0
+        @test get_linear_coeffs(t) == N[0]
+        p = x₁ + 2x₂ - 3x₃
+        @test get_linear_coeffs(p) == N[1, 2, -3]
+        y = TaylorModels.set_variables("y"; numvars=2, order=1)
+        p = zero(y[1])
+        @test get_linear_coeffs(p) == N[0, 0]
+
+        # auxiliary function to get nonlinear coefficients of TaylorN
+        x = TaylorModels.set_variables("x"; numvars=2, order=10)
+
+        p = (1 + x[1] - 2x[2])^2
+        @test get_linear_coeffs(p) == [2.0, -4.0]
+        @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1] * x[2] + 4x[2]^2
+
+        p = 1234.5 + 0 * x[1] + 0 * x[2]
+        @test get_linear_coeffs(p) == [0.0, 0.0]
+        @test iszero(_nonlinear_polynomial(p))
+
+        p = 1234.5 + 6 * x[1] + 7 * x[2]
+        @test get_linear_coeffs(p) == [6.0, 7.0]
+        @test iszero(_nonlinear_polynomial(p))
+
+        p = 1234.5 + 6 * x[1] + 7 * x[2] + 8 * x[1] * x[2]^3
+        @test get_linear_coeffs(p) == [6.0, 7.0]
+        @test _nonlinear_polynomial(p) == 8 * x[1] * x[2]^3
+
+        p = (1 + x[1] - 2x[2])^2
+        @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1] * x[2] + 4x[2]^2
+
+        x = TaylorModels.set_variables("x"; numvars=2, order=1)
+
+        p = 1234.5 + 0 * x[1] + 0 * x[2]
+        @test get_linear_coeffs(p) == [0.0, 0.0]
+        @test iszero(_nonlinear_polynomial(p))
+
+        p = 1234.5 + 6 * x[1] + 7 * x[2]
+        @test get_linear_coeffs(p) == [6.0, 7.0]
+        @test iszero(_nonlinear_polynomial(p))
+
+        # auxiliary function to get nonlinear coefficients of Taylor1
+        t = TaylorModels.Taylor1(N, 6)
+        qq = 1.0 + 2.0 * t + 3t^2 + 6t^3
+        @test _nonlinear_polynomial(qq) == 3t^2 + 6t^3
+
+        # overapproximate with non-thin interval
+        local x₁, x₂ = TaylorModels.set_variables(N, ["x₁", "x₂"]; order=5)
+        D = [IA.interval(N(0), N(1)), IA.interval(N(0), N(1))]
+        local x0 = [IA.interval(N(0)) for di in D]
+        local p₁ = -0.5889978124894689 + 1.1134797677046997 * x₁ + 0.3335653797529812 * x₂
+        local p₂ = -0.2491731179254906 + 1.7154248320430348 * x₁ - 1.4331637467176936 * x₂
+        local vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
+        Z = overapproximate(vTM, Zonotope)
+        @test isequivalent(Z,
+                           Zonotope([0.13452476123937152, -0.10804257526282007],
+                                    [0.1667826898764906 0.5567398838523498;
+                                     -0.7165818733588468 0.8577124160215174]))
+    end
 end
 
 for N in @tN([Float64, Float32])
@@ -554,85 +633,6 @@ for N in [Float64]
     d_oa = overapproximate(lm, CartesianProductArray{N,Interval{N}})
     oa = overapproximate(lm, OctDirections)
     @test oa ⊆ d_oa
-
-    # =======================================
-    # Zonotope overapprox. of a Taylor model
-    # =======================================
-    @static if isdefined(@__MODULE__, :TaylorModels)
-        using LazySets.Approximations: get_linear_coeffs, _nonlinear_polynomial
-
-        local x₁, x₂, x₃ = TaylorModels.set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
-        Dx₁ = IA.interval(N(1.0), N(3.0))
-        Dx₂ = IA.interval(N(-1.0), N(1.0))
-        Dx₃ = IA.interval(N(-1.0), N(0.0))
-        D = [Dx₁, Dx₂, Dx₃]   # domain
-        local x0 = [IA.interval(IA.mid(di)) for di in D]
-        I = IA.interval(N(0.0), N(0.0)) # interval remainder
-        local p₁ = 1 + x₁ - x₂
-        local p₂ = x₃ - x₁
-        local vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
-        Z1 = overapproximate(vTM, Zonotope)
-        @test isequivalent(Z1, Zonotope(N[3, -2.5], N[0 1 1; 0.5 -1 0]))
-
-        # auxiliary function to get the linear coefficients
-        t = TaylorModels.Taylor1(0) # get_order(t) is 0
-        @test get_linear_coeffs(t) == N[0]
-        p = x₁ + 2x₂ - 3x₃
-        @test get_linear_coeffs(p) == N[1, 2, -3]
-        y = TaylorModels.set_variables("y"; numvars=2, order=1)
-        p = zero(y[1])
-        @test get_linear_coeffs(p) == N[0, 0]
-
-        # auxiliary function to get nonlinear coefficients of TaylorN
-        x = TaylorModels.set_variables("x"; numvars=2, order=10)
-
-        p = (1 + x[1] - 2x[2])^2
-        @test get_linear_coeffs(p) == [2.0, -4.0]
-        @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1] * x[2] + 4x[2]^2
-
-        p = 1234.5 + 0 * x[1] + 0 * x[2]
-        @test get_linear_coeffs(p) == [0.0, 0.0]
-        @test iszero(_nonlinear_polynomial(p))
-
-        p = 1234.5 + 6 * x[1] + 7 * x[2]
-        @test get_linear_coeffs(p) == [6.0, 7.0]
-        @test iszero(_nonlinear_polynomial(p))
-
-        p = 1234.5 + 6 * x[1] + 7 * x[2] + 8 * x[1] * x[2]^3
-        @test get_linear_coeffs(p) == [6.0, 7.0]
-        @test _nonlinear_polynomial(p) == 8 * x[1] * x[2]^3
-
-        p = (1 + x[1] - 2x[2])^2
-        @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1] * x[2] + 4x[2]^2
-
-        x = TaylorModels.set_variables("x"; numvars=2, order=1)
-
-        p = 1234.5 + 0 * x[1] + 0 * x[2]
-        @test get_linear_coeffs(p) == [0.0, 0.0]
-        @test iszero(_nonlinear_polynomial(p))
-
-        p = 1234.5 + 6 * x[1] + 7 * x[2]
-        @test get_linear_coeffs(p) == [6.0, 7.0]
-        @test iszero(_nonlinear_polynomial(p))
-
-        # auxiliary function to get nonlinear coefficients of Taylor1
-        t = TaylorModels.Taylor1(6)
-        qq = 1.0 + 2.0 * t + 3t^2 + 6t^3
-        @test _nonlinear_polynomial(qq) == 3t^2 + 6t^3
-
-        # overapproximate with non-thin interval
-        local x₁, x₂ = TaylorModels.set_variables(N, ["x₁", "x₂"]; order=5)
-        D = [IA.interval(N(0), N(1)), IA.interval(N(0), N(1))]
-        local x0 = [IA.interval(N(0)) for di in D]
-        local p₁ = -0.5889978124894689 + 1.1134797677046997 * x₁ + 0.3335653797529812 * x₂
-        local p₂ = -0.2491731179254906 + 1.7154248320430348 * x₁ - 1.4331637467176936 * x₂
-        local vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
-        Z = overapproximate(vTM, Zonotope)
-        @test isequivalent(Z,
-                           Zonotope([0.13452476123937152, -0.10804257526282007],
-                                    [0.1667826898764906 0.5567398838523498;
-                                     -0.7165818733588468 0.8577124160215174]))
-    end
 
     # Zonotope approximation of convex hull array of zonotopes
     Z1 = Zonotope(N[3, 0], N[1 2 1; 1 1 2])
