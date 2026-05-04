@@ -10,8 +10,8 @@ for N in [Float64, Float32]
    
     # Test underapproximate/overapproximate aliases
     inner2 = underapproximate(B, VPolytope, tol)
-    @test inner2 isa VPolytope
+    @test inner2 == inner
 
     outer2 = overapproximate(B, HPolytope, tol)
-    @test outer2 isa HPolytope
+    @test outer2 == outer
 end

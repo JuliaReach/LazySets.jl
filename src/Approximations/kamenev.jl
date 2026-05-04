@@ -6,7 +6,7 @@ Compute an inner and outer polyhedral approximation of a convex set.
 ### Input
 
 - `S`       -- convex set
-- `tol`     -- error tolerance (Hausdorff distance between inner and outer approximation)
+- `tol`     -- error tolerance
 - `maxiter` -- (optional, default: `100`) maximum number of iterations
 
 ### Output
@@ -36,7 +36,7 @@ function kamenev(S::LazySet, tol; maxiter = 100)
         inner_V = VPolytope(inner_V.vertices)
         inner_H = convert(HPolytope,inner_V) # this isn't ideal. inner_H was still largely correct
 
-        outer = concretize(outer ∩ HalfSpace(worst_face.a,ρ(worst_face.a,S)))
+        outer = intersection(outer, HalfSpace(worst_face.a,ρ(worst_face.a,S)))
     end
 
     return (inner_V, outer, cur_err)
