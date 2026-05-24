@@ -490,7 +490,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # disjoint
     S2 = Singleton(N[3, 1])
     for (S2a, S2b) in ((S, S2), (S2, S))
-        if (N == Float64 && VERSION < v"1.12") || (N == Rational{Int} && VERSION < v"1.11")
+        if (N == Float64 && VERSION < v"1.12") || (N == Float32 && VERSION >= v"1.13-") ||
+           (N == Rational{Int} && VERSION < v"1.11")
             @test @inferred isdisjoint(S2a, S2b)
         else
             @test_broken @inferred isdisjoint(S2a, S2b)  # TODO make this type-stable (witness)
@@ -542,7 +543,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # issubset
     @test_throws DimensionMismatch S ⊆ S3
-    if (N == Float64 && VERSION < v"1.12") || (N == Rational{Int} && VERSION < v"1.11")
+    if (N == Float64 && VERSION < v"1.12") || (N == Float32 && VERSION >= v"1.13-") ||
+       (N == Rational{Int} && VERSION < v"1.11")
         @test @inferred S ⊆ S
     else
         @test_broken @inferred S ⊆ S  # TODO make this type-stable (witness)
@@ -551,8 +553,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_broken @inferred ⊆(S, S, true)  # TODO make this type-stable (witness)
     res, w = ⊆(S, S, true)
     @test res && w isa Vector{N} && w == N[]
-    if VERSION >= v"1.12"
-        @test_broken @inferred S ⊆ P  # TODO make this type-stable (witness)
+    @static if v"1.12" <= VERSION < v"1.13-"
+        @test_broken @inferred S ⊆ P
         @test S ⊆ P
     else
         @test @inferred S ⊆ P
