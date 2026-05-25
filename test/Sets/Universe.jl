@@ -393,8 +393,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isdisjoint
     @test_throws DimensionMismatch isdisjoint(U, U3)
-    @static if VERSION >= v"1.12"
-        @test_broken !(@inferred isdisjoint(U, U))  # TODO make this type-stable (witness)
+    @static if v"1.12" <= VERSION < v"1.13-"
+        @test_broken !(@inferred isdisjoint(U, U))
         @test !isdisjoint(U, U)
     else
         @test !(@inferred isdisjoint(U, U))
@@ -459,10 +459,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     end
     U2 = Universe{N}(1)
     X = Line(N[0], N[1])
-    @static if VERSION >= v"1.12"
-        @test_broken @inferred U2 ⊆ X  # TODO make this type-stable (witness)
+    @static if v"1.12" <= VERSION < v"1.13-"
+        @test_broken @inferred U2 ⊆ X
+        @test U2 ⊆ X
+    else
+        @inferred U2 ⊆ X
     end
-    @test U2 ⊆ X
     res, w = ⊆(U2, X, true)
     @test res && w isa Vector{N} && isempty(w)
 
