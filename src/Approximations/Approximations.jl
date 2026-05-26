@@ -13,6 +13,7 @@ export approximate,
        overapproximate,
        underapproximate,
        box_approximation_symmetric, symmetric_interval_hull,
+       kamenev,
        BoxDirections,
        DiagDirections,
        BoxDiagDirections,
@@ -58,6 +59,7 @@ include("hausdorff_distance.jl")
 include("overapproximate_norm.jl")
 include("overapproximate_expmap.jl")
 include("overapproximate_matrixzonotope.jl")
+include("kamenev.jl")
 include("init.jl")
 
 end # module
