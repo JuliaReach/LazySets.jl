@@ -18,7 +18,11 @@ function load_StaticArraysCore_genmat_Hyperrectangle()
                     gens[i, j] = ri
                 end
             end
-            return SMatrix{L,j}(view(gens, :, 1:j))
+            if j == L  # no zero radius
+                return SMatrix{L,L}(gens)
+            else
+                return SMatrix{L,j}(view(gens, :, 1:j))::SMatrix{L}
+            end
         end
 
         # this function is type stable, but it does not prune the generators

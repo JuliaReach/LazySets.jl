@@ -197,14 +197,14 @@ for N in @tN([Float64, Float32, Rational{Int}])
         using StaticArrays: SA, SMatrix
         # no flat dimension
         G1 = @inferred genmat(Hyperrectangle(sparsevec(N[3, 2]), sparsevec(N[2, 1])))
-        @test_broken @inferred genmat(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))  # TODO make this more type-stable (`SMatrix`)
+        @test_broken @inferred genmat(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))
         G2 = genmat(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))
         G3 = @inferred LazySets._genmat_static(Hyperrectangle(SA[N(3), N(2)], SA[N(2), N(1)]))
         @test G1 isa SparseMatrixCSC && G2 isa SMatrix && G3 isa SMatrix
         @test G1 == G2 == G3 == N[2 0; 0 1]
         # flat dimension
         G1 = @inferred genmat(Hyperrectangle(sparsevec(N[3, 1, 2]), sparsevec(N[2, 0, 1])))
-        @test_broken @inferred genmat(Hyperrectangle(SA[N(3), N(1), N(2)], SA[N(2), N(0), N(1)]))  # TODO make this more type-stable (`SMatrix`)
+        @test_broken @inferred genmat(Hyperrectangle(SA[N(3), N(1), N(2)], SA[N(2), N(0), N(1)]))
         G2 = genmat(Hyperrectangle(SA[N(3), N(1), N(2)], SA[N(2), N(0), N(1)]))
         G3 = @inferred LazySets._genmat_static(Hyperrectangle(SA[N(3), N(1), N(2)],
                                                               SA[N(2), N(0), N(1)]))
