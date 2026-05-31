@@ -318,7 +318,7 @@ its generators are the concatenation of the generators of `PZ` and `Z`.
 end
 
 # ZeroSet is the neutral element
-@commutative minkowski_sum(::ZeroSet, X::LazySet) = X
+@validate_commutative minkowski_sum(Z::ZeroSet, X::LazySet) = X
 
 # See [Kochdumper21a; Proposition 3.1.19](@citet).
 @validate_commutative function minkowski_sum(PZ::AbstractSparsePolynomialZonotope,
