@@ -254,20 +254,20 @@ include("Sets/Interval/IntervalModule.jl")
 # =================================
 # Types representing set operations
 # =================================
-include("LazyOperations/Bloating.jl")
-include("LazyOperations/CartesianProduct.jl")
-include("LazyOperations/CartesianProductArray.jl")
-include("LazyOperations/Complement.jl")
-include("LazyOperations/ConvexHull.jl")
-include("LazyOperations/ConvexHullArray.jl")
-include("LazyOperations/ExactSum.jl")
-include("LazyOperations/ExponentialMap.jl")
-include("LazyOperations/ExponentialProjectionMap.jl")
-include("LazyOperations/Intersection.jl")
-include("LazyOperations/IntersectionArray.jl")
-include("LazyOperations/LinearMap.jl")
-include("LazyOperations/InverseLinearMap.jl")
-include("LazyOperations/AffineMap.jl")  # must come after LinearMap
+include("LazyOperations/Bloating/Bloating.jl")
+include("LazyOperations/CartesianProduct/CartesianProduct.jl")
+include("LazyOperations/CartesianProductArray/CartesianProductArray.jl")
+include("LazyOperations/Complement/Complement.jl")
+include("LazyOperations/ConvexHull/ConvexHull.jl")
+include("LazyOperations/ConvexHullArray/ConvexHullArray.jl")
+include("LazyOperations/ExactSum/ExactSum.jl")
+include("LazyOperations/ExponentialMap/ExponentialMap.jl")
+include("LazyOperations/ExponentialProjectionMap/ExponentialProjectionMap.jl")
+include("LazyOperations/Intersection/Intersection.jl")
+include("LazyOperations/IntersectionArray/IntersectionArray.jl")
+include("LazyOperations/LinearMap/LinearMap.jl")
+include("LazyOperations/InverseLinearMap/InverseLinearMap.jl")
+include("LazyOperations/AffineMap/AffineMap.jl")  # must come after LinearMap
 
 # must come after AffineMap
 const STAR{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N},PT<:AbstractPolyhedron{N}} = AffineMap{N,
@@ -276,16 +276,16 @@ const STAR{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N},PT<:AbstractPolyhedron{
                                                                                                 MN,
                                                                                                 VN}
 
-include("LazyOperations/MinkowskiSum.jl")
-include("LazyOperations/MinkowskiSumArray.jl")
-include("LazyOperations/CachedMinkowskiSumArray.jl")
-include("LazyOperations/QuadraticMap.jl")
-include("LazyOperations/ResetMap.jl")
-include("LazyOperations/SymmetricIntervalHull.jl")
-include("LazyOperations/Translation.jl")
-include("LazyOperations/UnionSet.jl")
-include("LazyOperations/UnionSetArray.jl")
-include("LazyOperations/Rectification.jl")  # must come after UnionSetArray
+include("LazyOperations/MinkowskiSum/MinkowskiSum.jl")
+include("LazyOperations/MinkowskiSumArray/MinkowskiSumArray.jl")
+include("LazyOperations/CachedMinkowskiSumArray/CachedMinkowskiSumArray.jl")
+include("LazyOperations/QuadraticMap/QuadraticMap.jl")
+include("LazyOperations/ResetMap/ResetMap.jl")
+include("LazyOperations/SymmetricIntervalHull/SymmetricIntervalHull.jl")
+include("LazyOperations/Translation/Translation.jl")
+include("LazyOperations/UnionSet/UnionSet.jl")
+include("LazyOperations/UnionSetArray/UnionSetArray.jl")
+include("LazyOperations/Rectification/Rectification.jl")  # must come after UnionSetArray
 
 # =======
 # Aliases
