@@ -255,6 +255,8 @@ include("Sets/Interval/IntervalModule.jl")
 # Types representing set operations
 # =================================
 include("LazyOperations/Bloating/Bloating.jl")
+export Bloating
+
 include("LazyOperations/CartesianProduct/CartesianProduct.jl")
 include("LazyOperations/CartesianProductArray/CartesianProductArray.jl")
 include("LazyOperations/Complement/Complement.jl")
