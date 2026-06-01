@@ -426,8 +426,17 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # isequivalent
     @test_throws DimensionMismatch isequivalent(U, U3)
     @test @inferred isequivalent(U, U)
+    @test_broken @inferred isequivalent(U, U, true)  # TODO make this type-stable (witness)
+    res, w = isequivalent(U, U, true)
+    @test res && w isa Vector{N} && isempty(w)
+    @test_broken @inferred isequivalent(U, B)  # TODO make this type-stable (witness)
     @test_broken @inferred isequivalent(B, U)  # TODO make this type-stable (witness)
-    @test !(@inferred isequivalent(U, B)) && !isequivalent(B, U)
+    @test !isequivalent(U, B) && !isequivalent(B, U)
+    for (X, Y) in ((U, B), (B, U))
+        @test_broken @inferred isequivalent(X, Y, true)  # TODO make this type-stable (witness)
+        res, w = isequivalent(X, Y, true)
+        @test !res && w isa Vector{N} && w ∈ U && w ∉ B
+    end
 
     # isstrictsubset
     @test_throws DimensionMismatch U ⊂ U3

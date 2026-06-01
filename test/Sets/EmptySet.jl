@@ -410,9 +410,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_broken @inferred isequivalent(E, E, true)  # TODO make this type-stable (witness)
     res, w = isequivalent(E, E, true)
     @test res && w isa Vector{N} && isempty(w)
-    @test !(@inferred isequivalent(E, B)) && !(@inferred isequivalent(B, E))
-    res, w = isequivalent(E, B, true)
-    @test !res && w isa Vector{N} && w ∈ B && w ∉ E
+    for X in (B, U)
+        if X == B
+            @test !(@inferred isequivalent(E, X)) && !(@inferred isequivalent(X, E))
+        else
+            @test_broken @inferred isequivalent(E, X)  # TODO make this type-stable (witness)
+            @test_broken @inferred isequivalent(X, E)  # TODO make this type-stable (witness)
+        end
+        res, w = isequivalent(E, X, true)
+        @test !res && w isa Vector{N} && w ∈ X && w ∉ E
+    end
 
     # isstrictsubset
     @test_throws DimensionMismatch E ⊂ E3

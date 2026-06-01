@@ -61,3 +61,15 @@ end
 @validate_commutative function isequivalent(∅::EmptySet, X::LazySet, witness::Bool=false)
     return _issubset_emptyset2(X, ∅, witness)
 end
+
+@validate_commutative function isequivalent(U::Universe, X::LazySet, witness::Bool=false)
+    return isuniversal(X, witness)
+end
+
+# disambiguation
+@validate_commutative function isequivalent(U::Universe, ∅::EmptySet, witness::Bool=false)
+    if witness
+        return (false, an_element(U))
+    end
+    return false
+end
