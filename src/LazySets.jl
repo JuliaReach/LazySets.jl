@@ -256,6 +256,8 @@ include("Sets/Interval/IntervalModule.jl")
 # =================================
 include("LazyOperations/Bloating/Bloating.jl")
 include("LazyOperations/CartesianProduct/CartesianProduct.jl")
+export CartesianProduct, CartesianProduct!, swap
+
 include("LazyOperations/CartesianProductArray/CartesianProductArray.jl")
 include("LazyOperations/Complement/Complement.jl")
 include("LazyOperations/ConvexHull/ConvexHull.jl")
