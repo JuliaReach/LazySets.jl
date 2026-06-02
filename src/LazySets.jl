@@ -273,6 +273,8 @@ include("LazyOperations/ConvexHullArray/ConvexHullArray.jl")
 include("LazyOperations/ExactSum/ExactSum.jl")
 include("LazyOperations/ExponentialMap/ExponentialMap.jl")
 include("LazyOperations/ExponentialProjectionMap/ExponentialProjectionMap.jl")
+export ProjectionSparseMatrixExp, ExponentialProjectionMap
+
 include("LazyOperations/Intersection/Intersection.jl")
 include("LazyOperations/IntersectionArray/IntersectionArray.jl")
 include("LazyOperations/LinearMap/LinearMap.jl")
