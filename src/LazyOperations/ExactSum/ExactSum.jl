@@ -1,5 +1,3 @@
-export ExactSum, ⊞
-
 """
     ExactSum{N,S1<:LazySet{N},S2<:LazySet{N}} <: LazySet{N}
 
@@ -30,10 +28,11 @@ end
 
 ⊞(X::LazySet, Y::LazySet) = ExactSum(X, Y)
 
-isoperationtype(::Type{<:ExactSum}) = true
 concrete_function(::Type{<:ExactSum}) = exact_sum
 
 # interface for binary set operations
 first(ES::ExactSum) = ES.X
 second(ES::ExactSum) = ES.Y
 @declare_binary_operation(ExactSum)
+
+include("isoperationtype.jl")

@@ -271,6 +271,8 @@ export Complement
 include("LazyOperations/ConvexHull/ConvexHull.jl")
 include("LazyOperations/ConvexHullArray/ConvexHullArray.jl")
 include("LazyOperations/ExactSum/ExactSum.jl")
+export ExactSum, ⊞
+
 include("LazyOperations/ExponentialMap/ExponentialMap.jl")
 include("LazyOperations/ExponentialProjectionMap/ExponentialProjectionMap.jl")
 include("LazyOperations/Intersection/Intersection.jl")
