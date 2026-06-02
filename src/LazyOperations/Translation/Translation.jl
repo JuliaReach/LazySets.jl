@@ -1,5 +1,3 @@
-export Translation
-
 """
     Translation{N, S<:LazySet{N}, VN<:AbstractVector{N}}
         <: AbstractAffineMap{N, S}
@@ -153,10 +151,6 @@ struct Translation{N,S<:LazySet{N},VN<:AbstractVector{N}} <: AbstractAffineMap{N
     end
 end
 
-isoperationtype(::Type{<:Translation}) = true
-
-isconvextype(::Type{Translation{N,S,VN}}) where {N,S,VN} = isconvextype(S)
-
 # constructor from a Translation: perform the translation immediately
 Translation(tr::Translation{N}, v::AbstractVector{N}) where {N} = Translation(tr.X, tr.v + v)
 
@@ -189,177 +183,16 @@ function set(tr::Translation)
     return tr.X
 end
 
-"""
-    σ(d::AbstractVector, tr::Translation)
-
-Return a support vector of a translation.
-
-### Input
-
-- `d`  -- direction
-- `tr` -- translation of a set
-
-### Output
-
-A support vector in the given direction.
-If the direction has norm zero, the result depends on the wrapped set.
-"""
-@validate function σ(d::AbstractVector, tr::Translation)
-    return tr.v + σ(d, tr.X)
-end
-
-"""
-    ρ(d::AbstractVector, tr::Translation)
-
-Evaluate the support function of a translation.
-
-### Input
-
-- `d`  -- direction
-- `tr` -- translation of a set
-
-### Output
-
-The evaluation of the support function in the given direction.
-"""
-@validate function ρ(d::AbstractVector, tr::Translation)
-    return dot(d, tr.v) + ρ(d, tr.X)
-end
-
-"""
-    an_element(tr::Translation)
-
-Return some element of a translation.
-
-### Input
-
-- `tr` -- translation of a set
-
-### Output
-
-An element in the translation.
-
-### Notes
-
-This function first asks for `an_element` of the wrapped set, then translates
-this element according to the given translation vector.
-"""
-function an_element(tr::Translation)
-    return an_element(tr.X) + tr.v
-end
-
-function isboundedtype(::Type{<:Translation{N,S}}) where {N,S}
-    return isboundedtype(S)
-end
-
-"""
-    constraints_list(tr::Translation)
-
-Return a list of constraints of the translation of a set.
-
-### Input
-
-- `tr` -- translation of a polyhedron
-
-### Output
-
-A list of constraints of the translation.
-
-### Notes
-
-We assume that the set wrapped by the lazy translation `X` offers a method
-`constraints_list(⋅)`.
-
-### Algorithm
-
-Let the translation be defined by the set of points `y` such that `y = x + v` for
-all `x ∈ X`. Then, each defining halfspace `a⋅x ≤ b` is transformed to
-`a⋅y ≤ b + a⋅v`.
-"""
-function constraints_list(tr::Translation)
-    return _constraints_list_translation(tr.X, tr.v)
-end
-
-function _constraints_list_translation(X::LazySet, v::AbstractVector)
-    constraints_X = constraints_list(X)
-    constraints_TX = similar(constraints_X)
-    @inbounds for (i, ci) in enumerate(constraints_X)
-        constraints_TX[i] = HalfSpace(ci.a, ci.b + dot(ci.a, v))
-    end
-    return constraints_TX
-end
-
-"""
-    in(x::AbstractVector, tr::Translation)
-
-Check whether a given point is contained in the translation of a set.
-
-### Input
-
-- `x`  -- point/vector
-- `tr` -- translation of a set
-
-### Output
-
-`true` iff ``x ∈ tr``.
-
-### Algorithm
-
-This implementation relies on the set-membership function for the wrapped set
-`tr.X`, since ``x ∈ X ⊕ v`` iff ``x - v ∈ X``.
-"""
-@validate function in(x::AbstractVector, tr::Translation)
-    return x - tr.v ∈ tr.X
-end
-
-"""
-    linear_map(M::AbstractMatrix, tr::Translation)
-
-Concrete linear map of a translation.
-
-### Input
-
-- `M`  -- matrix
-- `tr` -- translation of a set
-
-### Output
-
-A concrete set corresponding to the linear map.
-The type of the result depends on the type of the set wrapped by `tr`.
-
-### Algorithm
-
-We compute `affine_map(M, tr.X, M * tr.v)`.
-"""
-@validate function linear_map(M::AbstractMatrix, tr::Translation)
-    return affine_map(M, tr.X, M * tr.v)
-end
-
-function concretize(tr::Translation)
-    return translate(concretize(tr.X), tr.v)
-end
-
-"""
-    center(tr::Translation)
-
-Return the center of the translation of a centrally-symmetric set.
-
-### Input
-
-- `tr` -- translation of a centrally-symmetric set
-
-### Output
-
-The translation of the center of the wrapped set by the translation vector.
-"""
-function center(tr::Translation)
-    return center(tr.X) + tr.v
-end
-
-@validate function translate(tr::Translation, x::AbstractVector)
-    return Translation(translate(tr.X, x))
-end
-
-function isuniversal(tr::Translation)
-    return isuniversal(tr.X)
-end
+include("an_element.jl")
+include("center.jl")
+include("concretize.jl")
+include("constraints_list.jl")
+include("isboundedtype.jl")
+include("isconvextype.jl")
+include("isoperationtype.jl")
+include("isuniversal.jl")
+include("in.jl")
+include("linear_map.jl")
+include("support_function.jl")
+include("support_vector.jl")
+include("translate.jl")
