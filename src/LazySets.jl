@@ -318,6 +318,8 @@ include("LazyOperations/QuadraticMap/QuadraticMap.jl")
 export QuadraticMap
 
 include("LazyOperations/ResetMap/ResetMap.jl")
+export ResetMap
+
 include("LazyOperations/SymmetricIntervalHull/SymmetricIntervalHull.jl")
 include("LazyOperations/Translation/Translation.jl")
 include("LazyOperations/UnionSet/UnionSet.jl")
