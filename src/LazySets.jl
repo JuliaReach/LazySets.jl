@@ -321,6 +321,8 @@ include("LazyOperations/ResetMap/ResetMap.jl")
 export ResetMap
 
 include("LazyOperations/SymmetricIntervalHull/SymmetricIntervalHull.jl")
+export SymmetricIntervalHull, ⊡
+
 include("LazyOperations/Translation/Translation.jl")
 include("LazyOperations/UnionSet/UnionSet.jl")
 include("LazyOperations/UnionSetArray/UnionSetArray.jl")
