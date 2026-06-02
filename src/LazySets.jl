@@ -275,6 +275,8 @@ include("LazyOperations/ConvexHullArray/ConvexHullArray.jl")
 export ConvexHullArray, CHArray
 
 include("LazyOperations/ExactSum/ExactSum.jl")
+export ExactSum, ⊞
+
 include("LazyOperations/ExponentialMap/ExponentialMap.jl")
 include("LazyOperations/ExponentialProjectionMap/ExponentialProjectionMap.jl")
 include("LazyOperations/Intersection/Intersection.jl")
