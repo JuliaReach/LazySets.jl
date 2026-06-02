@@ -274,6 +274,8 @@ include("LazyOperations/ExactSum/ExactSum.jl")
 include("LazyOperations/ExponentialMap/ExponentialMap.jl")
 include("LazyOperations/ExponentialProjectionMap/ExponentialProjectionMap.jl")
 include("LazyOperations/Intersection/Intersection.jl")
+export Intersection, isempty_known, set_isempty!, use_precise_ρ
+
 include("LazyOperations/IntersectionArray/IntersectionArray.jl")
 include("LazyOperations/LinearMap/LinearMap.jl")
 include("LazyOperations/InverseLinearMap/InverseLinearMap.jl")
