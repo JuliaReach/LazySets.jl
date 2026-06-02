@@ -330,6 +330,8 @@ include("LazyOperations/UnionSet/UnionSet.jl")
 export UnionSet
 
 include("LazyOperations/UnionSetArray/UnionSetArray.jl")
+export UnionSetArray
+
 include("LazyOperations/Rectification/Rectification.jl")  # must come after UnionSetArray
 export Rectification
 
