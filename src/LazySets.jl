@@ -318,6 +318,8 @@ include("LazyOperations/SymmetricIntervalHull/SymmetricIntervalHull.jl")
 include("LazyOperations/Translation/Translation.jl")
 include("LazyOperations/UnionSet/UnionSet.jl")
 include("LazyOperations/UnionSetArray/UnionSetArray.jl")
+export UnionSetArray
+
 include("LazyOperations/Rectification/Rectification.jl")  # must come after UnionSetArray
 
 # =======
