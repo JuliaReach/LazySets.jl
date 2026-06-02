@@ -1,5 +1,3 @@
-export SymmetricIntervalHull, ⊡
-
 """
     SymmetricIntervalHull{N, S<:LazySet{N}} <: AbstractHyperrectangle{N}
 
@@ -52,8 +50,6 @@ struct SymmetricIntervalHull{N,S<:LazySet{N}} <: AbstractHyperrectangle{N}
 end
 
 const ⊡ = SymmetricIntervalHull
-
-isoperationtype(::Type{<:SymmetricIntervalHull}) = true
 
 """
     SymmetricIntervalHull(∅::EmptySet)
@@ -120,111 +116,6 @@ function radius_hyperrectangle(sih::SymmetricIntervalHull)
 end
 
 """
-    center(sih::SymmetricIntervalHull, i::Int)
-
-Return the center along a given dimension of the symmetric interval hull of a
-set.
-
-### Input
-
-- `sih` -- symmetric interval hull of a set
-- `i`   -- dimension of interest
-
-### Output
-
-The center along a given dimension of the symmetric interval hull of a set.
-"""
-@validate function center(sih::SymmetricIntervalHull, i::Int)
-    N = eltype(sih)
-    return zero(N)
-end
-
-"""
-    center(sih::SymmetricIntervalHull)
-
-Return the center of the symmetric interval hull of a set.
-
-### Input
-
-- `sih` -- symmetric interval hull of a set
-
-### Output
-
-The origin.
-"""
-function center(sih::SymmetricIntervalHull)
-    N = eltype(sih)
-    return zeros(N, dim(sih))
-end
-
-"""
-    dim(sih::SymmetricIntervalHull)
-
-Return the dimension of the symmetric interval hull of a set.
-
-### Input
-
-- `sih` -- symmetric interval hull of a set
-
-### Output
-
-The ambient dimension of the symmetric interval hull of a set.
-"""
-function dim(sih::SymmetricIntervalHull)
-    return dim(sih.X)
-end
-
-"""
-    σ(d::AbstractVector, sih::SymmetricIntervalHull)
-
-Return a support vector of the symmetric interval hull of a set in a given
-direction.
-
-### Input
-
-- `d`   -- direction
-- `sih` -- symmetric interval hull of a set
-
-### Output
-
-A support vector of the symmetric interval hull of a set in the given direction.
-If the direction has norm zero, the origin is returned.
-
-### Algorithm
-
-For each non-zero entry in `d` we need to either look up the bound (if it has
-been computed before) or compute it, in which case we store it for future
-queries.
-"""
-@validate function σ(d::AbstractVector, sih::SymmetricIntervalHull)
-    N = promote_type(eltype(d), eltype(sih))
-    svec = similar(d)
-    for i in eachindex(d)
-        if d[i] == zero(N)
-            svec[i] = zero(N)
-        else
-            svec[i] = sign(d[i]) * get_radius!(sih, i)
-        end
-    end
-    return svec
-end
-
-# faster support-vector calculation for SingleEntryVector
-@validate function σ(d::SingleEntryVector, sih::SymmetricIntervalHull)
-    N = promote_type(eltype(d), eltype(sih))
-    entry = get_radius!(sih, d.i)
-    if d.v < zero(N)
-        entry = -entry
-    end
-    return SingleEntryVector(d.i, d.n, entry)
-end
-
-# faster support-function evaluation for SingleEntryVector
-@validate function ρ(d::SingleEntryVector, sih::SymmetricIntervalHull)
-    return abs(d.v) * get_radius!(sih, d.i)
-end
-
-"""
     get_radius!(sih::SymmetricIntervalHull, i::Int)
 
 Compute the radius of the symmetric interval hull of a set in a given dimension.
@@ -253,3 +144,9 @@ function get_radius!(sih::SymmetricIntervalHull, i::Int)
     end
     return sih.cache[i]
 end
+
+include("center.jl")
+include("dim.jl")
+include("isoperationtype.jl")
+include("support_function.jl")
+include("support_vector.jl")
