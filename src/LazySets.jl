@@ -281,6 +281,8 @@ include("LazyOperations/ExponentialMap/ExponentialMap.jl")
 export SparseMatrixExp, ExponentialMap, get_row, get_rows, get_column, get_columns
 
 include("LazyOperations/ExponentialProjectionMap/ExponentialProjectionMap.jl")
+export ProjectionSparseMatrixExp, ExponentialProjectionMap
+
 include("LazyOperations/Intersection/Intersection.jl")
 include("LazyOperations/IntersectionArray/IntersectionArray.jl")
 include("LazyOperations/LinearMap/LinearMap.jl")
