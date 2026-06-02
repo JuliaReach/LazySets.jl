@@ -1,6 +1,3 @@
-export MinkowskiSumArray,
-       array
-
 """
    MinkowskiSumArray{N, S<:LazySet{N}} <: LazySet{N}
 
@@ -42,9 +39,6 @@ function MinkowskiSum! end
 ⊕(X::LazySet, Xs::LazySet...) = +(X, Xs...)
 ⊕(Xs::Vector{<:LazySet}) = +(Xs)
 
-isoperationtype(::Type{<:MinkowskiSumArray}) = true
-isconvextype(::Type{MinkowskiSumArray{N,S}}) where {N,S} = isconvextype(S)
-
 # constructor for an empty sum with optional size hint and numeric type
 function MinkowskiSumArray(n::Int=0, N::Type=Float64)
     arr = Vector{LazySet{N}}()
@@ -79,132 +73,14 @@ function array(msa::MinkowskiSumArray)
     return msa.array
 end
 
-"""
-   dim(msa::MinkowskiSumArray)
-
-Return the dimension of a Minkowski sum of a finite number of sets.
-
-### Input
-
-- `msa` -- Minkowski sum of a finite number of sets
-
-### Output
-
-The ambient dimension of the Minkowski sum of a finite number of sets, or `0` if
-there is no set in the array.
-"""
-function dim(msa::MinkowskiSumArray)
-    return length(msa.array) == 0 ? 0 : dim(msa.array[1])
-end
-
-"""
-   σ(d::AbstractVector, msa::MinkowskiSumArray)
-
-Return a support vector of a Minkowski sum of a finite number of sets in a given
-direction.
-
-### Input
-
-- `d`   -- direction
-- `msa` -- Minkowski sum of a finite number of sets
-
-### Output
-
-A support vector in the given direction.
-If the direction has norm zero, the result depends on the summand sets.
-"""
-@validate function σ(d::AbstractVector, msa::MinkowskiSumArray)
-    return _σ_msum_array(d, msa.array)
-end
-
-@inline function _σ_msum_array(d::AbstractVector, array::AbstractVector{<:LazySet})
-    return sum(σ(d, Xi) for Xi in array)
-end
-
-"""
-   ρ(d::AbstractVector, msa::MinkowskiSumArray)
-
-Evaluate the support function of a Minkowski sum of a finite number of sets in a
-given direction.
-
-### Input
-
-- `d`   -- direction
-- `msa` -- Minkowski sum of a finite number of sets
-
-### Output
-
-The evaluation of the support function in the given direction.
-
-### Algorithm
-
-The support function of the Minkowski sum of multiple sets evaluations to the
-sum of the support-function evaluations of each set.
-"""
-@validate function ρ(d::AbstractVector, msa::MinkowskiSumArray)
-    return sum(ρ(d, Xi) for Xi in msa.array)
-end
-
-"""
-    isbounded(msa::MinkowskiSumArray)
-
-Check whether a Minkowski sum of a finite number of sets is bounded.
-
-### Input
-
-- `msa` -- Minkowski sum of a finite number of sets
-
-### Output
-
-`true` iff all wrapped sets are bounded.
-"""
-function isbounded(msa::MinkowskiSumArray)
-    return all(isbounded, msa.array)
-end
-
-function isboundedtype(::Type{<:MinkowskiSumArray{N,S}}) where {N,S}
-    return isboundedtype(S)
-end
-
-"""
-   isempty(msa::MinkowskiSumArray)
-
-Check whether a Minkowski sum of a finite number of sets is empty.
-
-### Input
-
-- `msa` -- Minkowski sum of a finite number of sets
-
-### Output
-
-`true` iff any of the wrapped sets is empty.
-"""
-function isempty(msa::MinkowskiSumArray)
-    return any(isempty, array(msa))
-end
-
-"""
-    center(msa::MinkowskiSumArray)
-
-Return the center of a Minkowski sum of a finite number of centrally-symmetric
-sets.
-
-### Input
-
-- `msa` -- Minkowski sum of a finite number of centrally-symmetric sets
-
-### Output
-
-The center of the set.
-"""
-function center(msa::MinkowskiSumArray)
-    return sum(center(X) for X in msa)
-end
-
-function concretize(msa::MinkowskiSumArray)
-    return _concretize_lazy_array(msa)
-end
-
-@validate function translate(msa::MinkowskiSumArray, x::AbstractVector)
-    return MinkowskiSumArray([translate(X, x) for X in array(msa)])
-end
+include("center.jl")
+include("concretize.jl")
+include("dim.jl")
+include("isbounded.jl")
+include("isboundedtype.jl")
+include("isconvextype.jl")
+include("isempty.jl")
+include("isoperationtype.jl")
+include("support_function.jl")
+include("support_vector.jl")
+include("translate.jl")
