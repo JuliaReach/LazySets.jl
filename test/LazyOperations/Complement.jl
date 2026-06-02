@@ -17,6 +17,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # dimension
     @test dim(C) == 2
 
+    # isoperationtype
+    @test isoperationtype(typeof(C))
+
     # membership
     @test N[1, 1] ∉ C && N[2, 2] ∈ C
 
@@ -69,4 +72,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # boundedness
     @test isboundedtype(typeof(Complement(Universe{N}(2))))
     @test !isboundedtype(typeof(Complement(EmptySet{N}(2))))
+
+    # translate
+    v = N[1, 2]
+    C2 = translate(C, v)
+    @test C2 == Complement(translate(B1, v))
 end
