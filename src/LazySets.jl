@@ -290,6 +290,8 @@ include("LazyOperations/IntersectionArray/IntersectionArray.jl")
 export IntersectionArray
 
 include("LazyOperations/LinearMap/LinearMap.jl")
+export LinearMap, Projection
+
 include("LazyOperations/InverseLinearMap/InverseLinearMap.jl")
 export InverseLinearMap
 

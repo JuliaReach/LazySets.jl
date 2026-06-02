@@ -1,8 +1,5 @@
 import Base: *
 
-export LinearMap,
-       Projection
-
 """
     LinearMap{N,S<:LazySet{N},NM,
               MAT<:Union{AbstractMatrix{NM},AbstractMatrixZonotope{NM}}} <: AbstractAffineMap{N,S}
@@ -110,10 +107,6 @@ struct LinearMap{N,S<:LazySet{N},NM,
         return new{N,S,NM,MAT}(M, X)
     end
 end
-
-isoperationtype(::Type{<:LinearMap}) = true
-
-isconvextype(::Type{<:LinearMap{N,S}}) where {N,S} = isconvextype(S)
 
 """
 ```
@@ -223,228 +216,6 @@ function set(lm::LinearMap)
 end
 
 """
-    dim(lm::LinearMap)
-
-Return the dimension of a linear map.
-
-### Input
-
-- `lm` -- linear map
-
-### Output
-
-The ambient dimension of the linear map.
-"""
-function dim(lm::LinearMap)
-    return size(lm.M, 1)
-end
-
-"""
-    σ(d::AbstractVector, lm::LinearMap)
-
-Return a support vector of the linear map.
-
-### Input
-
-- `d`  -- direction
-- `lm` -- linear map
-
-### Output
-
-A support vector in the given direction.
-If the direction has norm zero, the result depends on the wrapped set.
-
-### Notes
-
-If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a set, it follows that
-``σ(d, L) = M⋅σ(M^T d, S)`` for any direction ``d``.
-"""
-@validate function σ(d::AbstractVector, lm::LinearMap)
-    return _σ_linear_map(d, lm.M, lm.X)
-end
-
-function _σ_linear_map(d::AbstractVector, M::AbstractMatrix, X::LazySet)
-    return M * σ(At_mul_B(M, d), X)
-end
-
-"""
-    ρ(d::AbstractVector, lm::LinearMap; kwargs...)
-
-Evaluate the support function of the linear map.
-
-### Input
-
-- `d`      -- direction
-- `lm`     -- linear map
-- `kwargs` -- additional arguments that are passed to the support function
-              algorithm
-
-### Output
-
-The evaluation of the support function in the given direction.
-If the direction has norm zero, the result depends on the wrapped set.
-
-### Notes
-
-If ``L = M⋅S``, where ``M`` is a matrix and ``S`` is a set, it follows that
-``ρ(d, L) = ρ(M^T d, S)`` for any direction ``d``.
-"""
-@validate function ρ(d::AbstractVector, lm::LinearMap; kwargs...)
-    return _ρ_linear_map(d, lm.M, lm.X; kwargs...)
-end
-
-function _ρ_linear_map(d::AbstractVector, M::AbstractMatrix, X::LazySet;
-                       kwargs...)
-    return ρ(At_mul_B(M, d), X; kwargs...)
-end
-
-"""
-    in(x::AbstractVector, lm::LinearMap)
-
-Check whether a given point is contained in a linear map.
-
-### Input
-
-- `x`  -- point/vector
-- `lm` -- linear map
-
-### Output
-
-`true` iff ``x ∈ lm``.
-
-### Algorithm
-
-Note that ``x ∈ M⋅S`` iff ``M^{-1}⋅x ∈ S``.
-This implementation does not explicitly invert the matrix: instead of
-``M^{-1}⋅x`` it computes ``M \\ x``.
-Hence it also works for non-square matrices.
-
-### Examples
-
-```jldoctest
-julia> lm = LinearMap([2.0 0.0; 0.0 1.0], BallInf([1., 1.], 1.));
-
-julia> [5.0, 1.0] ∈ lm
-false
-julia> [3.0, 1.0] ∈ lm
-true
-```
-
-An example with non-square matrix:
-```jldoctest
-julia> B = BallInf(zeros(4), 1.);
-
-julia> M = [1. 0 0 0; 0 1 0 0]/2;
-
-julia> [0.5, 0.5] ∈ M*B
-true
-```
-"""
-@validate function in(x::AbstractVector, lm::LinearMap)
-    if !iswellconditioned(matrix(lm))
-        # ill-conditioned matrix; use concrete set representation
-        return x ∈ linear_map(matrix(lm), set(lm))
-    end
-    return matrix(lm) \ x ∈ set(lm)
-end
-
-"""
-    an_element(lm::LinearMap)
-
-Return some element of a linear map.
-
-### Input
-
-- `lm` -- linear map
-
-### Output
-
-An element in the linear map.
-It relies on the `an_element` function of the wrapped set.
-"""
-function an_element(lm::LinearMap)
-    return lm.M * an_element(lm.X)
-end
-
-function isboundedtype(::Type{<:LinearMap{N,S}}) where {N,S}
-    return isboundedtype(S)
-end
-
-"""
-    vertices_list(lm::LinearMap; prune::Bool=true)
-
-Return the list of vertices of a (polytopic) linear map.
-
-### Input
-
-- `lm`    -- linear map
-- `prune` -- (optional, default: `true`) if `true`, we remove redundant vertices
-
-### Output
-
-A list of vertices.
-
-### Algorithm
-
-We assume that the underlying set `X` is polytopic and compute the vertices of
-`X`. The result is just the linear map applied to each vertex.
-"""
-@validate function vertices_list(lm::LinearMap; prune::Bool=true)
-    # apply the linear map to each vertex
-    vlist = broadcast(x -> lm.M * x, vertices(lm.X))
-
-    return prune ? convex_hull(vlist) : vlist
-end
-
-"""
-    constraints_list(lm::LinearMap)
-
-Return the list of constraints of a (polyhedral) linear map.
-
-### Input
-
-- `lm` -- linear map
-
-### Output
-
-The list of constraints of the linear map.
-
-### Notes
-
-We assume that the underlying set `X` is polyhedral, i.e., offers a method
-`constraints_list(X)`.
-
-### Algorithm
-
-We fall back to a concrete set representation by applying `linear_map`.
-"""
-function constraints_list(lm::LinearMap)
-    return constraints_list(linear_map(lm.M, lm.X))
-end
-
-"""
-    linear_map(M::AbstractMatrix, lm::LinearMap)
-
-Return the linear map of a lazy linear map.
-
-### Input
-
-- `M`  -- matrix
-- `lm` -- linear map
-
-### Output
-
-A set representing the linear map.
-"""
-@validate function linear_map(M::AbstractMatrix, lm::LinearMap)
-    return linear_map(M * lm.M, lm.X)
-end
-
-function concretize(lm::LinearMap)
-    return linear_map(lm.M, concretize(lm.X))
-end
-
-"""
     Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N}
 
 Return a lazy projection of a set.
@@ -479,27 +250,16 @@ function Projection(X::LazySet{N}, variables::AbstractVector{Int}) where {N}
     return LinearMap(M, X)
 end
 
-"""
-    project(S::LazySet, block::AbstractVector{Int}, set_type::Type{<:LinearMap},
-            [n]::Int=dim(S); [kwargs...])
-
-Project a high-dimensional set to a given block by using a lazy linear map.
-
-### Input
-
-- `S`         -- set
-- `block`     -- block structure - a vector with the dimensions of interest
-- `LinearMap` -- used for dispatch
-- `n`         -- (optional, default: `dim(S)`) ambient dimension of the set `S`
-
-### Output
-
-A lazy `LinearMap` representing the projection of the set `S` to block `block`.
-"""
-@inline function project(S::LazySet, block::AbstractVector{Int},
-                         set_type::Type{<:LinearMap}, n::Int=dim(S);
-                         kwargs...)
-    N = eltype(S)
-    M = projection_matrix(block, n, N)
-    return M * S
-end
+include("an_element.jl")
+include("concretize.jl")
+include("constraints_list.jl")
+include("dim.jl")
+include("isboundedtype.jl")
+include("isconvextype.jl")
+include("isoperationtype.jl")
+include("vertices_list.jl")
+include("in.jl")
+include("linear_map.jl")
+include("project.jl")
+include("support_function.jl")
+include("support_vector.jl")
