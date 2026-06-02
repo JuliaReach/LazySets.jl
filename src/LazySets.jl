@@ -266,6 +266,8 @@ include("LazyOperations/CartesianProductArray/CartesianProductArray.jl")
 export CartesianProductArray, same_block_structure
 
 include("LazyOperations/Complement/Complement.jl")
+export Complement
+
 include("LazyOperations/ConvexHull/ConvexHull.jl")
 include("LazyOperations/ConvexHullArray/ConvexHullArray.jl")
 include("LazyOperations/ExactSum/ExactSum.jl")
