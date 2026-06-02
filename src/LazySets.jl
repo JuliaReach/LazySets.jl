@@ -298,6 +298,8 @@ const STAR{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N},PT<:AbstractPolyhedron{
                                                                                                 VN}
 
 include("LazyOperations/MinkowskiSum/MinkowskiSum.jl")
+export MinkowskiSum, ⊕, MinkowskiSum!
+
 include("LazyOperations/MinkowskiSumArray/MinkowskiSumArray.jl")
 include("LazyOperations/CachedMinkowskiSumArray/CachedMinkowskiSumArray.jl")
 export CachedMinkowskiSumArray, forget_sets!
