@@ -286,6 +286,8 @@ export ProjectionSparseMatrixExp, ExponentialProjectionMap
 include("LazyOperations/Intersection/Intersection.jl")
 include("LazyOperations/IntersectionArray/IntersectionArray.jl")
 include("LazyOperations/LinearMap/LinearMap.jl")
+export LinearMap, Projection
+
 include("LazyOperations/InverseLinearMap/InverseLinearMap.jl")
 include("LazyOperations/AffineMap/AffineMap.jl")  # must come after LinearMap
 export AffineMap
