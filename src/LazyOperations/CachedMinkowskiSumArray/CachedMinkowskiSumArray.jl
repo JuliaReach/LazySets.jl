@@ -1,6 +1,3 @@
-export CachedMinkowskiSumArray,
-       forget_sets!
-
 """
     CachedPair{N}
 
@@ -62,9 +59,6 @@ struct CachedMinkowskiSumArray{N,S<:LazySet{N}} <: LazySet{N}
     end
 end
 
-isoperationtype(::Type{<:CachedMinkowskiSumArray}) = true
-isconvextype(::Type{CachedMinkowskiSumArray{N,S}}) where {N,S} = isconvextype(S)
-
 # constructor for an empty sum with optional size hint and numeric type
 function CachedMinkowskiSumArray(n::Int=0, N::Type=Float64)
     arr = Vector{LazySet{N}}()
@@ -94,116 +88,6 @@ The array of a cached Minkowski sum.
 """
 function array(cms::CachedMinkowskiSumArray)
     return cms.array
-end
-
-"""
-    dim(cms::CachedMinkowskiSumArray)
-
-Return the dimension of a cached Minkowski sum.
-
-### Input
-
-- `cms` -- cached Minkowski sum
-
-### Output
-
-The ambient dimension of the cached Minkowski sum, or `0` if there is no set in
-the array.
-"""
-function dim(cms::CachedMinkowskiSumArray)
-    return length(cms.array) == 0 ? 0 : dim(cms.array[1])
-end
-
-"""
-    σ(d::AbstractVector, cms::CachedMinkowskiSumArray)
-
-Return a support vector of a cached Minkowski sum in a given direction.
-
-### Input
-
-- `d`   -- direction
-- `cms` -- cached Minkowski sum
-
-### Output
-
-A support vector in the given direction.
-If the direction has norm zero, the result depends on the summand sets.
-
-### Notes
-
-The result is cached, i.e., any further query with the same direction runs in
-constant time.
-When sets are added to the cached Minkowski sum, the query is only performed
-for the new sets.
-"""
-@validate function σ(d::AbstractVector, cms::CachedMinkowskiSumArray)
-    arr = array(cms)
-    l = length(arr)
-    cache = cms.cache
-    if haskey(cache, d)
-        pair = cache[d]
-        k = pair.idx
-        svec1 = pair.vec
-        if k == l
-            # has already stored the full support vector
-            return svec1
-        else
-            # has only stored the support vector of the first k sets
-            @assert k < l "invalid cache index"
-            svec = svec1 + _σ_msum_array(d, @view arr[(k + 1):l])
-        end
-    else
-        # first-time computation of support vector
-        svec = _σ_msum_array(d, arr)
-    end
-    # NOTE: make a copy of the direction vector (can be modified outside)
-    cache[copy(d)] = CachedPair(l, svec)
-    return svec
-end
-
-"""
-    isbounded(cms::CachedMinkowskiSumArray)
-
-Check whether a cached Minkowski sum is bounded.
-
-### Input
-
-- `cms` -- cached Minkowski sum
-
-### Output
-
-`true` iff all wrapped sets are bounded.
-"""
-function isbounded(cms::CachedMinkowskiSumArray)
-    return all(isbounded, cms.array)
-end
-
-function isboundedtype(::Type{<:CachedMinkowskiSumArray{N,S}}) where {N,S}
-    return isboundedtype(S)
-end
-
-"""
-    isempty(cms::CachedMinkowskiSumArray)
-
-Check whether a cached Minkowski sum array is empty.
-
-### Input
-
-- `cms` -- cached Minkowski sum
-
-### Output
-
-`true` iff any of the wrapped sets are empty.
-
-### Notes
-
-Forgotten sets cannot be checked anymore.
-Normally they should not have been empty because otherwise the support-vector
-query would have crashed before.
-In that case, the cached Minkowski sum should not be used further.
-"""
-function isempty(cms::CachedMinkowskiSumArray)
-    return any(isempty, array(cms))
 end
 
 """
@@ -289,16 +173,11 @@ function forget_sets!(cms::CachedMinkowskiSumArray)
     return sets_to_remove
 end
 
-function concretize(cms::CachedMinkowskiSumArray)
-    a = array(cms)
-    @assert !isempty(a) "an empty Minkowski sum is not allowed"
-    X = cms
-    @inbounds for (i, Y) in enumerate(a)
-        if i == 1
-            X = concretize(Y)
-        else
-            X = minkowski_sum(X, concretize(Y))
-        end
-    end
-    return X
-end
+include("concretize.jl")
+include("dim.jl")
+include("isbounded.jl")
+include("isboundedtype.jl")
+include("isconvextype.jl")
+include("isempty.jl")
+include("isoperationtype.jl")
+include("support_vector.jl")

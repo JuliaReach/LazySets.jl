@@ -282,6 +282,8 @@ const STAR{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N},PT<:AbstractPolyhedron{
 include("LazyOperations/MinkowskiSum/MinkowskiSum.jl")
 include("LazyOperations/MinkowskiSumArray/MinkowskiSumArray.jl")
 include("LazyOperations/CachedMinkowskiSumArray/CachedMinkowskiSumArray.jl")
+export CachedMinkowskiSumArray, forget_sets!
+
 include("LazyOperations/QuadraticMap/QuadraticMap.jl")
 include("LazyOperations/ResetMap/ResetMap.jl")
 include("LazyOperations/SymmetricIntervalHull/SymmetricIntervalHull.jl")
