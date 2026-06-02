@@ -18,4 +18,5 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isoperationtype(typeof(ES))
     @test LazySets.concrete_function(ExactSum) == exact_sum
     @test concretize(ES) == exact_sum(P1, P2)
+    @test dim(ES) == 2
 end
