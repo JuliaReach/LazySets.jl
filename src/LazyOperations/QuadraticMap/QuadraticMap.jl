@@ -1,5 +1,3 @@
-export QuadraticMap
-
 """
     QuadraticMap{N, S<:LazySet{N}, MVT<:AbstractVector{<:AbstractMatrix{N}}} <: LazySet{N}
 
@@ -38,35 +36,8 @@ struct QuadraticMap{N,S<:LazySet{N},MVT<:AbstractVector{<:AbstractMatrix{N}}} <:
     end
 end
 
-function isoperationtype(::Type{<:QuadraticMap})
-    return true
-end
-
-function isconvextype(::Type{<:QuadraticMap})
-    return false
-end
-
-function isboundedtype(::Type{<:QuadraticMap{MVT,S}}) where {MVT,S}
-    return isboundedtype(S)
-end
-
-"""
-    dim(qm::QuadraticMap)
-
-Return the dimension of a quadratic map.
-
-### Input
-
-- `qm` -- quadratic map
-
-### Output
-
-The ambient dimension of the quadratic map.
-"""
-function dim(qm::QuadraticMap)
-    return dim(qm.X)
-end
-
-function concretize(qm::QuadraticMap)
-    return quadratic_map(qm.Q, concretize(qm.X))
-end
+include("concretize.jl")
+include("dim.jl")
+include("isboundedtype.jl")
+include("isconvextype.jl")
+include("isoperationtype.jl")
