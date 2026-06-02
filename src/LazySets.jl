@@ -268,6 +268,7 @@ include("LazyOperations/IntersectionArray/IntersectionArray.jl")
 include("LazyOperations/LinearMap/LinearMap.jl")
 include("LazyOperations/InverseLinearMap/InverseLinearMap.jl")
 include("LazyOperations/AffineMap/AffineMap.jl")  # must come after LinearMap
+export AffineMap
 
 # must come after AffineMap
 const STAR{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N},PT<:AbstractPolyhedron{N}} = AffineMap{N,

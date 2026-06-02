@@ -1,5 +1,3 @@
-export AffineMap
-
 """
     AffineMap{N, S<:LazySet{N}, NM, MAT<:AbstractMatrix{NM},
               VN<:AbstractVector{NM}} <: AbstractAffineMap{N, S}
@@ -106,8 +104,6 @@ struct AffineMap{N,S<:LazySet{N},NM,MAT<:AbstractMatrix{NM},
     end
 end
 
-isoperationtype(::Type{<:AffineMap}) = true
-
 # convenience constructor from a UniformScaling
 function AffineMap(M::UniformScaling, X::LazySet, v::AbstractVector)
     return AffineMap(M.λ, X, v)
@@ -160,17 +156,7 @@ function set(am::AffineMap)
     return am.X
 end
 
-function concretize(am::AffineMap)
-    return affine_map(am.M, concretize(am.X), am.v)
-end
-
-function isboundedtype(::Type{<:AffineMap{N,S}}) where {N,S}
-    return isboundedtype(S)
-end
-
-@validate function translate(am::AffineMap, x::AbstractVector)
-    M = matrix(am)
-    X = set(am)
-    v = vector(am)
-    return AffineMap(M, X, v + x)
-end
+include("concretize.jl")
+include("isboundedtype.jl")
+include("isoperationtype.jl")
+include("translate.jl")
