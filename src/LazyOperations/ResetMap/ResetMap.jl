@@ -1,7 +1,5 @@
 using ReachabilityBase.Arrays: find_unique_nonzero_entry
 
-export ResetMap
-
 """
     ResetMap{N, S<:LazySet{N}} <: AbstractAffineMap{N, S}
 
@@ -84,10 +82,6 @@ struct ResetMap{N,S<:LazySet{N}} <: AbstractAffineMap{N,S}
     X::S
     resets::Dict{Int,N}
 end
-
-isoperationtype(::Type{<:ResetMap}) = true
-
-isconvextype(::Type{ResetMap{N,S}}) where {N,S} = isconvextype(S)
 
 # ZeroSet is "almost absorbing" for the reset map because only the translation
 # vector remains
@@ -176,184 +170,12 @@ function set(rm::ResetMap)
     return rm.X
 end
 
-"""
-    dim(rm::ResetMap)
-
-Return the dimension of a reset map.
-
-### Input
-
-- `rm` -- reset map
-
-### Output
-
-The ambient dimension of a reset map.
-"""
-function dim(rm::ResetMap)
-    return dim(rm.X)
-end
-
-"""
-    σ(d::AbstractVector, rm::ResetMap)
-
-Return a support vector of a reset map.
-
-### Input
-
-- `d`  -- direction
-- `rm` -- reset map
-
-### Output
-
-A support vector in the given direction.
-If the direction has norm zero, the result depends on the wrapped set.
-"""
-@validate function σ(d::AbstractVector, rm::ResetMap)
-    N = promote_type(eltype(d), eltype(rm))
-    d_reset = copy(d)
-    for var in keys(rm.resets)
-        d_reset[var] = zero(N)
-    end
-    return substitute(rm.resets, σ(d_reset, rm.X))
-end
-
-"""
-    ρ(d::AbstractVector, rm::ResetMap)
-
-Evaluate the support function of a reset map.
-
-### Input
-
-- `d`  -- direction
-- `rm` -- reset map
-
-### Output
-
-The evaluation of the support function in the given direction.
-
-### Notes
-
-We use the usual dot-product definition, but for unbounded sets we redefine the
-product between ``0`` and ``±∞`` as ``0``; Julia returns `NaN` here.
-
-```jldoctest
-julia> Inf * 0.0
-NaN
-```
-
-See the discussion [here](https://math.stackexchange.com/q/28940).
-"""
-@validate function ρ(d::AbstractVector, rm::ResetMap)
-    return dot_zero(d, σ(d, rm))
-end
-
-"""
-    an_element(rm::ResetMap)
-
-Return some element of a reset map.
-
-### Input
-
-- `rm` -- reset map
-
-### Output
-
-An element in the reset map.
-
-### Algorithm
-
-This method relies on the `an_element` implementation for the wrapped set.
-"""
-function an_element(rm::ResetMap)
-    return substitute(rm.resets, an_element(rm.X))
-end
-
-function isboundedtype(::Type{<:ResetMap{N,S}}) where {N,S}
-    return isboundedtype(S)
-end
-
-"""
-    constraints_list(rm::ResetMap)
-
-Return a list of constraints of a polyhedral reset map.
-
-### Input
-
-- `rm` -- reset map of a polyhedron
-
-### Output
-
-A list of constraints of the reset map.
-
-### Notes
-
-We assume that the underlying set `rm.X` is a polyhedron, i.e., offers a method
-`constraints_list(X)`.
-
-### Algorithm
-
-If the set `rm.X` is hyperrectangular, we iterate through all dimensions.
-For each reset we construct the corresponding (flat) constraints, and in the
-other dimensions we construct the corresponding constraints of the underlying
-set.
-
-For more general sets, we fall back to `constraints_list` of a `LinearMap` of
-the `A`-matrix in the affine-map view of a reset map.
-Each reset dimension ``i`` is projected to zero, expressed by two constraints
-for each reset dimension.
-Then it remains to shift these constraints to the new value.
-
-For instance, if the dimension ``5`` was reset to ``4``, then there will be
-constraints ``x₅ ≤ 0`` and ``-x₅ ≤ 0``.
-We then modify the right-hand side of these constraints to ``x₅ ≤ 4`` and
-``-x₅ ≤ -4``, respectively.
-"""
-function constraints_list(rm::ResetMap)
-    constraints = constraints_list(LinearMap(matrix(rm), set(rm)))
-    N = eltype(rm)
-    for (i, c) in enumerate(constraints)
-        constrained_dim = find_unique_nonzero_entry(c.a)
-        if constrained_dim > 0  # constrained in only one dimension
-            if !haskey(rm.resets, constrained_dim)
-                continue  # not a dimension we are interested in
-            end
-            new_value = rm.resets[constrained_dim]
-            if iszero(new_value)
-                @assert iszero(c.b) "expected b = 0"
-                continue  # a reset to 0 needs not create a new constraint
-            end
-            if c.a[constrained_dim] < zero(N)
-                # change sign for lower bound
-                new_value = -new_value
-            end
-            constraints[i] = HalfSpace(c.a, new_value)
-        end
-    end
-    return constraints
-end
-
-function constraints_list(rm::ResetMap{N,<:AbstractHyperrectangle}) where {N}
-    H = rm.X
-    n = dim(H)
-    constraints = Vector{HalfSpace{N,SingleEntryVector{N}}}(undef, 2 * n)
-    j = 1
-    for i in 1:n
-        ei = SingleEntryVector(i, n, one(N))
-        if haskey(rm.resets, i)
-            # reset dimension => add flat constraints
-            v = rm.resets[i]
-            constraints[j] = HalfSpace(ei, v)
-            constraints[j + 1] = HalfSpace(-ei, -v)
-        else
-            # non-reset dimension => use the hyperrectangle's constraints
-            constraints[j] = HalfSpace(ei, high(H, i))
-            constraints[j + 1] = HalfSpace(-ei, -low(H, i))
-        end
-        j += 2
-    end
-    return constraints
-end
-
-function concretize(rm::ResetMap)
-    return affine_map(matrix(rm), concretize(set(rm)), vector(rm))
-end
+include("an_element.jl")
+include("concretize.jl")
+include("constraints_list.jl")
+include("dim.jl")
+include("isboundedtype.jl")
+include("isconvextype.jl")
+include("isoperationtype.jl")
+include("support_function.jl")
+include("support_vector.jl")

@@ -312,6 +312,8 @@ export CachedMinkowskiSumArray, forget_sets!
 
 include("LazyOperations/QuadraticMap/QuadraticMap.jl")
 include("LazyOperations/ResetMap/ResetMap.jl")
+export ResetMap
+
 include("LazyOperations/SymmetricIntervalHull/SymmetricIntervalHull.jl")
 include("LazyOperations/Translation/Translation.jl")
 include("LazyOperations/UnionSet/UnionSet.jl")
