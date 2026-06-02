@@ -277,6 +277,8 @@ include("LazyOperations/ExponentialMap/ExponentialMap.jl")
 include("LazyOperations/ExponentialProjectionMap/ExponentialProjectionMap.jl")
 include("LazyOperations/Intersection/Intersection.jl")
 include("LazyOperations/IntersectionArray/IntersectionArray.jl")
+export IntersectionArray
+
 include("LazyOperations/LinearMap/LinearMap.jl")
 include("LazyOperations/InverseLinearMap/InverseLinearMap.jl")
 include("LazyOperations/AffineMap/AffineMap.jl")  # must come after LinearMap
