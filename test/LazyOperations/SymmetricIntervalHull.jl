@@ -1,4 +1,5 @@
 using LazySets, Test
+using LazySets.ReachabilityBase.Arrays: SingleEntryVector
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -34,8 +35,18 @@ for N in @tN([Float64, Float32, Rational{Int}])
     d = N[0, 1]
     @test σ(d, h)[2] == N(7) && σ(-d, h)[2] == N(-7)
 
+    # support function
+    for d in (N[1, 0], SingleEntryVector(1, 2, N(1)))
+        @test ρ(d, h) == N(6) && ρ(-d, h) == N(6)
+    end
+    d = N[0, 1]
+    @test ρ(d, h) == N(7) && ρ(-d, h) == N(7)
+
     # boundedness
     @test isbounded(h) && isboundedtype(typeof(h))
+
+    # isoperationtype
+    @test isoperationtype(typeof(h))
 
     # ispolyhedral
     @test ispolyhedral(h)
