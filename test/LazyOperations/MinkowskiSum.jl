@@ -251,7 +251,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # boundedness
     @test isbounded(cms)
+    @test !isboundedtype(typeof(cms))
+    @test isboundedtype(typeof(CachedMinkowskiSumArray([B, B])))
     @test !isbounded(CachedMinkowskiSumArray([Singleton(N[1]), HalfSpace(N[1], N(1))]))
+
+    # isconvextype
+    @test !isconvextype(typeof(cms))
+    @test isconvextype(typeof(CachedMinkowskiSumArray([B, B])))
+
+    # isoperationtype
+    @test isoperationtype(typeof(cms))
 
     # isempty
     @test !isempty(cms)
