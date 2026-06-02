@@ -254,13 +254,17 @@ include("Sets/Interval/IntervalModule.jl")
 # =================================
 # Types representing set operations
 # =================================
+export array, swap
+
 include("LazyOperations/Bloating/Bloating.jl")
 export Bloating
 
 include("LazyOperations/CartesianProduct/CartesianProduct.jl")
-export CartesianProduct, CartesianProduct!, swap
+export CartesianProduct, CartesianProduct!
 
 include("LazyOperations/CartesianProductArray/CartesianProductArray.jl")
+export CartesianProductArray, same_block_structure
+
 include("LazyOperations/Complement/Complement.jl")
 include("LazyOperations/ConvexHull/ConvexHull.jl")
 include("LazyOperations/ConvexHullArray/ConvexHullArray.jl")
