@@ -317,6 +317,8 @@ include("LazyOperations/ResetMap/ResetMap.jl")
 include("LazyOperations/SymmetricIntervalHull/SymmetricIntervalHull.jl")
 include("LazyOperations/Translation/Translation.jl")
 include("LazyOperations/UnionSet/UnionSet.jl")
+export UnionSet
+
 include("LazyOperations/UnionSetArray/UnionSetArray.jl")
 include("LazyOperations/Rectification/Rectification.jl")  # must come after UnionSetArray
 
