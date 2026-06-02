@@ -309,6 +309,8 @@ include("LazyOperations/MinkowskiSum/MinkowskiSum.jl")
 export MinkowskiSum, ⊕, MinkowskiSum!
 
 include("LazyOperations/MinkowskiSumArray/MinkowskiSumArray.jl")
+export MinkowskiSumArray
+
 include("LazyOperations/CachedMinkowskiSumArray/CachedMinkowskiSumArray.jl")
 export CachedMinkowskiSumArray, forget_sets!
 
