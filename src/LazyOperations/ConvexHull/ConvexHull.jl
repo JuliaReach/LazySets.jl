@@ -1,8 +1,3 @@
-export ConvexHull, CH,
-       convex_hull!,
-       ConvexHull!,
-       swap
-
 """
     ConvexHull{N, S1<:LazySet{N}, S2<:LazySet{N}} <: ConvexSet{N}
 
@@ -53,18 +48,7 @@ end
 # constructor with a single argument
 ConvexHull(X::LazySet) = ConvexHull(X, X)
 
-isoperationtype(::Type{<:ConvexHull}) = true
 concrete_function(::Type{<:ConvexHull}) = convex_hull
-
-function ispolyhedraltype(::Type{<:ConvexHull{N,S1,S2}}) where {N,S1,S2}
-    return ispolyhedraltype(S1) && ispolyhedraltype(S2)
-end
-
-function ispolyhedral(ch::ConvexHull)
-    ispolyhedraltype(typeof(ch)) && return true
-
-    return ispolyhedral(ch.X) && ispolyhedral(ch.Y)
-end
 
 # EmptySet is the neutral element for ConvexHull
 @neutral(ConvexHull, EmptySet)
@@ -96,139 +80,15 @@ function swap(ch::ConvexHull)
     return ConvexHull(ch.Y, ch.X)
 end
 
-"""
-    dim(ch::ConvexHull)
-
-Return the dimension of a convex hull of two sets.
-
-### Input
-
-- `ch` -- convex hull of two sets
-
-### Output
-
-The ambient dimension of the convex hull of two sets.
-"""
-function dim(ch::ConvexHull)
-    return dim(ch.X)
-end
-
-"""
-    σ(d::AbstractVector, ch::ConvexHull)
-
-Return a support vector of the convex hull of two sets in a given direction.
-
-### Input
-
-- `d`  -- direction
-- `ch` -- convex hull of two sets
-
-### Output
-
-A support vector of the convex hull in the given direction.
-"""
-@validate function σ(d::AbstractVector, ch::ConvexHull)
-    σ1 = σ(d, ch.X)
-    σ2 = σ(d, ch.Y)
-    ρ1 = dot(d, σ1)
-    ρ2 = dot(d, σ2)
-    return ρ1 >= ρ2 ? σ1 : σ2
-end
-
-"""
-    ρ(d::AbstractVector, ch::ConvexHull)
-
-Evaluate the support function of the convex hull of two sets in a given
-direction.
-
-### Input
-
-- `d`  -- direction
-- `ch` -- convex hull of two sets
-
-### Output
-
-The evaluation of the support function of the convex hull in the given
-direction.
-"""
-@validate function ρ(d::AbstractVector, ch::ConvexHull)
-    return max(ρ(d, ch.X), ρ(d, ch.Y))
-end
-
-"""
-    isbounded(ch::ConvexHull)
-
-Check whether the convex hull of two sets is bounded.
-
-### Input
-
-- `ch` -- convex hull of two sets
-
-### Output
-
-`true` iff both wrapped sets are bounded.
-"""
-function isbounded(ch::ConvexHull)
-    return isbounded(ch.X) && isbounded(ch.Y)
-end
-
-function isboundedtype(::Type{<:ConvexHull{N,S1,S2}}) where {N,S1,S2}
-    return isboundedtype(S1) && isboundedtype(S2)
-end
-
-"""
-    isempty(ch::ConvexHull)
-
-Check whether the convex hull of two sets is empty.
-
-### Input
-
-- `ch` -- convex hull
-
-### Output
-
-`true` iff both wrapped sets are empty.
-"""
-function isempty(ch::ConvexHull)
-    return isempty(ch.X) && isempty(ch.Y)
-end
-
-"""
-    vertices_list(ch::ConvexHull; [apply_convex_hull]::Bool=true,
-                  [backend]=nothing)
-
-Return a list of vertices of the convex hull of two sets.
-
-### Input
-
-- `ch`                -- convex hull of two sets
-- `apply_convex_hull` -- (optional, default: `true`) if `true`, post-process the
-                         vertices using a convex-hull algorithm
-- `backend`           -- (optional, default: `nothing`) backend for computing
-                         the convex hull (see argument `apply_convex_hull`)
-
-### Output
-
-A list of vertices.
-"""
-@validate function vertices_list(ch::ConvexHull;
-                                 apply_convex_hull::Bool=true,
-                                 backend=nothing)
-    vlist = vcat(vertices_list(ch.X), vertices_list(ch.Y))
-    if apply_convex_hull
-        convex_hull!(vlist; backend=backend)
-    end
-    return vlist
-end
-
-function constraints_list(ch::ConvexHull)
-    ST = (dim(ch) == 2) ? VPolygon : VPolytope
-    V = convert(ST, ch)
-    return constraints_list(V)
-end
-
-@validate function translate(ch::ConvexHull, x::AbstractVector)
-    X = translate(first(ch), x)
-    Y = translate(second(ch), x)
-    return ConvexHull(X, Y)
-end
+include("constraints_list.jl")
+include("dim.jl")
+include("isbounded.jl")
+include("isboundedtype.jl")
+include("isempty.jl")
+include("isoperationtype.jl")
+include("ispolyhedral.jl")
+include("ispolyhedraltype.jl")
+include("vertices_list.jl")
+include("support_function.jl")
+include("support_vector.jl")
+include("translate.jl")
