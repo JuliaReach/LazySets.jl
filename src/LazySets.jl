@@ -319,6 +319,7 @@ include("LazyOperations/Translation/Translation.jl")
 include("LazyOperations/UnionSet/UnionSet.jl")
 include("LazyOperations/UnionSetArray/UnionSetArray.jl")
 include("LazyOperations/Rectification/Rectification.jl")  # must come after UnionSetArray
+export Rectification
 
 # =======
 # Aliases
