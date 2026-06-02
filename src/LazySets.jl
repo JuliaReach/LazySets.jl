@@ -258,6 +258,8 @@ include("LazyOperations/Bloating/Bloating.jl")
 export Bloating
 
 include("LazyOperations/CartesianProduct/CartesianProduct.jl")
+export CartesianProduct, CartesianProduct!, swap
+
 include("LazyOperations/CartesianProductArray/CartesianProductArray.jl")
 include("LazyOperations/Complement/Complement.jl")
 include("LazyOperations/ConvexHull/ConvexHull.jl")
