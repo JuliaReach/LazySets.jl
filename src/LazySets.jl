@@ -287,6 +287,8 @@ include("LazyOperations/Intersection/Intersection.jl")
 export Intersection, isempty_known, set_isempty!, use_precise_ρ
 
 include("LazyOperations/IntersectionArray/IntersectionArray.jl")
+export IntersectionArray
+
 include("LazyOperations/LinearMap/LinearMap.jl")
 include("LazyOperations/InverseLinearMap/InverseLinearMap.jl")
 include("LazyOperations/AffineMap/AffineMap.jl")  # must come after LinearMap
