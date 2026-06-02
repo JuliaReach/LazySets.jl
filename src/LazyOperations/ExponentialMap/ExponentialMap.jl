@@ -1,13 +1,5 @@
 import Base: *, size
 
-export SparseMatrixExp,
-       ExponentialMap,
-       size,
-       get_row,
-       get_rows,
-       get_column,
-       get_columns
-
 """
     SparseMatrixExp{N}
 
@@ -291,10 +283,6 @@ function ExponentialMap(M::AbstractMatrix, X::LazySet)
     return ExponentialMap(SparseMatrixExp(M), X)
 end
 
-isoperationtype(::Type{<:ExponentialMap}) = true
-
-isconvextype(::Type{ExponentialMap{N,S}}) where {N,S} = isconvextype(S)
-
 """
 ```
     *(spmexp::SparseMatrixExp, X::LazySet)
@@ -327,181 +315,13 @@ function set(em::ExponentialMap)
     return em.X
 end
 
-"""
-    dim(em::ExponentialMap)
-
-Return the dimension of an exponential map.
-
-### Input
-
-- `em` -- exponential map
-
-### Output
-
-The ambient dimension of the exponential map.
-"""
-function dim(em::ExponentialMap)
-    return size(em.expmat, 1)
-end
-
-"""
-    σ(d::AbstractVector, em::ExponentialMap;
-      [backend]=get_exponential_backend())
-
-Return a support vector of an exponential map.
-
-### Input
-
-- `d`       -- direction
-- `em`      -- exponential map
-- `backend` -- (optional; default: `get_exponential_backend()`) exponentiation
-               backend
-
-### Output
-
-A support vector in the given direction.
-If the direction has norm zero, the result depends on the wrapped set.
-
-### Notes
-
-If ``E = \\exp(M)⋅X``, where ``M`` is a matrix and ``X`` is a set, it
-follows that ``σ(d, E) = \\exp(M)⋅σ(\\exp(M)^T d, X)`` for any direction ``d``.
-"""
-@validate function σ(d::AbstractVector, em::ExponentialMap;
-                     backend=get_exponential_backend())
-    N = promote_type(eltype(d), eltype(em))
-    v = _expmv(backend, one(N), transpose(em.expmat.M), d)  # exp(M^T) * d
-    return _expmv(backend, one(N), em.expmat.M, σ(v, em.X))  # exp(M) * σ(v, X)
-end
-
-"""
-    ρ(d::AbstractVector, em::ExponentialMap;
-      [backend]=get_exponential_backend())
-
-Evaluate the support function of the exponential map.
-
-### Input
-
-- `d`       -- direction
-- `em`      -- exponential map
-- `backend` -- (optional; default: `get_exponential_backend()`) exponentiation
-               backend
-
-### Output
-
-The evaluation of the support function in the given direction.
-
-### Notes
-
-If ``E = \\exp(M)⋅X``, where ``M`` is a matrix and ``X`` is a set, it
-follows that ``ρ(d, E) = ρ(\\exp(M)^T d, X)`` for any direction ``d``.
-"""
-@validate function ρ(d::AbstractVector, em::ExponentialMap;
-                     backend=get_exponential_backend())
-    N = promote_type(eltype(d), eltype(em))
-    v = _expmv(backend, one(N), transpose(em.expmat.M), d)  # exp(M^T) * d
-    return ρ(v, em.X)
-end
-
-function concretize(em::ExponentialMap)
-    return exponential_map(Matrix(em.expmat.M), concretize(em.X))
-end
-
-"""
-    in(x::AbstractVector, em::ExponentialMap;
-      [backend]=get_exponential_backend())
-
-Check whether a given point is contained in an exponential map of a set.
-
-### Input
-
-- `x`       -- point/vector
-- `em`      -- exponential map of a set
-- `backend` -- (optional; default: `get_exponential_backend()`) exponentiation
-               backend
-
-### Output
-
-`true` iff ``x ∈ em``.
-
-### Algorithm
-
-This implementation exploits that ``x ∈ \\exp(M)⋅X`` iff ``\\exp(-M)⋅x ∈ X``.
-This follows from ``\\exp(-M)⋅\\exp(M) = I`` for any ``M``.
-
-### Examples
-
-```jldoctest
-julia> using SparseArrays
-
-julia> em = ExponentialMap(
-        SparseMatrixExp(sparse([1, 2], [1, 2], [2.0, 1.0], 2, 2)),
-        BallInf([1., 1.], 1.));
-
-julia> [-1.0, 1.0] ∈ em
-false
-julia> [1.0, 1.0] ∈ em
-true
-```
-"""
-@validate function in(x::AbstractVector, em::ExponentialMap;
-                      backend=get_exponential_backend())
-    N = promote_type(eltype(x), eltype(em))
-    y = _expmv(backend, -one(N), em.expmat.M, x)
-    return y ∈ em.X
-end
-
-"""
-    vertices_list(em::ExponentialMap; [backend]=get_exponential_backend())
-
-Return the list of vertices of a (polytopic) exponential map.
-
-### Input
-
-- `em`      -- polytopic exponential map
-- `backend` -- (optional; default: `get_exponential_backend()`) exponentiation
-               backend
-
-### Output
-
-A list of vertices.
-
-### Algorithm
-
-We assume that the underlying set `X` is polytopic.
-Then the result is just the exponential map applied to the vertices of `X`.
-"""
-@validate function vertices_list(em::ExponentialMap; backend=get_exponential_backend())
-    # collect vertices lists of wrapped set
-    vlist_X = vertices_list(em.X)
-
-    # create resulting vertices list
-    N = eltype(em)
-    vlist = Vector{Vector{N}}(undef, length(vlist_X))
-    @inbounds for (i, v) in enumerate(vlist_X)
-        vlist[i] = _expmv(backend, one(N), em.expmat.M, v)
-    end
-
-    return vlist
-end
-
-"""
-    isbounded(em::ExponentialMap)
-
-Check whether an exponential map is bounded.
-
-### Input
-
-- `em` -- exponential map
-
-### Output
-
-`true` iff the exponential map is bounded.
-"""
-function isbounded(em::ExponentialMap)
-    return isbounded(em.X)
-end
-
-function isboundedtype(::Type{<:ExponentialMap{N,S}}) where {N,S}
-    return isboundedtype(S)
-end
+include("concretize.jl")
+include("dim.jl")
+include("isbounded.jl")
+include("isboundedtype.jl")
+include("isconvextype.jl")
+include("isoperationtype.jl")
+include("vertices_list.jl")
+include("in.jl")
+include("support_function.jl")
+include("support_vector.jl")

@@ -272,6 +272,8 @@ include("LazyOperations/ConvexHull/ConvexHull.jl")
 include("LazyOperations/ConvexHullArray/ConvexHullArray.jl")
 include("LazyOperations/ExactSum/ExactSum.jl")
 include("LazyOperations/ExponentialMap/ExponentialMap.jl")
+export SparseMatrixExp, ExponentialMap, get_row, get_rows, get_column, get_columns
+
 include("LazyOperations/ExponentialProjectionMap/ExponentialProjectionMap.jl")
 include("LazyOperations/Intersection/Intersection.jl")
 include("LazyOperations/IntersectionArray/IntersectionArray.jl")
