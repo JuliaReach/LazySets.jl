@@ -1,8 +1,8 @@
 function load_TaylorModels_convert_TaylorModelN()
     return quote
         using .TaylorModels: TaylorModelN
-        using .TaylorModels.TaylorSeries: coeff_table, set_variables, HomogeneousPolynomial,
-                                          in_base, pos_table, TaylorN
+        using .TaylorSeries: HomogeneousPolynomial, TaylorN, coeff_table,
+                             in_base, pos_table, variables!
         # NOTE: `coeff_table`, `in_base`, and `pos_table` are internal functions
 
         # implements Proposition 3.1.13 in thesis
@@ -19,7 +19,7 @@ function load_TaylorModels_convert_TaylorModelN()
             poly_order = polynomial_order(P)
             z = zeros(Int, q)
             # we need to rewrite the global variables
-            set_variables("x"; order=poly_order, numvars=r)
+            variables!("x"; order=poly_order, numvars=r, nowarn=true)
             # the following vectors are shared for each polynomial
             rem = zero_itv(N)
             dom = sym_box(r, N)

@@ -321,21 +321,21 @@ end
 # function to be loaded by Requires
 function load_taylormodels_overapproximation()
     return quote
-        using .TaylorModels: Taylor1, TaylorN, TaylorModel1, TaylorModelN,
-                             polynomial, remainder, domain,
-                             normalize_taylor, linear_polynomial,
-                             constant_term, evaluate, mid, get_numvars,
-                             HomogeneousPolynomial, get_order
+        using .TaylorModels: TaylorModel1, TaylorModelN, domain, polynomial,
+                             remainder
+        using .TaylorSeries: HomogeneousPolynomial, Taylor1, TaylorN,
+                             constant_term, evaluate, get_numvars,
+                             linear_polynomial, normalize_taylor
 
         @inline function get_linear_coeffs(p::Taylor1)
-            if get_order(p) == 0
+            if TaylorSeries.order(p) == 0
                 return zeros(eltype(p), 1)
             end
             return linear_polynomial(p).coeffs[2:2]
         end
 
         @inline function get_linear_coeffs(p::TaylorN)
-            if get_order(p) == 0
+            if TaylorSeries.order(p) == 0
                 n = get_numvars()
                 return zeros(eltype(p), n)
             end
@@ -346,7 +346,7 @@ function load_taylormodels_overapproximation()
         @inline function _nonlinear_polynomial(p::Taylor1{T}) where {T}
             pnl = deepcopy(p)
             pnl.coeffs[1] = zero(T)
-            if get_order(p) > 0
+            if TaylorSeries.order(p) > 0
                 pnl.coeffs[2] = zero(T)
             end
             return pnl
@@ -355,7 +355,7 @@ function load_taylormodels_overapproximation()
         @inline function _nonlinear_polynomial(p::TaylorN{T}) where {T}
             pnl = deepcopy(p)
             pnl.coeffs[1] = HomogeneousPolynomial([zero(T)])
-            if get_order(p) > 0
+            if TaylorSeries.order(p) > 0
                 pnl.coeffs[2] = HomogeneousPolynomial([zero(T)])
             end
             return pnl
@@ -547,7 +547,7 @@ function load_taylormodels_overapproximation()
 
         julia> const IA = IntervalArithmetic;
 
-        julia> x₁, x₂ = set_variables(Float64, ["x₁", "x₂"], order=8)
+        julia> x₁, x₂ = variables!(Float64, ["x₁", "x₂"], order=8)
         2-element Vector{TaylorN{Float64}}:
           1.0 x₁ + 𝒪(‖x‖⁹)
           1.0 x₂ + 𝒪(‖x‖⁹)
@@ -633,13 +633,13 @@ function load_taylormodels_overapproximation()
                 rem_nonlin = evaluate(pol_nonlin, dom) + remainder(p)
 
                 # build the generators
-                α = mid(rem_nonlin)
+                α = IA.mid(rem_nonlin)
                 cterm = constant_term(pol_lin_norm)
                 @assert _isthin_approx(cterm) "unexpected interval value: $cterm"
-                c[i] = mid(cterm) + α  # constant terms
+                c[i] = IA.mid(cterm) + α  # constant terms
                 lin_coeffs = get_linear_coeffs(pol_lin_norm)
                 @assert all(_isthin_approx, lin_coeffs) "unexpected interval value: $lin_coeffs"
-                G[i, 1:n] = mid.(lin_coeffs)  # linear terms
+                G[i, 1:n] = IA.mid.(lin_coeffs)  # linear terms
                 # interval generator
                 for j in (n + 1):(n + m)
                     G[i, j] = zero(N)

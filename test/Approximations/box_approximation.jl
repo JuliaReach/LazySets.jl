@@ -3,6 +3,9 @@ IA = LazySets.IA
 @static if isdefined(Main, :TaylorModels)
     import TaylorModels
 end
+@static if isdefined(Main, :TaylorSeries)
+    import TaylorSeries
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
@@ -109,20 +112,20 @@ for N in [Float64, Float32]
     X = HalfSpace(N[-1], N(0)) ∩ HalfSpace(N[1], N(-1e-15))
     @test box_approximation(X) == Hyperrectangle(N[-5.0e-16], N[0])
 
-    @static if isdefined(@__MODULE__, :TaylorModels)
+    @static if isdefined(@__MODULE__, :TaylorModels) && isdefined(@__MODULE__, :TaylorSeries)
         # box approximation of Taylor model
         # (currently gives different result for non-Float64:
         #  https://github.com/JuliaIntervals/TaylorModels.jl/issues/158)
         I = IA.interval(N(0), N(0))  # interval remainder
         # TaylorModel1
-        t = TaylorModels.Taylor1(N, 3)
+        t = TaylorSeries.Taylor1(N, 3)
         q₁ = 1 + 2 * t + 2 * t^2
         D = IA.interval(N(-1), N(1))
         local x0 = IA.mid(D)
         local vTM = [TaylorModels.TaylorModel1(q₁, I, x0, D)]
         @test box_approximation(vTM) == Hyperrectangle(N[2], N[3])
         # TaylorModelN
-        local x₁, x₂, x₃ = TaylorModels.set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
+        local x₁, x₂, x₃ = TaylorSeries.variables!(N, ["x₁", "x₂", "x₃"]; order=5, nowarn=true)
         local p₁ = 1 + x₁ - x₂
         local p₂ = x₃ - x₁
         Dx₁ = IA.interval(N(-1), N(1))
