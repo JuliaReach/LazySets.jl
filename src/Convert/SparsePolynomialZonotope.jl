@@ -72,8 +72,9 @@ end
 
 function load_TaylorModels_convert_SparsePolynomialZonotope()
     return quote
-        using .TaylorModels: TaylorModelN, polynomial, remainder, constant_term
-        using .TaylorModels.TaylorSeries: coeff_table  # NOTE: this is an internal function
+        using .TaylorModels: TaylorModelN, polynomial, remainder
+        using .TaylorSeries: coeff_table,  # NOTE: this is an internal function
+                             constant_term
 
         # implements Proposition 3.1.12 in thesis
         function convert(::Type{SparsePolynomialZonotope},
