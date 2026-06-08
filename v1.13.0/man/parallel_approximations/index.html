@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Parallel Approximations · LazySets.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><link href="../../assets/juliareach.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="LazySets.jl logo"/></a><h1>LazySets.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../getting_started/">Getting Started</a></li><li><a class="toctext" href="../polyhedral_approximations/">Polyhedral Approximations</a></li><li><a class="toctext" href="../decompose_example/">Decomposing an Affine Map</a></li><li><a class="toctext" href="../fast_2d_LPs/">Fast 2D LPs</a></li><li><a class="toctext" href="../iterative_refinement/">Iterative Refinement</a></li><li><a class="toctext" href="../interval_hulls/">Interval Hulls</a></li><li><a class="toctext" href="../convex_hulls/">Convex Hulls</a></li><li><a class="toctext" href="../set_operations/">Operations on Sets</a></li><li><a class="toctext" href="../reach_zonotopes/">A Reachability Algorithm</a></li><li><a class="toctext" href="../reach_zonotopes_hybrid/">A Hybrid Reachability Algorithm</a></li><li><a class="toctext" href="../concrete_polyhedra/">Concrete Polyhedra</a></li><li class="current"><a class="toctext" href>Parallel Approximations</a><ul class="internal"><li><a class="toctext" href="#Parallel-interval-hulls-1">Parallel interval hulls</a></li></ul></li><li><a class="toctext" href="../lazy_intersections/">Lazy Intersections</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../../lib/interfaces/">Set Interfaces</a></li><li><a class="toctext" href="../../lib/representations/">Common Set Representations</a></li><li><a class="toctext" href="../../lib/operations/">Common Set Operations</a></li><li><a class="toctext" href="../../lib/comparisons/">Comparisons</a></li><li><a class="toctext" href="../../lib/conversion/">Conversions between set representations</a></li><li><a class="toctext" href="../../lib/binary_functions/">Binary Functions on Sets</a></li><li><a class="toctext" href="../../lib/approximations/">Approximations</a></li><li><a class="toctext" href="../../lib/utils/">Utility Functions</a></li><li><a class="toctext" href="../../lib/parallel/">Parallel</a></li></ul></li><li><a class="toctext" href="../../about/">About</a></li></ul></nav><article id="docs"><header><nav><ul><li>Manual</li><li><a href>Parallel Approximations</a></li></ul><a class="edit-page" href="https://github.com/JuliaReach/LazySets.jl/blob/master/docs/src/man/parallel_approximations.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Parallel Approximations</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Parallel-Approximations-1" href="#Parallel-Approximations-1">Parallel Approximations</a></h1><p>A subset of the approximation algorithms are implemented in parallel in the  <code>LazySets.Parallel</code> module. In order to use parallel versions of the algorithms, you can write:</p><pre><code class="language-julia">using LazySets
+import LazySets.Parallel
+
+# call a method implemented in parallel, for example:
+S = Ball2(ones(100), 1.0)
+Parallel.box_approximation(S)</code></pre><pre><code class="language-none">Hyperrectangle{Float64}([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0  …  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0  …  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])</code></pre><p>Note that after importing or using <code>LazySets.Parallel</code>, the version of the function used must be fully qualified, eg. <code>LazySets.Approximations.box_approximation</code> for the sequential version or <code>LazySets.Parallel.box_approximation</code> for the parallel version.</p><p>The parallelization strategy that is available uses processes. To set the number of processes <code>N</code>, use the flag <code>-p N</code> at julia startup. For example, do</p><pre><code class="language-julia">$ julia -p 4</code></pre><p>to launch <code>4</code> additional local worker julia processes. Use the keyword <code>auto</code>, as in</p><pre><code class="language-julia">$ julia -p auto</code></pre><p>to launch as many workers as the number of local CPU cores.</p><ul><li><a href="#Parallel-Approximations-1">Parallel Approximations</a></li><ul><li><a href="#Parallel-interval-hulls-1">Parallel interval hulls</a></li></ul></ul><h2><a class="nav-anchor" id="Parallel-interval-hulls-1" href="#Parallel-interval-hulls-1">Parallel interval hulls</a></h2><p>As an illustration of the symmetric interval hull approximation of a nested lazy set computed in parallel, consider the following calculation. It arises in the discretization of set-based ODEs, and is defined below for an artificial example of a tridiagonal matrix of order <code>n</code>, where <code>n</code> is a positive integer.</p><pre><code class="language-julia">using LazySets, Expokit
+using SparseArrays, LinearAlgebra
+
+# define an nxn tridiagonal matrix
+A(n) = sparse(diagm(0 =&gt; fill(0.05, n), -1 =&gt; fill(-1, n-1), 1 =&gt; fill(-1, n-1)))
+
+# step size and initial set
+δ = 0.1
+X0(n) = Ball2(ones(n), 0.1)
+
+# input coefficients matrix (nx2 matrix with coefficients from -1 to 1)
+b(n) = vcat(range(-1, stop=1, length=n))
+B(n) = [b(n) b(n)] 
+U = BallInf(zeros(2), 1.2)
+
+# lazy matrix exponential
+eAδ(n) = SparseMatrixExp(A(n) * δ)
+
+# set that we want to overapproximate with an interval hull
+Y(n) = ConvexHull(eAδ(n) * X0(n) ⊕ (δ * B(n) * U), X0(n))</code></pre><p>The set <code>Y(n)</code> is parametric in the system&#39;s dimension <code>n</code>, to facilitate benchmarking. We will explore the computational cost as the dimension <code>n</code> increases, and compare the sequential algorithm with the parallel algorithm.</p><p>Given the lazy set <code>Y(n)</code>, we want to calculate the symmetric interval hull, which corresponds to finding the smallest <code>n</code>-dimensional hyperrectangle that contains the set <code>Y(n)</code> and is symmetric with respect to the origin. Notice that this operation is inherently parallel, since one can evaluate the support function of <code>Y</code> independently in each dimension from <code>1</code> to <code>n</code>.</p><p>The sequential algorithm returns the following execution times. We use the <code>@btime</code> macro from the <code>BenchmarkTools</code> package to have a more accurate timing than <code>@time</code>; the <code>$n</code> argument is used for interpolation of the arguments (if you are not behchmarking, pass <code>n</code> to <code>symmetric_interval_hull</code>, as usual).</p><pre><code class="language-julia">using BenchmarkTools
+
+for n in [50, 100, 500, 1000]
+    @btime res = Approximations.symmetric_interval_hull(Y($n));
+end
+
+  59.103 ms (11554 allocations: 25.89 MiB)
+  129.453 ms (23118 allocations: 54.16 MiB)
+  1.943 s (115530 allocations: 381.26 MiB)
+  10.017 s (232506 allocations: 1.01 GiB)</code></pre><p>For the parallel benchmark, we start Julia with 4 processes with the command <code>$ julia -p 4</code> and call <code>LazySets.Parallel.symmetric_interval_hull(Y(n))</code>. </p><pre><code class="language-julia">import LazySets.Parallel
+
+for n in [50, 100, 500, 1000]
+    @btime LazySets.Parallel.symmetric_interval_hull($Y($n));
+end
+
+  6.846 ms (2550 allocations: 160.59 KiB)
+  13.544 ms (3528 allocations: 271.94 KiB)
+  387.556 ms (11155 allocations: 2.51 MiB)
+  2.638 s (22156 allocations: 8.77 MiB)</code></pre><p>In the following table we summarize the speedup.</p><table><tr><th style="text-align: right">n</th><th style="text-align: right">Sequential (s)</th><th style="text-align: right">Parallel <code>p=4</code> (s)</th><th style="text-align: right">Speedup</th></tr><tr><td style="text-align: right">50</td><td style="text-align: right">0.059</td><td style="text-align: right">0.007</td><td style="text-align: right">8.42</td></tr><tr><td style="text-align: right">100</td><td style="text-align: right">0.129</td><td style="text-align: right">0.013</td><td style="text-align: right">9.92</td></tr><tr><td style="text-align: right">500</td><td style="text-align: right">1.94</td><td style="text-align: right">0.387</td><td style="text-align: right">4.96</td></tr><tr><td style="text-align: right">1000</td><td style="text-align: right">10.0</td><td style="text-align: right">2.64</td><td style="text-align: right">3.79</td></tr></table><p>The results in this section were obtained with a standard MacBook Pro laptop with the following specifications:</p><pre><code class="language-julia">julia&gt; versioninfo()
+Julia Version 1.0.2
+Commit d789231e99 (2018-11-08 20:11 UTC)
+Platform Info:
+  OS: macOS (x86_64-apple-darwin14.5.0)
+  CPU: Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-6.0.0 (ORCJIT, haswell)</code></pre><footer><hr/><a class="previous" href="../concrete_polyhedra/"><span class="direction">Previous</span><span class="title">Concrete Polyhedra</span></a><a class="next" href="../lazy_intersections/"><span class="direction">Next</span><span class="title">Lazy Intersections</span></a></footer></article></body></html>
