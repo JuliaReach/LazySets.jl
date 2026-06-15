@@ -6,9 +6,8 @@ using SafeTestsets
 
     ignores_all_explicit_imports_are_public = (:GLOBAL_RNG, :SamplerType, :invokelatest, :parse,
                                                :apply_recipe, :product, :checksquare, :Mesh,
-                                               :coeff_table, :in_base, :numtype, :pos_table,
-                                               :AbstractEnclosureAlgorithm, :_exp_remainder,
-                                               :BasicSymbolic, :Symbolic, :Arrays,
+                                               :in_base, :numtype, :AbstractEnclosureAlgorithm,
+                                               :_exp_remainder, :BasicSymbolic, :Symbolic, :Arrays,
                                                Symbol("@assert"),
                                                # LazySets package extensions
                                                :AbstractLinearMapAlgorithm, :HPoly, :LinearMapVRep,

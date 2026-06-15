@@ -1,9 +1,8 @@
 function load_TaylorModels_convert_TaylorModelN()
     return quote
         using .TaylorModels: TaylorModelN
-        using .TaylorSeries: HomogeneousPolynomial, TaylorN, coeff_table,
-                             in_base, pos_table, variables!
-        # NOTE: `coeff_table`, `in_base`, and `pos_table` are internal functions
+        using .TaylorSeries: HomogeneousPolynomial, TaylorN, in_base, variables!
+        # NOTE: `in_base` is an internal function
 
         # implements Proposition 3.1.13 in thesis
         function convert(::Type{Vector{<:TaylorModelN}}, P::SparsePolynomialZonotope{N}) where {N}
@@ -46,8 +45,9 @@ function load_TaylorModels_convert_TaylorModelN()
                     Ej = E[:, j]
                     ord = sum(Ej)
                     G[i, j]
-                    idx = pos_table[ord + 1][in_base(poly_order, Ej)]
-                    l = length(coeff_table[ord + 1])
+                    space = coeffs[ord + 1].space
+                    idx = space.pos_table[ord + 1][in_base(poly_order, Ej)]
+                    l = length(space.coeff_table[ord + 1])
                     v = Vector(SingleEntryVector(idx, l, G[i, j]))
                     pj = HomogeneousPolynomial(v, ord)
                     coeffs[ord + 1] += pj
