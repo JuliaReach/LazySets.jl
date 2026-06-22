@@ -5,17 +5,13 @@ using Requires: @require
 
 using ..LazySets: AbstractPolytope, LazySet, AbstractLinearMapAlgorithm,
                   default_polyhedra_backend, vertices_list_1d,
-                  _infeasible_constraints_list, _linear_map_hrep,
-                  _minkowski_sum_hrep_preprocess, _normal_Vector,
-                  _removevredundancy!, @validate
+                  _linear_map_hrep, _minkowski_sum_hrep_preprocess,
+                  _normal_Vector, _removevredundancy!, @validate
 using ..HalfSpaceModule: HalfSpace
-using Random: AbstractRNG, GLOBAL_RNG
-using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Comparison: isapproxzero
 using ReachabilityBase.Require: require
 
-@reexport import ..API: isbounded, isoperationtype, rand, vertices_list,
-                        minkowski_sum
+@reexport import ..API: isbounded, isoperationtype, vertices_list, minkowski_sum
 import ..LazySets: _linear_map_hrep_helper
 import Base: convert
 @reexport using ..API
@@ -26,7 +22,7 @@ include("HPolytope.jl")
 
 include("isbounded.jl")
 include("isoperationtype.jl")
-include("rand.jl")
+# include("rand.jl")
 include("vertices_list.jl")
 include("linear_map.jl")
 include("minkowski_sum.jl")
