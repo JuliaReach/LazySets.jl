@@ -20,8 +20,6 @@ function rand(::Type{HParallelotope};
               dim::Int=2,
               rng::AbstractRNG=GLOBAL_RNG,
               seed::Union{Int,Nothing}=nothing)
-    require(@__MODULE__, :LazySets; fun_name="rand")
-
     rng = reseed!(rng, seed)
 
     while true
@@ -36,9 +34,9 @@ function rand(::Type{HParallelotope};
 
         # convert to polyhedron to check boundedness
         clist = _constraints_list_hparallelotope(D, offset, N, typeof(offset))
-        Q = HPolyhedron(clist)
+        Q = _HPolyhedron(clist)
         if isbounded(Q)
-            return P = HParallelotope(D, offset; check_consistency=false)
+            return HParallelotope(D, offset; check_consistency=false)
         end
         # set is unbounded; sample a new set in the next iteration
     end  # COV_EXCL_LINE

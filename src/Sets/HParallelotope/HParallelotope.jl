@@ -52,9 +52,7 @@ struct HParallelotope{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N}} <: Abstract
                                                 "but they have sizes $(length(c)) and $(size(D)) respectively"
 
         if check_consistency
-            require(@__MODULE__, :LazySets; fun_name="HParallelotope")
-
-            P = HPolyhedron(_constraints_list_hparallelotope(D, c, N, VN))
+            P = _HPolyhedron(_constraints_list_hparallelotope(D, c, N, VN))
             if isempty(P)
                 throw(ArgumentError("the constraints are contradictory"))
             elseif !isbounded(P)
@@ -65,3 +63,6 @@ struct HParallelotope{N,VN<:AbstractVector{N},MN<:AbstractMatrix{N}} <: Abstract
         return new{N,VN,MN}(D, c)
     end
 end
+
+# see ext/LazySets/LazySetsHPolyhedronExt.jl
+_HPolyhedron(clist) = error()
