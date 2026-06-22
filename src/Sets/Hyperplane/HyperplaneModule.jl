@@ -3,22 +3,19 @@ module HyperplaneModule
 using Reexport: @reexport
 using Requires: @require
 
-using ..LazySets: AbstractPolyhedron, AbstractLinearMapAlgorithm,
-                  _linear_map_hrep, _witness_result_empty, @validate,
-                  @validate_commutative
+using ..LazySets: AbstractPolyhedron, @validate
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: nonzero_indices
 using ReachabilityBase.Commutative: @commutative
 using ReachabilityBase.Comparison: _isapprox
 using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, constraints_list, dim, isbounded, isempty,
-                        isoperationtype, isuniversal, rand, reflect, distance,
-                        in, project, ρ, σ, translate, isdisjoint
-@reexport import ..LazySets: constrained_dimensions, ishyperplanar, normalize
-import ..LazySets: _ishyperplanar, _linear_map_hrep_helper
+                        isoperationtype, rand, reflect, in, project, ρ, σ,
+                        translate, isdisjoint
+@reexport import ..LazySets: constrained_dimensions, ishyperplanar
+import ..LazySets: _ishyperplanar
 import ..Base: convert
 @reexport using ..API
 
@@ -32,10 +29,10 @@ include("dim.jl")
 include("isbounded.jl")
 include("isempty.jl")
 include("isoperationtype.jl")
-include("isuniversal.jl")
+# include("isuniversal.jl")
 include("rand.jl")
 include("reflect.jl")
-include("distance.jl")
+# include("distance.jl")
 include("in.jl")
 include("linear_map.jl")
 include("project.jl")
@@ -46,7 +43,7 @@ include("isdisjoint.jl")
 
 include("constrained_dimensions.jl")
 include("ishyperplanar.jl")
-include("normalize.jl")
+# include("normalize.jl")
 
 include("convert.jl")
 
