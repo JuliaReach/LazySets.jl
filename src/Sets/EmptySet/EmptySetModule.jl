@@ -9,18 +9,16 @@ using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: _rtol
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator
-using ReachabilityBase.Require: require
 
-@reexport import ..API: an_element, area, complement, diameter, dim,
-                        exponential_map, high, in, is_interior_point, isbounded,
-                        isboundedtype, isempty, isoperationtype, isuniversal,
-                        linear_map, low, norm, permute, project, radius, rand,
-                        rectify, reflect, sample, scale, scale!, ρ, σ,
-                        translate, translate!, vertices, vertices_list, volume,
-                        cartesian_product, convex_hull, difference, distance,
-                        intersection, isapprox, isdisjoint, isequivalent,
-                        ⊂, issubset, linear_combination, minkowski_difference,
-                        minkowski_sum
+@reexport import ..API: an_element, area, diameter, dim, exponential_map, high,
+                        in, is_interior_point, isbounded, isboundedtype,
+                        isempty, isoperationtype, isuniversal, linear_map, low,
+                        norm, permute, project, radius, rand, rectify, reflect,
+                        sample, scale, scale!, ρ, σ, translate, translate!,
+                        vertices, vertices_list, volume, cartesian_product,
+                        convex_hull, difference, distance, intersection,
+                        isapprox, isdisjoint, isequivalent, ⊂, issubset,
+                        linear_combination, minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, constrained_dimensions,
                              linear_map_inverse, rationalize, triangulate
 import ..LazySets: plot_recipe
@@ -33,7 +31,7 @@ include("EmptySet.jl")
 
 include("an_element.jl")
 include("area.jl")
-include("complement.jl")
+# include("complement.jl")
 include("diameter.jl")
 include("dim.jl")
 include("high.jl")
