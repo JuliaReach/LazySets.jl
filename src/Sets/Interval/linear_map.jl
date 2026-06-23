@@ -27,18 +27,5 @@ function _linear_map_interval(M::AbstractMatrix, X::Interval)
     return Interval(α * X.dat)
 end
 
-function _linear_map_zonotope(M::AbstractMatrix, X::Interval)
-    require(@__MODULE__, :LazySets; fun_name="linear_map")
-
-    nout = size(M, 1)
-    cx = _center(X)
-    gx = cx - min(X)
-    N = promote_type(eltype(M), eltype(X))
-    c = Vector{N}(undef, nout)
-    gen = Matrix{N}(undef, nout, 1)
-    @inbounds for i in 1:nout
-        c[i] = M[i, 1] * cx
-        gen[i] = M[i, 1] * gx
-    end
-    return Zonotope(c, gen)
-end
+# see ext/LazySets/LazySetsIntervalExt.jl
+_linear_map_zonotope(M, X) = error()

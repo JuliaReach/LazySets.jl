@@ -1,26 +1,22 @@
 module IntervalModule
 
 using Reexport: @reexport
-using Requires: @require
 
 using ..LazySets: LazySet, AbstractHyperrectangle, _witness_result_empty,
                   @validate
 using ..API: eltype, isconvextype
 import IntervalArithmetic as IA
 using Random: AbstractRNG, GLOBAL_RNG
-using ReachabilityBase.Arrays: SingleEntryVector
 using ReachabilityBase.Comparison: isapproxzero, _isapprox, _leq
 using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Require: require
 
-@reexport import ..API: affine_map, an_element, center, complement,
-                        constraints_list, convex_hull, diameter, dim,
-                        exponential_map, extrema, high, in, isoperationtype,
-                        linear_map, low, norm, permute, project, radius, rand,
-                        rectify, reflect, scale, ρ, σ, translate, vertices_list,
-                        volume, difference, distance, intersection, isapprox,
-                        isdisjoint, isequivalent, ⊂, issubset,
-                        minkowski_difference, minkowski_sum
+@reexport import ..API: affine_map, an_element, center, constraints_list,
+                        convex_hull, diameter, dim, exponential_map, extrema,
+                        high, in, isoperationtype, linear_map, low, norm,
+                        permute, project, radius, rand, rectify, reflect, scale,
+                        ρ, σ, translate, vertices_list, volume, distance,
+                        isapprox, isdisjoint, isequivalent, ⊂, issubset,
+                        minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens,
                              radius_hyperrectangle, rationalize, split
 import ..LazySets: plot_recipe
@@ -33,7 +29,7 @@ include("Interval.jl")
 
 include("an_element.jl")
 include("center.jl")
-include("complement.jl")
+# include("complement.jl")
 include("constraints_list.jl")
 include("convex_hull.jl")
 include("diameter.jl")
@@ -61,15 +57,15 @@ include("scale.jl")
 include("support_vector.jl")
 include("support_function.jl")
 include("translate.jl")
-include("difference.jl")
+# include("difference.jl")
 include("distance.jl")
-include("intersection.jl")
+# include("intersection.jl")
 include("isapprox.jl")
 include("isdisjoint.jl")
 include("isequivalent.jl")
 include("isstrictsubset.jl")
 include("issubset.jl")
-include("minkowski_difference.jl")
+# include("minkowski_difference.jl")
 include("minkowski_sum.jl")
 
 include("chebyshev_center_radius.jl")
@@ -135,7 +131,5 @@ We consider the interval as a line segment with y coordinate equal to zero.
 function plot_recipe(X::Interval{N}, ε=zero(N)) where {N}
     return [min(X), max(X)], zeros(N, 2)
 end
-
-include("init.jl")
 
 end  # module
