@@ -10,5 +10,6 @@ include("LazySets/LazySetsHPolyhedronExt.jl")
 include("LazySets/LazySetsHPolytopeExt.jl")
 include("LazySets/LazySetsHyperplaneExt.jl")
 include("LazySets/LazySetsIntervalExt.jl")
+include("LazySets/LazySetsLineExt.jl")
 
 end  # module
