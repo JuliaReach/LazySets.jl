@@ -12,5 +12,6 @@ include("LazySets/LazySetsHyperplaneExt.jl")
 include("LazySets/LazySetsIntervalExt.jl")
 include("LazySets/LazySetsLineExt.jl")
 include("LazySets/LazySetsLine2DExt.jl")
+include("LazySets/LazySetsLineSegmentExt.jl")
 
 end  # module
