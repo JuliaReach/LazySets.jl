@@ -29,7 +29,7 @@ jobs:
         with:
           version: '1'
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Cache artifacts
         uses: julia-actions/cache@v3
       - name: Install dependencies
