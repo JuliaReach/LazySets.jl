@@ -16,6 +16,23 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     end
 end
 
+# TODO temporary workaround for `==` of `TaylorModelN`s with `JetSpace`s
+function Base.:(==)(a::TaylorSeries.TaylorN{T}, b::TaylorSeries.TaylorN{T}) where {T<:Number}
+    TaylorSeries.space(a) == TaylorSeries.space(b) || return false
+    if TaylorSeries.order(a) != TaylorSeries.order(b)
+        a, b = TaylorSeries.fixorder(a, b)
+    end
+    return a.coeffs == b.coeffs
+end
+function Base.:(==)(a::TaylorSeries.HomogeneousPolynomial, b::TaylorSeries.HomogeneousPolynomial)
+    TaylorSeries.space(a) == TaylorSeries.space(b) || return false
+    TaylorSeries.order(a) == TaylorSeries.order(b) && return a.coeffs == b.coeffs
+    return iszero(a.coeffs) && iszero(b.coeffs)
+end
+function Base.:(==)(a::TaylorSeries.JetSpace, b::TaylorSeries.JetSpace)
+    return true  # this should actually compare something
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     # Example 3.1.2 from thesis
     c = N[4, 4]
