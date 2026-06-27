@@ -13,5 +13,6 @@ include("LazySets/LazySetsIntervalExt.jl")
 include("LazySets/LazySetsLineExt.jl")
 include("LazySets/LazySetsLine2DExt.jl")
 include("LazySets/LazySetsLineSegmentExt.jl")
+include("LazySets/LazySetsPolygonExt.jl")
 
 end  # module
