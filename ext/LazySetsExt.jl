@@ -15,5 +15,6 @@ include("LazySets/LazySetsLine2DExt.jl")
 include("LazySets/LazySetsLineSegmentExt.jl")
 include("LazySets/LazySetsPolygonExt.jl")
 include("LazySets/LazySetsSparsePolynomialZonotopeExt.jl")
+include("LazySets/LazySetsStarExt.jl")
 
 end  # module
