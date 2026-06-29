@@ -1,26 +1,22 @@
 module UniverseModule
 
 using Reexport: @reexport
-using Requires: @require
 
 using ..LazySets: LazySet, AbstractPolyhedron, _linear_map_polyhedron,
                   _witness_result_empty, @validate, @validate_commutative
 using Random: AbstractRNG, GLOBAL_RNG
-using ReachabilityBase.Arrays: SingleEntryVector, isinvertible
+using ReachabilityBase.Arrays: isinvertible
 using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Iteration: EmptyIterator
-using ReachabilityBase.Require: require
 
-@reexport import ..API: an_element, area, complement, constraints,
-                        constraints_list, diameter, dim, isbounded,
+@reexport import ..API: an_element, area, constraints, diameter, dim, isbounded,
                         isboundedtype, isempty, isoperationtype, isuniversal,
-                        norm, radius, rand, rectify, reflect, volume,
-                        exponential_map, in, linear_map, permute, project,
-                        scale, scale!, ρ, σ, translate, translate!,
-                        cartesian_product, convex_hull, difference, distance,
-                        intersection, isapprox, isdisjoint, isequivalent,
-                        issubset, linear_combination, minkowski_difference,
-                        minkowski_sum
+                        norm, radius, rand, reflect, volume, exponential_map,
+                        in, linear_map, permute, project, scale!, ρ, σ,
+                        translate, translate!, cartesian_product, convex_hull,
+                        difference, distance, intersection, isapprox,
+                        isdisjoint, isequivalent, issubset, linear_combination,
+                        minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, constrained_dimensions,
                              linear_map_inverse, rationalize, tosimplehrep,
                              triangulate
@@ -33,9 +29,9 @@ include("Universe.jl")
 
 include("an_element.jl")
 include("area.jl")
-include("complement.jl")
+# include("complement.jl")
 include("constraints.jl")
-include("constraints_list.jl")
+# include("constraints_list.jl")
 include("copy.jl")
 include("diameter.jl")
 include("dim.jl")
@@ -49,7 +45,7 @@ include("norm.jl")
 include("radius.jl")
 include("rand.jl")
 include("rationalize.jl")
-include("rectify.jl")
+# include("rectify.jl")
 include("reflect.jl")
 include("volume.jl")
 include("exponential_map.jl")
@@ -78,7 +74,5 @@ include("constrained_dimensions.jl")
 include("linear_map_inverse.jl")
 include("tosimplehrep.jl")
 include("triangulate.jl")
-
-include("init.jl")
 
 end  # module

@@ -1,11 +1,4 @@
-function scale(α::Real, U::Universe{N}) where {N}
-    if iszero(α)
-        require(@__MODULE__, :LazySets; fun_name="scale")
-
-        return ZeroSet{N}(dim(U))
-    end
-    return U
-end
+# see ext/LazySets/LazySetsUniverseExt.jl
 
 function scale!(α::Real, U::Universe)
     if iszero(α)
