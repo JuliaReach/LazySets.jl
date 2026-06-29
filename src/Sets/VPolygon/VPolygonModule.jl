@@ -1,30 +1,22 @@
 module VPolygonModule
 
 using Reexport: @reexport
-using Requires: @require
 
-using ..LazySets: AbstractPolygon, LazySet, AbstractHPolygon, halfspace_left,
-                  is_right_turn, _area_vlist_2D,
-                  _constraints_list_singleton_Vector, _extrema_vlist,
-                  _high_vlist, _infeasible_constraints_list,
-                  _intersection_vrep_2d, _linear_map_vrep, _low_vlist,
-                  _minkowski_sum_vrep_2d, _sort_constraints, _to_colVector,
-                  @validate
+using ..LazySets: AbstractPolygon, LazySet, AbstractHPolygon, is_right_turn,
+                  remove_redundant_vertices!, _area_vlist_2D, _extrema_vlist,
+                  _high_vlist, _linear_map_vrep, _low_vlist,
+                  _minkowski_sum_vrep_2d, _to_colVector, @validate
 using ..HPolygonModule: HPolygon
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG, shuffle
 using ReachabilityBase.Arrays: isabove, rand_pos_neg_zerosum_vector
 using ReachabilityBase.Comparison: _isapprox
 using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Require: require
 
-@reexport import ..API: an_element, area, constraints_list, extrema, high,
-                        isoperationtype, low, rand, vertices_list, in,
-                        linear_map, permute, project, scale, scale!, σ,
-                        translate, translate!, convex_hull, intersection,
-                        minkowski_sum
-@reexport import ..LazySets: remove_redundant_vertices,
-                             remove_redundant_vertices!, tohrep, tovrep
+@reexport import ..API: an_element, area, extrema, high, isoperationtype, low,
+                        rand, vertices_list, in, linear_map, permute, scale,
+                        scale!, σ, translate, translate!, minkowski_sum
+@reexport import ..LazySets: remove_redundant_vertices, tohrep, tovrep
 import Base: convert
 @reexport using ..API
 
@@ -34,7 +26,7 @@ include("VPolygon.jl")
 
 include("an_element.jl")
 include("area.jl")
-include("constraints_list.jl")
+# include("constraints_list.jl")
 include("extrema.jl")
 include("high.jl")
 include("isoperationtype.jl")
@@ -44,12 +36,12 @@ include("vertices_list.jl")
 include("in.jl")
 include("linear_map.jl")
 include("permute.jl")
-include("project.jl")
+# include("project.jl")
 include("scale.jl")
 include("support_vector.jl")
 include("translate.jl")
-include("convex_hull.jl")
-include("intersection.jl")
+# include("convex_hull.jl")
+# include("intersection.jl")
 include("minkowski_sum.jl")
 
 include("remove_redundant_vertices.jl")
@@ -57,7 +49,5 @@ include("tohrep.jl")
 include("tovrep.jl")
 
 include("convert.jl")
-
-include("init.jl")
 
 end  # module
