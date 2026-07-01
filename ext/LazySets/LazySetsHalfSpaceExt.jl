@@ -67,6 +67,12 @@ Consider the half-space ``x + y + 0⋅z ≤ 1``, whose ambient dimension is `3`.
 The (trivial) projection in the three dimensions using the block of variables
 `[1, 2, 3]` is:
 
+```@meta
+DocTestSetup = quote
+    using LazySets
+end
+```
+
 ```jldoctest project_halfspace
 julia> H = HalfSpace([1.0, 1.0, 0.0], 1.0)
 HalfSpace{Float64, Vector{Float64}}([1.0, 1.0, 0.0], 1.0)

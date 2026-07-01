@@ -12,6 +12,9 @@ Hyperplane
 
 The following method requires the [`SymEngine`](https://github.com/symengine/SymEngine.jl) package.
 
+```@meta
+CurrentModule = LazySets
+```
 ```@docs
 LazySets.convert(::Type{Hyperplane{N}}, ::Expr; vars::Vector{Basic}=Basic[]) where {N}
 ```
@@ -54,6 +57,11 @@ CurrentModule = LazySets.HyperplaneModule
 ```
 ```@docs
 isuniversal(::Hyperplane, ::Bool=false)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
 normalize(::Hyperplane{N}, p::Real=N(2)) where {N}
 ```
 ```@meta

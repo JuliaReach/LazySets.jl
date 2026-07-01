@@ -30,7 +30,17 @@ CurrentModule = LazySets.LineSegmentModule
 ```
 ```@docs
 constraints_list(::LineSegment)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
 generators(::LineSegment)
+```
+```@meta
+CurrentModule = LazySets.LineSegmentModule
+```
+```@docs
 genmat(::LineSegment)
 halfspace_left(::LineSegment)
 halfspace_right(::LineSegment)

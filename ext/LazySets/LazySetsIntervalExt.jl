@@ -73,6 +73,12 @@ flat. Three cases may arise:
 
 ### Examples
 
+```@meta
+DocTestSetup = quote
+    using LazySets
+end
+```
+
 ```jldoctest
 julia> X = Interval(0, 2); Y = Interval(1, 4); Z = Interval(2, 3);
 

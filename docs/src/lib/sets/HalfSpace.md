@@ -16,6 +16,10 @@ convert(::Type{HalfSpace{N,Vector{N}}}, hs::HalfSpace{N,<:AbstractVector{N}}) wh
 
 The following method requires the [`SymEngine`](https://github.com/symengine/SymEngine.jl) package.
 
+```@meta
+CurrentModule = LazySets
+```
+
 ```@docs
 LazySets.convert(::Type{HalfSpace{N}}, ::Expr; vars::Vector{Basic}=Basic[]) where {N}
 ```
