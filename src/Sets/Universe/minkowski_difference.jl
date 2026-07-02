@@ -6,10 +6,5 @@ function _minkowski_difference_universe(U::Universe, X::LazySet)
     return U
 end
 
-function _minkowski_difference_universe2(X::LazySet, U::Universe)
-    if isuniversal(X)
-        return U
-    end
-    N = promote_type(eltype(X), eltype(U))
-    return EmptySet{N}(dim(U))
-end
+# see ext/LazySets/LazySetsUniverseExt.jl
+_minkowski_difference_universe2(X, U) = error

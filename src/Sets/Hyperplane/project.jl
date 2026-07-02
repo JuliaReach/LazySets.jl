@@ -1,10 +1,4 @@
-@validate function project(H::Hyperplane{N}, block::AbstractVector{Int}; kwargs...) where {N}
-    if constrained_dimensions(H) ⊆ block
-        return Hyperplane(H.a[block], H.b)
-    else
-        return Universe{N}(length(block))
-    end
-end
+# see ext/LazySets/LazySetsHyperplaneExt.jl
 
 """
     project(x::AbstractVector, H::Hyperplane)

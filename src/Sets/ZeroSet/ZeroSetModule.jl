@@ -1,15 +1,13 @@
 module ZeroSetModule
 
 using Reexport: @reexport
-using Requires: @require
 
 using ..LazySets: AbstractSingleton, @validate
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Require: require
 
 @reexport import ..API: dim, isoperationtype, rand, rectify, reflect, in,
-                        linear_map, scale, scale!, ρ, translate, minkowski_sum
+                        linear_map, scale, scale!, ρ, minkowski_sum
 @reexport import ..LazySets: element
 import Base: copy
 @reexport using ..API
@@ -28,11 +26,9 @@ include("in.jl")
 include("linear_map.jl")
 include("scale.jl")
 include("support_function.jl")
-include("translate.jl")
+# include("translate.jl")
 include("minkowski_sum.jl")
 
 include("element.jl")
-
-include("init.jl")
 
 end  # module

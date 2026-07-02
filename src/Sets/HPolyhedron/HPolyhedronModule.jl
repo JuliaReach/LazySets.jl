@@ -3,7 +3,7 @@ module HPolyhedronModule
 using Reexport: @reexport
 using Requires: @require
 
-using ..LazySets: AbstractPolyhedron, LazySet, default_lp_solver,
+using ..LazySets: LazySets, AbstractPolyhedron, LazySet, default_lp_solver,
                   default_polyhedra_backend, iscomplement, is_lp_infeasible,
                   is_lp_optimal, is_lp_unbounded, has_lp_infeasibility_ray,
                   linprog, tosimplehrep, _isempty_polyhedron, _normal_Vector,
@@ -22,7 +22,7 @@ using ReachabilityBase.Require: require
                         permute, ρ, σ, translate, convex_hull
 @reexport import ..LazySets: ishyperplanar, normalize,
                              remove_redundant_constraints,
-                             remove_redundant_constraints!, tohrep, tovrep,
+                             remove_redundant_constraints!, tohrep,
                              addconstraint!
 import ..Base: convert
 @reexport using ..API
@@ -49,7 +49,7 @@ include("ishyperplanar.jl")
 include("normalize.jl")
 include("remove_redundant_constraints.jl")
 include("tohrep.jl")
-include("tovrep.jl")
+# include("tovrep.jl")
 include("addconstraint.jl")
 
 include("convert.jl")

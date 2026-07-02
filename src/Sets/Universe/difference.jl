@@ -6,7 +6,5 @@ function _difference_universe(U::Universe, X::LazySet)
     return complement(X)
 end
 
-function _difference_universe2(X::LazySet, U::Universe)
-    N = promote_type(eltype(X), eltype(U))
-    return EmptySet{N}(dim(U))
-end
+# see ext/LazySets/LazySetsUniverseExt.jl
+_difference_universe2(X, U) = error

@@ -56,7 +56,17 @@ CurrentModule = LazySets.VPolytopeModule
 ```@docs
 rand(::Type{VPolytope})
 remove_redundant_vertices(::VPolytope)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs
 tohrep(::VPolytope)
+```
+```@meta
+CurrentModule = LazySets.VPolytopeModule
+```
+```@docs
 tovrep(::VPolytope)
 ```
 ```@meta

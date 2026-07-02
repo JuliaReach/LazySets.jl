@@ -1,28 +1,4 @@
-# the algorithm is a 2D specialization of the `Hyperplane` algorithm, except
-# that it returns a `Singleton` for a 1D line
-@validate function project(L::Line2D{N}, block::AbstractVector{Int}; kwargs...) where {N}
-    m = length(block)
-    if m == 2
-        @inbounds if block[1] == 1 && block[2] == 2
-            return L  # no projection
-        end
-        # block[1] == 2 && block[2] == 1
-        return Line2D(L.a[block], L.b)  # swap a vector
-    end
-    # projection to 1 dimension
-    cdims = constrained_dimensions(L)
-    if length(cdims) == 1
-        @inbounds if cdims[1] == block[1]
-            # L: aᵢxᵢ = b where aᵢ ≠ 0
-            return Singleton([L.b / L.a[cdims[1]]])
-        else
-            # L: aⱼxⱼ = b where i ≠ j
-            return Universe{N}(1)
-        end
-    end
-    @assert length(cdims) == 2 "the line should be constrained in both dimensions"
-    return Universe{N}(1)
-end
+# see ext/LazySets/LazySetsLine2DExt.jl
 
 """
     project(x::AbstractVector, L::Line2D)

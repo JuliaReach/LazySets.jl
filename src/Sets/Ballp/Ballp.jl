@@ -59,20 +59,14 @@ struct Ballp{N<:AbstractFloat,VN<:AbstractVector{N}} <: AbstractBallp{N}
         @assert radius >= zero(N) "the radius must be nonnegative but is $radius"
         @assert isfinite(radius) "the radius must be finite but is $radius"
         @assert p >= one(N) "p must not be less than 1"
-        if p == N(Inf)
-            require(@__MODULE__, :LazySets; fun_name="Ballp")
 
-            return BallInf(center, radius)
-        elseif p == N(2)
-            require(@__MODULE__, :LazySets; fun_name="Ballp")
-
-            return Ball2(center, radius)
-        elseif isone(p)
-            require(@__MODULE__, :LazySets; fun_name="Ballp")
-
-            return Ball1(center, radius)
-        else
-            return new{N,VN}(p, center, radius)
+        res = _Ballp_special_cases(p, center, radius)
+        if !isnothing(res)
+            return res
         end
+        return new{N,VN}(p, center, radius)
     end
 end
+
+# see ext/LazySets/LazySetsBallpExt.jl
+_Ballp_special_cases(p, center, radius) = error()

@@ -68,7 +68,17 @@ normalize(::HPoly{N}, p::Real=N(2)) where {N}
 remove_redundant_constraints(::HPoly)
 remove_redundant_constraints!(::HPoly)
 tohrep(::HPoly)
+```
+```@meta
+CurrentModule = LazySets
+```
+```@docs; canonical=false
 tovrep(::HPoly)
+```
+```@meta
+CurrentModule = LazySets.HPolyhedronModule
+```
+```@docs; canonical=false
 addconstraint!(::HPoly, ::HalfSpace)
 ```
 ```@meta

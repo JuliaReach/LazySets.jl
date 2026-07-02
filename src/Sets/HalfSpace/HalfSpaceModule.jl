@@ -3,25 +3,22 @@ module HalfSpaceModule
 using Reexport: @reexport
 using Requires: @require
 
-using ..LazySets: AbstractPolyhedron, LazySet, AbstractLinearMapAlgorithm,
-                  default_lp_solver, is_lp_optimal, linprog,
-                  _witness_result_empty, @validate, @validate_commutative
+using ..LazySets: AbstractPolyhedron, LazySet, default_lp_solver, is_lp_optimal,
+                  linprog, @validate, @validate_commutative
 import LinearAlgebra
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: ismultiple, nonzero_indices, samedir
 using ReachabilityBase.Comparison: isapproxzero, _isapprox, _leq
 using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Require: require
 
 @reexport import ..API: an_element, complement, constraints_list, dim,
                         isbounded, isempty, isoperationtype, isuniversal, rand,
-                        distance, in, permute, project, ρ, σ, translate,
-                        isdisjoint
+                        distance, in, permute, translate
 @reexport import ..LazySets: constrained_dimensions, isfeasible, normalize,
                              remove_redundant_constraints,
                              remove_redundant_constraints!, tosimplehrep
-import ..LazySets: _ishalfspace, _linear_map_hrep_helper
+import ..LazySets: _ishalfspace
 import ..Base: convert
 @reexport using ..API
 
@@ -45,13 +42,13 @@ include("remove_redundant_constraints.jl")
 include("tosimplehrep.jl")
 include("distance.jl")
 include("in.jl")
-include("linear_map.jl")
+# include("linear_map.jl")
 include("permute.jl")
-include("project.jl")
-include("support_function.jl")
-include("support_vector.jl")
+# include("project.jl")
+# include("support_function.jl")
+# include("support_vector.jl")
 include("translate.jl")
-include("isdisjoint.jl")
+# include("isdisjoint.jl")
 
 include("halfspace_left.jl")
 include("halfspace_right.jl")

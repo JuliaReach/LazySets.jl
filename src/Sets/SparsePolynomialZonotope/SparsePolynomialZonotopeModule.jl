@@ -1,21 +1,17 @@
 module SparsePolynomialZonotopeModule
 
 using Reexport: @reexport
-using Requires: @require
 
 using ..LazySets: AbstractSparsePolynomialZonotope, AbstractReductionMethod,
-                  genmat, GIR05, order, _remove_redundant_generators_polyzono,
+                  GIR05, order, _remove_redundant_generators_polyzono,
                   MatrixZonotope, MatrixZonotopeProduct, ngens, generators,
                   factors, @validate
 import IntervalArithmetic as IA
 import LazySets: _indexvector
 using LinearAlgebra: I
-using Random: AbstractRNG, GLOBAL_RNG
-using ReachabilityBase.Distribution: reseed!
-using ReachabilityBase.Require: require
 
-@reexport import ..API: center, isoperationtype, rand, scale, scale!,
-                        translate, translate!, exact_sum, linear_map
+@reexport import ..API: center, isoperationtype, scale, scale!, translate,
+                        translate!, exact_sum, linear_map
 @reexport import ..LazySets: expmat, genmat_dep, genmat_indep, indexvector,
                              ngens_dep, ngens_indep, nparams, polynomial_order,
                              reduce_order, remove_redundant_generators
@@ -30,7 +26,7 @@ const SPZ = SparsePolynomialZonotope
 
 include("center.jl")
 include("isoperationtype.jl")
-include("rand.jl")
+# include("rand.jl")
 include("scale.jl")
 include("translate.jl")
 include("exact_sum.jl")
@@ -44,8 +40,6 @@ include("merge_id.jl")
 include("polynomial_order.jl")
 include("remove_redundant_generators.jl")
 include("reduce_order.jl")
-
-include("init.jl")
 
 """
     uniqueID(n::Int)
