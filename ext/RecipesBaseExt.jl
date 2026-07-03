@@ -1,3 +1,11 @@
+module RecipesBaseExt
+
+using LazySets
+using LazySets: plot_vlist, _plot_recipe_3d_polytope
+using ReachabilityBase.Comparison: isapproxzero
+using RecipesBase: AbstractPlot, @recipe, @series
+import RecipesBase: apply_recipe  # required for Documenter to find docstrings
+
 # global values
 DEFAULT_COLOR = :auto
 DEFAULT_ALPHA = 0.5
@@ -597,3 +605,5 @@ end
         return _plot_list_same_recipe(array(Poa), ε)
     end
 end
+
+end  # module

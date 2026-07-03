@@ -31,7 +31,9 @@ using SafeTestsets
                                                :_sort_constraints, :_ρ_vertices,
                                                :_σ_hyperplane_halfspace, :_σ_vertices,
                                                :_witness_result_empty, Symbol("@validate"),
-                                               Symbol("@validate_commutative"))
+                                               Symbol("@validate_commutative"),
+                                               # RecipesBaseExt
+                                               :plot_vlist, :_plot_recipe_3d_polytope)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
