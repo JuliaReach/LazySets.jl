@@ -5,15 +5,17 @@ import Plots, Polyhedra, Optim, ExponentialUtilities, TaylorModels, Distribution
        MiniQhull, Symbolics, SymEngine, IntervalMatrices, GeometryBasics
 
 # workaround to document methods defined in package extensions
-import ReachabilityBase
+import ReachabilityBase, RecipesBase
 include("../ext/LazySetsExt.jl")
+include("../ext/RecipesBaseExt.jl")
 
 include("init.jl")
 
 bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"); style=:alpha)
 
 makedocs(; sitename="LazySets.jl",
-         modules=[LazySets, LazySets.API, Approximations, LazySets.Parallel, LazySets.LazySetsExt],
+         modules=[LazySets, LazySets.API, Approximations, LazySets.Parallel,
+                  LazySets.LazySetsExt, RecipesBaseExt],
          format=Documenter.HTML(; prettyurls=get(ENV, "CI", nothing) == "true",
                                 assets=["assets/aligned.css", "assets/citations.css"],
                                 size_threshold_warn=150 * 2^10),
