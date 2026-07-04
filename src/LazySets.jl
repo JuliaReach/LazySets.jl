@@ -376,6 +376,7 @@ include("Approximations/Approximations.jl")
 # ==================================
 # Plotting (requires Approximations)
 # ==================================
+function plot_recipe end  # internal function; only defined here to be accessible to tests
 include("Plotting/mesh.jl")
 
 # ==========================
