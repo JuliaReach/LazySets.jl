@@ -17,7 +17,6 @@ function __init__()
     @require SymEngine = "123dc426-2d89-5057-bbad-38513e3affd8" include("Initialization/init_SymEngine.jl")
     @require Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7" include("Initialization/init_Symbolics.jl")
     @require TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a" include("Initialization/init_TaylorModels.jl")
-    @require WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192" include("Initialization/init_WriteVTK.jl")
 
     return nothing
 end

@@ -373,11 +373,15 @@ include("Approximations/Approximations.jl")
 # It can, however, happen that we forget to add the `using` statements.
 @reexport using .Approximations
 
-# ==================================
-# Plotting (requires Approximations)
-# ==================================
+# ========
+# Plotting
+# ========
 function plot_recipe end  # internal function; only defined here to be accessible to tests
+
 include("Plotting/mesh.jl")
+
+include("Plotting/paraview.jl")
+export writevtk
 
 # ==========================
 # Parallel-algorithms module
