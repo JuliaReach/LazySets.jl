@@ -49,5 +49,4 @@ else
     end
 end
 
-eval(load_polyhedra_mesh())
 eval(load_Polyhedra_polyhedron())

@@ -1386,6 +1386,8 @@ end  # quote / load_Polyhedra_polyhedron()
 
 function load_Polyhedra_GeometryBasics_triangulate_faces()
     return quote
+        using .Polyhedra: Mesh
+
         """
             triangulate_faces(X::LazySet)
 
