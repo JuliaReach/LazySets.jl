@@ -2,7 +2,7 @@ const args1 = (1,)
 const args12 = (1, 2)
 const args123 = (1, 2, 3)
 const args2 = (2,)
-const global VALIDATE_DICT = Dict{Symbol,Tuple{Function,Any}}()
+const VALIDATE_DICT = Dict{Symbol,Tuple{Function,Any}}()
 
 # unary set operations
 

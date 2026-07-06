@@ -5,18 +5,19 @@ const SUPPORTED_SDP_PACKAGES = [:SCS]
 # Global option
 # =============
 
-global sdp_solver = missing  # global state of the SDP solver
+const sdp_solver = Ref{Any}(missing)  # global state of the SDP solver
 
 function set_sdp_solver!(solver::Module)
-    return global sdp_solver = Val(Symbol(solver))
+    sdp_solver[] = Val(Symbol(solver))
+    return sdp_solver[]
 end
 
 function get_sdp_solver()
-    if ismissing(sdp_solver)
+    if ismissing(sdp_solver[])
         throw(ArgumentError("no semidefinite-programming (SDP) solver is loaded; load one of " *
                             "these packages: $SUPPORTED_SDP_PACKAGES"))
     end
-    return sdp_solver
+    return sdp_solver[]
 end
 
 # default semidefinite-programming solver
@@ -31,14 +32,12 @@ end
 
 function load_scs()
     return quote
-        if ismissing(sdp_solver)
+        if ismissing(sdp_solver[])
             set_sdp_solver!(SCS)
         end
     end
 end  # quote / load_scs
 
 function _default_sdp_solver(::Val{:SCS})
-    solver = JuMP.optimizer_with_attributes(() -> SCS.Optimizer())
-    JuMP.set_attribute(solver, JuMP.MOI.Silent(), true)
-    return solver
+    return JuMP.optimizer_with_attributes(SCS.Optimizer, JuMP.MOI.Silent() => true)
 end

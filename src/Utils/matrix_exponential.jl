@@ -5,18 +5,19 @@ const SUPPORTED_EXPONENTIAL_PACKAGES = [:ExponentialUtilities, :Expokit]
 # Global option
 # =============
 
-global exponential_backend = missing  # global state of the exponential backend
+const exponential_backend = Ref{Any}(missing)  # global state of the exponential backend
 
 function set_exponential_backend!(backend::Module)
-    return global exponential_backend = Val(Symbol(backend))
+    exponential_backend[] = Val(Symbol(backend))
+    return exponential_backend[]
 end
 
 function get_exponential_backend()
-    if ismissing(exponential_backend)
+    if ismissing(exponential_backend[])
         throw(ArgumentError("no exponential backend is loaded; load one of these packages: " *
                             "$SUPPORTED_EXPONENTIAL_PACKAGES"))
     end
-    return exponential_backend
+    return exponential_backend[]
 end
 
 # use default backend
@@ -31,7 +32,7 @@ end
 
 function load_exponentialutilities()
     return quote
-        if ismissing(exponential_backend)
+        if ismissing(exponential_backend[])
             set_exponential_backend!(ExponentialUtilities)
         end
     end
@@ -47,7 +48,7 @@ end
 
 function load_expokit()
     return quote
-        if ismissing(exponential_backend)
+        if ismissing(exponential_backend[])
             set_exponential_backend!(Expokit)
         end
     end
