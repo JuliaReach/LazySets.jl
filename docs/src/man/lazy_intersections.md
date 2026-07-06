@@ -134,7 +134,7 @@ end
 
 for n in [2, 5, 10]
     println("\nn = $n\n")
-    global E₁, E₂ = rand_ellipsoid(n), rand_ellipsoid(n)
+    local E₁, E₂ = rand_ellipsoid(n), rand_ellipsoid(n)
 
     # overapproximate the lazy intersection using an n-dimensional box
     @time overapproximate(E₁ ∩ E₂, BoxDirections(n))
