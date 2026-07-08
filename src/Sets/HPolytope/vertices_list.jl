@@ -49,7 +49,7 @@ backends see
     if isnothing(backend)
         backend = default_polyhedra_backend(P)
     end
-    Q = Polyhedra.polyhedron(P; backend=backend)
+    Q = Polyhedra.polyhedron(P; backend=backend)  # actually `LazySets.polyhedron`, but it is only defined after loading Polyhedra
     if prune
         _removevredundancy!(Q; N=N)
     end

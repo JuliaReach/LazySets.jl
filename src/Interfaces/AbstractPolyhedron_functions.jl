@@ -539,7 +539,7 @@ function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron, algo::Linear
     y_eq_Mx = [Polyhedra.HyperPlane(vcat(Id_neg[i, :], Vector(M[i, :])), zero(N)) for i in 1:m]
 
     Phrep = Polyhedra.hrep(y_eq_Mx, Ax_leq_b)
-    Phrep = polyhedron(Phrep, backend) # define concrete subtype
+    Phrep = Polyhedra.polyhedron(Phrep, backend) # define concrete subtype
     Peli_block = Polyhedra.eliminate(Phrep, (m + 1):(m + n), method)
     Peli_block = Polyhedra.removeduplicates(Polyhedra.hrep(Peli_block),
                                             default_lp_solver_polyhedra(N))
