@@ -51,10 +51,7 @@ Random.seed!(seed)
     import CDDLib, Distributions, ExponentialUtilities, Expokit, GeometryBasics,
            IntervalBoxes, IntervalConstraintProgramming, IntervalMatrices,
            Ipopt, MiniQhull, Optim, PkgVersion, Polyhedra, RangeEnclosures, SCS,
-           StaticArrays, TaylorModels
-    if VERSION < v"1.12"
-        import SetProg  # TODO add back unconditionally once it works in v1.12
-    end
+           SetProg, StaticArrays, TaylorModels
 
     # load all symbols from the following packages
     using SymEngine, Symbolics
