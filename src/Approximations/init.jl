@@ -6,5 +6,7 @@ function __init__()
     @require Ipopt = "b6b21f68-93f8-5de0-b562-5493be1d77c9" include("init_Ipopt.jl")
     @require SetProg = "39881422-4b75-5582-a5c7-0feb14562a65" include("init_SetProg.jl")
     @require StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c" include("init_StaticArraysCore.jl")
-    @require TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a" include("init_TaylorModels.jl")
+    @require TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a" begin
+        @require TaylorSeries = "6aa5eb33-94cf-58f4-a9d0-e4b2c4fc25ea" include("init_TaylorModels.jl")
+    end
 end

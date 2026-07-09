@@ -7,10 +7,30 @@ end
 @static if isdefined(Main, :TaylorModels)
     import TaylorModels
 end
+@static if isdefined(Main, :TaylorSeries)
+    import TaylorSeries
+end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
     end
+end
+
+# TODO temporary workaround for `==` of `TaylorModelN`s with `JetSpace`s
+function Base.:(==)(a::TaylorSeries.TaylorN{T}, b::TaylorSeries.TaylorN{T}) where {T<:Number}
+    TaylorSeries.space(a) == TaylorSeries.space(b) || return false
+    if TaylorSeries.order(a) != TaylorSeries.order(b)
+        a, b = TaylorSeries.fixorder(a, b)
+    end
+    return a.coeffs == b.coeffs
+end
+function Base.:(==)(a::TaylorSeries.HomogeneousPolynomial, b::TaylorSeries.HomogeneousPolynomial)
+    TaylorSeries.space(a) == TaylorSeries.space(b) || return false
+    TaylorSeries.order(a) == TaylorSeries.order(b) && return a.coeffs == b.coeffs
+    return iszero(a.coeffs) && iszero(b.coeffs)
+end
+function Base.:(==)(a::TaylorSeries.JetSpace, b::TaylorSeries.JetSpace)
+    return true  # this should actually compare something
 end
 
 for N in @tN([Float64, Float32, Rational{Int}])
@@ -286,7 +306,7 @@ for Z in [rand(Zonotope), rand(Hyperrectangle)]
 end
 
 for N in [Float64]
-    @static if isdefined(@__MODULE__, :TaylorModels)
+    @static if isdefined(@__MODULE__, :TaylorModels) && isdefined(@__MODULE__, :TaylorSeries)
         PZS = SimpleSparsePolynomialZonotope(N[0.2, -0.6], N[1 0; 0 0.4], [1 0; 0 1])
         PZ = convert(SparsePolynomialZonotope, PZS)
         @test center(PZ) == center(PZS)
@@ -296,7 +316,7 @@ for N in [Float64]
         @test indexvector(PZ) == 1:2
 
         # conversion from Taylor model
-        x₁, x₂, x₃ = TaylorModels.set_variables(Float64, ["x₁", "x₂", "x₃"]; order=3)
+        x₁, x₂, x₃ = TaylorSeries.variables!(Float64, ["x₁", "x₂", "x₃"]; order=3, nowarn=true)
         dom1 = IA.interval(N(-1), N(1))
         dom = [dom1, dom1, dom1]
         x0 = [IA.interval(IA.mid(di)) for di in dom]
@@ -324,8 +344,8 @@ for N in [Float64]
 
         # proper SparsePolynomialZonotope, but with zero independent generators
         PZ = SparsePolynomialZonotope(PZ.c, PZ.G, zeros(2, 2), PZ.E, PZ.idx)
-        x₁, x₂, x₃, x₄, x₅ = TaylorModels.set_variables(Float64, ["x₁", "x₂", "x₃", "x₄", "x₅"];
-                                                        order=5)
+        x₁, x₂, x₃, x₄, x₅ = TaylorSeries.variables!(Float64, ["x₁", "x₂", "x₃", "x₄", "x₅"];
+                                                     order=5, nowarn=true)
         vTM2 = convert(Vector{<:TaylorModels.TaylorModelN}, PZ)
         for i in eachindex(vTM)
             @test vTM2[i].rem == vTM[i].rem

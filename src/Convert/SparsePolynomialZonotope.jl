@@ -72,8 +72,8 @@ end
 
 function load_TaylorModels_convert_SparsePolynomialZonotope()
     return quote
-        using .TaylorModels: TaylorModelN, polynomial, remainder, constant_term
-        using .TaylorModels.TaylorSeries: coeff_table  # NOTE: this is an internal function
+        using .TaylorModels: TaylorModelN, polynomial, remainder
+        using .TaylorSeries: constant_term
 
         # implements Proposition 3.1.12 in thesis
         function convert(::Type{SparsePolynomialZonotope},
@@ -108,7 +108,7 @@ function load_TaylorModels_convert_SparsePolynomialZonotope()
                         if iszero(coeff_k)
                             continue
                         end
-                        Ej = coeff_table[order][k]
+                        Ej = pol.space.coeff_table[order][k]
                         j = findfirst(e -> e == Ej, Es)
                         if isnothing(j)
                             total_columns += 1
