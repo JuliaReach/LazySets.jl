@@ -3,9 +3,6 @@ using LazySets.ReachabilityBase.Arrays: SingleEntryVector
 @static if isdefined(Main, :CDDLib)
     import CDDLib
 end
-@static if isdefined(Main, :MiniQhull)
-    import MiniQhull
-end
 @static if isdefined(Main, :Polyhedra)
     import Polyhedra
 end
@@ -148,7 +145,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # test concrete linear map of a half-space
     H = HalfSpace(N[1, -1], N(0)) # x <= y
     M = N[1 0; 0 0]  # non-invertible matrix
-    @test_throws ArgumentError linear_map(M, H, algorithm="vrep")
+    @static if isdefined(@__MODULE__, :Polyhedra)
+        @test_throws ArgumentError linear_map(M, H, algorithm="vrep")
+    end
     M = N[2 2; 0 1]  # invertible matrix
     @test linear_map(M, H) == HalfSpace(N[0.5, -2.0], N(0.0))
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
