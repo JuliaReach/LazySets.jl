@@ -337,6 +337,9 @@ end
     @safetestset "underapproximate" begin
         include("Approximations/underapproximate.jl")
     end
+    @safetestset "kamenev" begin
+        include("Approximations/kamenev.jl")
+    end
 
     # ====================
     # Solver functionality
