@@ -18,6 +18,9 @@ end
 @static if isdefined(Main, :Polyhedra)
     import Polyhedra
 end
+@static if isdefined(Main, :Symbolics)
+    import Symbolics
+end
 @static if isdefined(Main, :TaylorModels)
     import TaylorModels
 end
@@ -659,9 +662,9 @@ for N in [Float64]
     end
 
     @static if isdefined(@__MODULE__, :IntervalConstraintProgramming) &&
-               isdefined(@__MODULE__, :IntervalBoxes)
+               isdefined(@__MODULE__, :IntervalBoxes) && isdefined(@__MODULE__, :Symbolics)
         # overapproximate a nonlinear constraint with an HPolyhedron
-        vars = IntervalConstraintProgramming.@variables x, y
+        vars = Symbolics.@variables x, y
         dom = IntervalBoxes.IntervalBox([IA.interval(-2, 2), IA.interval(-2, 2)]...)
         C = IntervalConstraintProgramming.constraint(x^2 + y^2 <= 1, vars)
         # (`invokelatest` to avoid world-age issue)
