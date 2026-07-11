@@ -16,7 +16,6 @@ using ReachabilityBase.Distribution: reseed!
                         translate, isdisjoint
 @reexport import ..LazySets: constrained_dimensions, ishyperplanar
 import ..LazySets: _ishyperplanar
-import ..Base: convert
 @reexport using ..API
 
 export Hyperplane
@@ -45,7 +44,7 @@ include("constrained_dimensions.jl")
 include("ishyperplanar.jl")
 # include("normalize.jl")
 
-include("convert.jl")
+# include("convert.jl")
 
 include("init.jl")
 
