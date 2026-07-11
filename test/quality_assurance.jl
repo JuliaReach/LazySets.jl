@@ -49,7 +49,9 @@ using SafeTestsets
                                                :_contract_zonotope_halfspace_ICP,
                                                # SetProgExt
                                                :InteriorPoint, :Translation, :ellipsoid,
-                                               :_underapproximate_ellipsoid, :default_sdp_solver)
+                                               :_underapproximate_ellipsoid, :default_sdp_solver,
+                                               # SymbolicsExt (not needed in v"1.12")
+                                               :Arr, :get_variables, :gradient, :value)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
@@ -57,7 +59,7 @@ using SafeTestsets
                                                  :EliminationAlgorithm, :Library, :get_degrees,
                                                  :hcartesianproduct, :intersect, :isempty,
                                                  :_exp_remainder, :hvectortype, :value, :setvrep!,
-                                                 :supportssolver, :vcartesianproduct, :Arr,
+                                                 :supportssolver, :vcartesianproduct,
                                                  :get_variables, :gradient, :Ellipsoid,
                                                  :invokelatest, :parse, :inf, :sup,
                                                  :OptimizerWithAttributes,

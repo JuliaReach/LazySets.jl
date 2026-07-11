@@ -68,8 +68,12 @@ LazySets.UnionSampler
 
 ## Symbolics
 
+```@meta
+CurrentModule = SymbolicsExt
+```
+
 ```@docs
-LazySets._vec
+SymbolicsExt._vec
 ```
 
 ## SymEngine
