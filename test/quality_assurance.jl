@@ -46,7 +46,10 @@ using SafeTestsets
                                                # MakieExt
                                                :Automatic,
                                                # IntervalConstraintProgrammingExt
-                                               :_contract_zonotope_halfspace_ICP)
+                                               :_contract_zonotope_halfspace_ICP,
+                                               # SetProgExt
+                                               :InteriorPoint, :Translation, :ellipsoid,
+                                               :_underapproximate_ellipsoid, :default_sdp_solver)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
@@ -56,7 +59,6 @@ using SafeTestsets
                                                  :_exp_remainder, :hvectortype, :value, :setvrep!,
                                                  :supportssolver, :vcartesianproduct, :Arr,
                                                  :get_variables, :gradient, :Ellipsoid,
-                                                 :InteriorPoint, :Sets, :Translation, :ellipsoid,
                                                  :invokelatest, :parse, :inf, :sup,
                                                  :OptimizerWithAttributes,
                                                  # fixed in versions after v"1.10"
