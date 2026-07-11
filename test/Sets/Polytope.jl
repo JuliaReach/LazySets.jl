@@ -14,7 +14,8 @@ end
     import StaticArrays
 end
 @static if isdefined(Main, :Symbolics)
-    using Symbolics
+    import Symbolics
+    using Symbolics: @variables
 end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
