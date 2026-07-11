@@ -7,7 +7,8 @@ end
     import Polyhedra
 end
 @static if isdefined(Main, :Symbolics)
-    using Symbolics
+    import Symbolics
+    using Symbolics: @variables
 end
 @static if isdefined(Main, :SymEngine)
     import SymEngine
