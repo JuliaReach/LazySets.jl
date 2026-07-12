@@ -66,14 +66,16 @@ using SafeTestsets
                                                # IntervalBoxesExt
                                                :_difference,
                                                # GeometryBasicsExt
-                                               :_area_polytope_3D, :_area_triangle_3D!)
+                                               :_area_polytope_3D, :_area_triangle_3D!,
+                                               # IntervalMatricesExt
+                                               :_exp_remainder, :taylor_expmap_remainder)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
                                                  :uniontypes, :AbstractEnclosureAlgorithm,
                                                  :EliminationAlgorithm, :Library, :get_degrees,
                                                  :hcartesianproduct, :intersect, :isempty,
-                                                 :_exp_remainder, :hvectortype, :value, :setvrep!,
+                                                 :hvectortype, :value, :setvrep!,
                                                  :supportssolver, :vcartesianproduct,
                                                  :get_variables, :gradient, :Ellipsoid,
                                                  :invokelatest, :parse, :inf, :sup,
