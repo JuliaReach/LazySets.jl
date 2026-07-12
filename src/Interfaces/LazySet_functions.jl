@@ -56,9 +56,11 @@ function _triangulate_delaunay(X; kwargs...)
     error()
 end
 
-@validate function triangulate_faces(X)
-    require(@__MODULE__, [:Polyhedra, :GeometryBasics]; fun_name="triangulate_faces")
-    throw(ArgumentError("`triangulate_faces` not implemented for $(typeof(X))"))
+# see ext/GeometryBasicsExt.jl
+@validate function triangulate_faces(P)
+    mod = Base.get_extension(@__MODULE__, :GeometryBasicsExt)
+    require(mod, [:GeometryBasics, :Polyhedra]; fun_name="triangulate_faces")
+    throw(ArgumentError("`triangulate_faces` not implemented for $(typeof(P))"))
 end
 
 """
@@ -907,19 +909,11 @@ function _area_polygon(v::Vector{VN}) where {N,VN<:AbstractVector{N}}
     return abs(res / 2)
 end
 
-function _area_polytope_3D(P::LazySet)
-    require(@__MODULE__, :Polyhedra; fun_name="area")
-    require(@__MODULE__, :GeometryBasics; fun_name="area")
-
-    points, connections = triangulate_faces(P)
-    N = (eltype(P) <: AbstractFloat) ? eltype(P) : Float64  # `_area_triangle_3D!` uses `sqrt`
-    res = zero(N)
-    M = ones(N, 3, 3)
-    @inbounds for triple in connections
-        x, y, z = points[:, triple[1]], points[:, triple[2]], points[:, triple[3]]
-        res += _area_triangle_3D!(M, x, y, z)
-    end
-    return res
+# see ext/GeometryBasicsExt.jl
+function _area_polytope_3D(P)
+    mod = Base.get_extension(@__MODULE__, :GeometryBasicsExt)
+    require(mod, [:GeometryBasics, :Polyhedra]; fun_name="area")
+    error()
 end
 
 # see https://en.wikipedia.org/wiki/Area_of_a_triangle#Using_coordinates
@@ -1328,53 +1322,6 @@ function load_Polyhedra_polyhedron()
         end
     end
 end  # quote / load_Polyhedra_polyhedron()
-
-function load_Polyhedra_GeometryBasics_triangulate_faces()
-    return quote
-        using .Polyhedra: Mesh
-
-        """
-            triangulate_faces(X::LazySet)
-
-        Triangulate the faces of a three-dimensional polytopic set.
-
-        ### Input
-
-        - `X` -- three-dimensional polytopic set
-
-        ### Output
-
-        A tuple `(p, c)` where `p` is a matrix, with each column containing a point, and
-        `c` is a list of 3-tuples containing the indices of the points in each triangle.
-
-        ### Notes
-
-        This function triangulates all faces of a 3D polytope. The result is a list of (flat)
-        triangles in 3D which describe the boundary of `X`.
-
-        `X` must contain at least three vertices.
-        """
-        @validate function triangulate_faces(X::LazySet)
-            P = polyhedron(X)
-            mes = Mesh(P)
-            coords = GeometryBasics.coordinates(mes)
-            connection = GeometryBasics.faces(mes)
-
-            ntriangles = length(connection)
-            npoints = length(coords)
-            @assert npoints == 3 * ntriangles "each triangle should have 3 vertices"
-            points = Matrix{Float32}(undef, 3, npoints)
-
-            for i in 1:npoints
-                points[:, i] .= coords[i].data
-            end
-
-            connection_tup = getfield.(connection, :data)
-
-            return points, connection_tup
-        end
-    end
-end  # quote / load_Polyhedra_GeometryBasics_triangulate_faces()
 
 """
 # Extended help
