@@ -62,7 +62,9 @@ using SafeTestsets
                                                # MiniQhullExt
                                                :_triangulate_delaunay,
                                                # CDDLibExt
-                                               :Library, :default_cddlib_backend)
+                                               :Library, :default_cddlib_backend,
+                                               # IntervalBoxesExt
+                                               :_difference)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
@@ -76,7 +78,6 @@ using SafeTestsets
                                                  :OptimizerWithAttributes,
                                                  # fixed in versions after v"1.10"
                                                  :get_extension)
-    ignores_all_qualified_accesses_via_owners = (:inf, :sup)  # defined in IntervalArithmetic but imported through IntervalBoxes
     ignores_no_stale_explicit_imports = (
                                          # required for documentation
                                          :apply_recipe,
@@ -87,7 +88,6 @@ using SafeTestsets
                                           all_explicit_imports_are_public=(ignore=ignores_all_explicit_imports_are_public,),
                                           all_explicit_imports_via_owners=(ignore=ignores_all_explicit_imports_via_owners,),
                                           all_qualified_accesses_are_public=(ignore=ignores_all_qualified_accesses_are_public,),
-                                          all_qualified_accesses_via_owners=(ignore=ignores_all_qualified_accesses_via_owners,),
                                           no_stale_explicit_imports=(ignore=ignores_no_stale_explicit_imports,))
 end
 

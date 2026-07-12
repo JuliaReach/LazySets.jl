@@ -1,6 +1,5 @@
 function __init__()
     @require IntervalMatrices = "5c1f47dc-42dd-5697-8aaa-4d102d140ba9" include("Initialization/init_IntervalMatrices.jl")
-    @require IntervalBoxes = "43d83c95-ebbb-40ec-8188-24586a1458ed" include("Initialization/init_IntervalBoxes.jl")
     @require Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029" begin
         include("Initialization/init_Polyhedra.jl")
         @require GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326" include("Initialization/init_GeometryBasics.jl")
