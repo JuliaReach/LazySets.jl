@@ -118,12 +118,25 @@ end
 
 # Polyhedra backend (fallback method)
 function default_polyhedra_backend(P::LazySet{N}) where {N}
-    require(@__MODULE__, :Polyhedra; fun_name="default_polyhedra_backend")
     if dim(P) == 1
         return default_polyhedra_backend_1d(N)
     else
         return default_polyhedra_backend_nd(N)
     end
+end
+
+# see ext/PolyhedraExt.jl
+function default_polyhedra_backend_1d(N)
+    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    require(mod, :Polyhedra; fun_name="default_polyhedra_backend")
+    error()
+end
+
+# see ext/PolyhedraExt.jl
+function default_polyhedra_backend_nd(N)
+    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    require(mod, :Polyhedra; fun_name="default_polyhedra_backend")
+    error()
 end
 
 # Note: this method cannot be documented due to a bug in Julia
@@ -1233,95 +1246,11 @@ function rationalize(::Type{T}, X::AbstractVector{<:LazySet{<:AbstractFloat}},
     return rationalize.(Ref(T), X, Ref(tol))
 end
 
-"""
-    chebyshev_center_radius(P::LazySet;
-                            [backend]=default_polyhedra_backend(P),
-                            [solver]=default_lp_solver_polyhedra(eltype(P); presolve=true))
-
-Compute a [Chebyshev center](https://en.wikipedia.org/wiki/Chebyshev_center)
-and the corresponding radius of a polytopic set.
-
-### Input
-
-- `P`       -- polytopic set
-- `backend` -- (optional; default: `default_polyhedra_backend(P)`) the backend
-               for polyhedral computations
-- `solver`  -- (optional; default:
-               `default_lp_solver_polyhedra(N; presolve=true)`) the LP solver
-               passed to `Polyhedra`
-
-### Output
-
-The pair `(c, r)` where `c` is a Chebyshev center of `P` and `r` is the radius
-of the largest Euclidean ball with center `c` enclosed by `P`.
-
-### Notes
-
-The Chebyshev center is the center of a largest Euclidean ball enclosed by `P`.
-In general, the center of such a ball is not unique, but the radius is.
-
-### Algorithm
-
-We call `Polyhedra.chebyshevcenter`.
-"""
-function chebyshev_center_radius(P::LazySet;
-                                 backend=default_polyhedra_backend(P),
-                                 solver=default_lp_solver_polyhedra(eltype(P); presolve=true))
-    require(@__MODULE__, :Polyhedra; fun_name="chebyshev_center")
-    if !ispolytopic(P)
-        throw(ArgumentError("can only compute a Chebyshev center for polytopes"))
-    end
-
-    Q = polyhedron(P; backend=backend)
-    c, r = Polyhedra.chebyshevcenter(Q, solver)
-    if eltype(P) == Float64  # help with type inference
-        c::Vector{Float64}
-        r::Float64
-    end
-    return c, r
-end
-
 function polyhedron(P; backend=default_polyhedra_backend(P))
-    require(@__MODULE__, :Polyhedra; fun_name="polyhedron")
+    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    require(mod, :Polyhedra; fun_name="polyhedron")
     error()
 end
-
-function load_Polyhedra_polyhedron()
-    return quote
-        # see the interface file init_Polyhedra.jl for the imports
-
-        """
-            polyhedron(P::LazySet; [backend]=default_polyhedra_backend(P))
-
-        Compute a set representation from `Polyhedra.jl`.
-
-        ### Input
-
-        - `P`       -- polyhedral set
-        - `backend` -- (optional, default: call `default_polyhedra_backend(P)`)
-                        the polyhedral computations backend
-
-        ### Output
-
-        A set representation in the `Polyhedra` library.
-
-        ### Notes
-
-        For further information on the supported backends see
-        [Polyhedra's documentation](https://juliapolyhedra.github.io/).
-
-        ### Algorithm
-
-        This default implementation uses `tosimplehrep`, which computes the constraint
-        representation of `P`. Set types preferring the vertex representation should
-        implement their own method.
-        """
-        function polyhedron(P::LazySet; backend=default_polyhedra_backend(P))
-            A, b = tosimplehrep(P)
-            return Polyhedra.polyhedron(Polyhedra.hrep(A, b), backend)
-        end
-    end
-end  # quote / load_Polyhedra_polyhedron()
 
 """
 # Extended help
@@ -1387,28 +1316,13 @@ function _isempty_polyhedron(P::LazySet{N}, witness::Bool=false;
     end
 end
 
-function _isempty_polyhedron_polyhedra(P::LazySet{N}, witness::Bool=false;
-                                       solver=nothing, backend=nothing) where {N}
-    require(@__MODULE__, :Polyhedra; fun_name="isempty",
+# see ext/PolyhedraExt.jl
+function _isempty_polyhedron_polyhedra(P, witness=false;
+                                       solver=nothing, backend=nothing)
+    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    require(mod, :Polyhedra; fun_name="isempty",
             explanation="with the active option `use_polyhedra_interface`")
-
-    if isnothing(backend)
-        backend = default_polyhedra_backend(P)
-    end
-
-    if isnothing(solver)
-        result = isempty(polyhedron(P; backend=backend))
-    else
-        result = isempty(polyhedron(P; backend=backend), solver)
-    end
-
-    if result
-        return _witness_result_empty(witness, true, N)
-    elseif witness
-        throw(ArgumentError("witness production is not supported yet"))
-    else
-        return false
-    end
+    error()
 end
 
 """

@@ -30,7 +30,7 @@ using SafeTestsets
                                                :_minkowski_difference_universe2,
                                                :_non_element_halfspace, :_normalize_halfspace,
                                                :_sort_constraints, :_ρ_vertices,
-                                               :_σ_hyperplane_halfspace, :_σ_vertices,
+                                               :_σ_hyperplane_halfspace, :_σ_vertices, :_tohrep,
                                                :_witness_result_empty, Symbol("@validate"),
                                                Symbol("@validate_commutative"),
                                                # RecipesBaseExt
@@ -73,20 +73,30 @@ using SafeTestsets
                                                :AbstractReductionMethod, :GIR05, :_convert_static,
                                                :_genmat_static, :_hcat_KLred, :_interval_hull,
                                                :_split_ret, :_to_colVector, :dir_east, :dir_north,
-                                               :dir_south, :dir_west)
+                                               :dir_south, :dir_west,
+                                               # PolyhedraExt
+                                               :EXACT, :EliminationAlgorithm, :GLPK_ON,
+                                               :LinearMapElimination, :default_lp_solver_polyhedra,
+                                               :default_polyhedra_backend_1d,
+                                               :default_polyhedra_backend_nd, :hcartesianproduct,
+                                               :hvectortype, :setvrep!, :supportssolver,
+                                               :vcartesianproduct, :_area_Polyhedra,
+                                               :_backend_solver_nd,
+                                               :_cartesian_product_hrep_polyhedra,
+                                               :_cartesian_product_vrep, :_convex_hull,
+                                               :_get_elimination_instance,
+                                               :_isempty_polyhedron_polyhedra,
+                                               :_is_polyhedra_backend,
+                                               :_minkowski_sum_hrep_preprocess,
+                                               :_removehredundancy!, :_removevredundancy!,
+                                               :_remove_redundant_vertices, :_vertices_list)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
-                                                 :uniontypes, :AbstractEnclosureAlgorithm,
-                                                 :EliminationAlgorithm, :Library, :get_degrees,
-                                                 :hcartesianproduct, :intersect, :isempty,
-                                                 :hvectortype, :value, :setvrep!,
-                                                 :supportssolver, :vcartesianproduct,
-                                                 :get_variables, :gradient, :Ellipsoid,
-                                                 :invokelatest, :parse, :inf, :sup,
-                                                 :OptimizerWithAttributes,
+                                                 :uniontypes, :get_degrees, :intersect, :isempty,
+                                                 :Ellipsoid, :inf, :sup, :OptimizerWithAttributes,
                                                  # fixed in versions after v"1.10"
-                                                 :get_extension)
+                                                 :get_extension, :parse)
     ignores_no_stale_explicit_imports = (
                                          # required for documentation
                                          :apply_recipe,

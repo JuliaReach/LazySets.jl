@@ -3,9 +3,8 @@ using LazySets: LinearMapVRep, convex_hull!, dim, default_polyhedra_backend
 using LazySets.HPolytopeModule: HPolytope
 using LazySets.IntervalModule: Interval, _constraints_list_Vector
 using LazySets.VPolygonModule: VPolygon
-using LazySets.VPolytopeModule: VPolytope
+using LazySets.VPolytopeModule: VPolytope, _tohrep
 using ReachabilityBase.Arrays: projection_matrix
-using ReachabilityBase.Require: require
 import LazySets.API: constraints_list, project, convex_hull
 import LazySets: tohrep, _linear_map_vrep
 
@@ -127,23 +126,5 @@ function tohrep(P::VPolytope; backend=nothing)
     elseif n == 2
         return convert(HPolytope, convert(VPolygon, P))
     end
-
-    require(LazySets, :Polyhedra; fun_name="tohrep")
-
-    if isnothing(backend)
-        backend = default_polyhedra_backend(P)
-    end
-
-    Q = LazySets.polyhedron(P; backend=backend)
-    R = convert(HPolytope, Q)
-    T = _output_type(P)  # help with type inference
-    return R::T
-end
-
-function _output_type(::VPolytope)
-    return HPolytope{N,Vector{N}} where {N}
-end
-
-function _output_type(::VPolytope{Float64})
-    return HPolytope{Float64,Vector{Float64}}
+    return _tohrep(P; backend)
 end

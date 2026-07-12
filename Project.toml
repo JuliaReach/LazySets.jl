@@ -68,6 +68,7 @@ JavisExt = "Javis"
 MakieExt = ["Makie", "Polyhedra"]
 MiniQhullExt = "MiniQhull"
 OptimExt = "Optim"
+PolyhedraExt = ["JuMP", "GLPK", "Polyhedra"]
 RangeEnclosuresExt = ["IntervalArithmetic", "RangeEnclosures"]
 RecipesBaseExt = ["ReachabilityBase", "RecipesBase"]
 SCSExt = "SCS"

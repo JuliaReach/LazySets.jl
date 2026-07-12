@@ -32,6 +32,7 @@ function default_cddlib_backend(N)
 end
 
 # check for Polyhedra backend (fallback method)
+# see ext/PolyhedraExt.jl
 function _is_polyhedra_backend(backend)
     return false
 end
@@ -40,7 +41,8 @@ end
 # NOTE: exists in parallel to `default_lp_solver` because we use different
 # interfaces (see #1493)
 function default_lp_solver_polyhedra(N; kwargs...)
-    require(@__MODULE__, :Polyhedra; fun_name="default_lp_solver_polyhedra")
+    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    require(mod, :Polyhedra; fun_name="default_lp_solver_polyhedra")
     return throw(ArgumentError("no default solver for numeric type $N"))
 end
 

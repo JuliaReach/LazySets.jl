@@ -73,6 +73,11 @@ CurrentModule = LazySets
 ```
 ```@docs
 area(::LazySet)
+```
+```@meta
+CurrentModule = PolyhedraExt
+```
+```@docs
 chebyshev_center_radius(::LazySet)
 ```
 ```@meta
@@ -319,6 +324,11 @@ CurrentModule = LazySets
 ```
 ```@docs
 norm(::LazySet, ::Real=Inf)
+```
+```@meta
+CurrentModule = PolyhedraExt
+```
+```@docs
 polyhedron(::LazySet)
 ```
 ```@meta
