@@ -1,6 +1,6 @@
 function load_intervalmatrices_conversion()
     return quote
-        using .IntervalMatrices: IntervalMatrix, mid, radius
+        using .IntervalMatrices: IntervalMatrix, midpoint_radius
 
         """
             convert(::Type{MatrixZonotope}, IM::IntervalMatrix)
@@ -33,8 +33,7 @@ function load_intervalmatrices_conversion()
         """
         function convert(::Type{MatrixZonotope}, IM::IntervalMatrix{N}) where {N}
             m, n = size(IM)
-            center = mid(IM)
-            halfIM = radius(IM)
+            center, halfIM = midpoint_radius(IM)
 
             gens = Vector{Matrix{N}}()
             sizehint!(gens, m * n)
