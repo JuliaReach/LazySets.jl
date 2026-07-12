@@ -17,6 +17,7 @@ SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
+CDDLib = "0.6 - 0.10"
 Distributed = "<0.0.1, 1.6"
 Distributions = "0.19 - 0.25"
 Expokit = "0.2"
@@ -51,6 +52,7 @@ WriteVTK = "1"
 julia = "1.10"
 
 [extensions]
+CDDLibExt = "CDDLib"
 DistributionsExt = ["Distributions", "Random", "ReachabilityBase"]
 ExpokitExt = "Expokit"
 ExponentialUtilitiesExt = "ExponentialUtilities"
@@ -69,6 +71,7 @@ SymbolicsExt = ["SymbolicUtils", "Symbolics"]
 WriteVTKExt = "WriteVTK"
 
 [weakdeps]
+CDDLib = "3391f64e-dcde-5f30-b752-e11513730f60"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4"
 ExponentialUtilities = "d4d017d3-3776-5f7e-afef-a10c40355c18"

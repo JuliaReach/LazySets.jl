@@ -60,7 +60,9 @@ using SafeTestsets
                                                # OptimExt
                                                :_line_search_optim,
                                                # MiniQhullExt
-                                               :_triangulate_delaunay)
+                                               :_triangulate_delaunay,
+                                               # CDDLibExt
+                                               :Library, :default_cddlib_backend)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
