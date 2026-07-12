@@ -51,7 +51,10 @@ using SafeTestsets
                                                :InteriorPoint, :Translation, :ellipsoid,
                                                :_underapproximate_ellipsoid, :default_sdp_solver,
                                                # SymbolicsExt (not needed in v"1.12")
-                                               :Arr, :get_variables, :gradient, :value)
+                                               :Arr, :get_variables, :gradient, :value,
+                                               # ExpokitExt
+                                               :_expmv, :exponential_backend,
+                                               :set_exponential_backend!)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
