@@ -68,7 +68,12 @@ using SafeTestsets
                                                # GeometryBasicsExt
                                                :_area_polytope_3D, :_area_triangle_3D!,
                                                # IntervalMatricesExt
-                                               :_exp_remainder, :taylor_expmap_remainder)
+                                               :_exp_remainder, :taylor_expmap_remainder,
+                                               # StaticArraysCoreExt
+                                               :AbstractReductionMethod, :GIR05, :_convert_static,
+                                               :_genmat_static, :_hcat_KLred, :_interval_hull,
+                                               :_split_ret, :_to_colVector, :dir_east, :dir_north,
+                                               :dir_south, :dir_west)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
