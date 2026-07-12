@@ -1,10 +1,10 @@
 module HyperrectangleModule
 
 using Reexport: @reexport
-using Requires: @require
 
 using ..LazySets: AbstractHyperrectangle, _ρ_sev_hyperrectangle,
                   _σ_sev_hyperrectangle, @validate
+import IntervalArithmetic as IA
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: SingleEntryVector
@@ -39,7 +39,5 @@ include("copy.jl")
 function □(c::VNC, r::VNR) where {N,VNC<:AbstractVector{N},VNR<:AbstractVector{N}}
     return Hyperrectangle(c, r)
 end
-
-include("init.jl")
 
 end  # module
