@@ -727,6 +727,17 @@ function load_Distributions_sample()
     end
 end  # load_Distributions_sample
 
+"""
+    UnionSetArraySampler <: AbstractSampler
+
+Type used for sampling from a union of sets.
+
+### Notes
+
+The sampling individually samples from each set in the union and tries to make the sampling more uniform by estimating the size of each set in the union through a box approximation.
+Overlaps between sets may result in overrepresentation in the regions of overlap.
+
+"""
 struct UnionSetArraySampler <: AbstractSampler
 end
 
