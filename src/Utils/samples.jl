@@ -95,6 +95,7 @@ _default_sampler(::AbstractPolynomialZonotope) = PolynomialZonotopeSampler()
 _default_sampler(::Universe) = UniverseSampler()
 _default_sampler(H::AbstractHyperrectangle) = RejectionSampler(H)
 _default_sampler(::AbstractZonotope) = PolynomialZonotopeSampler()
+_default_sampler(::UnionSetArray) = UnionSetArraySampler()
 
 _rand(rng, U) = rand(rng, U)
 _rand(rng, U::AbstractVector) = rand.(Ref(rng), U)
@@ -725,3 +726,35 @@ function load_Distributions_sample()
         end
     end
 end  # load_Distributions_sample
+
+struct UnionSetArraySampler <: AbstractSampler
+end
+
+function sample!(D::Vector{VN}, S::UnionSetArray, sampler::UnionSetArraySampler;
+                    rng::AbstractRNG=GLOBAL_RNG,
+                    seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
+    num_samples = length(D)
+    # estimate size of each set in the union to make sampling more uniform
+    size_sets = [prod(high(box_approximation(set)) .- low(box_approximation(set))) for set in S]
+    # normalize to get weights
+    total_size = sum(size_sets)
+    weights = [size / total_size for size in size_sets]
+    # calculate each share
+    shares = [floor(Int, w * num_samples) for w in weights]
+    # we rounded down so make sure to sum up to num_samples
+    leftover = num_samples - sum(shares)
+    for i in 1:leftover
+        shares[i] += 1
+    end
+    idx = 1
+    for (i, set) in enumerate(S)
+        share_i = shares[i]
+        # made a new vector everytime for each set
+        split_D = Vector{VN}(undef, share_i)
+        sample!(split_D, set, _default_sampler(set); rng=rng, seed=seed)
+        D[idx:(idx + share_i - 1)] .= split_D
+        idx += share_i
+    end
+    return D
+
+end
