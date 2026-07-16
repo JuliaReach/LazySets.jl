@@ -753,8 +753,8 @@ function UnionSampler(; size_weighted::Bool=true)
 end
 
 function sample!(D::Vector{VN}, S::UnionSetArray, sampler::UnionSampler;
-                    rng::AbstractRNG=GLOBAL_RNG,
-                    seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
+                 rng::AbstractRNG=GLOBAL_RNG,
+                 seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     num_samples = length(D)
     num_sets = length(S)
     if sampler.size_weighted
@@ -772,9 +772,9 @@ function sample!(D::Vector{VN}, S::UnionSetArray, sampler::UnionSampler;
     end
     # we rounded down so we need to distribute the remainder
     leftover = num_samples - sum(shares)
-        for i in 1:leftover
-            shares[i] += 1
-        end
+    for i in 1:leftover
+        shares[i] += 1
+    end
     idx = 1
     for (i, set) in enumerate(S)
         share_i = shares[i]
@@ -785,5 +785,4 @@ function sample!(D::Vector{VN}, S::UnionSetArray, sampler::UnionSampler;
         idx += share_i
     end
     return D
-
 end
