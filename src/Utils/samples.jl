@@ -95,6 +95,7 @@ _default_sampler(::AbstractPolynomialZonotope) = PolynomialZonotopeSampler()
 _default_sampler(::Universe) = UniverseSampler()
 _default_sampler(H::AbstractHyperrectangle) = RejectionSampler(H)
 _default_sampler(::AbstractZonotope) = PolynomialZonotopeSampler()
+_default_sampler(::UnionSetArray) = UnionSampler()
 
 _rand(rng, U) = rand(rng, U)
 _rand(rng, U::AbstractVector) = rand.(Ref(rng), U)
@@ -725,3 +726,64 @@ function load_Distributions_sample()
         end
     end
 end  # load_Distributions_sample
+
+"""
+    UnionSampler <: AbstractSampler
+
+Type used for sampling from a union of sets.
+
+### Fields
+
+- `size_weighted` -- (optional, default: `true`) if `true`, the sampling is
+                     weighted by the size of each set in the union; otherwise,
+                     each set is sampled equally
+
+### Notes
+
+The sampling individually samples from each set in the union.
+Overlaps between sets may result in overrepresentation in the regions of overlap.
+
+"""
+struct UnionSampler <: AbstractSampler
+    size_weighted::Bool
+end
+
+function UnionSampler(; size_weighted::Bool=true)
+    return UnionSampler(size_weighted)
+end
+
+function sample!(D::Vector{VN}, S::UnionSetArray, sampler::UnionSampler;
+                    rng::AbstractRNG=GLOBAL_RNG,
+                    seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
+    num_samples = length(D)
+    num_sets = length(S)
+    if sampler.size_weighted
+        # calculate size of each set in the union to make sampling more uniform
+        size_sets = [volume(set) for set in S]
+        # normalize to get weights
+        total_size = sum(size_sets)
+        weights = [size / total_size for size in size_sets]
+        # calculate each share
+        shares = [floor(Int, w * num_samples) for w in weights]
+    else
+        # equal shares for each set in the union
+        share = floor(Int, num_samples / num_sets)
+        shares = fill(share, num_sets)
+    end
+    # we rounded down so we need to distribute the remainder
+    leftover = num_samples - sum(shares)
+        for i in 1:leftover
+            shares[i] += 1
+        end
+    idx = 1
+    for (i, set) in enumerate(S)
+        share_i = shares[i]
+        # made a new vector everytime for each set
+        split_D = Vector{VN}(undef, share_i)
+        sample!(split_D, set, _default_sampler(set); rng=rng, seed=seed)
+        D[idx:(idx + share_i - 1)] .= split_D
+        idx += share_i
+    end
+    return D
+
+end
