@@ -95,7 +95,7 @@ _default_sampler(::AbstractPolynomialZonotope) = PolynomialZonotopeSampler()
 _default_sampler(::Universe) = UniverseSampler()
 _default_sampler(H::AbstractHyperrectangle) = RejectionSampler(H)
 _default_sampler(::AbstractZonotope) = PolynomialZonotopeSampler()
-_default_sampler(::UnionSetArray) = UnionSetArraySampler()
+_default_sampler(::UnionSetArray) = UnionSampler()
 
 _rand(rng, U) = rand(rng, U)
 _rand(rng, U::AbstractVector) = rand.(Ref(rng), U)
@@ -728,34 +728,56 @@ function load_Distributions_sample()
 end  # load_Distributions_sample
 
 """
-    UnionSetArraySampler <: AbstractSampler
+    UnionSampler <: AbstractSampler
 
 Type used for sampling from a union of sets.
 
+### Fields
+
+- `size_weighted` -- (optional, default: `true`) if `true`, the sampling is
+                     weighted by the size of each set in the union; otherwise,
+                     each set is sampled equally
+
 ### Notes
 
-The sampling individually samples from each set in the union and tries to make the sampling more uniform by estimating the size of each set in the union through a box approximation.
+The sampling individually samples from each set in the union.
 Overlaps between sets may result in overrepresentation in the regions of overlap.
 
 """
-struct UnionSetArraySampler <: AbstractSampler
+struct UnionSampler <: AbstractSampler
+    size_weighted::Bool
 end
 
-function sample!(D::Vector{VN}, S::UnionSetArray, sampler::UnionSetArraySampler;
+function UnionSampler(; size_weighted::Bool=true)
+    return UnionSampler(size_weighted)
+end
+
+function sample!(D::Vector{VN}, S::UnionSetArray, sampler::UnionSampler;
                     rng::AbstractRNG=GLOBAL_RNG,
                     seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
     num_samples = length(D)
-    # estimate size of each set in the union to make sampling more uniform
-    size_sets = [prod(high(box_approximation(set)) .- low(box_approximation(set))) for set in S]
-    # normalize to get weights
-    total_size = sum(size_sets)
-    weights = [size / total_size for size in size_sets]
-    # calculate each share
-    shares = [floor(Int, w * num_samples) for w in weights]
-    # we rounded down so make sure to sum up to num_samples
-    leftover = num_samples - sum(shares)
-    for i in 1:leftover
-        shares[i] += 1
+    num_sets = length(S)
+    if sampler.size_weighted
+        # calculate size of each set in the union to make sampling more uniform
+        size_sets = [volume(set) for set in S]
+        # normalize to get weights
+        total_size = sum(size_sets)
+        weights = [size / total_size for size in size_sets]
+        # calculate each share
+        shares = [floor(Int, w * num_samples) for w in weights]
+        # we rounded down so make sure to sum up to num_samples
+        leftover = num_samples - sum(shares)
+        for i in 1:leftover
+            shares[i] += 1
+        end
+    else
+        # equal shares for each set in the union
+        share = floor(Int, num_samples / num_sets)
+        shares = fill(share, num_sets)
+        leftover = num_samples - sum(shares)
+        for i in 1:leftover
+            shares[i] += 1
+        end
     end
     idx = 1
     for (i, set) in enumerate(S)
