@@ -765,20 +765,16 @@ function sample!(D::Vector{VN}, S::UnionSetArray, sampler::UnionSampler;
         weights = [size / total_size for size in size_sets]
         # calculate each share
         shares = [floor(Int, w * num_samples) for w in weights]
-        # we rounded down so make sure to sum up to num_samples
-        leftover = num_samples - sum(shares)
-        for i in 1:leftover
-            shares[i] += 1
-        end
     else
         # equal shares for each set in the union
         share = floor(Int, num_samples / num_sets)
         shares = fill(share, num_sets)
-        leftover = num_samples - sum(shares)
+    end
+    # we rounded down so we need to distribute the remainder
+    leftover = num_samples - sum(shares)
         for i in 1:leftover
             shares[i] += 1
         end
-    end
     idx = 1
     for (i, set) in enumerate(S)
         share_i = shares[i]
