@@ -396,19 +396,3 @@ function box_approximation(ms::MinkowskiSum)
     H2 = box_approximation(second(ms))
     return minkowski_sum(H1, H2)
 end
-
-# function to be loaded by Requires
-function load_taylormodels_box_approximation()
-    return quote
-        using .TaylorModels: TaylorModel1, TaylorModelN, domain, evaluate
-
-        box_approximation(vTM::Vector{<:TaylorModel1}) = _box_approximation_vTM(vTM)
-
-        box_approximation(vTM::Vector{<:TaylorModelN}) = _box_approximation_vTM(vTM)
-
-        function _box_approximation_vTM(vTM)
-            bounds = [evaluate(vTM[i], domain(p)) for (i, p) in enumerate(vTM)]
-            return Hyperrectangle(; low=IA.inf.(bounds), high=IA.sup.(bounds))
-        end
-    end
-end  # quote / load_taylormodels_box_approximation

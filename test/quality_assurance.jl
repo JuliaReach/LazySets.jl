@@ -89,7 +89,9 @@ using SafeTestsets
                                                :_is_polyhedra_backend,
                                                :_minkowski_sum_hrep_preprocess,
                                                :_removehredundancy!, :_removevredundancy!,
-                                               :_remove_redundant_vertices, :_vertices_list)
+                                               :_remove_redundant_vertices, :_vertices_list,
+                                               # PolyhedraExt
+                                               :sym_box, :sym_itv, :zero_box, :zero_itv)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,

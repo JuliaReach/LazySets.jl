@@ -31,11 +31,10 @@ import GLPK, JuMP, ExprTools
 import IntervalArithmetic as IA
 
 using LinearAlgebra: /, Diagonal, I, UniformScaling, checksquare, copyto!, det,  # NOTE: `checksquare` is an internal symbol
-                     diagm, dot, nullspace, tr, transpose
+                     dot, nullspace, tr, transpose
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, randperm  # NOTE: `GLOBAL_RNG` and `SamplerType` are internal symbols
 using SparseArrays: AbstractSparseMatrix, AbstractSparseVector, SparseVector,
                     blockdiag, findnz, issparse, sparse, sparsevec, spzeros
-using Requires: @require
 
 # ================
 # ReachabilityBase
@@ -399,10 +398,5 @@ activate_assertions()
 # Load fake package extension for LazySets itself
 # ===============================================
 include("../ext/LazySetsExt.jl")
-
-# ===================================================
-# Load external packages on-demand (using 'Requires')
-# ===================================================
-include("init.jl")
 
 end # module
