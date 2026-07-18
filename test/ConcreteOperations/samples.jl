@@ -116,13 +116,14 @@ for N in [Float64]
     end
 
     # UnionSetArray sampler
-    S1 = complement(Hyperrectangle(low = N[-4.0, -4.0], high = N[4.0, 4.0])) # inner set
-    S2 = Hyperrectangle(low = N[-4.5, -4.5], high = N[4.5, 4.5]) # outer set
-    S3 = Hyperrectangle(low = N[-9.0, -4.5], high = N[4.5, 4.5]) # same outer set but has bigger left side after intersection with S1
+    S1 = complement(Hyperrectangle(; low=N[-4.0, -4.0], high=N[4.0, 4.0])) # inner set
+    S2 = Hyperrectangle(; low=N[-4.5, -4.5], high=N[4.5, 4.5]) # outer set
+    S3 = Hyperrectangle(; low=N[-9.0, -4.5], high=N[4.5, 4.5]) # same outer set but has bigger left side after intersection with S1
     S1S2 = intersection(S1, S2)
     S1S3 = intersection(S1, S3)
     # test for both values of the parameter
-    for sampler in [LazySets.UnionSampler(size_weighted=true), LazySets.UnionSampler(size_weighted=false)]
+    for sampler in
+        [LazySets.UnionSampler(; size_weighted=true), LazySets.UnionSampler(; size_weighted=false)]
         pts1 = sample(S1S2, 10; sampler=sampler)
         Pts2 = sample(S1S3, 10; sampler=sampler)
         @test length(pts1) == 10
@@ -132,9 +133,8 @@ for N in [Float64]
     end
 
     # test that weighted sampling results in more points in the bigger set
-    weighted_pts = sample(S1S3, 100; sampler=LazySets.UnionSampler(size_weighted=true))
-    unweighted_pts = sample(S1S3, 100; sampler=LazySets.UnionSampler(size_weighted=false))
+    weighted_pts = sample(S1S3, 100; sampler=LazySets.UnionSampler(; size_weighted=true))
+    unweighted_pts = sample(S1S3, 100; sampler=LazySets.UnionSampler(; size_weighted=false))
     in_big_set(v) = v[1] < -4.0
     @test count(in_big_set, weighted_pts) > count(in_big_set, unweighted_pts)
-
 end
