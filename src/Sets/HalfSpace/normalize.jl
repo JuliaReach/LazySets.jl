@@ -20,7 +20,7 @@ end
 
 function _normalize_halfspace(H, p=2)
     nₐ = norm(H.a, p)
-    a = LinearAlgebra.normalize(H.a, p)
+    a = normalize(H.a, p)
     b = H.b / nₐ
     return a, b
 end

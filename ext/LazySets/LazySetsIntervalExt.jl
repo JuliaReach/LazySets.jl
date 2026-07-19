@@ -9,16 +9,17 @@ using LazySets: UnionSet
 using ReachabilityBase.Arrays: SingleEntryVector
 using ReachabilityBase.Comparison: isapproxzero
 import LazySets.IntervalModule: _constraints_list_Vector, _linear_map_zonotope
-import LazySets.API: difference, intersection, minkowski_difference
+import LazySets.API: complement, constraints_list, difference, intersection,
+                     minkowski_difference
 
-function LazySets.complement(X::Interval)
+function complement(X::Interval)
     N = eltype(X)
     L = HalfSpace(SingleEntryVector(1, 1, one(N)), min(X))
     H = HalfSpace(SingleEntryVector(1, 1, -one(N)), -max(X))
     return UnionSet(L, H)
 end
 
-function LazySets.constraints_list(X::Interval)
+function constraints_list(X::Interval)
     N = eltype(X)
     constraints = Vector{HalfSpace{N,SingleEntryVector{N}}}(undef, 2)
     e₁ = SingleEntryVector(1, 1, one(N))
