@@ -1,6 +1,7 @@
 module JavisExt
 
-using Javis: Luxor, Background, Object, Video, background, poly, render, sethue
+using Javis: Background, Object, Video, background, poly, render, sethue
+using Javis.Luxor: Point
 using LazySets: HPolygon, LazySet, dim, overapproximate, vertices_list
 import Javis: animate
 
@@ -25,7 +26,7 @@ function luxify(X::LazySet; tol=1e-3)
     # convert to vertex representation
     vlist = vertices_list(P)
 
-    out_luxor = [Luxor.Point(Tuple(p)) for p in vlist]
+    out_luxor = [Point(Tuple(p)) for p in vlist]
 
     #return Luxor.poly(out_luxor, :stroke, close=true)
     return out_luxor

@@ -2,7 +2,8 @@ module SCSExt
 
 using LazySets: sdp_solver, set_sdp_solver!
 import SCS
-using SCS: MOI, Optimizer
+using SCS: Optimizer
+using SCS.MOI: OptimizerWithAttributes, Silent
 import LazySets: _default_sdp_solver
 
 function __init__()
@@ -12,7 +13,7 @@ function __init__()
 end
 
 function _default_sdp_solver(::Val{:SCS})
-    return MOI.OptimizerWithAttributes(Optimizer, MOI.Silent() => true)
+    return OptimizerWithAttributes(Optimizer, Silent() => true)
 end
 
 end  # module

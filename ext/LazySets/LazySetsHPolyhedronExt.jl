@@ -1,5 +1,6 @@
 import LazySets
 
+using LazySets: polyhedron
 using LazySets.EmptySetModule: EmptySet
 using LazySets.HPolygonModule: HPolygon
 using LazySets.HPolyhedronModule: HPoly
@@ -48,7 +49,7 @@ function tovrep(P::HPoly; backend=nothing)
             backend = default_polyhedra_backend(P)
         end
 
-        Q = LazySets.polyhedron(P; backend=backend)
+        Q = polyhedron(P; backend=backend)
     end
     return convert(VPolytope, Q)
 end

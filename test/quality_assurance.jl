@@ -39,8 +39,8 @@ using SafeTestsets
                                                :RejectionSampler, :_sample_unit_nball_muller!,
                                                :_sample_unit_nsphere_muller!,
                                                # SCSExt
-                                               :MOI, :Optimizer, :sdp_solver, :set_sdp_solver!,
-                                               :_default_sdp_solver,
+                                               :MOI, :Optimizer, :OptimizerWithAttributes, :Silent,
+                                               :sdp_solver, :set_sdp_solver!, :_default_sdp_solver,
                                                # IpoptExt
                                                :_default_nln_solver,
                                                # MakieExt
@@ -96,7 +96,7 @@ using SafeTestsets
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
                                                  :uniontypes, :get_degrees, :intersect, :isempty,
-                                                 :Ellipsoid, :inf, :sup, :OptimizerWithAttributes,
+                                                 :Ellipsoid, :inf, :sup,
                                                  # fixed in versions after v"1.10"
                                                  :get_extension, :parse)
     ignores_no_stale_explicit_imports = (
