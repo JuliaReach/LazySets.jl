@@ -2,7 +2,7 @@ module IntervalConstraintProgrammingExt
 
 using IntervalBoxes: IntervalBox
 using IntervalConstraintProgramming: Separator
-using Symbolics: @variables
+using Symbolics: @variables  # NOTE: used for metaprogramming below
 import LazySets.Approximations: _contract_zonotope_halfspace_ICP
 
 function _contract_zonotope_halfspace_ICP(e::Expr, X::Vector, vars_string::String)
