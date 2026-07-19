@@ -5,7 +5,6 @@ import Plots, Polyhedra, Optim, ExponentialUtilities, TaylorModels, Distribution
        MiniQhull, Symbolics, SymEngine, IntervalMatrices, GeometryBasics, CairoMakie
 
 # workaround to document methods defined in package extensions
-import Distributions, ReachabilityBase, RecipesBase
 include("../ext/LazySetsExt.jl")
 include("../ext/DistributionsExt.jl")
 include("../ext/GeometryBasicsExt.jl")
