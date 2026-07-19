@@ -9,6 +9,12 @@ export ground,
        luxify,
        nfolds
 
+function __init__()
+    return Base.depwarn("LazySets.JavisExt is deprecated because Javis is " *
+                        "unmaintained and requires a downgrade to very old " *
+                        "package versions", :JavisExt)
+end
+
 # default canvas background
 function ground(args...)
     background("white") # canvas background
