@@ -8,7 +8,7 @@ elseif isdefined(SymbolicUtils, :BasicSymbolic)
     using SymbolicUtils: BasicSymbolic
     const BasicSymbolic2 = BasicSymbolic
 else
-    using .Symbolics: BasicSymbolic
+    using Symbolics: BasicSymbolic
     const BasicSymbolic2 = BasicSymbolic
 end
 
