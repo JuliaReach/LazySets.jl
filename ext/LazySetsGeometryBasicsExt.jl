@@ -1,4 +1,4 @@
-module GeometryBasicsExt
+module LazySetsGeometryBasicsExt
 
 using LazySets: LazySet, polyhedron, triangulate_faces, _area_triangle_3D!,
                 @validate

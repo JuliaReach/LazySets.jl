@@ -163,9 +163,9 @@ function convert(::Type{Zonotope}, P::AbstractPolynomialZonotope)
     return Zonotope(center(P), genmat_indep(P))
 end
 
-# see ext/StaticArraysCoreExt.jl
+# see ext/LazySetsStaticArraysCoreExt.jl
 function _convert_static(Ztype, Hsvec)
-    mod = Base.get_extension(@__MODULE__, :StaticArraysCoreExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsStaticArraysCoreExt)
     require(mod, :StaticArraysCore; fun_name="_convert_static")
     error()
 end

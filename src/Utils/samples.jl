@@ -655,9 +655,9 @@ function sample!(D::Vector{VN}, X::LazySet, sampler::UniverseSampler;
     end
 end
 
-# see ext/DistributionsExt.jl
+# see ext/LazySetsDistributionsExt.jl
 function _sample_unit_nsphere_muller!(D, n, p; rng=GLOBAL_RNG, seed=nothing)
-    mod = Base.get_extension(@__MODULE__, :DistributionsExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsDistributionsExt)
     require(mod, :Distributions; fun_name="_sample_unit_nsphere_muller!")
     error()
 end

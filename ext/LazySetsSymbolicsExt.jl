@@ -1,13 +1,13 @@
-module SymbolicsExt
+module LazySetsSymbolicsExt
 
 import Symbolics
 using Symbolics: Arr, Num, get_variables
 import SymbolicUtils
 
-include("Symbolics/SymbolicsHalfSpaceExt.jl")
-include("Symbolics/SymbolicsHPolyhedronExt.jl")
-include("Symbolics/SymbolicsHPolytopeExt.jl")
-include("Symbolics/SymbolicsHyperplaneExt.jl")
+include("Symbolics/HalfSpaceExt.jl")
+include("Symbolics/HPolyhedronExt.jl")
+include("Symbolics/HPolytopeExt.jl")
+include("Symbolics/HyperplaneExt.jl")
 
 """
     _vec(vars)
@@ -33,9 +33,9 @@ julia> vars = @variables x[1:2] y
   x[1:2]
  y
 
-julia> SymbolicsExt = Base.get_extension(LazySets, :SymbolicsExt);
+julia> LazySetsSymbolicsExt = Base.get_extension(LazySets, :LazySetsSymbolicsExt);
 
-julia> SymbolicsExt._vec(vars)
+julia> LazySetsSymbolicsExt._vec(vars)
 3-element Vector{Num}:
  x[1]
  x[2]

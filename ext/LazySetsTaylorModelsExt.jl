@@ -1,4 +1,4 @@
-module TaylorModelsExt
+module LazySetsTaylorModelsExt
 
 using IntervalArithmetic: Interval, inf, sup
 import LazySets
@@ -11,7 +11,7 @@ using TaylorModels: HomogeneousPolynomial, TaylorModel1, TaylorModelN, Taylor1,
 using TaylorModels.TaylorSeries: numtype  # NOTE: this is an internal function
 import LazySets.Approximations: box_approximation, overapproximate
 
-include("TaylorModels/TaylorModelsSparsePolynomialZonotopeExt.jl")
+include("TaylorModels/SparsePolynomialZonotopeExt.jl")
 
 function _eltype_TM(TMi)
     return numtype(polynomial(TMi))

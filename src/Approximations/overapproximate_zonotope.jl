@@ -836,9 +836,9 @@ function _overapproximate_zonotope_halfspace_ICP(Z::AbstractZonotope{N},
     return affine_map(G, convert(Hyperrectangle, newD), c)
 end
 
-# see ext/IntervalConstraintProgrammingExt.jl
+# see ext/LazySetsIntervalConstraintProgrammingExt.jl
 function _contract_zonotope_halfspace_ICP(e, X, vars_string)
-    mod = Base.get_extension(@__MODULE__, :IntervalConstraintProgrammingExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsIntervalConstraintProgrammingExt)
     require(mod, :IntervalConstraintProgramming; fun_name="overapproximate")
     error()
 end

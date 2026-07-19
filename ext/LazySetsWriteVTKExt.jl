@@ -1,4 +1,4 @@
-module WriteVTKExt
+module LazySetsWriteVTKExt
 
 using LazySets: LazySet, triangulate_faces
 using WriteVTK: VTKPolyhedron, vtk_grid

@@ -1,4 +1,4 @@
-module ExpokitExt
+module LazySetsExpokitExt
 
 import Expokit
 using Expokit: expmv

@@ -143,9 +143,9 @@ function volume(P::AbstractPolytope; backend=nothing)
     return _area_Polyhedra(P; backend)
 end
 
-# see ext/PolyhedraExt.jl
+# see ext/LazySetsPolyhedraExt.jl
 function _area_Polyhedra(P; backend)
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="volume")
     error()
 end

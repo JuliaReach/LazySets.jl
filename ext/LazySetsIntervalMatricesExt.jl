@@ -1,4 +1,4 @@
-module IntervalMatricesExt
+module LazySetsIntervalMatricesExt
 
 using IntervalArithmetic: Interval, interval
 using IntervalMatrices: AbstractIntervalMatrix, IntervalMatrix, midpoint_radius,

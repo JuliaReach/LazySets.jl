@@ -6,15 +6,15 @@ import Plots, Polyhedra, Optim, ExponentialUtilities, TaylorModels, Distribution
 
 # workaround to document methods defined in package extensions
 include("../ext/LazySetsExt.jl")
-include("../ext/DistributionsExt.jl")
-include("../ext/GeometryBasicsExt.jl")
-include("../ext/IntervalMatricesExt.jl")
-include("../ext/MakieExt.jl")
-include("../ext/PolyhedraExt.jl")
-include("../ext/RecipesBaseExt.jl")
-include("../ext/SymEngineExt.jl")
-include("../ext/SymbolicsExt.jl")
-include("../ext/TaylorModelsExt.jl")
+include("../ext/LazySetsDistributionsExt.jl")
+include("../ext/LazySetsGeometryBasicsExt.jl")
+include("../ext/LazySetsIntervalMatricesExt.jl")
+include("../ext/LazySetsMakieExt.jl")
+include("../ext/LazySetsPolyhedraExt.jl")
+include("../ext/LazySetsRecipesBaseExt.jl")
+include("../ext/LazySetsSymEngineExt.jl")
+include("../ext/LazySetsSymbolicsExt.jl")
+include("../ext/LazySetsTaylorModelsExt.jl")
 
 include("init.jl")
 
@@ -22,9 +22,11 @@ bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"); style=:alpha)
 
 makedocs(; sitename="LazySets.jl",
          modules=[LazySets, LazySets.API, Approximations, LazySets.Parallel,
-                  LazySets.LazySetsExt, DistributionsExt, GeometryBasicsExt,
-                  IntervalMatricesExt, MakieExt, PolyhedraExt, RecipesBaseExt,
-                  SymEngineExt, SymbolicsExt, TaylorModelsExt],
+                  LazySets.LazySetsExt, LazySetsDistributionsExt,
+                  LazySetsGeometryBasicsExt, LazySetsIntervalMatricesExt,
+                  LazySetsMakieExt, LazySetsPolyhedraExt, LazySetsRecipesBaseExt,
+                  LazySetsSymEngineExt, LazySetsSymbolicsExt,
+                  LazySetsTaylorModelsExt],
          format=Documenter.HTML(; prettyurls=get(ENV, "CI", nothing) == "true",
                                 assets=["assets/aligned.css", "assets/citations.css"],
                                 size_threshold_warn=150 * 2^10),

@@ -161,11 +161,11 @@ halfspace_right(::AbstractVector, ::AbstractVector)
 ```
 
 ```@meta
-CurrentModule = SymEngineExt
+CurrentModule = LazySetsSymEngineExt
 ```
 
 ```@docs
-SymEngineExt._ishalfspace
+LazySetsSymEngineExt._ishalfspace
 ```
 
 ```@meta

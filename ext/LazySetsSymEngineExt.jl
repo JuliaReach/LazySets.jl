@@ -1,12 +1,12 @@
-module SymEngineExt
+module LazySetsSymEngineExt
 
 using LazySets: LazySet
 import SymEngine
 using SymEngine: Basic, subs
 import SymEngine: free_symbols
 
-include("SymEngine/SymEngineHalfSpaceExt.jl")
-include("SymEngine/SymEngineHyperplaneExt.jl")
+include("SymEngine/HalfSpaceExt.jl")
+include("SymEngine/HyperplaneExt.jl")
 
 """
    _is_linear_combination(L::Basic)
@@ -28,9 +28,9 @@ julia> using LazySets
 
 julia> import SymEngine
 
-julia> SymEngineExt = Base.get_extension(LazySets, :SymEngineExt);
+julia> LazySetsSymEngineExt = Base.get_extension(LazySets, :LazySetsSymEngineExt);
 
-julia> using .SymEngineExt: _is_linear_combination
+julia> using .LazySetsSymEngineExt: _is_linear_combination
 
 julia> _is_linear_combination(:(2*x1 - 4))
 true
@@ -71,9 +71,9 @@ julia> using LazySets
 
 julia> import SymEngine
 
-julia> SymEngineExt = Base.get_extension(LazySets, :SymEngineExt);
+julia> LazySetsSymEngineExt = Base.get_extension(LazySets, :LazySetsSymEngineExt);
 
-julia> using .SymEngineExt: free_symbols
+julia> using .LazySetsSymEngineExt: free_symbols
 
 julia> free_symbols(:(x1 <= -0.03), HalfSpace)
 1-element Vector{SymEngine.Basic}:

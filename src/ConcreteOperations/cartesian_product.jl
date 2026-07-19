@@ -80,10 +80,10 @@ function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:LazySet,S2<:LazySet}
     end
 end
 
-# see ext/PolyhedraExt.jl
+# see ext/LazySetsPolyhedraExt.jl
 function _cartesian_product_hrep_polyhedra(P1, P2; backend1=nothing,
                                            backend2=nothing)
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="`cartesian_product")
     error()
 end

@@ -26,7 +26,7 @@ function default_sdp_solver()
     return _default_sdp_solver(solver)
 end
 
-# see ext/SCSExt.jl
+# see ext/LazySetsSCSExt.jl
 function _default_sdp_solver(solver)
     error()
 end

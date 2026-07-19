@@ -1,4 +1,4 @@
-module SetProgExt
+module LazySetsSetProgExt
 
 using JuMP: Model, optimize!, @constraint, @objective, @variable
 using LazySets: AbstractPolyhedron, chebyshev_center_radius, default_sdp_solver,

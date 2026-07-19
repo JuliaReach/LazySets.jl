@@ -49,16 +49,16 @@ function triangulate(X::LazySet; algorithm::String="delaunay", kwargs...)
     end
 end
 
-# see ext/MiniQhullExt.jl
+# see ext/LazySetsMiniQhullExt.jl
 function _triangulate_delaunay(X; kwargs...)
-    mod = Base.get_extension(@__MODULE__, :MiniQhullExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsMiniQhullExt)
     require(mod, :MiniQhull; fun_name="triangulate")
     error()
 end
 
-# see ext/GeometryBasicsExt.jl
+# see ext/LazySetsGeometryBasicsExt.jl
 @validate function triangulate_faces(P)
-    mod = Base.get_extension(@__MODULE__, :GeometryBasicsExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsGeometryBasicsExt)
     require(mod, [:GeometryBasics, :Polyhedra]; fun_name="triangulate_faces")
     throw(ArgumentError("`triangulate_faces` not implemented for $(typeof(P))"))
 end
@@ -125,16 +125,16 @@ function default_polyhedra_backend(P::LazySet{N}) where {N}
     end
 end
 
-# see ext/PolyhedraExt.jl
+# see ext/LazySetsPolyhedraExt.jl
 function default_polyhedra_backend_1d(N)
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="default_polyhedra_backend")
     error()
 end
 
-# see ext/PolyhedraExt.jl
+# see ext/LazySetsPolyhedraExt.jl
 function default_polyhedra_backend_nd(N)
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="default_polyhedra_backend")
     error()
 end
@@ -782,9 +782,9 @@ contained in `X`.
     return Ballp(p, v, ε) ⊆ X
 end
 
-# see ext/MiniQhullExt.jl
+# see ext/LazySetsMiniQhullExt.jl
 function _plot_recipe_3d_polytope(P, N=eltype(P))
-    mod = Base.get_extension(@__MODULE__, :MiniQhullExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsMiniQhullExt)
     require(mod, :MiniQhull; fun_name="_plot_recipe_3d_polytope")
     error()
 end
@@ -922,9 +922,9 @@ function _area_polygon(v::Vector{VN}) where {N,VN<:AbstractVector{N}}
     return abs(res / 2)
 end
 
-# see ext/GeometryBasicsExt.jl
+# see ext/LazySetsGeometryBasicsExt.jl
 function _area_polytope_3D(P)
-    mod = Base.get_extension(@__MODULE__, :GeometryBasicsExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsGeometryBasicsExt)
     require(mod, [:GeometryBasics, :Polyhedra]; fun_name="area")
     error()
 end
@@ -1247,7 +1247,7 @@ function rationalize(::Type{T}, X::AbstractVector{<:LazySet{<:AbstractFloat}},
 end
 
 function polyhedron(P; backend=default_polyhedra_backend(P))
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="polyhedron")
     error()
 end
@@ -1316,10 +1316,10 @@ function _isempty_polyhedron(P::LazySet{N}, witness::Bool=false;
     end
 end
 
-# see ext/PolyhedraExt.jl
+# see ext/LazySetsPolyhedraExt.jl
 function _isempty_polyhedron_polyhedra(P, witness=false;
                                        solver=nothing, backend=nothing)
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="isempty",
             explanation="with the active option `use_polyhedra_interface`")
     error()

@@ -129,11 +129,11 @@ translate(::Hyperplane, ::AbstractVector)
 ```
 
 ```@meta
-CurrentModule = SymEngineExt
+CurrentModule = LazySetsSymEngineExt
 ```
 
 ```@docs
-SymEngineExt._ishyperplanar
+LazySetsSymEngineExt._ishyperplanar
 ```
 
 ```@meta

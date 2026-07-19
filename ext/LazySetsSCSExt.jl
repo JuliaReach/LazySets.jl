@@ -1,4 +1,4 @@
-module SCSExt
+module LazySetsSCSExt
 
 using LazySets: sdp_solver, set_sdp_solver!
 import SCS

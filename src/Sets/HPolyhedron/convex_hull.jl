@@ -30,9 +30,9 @@ For further information on the supported backends see
     return _convex_hull(P1, P2; backend)
 end
 
-# see ext/PolyhedraExt.jl
+# see ext/LazySetsPolyhedraExt.jl
 function _convex_hull(P1, P2; backend)
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="convex_hull")
     error()
 end

@@ -137,7 +137,7 @@ minkowski_sum(::VPolytope, ::VPolytope)
 ```
 
 ```@meta
-CurrentModule = PolyhedraExt
+CurrentModule = LazySetsPolyhedraExt
 ```
 
 ```@docs

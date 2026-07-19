@@ -1,4 +1,4 @@
-module OptimExt
+module LazySetsOptimExt
 
 using LazySets: HalfSpace, Hyperplane, LazySet, Line2D, isconvex, ρ
 using Optim: Brent, optimize

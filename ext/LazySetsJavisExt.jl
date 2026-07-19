@@ -1,4 +1,4 @@
-module JavisExt
+module LazySetsJavisExt
 
 using Javis: Background, Object, Video, background, poly, render, sethue
 using Javis.Luxor: Point
@@ -10,9 +10,9 @@ export ground,
        nfolds
 
 function __init__()
-    return Base.depwarn("LazySets.JavisExt is deprecated because Javis is " *
+    return Base.depwarn("LazySets.LazySetsJavisExt is deprecated because Javis is " *
                         "unmaintained and requires a downgrade to very old " *
-                        "package versions", :JavisExt)
+                        "package versions", :LazySetsJavisExt)
 end
 
 # default canvas background

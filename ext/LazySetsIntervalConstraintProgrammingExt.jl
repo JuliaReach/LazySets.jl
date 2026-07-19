@@ -1,4 +1,4 @@
-module IntervalConstraintProgrammingExt
+module LazySetsIntervalConstraintProgrammingExt
 
 using IntervalBoxes: IntervalBox
 using IntervalConstraintProgramming: Separator

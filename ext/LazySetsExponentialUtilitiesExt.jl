@@ -1,4 +1,4 @@
-module ExponentialUtilitiesExt
+module LazySetsExponentialUtilitiesExt
 
 import ExponentialUtilities
 using ExponentialUtilities: expv

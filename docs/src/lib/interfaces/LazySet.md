@@ -75,7 +75,7 @@ CurrentModule = LazySets
 area(::LazySet)
 ```
 ```@meta
-CurrentModule = PolyhedraExt
+CurrentModule = LazySetsPolyhedraExt
 ```
 ```@docs
 chebyshev_center_radius(::LazySet)
@@ -326,7 +326,7 @@ CurrentModule = LazySets
 norm(::LazySet, ::Real=Inf)
 ```
 ```@meta
-CurrentModule = PolyhedraExt
+CurrentModule = LazySetsPolyhedraExt
 ```
 ```@docs
 polyhedron(::LazySet)
@@ -574,7 +574,7 @@ means that (1) plotting will fail if these functionalities are not available
 can be misleading (because a convex approximation is applied).
 
 ```@meta
-CurrentModule = RecipesBaseExt
+CurrentModule = LazySetsRecipesBaseExt
 ```
 
 ```@docs
