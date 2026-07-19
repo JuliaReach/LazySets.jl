@@ -183,8 +183,8 @@ The remainder term ``E_k`` is computed through interval arithmetic
 following [AlthoffKS11; Proposition 4.1](@citet).
 """
 function overapproximate(expA::MatrixZonotopeExp{N,T},
-                            ::Type{<:MatrixZonotope},
-                            k::Int=2; tol::Real=1e-9) where {N,T<:AbstractMatrixZonotope{N}}
+                         ::Type{<:MatrixZonotope},
+                         k::Int=2; tol::Real=1e-9) where {N,T<:AbstractMatrixZonotope{N}}
 
     # overapproximate the product MZP = A*B*... ---
     MZP = MatrixZonotopeProduct(expA.M)

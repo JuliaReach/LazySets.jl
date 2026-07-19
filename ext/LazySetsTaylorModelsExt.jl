@@ -232,11 +232,11 @@ This algorithm proceeds in two steps:
     normalization onto the symmetric intervals ``[-1, 1]``.
 """
 function overapproximate(vTM::Vector{TaylorModel1{T,S}}, ::Type{<:Zonotope};
-                            remove_redundant_generators::Bool=true,
-                            normalize::Bool=true) where {T,S}
+                         remove_redundant_generators::Bool=true,
+                         normalize::Bool=true) where {T,S}
     return _overapproximate_vTM_zonotope(vTM, 1, T;
-                                            remove_redundant_generators=remove_redundant_generators,
-                                            normalize=normalize)
+                                         remove_redundant_generators=remove_redundant_generators,
+                                         normalize=normalize)
 end
 
 """
