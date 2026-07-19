@@ -39,7 +39,7 @@ using SafeTestsets
                                                :RejectionSampler, :_sample_unit_nball_muller!,
                                                :_sample_unit_nsphere_muller!,
                                                # SCSExt
-                                               :MOI, :Optimizer, :OptimizerWithAttributes, :Silent,
+                                               :Optimizer, :OptimizerWithAttributes, :Silent,
                                                :sdp_solver, :set_sdp_solver!, :_default_sdp_solver,
                                                # IpoptExt
                                                :_default_nln_solver,

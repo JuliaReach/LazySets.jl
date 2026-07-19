@@ -3,7 +3,7 @@ module SCSExt
 using LazySets: sdp_solver, set_sdp_solver!
 import SCS
 using SCS: Optimizer
-using SCS.MOI: OptimizerWithAttributes, Silent
+using MathOptInterface: OptimizerWithAttributes, Silent
 import LazySets: _default_sdp_solver
 
 function __init__()
