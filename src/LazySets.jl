@@ -383,11 +383,6 @@ export plot3d, plot3d!
 include("Plotting/paraview.jl")
 export writevtk
 
-# ==========================
-# Parallel-algorithms module
-# ==========================
-include("Parallel/Parallel.jl")
-
 # ==============================
 # Activate assertions by default
 # ==============================
