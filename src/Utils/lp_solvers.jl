@@ -2,7 +2,7 @@ export isfeasible
 
 function default_lp_solver(::Type{T}) where {T}
     key = task_local_lp_solver_key(T)
-    solver = get!(() -> JuMP.Model(default_lp_solver_factory(T)), task_local_storage(), key)
+    solver = get!(() -> Model(default_lp_solver_factory(T)), task_local_storage(), key)
     return solver
 end
 
