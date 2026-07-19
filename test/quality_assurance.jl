@@ -93,18 +93,16 @@ using SafeTestsets
                                                # PolyhedraExt
                                                :sym_box, :sym_itv, :zero_box, :zero_itv)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
-    ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
-                                                 :Optimizer, :SIMPLEX, :Silent, :commutative,
-                                                 :uniontypes, :get_degrees, :intersect, :isempty,
-                                                 :Ellipsoid, :inf, :sup,
+    ignores_all_qualified_accesses_are_public = (:EXACT, :SIMPLEX, :Assertions, :Commutative,
+                                                 :Comparison, :Ellipsoid, :Optimizer, :commutative,
+                                                 :get_degrees, :uniontypes,
                                                  # fixed in versions after v"1.10"
                                                  :get_extension, :parse)
     ignores_no_stale_explicit_imports = (
                                          # required for documentation
                                          :apply_recipe,
                                          # IntervalConstraintProgrammingExt
-                                         Symbol("@variables")
-                                         )
+                                         Symbol("@variables"))
     ExplicitImports.test_explicit_imports(LazySets;
                                           all_explicit_imports_are_public=(ignore=ignores_all_explicit_imports_are_public,),
                                           all_explicit_imports_via_owners=(ignore=ignores_all_explicit_imports_via_owners,),
