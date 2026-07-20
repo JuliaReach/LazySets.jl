@@ -28,9 +28,8 @@ The subtypes of `AbstractHPolygon`:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractHPolygon)
-2-element Vector{Any}:
+1-element Vector{Any}:
  HPolygon
- HPolygonOpt
 ```
 """
 abstract type AbstractHPolygon{N} <: AbstractPolygon{N} end

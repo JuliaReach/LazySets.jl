@@ -848,7 +848,7 @@ The modified star set.
     return X
 end
 
-function _intersection_star!(c, V, P::Union{HPoly,HPolygon,HPolygonOpt}, H::HalfSpace)
+function _intersection_star!(c, V, P::Union{HPoly,HPolygon}, H::HalfSpace)
     a′ = transpose(V) * H.a
     b′ = H.b - dot(H.a, c)
     H′ = HalfSpace(a′, b′)
@@ -868,8 +868,7 @@ end
 @validate_commutative function intersection(X::Star{N,VN,MN,PT},
                                             H::HalfSpace) where {N,VN<:AbstractVector{N},
                                                                  MN<:AbstractMatrix{N},
-                                                                 PT<:Union{HPoly,HPolygon,
-                                                                           HPolygonOpt}}
+                                                                 PT<:Union{HPoly,HPolygon}}
     return intersection!(copy(X), H)
 end
 
