@@ -135,7 +135,7 @@ zero. Then we distinguish the cases that `hs` is a lower or an upper bound.
         end
     end
 
-    empty, lbound, ubound = _intersection_interval_halfspace(min(X), max(X), a, b, N)
+    empty, lbound, ubound = _intersection_interval_halfspace(_min(X), _max(X), a, b, N)
 
     if empty
         return EmptySet{N}(1)
@@ -182,7 +182,7 @@ end
 @validate_commutative function intersection(X::Interval, hp::Hyperplane)
     # a one-dimensional hyperplane is just a point
     p = hp.b / hp.a[1]
-    if _leq(min(X), p) && _leq(p, max(X))
+    if _leq(_min(X), p) && _leq(p, _max(X))
         return Singleton([p])
     else
         N = promote_type(eltype(X), eltype(hp))
@@ -214,8 +214,8 @@ function _intersection_interval(X::Interval, Y::LazySet)
     @assert isconvex(Y) "this implementation requires a convex set"
 
     N = promote_type(eltype(X), eltype(Y))
-    lower = max(min(X), low(Y, 1))
-    upper = min(max(X), high(Y, 1))
+    lower = max(_min(X), low(Y, 1))
+    upper = min(_max(X), high(Y, 1))
     if _isapprox(lower, upper)
         return Singleton([lower])
     elseif lower < upper

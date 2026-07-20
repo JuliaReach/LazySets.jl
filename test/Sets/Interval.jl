@@ -215,12 +215,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     res = @inferred low(X, 1)
     @test res isa N && res == N(0)  # -0.0
 
-    # min
-    v = @inferred min(X)
+    # _min
+    v = @inferred LazySets.IntervalModule._min(X)
     @test v isa N && res == N(0)  # -0.0
 
-    # max
-    v = @inferred max(X)
+    # _max
+    v = @inferred LazySets.IntervalModule._max(X)
     @test v === N(2)
 
     # ngens

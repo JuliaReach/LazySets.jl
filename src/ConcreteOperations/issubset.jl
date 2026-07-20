@@ -353,13 +353,13 @@ end
 
 function _issubset_interval(X::Interval{N}, Y::Interval, Z::Interval,
                             witness) where {N}
-    if min(Y) > min(Z)
+    if _min(Y) > _min(Z)
         W = Z
         Z = Y
         Y = W
     end
     # a is on the left of b
-    if min(X) < min(Y)
+    if _min(X) < _min(Y)
         return witness ? (false, low(X)) : false
     end
     W = difference(X, Y)
@@ -370,7 +370,7 @@ function _issubset_interval(X::Interval{N}, Y::Interval, Z::Interval,
     end
 
     # compute witness
-    w = min(Z) > min(W) ? [(min(W) + min(Z)) / 2] : high(W)
+    w = _min(Z) > _min(W) ? [(_min(W) + _min(Z)) / 2] : high(W)
     return (false, w)
 end
 

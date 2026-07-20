@@ -131,8 +131,6 @@ CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
 minkowski_difference(::Interval, ::Interval)
-min(::Interval)
-max(::Interval)
 ```
 
 ```@meta

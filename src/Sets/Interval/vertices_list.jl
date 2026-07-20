@@ -10,7 +10,7 @@ or just one if the interval is degenerate (the endpoints match within the
 working tolerance).
 """
 @validate function vertices_list(X::Interval; kwargs...)
-    a = min(X)
-    b = max(X)
+    a = _min(X)
+    b = _max(X)
     return _isapprox(a, b) ? [[a]] : [[a], [b]]
 end

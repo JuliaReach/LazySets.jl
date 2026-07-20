@@ -821,7 +821,9 @@ A pair `(x, y)` of two points that can be plotted.
 We consider the interval as a line segment with y coordinate equal to zero.
 """
 function plot_recipe(X::Interval{N}, ε=zero(N)) where {N}
-    return [min(X), max(X)], zeros(N, 2)
+    bounds = extrema(X, 1)
+    x = @inbounds [bounds[1], bounds[2]]
+    return x, zeros(N, 2)
 end
 
 function plot_recipe(P::Polygon{N}, ε=zero(N)) where {N}

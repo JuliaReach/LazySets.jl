@@ -244,6 +244,7 @@ include("Sets/ZeroSet/ZeroSetModule.jl")
 
 include("Sets/Interval/IntervalModule.jl")
 @reexport using ..IntervalModule: Interval
+using ..IntervalModule: _max, _min  # internal convenience functions, not exported
 
 # =================================
 # Types representing set operations

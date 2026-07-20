@@ -28,26 +28,26 @@ end
     if H.a[1] < zero(N)
         # half-space is a lower bound
         l = low(H, 1)
-        if l > max(X)
+        if l > _max(X)
             # no effect
             return X
-        elseif l <= min(X)
+        elseif l <= _min(X)
             # empty difference
             return EmptySet{N}(1)
         else
-            return Interval(min(X), l)
+            return Interval(_min(X), l)
         end
     else
         # half-space is an upper bound
         h = high(H, 1)
-        if h < min(X)
+        if h < -_min(X)
             # no effect
             return X
-        elseif h >= max(X)
+        elseif h >= _max(X)
             # empty difference
             return EmptySet{N}(1)
         else
-            return Interval(h, max(X))
+            return Interval(h, _max(X))
         end
     end
 end

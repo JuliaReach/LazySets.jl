@@ -75,37 +75,11 @@ include("split.jl")
 include("convert.jl")
 include("isequal.jl")
 
-"""
-    min(X::Interval)
-
-Return the lower component of an interval.
-
-### Input
-
-- `X` -- interval
-
-### Output
-
-The lower (`lo`) component of the interval (a number).
-"""
-function min(X::Interval)
+function _min(X::Interval)
     return IA.inf(X.dat)
 end
 
-"""
-    max(X::Interval)
-
-Return the higher or upper component of an interval.
-
-### Input
-
-- `X` -- interval
-
-### Output
-
-The higher (`hi`) component of the interval (a number).
-"""
-function max(X::Interval)
+function _max(X::Interval)
     return IA.sup(X.dat)
 end
 
