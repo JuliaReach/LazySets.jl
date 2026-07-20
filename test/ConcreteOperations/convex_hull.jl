@@ -182,7 +182,7 @@ for N in @tN([Float64, Rational{Int}])
     end
     S = Singleton(N[1])
     ch = convex_hull(S, S)
-    @test ch isa Singleton{N} && element(ch) == element(S)
+    @test ch isa Singleton{N} && center(ch) == center(S)
     U = UnionSet(Interval(N(1), N(2)), Interval(N(3), N(4)))
     @test convex_hull(U) == Interval(N(1), N(4))
 

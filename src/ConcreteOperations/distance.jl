@@ -23,7 +23,7 @@
 end
 
 @validate_commutative function distance(S::AbstractSingleton, X::LazySet; p::Real=2.0)
-    return distance(element(S), X; p=p)
+    return distance(center(S), X; p=p)
 end
 
 @validate_commutative function distance(∅::EmptySet, X::LazySet; p::Real=2.0)
@@ -39,12 +39,12 @@ end
 # ============== #
 
 @validate function distance(S1::AbstractSingleton, S2::AbstractSingleton; p::Real=2.0)
-    return distance(element(S1), element(S2); p=p)
+    return distance(center(S1), center(S2); p=p)
 end
 
 @validate_commutative function distance(S::AbstractSingleton, H::AbstractHyperrectangle;
                                         p::Real=2.0)
-    return distance(element(S), H; p=p)
+    return distance(center(S), H; p=p)
 end
 
 @validate_commutative function distance(U::Universe, S::AbstractSingleton; p::Real=2.0)

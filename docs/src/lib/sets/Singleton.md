@@ -10,9 +10,6 @@ Singleton
 
 ## Operations
 
-```@docs
-element(::Singleton)
-```
 ```@meta
 CurrentModule = LazySets.API
 ```

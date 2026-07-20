@@ -520,7 +520,7 @@ end
 function sample!(D::Vector{VN}, S::AbstractSingleton, sampler::SingletonSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
-    x = element(S)
+    x = center(S)
     @inbounds for i in eachindex(D)
         D[i] = copy(x)
     end

@@ -10,10 +10,6 @@ ZeroSet
 
 ## Operations
 
-```@docs
-element(::ZeroSet)
-element(::ZeroSet, ::Int)
-```
 ```@meta
 CurrentModule = LazySets.API
 ```

@@ -1,6 +1,6 @@
 import LazySets
 
-using LazySets: element, intersection
+using LazySets: center, intersection
 using LazySets.Line2DModule: Line2D
 using LazySets.PolygonModule: Polygon
 using LazySets.VPolygonModule: VPolygon
@@ -45,7 +45,7 @@ end
             else
                 # non-vertical line segment -> intersect (Line2D intersection is used)
                 line2 = Line2D(p, q)
-                y = element(intersection(line2, vline))
+                y = center(intersection(line2, vline))
                 # compare y coordinate
                 if _geq(y[2], x[2])
                     if y == x

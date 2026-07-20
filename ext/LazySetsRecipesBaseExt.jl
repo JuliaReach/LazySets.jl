@@ -284,7 +284,7 @@ function _plot_singleton_list_1D(list::AbstractVector{SN}) where {N,SN<:Abstract
     y = zeros(N, m)
 
     @inbounds for (i, Xi) in enumerate(list)
-        p = element(Xi)
+        p = center(Xi)
         x[i] = p[1]
     end
     return x, y
@@ -296,7 +296,7 @@ function _plot_singleton_list_2D(list::AbstractVector{SN}) where {N,SN<:Abstract
     y = Vector{N}(undef, m)
 
     @inbounds for (i, Xi) in enumerate(list)
-        p = element(Xi)
+        p = center(Xi)
         x[i] = p[1]
         y[i] = p[2]
     end
@@ -740,11 +740,11 @@ A pair `(x, y)` of one point that can be plotted.
 function plot_recipe(S::AbstractSingleton{N}, ε=zero(N)) where {N}
     n = dim(S)
     if n == 1
-        return [element(S)[1]], [zero(N)]
+        return [center(S)[1]], [zero(N)]
     elseif n == 2
-        return [element(S)[1]], [element(S)[2]]
+        return [center(S)[1]], [center(S)[2]]
     elseif n == 3
-        return [element(S)[1]], [element(S)[2]], [element(S)[3]]
+        return [center(S)[1]], [center(S)[2]], [center(S)[3]]
     else
         throw(ArgumentError("cannot plot a $n-dimensional $(typeof(S))"))
     end

@@ -19,7 +19,7 @@ end
 
 function _intersection_singleton(S::AbstractSingleton, X)
     N = promote_type(eltype(S), eltype(X))
-    return element(S) ∈ X ? S : EmptySet{N}(dim(S))
+    return center(S) ∈ X ? S : EmptySet{N}(dim(S))
 end
 
 # this method can also be called with `HalfSpace` arguments
@@ -924,7 +924,7 @@ function _bound_intersect_2D(Z::Zonotope, L::Line2D)
         end
     end
     singleton = intersection(LineSegment(P, P + 2g(j)), L)
-    return element(singleton)[2]
+    return center(singleton)[2]
 end
 
 # ============== #

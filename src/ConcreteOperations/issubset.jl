@@ -252,8 +252,8 @@ function _issubset_constraints_list(S::LazySet, P::LazySet, witness::Bool=false)
 end
 
 @validate function issubset(S1::AbstractSingleton, S2::AbstractSingleton, witness::Bool=false)
-    s1 = element(S1)
-    result = _isapprox(s1, element(S2))
+    s1 = center(S1)
+    result = _isapprox(s1, center(S2))
     return _witness_result_empty(witness, result, S1, S2, s1)
 end
 
@@ -262,13 +262,13 @@ end
 end
 
 function _issubset_singleton(S, X, witness)
-    s = element(S)
+    s = center(S)
     result = s ∈ X
     return _witness_result_empty(witness, result, S, X, s)
 end
 
 @validate function issubset(B::Union{Ball2,Ballp}, S::AbstractSingleton, witness::Bool=false)
-    result = isapproxzero(B.radius) && _isapprox(B.center, element(S))
+    result = isapproxzero(B.radius) && _isapprox(B.center, center(S))
     if result
         return _witness_result_empty(witness, true, B, S)
     elseif !witness
@@ -276,7 +276,7 @@ end
     end
 
     # compute a witness v
-    if B.center != element(S)
+    if B.center != center(S)
         v = B.center
     else
         v = copy(B.center)
