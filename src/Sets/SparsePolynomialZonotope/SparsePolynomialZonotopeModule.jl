@@ -21,9 +21,6 @@ export SparsePolynomialZonotope
 
 include("SparsePolynomialZonotope.jl")
 
-# short-hand
-const SPZ = SparsePolynomialZonotope
-
 include("center.jl")
 include("isoperationtype.jl")
 # include("rand.jl")

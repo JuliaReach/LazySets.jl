@@ -212,14 +212,13 @@ include("MatrixSets/MatrixZonotopeModule.jl")
 
 include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
-                                                        SSPZ,
                                                         quadratic_map
 
 include("Sets/Singleton/SingletonModule.jl")
 @reexport using ..SingletonModule: Singleton
 
 include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
-@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ
+@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope
 using ..SparsePolynomialZonotopeModule: uniqueID
 
 include("Sets/Star/StarModule.jl")
