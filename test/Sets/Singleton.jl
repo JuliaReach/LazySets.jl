@@ -233,11 +233,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # remove_redundant_generators
     @test isidentical((@inferred remove_redundant_generators(S)), S)
 
-    # singleton_list
-    res = @inferred singleton_list(S)
-    @test res isa Vector{Singleton{N,Vector{N}}}
-    @test res == [S]
-
     # togrep
     Z = @inferred togrep(S)
     @test Z isa Zonotope{N} && isequivalent(Z, S)

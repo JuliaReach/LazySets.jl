@@ -88,9 +88,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test N[5 / 4, 7 / 4] ∈ p
     @test N[4, 1] ∉ p
 
-    # singleton list
-    @test length(singleton_list(p)) == 4
-
     @static if isdefined(@__MODULE__, :Polyhedra)
         # conversion to and from Polyhedra's VRep data structure
         cl = constraints_list(convert(HPolytope, polyhedron(p)))

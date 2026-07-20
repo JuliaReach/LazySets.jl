@@ -1,7 +1,6 @@
 export neutral,
        absorbing,
        tosimplehrep,
-       singleton_list,
        chebyshev_center_radius,
        flatten,
        triangulate,
@@ -961,28 +960,6 @@ function _area_triangle_3D!(M, a, b, c)
         res += det(M)^2
     end
     return sqrt(res) / 2
-end
-
-"""
-    singleton_list(P::LazySet)
-
-Return the vertices of a polytopic set as a list of singletons.
-
-### Input
-
-- `P` -- polytopic set
-
-### Output
-
-A list of the vertices of `P` as `Singleton`s.
-
-### Notes
-
-This function relies on `vertices_list`, which raises an error if the set is
-not polytopic (e.g., unbounded).
-"""
-function singleton_list(P::LazySet)
-    return [Singleton(x) for x in vertices_list(P)]
 end
 
 """

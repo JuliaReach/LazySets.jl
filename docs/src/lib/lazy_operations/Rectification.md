@@ -20,7 +20,6 @@ isbounded(::Rectification)
 to_union_of_projections(::Rectification, ::Bool=false)
 ```
 Inherited from [`LazySet`](@ref):
-* [`singleton_list`](@ref singleton_list(::LazySet))
 
 ## Rectification cache
 

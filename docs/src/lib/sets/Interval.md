@@ -189,7 +189,6 @@ Inherited from [`LazySet`](@ref):
 * [`ispolytopictype`](@ref ispolytopictype(::Type{LazySet}))
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`rationalize`](@ref rationalize(::LazySet))
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`vertices`](@ref vertices(::LazySet))
 * [`sample`](@ref sample(::LazySet, ::Int))

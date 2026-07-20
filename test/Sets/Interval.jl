@@ -269,11 +269,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     Y = @inferred reflect(X)
     @test isidentical(Y, Interval(N(-2), N(0)))
 
-    # singleton_list
-    res = @inferred singleton_list(X)
-    @test res isa Vector{Singleton{N,Vector{N}}}
-    @test ispermutation(res, [Singleton(N[0]), Singleton(N[2])])
-
     # togrep
     Z = @inferred togrep(X)
     @test Z isa Zonotope{N} && isequivalent(Z, X)

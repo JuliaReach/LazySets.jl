@@ -336,13 +336,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # remove_redundant_generators
     @test isidentical((@inferred remove_redundant_generators(H)), H)
 
-    # singleton_list
-    res = @inferred singleton_list(H)
-    @test res isa Vector{Singleton{N,Vector{N}}}
-    @test ispermutation(res,
-                        [Singleton(N[2, 1]), Singleton(N[0, 1]),
-                         Singleton(N[0, -3]), Singleton(N[2, -3])])
-
     # togrep
     Z = @inferred togrep(H)
     @test Z isa Zonotope{N} && isequivalent(Z, H)
