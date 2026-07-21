@@ -13,7 +13,7 @@ include("init.jl")
 bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"); style=:alpha)
 
 makedocs(; sitename="LazySets.jl",
-         modules=[LazySets, LazySets.API, Approximations, LazySets.Parallel, LazySetsExt],
+         modules=[LazySets, LazySets.API, Approximations, LazySets.Parallel, LazySets.LazySetsExt],
          format=Documenter.HTML(; prettyurls=get(ENV, "CI", nothing) == "true",
                                 assets=["assets/aligned.css", "assets/citations.css"],
                                 size_threshold_warn=150 * 2^10),
