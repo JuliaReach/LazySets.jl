@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Concrete Polyhedra · LazySets.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/><link href="../assets/juliareach.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../index.html"><img class="logo" src="../assets/logo.png" alt="LazySets.jl logo"/></a><h1>LazySets.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../index.html">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="getting_started.html">Getting Started</a></li><li><a class="toctext" href="polyhedral_approximations.html">Polyhedral Approximations</a></li><li><a class="toctext" href="decompose_example.html">Decomposing an Affine Map</a></li><li><a class="toctext" href="fast_2d_LPs.html">Fast 2D LPs</a></li><li><a class="toctext" href="iterative_refinement.html">Iterative Refinement</a></li><li><a class="toctext" href="interval_hulls.html">Interval Hulls</a></li><li><a class="toctext" href="convex_hulls.html">Convex Hulls</a></li><li><a class="toctext" href="set_operations.html">Operations on Sets</a></li><li><a class="toctext" href="reach_zonotopes.html">A Reachability Algorithm</a></li><li><a class="toctext" href="reach_zonotopes_hybrid.html">A Hybrid Reachability Algorithm</a></li><li class="current"><a class="toctext" href="concrete_polyhedra.html">Concrete Polyhedra</a><ul class="internal"><li><a class="toctext" href="#Creating-polyhedra-1">Creating polyhedra</a></li><li><a class="toctext" href="#Methods-1">Methods</a></li><li><a class="toctext" href="#Projections-1">Projections</a></li></ul></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../lib/interfaces.html">Set Interfaces</a></li><li><a class="toctext" href="../lib/representations.html">Common Set Representations</a></li><li><a class="toctext" href="../lib/operations.html">Common Set Operations</a></li><li><a class="toctext" href="../lib/conversion.html">Conversion between set representations</a></li><li><a class="toctext" href="../lib/binary_functions.html">Binary Functions on Sets</a></li><li><a class="toctext" href="../lib/approximations.html">Approximations</a></li><li><a class="toctext" href="../lib/utils.html">Utility Functions</a></li></ul></li><li><a class="toctext" href="../about.html">About</a></li></ul></nav><article id="docs"><header><nav><ul><li>Manual</li><li><a href="concrete_polyhedra.html">Concrete Polyhedra</a></li></ul><a class="edit-page" href="https://github.com/JuliaReach/LazySets.jl/blob/master/docs/src/man/concrete_polyhedra.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Concrete Polyhedra</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Concrete-Polyhedra-1" href="#Concrete-Polyhedra-1">Concrete Polyhedra</a></h1><p>The focus of <code>LazySets.jl</code> is to wrap set representations and operations into specialized types, delaying the evaluation of the result of an expression until it is necessary. However, sometimes it is necessary to do an explicit computation. For concrete operations with polyhedra we rely on the polyhedra manipulation library <a href="https://github.com/JuliaPolyhedra/Polyhedra.jl">Polyhedra.jl</a>.</p><p>Actually, <code>Polyhedra.jl</code> provides a unified interface to well-known implementations of polyhedral computations, such as CDD or LRS (see the complete list in <a href="https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1">the documentation of <code>Polyhedra.jl</code></a>). This is a great advantage because we can easily use a library that supports floating point arithmetic, rational arithmetic, multiple precision, etc. The libraries also include projection and elimination of variables through Fourier-Motzkin.</p><p>Below we give examples of operations that are actually done via <code>Polyhedra.jl</code>.</p><ul><li><a href="concrete_polyhedra.html#Concrete-Polyhedra-1">Concrete Polyhedra</a></li><ul><li><a href="concrete_polyhedra.html#Creating-polyhedra-1">Creating polyhedra</a></li><li><a href="concrete_polyhedra.html#Methods-1">Methods</a></li><li><a href="concrete_polyhedra.html#Projections-1">Projections</a></li></ul></ul><h2><a class="nav-anchor" id="Creating-polyhedra-1" href="#Creating-polyhedra-1">Creating polyhedra</a></h2><p>To use the <code>Polyhedra.jl</code> interface, you need to load the package with <code>using Polyhedra</code>. Let&#39;s create an H-representation object:</p><div><pre><code class="language-julia">using LazySets, Plots, Polyhedra
+
+A = [1. 1;1 -1;-1 0]
+b = [1.,0,0]
+hrep = SimpleHRepresentation(A, b)</code></pre><pre><code class="language-none">WARNING: `SimpleHRepresentation` is deprecated, it has been renamed to `MixedMatHRep`. It is recommended to use `hrep` to build a `MixedMatHRep`, e.g. `hrep([1 2; 3 4], [5, 6])` for `x + 2y ≤ 5` and `3x + 4y ≤ 6`.
+Stacktrace:
+ [1] depwarn(::String, ::Symbol) at ./deprecated.jl:70
+ [2] SimpleHRepresentation(::Array{Float64,2}, ::Vararg{Any,N} where N) at /home/travis/.julia/v0.6/Polyhedra/src/matrep.jl:160
+ [3] cd(::Documenter.Expanders.##8#10{Module}, ::String) at ./file.jl:70
+ [4] (::Documenter.Utilities.##19#20{Documenter.Expanders.##7#9{Documenter.Documents.Page,Module},Base.PipeEndpoint,Base.PipeEndpoint,Pipe,Array{UInt8,1}})() at /home/travis/.julia/v0.6/Documenter/src/Utilities/Utilities.jl:577
+ [5] withoutput(::Documenter.Expanders.##7#9{Documenter.Documents.Page,Module}) at /home/travis/.julia/v0.6/Documenter/src/Utilities/Utilities.jl:575
+ [6] runner(::Type{Documenter.Expanders.ExampleBlocks}, ::Base.Markdown.Code, ::Documenter.Documents.Page, ::Documenter.Documents.Document) at /home/travis/.julia/v0.6/Documenter/src/Expanders.jl:478
+ [7] dispatch(::Type{Documenter.Expanders.ExpanderPipeline}, ::Base.Markdown.Code, ::Vararg{Any,N} where N) at /home/travis/.julia/v0.6/Documenter/src/Selectors.jl:168
+ [8] expand(::Documenter.Documents.Document) at /home/travis/.julia/v0.6/Documenter/src/Expanders.jl:31
+ [9] runner(::Type{Documenter.Builder.ExpandTemplates}, ::Documenter.Documents.Document) at /home/travis/.julia/v0.6/Documenter/src/Builder.jl:178
+ [10] dispatch(::Type{Documenter.Builder.DocumentPipeline}, ::Documenter.Documents.Document, ::Vararg{Documenter.Documents.Document,N} where N) at /home/travis/.julia/v0.6/Documenter/src/Selectors.jl:168
+ [11] cd(::Documenter.##2#3{Documenter.Documents.Document}, ::String) at ./file.jl:70
+ [12] #makedocs#1(::Bool, ::Array{Any,1}, ::Function) at /home/travis/.julia/v0.6/Documenter/src/Documenter.jl:204
+ [13] (::Documenter.#kw##makedocs)(::Array{Any,1}, ::Documenter.#makedocs) at ./&lt;missing&gt;:0
+ [14] include_from_node1(::String) at ./loading.jl:576
+ [15] include(::String) at ./sysimg.jl:14
+ [16] eval(::Module, ::Any) at ./boot.jl:235
+ [17] process_options(::Base.JLOptions) at ./client.jl:286
+ [18] _start() at ./client.jl:371
+while loading /home/travis/.julia/v0.6/LazySets/docs/make.jl, in expression starting on line 4
+H-representation Polyhedra.MixedMatHRep{2,Float64,Array{Float64,2}}:
+3-element iterator of Polyhedra.HalfSpace{2,Float64,Array{Float64,1}}:
+ Polyhedra.HalfSpace{2,Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+ Polyhedra.HalfSpace{2,Float64,Array{Float64,1}}([1.0, -1.0], 0.0)
+ Polyhedra.HalfSpace{2,Float64,Array{Float64,1}}([-1.0, 0.0], 0.0)</code></pre></div><p>It is used to instantiate a new polyhedron:</p><div><pre><code class="language-julia">p = polyhedron(hrep)</code></pre><pre><code class="language-none">Polyhedron Polyhedra.SimplePolyhedron{2,Float64,Polyhedra.MixedMatHRep{2,Float64,Array{Float64,2}},Polyhedra.MixedMatVRep{2,Float64,Array{Float64,2}}}:
+3-element iterator of Polyhedra.HalfSpace{2,Float64,Array{Float64,1}}:
+ Polyhedra.HalfSpace{2,Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+ Polyhedra.HalfSpace{2,Float64,Array{Float64,1}}([1.0, -1.0], 0.0)
+ Polyhedra.HalfSpace{2,Float64,Array{Float64,1}}([-1.0, 0.0], 0.0)</code></pre></div><p>Now, <code>p</code> is of the generic type <code>Polyhedra.SimplePolyhedron{2,Float64}</code>, where <code>2</code> states for its ambient dimension, and <code>Float64</code> the numeric field:</p><div><pre><code class="language-julia">typeof(p)</code></pre><pre><code class="language-none">Polyhedra.SimplePolyhedron{2,Float64,Polyhedra.MixedMatHRep{2,Float64,Array{Float64,2}},Polyhedra.MixedMatVRep{2,Float64,Array{Float64,2}}}</code></pre></div><p>Observe that we instantiate a particular backend, such as the <code>CDD</code> library:</p><div><pre><code class="language-julia">using CDDLib
+
+p = polyhedron(hrep, CDDLib.CDDLibrary())</code></pre><pre><code class="language-none">Polyhedron CDDLib.CDDPolyhedron{2,Float64}:
+3-element iterator of Polyhedra.HalfSpace{2,Float64,Array{Float64,1}}:
+ Polyhedra.HalfSpace{2,Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+ Polyhedra.HalfSpace{2,Float64,Array{Float64,1}}([1.0, -1.0], 0.0)
+ Polyhedra.HalfSpace{2,Float64,Array{Float64,1}}([-1.0, 0.0], 0.0)</code></pre></div><p>On the other hand, a <code>LazySets.HPolytope</code> object can be constructed from <code>p</code>:</p><pre><code class="language-">x = HPolytope(p)
+x.constraints</code></pre><p>Conversely, from a <code>HPolytope</code> we can build a polyhedron:</p><pre><code class="language-">y = polyhedron(x)
+typeof(y)</code></pre><p>Moreover, you can specify the backend with an extra argument. For instance, we can use an exact representation through the <code>CDDLibrary(:exact)</code>:</p><div><pre><code class="language-julia">A, b = Rational{Int}[1 1;1 -1;-1 0], Rational{Int}[1,0,0]
+p = HPolytope(A, b)
+
+polyhedron(p, CDDLib.CDDLibrary(:exact))</code></pre><pre><code class="language-none">WARNING: `SimpleHRepresentation` is deprecated, it has been renamed to `MixedMatHRep`. It is recommended to use `hrep` to build a `MixedMatHRep`, e.g. `hrep([1 2; 3 4], [5, 6])` for `x + 2y ≤ 5` and `3x + 4y ≤ 6`.
+Stacktrace:
+ [1] depwarn(::String, ::Symbol) at ./deprecated.jl:70
+ [2] SimpleHRepresentation at /home/travis/.julia/v0.6/Polyhedra/src/matrep.jl:160 [inlined]
+ [3] polyhedron(::LazySets.HPolytope{Rational{Int64}}, ::CDDLib.CDDLibrary) at /home/travis/.julia/v0.6/LazySets/src/HPolytope.jl:244
+ [4] cd(::Documenter.Expanders.##8#10{Module}, ::String) at ./file.jl:70
+ [5] (::Documenter.Utilities.##19#20{Documenter.Expanders.##7#9{Documenter.Documents.Page,Module},Base.PipeEndpoint,Base.PipeEndpoint,Pipe,Array{UInt8,1}})() at /home/travis/.julia/v0.6/Documenter/src/Utilities/Utilities.jl:577
+ [6] withoutput(::Documenter.Expanders.##7#9{Documenter.Documents.Page,Module}) at /home/travis/.julia/v0.6/Documenter/src/Utilities/Utilities.jl:575
+ [7] runner(::Type{Documenter.Expanders.ExampleBlocks}, ::Base.Markdown.Code, ::Documenter.Documents.Page, ::Documenter.Documents.Document) at /home/travis/.julia/v0.6/Documenter/src/Expanders.jl:478
+ [8] dispatch(::Type{Documenter.Expanders.ExpanderPipeline}, ::Base.Markdown.Code, ::Vararg{Any,N} where N) at /home/travis/.julia/v0.6/Documenter/src/Selectors.jl:168
+ [9] expand(::Documenter.Documents.Document) at /home/travis/.julia/v0.6/Documenter/src/Expanders.jl:31
+ [10] runner(::Type{Documenter.Builder.ExpandTemplates}, ::Documenter.Documents.Document) at /home/travis/.julia/v0.6/Documenter/src/Builder.jl:178
+ [11] dispatch(::Type{Documenter.Builder.DocumentPipeline}, ::Documenter.Documents.Document, ::Vararg{Documenter.Documents.Document,N} where N) at /home/travis/.julia/v0.6/Documenter/src/Selectors.jl:168
+ [12] cd(::Documenter.##2#3{Documenter.Documents.Document}, ::String) at ./file.jl:70
+ [13] #makedocs#1(::Bool, ::Array{Any,1}, ::Function) at /home/travis/.julia/v0.6/Documenter/src/Documenter.jl:204
+ [14] (::Documenter.#kw##makedocs)(::Array{Any,1}, ::Documenter.#makedocs) at ./&lt;missing&gt;:0
+ [15] include_from_node1(::String) at ./loading.jl:576
+ [16] include(::String) at ./sysimg.jl:14
+ [17] eval(::Module, ::Any) at ./boot.jl:235
+ [18] process_options(::Base.JLOptions) at ./client.jl:286
+ [19] _start() at ./client.jl:371
+while loading /home/travis/.julia/v0.6/LazySets/docs/make.jl, in expression starting on line 4
+Polyhedron CDDLib.CDDPolyhedron{2,Rational{BigInt}}:
+3-element iterator of Polyhedra.HalfSpace{2,Rational{BigInt},Array{Rational{BigInt},1}}:
+ Polyhedra.HalfSpace{2,Rational{BigInt},Array{Rational{BigInt},1}}(Rational{BigInt}[1//1, 1//1], 1//1)
+ Polyhedra.HalfSpace{2,Rational{BigInt},Array{Rational{BigInt},1}}(Rational{BigInt}[1//1, -1//1], 0//1)
+ Polyhedra.HalfSpace{2,Rational{BigInt},Array{Rational{BigInt},1}}(Rational{BigInt}[-1//1, 0//1], 0//1)</code></pre></div><h2><a class="nav-anchor" id="Methods-1" href="#Methods-1">Methods</a></h2><p>The utility methods available are convex hull, intersection and cartesian product. The dual representation as a list of vertices can be obtained with the <code>vertices_list</code> function.</p><p>For example, the intersection of two polytopes is performed with the <code>intersect</code> method.</p><pre><code class="language-">E = Ellipsoid(ones(2), diagm([2.0, 0.5]))
+B = Ball1([2.5, 1.5], .8)
+
+import LazySets.Approximations.overapproximate
+polyoverapprox(x) = HPolytope(overapproximate(x, 1e-3).constraints)
+
+Epoly = polyoverapprox(E)
+Bpoly = polyoverapprox(B)
+X = intersect(Epoly, Bpoly)
+
+plot(E, 1e-3, aspectratio=1, alpha=0.4)
+plot!(B, 1e-3, alpha=0.4)
+plot!(X, 1e-3, alpha=0.4, color=&quot;black&quot;)</code></pre><h2><a class="nav-anchor" id="Projections-1" href="#Projections-1">Projections</a></h2><p>Projection of high-dimensional polyhedra and elimination of variables can be performed with the <code>eliminate</code> function, which supports three types of methods: <code>:FourierMotzkin</code>, <code>:BlockElimination</code> and <code>:ProjectGenerators</code>. See <a href="https://juliapolyhedra.github.io/Polyhedra.jl/latest/polyhedron.html#Projecting-a-polyhedron-1">the documentation of Polyhedra.jl</a> for further details.</p><footer><hr/><a class="previous" href="reach_zonotopes_hybrid.html"><span class="direction">Previous</span><span class="title">A Hybrid Reachability Algorithm</span></a><a class="next" href="../lib/interfaces.html"><span class="direction">Next</span><span class="title">Set Interfaces</span></a></footer></article></body></html>
