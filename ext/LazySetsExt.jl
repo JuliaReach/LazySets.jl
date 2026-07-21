@@ -1,3 +1,8 @@
+# NOTE: This file and all included sub-files are organized like a package
+#       extension for LazySets. While Julia itself is happy with that, the
+#       package registrator does not accept a recursive package definition.
+#       Hence, we simply include these files in the main LazySets code.
+
 module LazySetsExt
 
 import LazySets

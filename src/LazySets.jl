@@ -391,6 +391,11 @@ include("Parallel/Parallel.jl")
 # ==============================
 activate_assertions()
 
+# ===============================================
+# Load fake package extension for LazySets itself
+# ===============================================
+include("../ext/LazySetsExt.jl")
+
 # ===================================================
 # Load external packages on-demand (using 'Requires')
 # ===================================================
