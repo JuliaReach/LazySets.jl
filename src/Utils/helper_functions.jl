@@ -222,45 +222,6 @@ end
     return condition ? (result, witness) : result
 end
 
-# used for Symbolics.jl; must be defined before loading some submodules
-function _get_variables() end
-
-"""
-    _vec(vars)
-
-Transform a tuple of operations into one vector of operations.
-
-### Input
-
-- `vars` -- tuple where each element is either variable-like (`Num`) or a
-            vector of variables (`Vector{Num}`)
-
-### Output
-
-A vector of `Operation` obtained by concatenating each tuple component.
-
-## Examples
-
-```jldoctest
-julia> using Symbolics
-
-julia> vars = @variables x[1:2] y
-2-element Vector{Any}:
-  x[1:2]
- y
-
-julia> LazySets._vec(vars)
-3-element Vector{Num}:
- x[1]
- x[2]
-    y
-```
-"""
-function _vec end
-
-# internal function; defined here due to dependency SymEngine and submodules
-function _is_linear_combination end
-
 # internal function; defined here due to dependency in submodules
 function _intersection_line2d end
 
