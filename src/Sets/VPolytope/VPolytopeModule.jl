@@ -18,7 +18,7 @@ using ReachabilityBase.Require: require
                         vertices_list, in, linear_map, permute, scale, scale!,
                         ρ, σ, translate, translate!, cartesian_product,
                         minkowski_sum
-@reexport import ..LazySets: remove_redundant_vertices, tovrep
+@reexport import ..LazySets: polyhedron, remove_redundant_vertices, tovrep
 import ..LazySets: _linear_map_vrep
 import Base: convert
 @reexport using ..API

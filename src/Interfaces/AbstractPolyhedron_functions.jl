@@ -133,7 +133,6 @@ end
 function _get_elimination_instance(N, backend, elimination_method)
     require(@__MODULE__, :Polyhedra; fun_name="linear_map with elimination")
     if isnothing(backend)
-        require(@__MODULE__, :CDDLib; fun_name="linear_map with elimination")
         backend = default_cddlib_backend(N)
     end
     if isnothing(elimination_method)
@@ -550,71 +549,6 @@ end
 
 @inline function _preallocate_constraints(constraints::Vector{<:HalfSpace{N}}) where {N}
     return Vector{HalfSpace{N,Vector{N}}}(undef, length(constraints))
-end
-
-"""
-    plot_recipe(P::AbstractPolyhedron{N}, [ε]=zero(N)) where {N}
-
-Convert a (bounded) polyhedron to a pair `(x, y)` of points for plotting.
-
-### Input
-
-- `P` -- bounded polyhedron
-- `ε` -- (optional, default: `0`) ignored, used for dispatch
-
-### Output
-
-A pair `(x, y)` of points that can be plotted, where `x` is the vector of
-x-coordinates and `y` is the vector of y-coordinates.
-
-### Algorithm
-
-We first assert that `P` is bounded (i.e., that `P` is a polytope).
-
-One-dimensional polytopes are converted to an `Interval`.
-Three-dimensional or higher-dimensional polytopes are not supported.
-
-For two-dimensional polytopes (i.e., polygons) we compute their set of vertices
-using `vertices_list` and then plot the convex hull of these vertices.
-"""
-function plot_recipe(P::AbstractPolyhedron{N}, ε=zero(N)) where {N}
-    @assert dim(P) <= 3 "cannot plot a $(dim(P))-dimensional $(typeof(P))"
-    @assert isbounded(P) "cannot plot an unbounded $(typeof(P))"
-
-    if dim(P) == 1
-        Q = convert(Interval, P)
-        if diameter(Q) < _ztol(N)  # flat interval
-            Q = Singleton(center(Q))
-        end
-        return plot_recipe(Q, ε)
-    elseif dim(P) == 2
-        vlist = convex_hull(vertices_list(P))
-        return _plot_recipe_2d_vlist(vlist, N)
-    else
-        return _plot_recipe_3d_polytope(P, N)
-    end
-end
-
-function _plot_recipe_2d_vlist(vlist, N)
-    m = length(vlist)
-    if m == 0
-        @warn "received a polyhedron with no vertices during plotting"
-        return plot_recipe(EmptySet{N}(2), zero(N))
-    end
-
-    x = Vector{N}(undef, m)
-    y = Vector{N}(undef, m)
-    @inbounds for (i, vi) in enumerate(vlist)
-        x[i] = vi[1]
-        y[i] = vi[2]
-    end
-
-    if m > 2
-        # add first vertex to "close" the polygon
-        push!(x, x[1])
-        push!(y, y[1])
-    end
-    return x, y
 end
 
 """

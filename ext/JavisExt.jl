@@ -1,4 +1,8 @@
-using .Javis: Luxor, background, sethue, Video, Background, Object, render
+module JavisExt
+
+using Javis: Luxor, Background, Object, Video, background, poly, render, sethue
+using LazySets: HPolygon, LazySet, dim, overapproximate, vertices_list
+import Javis: animate
 
 export ground,
        luxify,
@@ -40,7 +44,7 @@ end
 
 # animate an array of sets using Javis.jl
 # TODO pass colors, eg. with default cols = Javis.distinguishable_colors(length(X))
-function Javis.animate(X::AbstractVector{ST}; kwargs...) where {N,ST<:LazySet{N}}
+function animate(X::AbstractVector{ST}; kwargs...) where {N,ST<:LazySet{N}}
 
     # size of the animation
     sz = get(kwargs, :size, (500, 500))
@@ -67,9 +71,11 @@ function Javis.animate(X::AbstractVector{ST}; kwargs...) where {N,ST<:LazySet{N}
 
     # add objects to the canvas
     for (dt, p) in zip(tdiv, Xlux)
-        Object(dt, (args...) -> Javis.poly(α .* p, :stroke; close=true))
+        Object(dt, (args...) -> poly(α .* p, :stroke; close=true))
     end
 
     # render video
     return render(vid)
 end
+
+end  # module

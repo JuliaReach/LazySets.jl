@@ -26,39 +26,10 @@ function _expmv(t, A, b; kwargs...)
     return _expmv(backend, t, A, b; kwargs...)
 end
 
-# ====================
-# ExponentialUtilities
-# ====================
-
-function load_exponentialutilities()
-    return quote
-        if ismissing(exponential_backend[])
-            set_exponential_backend!(ExponentialUtilities)
-        end
-    end
-end  # quote / load_exponentialutilities
-
-function _expmv(::Val{:ExponentialUtilities}, t, A, b; kwargs...)
-    return ExponentialUtilities.expv(t, A, b; kwargs...)
-end
-
-# =======
-# Expokit
-# =======
-
-function load_expokit()
-    return quote
-        if ismissing(exponential_backend[])
-            set_exponential_backend!(Expokit)
-        end
-    end
-end  # quote / load_expokit
-
-function _expmv(::Val{:Expokit}, t, A, b::Vector; kwargs...)
-    return Expokit.expmv(t, A, b; kwargs...)
-end
-
-function _expmv(backend::Val{:Expokit}, t, A, b; kwargs...)
-    b = Vector(b)  # Expokit requires a dense vector
-    return _expmv(backend, t, A, b; kwargs...)
+# see ext/ExpokitExt.jl and ext/ExponentialUtilitiesExt.jl
+function _expmv(backend, t, A, b; kwargs...)
+    # note: `@__MODULE__` does not detect when a package extension is loaded;
+    #       however, the method will simply be overwritten
+    require(@__MODULE__, SUPPORTED_EXPONENTIAL_PACKAGES; fun_name="_expmv")
+    error()
 end

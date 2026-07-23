@@ -1,7 +1,5 @@
 function load_Polyhedra_polyhedron()
     return quote
-        import .Polyhedra: polyhedron
-
         """
             polyhedron(P::VPolytope;
                        [backend]=default_polyhedra_backend(P),
@@ -47,9 +45,10 @@ function load_Polyhedra_polyhedron()
                                         "but it cannot be inferred from an empty set; use the " *
                                         "keyword argument `relative_dimension`"))
                 end
-                return polyhedron(Polyhedra.vrep(P.vertices; d=relative_dimension), backend)
+                return Polyhedra.polyhedron(Polyhedra.vrep(P.vertices; d=relative_dimension),
+                                            backend)
             end
-            return polyhedron(Polyhedra.vrep(P.vertices), backend)
+            return Polyhedra.polyhedron(Polyhedra.vrep(P.vertices), backend)
         end
     end
 end  # load_Polyhedra_polyhedron
