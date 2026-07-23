@@ -655,70 +655,6 @@ function load_taylormodels_overapproximation()
     end
 end  # quote / load_taylormodels_overapproximation
 
-function load_intervalmatrices_overapproximation()
-    return quote
-        using .IntervalMatrices: AbstractIntervalMatrix, midpoint_radius
-
-        # temporary patch for IntervalArithmetic#317
-        function convert(::Type{IntervalMatrices.Interval{T}},
-                         x::IntervalMatrices.Interval{T}) where {T<:Real}
-            return x
-        end
-
-        """
-            overapproximate(lm::LinearMap{N, <:AbstractZonotope, NM,
-                                          <:AbstractIntervalMatrix{NM}},
-                            ::Type{<:Zonotope}) where {N, NM}
-
-        Overapproximate an interval-matrix linear map of a zonotopic set by a zonotope.
-
-        ### Input
-
-        - `lm`       -- interval-matrix linear map of a zonotopic set
-        - `Zonotope` -- target set type
-
-        ### Output
-
-        A zonotope overapproximating the linear map.
-
-        ### Algorithm
-
-        This implementation uses the method proposed in [AlthoffSB07](@citet).
-
-        Given an interval matrix ``M = \\tilde{M} + ⟨-\\hat{M},\\hat{M}⟩`` (split into a
-        conventional matrix and a symmetric interval matrix) and a zonotope
-        ``⟨c, g_1, …, g_m⟩``, we compute the resulting zonotope
-        ``⟨\\tilde{M}c, \\tilde{M}g_1, …, \\tilde{M}g_m, v_1, …, v_n⟩`` where the
-        ``v_j``, ``j = 1, …, n``, are defined as
-
-        ```math
-            v_j = \\begin{cases} 0 & i ≠ j \\\\
-                  \\hat{M}_j (|c| + ∑_{k=1}^m |g_k|) & i = j. \\end{cases}
-        ```
-        """
-        function overapproximate(lm::LinearMap{N,<:AbstractZonotope,NM,
-                                               <:AbstractIntervalMatrix{NM}},
-                                 ::Type{<:Zonotope}) where {N,NM}
-            Mc, Ms = midpoint_radius(lm.M)
-            Z = lm.X
-            c = Mc * center(Z)
-            n = dim(lm)
-            nG = ngens(Z)
-            G = zeros(N, n, nG + n)
-            vector_sum = abs.(center(Z))
-            @inbounds for (j, g) in enumerate(generators(Z))
-                G[:, j] = Mc * g
-                vector_sum += abs.(g)
-            end
-            @inbounds for i in 1:n
-                row = @view Ms[i, :]
-                G[i, i + nG] = dot(row, vector_sum)
-            end
-            return Zonotope(c, G)
-        end
-    end
-end  # quote / load_intervalmatrices_overapproximation()
-
 """
     overapproximate(X::LazySet, ZT::Type{<:Zonotope},
                     dir::Union{AbstractDirections, Type{<:AbstractDirections}};
@@ -1197,8 +1133,6 @@ end
 # - the resulting zonotope is G * D + c
 function _overapproximate_zonotope_halfspace_ICP(Z::AbstractZonotope{N},
                                                  H::HalfSpace{N,SingleEntryVector{N}}) where {N}
-    require(@__MODULE__, :IntervalConstraintProgramming; fun_name="overapproximate")
-
     c = center(Z)
     G = genmat(Z)
     p = size(G, 2)
@@ -1239,28 +1173,12 @@ function _overapproximate_zonotope_halfspace_ICP(Z::AbstractZonotope{N},
     return affine_map(G, convert(Hyperrectangle, newD), c)
 end
 
-function load_overapproximate_ICP()
-    return quote
-        import .IntervalConstraintProgramming as ICP
-        import .IntervalConstraintProgramming.IntervalBoxes as IB
-
-        function _contract_zonotope_halfspace_ICP(e, X, vars_string)
-            n = length(X)
-            prefix = "IntervalConstraintProgramming.Symbolics.@variables "
-            sym = Meta.parse(prefix * vars_string)
-            vars = eval(quote
-                            $sym
-                        end)
-            separator = eval(quote
-                                 ICP.Separator($e, $vars)
-                             end)
-            # smallest box containing all points in domain X satisfying constraint
-            # (`invokelatest` to avoid world-age issue)
-            boundary, _, _ = invokelatest(separator, IB.IntervalBox(X...))  # NOTE: this is an internal function
-            return boundary
-        end
-    end
-end  # load_overapproximate_ICP()
+# see ext/IntervalConstraintProgrammingExt.jl
+function _contract_zonotope_halfspace_ICP(e, X, vars_string)
+    mod = Base.get_extension(@__MODULE__, :IntervalConstraintProgrammingExt)
+    require(mod, :IntervalConstraintProgramming; fun_name="overapproximate")
+    error()
+end
 
 """
 	overapproximate(lm::LinearMap{N,S,NM,MAT},

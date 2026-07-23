@@ -5,7 +5,8 @@ export neutral,
        chebyshev_center_radius,
        flatten,
        triangulate,
-       triangulate_faces
+       triangulate_faces,
+       polyhedron
 
 """
     triangulate(X::LazySet; [algorithm]::String="delaunay", [kwargs]...)
@@ -42,16 +43,24 @@ vertices of `X` can be obtained.
 """
 function triangulate(X::LazySet; algorithm::String="delaunay", kwargs...)
     if algorithm == "delaunay"
-        require(@__MODULE__, :MiniQhull; fun_name="triangulate")
         return _triangulate_delaunay(X; kwargs...)
     else
         throw(ArgumentError("unknown algorithm $algorithm"))
     end
 end
 
-@validate function triangulate_faces(X)
-    require(@__MODULE__, [:Polyhedra, :GeometryBasics]; fun_name="triangulate_faces")
-    throw(ArgumentError("`triangulate_faces` not implemented for $(typeof(X))"))
+# see ext/MiniQhullExt.jl
+function _triangulate_delaunay(X; kwargs...)
+    mod = Base.get_extension(@__MODULE__, :MiniQhullExt)
+    require(mod, :MiniQhull; fun_name="triangulate")
+    error()
+end
+
+# see ext/GeometryBasicsExt.jl
+@validate function triangulate_faces(P)
+    mod = Base.get_extension(@__MODULE__, :GeometryBasicsExt)
+    require(mod, [:GeometryBasics, :Polyhedra]; fun_name="triangulate_faces")
+    throw(ArgumentError("`triangulate_faces` not implemented for $(typeof(P))"))
 end
 
 """
@@ -760,84 +769,11 @@ contained in `X`.
     return Ballp(p, v, ε) ⊆ X
 end
 
-"""
-    plot_recipe(X::LazySet, [ε])
-
-Convert a compact convex set to a pair `(x, y)` of points for plotting.
-
-### Input
-
-- `X` -- compact convex set
-- `ε` -- approximation-error bound
-
-### Output
-
-A pair `(x, y)` of points that can be plotted.
-
-### Notes
-
-We do not support three-dimensional or higher-dimensional sets at the moment.
-
-### Algorithm
-
-One-dimensional sets are converted to an `Interval`.
-
-For two-dimensional sets, we first compute a polygonal overapproximation.
-The second argument, `ε`, corresponds to the error in Hausdorff distance between
-the overapproximating set and `X`.
-On the other hand, if you only want to produce a fast box-overapproximation of
-`X`, pass `ε=Inf`.
-
-Finally, we use the plot recipe for the constructed set (interval or polygon).
-"""
-function plot_recipe(X::LazySet, ε)
-    @assert dim(X) <= 3 "this implementation cannot plot $(dim(X))-dimensional sets"
-    @assert isbounded(X) "this implementation can only plot bounded sets"
-    @assert isconvex(X) "this implementation can only plot convex sets"
-
-    if dim(X) == 1
-        Y = convert(Interval, X)
-    elseif dim(X) == 2
-        Y = overapproximate(X, ε)
-    else
-        return _plot_recipe_3d_polytope(X)
-    end
-    return plot_recipe(Y, ε)
-end
-
-function _plot_recipe_3d_polytope(P::LazySet, N=eltype(P))
-    require(@__MODULE__, :MiniQhull; fun_name="_plot_recipe_3d_polytope")
-    @assert ispolytopic(P) "3D plotting is only available for polytopes"
-
-    vlist, C = _delaunay_vlist_connectivity(P; compute_triangles_3d=true)
-
-    m = length(vlist)
-    if m == 0
-        @warn "received a polyhedron with no vertices during plotting"
-        return plot_recipe(EmptySet{N}(2), zero(N))
-    end
-
-    x = Vector{N}(undef, m)
-    y = Vector{N}(undef, m)
-    z = Vector{N}(undef, m)
-    @inbounds for (i, vi) in enumerate(vlist)
-        x[i] = vi[1]
-        y[i] = vi[2]
-        z[i] = vi[3]
-    end
-
-    l = size(C, 2)
-    i = Vector{Int}(undef, l)
-    j = Vector{Int}(undef, l)
-    k = Vector{Int}(undef, l)
-    @inbounds for idx in 1:l
-        # normalization: -1 for zero indexing; convert to Int on 64-bit systems
-        i[idx] = Int(C[1, idx] - 1)
-        j[idx] = Int(C[2, idx] - 1)
-        k[idx] = Int(C[3, idx] - 1)
-    end
-
-    return x, y, z, i, j, k
+# see ext/MiniQhullExt.jl
+function _plot_recipe_3d_polytope(P, N=eltype(P))
+    mod = Base.get_extension(@__MODULE__, :MiniQhullExt)
+    require(mod, :MiniQhull; fun_name="_plot_recipe_3d_polytope")
+    error()
 end
 
 """
@@ -973,19 +909,11 @@ function _area_polygon(v::Vector{VN}) where {N,VN<:AbstractVector{N}}
     return abs(res / 2)
 end
 
-function _area_polytope_3D(P::LazySet)
-    require(@__MODULE__, :Polyhedra; fun_name="area")
-    require(@__MODULE__, :GeometryBasics; fun_name="area")
-
-    points, connections = triangulate_faces(P)
-    N = (eltype(P) <: AbstractFloat) ? eltype(P) : Float64  # `_area_triangle_3D!` uses `sqrt`
-    res = zero(N)
-    M = ones(N, 3, 3)
-    @inbounds for triple in connections
-        x, y, z = points[:, triple[1]], points[:, triple[2]], points[:, triple[3]]
-        res += _area_triangle_3D!(M, x, y, z)
-    end
-    return res
+# see ext/GeometryBasicsExt.jl
+function _area_polytope_3D(P)
+    mod = Base.get_extension(@__MODULE__, :GeometryBasicsExt)
+    require(mod, [:GeometryBasics, :Polyhedra]; fun_name="area")
+    error()
 end
 
 # see https://en.wikipedia.org/wiki/Area_of_a_triangle#Using_coordinates
@@ -1087,39 +1015,6 @@ The default implementation computes all vertices via `vertices_list`.
 @validate function vertices(X::LazySet)
     return vertices_list(X)
 end
-
-function load_MiniQhull_triangulate()
-    return quote
-        function _triangulate_delaunay(X::LazySet; compute_triangles_3d::Bool=false)
-            vlist, connect_mat = _delaunay_vlist_connectivity(X;
-                                                              compute_triangles_3d=compute_triangles_3d)
-            nsimplices = size(connect_mat, 2)
-            if compute_triangles_3d
-                simplices = [VPolytope(vlist[connect_mat[1:3, j]]) for j in 1:nsimplices]
-            else
-                simplices = [VPolytope(vlist[connect_mat[:, j]]) for j in 1:nsimplices]
-            end
-            return UnionSetArray(simplices)
-        end
-
-        # compute the vertices and the connectivity matrix of the Delaunay triangulation
-        #
-        # if the flag `compute_triangles_3d` is set, the resulting matrix still has four
-        # rows, but the last row has no meaning
-        function _delaunay_vlist_connectivity(X::LazySet;
-                                              compute_triangles_3d::Bool=false)
-            n = dim(X)
-            @assert !compute_triangles_3d || n == 3 "the `compute_triangles_3d` " *
-                                                    "option requires 3D inputs"
-            vlist = vertices_list(X)
-            m = length(vlist)
-            coordinates = vcat(vlist...)
-            flags = compute_triangles_3d ? "qhull Qt" : nothing
-            connectivity_matrix = MiniQhull.delaunay(n, m, coordinates, flags)
-            return vlist, connectivity_matrix
-        end
-    end
-end  # load_MiniQhull_triangulate
 
 """
 # Extended help
@@ -1386,6 +1281,11 @@ function chebyshev_center_radius(P::LazySet;
     return c, r
 end
 
+function polyhedron(P; backend=default_polyhedra_backend(P))
+    require(@__MODULE__, :Polyhedra; fun_name="polyhedron")
+    error()
+end
+
 function load_Polyhedra_polyhedron()
     return quote
         # see the interface file init_Polyhedra.jl for the imports
@@ -1422,51 +1322,6 @@ function load_Polyhedra_polyhedron()
         end
     end
 end  # quote / load_Polyhedra_polyhedron()
-
-function load_Polyhedra_GeometryBasics_triangulate_faces()
-    return quote
-        """
-            triangulate_faces(X::LazySet)
-
-        Triangulate the faces of a three-dimensional polytopic set.
-
-        ### Input
-
-        - `X` -- three-dimensional polytopic set
-
-        ### Output
-
-        A tuple `(p, c)` where `p` is a matrix, with each column containing a point, and
-        `c` is a list of 3-tuples containing the indices of the points in each triangle.
-
-        ### Notes
-
-        This function triangulates all faces of a 3D polytope. The result is a list of (flat)
-        triangles in 3D which describe the boundary of `X`.
-
-        `X` must contain at least three vertices.
-        """
-        @validate function triangulate_faces(X::LazySet)
-            P = polyhedron(X)
-            mes = Mesh(P)
-            coords = GeometryBasics.coordinates(mes)
-            connection = GeometryBasics.faces(mes)
-
-            ntriangles = length(connection)
-            npoints = length(coords)
-            @assert npoints == 3 * ntriangles "each triangle should have 3 vertices"
-            points = Matrix{Float32}(undef, 3, npoints)
-
-            for i in 1:npoints
-                points[:, i] .= coords[i].data
-            end
-
-            connection_tup = getfield.(connection, :data)
-
-            return points, connection_tup
-        end
-    end
-end  # quote / load_Polyhedra_GeometryBasics_triangulate_faces()
 
 """
 # Extended help

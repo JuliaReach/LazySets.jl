@@ -1,7 +1,6 @@
 module HyperplaneModule
 
 using Reexport: @reexport
-using Requires: @require
 
 using ..LazySets: AbstractPolyhedron, @validate
 using LinearAlgebra: dot
@@ -15,8 +14,6 @@ using ReachabilityBase.Distribution: reseed!
                         isoperationtype, rand, reflect, in, project, ρ, σ,
                         translate, isdisjoint
 @reexport import ..LazySets: constrained_dimensions, ishyperplanar
-import ..LazySets: _ishyperplanar
-import ..Base: convert
 @reexport using ..API
 
 export Hyperplane
@@ -45,8 +42,6 @@ include("constrained_dimensions.jl")
 include("ishyperplanar.jl")
 # include("normalize.jl")
 
-include("convert.jl")
-
-include("init.jl")
+# include("convert.jl")
 
 end  # module

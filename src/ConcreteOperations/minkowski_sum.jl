@@ -118,8 +118,6 @@ end
 # common code before calling _minkowski_sum_hrep
 function _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
     require(@__MODULE__, :Polyhedra; fun_name="minkowski_sum")
-    require(@__MODULE__, :CDDLib; fun_name="minkowski_sum")
-
     A, b = tosimplehrep(P)
     C, d = tosimplehrep(Q)
     return _minkowski_sum_hrep(A, b, C, d; backend=backend, algorithm=algorithm,
@@ -410,16 +408,5 @@ end
 for T in (:ZeroSet, :Universe)
     @eval @validate_commutative function minkowski_sum(∅::EmptySet, X::$T)
         return _minkowski_sum_emptyset(∅, X)
-    end
-end
-
-function load_intervalmatrices_minkowski_sum()
-    return quote
-        using .IntervalMatrices: IntervalMatrix
-
-        # TODO avoid `convert`
-        @commutative function minkowski_sum(MZ::MatrixZonotope, IM::IntervalMatrix)
-            return minkowski_sum(MZ, convert(MatrixZonotope, IM))
-        end
     end
 end

@@ -1,7 +1,6 @@
 module MatrixZonotopeModule
 
 using Reexport: @reexport
-using Requires: @require
 
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
@@ -11,7 +10,7 @@ using ..LazySets: Zonotope, genmat, AbstractReductionMethod, dim, GIR05
 @reexport import ..LazySets: generators, ngens, order, remove_redundant_generators,
                              reduce_order
 
-import Base: ==, *, convert, copy, eltype, size, transpose
+import Base: ==, *, copy, eltype, size, transpose
 
 export AbstractMatrixZonotope, MatrixZonotope, MatrixZonotopeProduct,
        MatrixZonotopeExp, indexvector, factors, nfactors
@@ -29,13 +28,10 @@ include("minkowski_sum.jl")
 include("reduce_order.jl")
 include("remove_redundant_generators.jl")
 include("reshape.jl")
-include("convert.jl")
 
 include("generators.jl")
 include("indexvector.jl")
 include("ngens.jl")
 include("order.jl")
-
-include("init.jl")
 
 end  # module
