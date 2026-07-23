@@ -35,19 +35,6 @@ end
 
 _split_ret(Z₁::Zonotope, Z₂::Zonotope) = (Z₁, Z₂)
 
-function load_StaticArraysCore_split()
-    return quote
-        using .StaticArraysCore: MMatrix, MVector, SMatrix, SVector
-
-        function _split_ret(Z₁::Zonotope{N,SV,SM},
-                            Z₂::Zonotope{N,SV,SM}) where {N,n,p,SV<:MVector{n,N},SM<:MMatrix{n,p,N}}
-            Z₁ = Zonotope(SVector{n}(Z₁.center), SMatrix{n,p}(Z₁.generators))
-            Z₂ = Zonotope(SVector{n}(Z₂.center), SMatrix{n,p}(Z₂.generators))
-            return Z₁, Z₂
-        end
-    end
-end  # load_StaticArraysCore_split
-
 function _split(Z::Zonotope, gens::AbstractVector, n::AbstractVector)
     p = length(gens)
     @assert p == length(n) "the number of generators $(length(n)) does not " *

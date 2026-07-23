@@ -489,7 +489,7 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
 
         # remove the redundancies
         if prune
-            removehredundancy!(Qph)
+            _removehredundancy!(Qph)
         end
 
         if prune && isempty(Qph)

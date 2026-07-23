@@ -12,20 +12,6 @@ dir_north(N, ::AbstractVector) = DIR_NORTH(N)
 dir_west(N, ::AbstractVector) = DIR_WEST(N)
 dir_south(N, ::AbstractVector) = DIR_SOUTH(N)
 
-function load_staticarrays_directions()
-    return quote
-        const DIR_EAST_STATIC(N) = SVector{2}([one(N), zero(N)])
-        const DIR_NORTH_STATIC(N) = SVector{2}([zero(N), one(N)])
-        const DIR_WEST_STATIC(N) = SVector{2}([-one(N), zero(N)])
-        const DIR_SOUTH_STATIC(N) = SVector{2}([zero(N), -one(N)])
-
-        dir_east(N, ::SVector) = DIR_EAST_STATIC(N)
-        dir_north(N, ::SVector) = DIR_NORTH_STATIC(N)
-        dir_west(N, ::SVector) = DIR_WEST_STATIC(N)
-        dir_south(N, ::SVector) = DIR_SOUTH_STATIC(N)
-    end
-end  # quote / load_staticarrays_directions
-
 """
     box_approximation(S::LazySet)
 
@@ -410,19 +396,3 @@ function box_approximation(ms::MinkowskiSum)
     H2 = box_approximation(second(ms))
     return minkowski_sum(H1, H2)
 end
-
-# function to be loaded by Requires
-function load_taylormodels_box_approximation()
-    return quote
-        using .TaylorModels: TaylorModel1, TaylorModelN, domain, evaluate
-
-        box_approximation(vTM::Vector{<:TaylorModel1}) = _box_approximation_vTM(vTM)
-
-        box_approximation(vTM::Vector{<:TaylorModelN}) = _box_approximation_vTM(vTM)
-
-        function _box_approximation_vTM(vTM)
-            bounds = [evaluate(vTM[i], domain(p)) for (i, p) in enumerate(vTM)]
-            return Hyperrectangle(; low=IA.inf.(bounds), high=IA.sup.(bounds))
-        end
-    end
-end  # quote / load_taylormodels_box_approximation
