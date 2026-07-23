@@ -21,7 +21,6 @@ using ReachabilityBase.Iteration: EmptyIterator
                         linear_combination, minkowski_difference, minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, constrained_dimensions,
                              linear_map_inverse, rationalize, triangulate
-import ..LazySets: plot_recipe
 import Base: convert, copy
 @reexport using ..API
 
@@ -82,25 +81,6 @@ include("triangulate.jl")
 
 include("convert.jl")
 include("copy.jl")
-
-"""
-    plot_recipe(∅::EmptySet{N}, [ε]=zero(N)) where {N}
-
-Convert an empty set to a sequence of points for plotting.
-In the special case of an empty set, the sequence is empty.
-
-### Input
-
-- `∅` -- empty set
-- `ε` -- (optional, default: `0`) ignored, used for dispatch
-
-### Output
-
-An empty array.
-"""
-function plot_recipe(::EmptySet{N}, ε=zero(N)) where {N}
-    return []
-end
 
 include("init.jl")
 

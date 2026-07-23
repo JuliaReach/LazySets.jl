@@ -10,7 +10,8 @@ using SafeTestsets
                                                :AbstractEnclosureAlgorithm, :_exp_remainder,
                                                :BasicSymbolic, :Symbolic, :Arrays,
                                                Symbol("@assert"),
-                                               # LazySets package extensions
+                                               # package extensions
+                                               # LazySetsExt
                                                :AbstractLinearMapAlgorithm, :HPoly, :LinearMapVRep,
                                                :STAR, :default_polyhedra_backend,
                                                :_Ballp_special_cases, :_HPolyhedron,
@@ -31,7 +32,17 @@ using SafeTestsets
                                                :_sort_constraints, :_ρ_vertices,
                                                :_σ_hyperplane_halfspace, :_σ_vertices,
                                                :_witness_result_empty, Symbol("@validate"),
-                                               Symbol("@validate_commutative"))
+                                               Symbol("@validate_commutative"),
+                                               # RecipesBaseExt
+                                               :plot_recipe, :plot_vlist, :_plot_recipe_3d_polytope,
+                                               # DistributionsExt
+                                               :RejectionSampler, :_sample_unit_nball_muller!,
+                                               :_sample_unit_nsphere_muller!,
+                                               # SCSExt
+                                               :MOI, :Optimizer, :sdp_solver, :set_sdp_solver!,
+                                               :_default_sdp_solver,
+                                               # IpoptExt
+                                               :_default_nln_solver)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
@@ -42,7 +53,10 @@ using SafeTestsets
                                                  :supportssolver, :vcartesianproduct, :Arr,
                                                  :get_variables, :gradient, :Ellipsoid,
                                                  :InteriorPoint, :Sets, :Translation, :ellipsoid,
-                                                 :invokelatest, :parse, :inf, :sup)
+                                                 :invokelatest, :parse, :inf, :sup,
+                                                 :OptimizerWithAttributes,
+                                                 # fixed in versions after v"1.10"
+                                                 :get_extension)
     ignores_all_qualified_accesses_via_owners = (:inf, :sup)  # defined in IntervalArithmetic but imported through IntervalBoxes
     ignores_no_stale_explicit_imports = (:apply_recipe,)  # required for documentation
     ExplicitImports.test_explicit_imports(LazySets;
