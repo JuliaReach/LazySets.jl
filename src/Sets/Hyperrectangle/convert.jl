@@ -13,15 +13,3 @@ function load_IntervalArithmetic_convert()
         end
     end
 end  # quote / load_IntervalArithmetic_convert
-
-function load_IntervalBoxes_convert_Hyperrectangle()
-    return quote
-        import .IntervalBoxes as IB
-
-        function convert(::Type{Hyperrectangle}, Ibox::IB.IntervalBox)
-            low_IB = IB.inf.(Ibox)  # NOTE: `inf`/`sup` are defined in IntervalArithmetic
-            high_IB = IB.sup.(Ibox)
-            return Hyperrectangle(; low=low_IB, high=high_IB)
-        end
-    end
-end  # quote / load_IntervalBoxes_convert_Hyperrectangle

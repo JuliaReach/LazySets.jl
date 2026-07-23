@@ -1,14 +1,3 @@
-function load_StaticArraysCore_convert_Zonotope_Hyperrectangle_static()
-    return quote
-        using .StaticArraysCore: SVector
-
-        function _convert_static(::Type{Zonotope},
-                                 H::Hyperrectangle{N,<:SVector,<:SVector}) where {N}
-            return Zonotope(center(H), _genmat_static(H))
-        end
-    end
-end  # quote / load_StaticArraysCore_convert_Zonotope_Hyperrectangle_static
-
 """
     convert(::Type{Zonotope}, cp::CartesianProduct{N, HN1, HN2}) where {N,
             HN1<:AbstractHyperrectangle, HN2<:AbstractHyperrectangle}
@@ -172,4 +161,11 @@ function convert(::Type{Zonotope}, P::AbstractPolynomialZonotope)
     @assert iszero(ngens_dep(P)) "cannot convert a general polynomial zonotope to a Zonotope"
 
     return Zonotope(center(P), genmat_indep(P))
+end
+
+# see ext/StaticArraysCoreExt.jl
+function _convert_static(Ztype, Hsvec)
+    mod = Base.get_extension(@__MODULE__, :StaticArraysCoreExt)
+    require(mod, :StaticArraysCore; fun_name="_convert_static")
+    error()
 end

@@ -1225,29 +1225,6 @@ function _hcat_KLred(G::AbstractMatrix, indices, Lred::AbstractMatrix)
     return hcat(K, Lred)
 end
 
-function load_reduce_order_static()
-    return quote
-        # implementation for static arrays
-        function _interval_hull(G::SMatrix{n,p,N,L}, indices) where {n,p,N,L}
-            Lred = zeros(MMatrix{n,n,N})
-            @inbounds for i in 1:n
-                for j in indices
-                    Lred[i, i] += abs(G[i, j])
-                end
-            end
-            return SMatrix{n,n}(Lred)
-        end
-
-        # implementation for static arrays
-        function _hcat_KLred(G::SMatrix{n,p,N,L1}, indices,
-                             Lred::SMatrix{n,n,N,L2}) where {n,p,N,L1,L2}
-            m = length(indices)
-            K = SMatrix{n,m}(view(G, :, indices))
-            return hcat(K, Lred)
-        end
-    end
-end # quote / load_reduce_order_static
-
 """
 # Extended help
 
