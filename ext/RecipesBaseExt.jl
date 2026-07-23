@@ -1,3 +1,12 @@
+module RecipesBaseExt
+
+using LazySets
+using LazySets: plot_vlist, _plot_recipe_3d_polytope
+using ReachabilityBase.Comparison: isapproxzero, _ztol
+using RecipesBase: AbstractPlot, @recipe, @series
+import LazySets: plot_recipe
+import RecipesBase: apply_recipe  # required for Documenter to find docstrings
+
 # global values
 DEFAULT_COLOR = :auto
 DEFAULT_ALPHA = 0.5
@@ -597,3 +606,226 @@ end
         return _plot_list_same_recipe(array(Poa), ε)
     end
 end
+
+#######################
+# plot_recipe methods #
+#######################
+
+"""
+    plot_recipe(X::LazySet, [ε])
+
+Convert a compact convex set to a pair `(x, y)` of points for plotting.
+
+### Input
+
+- `X` -- compact convex set
+- `ε` -- approximation-error bound
+
+### Output
+
+A pair `(x, y)` of points that can be plotted.
+
+### Notes
+
+We do not support four-dimensional or higher-dimensional sets at the moment.
+
+### Algorithm
+
+One-dimensional sets are converted to an `Interval`.
+
+For two-dimensional sets, we first compute a polygonal overapproximation.
+The second argument, `ε`, corresponds to the error in Hausdorff distance between
+the overapproximating set and `X`.
+On the other hand, if you only want to produce a fast box-overapproximation of
+`X`, pass `ε=Inf`.
+
+Finally, we use the plot recipe for the constructed set (interval or polygon).
+
+For three-dimensional sets, we assume that `X` is a polytope.
+"""
+function plot_recipe(X::LazySet, ε)
+    @assert dim(X) <= 3 "this implementation cannot plot $(dim(X))-dimensional sets"
+    @assert isbounded(X) "this implementation can only plot bounded sets"
+    @assert isconvex(X) "this implementation can only plot convex sets"
+
+    if dim(X) == 1
+        Y = convert(Interval, X)
+    elseif dim(X) == 2
+        Y = overapproximate(X, ε)
+    else
+        return _plot_recipe_3d_polytope(X)
+    end
+    return plot_recipe(Y, ε)
+end
+
+"""
+    plot_recipe(P::AbstractPolyhedron{N}, [ε]=zero(N)) where {N}
+
+Convert a (bounded) polyhedron to a pair `(x, y)` of points for plotting.
+
+### Input
+
+- `P` -- bounded polyhedron
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
+
+### Output
+
+A pair `(x, y)` of points that can be plotted, where `x` is the vector of
+x-coordinates and `y` is the vector of y-coordinates.
+
+### Algorithm
+
+We first assert that `P` is bounded (i.e., that `P` is a polytope).
+
+One-dimensional polytopes are converted to an `Interval`.
+Three-dimensional or higher-dimensional polytopes are not supported.
+
+For two-dimensional polytopes (i.e., polygons) we compute their set of vertices
+using `vertices_list` and then plot the convex hull of these vertices.
+"""
+function plot_recipe(P::AbstractPolyhedron{N}, ε=zero(N)) where {N}
+    @assert dim(P) <= 3 "cannot plot a $(dim(P))-dimensional $(typeof(P))"
+    @assert isbounded(P) "cannot plot an unbounded $(typeof(P))"
+
+    if dim(P) == 1
+        Q = convert(Interval, P)
+        if diameter(Q) < _ztol(N)  # flat interval
+            Q = Singleton(center(Q))
+        end
+        return plot_recipe(Q, ε)
+    elseif dim(P) == 2
+        vlist = convex_hull(vertices_list(P))
+        return _plot_recipe_2d_vlist(vlist, N)
+    else
+        return _plot_recipe_3d_polytope(P, N)
+    end
+end
+
+function _plot_recipe_2d_vlist(vlist, N)
+    m = length(vlist)
+    if m == 0
+        @warn "received a polyhedron with no vertices during plotting"
+        return plot_recipe(EmptySet{N}(2), zero(N))
+    end
+
+    x = Vector{N}(undef, m)
+    y = Vector{N}(undef, m)
+    @inbounds for (i, vi) in enumerate(vlist)
+        x[i] = vi[1]
+        y[i] = vi[2]
+    end
+
+    if m > 2
+        # add first vertex to "close" the polygon
+        push!(x, x[1])
+        push!(y, y[1])
+    end
+    return x, y
+end
+
+"""
+    plot_recipe(S::AbstractSingleton{N}, [ε]=zero(N)) where {N}
+
+Convert a singleton to a pair `(x, y)` of points for plotting.
+
+### Input
+
+- `S` -- singleton
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
+
+### Output
+
+A pair `(x, y)` of one point that can be plotted.
+"""
+function plot_recipe(S::AbstractSingleton{N}, ε=zero(N)) where {N}
+    n = dim(S)
+    if n == 1
+        return [element(S)[1]], [zero(N)]
+    elseif n == 2
+        return [element(S)[1]], [element(S)[2]]
+    elseif n == 3
+        return [element(S)[1]], [element(S)[2]], [element(S)[3]]
+    else
+        throw(ArgumentError("cannot plot a $n-dimensional $(typeof(S))"))
+    end
+end
+
+"""
+    plot_recipe(cap::Intersection{N}, [ε]::N=-one(N),
+                [Nφ]::Int=PLOT_POLAR_DIRECTIONS) where {N}
+
+Convert an intersection of two sets to a pair `(x, y)` of points for plotting.
+
+### Input
+
+- `cap` -- intersection of two sets
+- `ε`   -- (optional, default `0`) ignored, used for dispatch
+- `Nφ`  -- (optional, default: `PLOT_POLAR_DIRECTIONS`) number of polar
+           directions used in the template overapproximation
+
+### Output
+
+A pair `(x, y)` of points that can be plotted.
+"""
+function plot_recipe(cap::Intersection{N}, ε::N=zero(N),
+                     Nφ::Int=PLOT_POLAR_DIRECTIONS) where {N}
+    @assert dim(cap) <= 2 "cannot plot a $(dim(cap))-dimensional intersection"
+
+    if isempty(cap)
+        return plot_recipe(EmptySet{N}(dim(cap)), ε)
+    elseif dim(cap) == 1
+        @assert isconvex(cap) "cannot plot a one-dimensional $(typeof(cap))"
+        return plot_recipe(convert(Interval, cap), ε)
+    else
+        # construct polygon approximation using polar directions
+        P = overapproximate(cap, PolarDirections{N}(Nφ))
+        return plot_recipe(P, ε)
+    end
+end
+
+"""
+    plot_recipe(∅::EmptySet{N}, [ε]=zero(N)) where {N}
+
+Convert an empty set to a sequence of points for plotting.
+In the special case of an empty set, the sequence is empty.
+
+### Input
+
+- `∅` -- empty set
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
+
+### Output
+
+An empty array.
+"""
+function plot_recipe(::EmptySet{N}, ε=zero(N)) where {N}
+    return []
+end
+
+"""
+    plot_recipe(X::Interval{N}, [ε]=zero(N)) where {N}
+
+Convert an interval to a pair `(x, y)` of points for plotting.
+
+### Input
+
+- `X` -- interval
+- `ε` -- (optional, default: `0`) ignored, used for dispatch
+
+### Output
+
+A pair `(x, y)` of two points that can be plotted.
+
+### Notes
+
+We consider the interval as a line segment with y coordinate equal to zero.
+"""
+function plot_recipe(X::Interval{N}, ε=zero(N)) where {N}
+    return [min(X), max(X)], zeros(N, 2)
+end
+
+function plot_recipe(P::Polygon{N}, ε=zero(N)) where {N}
+    return _plot_recipe_2d_vlist(P.vertices, N)
+end
+
+end  # module

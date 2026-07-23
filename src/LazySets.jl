@@ -25,7 +25,6 @@ import .API: eltype, extrema, isdisjoint, isempty, \, in, isapprox, ==, issubset
 @reexport import LinearAlgebra: ×, normalize, normalize!
 import Base: IndexStyle, convert, copy, eltype, first, getindex, iterate,
              lastindex, length, rationalize, \
-import RecipesBase: apply_recipe  # required for Documenter to find docstrings
 export subtypes
 
 import GLPK, JuMP, ExprTools
@@ -36,7 +35,6 @@ using LinearAlgebra: /, Diagonal, I, UniformScaling, checksquare, copyto!, det, 
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, randperm  # NOTE: `GLOBAL_RNG` and `SamplerType` are internal symbols
 using SparseArrays: AbstractSparseMatrix, AbstractSparseVector, SparseVector,
                     blockdiag, findnz, issparse, sparse, sparsevec, spzeros
-using RecipesBase: AbstractPlot, @recipe, @series
 using Requires: @require
 
 # ================
@@ -378,7 +376,7 @@ include("Approximations/Approximations.jl")
 # ==================================
 # Plotting (requires Approximations)
 # ==================================
-include("Plotting/plot_recipes.jl")
+function plot_recipe end  # internal function; only defined here to be accessible to tests
 include("Plotting/mesh.jl")
 
 # ==========================
