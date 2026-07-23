@@ -1,5 +1,12 @@
-using .SymEngine: Basic
-import .SymEngine: free_symbols
+module SymEngineExt
+
+using LazySets: LazySet
+import SymEngine
+using SymEngine: Basic, subs
+import SymEngine: free_symbols
+
+include("SymEngine/SymEngineHalfSpaceExt.jl")
+include("SymEngine/SymEngineHyperplaneExt.jl")
 
 """
    _is_linear_combination(L::Basic)
@@ -17,7 +24,13 @@ Determine whether the expression `L` is a linear combination of its symbols.
 ### Examples
 
 ```jldoctest
-julia> using LazySets: _is_linear_combination
+julia> using LazySets
+
+julia> import SymEngine
+
+julia> SymEngineExt = Base.get_extension(LazySets, :SymEngineExt);
+
+julia> using .SymEngineExt: _is_linear_combination
 
 julia> _is_linear_combination(:(2*x1 - 4))
 true
@@ -39,7 +52,7 @@ end
 _is_linear_combination(L::Expr) = _is_linear_combination(convert(Basic, L))
 
 """
-    free_symbols(expr::Expr, set_type::Type{LazySet})
+    free_symbols(expr::Expr, set_type::Type{<:LazySet})
 
 Return the free symbols in an expression that represents a given set type.
 
@@ -54,7 +67,13 @@ A list of symbols, in the form of SymEngine `Basic` objects.
 ### Examples
 
 ```jldoctest
-julia> using LazySets: free_symbols
+julia> using LazySets
+
+julia> import SymEngine
+
+julia> SymEngineExt = Base.get_extension(LazySets, :SymEngineExt);
+
+julia> using .SymEngineExt: free_symbols
 
 julia> free_symbols(:(x1 <= -0.03), HalfSpace)
 1-element Vector{SymEngine.Basic}:
@@ -74,7 +93,7 @@ function _parse_linear_expression(linexpr::Basic, vars::Vector{Basic}, N)
     if isempty(vars)
         vars = SymEngine.free_symbols(linexpr)
     end
-    b = SymEngine.subs(linexpr, [vi => zero(N) for vi in vars]...)
+    b = subs(linexpr, [vi => zero(N) for vi in vars]...)
     a = convert(Basic, linexpr - b)
 
     # convert to correct numeric type
@@ -94,3 +113,5 @@ function _free_symbols(expr::Expr)
         throw(ArgumentError("the `free_symbols` method for the expression $expr is not implemented"))
     end
 end
+
+end  # module

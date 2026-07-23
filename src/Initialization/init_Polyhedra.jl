@@ -1,5 +1,3 @@
-import .Polyhedra: polyhedron
-export polyhedron
 using .Polyhedra: removehredundancy!, removevredundancy!
 
 function default_polyhedra_backend_1d(N::Type{<:Number}, solver=nothing)
@@ -51,5 +49,4 @@ else
     end
 end
 
-eval(load_polyhedra_mesh())
 eval(load_Polyhedra_polyhedron())
