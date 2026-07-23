@@ -25,26 +25,22 @@ import .API: eltype, extrema, isdisjoint, isempty, \, in, isapprox, ==, issubset
 @reexport import LinearAlgebra: ×, normalize, normalize!
 import Base: IndexStyle, convert, copy, eltype, first, getindex, iterate,
              lastindex, length, rationalize, \
-import RecipesBase: apply_recipe  # required for Documenter to find docstrings
 export subtypes
 
 import GLPK, JuMP, ExprTools
 import IntervalArithmetic as IA
 
 using LinearAlgebra: /, Diagonal, I, UniformScaling, checksquare, copyto!, det,  # NOTE: `checksquare` is an internal symbol
-                     diagm, dot, nullspace, tr, transpose
+                     dot, nullspace, tr, transpose
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, randperm  # NOTE: `GLOBAL_RNG` and `SamplerType` are internal symbols
 using SparseArrays: AbstractSparseMatrix, AbstractSparseVector, SparseVector,
                     blockdiag, findnz, issparse, sparse, sparsevec, spzeros
-using RecipesBase: AbstractPlot, @recipe, @series
-using Requires: @require
 
 # ================
 # ReachabilityBase
 # ================
 
 import ReachabilityBase
-import ReachabilityBase.Assertions
 using ReachabilityBase.Assertions: @assert
 include("Utils/assertions.jl")
 
@@ -60,7 +56,7 @@ using ReachabilityBase.Arrays: At_ldiv_B, At_mul_B, DEFAULT_COND_TOL,
 using ReachabilityBase.Basetype: basetype
 using ReachabilityBase.Commutative: @commutative
 using ReachabilityBase.Comparison: Comparison, _geq, _isapprox, _leq, _rtol,
-                                   _ztol, isapproxzero
+                                   isapproxzero
 using ReachabilityBase.Distribution: Distribution, DefaultUniform, rand!,
                                      reseed!
 using ReachabilityBase.Iteration: Iteration, CartesianIterator, EmptyIterator,
@@ -84,6 +80,7 @@ include("Utils/helper_functions.jl")
 include("Utils/macros.jl")
 include("Utils/matrix_exponential.jl")
 include("Utils/lp_solvers.jl")
+include("Utils/nln_solvers.jl")
 include("Utils/sdp_solvers.jl")
 include("Utils/file_formats.jl")
 
@@ -169,8 +166,6 @@ include("Sets/HParallelotope/HParallelotopeModule.jl")
 include("Sets/HPolygon/HPolygonModule.jl")
 @reexport using ..HPolygonModule: HPolygon
 
-include("Sets/HPolygonOpt.jl")
-
 include("Sets/HPolytope/HPolytopeModule.jl")
 @reexport using ..HPolytopeModule: HPolytope
 
@@ -215,14 +210,13 @@ include("MatrixSets/MatrixZonotopeModule.jl")
 
 include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
-                                                        SSPZ,
                                                         quadratic_map
 
 include("Sets/Singleton/SingletonModule.jl")
 @reexport using ..SingletonModule: Singleton
 
 include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
-@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ
+@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope
 using ..SparsePolynomialZonotopeModule: uniqueID
 
 include("Sets/Star/StarModule.jl")
@@ -250,6 +244,7 @@ include("Sets/ZeroSet/ZeroSetModule.jl")
 
 include("Sets/Interval/IntervalModule.jl")
 @reexport using ..IntervalModule: Interval
+using ..IntervalModule: _max, _min  # internal convenience functions, not exported
 
 # =================================
 # Types representing set operations
@@ -375,16 +370,16 @@ include("Approximations/Approximations.jl")
 # It can, however, happen that we forget to add the `using` statements.
 @reexport using .Approximations
 
-# ==================================
-# Plotting (requires Approximations)
-# ==================================
-include("Plotting/plot_recipes.jl")
-include("Plotting/mesh.jl")
+# ========
+# Plotting
+# ========
+function plot_recipe end  # internal function; only defined here to be accessible to tests
 
-# ==========================
-# Parallel-algorithms module
-# ==========================
-include("Parallel/Parallel.jl")
+include("Plotting/mesh.jl")
+export plot3d, plot3d!
+
+include("Plotting/paraview.jl")
+export writevtk
 
 # ==============================
 # Activate assertions by default
@@ -395,10 +390,5 @@ activate_assertions()
 # Load fake package extension for LazySets itself
 # ===============================================
 include("../ext/LazySetsExt.jl")
-
-# ===================================================
-# Load external packages on-demand (using 'Requires')
-# ===================================================
-include("init.jl")
 
 end # module

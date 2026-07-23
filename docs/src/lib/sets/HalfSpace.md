@@ -158,7 +158,14 @@ isdisjoint(::HalfSpace, ::HalfSpace, ::Bool=false)
 ```@docs
 halfspace_left(::AbstractVector, ::AbstractVector)
 halfspace_right(::AbstractVector, ::AbstractVector)
-HalfSpaceModule._ishalfspace
+```
+
+```@meta
+CurrentModule = LazySetsSymEngineExt
+```
+
+```@docs
+LazySetsSymEngineExt._ishalfspace
 ```
 
 ```@meta
@@ -199,7 +206,6 @@ Inherited from [`LazySet`](@ref):
 * [`rationalize`](@ref rationalize(::LazySet))
 * [`rectify`](@ref rectify(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))

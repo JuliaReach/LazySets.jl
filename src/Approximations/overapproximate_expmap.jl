@@ -126,36 +126,10 @@ function taylor_expmap_truncation(MZP::MatrixZonotopeProduct, P::S,
     return res
 end
 
-function load_intervalmatrices_overapproximation_expmap()
-    return quote
-        using .IntervalMatrices: IntervalMatrix
-        """
-            taylor_expmap_remainder(Z::AbstractZonotope{N}, matnorm::Real, Int) where {N}
-
-        Overapproximate the Lagrange remainder term of the k-th order truncated Taylor expansion
-        of the exponential map of a matrix zonotope applied to a zonotopic set.
-
-        ### Input
-
-        - `P` -- a zonotopic set
-        - `matnorm` -- an upper bound on the norm of the matrix zonotope
-        - `k` -- the order of the Taylor expansion
-
-        ### Output
-
-        A zonotope over-approximating the remainder term of the Taylor expansion.
-        """
-        function taylor_expmap_remainder(Z::AbstractZonotope{N}, matnorm::Real, k::Int) where {N}
-            n = dim(Z)
-            ϵ = matnorm / (k + 2)
-
-            E = IntervalMatrix(fill(IA.interval(N(-1.0), N(1.0)), n, n))
-            E *= matnorm^(k + 1) / (factorial(k + 1) * (1 - ϵ))
-
-            res = overapproximate(E * Z, Zonotope)
-            return res
-        end
-    end
+function taylor_expmap_remainder(Z, matnorm, k)
+    mod = Base.get_extension(@__MODULE__, :LazySetsIntervalMatricesExt)
+    require(mod, :IntervalMatrices; fun_name="taylor_expmap_remainder")
+    error()
 end
 
 function _overapproximate_emz(em::ExponentialMap{N,S,MAT}, k::Int,
@@ -163,8 +137,6 @@ function _overapproximate_emz(em::ExponentialMap{N,S,MAT}, k::Int,
                                                     S<:Union{SparsePolynomialZonotope,
                                                              AbstractZonotope},
                                                     MAT<:AbstractMatrixZonotope{N}}
-    require(@__MODULE__, :IntervalMatrices; fun_name="overapproximate")
-
     MZP = matrix(em).M
     P = set(em)
 

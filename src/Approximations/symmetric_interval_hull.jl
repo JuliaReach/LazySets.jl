@@ -56,7 +56,7 @@ symmetric_interval_hull(∅::EmptySet) = ∅
 
 function symmetric_interval_hull(S::AbstractSingleton{N}) where {N}
     n = dim(S)
-    r = abs.(element(S))
+    r = abs.(center(S))
     return Hyperrectangle(zeros(N, n), r)
 end
 
@@ -79,13 +79,13 @@ end
 
 function symmetric_interval_hull(lm::LinearMap{N,<:AbstractSingleton}) where {N}
     n = dim(lm)
-    r = abs.(lm.M * element(lm.X))
+    r = abs.(lm.M * center(lm.X))
     return Hyperrectangle(zeros(N, n), r)
 end
 
 function symmetric_interval_hull(X::MinkowskiSum{N,<:AbstractSingleton,<:AbstractSingleton}) where {N}
     n = dim(X)
-    r = abs.(element(first(X)) + element(second(X)))
+    r = abs.(center(first(X)) + center(second(X)))
     return Hyperrectangle(zeros(N, n), r)
 end
 
@@ -99,7 +99,7 @@ end
 
 function symmetric_interval_hull(E::ExponentialMap{N,<:AbstractSingleton};
                                  backend=get_exponential_backend()) where {N}
-    v = _expmv(backend, one(N), E.expmat.M, element(E.X))
+    v = _expmv(backend, one(N), E.expmat.M, center(E.X))
     c = zeros(N, dim(E))
     r = abs.(v)
     return Hyperrectangle(c, r)

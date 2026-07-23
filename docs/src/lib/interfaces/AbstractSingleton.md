@@ -15,17 +15,8 @@ A singleton is a special hyperrectangle consisting of only one point.
 AbstractSingleton
 ```
 
-This interface requires to implement the following function:
-
-```@docs
-element(::AbstractSingleton)
-```
-
 This interface defines the following functions:
 
-```@docs
-element(::AbstractSingleton, ::Int)
-```
 ```@meta
 CurrentModule = LazySets.API
 ```
@@ -149,7 +140,6 @@ Inherited from [`LazySet`](@ref):
 * [`ispolytopictype`](@ref ispolytopictype(::Type{LazySet}))
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`rationalize`](@ref rationalize(::LazySet))
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))
@@ -196,13 +186,6 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`is_interior_point`](@ref is_interior_point(::AbstractVector, ::AbstractHyperrectangle))
 * [`difference`](@ref difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 * [`minkowski_difference`](@ref minkowski_difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))
-
-Plotting singletons is available too:
-
-```@docs
-plot_recipe(::AbstractSingleton{N}, ::Any=zero(N)) where {N}
-LazySets.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::Real=zero(N)) where {N}
-```
 
 ## Implementations
 

@@ -22,7 +22,6 @@ include("MinkowskiSumArray.jl")
 include("SimpleSparsePolynomialZonotope.jl")
 include("Singleton.jl")
 include("SparsePolynomialZonotope.jl")
-include("TaylorModelN.jl")
 include("VPolygon.jl")
 include("VPolytope.jl")
 include("Zonotope.jl")
@@ -31,7 +30,7 @@ include("Zonotope.jl")
 # `convert` methods with multiple by target types
 # ===============================================
 
-for T in [HPolygon, HPolygonOpt, HPolytope, HPolyhedron]
+for T in [HPolygon, HPolytope, HPolyhedron]
     @eval begin
         function convert(::Type{$T}, P::Intersection)
             clist = vcat(constraints_list(first(P)), constraints_list(second(P)))
@@ -132,13 +131,3 @@ for T in subtypes(AbstractHPolygon, true)
         end
     end
 end
-
-function load_IntervalBoxes_convert_AbstractHyperrectangle()
-    return quote
-        import .IntervalBoxes as IB
-
-        function convert(::Type{IB.IntervalBox}, H::AbstractHyperrectangle)
-            return IB.IntervalBox(IA.interval.(low(H), high(H))...)
-        end
-    end
-end  # quote / load_IntervalBoxes_convert_AbstractHyperrectangle

@@ -24,7 +24,6 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`an_element`](@ref an_element(::LazySet)
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
 
 ## [``n``-ary Minkowski sum (MinkowskiSumArray)](@id def_MinkowskiSumArray)
@@ -45,7 +44,6 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`an_element`](@ref an_element(::LazySet)
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
 
 ## [``n``-ary Minkowski sum with cache (CachedMinkowskiSumArray)](@id def_CachedMinkowskiSumArray)
@@ -64,5 +62,4 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`an_element`](@ref an_element(::LazySet))
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))

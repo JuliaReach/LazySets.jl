@@ -19,7 +19,7 @@ end
 
 function _intersection_singleton(S::AbstractSingleton, X)
     N = promote_type(eltype(S), eltype(X))
-    return element(S) ∈ X ? S : EmptySet{N}(dim(S))
+    return center(S) ∈ X ? S : EmptySet{N}(dim(S))
 end
 
 # this method can also be called with `HalfSpace` arguments
@@ -135,7 +135,7 @@ zero. Then we distinguish the cases that `hs` is a lower or an upper bound.
         end
     end
 
-    empty, lbound, ubound = _intersection_interval_halfspace(min(X), max(X), a, b, N)
+    empty, lbound, ubound = _intersection_interval_halfspace(_min(X), _max(X), a, b, N)
 
     if empty
         return EmptySet{N}(1)
@@ -182,7 +182,7 @@ end
 @validate_commutative function intersection(X::Interval, hp::Hyperplane)
     # a one-dimensional hyperplane is just a point
     p = hp.b / hp.a[1]
-    if _leq(min(X), p) && _leq(p, max(X))
+    if _leq(_min(X), p) && _leq(p, _max(X))
         return Singleton([p])
     else
         N = promote_type(eltype(X), eltype(hp))
@@ -214,8 +214,8 @@ function _intersection_interval(X::Interval, Y::LazySet)
     @assert isconvex(Y) "this implementation requires a convex set"
 
     N = promote_type(eltype(X), eltype(Y))
-    lower = max(min(X), low(Y, 1))
-    upper = min(max(X), high(Y, 1))
+    lower = max(_min(X), low(Y, 1))
+    upper = min(_max(X), high(Y, 1))
     if _isapprox(lower, upper)
         return Singleton([lower])
     elseif lower < upper
@@ -489,7 +489,7 @@ function _intersection_poly(P1::AbstractPolyhedron{N},
 
         # remove the redundancies
         if prune
-            removehredundancy!(Qph)
+            _removehredundancy!(Qph)
         end
 
         if prune && isempty(Qph)
@@ -848,7 +848,7 @@ The modified star set.
     return X
 end
 
-function _intersection_star!(c, V, P::Union{HPoly,HPolygon,HPolygonOpt}, H::HalfSpace)
+function _intersection_star!(c, V, P::Union{HPoly,HPolygon}, H::HalfSpace)
     a′ = transpose(V) * H.a
     b′ = H.b - dot(H.a, c)
     H′ = HalfSpace(a′, b′)
@@ -868,8 +868,7 @@ end
 @validate_commutative function intersection(X::Star{N,VN,MN,PT},
                                             H::HalfSpace) where {N,VN<:AbstractVector{N},
                                                                  MN<:AbstractMatrix{N},
-                                                                 PT<:Union{HPoly,HPolygon,
-                                                                           HPolygonOpt}}
+                                                                 PT<:Union{HPoly,HPolygon}}
     return intersection!(copy(X), H)
 end
 
@@ -924,7 +923,7 @@ function _bound_intersect_2D(Z::Zonotope, L::Line2D)
         end
     end
     singleton = intersection(LineSegment(P, P + 2g(j)), L)
-    return element(singleton)[2]
+    return center(singleton)[2]
 end
 
 # ============== #

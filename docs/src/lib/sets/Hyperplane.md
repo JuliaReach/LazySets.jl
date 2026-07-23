@@ -128,8 +128,12 @@ CurrentModule = LazySets.HyperplaneModule
 translate(::Hyperplane, ::AbstractVector)
 ```
 
+```@meta
+CurrentModule = LazySetsSymEngineExt
+```
+
 ```@docs
-HyperplaneModule._ishyperplanar
+LazySetsSymEngineExt._ishyperplanar
 ```
 
 ```@meta
@@ -171,7 +175,6 @@ Inherited from [`LazySet`](@ref):
 * [`rationalize`](@ref rationalize(::LazySet))
 * [`rectify`](@ref rectify(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))

@@ -28,21 +28,12 @@ been specified, we use `default_lp_solver_polyhedra(N)` to define such solver.
 Otherwise, the redundancy-removal function of the polyhedral backend is used.
 """
 function remove_redundant_vertices(P::VPolytope; backend=nothing, solver=nothing)
-    require(@__MODULE__, :Polyhedra; fun_name="remove_redundant_vertices")
-    if isnothing(backend)
-        backend = default_polyhedra_backend(P)
-    end
-    Q = polyhedron(P; backend=backend)
-    N = eltype(P)
-    if Polyhedra.supportssolver(typeof(Q))  # NOTE: this is an internal function
-        if isnothing(solver)
-            # presolver prints warnings about infeasible solutions (#3226)
-            solver = default_lp_solver_polyhedra(N; presolve=false)
-        end
-        vQ = Polyhedra.vrep(Q)
-        Polyhedra.setvrep!(Q, Polyhedra.removevredundancy(vQ, solver))  # NOTE: this is an internal function
-    else
-        _removevredundancy!(Q; N=N)
-    end
-    return convert(VPolytope, Q)
+    return _remove_redundant_vertices(P; backend, solver)
+end
+
+# see ext/LazySetsPolyhedraExt.jl
+function _remove_redundant_vertices(P; backend=nothing, solver=nothing)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
+    require(mod, :Polyhedra; fun_name="remove_redundant_vertices")
+    error()
 end

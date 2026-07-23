@@ -107,7 +107,6 @@ Inherited from [`LazySet`](@ref):
 * [`rationalize`](@ref rationalize(::LazySet))
 * [`rectify`](@ref rectify(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))
@@ -139,12 +138,6 @@ Some common functions implemented by several subtypes:
 ```@docs
 addconstraint!(::AbstractPolyhedron, ::HalfSpace)
 ishyperplanar(::AbstractPolyhedron)
-```
-
-Plotting polyhedra is available too:
-
-```@docs
-plot_recipe(::AbstractPolyhedron{N}, ::Any=zero(N)) where {N}
 ```
 
 ## Implementations

@@ -26,8 +26,6 @@ use_precise_ρ
 _line_search
 _projection
 linear_map(::AbstractMatrix, ::Intersection)
-plot_recipe(::Intersection{N}, ::N=zero(N), ::Int=40) where {N}
-LazySets.apply_recipe(::AbstractDict{Symbol,Any}, ::Intersection{N}, ::Real=zero(N), ::Int=40) where {N}
 ```
 
 Inherited from [`LazySet`](@ref):
@@ -35,7 +33,6 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`an_element`](@ref an_element(::LazySet)
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
 
 ### Intersection cache
@@ -61,5 +58,4 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`an_element`](@ref an_element(::LazySet)
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))

@@ -43,7 +43,6 @@ CurrentModule = LazySets.EmptySetModule
 ```
 ```@docs
 rand(::Type{EmptySet})
-plot_recipe(::EmptySet{N}, ::Any=zero(N)) where {N}
 ```
 
 ```@meta
@@ -124,7 +123,6 @@ Inherited from [`LazySet`](@ref):
 * [`ispolyhedraltype`](@ref ispolyhedraltype(::Type{LazySet}))
 * [`ispolytopic`](@ref ispolytopic(::LazySet))
 * [`ispolytopictype`](@ref ispolytopictype(::Type{LazySet}))
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`affine_map`](@ref affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
 * [`==`](@ref ==(::LazySet, ::LazySet))

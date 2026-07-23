@@ -19,7 +19,6 @@ using ReachabilityBase.Distribution: reseed!
                         minkowski_sum
 @reexport import ..LazySets: chebyshev_center_radius, isflat, ngens,
                              radius_hyperrectangle, rationalize, split
-import ..LazySets: plot_recipe
 import Base: ==, convert, min, max
 @reexport using ..API
 
@@ -76,60 +75,12 @@ include("split.jl")
 include("convert.jl")
 include("isequal.jl")
 
-"""
-    min(X::Interval)
-
-Return the lower component of an interval.
-
-### Input
-
-- `X` -- interval
-
-### Output
-
-The lower (`lo`) component of the interval (a number).
-"""
-function min(X::Interval)
+function _min(X::Interval)
     return IA.inf(X.dat)
 end
 
-"""
-    max(X::Interval)
-
-Return the higher or upper component of an interval.
-
-### Input
-
-- `X` -- interval
-
-### Output
-
-The higher (`hi`) component of the interval (a number).
-"""
-function max(X::Interval)
+function _max(X::Interval)
     return IA.sup(X.dat)
-end
-
-"""
-    plot_recipe(X::Interval{N}, [ε]=zero(N)) where {N}
-
-Convert an interval to a pair `(x, y)` of points for plotting.
-
-### Input
-
-- `X` -- interval
-- `ε` -- (optional, default: `0`) ignored, used for dispatch
-
-### Output
-
-A pair `(x, y)` of two points that can be plotted.
-
-### Notes
-
-We consider the interval as a line segment with y coordinate equal to zero.
-"""
-function plot_recipe(X::Interval{N}, ε=zero(N)) where {N}
-    return [min(X), max(X)], zeros(N, 2)
 end
 
 end  # module

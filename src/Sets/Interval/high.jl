@@ -1,7 +1,7 @@
 @validate function high(X::Interval, i::Int)
-    return max(X)
+    return _max(X)
 end
 
 function high(X::Interval)
-    return [max(X)]
+    return [_max(X)]
 end

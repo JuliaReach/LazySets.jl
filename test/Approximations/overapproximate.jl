@@ -23,6 +23,7 @@ end
 end
 @static if isdefined(Main, :TaylorModels)
     import TaylorModels
+    LazySetsTaylorModelsExt = Base.get_extension(LazySets, :LazySetsTaylorModelsExt)
 end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
@@ -237,7 +238,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # Zonotope overapprox. of a Taylor model
     # =======================================
     @static if isdefined(@__MODULE__, :TaylorModels)
-        using LazySets.Approximations: get_linear_coeffs, _nonlinear_polynomial
+        using .LazySetsTaylorModelsExt: get_linear_coeffs, _nonlinear_polynomial
 
         local x₁, x₂, x₃ = TaylorModels.set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
         Dx₁ = IA.interval(N(1.0), N(3.0))

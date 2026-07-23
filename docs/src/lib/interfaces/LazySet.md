@@ -73,6 +73,11 @@ CurrentModule = LazySets
 ```
 ```@docs
 area(::LazySet)
+```
+```@meta
+CurrentModule = LazySetsPolyhedraExt
+```
+```@docs
 chebyshev_center_radius(::LazySet)
 ```
 ```@meta
@@ -319,6 +324,11 @@ CurrentModule = LazySets
 ```
 ```@docs
 norm(::LazySet, ::Real=Inf)
+```
+```@meta
+CurrentModule = LazySetsPolyhedraExt
+```
+```@docs
 polyhedron(::LazySet)
 ```
 ```@meta
@@ -357,7 +367,6 @@ CurrentModule = LazySets
 ```
 ```@docs
 reflect(::LazySet)
-singleton_list(::LazySet)
 triangulate_faces(::LazySet)
 tohrep(::LazySet)
 tosimplehrep(::LazySet)
@@ -556,19 +565,34 @@ CurrentModule = LazySets
 
 ## Plotting
 
-Plotting via the `Plots` package is available for one- or two-dimensional sets.
-The default algorithm is to plot an outer approximation using the support
-function (1D) respectively the support vector (2D). This means that (1) plotting
-will fail if these functionalities are not available (e.g., for lazy
-`Intersection`s) and (2) that plots of non-convex sets can be misleading. The
-implementation below internally relies on the function `plot_recipe`. For some
-set types (e.g., `Intersection`), the default implementation is overridden.
+Plotting via the `Plots` package is available for one-, two-, and
+three-dimensional sets. The default algorithm is to plot an outer approximation
+using the support function (1D) respectively the support vector (2D & 3D). This
+means that (1) plotting will fail if these functionalities are not available
+(e.g., for lazy `Intersection`s) and (2) that plots of general non-convex sets
+can be misleading (because a convex approximation is applied).
+
+```@meta
+CurrentModule = LazySetsRecipesBaseExt
+```
 
 ```@docs
-LazySets.apply_recipe(::AbstractDict{Symbol,Any}, ::LazySet{N}, ::Real=N(1e-3)) where {N}
-LazySets.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::Real=N(1e-3), ::Int=40; ::Bool=false) where {N, VN<:LazySet{N}}
+apply_recipe(::AbstractDict{Symbol,Any}, ::LazySet{N}, ::Real=N(1e-3)) where {N}
+apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractVector{VN}, ::Real=N(1e-3), ::Int=40; ::Bool=false) where {N, VN<:LazySet{N}}
+apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::Real=zero(N)) where {N}
+apply_recipe(::AbstractDict{Symbol,Any}, ::Intersection{N}, ::Real=zero(N), ::Int=40) where {N}
+```
+
+```@meta
+CurrentModule = LazySets
+```
+
+The implementation below internally relies on the function `plot_recipe`. For
+some set types (e.g., `Intersection`), the default implementation is overridden.
+
+```@docs
+LazySets.plot_recipe
 plot_vlist(::LazySet, ::Real)
-plot_recipe(::LazySet, ::Any)
 ```
 
 For three-dimensional sets, we support `Makie`:

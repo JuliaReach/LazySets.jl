@@ -33,7 +33,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test σ(N[1, 1], ResetMap(b1, Dict(1 => N(3)))) == N[3, 2]
     @test σ(N[1, 1], ResetMap(b1, Dict(2 => N(3)))) == N[2, 3]
     svec = σ(N[1, 1], ResetMap(s, r_1))
-    @test svec == N[1, 0] && element(s) == N[0, 0]  # does not modify s
+    @test svec == N[1, 0] && center(s) == N[0, 0]  # does not modify s
 
     # boundedness
     @test isbounded(rm) && isboundedtype(typeof(rm))  # bounded set
@@ -52,7 +52,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # an_element function
     an_element(rm)
     elem = an_element(ResetMap(s, r_1))
-    @test elem == N[1, 0] && element(s) == N[0, 0]  # does not modify s
+    @test elem == N[1, 0] && center(s) == N[0, 0]  # does not modify s
 
     # isempty
     @test !isempty(rm)

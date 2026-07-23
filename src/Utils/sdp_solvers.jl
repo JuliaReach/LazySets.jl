@@ -26,18 +26,7 @@ function default_sdp_solver()
     return _default_sdp_solver(solver)
 end
 
-# ===
-# SCS
-# ===
-
-function load_scs()
-    return quote
-        if ismissing(sdp_solver[])
-            set_sdp_solver!(SCS)
-        end
-    end
-end  # quote / load_scs
-
-function _default_sdp_solver(::Val{:SCS})
-    return JuMP.optimizer_with_attributes(SCS.Optimizer, JuMP.MOI.Silent() => true)
+# see ext/LazySetsSCSExt.jl
+function _default_sdp_solver(solver)
+    error()
 end

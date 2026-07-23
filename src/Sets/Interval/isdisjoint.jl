@@ -20,7 +20,7 @@ interval, which is guaranteed to belong to the intersection.
 end
 
 function _isdisjoint(I1::Interval, I2::Interval, ::Val{false})
-    return !_leq(min(I2), max(I1)) || !_leq(min(I1), max(I2))
+    return !_leq(_min(I2), _max(I1)) || !_leq(_min(I1), _max(I2))
 end
 
 function _isdisjoint(I1::Interval, I2::Interval, ::Val{true})
@@ -29,8 +29,8 @@ function _isdisjoint(I1::Interval, I2::Interval, ::Val{true})
         return (true, N[])
     else
         # mid-point, most robust witness
-        l = max(min(I1), min(I2))
-        h = min(max(I1), max(I2))
+        l = max(_min(I1), _min(I2))
+        h = min(_max(I1), _max(I2))
         w = [l + (h - l) / 2]
         return (false, w)
     end

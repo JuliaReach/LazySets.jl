@@ -1,14 +1,11 @@
 module HPolytopeModule
 
 using Reexport: @reexport
-using Requires: @require
 
 using ..LazySets: AbstractPolytope, LazySet, AbstractLinearMapAlgorithm,
-                  default_polyhedra_backend, vertices_list_1d,
-                  _linear_map_hrep, _minkowski_sum_hrep_preprocess,
-                  _normal_Vector, _removevredundancy!, @validate
+                  vertices_list_1d, _linear_map_hrep,
+                  _minkowski_sum_hrep_preprocess, _normal_Vector, @validate
 using ..HalfSpaceModule: HalfSpace
-using ReachabilityBase.Comparison: isapproxzero
 using ReachabilityBase.Require: require
 
 @reexport import ..API: isbounded, isoperationtype, vertices_list, minkowski_sum
@@ -28,7 +25,5 @@ include("linear_map.jl")
 include("minkowski_sum.jl")
 
 include("convert.jl")
-
-include("init.jl")
 
 end  # module

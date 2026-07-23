@@ -34,4 +34,4 @@ end
     return _in_singleton_msum(x, ms.X, ms.Y)
 end
 
-@inline _in_singleton_msum(x, X, Y) = (x - element(X)) ∈ Y
+@inline _in_singleton_msum(x, X, Y) = (x - center(X)) ∈ Y

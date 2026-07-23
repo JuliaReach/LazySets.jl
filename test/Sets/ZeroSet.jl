@@ -42,9 +42,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # ispolyhedral
     @test ispolyhedral(Z)
 
-    # element & an_element function
-    @test element(Z) ∈ Z
-    @test element(Z, 1) == 0
+    # an_element
     @test an_element(Z) ∈ Z
 
     # high and low
@@ -81,6 +79,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test translate(Z, N[1, 2]) == Singleton(N[1, 2])
 
     # center
+    @test center(Z) == zeros(N, 2)
     @test center(Z, 1) == zero(N)
 
     # vertices / vertices_list

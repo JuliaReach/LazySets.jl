@@ -116,7 +116,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
                        LinearConstraint([-p1, p0], p0),
                        LinearConstraint([p0, -p1], p0)]
         hpg = HPolygon(constraints)
-        hpgo = HPolygonOpt(constraints)
         hpt = HPolytope(constraints)
         hpt_empty = HPolytope([HalfSpace(N[1, 0], N(0)), HalfSpace(N[-1, 0], N(-1)),
                                HalfSpace(N[0, 1], N(0)), HalfSpace(N[0, -1], N(0))])
@@ -185,7 +184,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
             @test_broken plot(itsa) isa Vector{RecipesBase.RecipeData}
         end
         plot(hpg)
-        plot(hpgo)
         plot(hpt)
         plot(hpt_empty)
         if n == 2

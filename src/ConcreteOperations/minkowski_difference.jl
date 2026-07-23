@@ -66,7 +66,7 @@ end
 for T in (:LazySet, :AbstractZonotope, :AbstractHyperrectangle)
     # Minkowski difference with singleton is a translation
     @eval @validate function minkowski_difference(X::($T), S::AbstractSingleton)
-        return translate(X, -element(S))
+        return translate(X, -center(S))
     end
 
     # Minkowski difference with ZeroSet is the identity
