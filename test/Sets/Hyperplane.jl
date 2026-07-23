@@ -12,6 +12,7 @@ end
 end
 @static if isdefined(Main, :SymEngine)
     import SymEngine
+    LazySetsSymEngineExt = Base.get_extension(LazySets, :LazySetsSymEngineExt)
 end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
@@ -259,13 +260,13 @@ for N in [Float64]
     # tests that require SymEngine
     @static if isdefined(@__MODULE__, :SymEngine)
         # _ishalfspace
-        res = LazySets._ishyperplanar(:(x1 = 0))
-        res &= !LazySets._ishyperplanar(:(x1 <= 0))
-        res &= LazySets._ishyperplanar(:(2 * x1 = 4))
-        res &= LazySets._ishyperplanar(:(6.1 = 5.3 * f - 0.1 * g))
-        res &= !LazySets._ishyperplanar(:(2 * x1^2 = 4))
-        res &= !LazySets._ishyperplanar(:(x1^2 = 4 * x2 - x3))
-        res &= LazySets._ishyperplanar(:(x1 = 4 * x2 - x3))
+        res = LazySetsSymEngineExt._ishyperplanar(:(x1 = 0))
+        res &= !LazySetsSymEngineExt._ishyperplanar(:(x1 <= 0))
+        res &= LazySetsSymEngineExt._ishyperplanar(:(2 * x1 = 4))
+        res &= LazySetsSymEngineExt._ishyperplanar(:(6.1 = 5.3 * f - 0.1 * g))
+        res &= !LazySetsSymEngineExt._ishyperplanar(:(2 * x1^2 = 4))
+        res &= !LazySetsSymEngineExt._ishyperplanar(:(x1^2 = 4 * x2 - x3))
+        res &= LazySetsSymEngineExt._ishyperplanar(:(x1 = 4 * x2 - x3))
         @test res
 
         # convert

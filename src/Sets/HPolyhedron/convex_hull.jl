@@ -27,9 +27,12 @@ For further information on the supported backends see
 """
 @validate function convex_hull(P1::HPoly, P2::HPoly;
                                backend=default_polyhedra_backend(P1))
-    require(@__MODULE__, :Polyhedra; fun_name="convex_hull")
-    Pch = Polyhedra.convexhull(LazySets.polyhedron(P1; backend=backend),
-                               LazySets.polyhedron(P2; backend=backend))
-    Polyhedra.removehredundancy!(Pch)
-    return convert(basetype(P1), Pch)
+    return _convex_hull(P1, P2; backend)
+end
+
+# see ext/LazySetsPolyhedraExt.jl
+function _convex_hull(P1, P2; backend)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
+    require(mod, :Polyhedra; fun_name="convex_hull")
+    error()
 end

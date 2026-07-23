@@ -42,7 +42,6 @@ CurrentModule = LazySets.VPolytopeModule
 ```
 ```@docs
 dim(::VPolytope)
-polyhedron(::VPolytope)
 ```
 ```@meta
 CurrentModule = LazySets.API
@@ -135,6 +134,14 @@ CurrentModule = LazySets.VPolytopeModule
 ```
 ```@docs
 minkowski_sum(::VPolytope, ::VPolytope)
+```
+
+```@meta
+CurrentModule = LazySetsPolyhedraExt
+```
+
+```@docs
+polyhedron(::VPolytope)
 ```
 
 ```@meta

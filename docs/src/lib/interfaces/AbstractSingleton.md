@@ -197,13 +197,6 @@ Inherited from [`AbstractHyperrectangle`](@ref):
 * [`difference`](@ref difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 * [`minkowski_difference`](@ref minkowski_difference(::AbstractHyperrectangle, ::AbstractHyperrectangle))
 
-Plotting singletons is available too:
-
-```@docs
-plot_recipe(::AbstractSingleton{N}, ::Any=zero(N)) where {N}
-LazySets.apply_recipe(::AbstractDict{Symbol,Any}, ::AbstractSingleton{N}, ::Real=zero(N)) where {N}
-```
-
 ## Implementations
 
 * [Singleton](@ref def_Singleton)

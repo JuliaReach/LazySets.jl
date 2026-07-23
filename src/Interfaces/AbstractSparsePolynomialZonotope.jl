@@ -200,34 +200,14 @@ This method implements [Kochdumper21a; Proposition 3.1.16](@citet).
 """
 @validate function ρ(d::AbstractVector, P::AbstractSparsePolynomialZonotope;
                      enclosure_method=nothing)
-    require(@__MODULE__, :RangeEnclosures; fun_name="ρ")
     return _ρ_range_enclosures(d, P, enclosure_method)
 end
 
-function load_RangeEnclosures_support_function()
-    return quote
-        using .RangeEnclosures: AbstractEnclosureAlgorithm  # NOTE: this is an internal function
-
-        function _ρ_range_enclosures(d::AbstractVector, P::AbstractSparsePolynomialZonotope,
-                                     method::Union{AbstractEnclosureAlgorithm,Nothing})
-            # default method: BranchAndBoundEnclosure
-            isnothing(method) && (method = RangeEnclosures.BranchAndBoundEnclosure())
-
-            c = center(P)
-            G = genmat_dep(P)
-            GI = genmat_indep(P)
-            E = expmat(P)
-            n = dim(P)
-
-            res = d' * c + sum(abs.(d' * gi) for gi in eachcol(GI); init=zero(eltype(GI)))
-
-            f(x) = sum(d' * gi * prod(x .^ ei) for (gi, ei) in zip(eachcol(G), eachcol(E)))
-
-            dom = fill(IA.interval(-1, 1), n)
-            res += IA.sup(RangeEnclosures.enclose(f, dom, method))
-            return res
-        end
-    end
-end  # load_RangeEnclosures_support_function
+# see ext/LazySetsRangeEnclosuresExt.jl
+function _ρ_range_enclosures(d, P, enclosure_method)
+    mod = Base.get_extension(@__MODULE__, :LazySetsRangeEnclosuresExt)
+    require(mod, :RangeEnclosures; fun_name="ρ")
+    error()
+end
 
 _indexvector(P::AbstractPolynomialZonotope) = uniqueID(size(expmat(P), 1))

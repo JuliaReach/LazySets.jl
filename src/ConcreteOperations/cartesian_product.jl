@@ -80,23 +80,12 @@ function _cartesian_product_hrep(X::S1, Y::S2) where {S1<:LazySet,S2<:LazySet}
     end
 end
 
-function _cartesian_product_hrep_polyhedra(P1::PT1, P2::PT2; backend1=nothing,
-                                           backend2=nothing) where {PT1,PT2}
-    require(@__MODULE__, :Polyhedra; fun_name="`cartesian_product")
-
-    if isnothing(backend1)
-        backend1 = default_polyhedra_backend(P1)
-    end
-    if isnothing(backend2)
-        backend2 = default_polyhedra_backend(P2)
-    end
-
-    P1′ = polyhedron(P1; backend=backend1)
-    P2′ = polyhedron(P2; backend=backend2)
-    Pout = Polyhedra.hcartesianproduct(P1′, P2′)  # NOTE: this is an internal function
-
-    PT = isboundedtype(PT1) && isboundedtype(PT2) ? HPolytope : HPolyhedron
-    return convert(PT, Pout)
+# see ext/LazySetsPolyhedraExt.jl
+function _cartesian_product_hrep_polyhedra(P1, P2; backend1=nothing,
+                                           backend2=nothing)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
+    require(mod, :Polyhedra; fun_name="`cartesian_product")
+    error()
 end
 
 # if the first set is an interval => the result is always a polytope

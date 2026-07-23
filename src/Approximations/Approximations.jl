@@ -27,7 +27,6 @@ import IntervalArithmetic as IA
 
 using LinearAlgebra: /, I, dot, norm, normalize, nullspace, transpose
 using SparseArrays: SparseVector, sparsevec, spzeros
-using Requires: @require
 
 using ReachabilityBase.Arrays: At_mul_B, SingleEntryVector, rectify,
                                remove_zero_columns, uniform_partition
@@ -35,11 +34,12 @@ using ReachabilityBase.Comparison: _isapprox, _leq, _geq, _rtol, isapproxzero
 using ReachabilityBase.Subtypes: subtypes
 
 using ..LazySets
-using ..LazySets: ACS, default_lp_solver, _isbounded_stiemke, require, linprog,
-                  is_lp_optimal, _normal_Vector, default_sdp_solver,
-                  get_exponential_backend, _expmv, second, @assert, _box_radius
+using ..LazySets: ACS, _isbounded_stiemke, require, linprog, is_lp_optimal,
+                  default_lp_solver, default_nln_solver, default_sdp_solver,
+                  _normal_Vector, get_exponential_backend, _expmv, second,
+                  @assert, _box_radius
 using ..LazySets.JuMP: Model, set_silent, @variable, @constraint, optimize!,
-                       value, @NLobjective, @objective
+                       value, @NLobjective
 using ..LazySets.MatrixZonotopeModule: _rowwise_zonotope_norm
 
 include("box_approximation.jl")
@@ -58,6 +58,5 @@ include("hausdorff_distance.jl")
 include("overapproximate_norm.jl")
 include("overapproximate_expmap.jl")
 include("overapproximate_matrixzonotope.jl")
-include("init.jl")
 
 end # module

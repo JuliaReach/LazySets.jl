@@ -68,15 +68,27 @@ LazySets.UnionSampler
 
 ## Symbolics
 
+```@meta
+CurrentModule = LazySetsSymbolicsExt
+```
+
 ```@docs
-LazySets._vec
+LazySetsSymbolicsExt._vec
 ```
 
 ## SymEngine
 
+```@meta
+CurrentModule = LazySetsSymEngineExt
+```
+
 ```@docs
-LazySets.free_symbols
-LazySets._is_linear_combination
+LazySetsSymEngineExt.free_symbols
+LazySetsSymEngineExt._is_linear_combination
+```
+
+```@meta
+CurrentModule = LazySets
 ```
 
 ## Functions for numbers

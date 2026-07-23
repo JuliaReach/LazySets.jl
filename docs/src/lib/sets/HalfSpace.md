@@ -158,7 +158,14 @@ isdisjoint(::HalfSpace, ::HalfSpace, ::Bool=false)
 ```@docs
 halfspace_left(::AbstractVector, ::AbstractVector)
 halfspace_right(::AbstractVector, ::AbstractVector)
-HalfSpaceModule._ishalfspace
+```
+
+```@meta
+CurrentModule = LazySetsSymEngineExt
+```
+
+```@docs
+LazySetsSymEngineExt._ishalfspace
 ```
 
 ```@meta
