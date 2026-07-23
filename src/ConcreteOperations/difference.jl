@@ -14,26 +14,15 @@ in general not convex.
 This implementation uses `IntervalArithmetic.setdiff`.
 """
 @validate function difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
-    require(@__MODULE__, :IntervalBoxes; fun_name="difference")
-
     return _difference(X, Y)
 end
 
-function load_IntervalBoxes_difference()
-    return quote
-        import .IntervalBoxes as IB
-
-        function _difference(X::AbstractHyperrectangle, Y::AbstractHyperrectangle)
-            Xib = convert(IB.IntervalBox, X)
-            Yib = convert(IB.IntervalBox, Y)
-            Zibs = setdiff(Xib, Yib)
-            if isempty(Zibs)
-                return EmptySet(dim(X))
-            end
-            return UnionSetArray(convert.(Hyperrectangle, Zibs))
-        end
-    end
-end  # quote / load_IntervalBoxes_difference
+# see ext/LazySetsIntervalBoxesExt.jl
+function _difference(X, Y)
+    mod = Base.get_extension(@__MODULE__, :LazySetsIntervalBoxesExt)
+    require(mod, :IntervalBoxes; fun_name="difference")
+    error()
+end
 
 @validate function difference(X::Interval{N}, H::HalfSpace) where {N}
     if H.a[1] < zero(N)

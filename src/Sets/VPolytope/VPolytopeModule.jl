@@ -1,13 +1,11 @@
 module VPolytopeModule
 
 using Reexport: @reexport
-using Requires: @require
 
 using ..LazySets: LazySets, AbstractPolytope, LazySet, LinearMapVRep,
-                  default_lp_solver, default_lp_solver_polyhedra,
-                  default_polyhedra_backend, is_lp_infeasible, is_lp_optimal,
-                  linprog, _extrema_vlist, _high_vlist, _low_vlist,
-                  _minkowski_sum_vrep_nd, _removevredundancy!, @validate
+                  default_lp_solver, is_lp_infeasible, is_lp_optimal, linprog,
+                  _extrema_vlist, _high_vlist, _low_vlist,
+                  _minkowski_sum_vrep_nd, @validate
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: _isapprox
@@ -48,13 +46,11 @@ include("cartesian_product.jl")
 # include("convex_hull.jl")
 include("minkowski_sum.jl")
 
-include("polyhedron.jl")
+# include("polyhedron.jl")
 include("remove_redundant_vertices.jl")
-# include("tohrep.jl")
+include("tohrep.jl")
 include("tovrep.jl")
 
 include("convert.jl")
-
-include("init.jl")
 
 end  # module

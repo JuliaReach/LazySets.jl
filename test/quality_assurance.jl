@@ -10,7 +10,8 @@ using SafeTestsets
                                                :AbstractEnclosureAlgorithm, :_exp_remainder,
                                                :BasicSymbolic, :Symbolic, :Arrays,
                                                Symbol("@assert"),
-                                               # LazySets package extensions
+                                               # package extensions
+                                               # LazySetsExt
                                                :AbstractLinearMapAlgorithm, :HPoly, :LinearMapVRep,
                                                :STAR, :default_polyhedra_backend,
                                                :_Ballp_special_cases, :_HPolyhedron,
@@ -29,27 +30,83 @@ using SafeTestsets
                                                :_minkowski_difference_universe2,
                                                :_non_element_halfspace, :_normalize_halfspace,
                                                :_sort_constraints, :_ρ_vertices,
-                                               :_σ_hyperplane_halfspace, :_σ_vertices,
+                                               :_σ_hyperplane_halfspace, :_σ_vertices, :_tohrep,
                                                :_witness_result_empty, Symbol("@validate"),
-                                               Symbol("@validate_commutative"))
+                                               Symbol("@validate_commutative"),
+                                               # LazySetsRecipesBaseExt
+                                               :plot_recipe, :plot_vlist, :_plot_recipe_3d_polytope,
+                                               # LazySetsDistributionsExt
+                                               :RejectionSampler, :_sample_unit_nball_muller!,
+                                               :_sample_unit_nsphere_muller!,
+                                               # LazySetsSCSExt
+                                               :Optimizer, :OptimizerWithAttributes, :Silent,
+                                               :sdp_solver, :set_sdp_solver!, :_default_sdp_solver,
+                                               # LazySetsIpoptExt
+                                               :_default_nln_solver,
+                                               # LazySetsMakieExt
+                                               :Automatic,
+                                               # LazySetsIntervalConstraintProgrammingExt
+                                               :_contract_zonotope_halfspace_ICP,
+                                               # LazySetsSetProgExt
+                                               :InteriorPoint, :Translation, :ellipsoid,
+                                               :_underapproximate_ellipsoid, :default_sdp_solver,
+                                               # LazySetsSymbolicsExt (not needed in v"1.12")
+                                               :Arr, :get_variables, :gradient, :value,
+                                               # LazySetsExpokitExt
+                                               :_expmv, :exponential_backend,
+                                               :set_exponential_backend!,
+                                               # LazySetsRangeEnclosuresExt
+                                               :_ρ_range_enclosures,
+                                               # LazySetsOptimExt
+                                               :_line_search_optim,
+                                               # LazySetsMiniQhullExt
+                                               :_triangulate_delaunay,
+                                               # LazySetsCDDLibExt
+                                               :Library, :default_cddlib_backend,
+                                               # LazySetsIntervalBoxesExt
+                                               :_difference,
+                                               # LazySetsGeometryBasicsExt
+                                               :_area_polytope_3D, :_area_triangle_3D!,
+                                               # LazySetsIntervalMatricesExt
+                                               :_exp_remainder, :taylor_expmap_remainder,
+                                               # LazySetsStaticArraysCoreExt
+                                               :AbstractReductionMethod, :GIR05, :_convert_static,
+                                               :_genmat_static, :_hcat_KLred, :_interval_hull,
+                                               :_split_ret, :_to_colVector, :dir_east, :dir_north,
+                                               :dir_south, :dir_west,
+                                               # LazySetsPolyhedraExt
+                                               :EXACT, :EliminationAlgorithm, :GLPK_ON,
+                                               :LinearMapElimination, :default_lp_solver_polyhedra,
+                                               :default_polyhedra_backend_1d,
+                                               :default_polyhedra_backend_nd, :hcartesianproduct,
+                                               :hvectortype, :setvrep!, :supportssolver,
+                                               :vcartesianproduct, :_area_Polyhedra,
+                                               :_backend_solver_nd,
+                                               :_cartesian_product_hrep_polyhedra,
+                                               :_cartesian_product_vrep, :_convex_hull,
+                                               :_get_elimination_instance,
+                                               :_isempty_polyhedron_polyhedra,
+                                               :_is_polyhedra_backend,
+                                               :_minkowski_sum_hrep_preprocess,
+                                               :_removehredundancy!, :_removevredundancy!,
+                                               :_remove_redundant_vertices, :_vertices_list,
+                                               # LazySetsPolyhedraExt
+                                               :sym_box, :sym_itv, :zero_box, :zero_itv)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
-    ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
-                                                 :Optimizer, :SIMPLEX, :Silent, :commutative,
-                                                 :uniontypes, :AbstractEnclosureAlgorithm,
-                                                 :EliminationAlgorithm, :Library, :get_degrees,
-                                                 :hcartesianproduct, :intersect, :isempty,
-                                                 :_exp_remainder, :hvectortype, :value, :setvrep!,
-                                                 :supportssolver, :vcartesianproduct, :Arr,
-                                                 :get_variables, :gradient, :Ellipsoid,
-                                                 :InteriorPoint, :Sets, :Translation, :ellipsoid,
-                                                 :invokelatest, :parse, :inf, :sup)
-    ignores_all_qualified_accesses_via_owners = (:inf, :sup)  # defined in IntervalArithmetic but imported through IntervalBoxes
-    ignores_no_stale_explicit_imports = (:apply_recipe,)  # required for documentation
+    ignores_all_qualified_accesses_are_public = (:EXACT, :SIMPLEX, :Assertions, :Commutative,
+                                                 :Comparison, :Ellipsoid, :Optimizer, :commutative,
+                                                 :get_degrees, :uniontypes,
+                                                 # fixed in versions after v"1.10"
+                                                 :get_extension, :parse)
+    ignores_no_stale_explicit_imports = (
+                                         # required for documentation
+                                         :apply_recipe,
+                                         # LazySetsIntervalConstraintProgrammingExt
+                                         Symbol("@variables"))
     ExplicitImports.test_explicit_imports(LazySets;
                                           all_explicit_imports_are_public=(ignore=ignores_all_explicit_imports_are_public,),
                                           all_explicit_imports_via_owners=(ignore=ignores_all_explicit_imports_via_owners,),
                                           all_qualified_accesses_are_public=(ignore=ignores_all_qualified_accesses_are_public,),
-                                          all_qualified_accesses_via_owners=(ignore=ignores_all_qualified_accesses_via_owners,),
                                           no_stale_explicit_imports=(ignore=ignores_no_stale_explicit_imports,))
 end
 

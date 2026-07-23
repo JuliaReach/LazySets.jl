@@ -162,33 +162,6 @@ function chebyshev_center_radius(S::AbstractSingleton{N}) where {N}
 end
 
 """
-    plot_recipe(S::AbstractSingleton{N}, [ε]=zero(N)) where {N}
-
-Convert a singleton to a pair `(x, y)` of points for plotting.
-
-### Input
-
-- `S` -- singleton
-- `ε` -- (optional, default: `0`) ignored, used for dispatch
-
-### Output
-
-A pair `(x, y)` of one point that can be plotted.
-"""
-function plot_recipe(S::AbstractSingleton{N}, ε=zero(N)) where {N}
-    n = dim(S)
-    if n == 1
-        return [element(S)[1]], [zero(N)]
-    elseif n == 2
-        return [element(S)[1]], [element(S)[2]]
-    elseif n == 3
-        return [element(S)[1]], [element(S)[2]], [element(S)[3]]
-    else
-        throw(ArgumentError("cannot plot a $n-dimensional $(typeof(S))"))
-    end
-end
-
-"""
 # Extended help
 
     reflect(S::AbstractSingleton)

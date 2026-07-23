@@ -1,21 +1,23 @@
 # Parallel Approximations
 
 A subset of the approximation algorithms are implemented in parallel in the
-`LazySets.Parallel` module. In order to use parallel versions of the algorithms,
+`LazySetsDistributedExt` module. In order to use parallel versions of the algorithms,
 you can write:
 
 ```@example
 using LazySets
-import LazySets.Parallel
+import Distributed, SharedArrays
+LazySetsDistributedExt = Base.get_extension(LazySets, :LazySetsDistributedExt)
+import .LazySetsDistributedExt
 
 # call a method implemented in parallel, for example:
 S = Ball2(ones(100), 1.0)
-Parallel.box_approximation(S)
+LazySetsDistributedExt.box_approximation(S)
 ```
 
-Note that after importing or using `LazySets.Parallel`, the version of the function
+Note that after importing or using `LazySetsDistributedExt`, the version of the function
 used must be fully qualified, eg. `LazySets.Approximations.box_approximation` for the
-sequential version or `LazySets.Parallel.box_approximation` for the parallel version.
+sequential version or `LazySetsDistributedExt.box_approximation` for the parallel version.
 
 The parallelization strategy that is available uses processes. To set the number
 of processes `N`, use the flag `-p N` at julia startup. For example, do
@@ -96,13 +98,11 @@ end
 ```
 
 For the parallel benchmark, we start Julia with 4 processes with the command
-`$ julia -p 4` and call `LazySets.Parallel.symmetric_interval_hull(Y(n))`.
+`$ julia -p 4` and call `LazySetsDistributedExt.symmetric_interval_hull(Y(n))`.
 
 ```julia
-import LazySets.Parallel
-
 for n in [50, 100, 500, 1000]
-    @btime LazySets.Parallel.symmetric_interval_hull($Y($n));
+    @btime LazySetsDistributedExt.symmetric_interval_hull($Y($n));
 end
 ```
 ```
