@@ -128,8 +128,12 @@ CurrentModule = LazySets.HyperplaneModule
 translate(::Hyperplane, ::AbstractVector)
 ```
 
+```@meta
+CurrentModule = SymEngineExt
+```
+
 ```@docs
-HyperplaneModule._ishyperplanar
+SymEngineExt._ishyperplanar
 ```
 
 ```@meta
