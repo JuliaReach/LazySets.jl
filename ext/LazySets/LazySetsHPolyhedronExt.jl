@@ -6,7 +6,6 @@ using LazySets.HPolyhedronModule: HPoly
 using LazySets.IntervalModule: Interval
 using LazySets.VPolytopeModule: VPolytope
 using LazySets: default_polyhedra_backend, dim, remove_redundant_constraints!
-using ReachabilityBase.Require: require
 import LazySets: remove_redundant_constraints, tovrep
 
 """
@@ -45,8 +44,6 @@ function tovrep(P::HPoly; backend=nothing)
     elseif n == 2
         Q = convert(HPolygon, P)
     else
-        require(LazySets, :Polyhedra; fun_name="tovrep")
-
         if isnothing(backend)
             backend = default_polyhedra_backend(P)
         end
