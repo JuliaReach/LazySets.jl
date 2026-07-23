@@ -1197,8 +1197,6 @@ end
 # - the resulting zonotope is G * D + c
 function _overapproximate_zonotope_halfspace_ICP(Z::AbstractZonotope{N},
                                                  H::HalfSpace{N,SingleEntryVector{N}}) where {N}
-    require(@__MODULE__, :IntervalConstraintProgramming; fun_name="overapproximate")
-
     c = center(Z)
     G = genmat(Z)
     p = size(G, 2)
@@ -1239,28 +1237,12 @@ function _overapproximate_zonotope_halfspace_ICP(Z::AbstractZonotope{N},
     return affine_map(G, convert(Hyperrectangle, newD), c)
 end
 
-function load_overapproximate_ICP()
-    return quote
-        import .IntervalConstraintProgramming as ICP
-        import .IntervalConstraintProgramming.IntervalBoxes as IB
-
-        function _contract_zonotope_halfspace_ICP(e, X, vars_string)
-            n = length(X)
-            prefix = "IntervalConstraintProgramming.Symbolics.@variables "
-            sym = Meta.parse(prefix * vars_string)
-            vars = eval(quote
-                            $sym
-                        end)
-            separator = eval(quote
-                                 ICP.Separator($e, $vars)
-                             end)
-            # smallest box containing all points in domain X satisfying constraint
-            # (`invokelatest` to avoid world-age issue)
-            boundary, _, _ = invokelatest(separator, IB.IntervalBox(X...))  # NOTE: this is an internal function
-            return boundary
-        end
-    end
-end  # load_overapproximate_ICP()
+# see ext/IntervalConstraintProgrammingExt.jl
+function _contract_zonotope_halfspace_ICP(e, X, vars_string)
+    mod = Base.get_extension(@__MODULE__, :IntervalConstraintProgrammingExt)
+    require(mod, :IntervalConstraintProgramming; fun_name="overapproximate")
+    error()
+end
 
 """
 	overapproximate(lm::LinearMap{N,S,NM,MAT},
