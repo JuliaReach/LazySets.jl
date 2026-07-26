@@ -264,6 +264,8 @@ RandomWalkSampler() = RandomWalkSampler(true)
 function sample!(D::Vector{VN}, X::LazySet, sampler::RandomWalkSampler;
                  rng::AbstractRNG=GLOBAL_RNG,
                  seed::Union{Int,Nothing}=nothing) where {N,VN<:AbstractVector{N}}
+    @assert isconvex(X) "this sampler is only compatible with convex sets"
+
     rng = reseed!(rng, seed)
     U = DefaultUniform(zero(N), one(N))
     vlist = vertices_list(X)
