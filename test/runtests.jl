@@ -40,7 +40,7 @@ end
 using LazySets
 
 # fix seed of random number generator (for reproducibility)
-using Random
+import Random
 seed = max(abs(rand(Int)), 0)
 println("using random seed $seed")
 Random.seed!(seed)
@@ -51,12 +51,7 @@ Random.seed!(seed)
     import CDDLib, Distributions, ExponentialUtilities, Expokit, GeometryBasics,
            IntervalBoxes, IntervalConstraintProgramming, IntervalMatrices,
            Ipopt, MiniQhull, Optim, PkgVersion, Polyhedra, RangeEnclosures, SCS,
-           SetProg, StaticArrays, TaylorModels
-
-    # load all symbols from the following packages
-    using SymEngine, Symbolics
-    # resolve conflict
-    using LazySets: factors
+           SetProg, StaticArrays, SymEngine, Symbolics, TaylorModels
 end
 
 # tests
