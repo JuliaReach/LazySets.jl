@@ -1,5 +1,4 @@
 using LazySets, Test, SparseArrays
-using LazySets.ReachabilityBase.Arrays: SingleEntryVector
 @static if isdefined(Main, :CDDLib)
     import CDDLib
 end
@@ -20,12 +19,61 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     end
 end
 
-for N in @tN([Float64, Float32, Rational{Int}])
-    # normal constructor
-    hs = HalfSpace(ones(N, 3), N(5))
+function isidentical(::HalfSpace, ::HalfSpace)
+    return false
+end
 
-    # corner case: zero normal vector
-    @test_throws AssertionError HalfSpace(N[0, 0], N(1))
+function isidentical(H1::HalfSpace{N}, H2::HalfSpace{N}) where {N}
+    return H1.a == H2.a && H1.b == H2.b
+end
+
+for N in @tN([Float64, Float32, Rational{Int}])
+    # auxiliary sets
+    # TODO
+
+    # constructor
+    @test_throws AssertionError HalfSpace(N[0, 0], N(1))  # zero normal vector
+    H = @inferred HalfSpace(ones(N, 2), N(5))
+    @test H isa HalfSpace{N}
+    @test H.a == 2
+    H1 = HalfSpace(ones(N, 1), N(5))
+    @test H1 isa HalfSpace{N}
+    @test H1.a == 3
+    H3 = HalfSpace(ones(N, 3), N(5))
+    @test H3 isa HalfSpace{N}
+    @test H3.a == 3
+
+    # convert
+    # TODO
+    # of normal vector
+    H2a = HalfSpace(sparsevec([2], N[1], 3), N(1))
+    H2b = convert(HalfSpace{N,Vector{N}}, H2a)
+    @test isidentical(H2b, HalfSpace(N[0, 1, 0], N(1))) && H2b.a isa Vector{N}
+
+    # an_element
+    x = @inferred an_element(H)
+    @test x isa Vector{N} && x ∈ H
+
+    # area
+    @test_throws DimensionMismatch area(H1)
+    @test_throws ArgumentError area(H)
+
+    # chebyshev_center_radius
+    @test_throws ArgumentError chebyshev_center_radius(H)
+
+    # complement
+    H2 = @inferred complement(H)
+    @test isidentical(H2, HalfSpace(N[-1, -1], N(-5)))
+    # TODO old tests:
+    @test complement(HalfSpace(N[1, -2], N(3))) == HalfSpace(N[-1, 2], N(-3))
+    for (h1, h2, eq) in [(HalfSpace(N[-1], N(0)), HalfSpace(N[1 // 2], N(0)), true),
+                         (HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(-2)), true),
+                         (HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, 6], N(-2)), false),
+                         (HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(2)), false)]
+        @test LazySets.iscomplement(h1, h2) == eq
+    end
+
+    ### TODO continue below
 
     # dimension
     @test dim(hs) == 3
@@ -83,9 +131,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # isempty
     @test !isempty(hs)
-
-    # an_element function and membership function
-    @test an_element(hs) ∈ hs
 
     # constraints list
     @test constraints_list(hs) == [hs]
@@ -168,22 +213,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     H = HalfSpace(N[1, -1], N(0))  # x <= y
     @test project(H, [1]) == project(H, [2]) == Universe{N}(1)
     @test project(H, [1, 2]) == H
-
-    # conversion of the normal vector
-    hs_sev = HalfSpace(SingleEntryVector(2, 3, N(1)), N(1))
-    hs_vec = convert(HalfSpace{N,Vector{N}}, hs_sev)
-    @test hs_vec.a == N[0, 1, 0] && hs_vec.b == N(1)
-
-    # complement
-    @test complement(HalfSpace(N[1, -2], N(3))) == HalfSpace(N[-1, 2], N(-3))
-
-    # complement check
-    for (h1, h2, eq) in [(HalfSpace(N[-1], N(0)), HalfSpace(N[1 // 2], N(0)), true),
-                         (HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(-2)), true),
-                         (HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, 6], N(-2)), false),
-                         (HalfSpace(N[1, 3], N(1)), HalfSpace(N[-2, -6], N(2)), false)]
-        @test LazySets.iscomplement(h1, h2) == eq
-    end
 
     # sampling
     for x in sample(H, 10)
