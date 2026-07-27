@@ -97,6 +97,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # concrete linear map with invertible matrix
     linear_map(N[2 3; 1 2], p)
 
+    # constraints list from matrix-vector representation
+    A = N[2 0; 1 3]
+    b = N[-1, 1]
+    @test constraints_list(A, b) ==
+          [HalfSpace(N[2, 0], N(-1)), HalfSpace(N[1, 3], N(1))]
+
     # translation
     p2 = translate(p, N[1, 2])
     @test p2 isa HPolyhedron{N} && ispermutation(constraints_list(p2),

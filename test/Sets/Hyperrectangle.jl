@@ -581,8 +581,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # difference
     @test_throws DimensionMismatch difference(H, H3)
-    # full set
     @static if isdefined(@__MODULE__, :IntervalBoxes)
+        # full set
         X = difference(H, Hyperrectangle(N[4, 3], N[1, 1]))
         @test X isa LazySet{N} && isequivalent(X, H)
         # empty set
