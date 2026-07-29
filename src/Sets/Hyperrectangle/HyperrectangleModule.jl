@@ -8,14 +8,12 @@ using ..LazySets: AbstractHyperrectangle, _ρ_sev_hyperrectangle,
 using LinearAlgebra: dot
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Arrays: SingleEntryVector
-using ReachabilityBase.Comparison: isapproxzero
 using ReachabilityBase.Distribution: reseed!
 using SparseArrays: SparseVector, findnz, sparse
 
 @reexport import ..API: center, isoperationtype, rand, permute, scale, scale!,
                         ρ, σ, translate, translate!
 @reexport import ..LazySets: genmat, radius_hyperrectangle, □
-import ..LazySets: _genmat_static
 import Base: convert, copy
 @reexport using ..API
 
