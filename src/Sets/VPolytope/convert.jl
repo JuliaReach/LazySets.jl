@@ -27,15 +27,3 @@ function convert(::Type{VPolytope}, X::LazySet; prune::Bool=true)
     end
     return VPolytope(vlist)
 end
-
-function load_Polyhedra_convert_VPolytope()
-    return quote
-        using .Polyhedra: VRep
-
-        # VPolytope from a VRep
-        function convert(::Type{VPolytope}, P::VRep)
-            vertices = collect(Polyhedra.points(P))
-            return VPolytope(vertices)
-        end
-    end
-end  # load_Polyhedra_convert_VPolytope

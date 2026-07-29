@@ -115,49 +115,11 @@ end
     return _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
 end
 
-# common code before calling _minkowski_sum_hrep
+# see ext/PolyhedraExt.jl
 function _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
-    require(@__MODULE__, :Polyhedra; fun_name="minkowski_sum")
-    A, b = tosimplehrep(P)
-    C, d = tosimplehrep(Q)
-    return _minkowski_sum_hrep(A, b, C, d; backend=backend, algorithm=algorithm,
-                               prune=prune)
-end
-
-# This function computes the Minkowski sum of two polyhedra in simple
-# H-representation, P = {x : Ax <= b} and Q = {x : Cx <= d}, using projection
-# methods. See the documentation of `minkowski_sum` for details.
-function _minkowski_sum_hrep(A::AbstractMatrix, b::AbstractVector,
-                             C::AbstractMatrix, d::AbstractVector;
-                             backend=nothing, algorithm=nothing, prune=true)
-    if isnothing(backend)
-        N = promote_type(eltype(A), eltype(b), eltype(C), eltype(d))
-        backend = default_cddlib_backend(N)
-    end
-
-    if isnothing(algorithm)
-        algorithm = Polyhedra.FourierMotzkin()
-    elseif !(algorithm isa Polyhedra.EliminationAlgorithm)  # NOTE: this is an internal function
-        throw(ArgumentError("algorithm $algorithm is not a valid elimination algorithm; " *
-                            "choose among any of $(subtypes(Polyhedra.EliminationAlgorithm))"))
-    end
-
-    mP, nP = size(A)
-    mQ, nQ = size(C)
-    E = [zeros(N, mP, nQ) A; C -C]
-    f = [b; d]
-    PQ = HPolyhedron(E, f)
-    PQ_cdd = polyhedron(PQ; backend=backend)
-    W_cdd = Polyhedra.eliminate(PQ_cdd, (nP + 1):(2nP), algorithm)
-    W = convert(HPolyhedron, W_cdd)
-    if prune
-        success = remove_redundant_constraints!(W)
-        if !success
-            throw(ArgumentError("the constraints corresponding to the Minkowski sum of the " *
-                                "given sets are infeasible"))
-        end
-    end
-    return W
+    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    require(mod, :Polyhedra; fun_name="minkowski_sum")
+    error()
 end
 
 """
@@ -285,13 +247,18 @@ function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
     end
     if apply_convex_hull
         if isnothing(backend)
-            require(@__MODULE__, :Polyhedra; fun_name="minkowski_sum")
-            backend = default_polyhedra_backend_nd(N)
-            solver = default_lp_solver_polyhedra(N)
+            backend, solver = _backend_solver_nd(N)
         end
         convex_hull!(vlist_out; backend=backend, solver=solver)
     end
     return vlist_out
+end
+
+# see ext/PolyhedraExt.jl
+function _backend_solver_nd()
+    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    require(mod, :Polyhedra; fun_name="minkowski_sum")
+    error()
 end
 
 """

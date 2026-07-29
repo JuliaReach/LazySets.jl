@@ -1,7 +1,6 @@
 module EmptySetModule
 
 using Reexport: @reexport
-using Requires: @require
 
 using ..LazySets: LazySet, ConvexSet, _witness_result, _witness_result_empty,
                   @validate, @validate_commutative
@@ -77,11 +76,10 @@ include("minkowski_sum.jl")
 
 include("chebyshev_center_radius.jl")
 include("constrained_dimensions.jl")
+# include("polyhedron.jl")
 include("triangulate.jl")
 
 include("convert.jl")
 include("copy.jl")
-
-include("init.jl")
 
 end  # module

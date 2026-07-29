@@ -131,14 +131,9 @@ function _check_algorithm_applies(M::AbstractMatrix, P::LazySet,
 end
 
 function _get_elimination_instance(N, backend, elimination_method)
-    require(@__MODULE__, :Polyhedra; fun_name="linear_map with elimination")
-    if isnothing(backend)
-        backend = default_cddlib_backend(N)
-    end
-    if isnothing(elimination_method)
-        elimination_method = Polyhedra.BlockElimination()
-    end
-    return LinearMapElimination(backend, elimination_method)
+    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    require(mod, :Polyhedra; fun_name="linear_map with elimination")
+    error()
 end
 
 function _default_linear_map_algorithm(M::AbstractMatrix, P::LazySet;
@@ -427,7 +422,8 @@ end
 function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron,
                           algo::LinearMapVRep=LinearMapVRep(nothing);
                           apply_convex_hull::Bool=false)
-    require(@__MODULE__, :Polyhedra; fun_name="linear_map",
+    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    require(mod, :Polyhedra; fun_name="linear_map",
             explanation="of a $(typeof(P)) by a non-invertible matrix")
 
     Q = convert(VPolytope, P)
@@ -514,37 +510,10 @@ function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron, algo::Linear
     return _linear_map_hrep(Mext, Pext, LinearMapInverse(inv_Mext))
 end
 
-# If P : Ax <= b and y = Mx, we consider the vector z = [y, x], write the
-# equalities and the inequalities, and then eliminate the last x variables
-# (there are length(x) in total) using Polyhedra.eliminate calls
-# to a backend library that can do variable elimination, typically CDDLib,
-# with the BlockElimination() algorithm.
-function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron, algo::LinearMapElimination)
-    m, n = size(M)
-    N = promote_type(eltype(M), eltype(P))
-    Id_neg = Matrix(-one(N) * I, m, m)
-    backend = algo.backend
-    method = algo.method
-
-    # extend the polytope storing the y variables first
-    # append zeros to the existing constraints, in the last m-n coordinates
-    # TODO: cast to common vector type instead of hard-coding Vector(c.a), see #1942 and #1952
-    clist = constraints_list(P)
-    if isempty(clist)
-        Ax_leq_b = Polyhedra.HalfSpace{N,Vector{N}}[]
-    else
-        Ax_leq_b = [Polyhedra.HalfSpace(vcat(zeros(N, m), Vector(c.a)), c.b) for c in clist]
-    end
-    y_eq_Mx = [Polyhedra.HyperPlane(vcat(Id_neg[i, :], Vector(M[i, :])), zero(N)) for i in 1:m]
-
-    Phrep = Polyhedra.hrep(y_eq_Mx, Ax_leq_b)
-    Phrep = Polyhedra.polyhedron(Phrep, backend) # define concrete subtype
-    Peli_block = Polyhedra.eliminate(Phrep, (m + 1):(m + n), method)
-    Peli_block = Polyhedra.removeduplicates(Polyhedra.hrep(Peli_block),
-                                            default_lp_solver_polyhedra(N))
-
-    # TODO: take constraints directly -- see #1988
-    return constraints_list(convert(HPolyhedron, Peli_block))
+function _linear_map_hrep(M, P, algo)
+    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    require(mod, :Polyhedra; fun_name="linear_map with elimination")
+    error()
 end
 
 @inline function _preallocate_constraints(constraints::Vector{<:HalfSpace{N}}) where {N}

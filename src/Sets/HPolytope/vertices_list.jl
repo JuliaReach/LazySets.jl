@@ -44,16 +44,17 @@ backends see
             return vertices_list(Q)
         end
     end
-
-    require(@__MODULE__, :Polyhedra; fun_name="vertices_list")
-    if isnothing(backend)
-        backend = default_polyhedra_backend(P)
-    end
-    Q = polyhedron(P; backend=backend)
-    if prune
-        _removevredundancy!(Q; N=N)
-    end
-    return collect(Polyhedra.points(Q))
+    return _vertices_list(P; backend, prune)
 end
 
-_convert_HPolygon(P, prune) = error()
+# see ext/PolyhedraExt.jl
+function _vertices_list(P; backend, prune)
+    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    require(mod, :Polyhedra; fun_name="vertices_list")
+    return error()
+end
+
+# see ext/LazySetsExt.jl
+function _convert_HPolygon(P, prune)
+    return error()
+end

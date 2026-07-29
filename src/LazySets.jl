@@ -58,7 +58,7 @@ using ReachabilityBase.Arrays: At_ldiv_B, At_mul_B, DEFAULT_COND_TOL,
 using ReachabilityBase.Basetype: basetype
 using ReachabilityBase.Commutative: @commutative
 using ReachabilityBase.Comparison: Comparison, _geq, _isapprox, _leq, _rtol,
-                                   _ztol, isapproxzero
+                                   isapproxzero
 using ReachabilityBase.Distribution: Distribution, DefaultUniform, rand!,
                                      reseed!
 using ReachabilityBase.Iteration: Iteration, CartesianIterator, EmptyIterator,

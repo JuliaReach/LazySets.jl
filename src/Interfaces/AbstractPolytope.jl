@@ -140,13 +140,14 @@ function volume(P::AbstractPolytope; backend=nothing)
         end
         throw(ArgumentError("invalid dimension $n"))
     end
+    return _area_Polyhedra(P; backend)
+end
 
-    require(@__MODULE__, :Polyhedra; fun_name="volume")
-    if isnothing(backend)
-        backend = default_polyhedra_backend(P)
-    end
-
-    return Polyhedra.volume(polyhedron(P; backend=backend))
+# see ext/PolyhedraExt.jl
+function _area_Polyhedra(P; backend)
+    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    require(mod, :Polyhedra; fun_name="volume")
+    error()
 end
 
 """

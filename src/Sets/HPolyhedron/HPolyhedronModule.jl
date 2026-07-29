@@ -1,7 +1,6 @@
 module HPolyhedronModule
 
 using Reexport: @reexport
-using Requires: @require
 
 using ..LazySets: LazySets, AbstractPolyhedron, LazySet, default_lp_solver,
                   default_polyhedra_backend, iscomplement, is_lp_infeasible,
@@ -53,7 +52,5 @@ include("tohrep.jl")
 include("addconstraint.jl")
 
 include("convert.jl")
-
-include("init.jl")
 
 end  # module
