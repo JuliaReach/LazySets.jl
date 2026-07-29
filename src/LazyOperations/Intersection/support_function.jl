@@ -43,8 +43,6 @@ function ρ_helper(d::AbstractVector{M},
     if !use_precise_ρ(cap) || algorithm == "simple"
         return _ρ_min(d, cap)
     elseif algorithm == "line_search"
-        require(@__MODULE__, :Optim; fun_name="ρ",
-                explanation="(algorithm $algorithm)")
         (s, _) = _line_search(d, X, H; kwargs...)
         return s
     elseif algorithm == "projection"
@@ -357,50 +355,11 @@ function _line_search(ℓ, X::LazySet, H::Union{<:HalfSpace,<:Hyperplane,<:Line2
     return _line_search_optim(ℓ, X, H; kwargs...)
 end
 
-function load_optim_intersection()
-    return quote
-        function _line_search_optim(ℓ, X::LazySet, H::Union{<:HalfSpace,<:Hyperplane,<:Line2D};
-                                    kwargs...)
-            @assert isconvex(X) "the first set in the intersection must be convex"
-
-            options = Dict(kwargs)
-
-            # Initialization
-            a, b = H.a, H.b
-            m = -ρ(-ℓ, X)  # `m` is a known lower bound for `f` below (Lemma 3 in paper)
-            f(λ) = max(ρ(ℓ - λ[1] * a, X) + λ[1] * b, m)
-
-            if haskey(options, :lower)
-                lower = pop!(options, :lower)
-            else
-                if H isa HalfSpace
-                    lower = 0.0
-                elseif (H isa Hyperplane) || (H isa Line2D)
-                    lower = -1e6 # "big": TODO relate with f(λ)
-                end
-            end
-
-            if haskey(options, :upper)
-                upper = pop!(options, :upper)
-            else
-                upper = 1e6 # "big": TODO relate with f(λ)
-            end
-
-            if haskey(options, :method)
-                method = pop!(options, :method)
-            else
-                method = Optim.Brent()
-            end
-
-            # Optimization
-            sol = Optim.optimize(f, lower, upper; method=method, options...)
-
-            # Recover results
-            fmin, λmin = sol.minimum, sol.minimizer
-            return (fmin, λmin)
-        end
-    end
-end  # quote / load_optim_intersection
+function _line_search_optim(ℓ, X, H; kwargs...)
+    mod = Base.get_extension(@__MODULE__, :OptimExt)
+    require(mod, :Optim; fun_name="ρ", explanation="(algorithm \"line_search\")")
+    error()
+end
 
 """
     _projection(ℓ, X::LazySet, H::Union{Hyperplane, Line2D};
