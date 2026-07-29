@@ -27,7 +27,6 @@ import IntervalArithmetic as IA
 
 using LinearAlgebra: /, I, dot, norm, normalize, nullspace, transpose
 using SparseArrays: SparseVector, sparsevec, spzeros
-using Requires: @require
 
 using ReachabilityBase.Arrays: At_mul_B, SingleEntryVector, rectify,
                                remove_zero_columns, uniform_partition
@@ -59,6 +58,5 @@ include("hausdorff_distance.jl")
 include("overapproximate_norm.jl")
 include("overapproximate_expmap.jl")
 include("overapproximate_matrixzonotope.jl")
-include("init.jl")
 
 end # module
