@@ -33,6 +33,7 @@ Requires = "0.5, 1"
 SCS = "1, 2"
 SharedArrays = "<0.0.1, 1.6"
 SparseArrays = "<0.0.1, 1.6"
+WriteVTK = "1"
 julia = "1.10"
 
 [extensions]
@@ -40,9 +41,11 @@ DistributionsExt = ["Distributions", "Random", "ReachabilityBase"]
 JavisExt = "Javis"
 RecipesBaseExt = ["ReachabilityBase", "RecipesBase"]
 SCSExt = "SCS"
+WriteVTKExt = "WriteVTK"
 
 [weakdeps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Javis = "78b212ba-a7f9-42d4-b726-60726080707e"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 SCS = "c946c3f1-0d1f-5ce8-9dea-7daa1f7e2d13"
+WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
