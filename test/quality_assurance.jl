@@ -42,7 +42,9 @@ using SafeTestsets
                                                :MOI, :Optimizer, :sdp_solver, :set_sdp_solver!,
                                                :_default_sdp_solver,
                                                # IpoptExt
-                                               :_default_nln_solver)
+                                               :_default_nln_solver,
+                                               # MakieExt
+                                               :Automatic)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,

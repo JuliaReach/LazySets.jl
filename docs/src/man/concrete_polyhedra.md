@@ -46,7 +46,7 @@ H = Polyhedra.hrep(A, b)
 It is used to instantiate a new polyhedron:
 
 ```@example concrete_polyhedra
-p = polyhedron(H)
+p = Polyhedra.polyhedron(H)
 ```
 
 Now, `p` is of the generic type `Polyhedra.SimplePolyhedron{2,Float64, ...}`, where
@@ -62,7 +62,7 @@ Observe that we can use a particular backend, such as the `CDD` library:
 ```@example concrete_polyhedra
 using CDDLib
 
-p = polyhedron(H, CDDLib.Library())
+p = Polyhedra.polyhedron(H, CDDLib.Library())
 ```
 
 On the other hand, a `LazySets.HPolytope` object can be constructed from `p`:
@@ -75,7 +75,7 @@ x.constraints
 Conversely, from a `HPolytope` we can build a polyhedron:
 
 ```@example concrete_polyhedra
-y = polyhedron(x)
+y = LazySets.polyhedron(x)
 typeof(y)
 ```
 
@@ -87,7 +87,7 @@ For instance, we can use an exact representation through the
 A, b = Rational{Int}[1 1;1 -1;-1 0], Rational{Int}[1,0,0]
 p = HPolytope(A, b)
 
-polyhedron(p; backend=CDDLib.Library(:exact))
+LazySets.polyhedron(p; backend=CDDLib.Library(:exact))
 ```
 
 ## Methods

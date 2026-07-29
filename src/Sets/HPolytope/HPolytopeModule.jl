@@ -12,7 +12,7 @@ using ReachabilityBase.Comparison: isapproxzero
 using ReachabilityBase.Require: require
 
 @reexport import ..API: isbounded, isoperationtype, vertices_list, minkowski_sum
-import ..LazySets: _linear_map_hrep_helper
+import ..LazySets: polyhedron, _linear_map_hrep_helper
 import Base: convert
 @reexport using ..API
 

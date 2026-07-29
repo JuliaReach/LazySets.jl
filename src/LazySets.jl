@@ -380,6 +380,7 @@ include("Approximations/Approximations.jl")
 function plot_recipe end  # internal function; only defined here to be accessible to tests
 
 include("Plotting/mesh.jl")
+export plot3d, plot3d!
 
 include("Plotting/paraview.jl")
 export writevtk

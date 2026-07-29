@@ -5,7 +5,8 @@ export neutral,
        chebyshev_center_radius,
        flatten,
        triangulate,
-       triangulate_faces
+       triangulate_faces,
+       polyhedron
 
 """
     triangulate(X::LazySet; [algorithm]::String="delaunay", [kwargs]...)
@@ -1341,6 +1342,11 @@ function chebyshev_center_radius(P::LazySet;
     return c, r
 end
 
+function polyhedron(P; backend=default_polyhedra_backend(P))
+    require(@__MODULE__, :Polyhedra; fun_name="polyhedron")
+    error()
+end
+
 function load_Polyhedra_polyhedron()
     return quote
         # see the interface file init_Polyhedra.jl for the imports
@@ -1380,6 +1386,8 @@ end  # quote / load_Polyhedra_polyhedron()
 
 function load_Polyhedra_GeometryBasics_triangulate_faces()
     return quote
+        using .Polyhedra: Mesh
+
         """
             triangulate_faces(X::LazySet)
 
