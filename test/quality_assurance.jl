@@ -64,7 +64,9 @@ using SafeTestsets
                                                # CDDLibExt
                                                :Library, :default_cddlib_backend,
                                                # IntervalBoxesExt
-                                               :_difference)
+                                               :_difference,
+                                               # GeometryBasicsExt
+                                               :_area_polytope_3D, :_area_triangle_3D!)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
