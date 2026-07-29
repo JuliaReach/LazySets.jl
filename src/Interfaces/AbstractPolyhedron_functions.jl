@@ -133,7 +133,6 @@ end
 function _get_elimination_instance(N, backend, elimination_method)
     require(@__MODULE__, :Polyhedra; fun_name="linear_map with elimination")
     if isnothing(backend)
-        require(@__MODULE__, :CDDLib; fun_name="linear_map with elimination")
         backend = default_cddlib_backend(N)
     end
     if isnothing(elimination_method)

@@ -24,6 +24,13 @@ end
     return default_lp_solver(promote_type(M, N))
 end
 
+# see etc/CDDLibExt.jl
+function default_cddlib_backend(N)
+    mod = Base.get_extension(@__MODULE__, :CDDLibExt)
+    require(mod, :CDDLib; fun_name="default_cddlib_backend")
+    error()
+end
+
 # check for Polyhedra backend (fallback method)
 function _is_polyhedra_backend(backend)
     return false

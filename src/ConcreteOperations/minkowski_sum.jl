@@ -118,8 +118,6 @@ end
 # common code before calling _minkowski_sum_hrep
 function _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
     require(@__MODULE__, :Polyhedra; fun_name="minkowski_sum")
-    require(@__MODULE__, :CDDLib; fun_name="minkowski_sum")
-
     A, b = tosimplehrep(P)
     C, d = tosimplehrep(Q)
     return _minkowski_sum_hrep(A, b, C, d; backend=backend, algorithm=algorithm,
