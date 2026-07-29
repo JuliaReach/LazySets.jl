@@ -22,6 +22,7 @@ Distributions = "0.19 - 0.25"
 ExprTools = "0.1"
 GLPK = "0.11 - 0.15, 1"
 IntervalArithmetic = "0.22 - 0.23, 1"
+Javis = "0.9"
 JuMP = "0.21 - 0.23, 1"
 LinearAlgebra = "<0.0.1, 1.6"
 Random = "<0.0.1, 1.6"
@@ -36,10 +37,12 @@ julia = "1.10"
 
 [extensions]
 DistributionsExt = ["Distributions", "Random", "ReachabilityBase"]
+JavisExt = "Javis"
 RecipesBaseExt = ["ReachabilityBase", "RecipesBase"]
 SCSExt = "SCS"
 
 [weakdeps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+Javis = "78b212ba-a7f9-42d4-b726-60726080707e"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 SCS = "c946c3f1-0d1f-5ce8-9dea-7daa1f7e2d13"
