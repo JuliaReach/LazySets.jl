@@ -213,7 +213,6 @@ Pages = [
     "lib/sets/HPolytope.md",
     "lib/sets/VPolytope.md",
     "lib/sets/HPolygon.md",
-    "lib/sets/HPolygonOpt.md",
     "lib/sets/VPolygon.md",
     "lib/sets/Zonotope.md",
     "lib/sets/LineSegment.md",

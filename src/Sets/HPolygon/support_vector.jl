@@ -46,8 +46,8 @@ search by default.
 
     if k == 1 || k == n + 1
         # corner cases: wrap-around in constraints list
-        return element(_intersection_line2d(P.constraints[1], P.constraints[n]))
+        return center(_intersection_line2d(P.constraints[1], P.constraints[n]))
     else
-        return element(_intersection_line2d(P.constraints[k], P.constraints[k - 1]))
+        return center(_intersection_line2d(P.constraints[k], P.constraints[k - 1]))
     end
 end

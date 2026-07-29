@@ -443,17 +443,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test isidentical(Z2a, Z2b)
     @test isidentical(Z2c, Zonotope(c, N[2 1; 0 1]))
 
-    # singleton_list
-    @static if VERSION >= v"1.11"
-        res = @inferred singleton_list(Z)
-    else
-        res = singleton_list(Z)
-    end
-    @test res isa Vector{Singleton{N,Vector{N}}}
-    @test ispermutation(res,
-                        [Singleton(N[3, 4]), Singleton(N[5, 8]),
-                         Singleton(N[-1, 0]), Singleton(N[-3, -4])])
-
     # togrep
     Z2 = @inferred togrep(Z)
     @test isidentical(Z2, Z)

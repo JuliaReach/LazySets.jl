@@ -215,12 +215,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     res = @inferred low(X, 1)
     @test res isa N && res == N(0)  # -0.0
 
-    # min
-    v = @inferred min(X)
+    # _min
+    v = @inferred LazySets.IntervalModule._min(X)
     @test v isa N && res == N(0)  # -0.0
 
-    # max
-    v = @inferred max(X)
+    # _max
+    v = @inferred LazySets.IntervalModule._max(X)
     @test v === N(2)
 
     # ngens
@@ -268,11 +268,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # reflect
     Y = @inferred reflect(X)
     @test isidentical(Y, Interval(N(-2), N(0)))
-
-    # singleton_list
-    res = @inferred singleton_list(X)
-    @test res isa Vector{Singleton{N,Vector{N}}}
-    @test ispermutation(res, [Singleton(N[0]), Singleton(N[2])])
 
     # togrep
     Z = @inferred togrep(X)

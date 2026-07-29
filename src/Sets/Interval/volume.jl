@@ -1,3 +1,3 @@
 function volume(X::Interval)
-    return max(X) - min(X)
+    return _max(X) - _min(X)
 end

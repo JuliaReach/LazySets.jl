@@ -71,16 +71,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
     A = N[2 0; 1 3]
     b = N[-1, 1]
     @test constraints_list(HPolygon(A, b)) ==
-          constraints_list(HPolygonOpt(A, b)) ==
           [HalfSpace(N[2, 0], N(-1)), HalfSpace(N[1, 3], N(1))]
 
     # constructor for V-rep
     @test_throws AssertionError VPolygon([N[0, 0], N[1]])
 
-    # conversion to optimized polygon
-    po = convert(HPolygonOpt, p)
-    # conversion back
-    convert(HPolygon, po)
     # conversion from HPolytope
     polytope = HPolytope{N}()
     addconstraint!(polytope, c1)
@@ -88,31 +83,23 @@ for N in @tN([Float64, Float32, Rational{Int}])
     addconstraint!(polytope, c3)
     addconstraint!(polytope, c4)
     convert(HPolygon, polytope)
-    convert(HPolygonOpt, polytope)
     # conversion to HPolytope
     HPolytope(constraints_list(p))
-    HPolytope(constraints_list(po))
 
     # conversion from other set type
     H = Hyperrectangle(; low=N[-1, -1], high=N[1, 1])
     HPolygon(constraints_list(H))
-    HPolygonOpt(constraints_list(H))
     H = HalfSpace(N[1, 1], N(1))
     @test_throws ArgumentError convert(HPolygon, H)
-    @test_throws ArgumentError convert(HPolygonOpt, H)
 
     # support vector of polygon with no constraints
     @test_throws DimensionMismatch σ(N[0], HPolygon{N}())
-    @test_throws DimensionMismatch σ(N[0], HPolygonOpt{N}())
 
     # boundedness
-    @test isbounded(p) && isbounded(po)
-    @test !isbounded(HPolygon{N}(), false) &&
-          !isbounded(HPolygonOpt{N}(), false)
+    @test isbounded(p)
+    @test !isbounded(HPolygon{N}(), false)
     @test_throws AssertionError HPolygon(LinearConstraint{N,Vector{N}}[];
                                          check_boundedness=true)
-    @test_throws AssertionError HPolygonOpt(LinearConstraint{N,Vector{N}}[];
-                                            check_boundedness=true)
 
     # subset
     b1 = Ball1(N[0, 0], N(1))
@@ -134,8 +121,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     vlist = vertices_list(H1pol)
     @test ispermutation(vlist, [N[3, 3], N[3, -1], N[-1, -1], N[-1, 3]])
 
-    # HPolygon/HPolygonOpt tests
-    for (hp, t_hp) in [(p, HPolygon), (po, HPolygonOpt)]
+    # HPolygon tests
+    for (hp, t_hp) in [(p, HPolygon)]
         # constructors
         @test t_hp{N}() isa t_hp{N}
         @test t_hp{N,Vector{N}}() isa t_hp{N,Vector{N}}
@@ -394,7 +381,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # vertices_list
     @test_throws ArgumentError vertices_list(HPolygon{N}())
-    @test_throws ArgumentError vertices_list(HPolygonOpt{N}())
     # vertices_list removes duplicates by default (#1405)
     p3 = HPolygon([HalfSpace(N[1, 0], N(0)), HalfSpace(N[0, 1], N(0)),
                    HalfSpace(N[-1, 0], N(0)), HalfSpace(N[0, -1], N(0))])
@@ -659,27 +645,21 @@ for N in @tN([Float64, Float32])
     # test adding constraints, with linear and binary search
     p1 = HPolygon{N}()
     p2 = HPolygon{N}()
-    po1 = HPolygonOpt{N}()
-    po2 = HPolygonOpt{N}()
     n = 10
     for i in 1:n
         constraint = LinearConstraint(rand(N, 2), rand(N))
         addconstraint!(p1, constraint; linear_search=true)
         addconstraint!(p2, constraint; linear_search=i <= 2)
-        addconstraint!(po1, constraint; linear_search=true)
-        addconstraint!(po2, constraint; linear_search=i <= 2)
     end
     n = length(p1.constraints)
-    all_equal = n == length(p2.constraints) == length(po1.constraints) ==
-                length(po2.constraints)
+    all_equal = n == length(p2.constraints)
     if all_equal  # may be violated, see #2426
         for i in 1:n
-            @test allequal([p1.constraints[i], p2.constraints[i],
-                            po1.constraints[i], po2.constraints[i]])
+            @test allequal([p1.constraints[i], p2.constraints[i]])
         end
     end
 
-    for (hp, t_hp) in [(p1, HPolygon), (po1, HPolygonOpt)]
+    for (hp, t_hp) in [(p1, HPolygon)]
         # normalization
         p2 = normalize(hp)
         @test p2 isa t_hp{N}
@@ -735,7 +715,6 @@ for N in @tN([Float64, Float32])
 
     # rand
     @test rand(HPolygon; N=N) isa HPolygon{N}
-    @test rand(HPolygonOpt; N=N) isa HPolygonOpt{N}
     @test rand(VPolygon; N=N, num_vertices=0) == VPolygon{N}()
     vp = rand(VPolygon; N=N, num_vertices=1)
     @test vp isa VPolygon{N} && length(vp.vertices) == 1
@@ -746,7 +725,6 @@ for N in [Float64]
     # check boundedness after conversion
     H = Hyperrectangle(; low=N[-1, -1], high=N[1, 1])
     HPolygon(constraints_list(H); check_boundedness=true)
-    HPolygonOpt(constraints_list(H); check_boundedness=true)
 
     p = HPolygon{N}()
     c1 = LinearConstraint(N[2, 2], N(12))
@@ -757,10 +735,9 @@ for N in [Float64]
     addconstraint!(p, c1)
     addconstraint!(p, c4)
     addconstraint!(p, c2)
-    po = convert(HPolygonOpt, p)
 
     # test boundedness
-    @test isbounded(p, false) && isbounded(po, false)
+    @test isbounded(p, false)
 
     # is intersection empty
     p3 = convert(HPolygon, Hyperrectangle(; low=N[-1, -1], high=N[1, 1]))
@@ -843,7 +820,6 @@ end
 let
     # default Float64 constructors
     @test HPolygon() isa HPolygon{Float64,Vector{Float64}}
-    @test HPolygonOpt() isa HPolygonOpt{Float64,Vector{Float64}}
     @test VPolygon() isa VPolygon{Float64}
 
     # construction from constraints of mixed numeric types
@@ -852,6 +828,5 @@ let
 
     # isoperationtype
     @test !isoperationtype(HPolygon)
-    @test !isoperationtype(HPolygonOpt)
     @test !isoperationtype(VPolygon)
 end

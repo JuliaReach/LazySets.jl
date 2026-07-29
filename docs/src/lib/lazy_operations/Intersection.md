@@ -33,7 +33,6 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`an_element`](@ref an_element(::LazySet)
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))
 
 ### Intersection cache
@@ -59,5 +58,4 @@ Inherited from [`LazySet`](@ref):
 * [`radius`](@ref radius(::LazySet, ::Real))
 * [`diameter`](@ref diameter(::LazySet, ::Real))
 * [`an_element`](@ref an_element(::LazySet)
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))

@@ -1,4 +1,4 @@
 # if ``x = [a, b]``, then ``-x = [-b, -a]``
 function reflect(X::Interval)
-    return Interval(-max(X), -min(X))
+    return Interval(-_max(X), -_min(X))
 end

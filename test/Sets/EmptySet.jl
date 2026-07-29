@@ -191,10 +191,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # reflect
     @test (@inferred reflect(E)) == E
 
-    # singleton_list
-    res = @inferred singleton_list(E)
-    @test res isa Vector{Singleton{N,Vector{N}}} && isempty(res)
-
     # tosimplehrep
     @test_throws MethodError tosimplehrep(E)  # TODO this should maybe change
 

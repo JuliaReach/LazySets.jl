@@ -40,7 +40,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # constructor from non-Vector
     e2 = @inferred SingleEntryVector(1, 1000, N(2))
     S2 = @inferred Singleton(e2)
-    @test element(S2) == e2
+    @test center(S2) == e2
 
     # convert
     # from CartesianProduct of AbstractSingletons
@@ -60,7 +60,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # center
     c = @inferred center(S)
+    @test_throws DimensionMismatch center(S, 0)
+    @test_throws DimensionMismatch center(S, 3)
     @test c isa AbstractVector{N} && c == e
+    for i in 1:2
+        @test (@inferred center(S, i)) == e[i]
+    end
 
     # chebyshev_center_radius
     c, r = @inferred chebyshev_center_radius(S)
@@ -105,14 +110,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # dim
     @test @inferred dim(S) == 2
     @test @inferred dim(S3) == 3
-
-    # element
-    @test (@inferred element(S)) == e
-    @test_throws DimensionMismatch element(S, 0)
-    @test_throws DimensionMismatch element(S, 3)
-    for i in 1:2
-        @test (@inferred element(S, i)) == e[i]
-    end
 
     # eltype
     @test (@inferred eltype(S)) == N
@@ -236,11 +233,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # remove_redundant_generators
     @test isidentical((@inferred remove_redundant_generators(S)), S)
 
-    # singleton_list
-    res = @inferred singleton_list(S)
-    @test res isa Vector{Singleton{N,Vector{N}}}
-    @test res == [S]
-
     # togrep
     Z = @inferred togrep(S)
     @test Z isa Zonotope{N} && isequivalent(Z, S)
@@ -295,7 +287,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test_throws DimensionMismatch exponential_map(ones(N, 2, 1), S)
     if N <: AbstractFloat
         S2 = @inferred exponential_map(N[1 0; 0 2], S)
-        @test S2 isa Singleton && element(S2) == N[2 * exp(1), -exp(2)]
+        @test S2 isa Singleton && center(S2) == N[2 * exp(1), -exp(2)]
     end
 
     # in

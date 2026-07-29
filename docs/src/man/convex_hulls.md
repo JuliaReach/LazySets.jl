@@ -106,14 +106,14 @@ julia> Singleton(v[1]) ∈ VPolygon(hull)
 ```
 ERROR: cannot make a point-in-set check if the left-hand side is a set; either
 check for set inclusion, as in `S ⊆ X`, or check for membership, as in
-`element(S) ∈ X` (the results are equivalent but the implementations may differ)
+`center(S) ∈ X` (the results are equivalent but the implementations may differ)
 ```
 
 As the error suggests, either use `element` to access the element of the
 singleton and check if it belongs to the right-hand side set:
 
 ```@example example_ch
-element(Singleton(v[1])) ∈ VPolygon(hull)
+LazySets.center(Singleton(v[1])) ∈ VPolygon(hull)
 ```
 
 Or use set inclusion between the singleton and the right-hand side set:

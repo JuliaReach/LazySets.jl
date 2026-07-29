@@ -1,5 +1,4 @@
-export AbstractSingleton,
-       element
+export AbstractSingleton
 
 """
     AbstractSingleton{N} <: AbstractHyperrectangle{N}
@@ -10,15 +9,6 @@ Abstract type for sets with a single value.
 
 See [`Singleton`](@ref) for a standard implementation of this interface.
 
-Every concrete `AbstractSingleton` must define the following function:
-
-- `element(::AbstractSingleton)` -- return the single element
-
-Among other functions, the following function is then automatically defined:
-
-- `element(::AbstractSingleton, i::Int)` -- return the single element at index
-                                            `i`
-
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractSingleton)
 2-element Vector{Any}:
@@ -27,39 +17,6 @@ julia> subtypes(AbstractSingleton)
 ```
 """
 abstract type AbstractSingleton{N} <: AbstractHyperrectangle{N} end
-
-"""
-    element(S::AbstractSingleton)
-
-Return the element of a set with a single value.
-
-### Input
-
-- `S` -- set with a single value
-
-### Output
-
-The unique element of `S`.
-"""
-function element(::AbstractSingleton) end
-
-"""
-    element(S::AbstractSingleton, i::Int)
-
-Return the i-th entry of the element of a set with a single value.
-
-### Input
-
-- `S` -- set with a single value
-- `i` -- dimension of interest
-
-### Output
-
-The i-th entry of the element.
-"""
-@validate function element(S::AbstractSingleton, i::Int)
-    return element(S)[i]
-end
 
 @validate function radius_hyperrectangle(S::AbstractSingleton, i::Int)
     N = eltype(S)
@@ -72,19 +29,19 @@ function radius_hyperrectangle(S::AbstractSingleton)
 end
 
 function high(S::AbstractSingleton)
-    return element(S)
+    return center(S)
 end
 
 @validate function high(S::AbstractSingleton, i::Int)
-    return element(S)[i]
+    return center(S)[i]
 end
 
 function low(S::AbstractSingleton)
-    return element(S)
+    return center(S)
 end
 
 @validate function low(S::AbstractSingleton, i::Int)
-    return element(S)[i]
+    return center(S)[i]
 end
 
 function genmat(S::AbstractSingleton)
@@ -101,20 +58,12 @@ function ngens(::AbstractSingleton)
     return 0
 end
 
-function center(S::AbstractSingleton)
-    return element(S)
-end
-
-@validate function center(S::AbstractSingleton, i::Int)
-    return element(S, i)
-end
-
 @validate function vertices(S::AbstractSingleton)
-    return SingletonIterator(element(S))
+    return SingletonIterator(center(S))
 end
 
 @validate function vertices_list(S::AbstractSingleton)
-    return [element(S)]
+    return [center(S)]
 end
 
 """
@@ -128,11 +77,11 @@ The support vector is the set's vector itself, irrespective of the given
 direction.
 """
 @validate function σ(d::AbstractVector, S::AbstractSingleton)
-    return element(S)
+    return center(S)
 end
 
 @validate function ρ(d::AbstractVector, S::AbstractSingleton)
-    return dot(d, element(S))
+    return dot(d, center(S))
 end
 
 """
@@ -146,19 +95,19 @@ This implementation performs an approximate comparison to account for
 imprecision in floating-point computations.
 """
 @validate function in(x::AbstractVector, S::AbstractSingleton)
-    return _isapprox(x, element(S))
+    return _isapprox(x, center(S))
 end
 
 # this operation is forbidden, but it is a common error
 function in(S::AbstractSingleton, X::LazySet)
     throw(ArgumentError("cannot make a point-in-set check if the left-hand " *
                         "side is a set; either check for set inclusion, as in `S ⊆ X`, or " *
-                        "check for membership, as in `element(S) ∈ X` (the results are " *
+                        "check for membership, as in `center(S) ∈ X` (the results are " *
                         "equivalent, but the implementations may differ)"))
 end
 
 function chebyshev_center_radius(S::AbstractSingleton{N}) where {N}
-    return element(S), zero(N)
+    return center(S), zero(N)
 end
 
 """
@@ -171,13 +120,13 @@ end
 A `Singleton`.
 """
 function reflect(S::AbstractSingleton)
-    return Singleton(-element(S))
+    return Singleton(-center(S))
 end
 
 function constraints_list(S::AbstractSingleton; min_constraints::Bool=false)
     if min_constraints
         # fewest constraints (n+1) but more expensive to represent (`Vector`)
-        return _constraints_list_singleton_Vector(element(S))
+        return _constraints_list_singleton_Vector(center(S))
     else
         # more constraints (2n) but cheaper to represent (`SingleEntryVector`)
         return _constraints_list_hyperrectangle(S)
@@ -217,12 +166,12 @@ end
 end
 
 function extrema(S::AbstractSingleton)
-    e = element(S)
+    e = center(S)
     return (e, e)
 end
 
 @validate function extrema(S::AbstractSingleton, i::Int)
-    ei = element(S)[i]
+    ei = center(S)[i]
     return (ei, ei)
 end
 
@@ -235,9 +184,9 @@ end
 end
 
 @validate function norm(S::AbstractSingleton, p::Real=Inf)
-    return norm(element(S), p)
+    return norm(center(S), p)
 end
 
 @validate_commutative function distance(x::AbstractVector, S::AbstractSingleton; p::Real=2)
-    return distance(x, element(S); p)
+    return distance(x, center(S); p)
 end

@@ -154,7 +154,7 @@ the generators of `Z1` and `Z2`.
 end
 
 @validate function minkowski_sum(X::AbstractSingleton, Y::AbstractSingleton)
-    return Singleton(element(X) + element(Y))
+    return Singleton(center(X) + center(Y))
 end
 
 function _minkowski_sum_vpolygon(P::LazySet, Q::LazySet)

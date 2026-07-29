@@ -93,8 +93,8 @@ function convert(::Type{Hyperrectangle},
     l = Vector{N}(undef, n)
     h = Vector{N}(undef, n)
     @inbounds for (i, Ii) in enumerate(array(cpa))
-        l[i] = min(Ii)
-        h[i] = max(Ii)
+        l[i] = _min(Ii)
+        h[i] = _max(Ii)
     end
     return Hyperrectangle(; low=l, high=h)
 end

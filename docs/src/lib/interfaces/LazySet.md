@@ -367,7 +367,6 @@ CurrentModule = LazySets
 ```
 ```@docs
 reflect(::LazySet)
-singleton_list(::LazySet)
 triangulate_faces(::LazySet)
 tohrep(::LazySet)
 tosimplehrep(::LazySet)

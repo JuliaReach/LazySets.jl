@@ -3,7 +3,7 @@ import LazySets
 using LazySets: @validate
 using LazySets.EmptySetModule: EmptySet
 using LazySets.HalfSpaceModule: HalfSpace
-using LazySets.IntervalModule: Interval, _center
+using LazySets.IntervalModule: Interval, _center, _min, _max
 using LazySets.ZonotopeModule: Zonotope
 using LazySets: UnionSet
 using ReachabilityBase.Arrays: SingleEntryVector
@@ -14,8 +14,8 @@ import LazySets.API: complement, constraints_list, difference, intersection,
 
 function complement(X::Interval)
     N = eltype(X)
-    L = HalfSpace(SingleEntryVector(1, 1, one(N)), min(X))
-    H = HalfSpace(SingleEntryVector(1, 1, -one(N)), -max(X))
+    L = HalfSpace(SingleEntryVector(1, 1, one(N)), _min(X))
+    H = HalfSpace(SingleEntryVector(1, 1, -one(N)), -_max(X))
     return UnionSet(L, H)
 end
 
@@ -23,16 +23,16 @@ function constraints_list(X::Interval)
     N = eltype(X)
     constraints = Vector{HalfSpace{N,SingleEntryVector{N}}}(undef, 2)
     e₁ = SingleEntryVector(1, 1, one(N))
-    @inbounds constraints[1] = HalfSpace(e₁, max(X))
-    @inbounds constraints[2] = HalfSpace(-e₁, -min(X))
+    @inbounds constraints[1] = HalfSpace(e₁, _max(X))
+    @inbounds constraints[2] = HalfSpace(-e₁, -_min(X))
     return constraints
 end
 
 function _constraints_list_Vector(X::Interval)
     N = eltype(X)
     constraints = Vector{HalfSpace{N,Vector{N}}}(undef, 2)
-    @inbounds constraints[1] = HalfSpace([one(N)], max(X))
-    @inbounds constraints[2] = HalfSpace([-one(N)], -min(X))
+    @inbounds constraints[1] = HalfSpace([one(N)], _max(X))
+    @inbounds constraints[2] = HalfSpace([-one(N)], -_min(X))
     return constraints
 end
 
@@ -98,18 +98,18 @@ UnionSet{Float64, Interval{Float64}, Interval{Float64}}(Interval{Float64}([1.0, 
     if l > h
         return X
     else
-        flat_left = isapproxzero(l - min(X))
-        flat_right = isapproxzero(max(X) - h)
+        flat_left = isapproxzero(l - _min(X))
+        flat_right = isapproxzero(_max(X) - h)
 
         if flat_left && flat_right
             N = promote_type(eltype(X), eltype(Y))
             return EmptySet{N}(1)
         elseif flat_left && !flat_right
-            return Interval(h, max(X))
+            return Interval(h, _max(X))
         elseif !flat_left && flat_right
-            return Interval(min(X), l)
+            return Interval(_min(X), l)
         else
-            return UnionSet(Interval(min(X), l), Interval(h, max(X)))
+            return UnionSet(Interval(_min(X), l), Interval(h, _max(X)))
         end
     end
 end
@@ -125,15 +125,15 @@ end
 end
 
 function _intersection_interval_bounds(X::Interval, Y::Interval)
-    l = max(min(X), min(Y))
-    h = min(max(X), max(Y))
+    l = max(_min(X), _min(Y))
+    h = min(_max(X), _max(Y))
     return (l, h)
 end
 
 function _linear_map_zonotope(M::AbstractMatrix, X::Interval)
     nout = size(M, 1)
     cx = _center(X)
-    gx = cx - min(X)
+    gx = cx - _min(X)
     N = promote_type(eltype(M), eltype(X))
     c = Vector{N}(undef, nout)
     gen = Matrix{N}(undef, nout, 1)
@@ -154,8 +154,8 @@ end
 An `Interval`, or an `EmptySet` if the difference is empty.
 """
 @validate function minkowski_difference(I1::Interval, I2::Interval)
-    l = min(I1) - min(I2)
-    h = max(I1) - max(I2)
+    l = _min(I1) - _min(I2)
+    h = _max(I1) - _max(I2)
     if h < l
         N = promote_type(eltype(I1), eltype(I2))
         return EmptySet{N}(1)

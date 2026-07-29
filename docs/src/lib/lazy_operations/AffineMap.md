@@ -21,5 +21,4 @@ Inherited from [`AbstractAffineMap`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::AbstractAffineMap))
 
 Inherited from [`LazySet`](@ref):
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`reflect`](@ref reflect(::LazySet))

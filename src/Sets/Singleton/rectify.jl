@@ -1,3 +1,3 @@
 function rectify(S::Singleton)
-    return Singleton(rectify(element(S)))
+    return Singleton(rectify(center(S)))
 end

@@ -36,4 +36,3 @@ isredundant(::HalfSpace, ::HalfSpace, ::HalfSpace)
 ## Implementations
 
 * [Polygon in constraint representation (HPolygon)](@ref def_HPolygon)
-* [Polygon in optimized constraint representation (HPolygonOpt)](@ref def_HPolygonOpt)

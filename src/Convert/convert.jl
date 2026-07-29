@@ -30,7 +30,7 @@ include("Zonotope.jl")
 # `convert` methods with multiple by target types
 # ===============================================
 
-for T in [HPolygon, HPolygonOpt, HPolytope, HPolyhedron]
+for T in [HPolygon, HPolytope, HPolyhedron]
     @eval begin
         function convert(::Type{$T}, P::Intersection)
             clist = vcat(constraints_list(first(P)), constraints_list(second(P)))

@@ -28,9 +28,8 @@ The subtypes of `AbstractHPolygon`:
 
 ```jldoctest; setup = :(using LazySets: subtypes)
 julia> subtypes(AbstractHPolygon)
-2-element Vector{Any}:
+1-element Vector{Any}:
  HPolygon
- HPolygonOpt
 ```
 """
 abstract type AbstractHPolygon{N} <: AbstractPolygon{N} end
@@ -156,14 +155,14 @@ constraint.
         if cap isa EmptySet
             return Vector{Vector{N}}()
         else
-            points[i] = element(cap)
+            points[i] = center(cap)
         end
     end
     cap = _intersection_line2d(P.constraints[n], P.constraints[1])
     if cap isa EmptySet
         return Vector{Vector{N}}()
     else
-        points[n] = element(cap)
+        points[n] = center(cap)
     end
 
     # check if polygon was empty
@@ -211,7 +210,7 @@ of the constraints).
 """
 function an_element(P::AbstractHPolygon)
     @assert length(P.constraints) >= 2 "polygon has less than two constraints"
-    return element(_intersection_line2d(P.constraints[1], P.constraints[2]))
+    return center(_intersection_line2d(P.constraints[1], P.constraints[2]))
 end
 
 """

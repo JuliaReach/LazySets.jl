@@ -17,5 +17,5 @@ An interval has either one generator, or zero generators if it is a degenerated
 interval of diameter zero.
 """
 function ngens(X::Interval)
-    return _isapprox(min(X), max(X)) ? 0 : 1
+    return _isapprox(_min(X), _max(X)) ? 0 : 1
 end

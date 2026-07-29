@@ -18,13 +18,9 @@ import Base: convert
 @reexport using ..API
 
 export SimpleSparsePolynomialZonotope,
-       SSPZ,
        quadratic_map
 
 include("SimpleSparsePolynomialZonotope.jl")
-
-# short-hand
-const SSPZ = SimpleSparsePolynomialZonotope
 
 include("center.jl")
 include("convex_hull.jl")

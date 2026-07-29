@@ -38,7 +38,7 @@ The table entries have the following meaning.
 | `Ellipsoid`                  | i   | x | x | i          | x  | i       | i         |            | x         |      |        | i        |
 | `EmptySet`                   | x   | i | x | x          | x  | x       | x         |            | x         | x    | x      | x        |
 | `HalfSpace`                  | x   | x | x | x          | x  | x       | x         |            | x         |      |        | i        |
-| `HPolygon`/`HPolygonOpt`     | i   | i | x | i          | i  | i       | i         | i          | x         |      |        | i        |
+| `HPolygon`                   | i   | i | x | i          | i  | i       | i         | i          | x         |      |        | i        |
 | `HPolyhedron`                | x   | x | x | i          | x  | x       | x         | x          | x         |      |        | i        |
 | `HPolytope`                  | x   | x | x | i          | x  | x       | i         | x          | x         |      |        | i        |
 | `Hyperplane`                 | x   | x | x | x          | x  | x       | x         |            | x         |      |        | i        |

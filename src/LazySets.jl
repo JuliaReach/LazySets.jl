@@ -166,8 +166,6 @@ include("Sets/HParallelotope/HParallelotopeModule.jl")
 include("Sets/HPolygon/HPolygonModule.jl")
 @reexport using ..HPolygonModule: HPolygon
 
-include("Sets/HPolygonOpt.jl")
-
 include("Sets/HPolytope/HPolytopeModule.jl")
 @reexport using ..HPolytopeModule: HPolytope
 
@@ -212,14 +210,13 @@ include("MatrixSets/MatrixZonotopeModule.jl")
 
 include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
-                                                        SSPZ,
                                                         quadratic_map
 
 include("Sets/Singleton/SingletonModule.jl")
 @reexport using ..SingletonModule: Singleton
 
 include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
-@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope, SPZ
+@reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope
 using ..SparsePolynomialZonotopeModule: uniqueID
 
 include("Sets/Star/StarModule.jl")
@@ -247,6 +244,7 @@ include("Sets/ZeroSet/ZeroSetModule.jl")
 
 include("Sets/Interval/IntervalModule.jl")
 @reexport using ..IntervalModule: Interval
+using ..IntervalModule: _max, _min  # internal convenience functions, not exported
 
 # =================================
 # Types representing set operations

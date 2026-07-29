@@ -118,7 +118,6 @@ Inherited from [`LazySet`](@ref):
 * [`ispolytopic`](@ref ispolytopic(::LazySet))
 * [`ispolytopictype`](@ref ispolytopictype(::Type{LazySet}))
 * [`polyhedron`](@ref polyhedron(::LazySet))
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))

@@ -80,7 +80,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     cap12 = intersection(l1, l2)
     cap13 = intersection(l1, l3)
     @test cap11 isa Line2D && cap11.a == l1.a && cap11.b == l1.b
-    @test cap12 isa Singleton && element(cap12) == N[1, 1]
+    @test cap12 isa Singleton && center(cap12) == N[1, 1]
     @test cap13 isa EmptySet{N}
 
     # concrete linear map of a line

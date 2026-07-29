@@ -3,9 +3,9 @@
 # subtypes
 
 @validate function extrema(X::Interval, i::Int)
-    return (min(X), max(X))
+    return (_min(X), _max(X))
 end
 
 function extrema(X::Interval)
-    return ([min(X)], [max(X)])
+    return ([_min(X)], [_max(X)])
 end

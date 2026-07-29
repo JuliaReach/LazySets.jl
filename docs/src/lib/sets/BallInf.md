@@ -125,7 +125,6 @@ Inherited from [`LazySet`](@ref):
 * [`ispolytopictype`](@ref ispolytopictype(::Type{LazySet}))
 * [`polyhedron`](@ref polyhedron(::LazySet))
 * [`rationalize`](@ref rationalize(::LazySet))
-* [`singleton_list`](@ref singleton_list(::LazySet))
 * [`tosimplehrep`](@ref tosimplehrep(::LazySet))
 * [`triangulate`](@ref triangulate(::LazySet))
 * [`triangulate_faces`](@ref triangulate_faces(::LazySet))

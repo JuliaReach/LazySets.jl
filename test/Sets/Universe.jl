@@ -193,9 +193,6 @@ for N in @tN([Float64, Float32, Rational{Int}])
     U2 = @inferred reflect(U)
     @test U2 == U
 
-    # singleton_list
-    @test_throws ArgumentError singleton_list(U)
-
     # tosimplehrep
     C, d = @inferred tosimplehrep(U)
     @test C isa Matrix{N} && d isa Vector{N} && size(C) == (0, 2) && isempty(d)

@@ -22,9 +22,6 @@ convert(::Type{Hyperrectangle}, ::Rectification{N, AH}) where {N, AH<:AbstractHy
 convert(::Type{HPolygon}, ::LazySet)
 convert(::Type{HPolygon}, ::VPolygon)
 convert(::Type{HPolygon}, ::LineSegment{N}) where {N}
-convert(::Type{HPolygonOpt}, ::LazySet)
-convert(::Type{HPolygonOpt}, ::VPolygon)
-convert(::Type{HPolygonOpt}, ::LineSegment{N}) where {N}
 convert(::Type{VPolygon}, ::AbstractHPolygon)
 convert(::Type{Zonotope}, ::LinearMap{N, ZN}) where {N, ZN<:AbstractZonotope}
 convert(::Type{Zonotope}, ::LinearMap{N, CartesianProduct{N, ZN1, ZN2}}) where {N, ZN1<:AbstractZonotope, ZN2<:AbstractZonotope}

@@ -86,15 +86,15 @@ end
 
 @validate function isdisjoint(S1::AbstractSingleton, S2::AbstractSingleton,
                               witness::Bool=false)
-    s1 = element(S1)
-    empty_intersection = !_isapprox(s1, element(S2))
+    s1 = center(S1)
+    empty_intersection = !_isapprox(s1, center(S2))
     return _witness_result_empty(witness, empty_intersection, S1, S2, s1)
 end
 
 # common code for singletons
 function _isdisjoint_singleton(S::AbstractSingleton, X::LazySet,
                                witness::Bool=false)
-    s = element(S)
+    s = center(S)
     empty_intersection = s ∉ X
     return _witness_result_empty(witness, empty_intersection, S, X, s)
 end

@@ -90,8 +90,8 @@ end
 
 # if the first set is an interval => the result is always a polytope
 function cartesian_product(I::Interval, P::Union{VPolygon,VPolytope})
-    a = min(I)
-    b = max(I)
+    a = _min(I)
+    b = _max(I)
     vlist = vertices_list(P)
     m = length(vlist)
 
@@ -104,8 +104,8 @@ function cartesian_product(I::Interval, P::Union{VPolygon,VPolytope})
 end
 
 function cartesian_product(S1::AbstractSingleton, S2::AbstractSingleton)
-    v1 = element(S1)
-    v2 = element(S2)
+    v1 = center(S1)
+    v2 = center(S2)
     return Singleton(vcat(v1, v2))
 end
 

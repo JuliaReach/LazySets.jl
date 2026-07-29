@@ -59,7 +59,7 @@ If we only consider *concrete* subtypes, then:
 julia> concrete_subtypes = subtypes(LazySet, true);
 
 julia> length(concrete_subtypes)
-55
+54
 
 julia> println.(concrete_subtypes);
 AffineMap
@@ -82,7 +82,6 @@ ExponentialMap
 ExponentialProjectionMap
 HParallelotope
 HPolygon
-HPolygonOpt
 HPolyhedron
 HPolytope
 HalfSpace

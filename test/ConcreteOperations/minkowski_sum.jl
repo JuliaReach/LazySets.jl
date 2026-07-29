@@ -45,7 +45,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
           SparsePolynomialZonotope(N[6, 8], zeros(N, 2, 0), N[7 0 3 0; 0 8 0 4], zeros(Int, 0, 0),
                                    Int[])
     # SSPZ + Z
-    P = convert(SSPZ, SPZ)
+    P = convert(SimpleSparsePolynomialZonotope, SPZ)
     P2 = minkowski_sum(P, H2)
     # equality is not required but approximates the equivalence check
     @test P2 == SparsePolynomialZonotope(N[6, 8], N[3 0; 0 4], N[7 0; 0 8], [1 0; 0 1], 1:2)
