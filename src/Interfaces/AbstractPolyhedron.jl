@@ -86,8 +86,6 @@ end
 # internal functions; defined here due to optional dependencies and submodules
 function remove_redundant_constraints end
 function remove_redundant_constraints! end
-function _ishalfspace end
-function _ishyperplanar end
 function _removevredundancy! end
 
 # To account for the compilation order, other functions are defined in the file

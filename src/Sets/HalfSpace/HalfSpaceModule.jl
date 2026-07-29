@@ -1,7 +1,6 @@
 module HalfSpaceModule
 
 using Reexport: @reexport
-using Requires: @require
 
 using ..LazySets: AbstractPolyhedron, LazySet, default_lp_solver, is_lp_optimal,
                   linprog, @validate, @validate_commutative
@@ -18,7 +17,6 @@ using ReachabilityBase.Distribution: reseed!
 @reexport import ..LazySets: constrained_dimensions, isfeasible, normalize,
                              remove_redundant_constraints,
                              remove_redundant_constraints!, tosimplehrep
-import ..LazySets: _ishalfspace
 import ..Base: convert
 @reexport using ..API
 
@@ -53,7 +51,6 @@ include("translate.jl")
 include("halfspace_left.jl")
 include("halfspace_right.jl")
 include("constrained_dimensions.jl")
-include("ishalfspace.jl")
 include("normalize.jl")
 include("iscomplement.jl")
 
@@ -105,7 +102,5 @@ function _normal_Vector(C::Vector{<:HalfSpace})
     N = promote_type([eltype(c) for c in C]...)
     return [HalfSpace(convert(Vector{N}, c.a), N(c.b)) for c in C]
 end
-
-include("init.jl")
 
 end  # module

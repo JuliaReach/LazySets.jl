@@ -11,6 +11,7 @@ include("../ext/DistributionsExt.jl")
 include("../ext/MakieExt.jl")
 include("../ext/RecipesBaseExt.jl")
 include("../ext/SymEngineExt.jl")
+include("../ext/SymbolicsExt.jl")
 
 include("init.jl")
 
@@ -19,7 +20,7 @@ bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"); style=:alpha)
 makedocs(; sitename="LazySets.jl",
          modules=[LazySets, LazySets.API, Approximations, LazySets.Parallel,
                   LazySets.LazySetsExt, DistributionsExt, MakieExt,
-                  RecipesBaseExt, SymEngineExt],
+                  RecipesBaseExt, SymEngineExt, SymbolicsExt],
          format=Documenter.HTML(; prettyurls=get(ENV, "CI", nothing) == "true",
                                 assets=["assets/aligned.css", "assets/citations.css"],
                                 size_threshold_warn=150 * 2^10),
