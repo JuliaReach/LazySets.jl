@@ -1,6 +1,5 @@
 function __init__()
     @require CDDLib = "3391f64e-dcde-5f30-b752-e11513730f60" include("Initialization/init_CDDLib.jl")
-    @require Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f" include("Initialization/init_Distributions.jl")
     @require Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4" include("Initialization/init_Expokit.jl")
     @require ExponentialUtilities = "d4d017d3-3776-5f7e-afef-a10c40355c18" include("Initialization/init_ExponentialUtilities.jl")
     @require IntervalMatrices = "5c1f47dc-42dd-5697-8aaa-4d102d140ba9" include("Initialization/init_IntervalMatrices.jl")

@@ -1,7 +1,6 @@
 module Ball2Module
 
 using Reexport: @reexport
-using Requires: @require
 
 using ..LazySets: AbstractBallp, _witness_result_empty, @validate
 using LinearAlgebra: dot, axpby!
@@ -43,7 +42,5 @@ include("radius_ball.jl")
 function ○(c::VN, r::N) where {N<:AbstractFloat,VN<:AbstractVector{N}}
     return Ball2(c, r)
 end
-
-include("init.jl")
 
 end  # module
