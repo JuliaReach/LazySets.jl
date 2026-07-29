@@ -44,7 +44,9 @@ using SafeTestsets
                                                # IpoptExt
                                                :_default_nln_solver,
                                                # MakieExt
-                                               :Automatic)
+                                               :Automatic,
+                                               # IntervalConstraintProgrammingExt
+                                               :_contract_zonotope_halfspace_ICP)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
@@ -60,7 +62,12 @@ using SafeTestsets
                                                  # fixed in versions after v"1.10"
                                                  :get_extension)
     ignores_all_qualified_accesses_via_owners = (:inf, :sup)  # defined in IntervalArithmetic but imported through IntervalBoxes
-    ignores_no_stale_explicit_imports = (:apply_recipe,)  # required for documentation
+    ignores_no_stale_explicit_imports = (
+                                         # required for documentation
+                                         :apply_recipe,
+                                         # IntervalConstraintProgrammingExt
+                                         Symbol("@variables")
+                                         )
     ExplicitImports.test_explicit_imports(LazySets;
                                           all_explicit_imports_are_public=(ignore=ignores_all_explicit_imports_are_public,),
                                           all_explicit_imports_via_owners=(ignore=ignores_all_explicit_imports_via_owners,),
