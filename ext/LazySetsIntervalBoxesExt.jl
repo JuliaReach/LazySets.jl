@@ -1,4 +1,4 @@
-module IntervalBoxesExt
+module LazySetsIntervalBoxesExt
 
 using IntervalArithmetic: interval
 using IntervalBoxes: IntervalBox
@@ -8,7 +8,7 @@ using LazySets.HyperrectangleModule: Hyperrectangle
 import Base: convert
 import LazySets: _difference
 
-include("IntervalBoxes/IntervalBoxesHyperrectangleExt.jl")
+include("IntervalBoxes/HyperrectangleExt.jl")
 
 function convert(::Type{IntervalBox}, H::AbstractHyperrectangle)
     return IntervalBox(interval.(low(H), high(H))...)

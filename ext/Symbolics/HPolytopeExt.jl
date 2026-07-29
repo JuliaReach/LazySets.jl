@@ -40,12 +40,12 @@ HPolytope{Float64, Vector{Float64}}(HalfSpace{Float64, Vector{Float64}}[HalfSpac
 ```
 """
 function HPolytope(expr::Vector{<:Num}, vars::AbstractVector{Num}=_get_variables(expr);
-                    N::Type{<:Real}=Float64, check_boundedness::Bool=false)
+                   N::Type{<:Real}=Float64, check_boundedness::Bool=false)
     return HPolytope([HalfSpace(ex, vars; N=N) for ex in expr];
-                        check_boundedness=check_boundedness)
+                     check_boundedness=check_boundedness)
 end
 
 function HPolytope(expr::Vector{<:Num}, vars; N::Type{<:Real}=Float64,
-                    check_boundedness::Bool=false)
+                   check_boundedness::Bool=false)
     return HPolytope(expr, _vec(vars); N=N, check_boundedness=check_boundedness)
 end

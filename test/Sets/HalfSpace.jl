@@ -12,7 +12,7 @@ end
 end
 @static if isdefined(Main, :SymEngine)
     import SymEngine
-    SymEngineExt = Base.get_extension(LazySets, :SymEngineExt)
+    LazySetsSymEngineExt = Base.get_extension(LazySets, :LazySetsSymEngineExt)
 end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
@@ -314,13 +314,13 @@ for N in [Float64]
     # tests that require SymEngine
     @static if isdefined(@__MODULE__, :SymEngine)
         # _ishalfspace
-        res = all(SymEngineExt._ishalfspace.([:(x1 <= 0), :(x1 < 0), :(x1 > 0), :(x1 >= 0)]))
-        res &= !SymEngineExt._ishalfspace(:(x1 = 0))
-        res &= SymEngineExt._ishalfspace(:(2 * x1 <= 4))
-        res &= SymEngineExt._ishalfspace(:(6.1 <= 5.3 * f - 0.1 * g))
-        res &= !SymEngineExt._ishalfspace(:(2 * x1^2 <= 4))
-        res &= !SymEngineExt._ishalfspace(:(x1^2 > 4 * x2 - x3))
-        res &= SymEngineExt._ishalfspace(:(x1 > 4 * x2 - x3))
+        res = all(LazySetsSymEngineExt._ishalfspace.([:(x1 <= 0), :(x1 < 0), :(x1 > 0), :(x1 >= 0)]))
+        res &= !LazySetsSymEngineExt._ishalfspace(:(x1 = 0))
+        res &= LazySetsSymEngineExt._ishalfspace(:(2 * x1 <= 4))
+        res &= LazySetsSymEngineExt._ishalfspace(:(6.1 <= 5.3 * f - 0.1 * g))
+        res &= !LazySetsSymEngineExt._ishalfspace(:(2 * x1^2 <= 4))
+        res &= !LazySetsSymEngineExt._ishalfspace(:(x1^2 > 4 * x2 - x3))
+        res &= LazySetsSymEngineExt._ishalfspace(:(x1 > 4 * x2 - x3))
         @test res
 
         # convert

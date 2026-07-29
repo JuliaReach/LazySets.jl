@@ -1,4 +1,4 @@
-module CDDLibExt
+module LazySetsCDDLibExt
 
 using CDDLib: Library  # NOTE: this is an internal function
 import LazySets: default_cddlib_backend

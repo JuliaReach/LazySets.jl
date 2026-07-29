@@ -69,22 +69,22 @@ LazySets.UnionSampler
 ## Symbolics
 
 ```@meta
-CurrentModule = SymbolicsExt
+CurrentModule = LazySetsSymbolicsExt
 ```
 
 ```@docs
-SymbolicsExt._vec
+LazySetsSymbolicsExt._vec
 ```
 
 ## SymEngine
 
 ```@meta
-CurrentModule = SymEngineExt
+CurrentModule = LazySetsSymEngineExt
 ```
 
 ```@docs
-SymEngineExt.free_symbols
-SymEngineExt._is_linear_combination
+LazySetsSymEngineExt.free_symbols
+LazySetsSymEngineExt._is_linear_combination
 ```
 
 ```@meta

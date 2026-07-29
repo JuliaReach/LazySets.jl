@@ -115,9 +115,9 @@ end
     return _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
 end
 
-# see ext/PolyhedraExt.jl
+# see ext/LazySetsPolyhedraExt.jl
 function _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="minkowski_sum")
     error()
 end
@@ -254,9 +254,9 @@ function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
     return vlist_out
 end
 
-# see ext/PolyhedraExt.jl
+# see ext/LazySetsPolyhedraExt.jl
 function _backend_solver_nd()
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="minkowski_sum")
     error()
 end

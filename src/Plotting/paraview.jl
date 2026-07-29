@@ -1,6 +1,6 @@
-# see ext/WriteVTKExt.jl
+# see ext/LazySetsWriteVTKExt.jl
 function writevtk(X; file="output")
-    mod = Base.get_extension(@__MODULE__, :WriteVTKExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsWriteVTKExt)
     require(mod, :WriteVTK; fun_name="writevtk")
     error()
 end

@@ -1,4 +1,4 @@
-module RecipesBaseExt
+module LazySetsRecipesBaseExt
 
 using LazySets
 using LazySets: plot_vlist, _plot_recipe_3d_polytope

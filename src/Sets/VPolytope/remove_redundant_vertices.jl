@@ -31,9 +31,9 @@ function remove_redundant_vertices(P::VPolytope; backend=nothing, solver=nothing
     return _remove_redundant_vertices(P; backend, solver)
 end
 
-# see ext/PolyhedraExt.jl
+# see ext/LazySetsPolyhedraExt.jl
 function _remove_redundant_vertices(P; backend=nothing, solver=nothing)
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="remove_redundant_vertices")
     error()
 end

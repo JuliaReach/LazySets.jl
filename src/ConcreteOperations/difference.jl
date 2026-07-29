@@ -17,9 +17,9 @@ This implementation uses `IntervalArithmetic.setdiff`.
     return _difference(X, Y)
 end
 
-# see ext/IntervalBoxesExt.jl
+# see ext/LazySetsIntervalBoxesExt.jl
 function _difference(X, Y)
-    mod = Base.get_extension(@__MODULE__, :IntervalBoxesExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsIntervalBoxesExt)
     require(mod, :IntervalBoxes; fun_name="difference")
     error()
 end

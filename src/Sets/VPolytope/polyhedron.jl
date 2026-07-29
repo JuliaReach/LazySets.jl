@@ -1,1 +1,1 @@
-# see ext/PolyhedraExt.jl
+# see ext/LazySetsPolyhedraExt.jl

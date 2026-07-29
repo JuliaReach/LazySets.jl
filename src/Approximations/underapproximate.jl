@@ -206,7 +206,7 @@ end
 
 function _underapproximate_ellipsoid(P, type; backend=default_sdp_solver(),
                                      interior_point=chebyshev_center_radius(P)[1])
-    mod = Base.get_extension(@__MODULE__, :SetProgExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsSetProgExt)
     require(mod, :SetProg; fun_name="underapproximate")
     error()
 end

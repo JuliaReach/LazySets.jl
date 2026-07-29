@@ -131,7 +131,7 @@ function _check_algorithm_applies(M::AbstractMatrix, P::LazySet,
 end
 
 function _get_elimination_instance(N, backend, elimination_method)
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="linear_map with elimination")
     error()
 end
@@ -422,7 +422,7 @@ end
 function _linear_map_vrep(M::AbstractMatrix, P::AbstractPolyhedron,
                           algo::LinearMapVRep=LinearMapVRep(nothing);
                           apply_convex_hull::Bool=false)
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="linear_map",
             explanation="of a $(typeof(P)) by a non-invertible matrix")
 
@@ -511,7 +511,7 @@ function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron, algo::Linear
 end
 
 function _linear_map_hrep(M, P, algo)
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="linear_map with elimination")
     error()
 end

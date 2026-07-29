@@ -203,9 +203,9 @@ This method implements [Kochdumper21a; Proposition 3.1.16](@citet).
     return _ρ_range_enclosures(d, P, enclosure_method)
 end
 
-# see ext/RangeEnclosuresExt.jl
+# see ext/LazySetsRangeEnclosuresExt.jl
 function _ρ_range_enclosures(d, P, enclosure_method)
-    mod = Base.get_extension(@__MODULE__, :RangeEnclosuresExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsRangeEnclosuresExt)
     require(mod, :RangeEnclosures; fun_name="ρ")
     error()
 end

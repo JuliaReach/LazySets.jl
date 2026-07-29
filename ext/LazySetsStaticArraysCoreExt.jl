@@ -1,4 +1,4 @@
-module StaticArraysCoreExt
+module LazySetsStaticArraysCoreExt
 
 using LazySets: center, _genmat_static
 using LazySets.HyperrectangleModule: Hyperrectangle
@@ -7,9 +7,9 @@ using StaticArraysCore: MMatrix, SMatrix, SVector
 import LazySets: _convert_static, _hcat_KLred, _interval_hull, _to_colVector
 import LazySets.Approximations: dir_east, dir_north, dir_west, dir_south
 
-include("StaticArraysCore/StaticArraysCoreBallInfExt.jl")
-include("StaticArraysCore/StaticArraysCoreHyperrectangleExt.jl")
-include("StaticArraysCore/StaticArraysCoreZonotopeExt.jl")
+include("StaticArraysCore/BallInfExt.jl")
+include("StaticArraysCore/HyperrectangleExt.jl")
+include("StaticArraysCore/ZonotopeExt.jl")
 
 const DIR_EAST_STATIC(N) = SVector{2}([one(N), zero(N)])
 const DIR_NORTH_STATIC(N) = SVector{2}([zero(N), one(N)])

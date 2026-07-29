@@ -36,9 +36,9 @@ julia> using LazySets
 
 julia> import SymEngine
 
-julia> SymEngineExt = Base.get_extension(LazySets, :SymEngineExt);
+julia> LazySetsSymEngineExt = Base.get_extension(LazySets, :LazySetsSymEngineExt);
 
-julia> using .SymEngineExt: _ishyperplanar
+julia> using .LazySetsSymEngineExt: _ishyperplanar
 
 julia> _ishyperplanar(:(x1 = 0))
 true

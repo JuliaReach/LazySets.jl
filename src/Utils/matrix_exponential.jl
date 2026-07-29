@@ -26,7 +26,7 @@ function _expmv(t, A, b; kwargs...)
     return _expmv(backend, t, A, b; kwargs...)
 end
 
-# see ext/ExpokitExt.jl and ext/ExponentialUtilitiesExt.jl
+# see ext/LazySetsExpokitExt.jl and ext/LazySetsExponentialUtilitiesExt.jl
 function _expmv(backend, t, A, b; kwargs...)
     # note: `@__MODULE__` does not detect when a package extension is loaded;
     #       however, the method will simply be overwritten

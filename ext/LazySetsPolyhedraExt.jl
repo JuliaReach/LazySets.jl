@@ -1,4 +1,4 @@
-module PolyhedraExt
+module LazySetsPolyhedraExt
 
 using GLPK: EXACT, Optimizer
 using LazySets: GLPK_ON, LazySet, LinearMapElimination, default_cddlib_backend,
@@ -24,10 +24,10 @@ import LazySets: chebyshev_center_radius, default_polyhedra_backend_1d,
                  _removevredundancy!
 import LazySets.HPolyhedronModule: _convex_hull
 
-include("Polyhedra/PolyhedraEmptySetExt.jl")
-include("Polyhedra/PolyhedraHPolyhedronExt.jl")
-include("Polyhedra/PolyhedraHPolytopeExt.jl")
-include("Polyhedra/PolyhedraVPolytopeExt.jl")
+include("Polyhedra/EmptySetExt.jl")
+include("Polyhedra/HPolyhedronExt.jl")
+include("Polyhedra/HPolytopeExt.jl")
+include("Polyhedra/VPolytopeExt.jl")
 
 # in v0.8.0, `Polyhedra` renamed the kwarg `ztol` to `tol`
 @static if hasmethod(detecthlinearity, (HRepresentation, Any), (:ztol,))

@@ -1,4 +1,4 @@
-module MakieExt
+module LazySetsMakieExt
 
 using LazySets: LazySet, constraints_list, default_polyhedra_backend, dim,
                 isbounded, polyhedron, remove_redundant_constraints!

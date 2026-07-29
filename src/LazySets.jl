@@ -41,7 +41,6 @@ using SparseArrays: AbstractSparseMatrix, AbstractSparseVector, SparseVector,
 # ================
 
 import ReachabilityBase
-import ReachabilityBase.Assertions
 using ReachabilityBase.Assertions: @assert
 include("Utils/assertions.jl")
 

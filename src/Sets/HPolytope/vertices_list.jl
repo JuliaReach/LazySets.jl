@@ -47,9 +47,9 @@ backends see
     return _vertices_list(P; backend, prune)
 end
 
-# see ext/PolyhedraExt.jl
+# see ext/LazySetsPolyhedraExt.jl
 function _vertices_list(P; backend, prune)
-    mod = Base.get_extension(@__MODULE__, :PolyhedraExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="vertices_list")
     return error()
 end

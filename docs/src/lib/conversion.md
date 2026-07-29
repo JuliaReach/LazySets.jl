@@ -43,7 +43,7 @@ convert(::Type{SparsePolynomialZonotope}, ::SimpleSparsePolynomialZonotope{N}) w
 ```
 
 ```@meta
-CurrentModule = IntervalMatricesExt
+CurrentModule = LazySetsIntervalMatricesExt
 ```
 
 ```@docs

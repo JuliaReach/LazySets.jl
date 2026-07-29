@@ -1,4 +1,4 @@
-module MiniQhullExt
+module LazySetsMiniQhullExt
 
 using MiniQhull: delaunay
 import LazySets: EmptySet, LazySet, UnionSetArray, VPolytope, dim, ispolytopic,

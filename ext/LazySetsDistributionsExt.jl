@@ -1,11 +1,11 @@
-module DistributionsExt
+module LazySetsDistributionsExt
 
 using Distributions: Normal, UnivariateDistribution
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Distribution: reseed!
 import LazySets: RejectionSampler, _sample_unit_nsphere_muller!
 
-include("Distributions/DistributionsBall2Ext.jl")
+include("Distributions/Ball2Ext.jl")
 
 function RejectionSampler(distr::UnivariateDistribution; tight::Bool=false)
     return RejectionSampler([distr]; tight=tight)

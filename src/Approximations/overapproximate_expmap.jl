@@ -127,7 +127,7 @@ function taylor_expmap_truncation(MZP::MatrixZonotopeProduct, P::S,
 end
 
 function taylor_expmap_remainder(Z, matnorm, k)
-    mod = Base.get_extension(@__MODULE__, :IntervalMatricesExt)
+    mod = Base.get_extension(@__MODULE__, :LazySetsIntervalMatricesExt)
     require(mod, :IntervalMatrices; fun_name="taylor_expmap_remainder")
     error()
 end

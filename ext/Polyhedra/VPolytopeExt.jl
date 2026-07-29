@@ -1,7 +1,7 @@
 using LazySets: LazySet, default_polyhedra_backend, _removevredundancy!
 using LazySets.VPolytopeModule: VPolytope
 using LazySets.HPolytopeModule: HPolytope
-using Polyhedra: VRep, removevredundancy, setvrep!, supportssolver,
+using Polyhedra: VRep, points, removevredundancy, setvrep!, supportssolver,
                  vcartesianproduct, vrep
 import Base: convert
 import LazySets: polyhedron
@@ -10,7 +10,7 @@ import LazySets.VPolytopeModule: _cartesian_product_vrep,
 
 # VPolytope from a VRep
 function convert(::Type{VPolytope}, P::VRep)
-    vertices = collect(Polyhedra.points(P))
+    vertices = collect(points(P))
     return VPolytope(vertices)
 end
 

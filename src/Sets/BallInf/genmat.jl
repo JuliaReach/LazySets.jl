@@ -1,1 +1,1 @@
-# see ext/StaticArraysCoreExt.jl
+# see ext/LazySetsStaticArraysCoreExt.jl

@@ -1,4 +1,4 @@
-module TaylorModelsExt
+module LazySetsTaylorModelsExt
 
 using IntervalArithmetic: Interval, inf, sup
 import LazySets
@@ -11,7 +11,7 @@ using TaylorModels: HomogeneousPolynomial, TaylorModel1, TaylorModelN, Taylor1,
 using TaylorModels.TaylorSeries: numtype  # NOTE: this is an internal function
 import LazySets.Approximations: box_approximation, overapproximate
 
-include("TaylorModels/TaylorModelsSparsePolynomialZonotopeExt.jl")
+include("TaylorModels/SparsePolynomialZonotopeExt.jl")
 
 function _eltype_TM(TMi)
     return numtype(polynomial(TMi))
@@ -232,11 +232,11 @@ This algorithm proceeds in two steps:
     normalization onto the symmetric intervals ``[-1, 1]``.
 """
 function overapproximate(vTM::Vector{TaylorModel1{T,S}}, ::Type{<:Zonotope};
-                            remove_redundant_generators::Bool=true,
-                            normalize::Bool=true) where {T,S}
+                         remove_redundant_generators::Bool=true,
+                         normalize::Bool=true) where {T,S}
     return _overapproximate_vTM_zonotope(vTM, 1, T;
-                                            remove_redundant_generators=remove_redundant_generators,
-                                            normalize=normalize)
+                                         remove_redundant_generators=remove_redundant_generators,
+                                         normalize=normalize)
 end
 
 """

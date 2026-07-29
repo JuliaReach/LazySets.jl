@@ -1,4 +1,4 @@
-module RangeEnclosuresExt
+module LazySetsRangeEnclosuresExt
 
 using IntervalArithmetic: interval, sup
 using LazySets: AbstractSparsePolynomialZonotope, center, dim, expmat,
