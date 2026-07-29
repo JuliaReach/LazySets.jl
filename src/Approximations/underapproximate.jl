@@ -200,50 +200,13 @@ An algorithm is described
 function underapproximate(P::AbstractPolyhedron{N}, ::Type{Ellipsoid};
                           backend=default_sdp_solver(),
                           interior_point::AbstractVector{N}=chebyshev_center_radius(P)[1]) where {N}
-    require(@__MODULE__, :SetProg; fun_name="underapproximate")
     return _underapproximate_ellipsoid(P, Ellipsoid; backend=backend,
                                        interior_point=interior_point)
 end
 
-function load_setprog_underapproximate()
-    return quote
-        function _underapproximate_ellipsoid(P::AbstractPolyhedron{N}, ::Type{Ellipsoid};
-                                             backend=default_sdp_solver(),
-                                             interior_point::AbstractVector{N}=chebyshev_center_radius(P)[1]) where {N}
-            # create SDP model
-            model = Model(backend)
-
-            # create symbolic ellipsoid S
-            point = SetProg.InteriorPoint(interior_point)
-            @variable(model, S, SetProg.Ellipsoid(point=point))
-
-            # add subset constraint
-            Q = polyhedron(P)  # convert P to a Polyhedra.polyhedron
-            @constraint(model, S ⊆ Q)
-
-            # add maximum-volume objective
-            @objective(model, Max, SetProg.nth_root(SetProg.volume(S)))
-
-            # solve SDP
-            optimize!(model)
-
-            # obtain solution
-            set = SetProg.value(S)
-
-            # convert to SetProg representation
-            E = SetProg.Sets.ellipsoid(set)
-
-            # convert result to a LazySets.Ellipsoid
-            return convert(Ellipsoid, E)
-        end
-
-        function convert(::Type{<:Ellipsoid},
-                         TE::SetProg.Sets.Translation{<:SetProg.Sets.Ellipsoid})
-            return Ellipsoid(TE.c, inv(TE.set.Q))
-        end
-
-        function convert(::Type{<:Ellipsoid}, E::SetProg.Sets.Ellipsoid)
-            return Ellipsoid(inv(E.Q))
-        end
-    end # quote
-end # load_setprog_underapproximate
+function _underapproximate_ellipsoid(P, type; backend=default_sdp_solver(),
+                                     interior_point=chebyshev_center_radius(P)[1])
+    mod = Base.get_extension(@__MODULE__, :SetProgExt)
+    require(mod, :SetProg; fun_name="underapproximate")
+    error()
+end
