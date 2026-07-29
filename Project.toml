@@ -3,7 +3,6 @@ uuid = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
 version = "6.1.0"
 
 [deps]
-Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 ExprTools = "e2ba6199-217a-4e67-a87a-7c52f15ade04"
 GLPK = "60bf3e95-4087-53dc-ae20-288a0d20c6a6"
 IntervalArithmetic = "d1acc4aa-44c8-5952-acd4-ba5d80a2a253"
@@ -12,11 +11,11 @@ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 ReachabilityBase = "379f33d0-9447-4353-bd03-d664070e549f"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
-SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [weakdeps]
 CDDLib = "3391f64e-dcde-5f30-b752-e11513730f60"
+Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Expokit = "a1e7a1ef-7a5d-5822-a38c-be74e1bb89f4"
 ExponentialUtilities = "d4d017d3-3776-5f7e-afef-a10c40355c18"
@@ -35,6 +34,7 @@ RangeEnclosures = "1b4d18b6-9e5d-11e9-236c-f792b01831f8"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 SCS = "c946c3f1-0d1f-5ce8-9dea-7daa1f7e2d13"
 SetProg = "39881422-4b75-5582-a5c7-0feb14562a65"
+SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
 SymEngine = "123dc426-2d89-5057-bbad-38513e3affd8"
 SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
@@ -44,6 +44,7 @@ WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
 
 [extensions]
 LazySetsCDDLibExt = "CDDLib"
+LazySetsDistributedExt = ["Distributed", "SharedArrays"]
 LazySetsDistributionsExt = ["Distributions", "Random", "ReachabilityBase"]
 LazySetsExpokitExt = "Expokit"
 LazySetsExponentialUtilitiesExt = "ExponentialUtilities"
