@@ -141,12 +141,6 @@ addconstraint!(::AbstractPolyhedron, ::HalfSpace)
 ishyperplanar(::AbstractPolyhedron)
 ```
 
-Plotting polyhedra is available too:
-
-```@docs
-plot_recipe(::AbstractPolyhedron{N}, ::Any=zero(N)) where {N}
-```
-
 ## Implementations
 
 * [Half-space (HalfSpace)](@ref def_HalfSpace)

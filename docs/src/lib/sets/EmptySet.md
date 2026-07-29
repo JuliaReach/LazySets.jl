@@ -43,7 +43,6 @@ CurrentModule = LazySets.EmptySetModule
 ```
 ```@docs
 rand(::Type{EmptySet})
-plot_recipe(::EmptySet{N}, ::Any=zero(N)) where {N}
 ```
 
 ```@meta

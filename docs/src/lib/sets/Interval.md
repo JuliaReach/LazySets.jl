@@ -131,7 +131,6 @@ CurrentModule = LazySets.IntervalModule
 ```
 ```@docs
 minkowski_difference(::Interval, ::Interval)
-plot_recipe(::Interval{N}, ::Any=zero(N)) where {N}
 min(::Interval)
 max(::Interval)
 ```

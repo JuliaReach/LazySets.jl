@@ -2,11 +2,10 @@ module PolygonModule
 
 using Reexport: @reexport
 
-using ..LazySets: LazySet, _plot_recipe_2d_vlist
+using ..LazySets: LazySet
 
 @reexport import ..API: an_element, dim, isconvextype, isbounded, isboundedtype,
                         isempty, isoperationtype, isuniversal, scale, scale!
-import ..LazySets: plot_recipe
 @reexport using ..API
 
 export Polygon
@@ -26,10 +25,5 @@ include("isuniversal.jl")
 include("scale.jl")
 # include("support_function.jl")
 # include("support_vector.jl")
-
-function plot_recipe(P::Polygon{N}, ε=zero(N)) where {N}
-    vlist = P.vertices
-    return _plot_recipe_2d_vlist(vlist, N)
-end
 
 end  # module

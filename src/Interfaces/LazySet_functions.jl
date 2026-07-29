@@ -760,51 +760,6 @@ contained in `X`.
     return Ballp(p, v, ε) ⊆ X
 end
 
-"""
-    plot_recipe(X::LazySet, [ε])
-
-Convert a compact convex set to a pair `(x, y)` of points for plotting.
-
-### Input
-
-- `X` -- compact convex set
-- `ε` -- approximation-error bound
-
-### Output
-
-A pair `(x, y)` of points that can be plotted.
-
-### Notes
-
-We do not support three-dimensional or higher-dimensional sets at the moment.
-
-### Algorithm
-
-One-dimensional sets are converted to an `Interval`.
-
-For two-dimensional sets, we first compute a polygonal overapproximation.
-The second argument, `ε`, corresponds to the error in Hausdorff distance between
-the overapproximating set and `X`.
-On the other hand, if you only want to produce a fast box-overapproximation of
-`X`, pass `ε=Inf`.
-
-Finally, we use the plot recipe for the constructed set (interval or polygon).
-"""
-function plot_recipe(X::LazySet, ε)
-    @assert dim(X) <= 3 "this implementation cannot plot $(dim(X))-dimensional sets"
-    @assert isbounded(X) "this implementation can only plot bounded sets"
-    @assert isconvex(X) "this implementation can only plot convex sets"
-
-    if dim(X) == 1
-        Y = convert(Interval, X)
-    elseif dim(X) == 2
-        Y = overapproximate(X, ε)
-    else
-        return _plot_recipe_3d_polytope(X)
-    end
-    return plot_recipe(Y, ε)
-end
-
 function _plot_recipe_3d_polytope(P::LazySet, N=eltype(P))
     require(@__MODULE__, :MiniQhull; fun_name="_plot_recipe_3d_polytope")
     @assert ispolytopic(P) "3D plotting is only available for polytopes"
