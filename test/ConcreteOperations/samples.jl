@@ -131,6 +131,7 @@ for N in [Float64]
         @test all(p ∈ S1S2 for p in pts1)
         @test all(p ∈ S1S3 for p in Pts2)
     end
+    @test_throws AssertionError sample(S1S2; sampler=LazySets.RandomWalkSampler())
 
     # test that weighted sampling results in more points in the bigger set
     weighted_pts = sample(S1S3, 100; sampler=LazySets.UnionSampler(; size_weighted=true))
