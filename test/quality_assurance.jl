@@ -54,7 +54,9 @@ using SafeTestsets
                                                :Arr, :get_variables, :gradient, :value,
                                                # ExpokitExt
                                                :_expmv, :exponential_backend,
-                                               :set_exponential_backend!)
+                                               :set_exponential_backend!,
+                                               # RangeEnclosuresExt
+                                               :_ρ_range_enclosures)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:Assertions, :Commutative, :Comparison, :EXACT,
                                                  :Optimizer, :SIMPLEX, :Silent, :commutative,
