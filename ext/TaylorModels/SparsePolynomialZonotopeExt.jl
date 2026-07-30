@@ -7,7 +7,7 @@ using LinearAlgebra: diagm
 using ReachabilityBase.Arrays: SingleEntryVector, remove_zero_columns
 using TaylorModels: TaylorModelN, polynomial, remainder
 using TaylorSeries: HomogeneousPolynomial, TaylorN, constant_term, variables!,
-                    coeff_table, in_base, pos_table  # NOTE: these are internal functions
+                    default_space, in_base  # NOTE: these are internal functions
 import Base: convert
 
 # check that a vector of Taylor models has the [-1, 1] domain
@@ -47,7 +47,7 @@ function convert(::Type{SparsePolynomialZonotope}, vTM::Vector{<:TaylorModelN{r,
                 if iszero(coeff_k)
                     continue
                 end
-                Ej = coeff_table[order][k]
+                Ej = pol.space.coeff_table[order][k]
                 j = findfirst(e -> e == Ej, Es)
                 if isnothing(j)
                     total_columns += 1
@@ -79,7 +79,10 @@ function convert(::Type{Vector{<:TaylorModelN}}, P::SparsePolynomialZonotope{N})
     poly_order = polynomial_order(P)
     z = zeros(Int, q)
     # we need to rewrite the global variables
-    variables!("x"; order=poly_order, numvars=r)
+    space = default_space[]
+    if space.num_vars != r || space.order != poly_order
+        variables!("x"; numvars=r, order=poly_order, nowarn=true)
+    end
     # the following vectors are shared for each polynomial
     rem = zero_itv(N)
     dom = sym_box(r, N)
@@ -106,8 +109,9 @@ function convert(::Type{Vector{<:TaylorModelN}}, P::SparsePolynomialZonotope{N})
             Ej = E[:, j]
             ord = sum(Ej)
             G[i, j]
-            idx = pos_table[ord + 1][in_base(poly_order, Ej)]
-            l = length(coeff_table[ord + 1])
+            space = coeffs[ord + 1].space
+            idx = space.pos_table[ord + 1][in_base(poly_order, Ej)]
+            l = length(space.coeff_table[ord + 1])
             v = Vector(SingleEntryVector(idx, l, G[i, j]))
             pj = HomogeneousPolynomial(v, ord)
             coeffs[ord + 1] += pj
