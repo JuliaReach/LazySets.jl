@@ -240,13 +240,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @static if isdefined(@__MODULE__, :TaylorModels)
         using .LazySetsTaylorModelsExt: get_linear_coeffs, _nonlinear_polynomial
 
-        local x₁, x₂, x₃ = TaylorModels.set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
+        local x₁, x₂, x₃ = TaylorModels.variables!(N, ["x₁", "x₂", "x₃"]; order=5)
         Dx₁ = IA.interval(N(1.0), N(3.0))
         Dx₂ = IA.interval(N(-1.0), N(1.0))
         Dx₃ = IA.interval(N(-1.0), N(0.0))
-        D = [Dx₁, Dx₂, Dx₃]   # domain
+        D = [Dx₁, Dx₂, Dx₃]  # domain
         local x0 = [IA.interval(IA.mid(di)) for di in D]
-        I = IA.interval(N(0.0), N(0.0)) # interval remainder
+        I = IA.interval(N(0.0), N(0.0))  # interval remainder
         local p₁ = 1 + x₁ - x₂
         local p₂ = x₃ - x₁
         local vTM = [TaylorModels.TaylorModelN(pi, I, x0, D) for pi in [p₁, p₂]]
@@ -254,16 +254,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test isequivalent(Z1, Zonotope(N[3, -2.5], N[0 1 1; 0.5 -1 0]))
 
         # auxiliary function to get the linear coefficients
-        t = TaylorModels.Taylor1(N, 0) # get_order(t) is 0
+        t = TaylorModels.Taylor1(N, 0)  # TaylorModels.order(t) is 0
         @test get_linear_coeffs(t) == N[0]
         p = x₁ + 2x₂ - 3x₃
         @test get_linear_coeffs(p) == N[1, 2, -3]
-        y = TaylorModels.set_variables("y"; numvars=2, order=1)
+        y = TaylorModels.variables!("y"; numvars=2, order=1)
         p = zero(y[1])
         @test get_linear_coeffs(p) == N[0, 0]
 
         # auxiliary function to get nonlinear coefficients of TaylorN
-        x = TaylorModels.set_variables("x"; numvars=2, order=10)
+        x = TaylorModels.variables!("x"; numvars=2, order=10)
 
         p = (1 + x[1] - 2x[2])^2
         @test get_linear_coeffs(p) == [2.0, -4.0]
@@ -284,7 +284,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         p = (1 + x[1] - 2x[2])^2
         @test _nonlinear_polynomial(p) == x[1]^2 - 4x[1] * x[2] + 4x[2]^2
 
-        x = TaylorModels.set_variables("x"; numvars=2, order=1)
+        x = TaylorModels.variables!("x"; numvars=2, order=1)
 
         p = 1234.5 + 0 * x[1] + 0 * x[2]
         @test get_linear_coeffs(p) == [0.0, 0.0]
@@ -300,7 +300,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test _nonlinear_polynomial(qq) == 3t^2 + 6t^3
 
         # overapproximate with non-thin interval
-        local x₁, x₂ = TaylorModels.set_variables(N, ["x₁", "x₂"]; order=5)
+        local x₁, x₂ = TaylorModels.variables!(N, ["x₁", "x₂"]; order=5)
         D = [IA.interval(N(0), N(1)), IA.interval(N(0), N(1))]
         local x0 = [IA.interval(N(0)) for di in D]
         local p₁ = -0.5889978124894689 + 1.1134797677046997 * x₁ + 0.3335653797529812 * x₂

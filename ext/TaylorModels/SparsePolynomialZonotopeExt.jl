@@ -5,9 +5,9 @@ using LazySets: center, dim, expmat, genmat_dep, genmat_indep, ngens_dep,
 using LazySets.SparsePolynomialZonotopeModule: SparsePolynomialZonotope
 using LinearAlgebra: diagm
 using ReachabilityBase.Arrays: SingleEntryVector, remove_zero_columns
-using TaylorModels: TaylorModelN, constant_term, polynomial, remainder
-using TaylorModels.TaylorSeries: HomogeneousPolynomial, TaylorN, set_variables,
-                                 coeff_table, in_base, pos_table  # NOTE: these are internal functions
+using TaylorModels: TaylorModelN, polynomial, remainder
+using TaylorSeries: HomogeneousPolynomial, TaylorN, constant_term, variables!,
+                    coeff_table, in_base, pos_table  # NOTE: these are internal functions
 import Base: convert
 
 # check that a vector of Taylor models has the [-1, 1] domain
@@ -79,7 +79,7 @@ function convert(::Type{Vector{<:TaylorModelN}}, P::SparsePolynomialZonotope{N})
     poly_order = polynomial_order(P)
     z = zeros(Int, q)
     # we need to rewrite the global variables
-    set_variables("x"; order=poly_order, numvars=r)
+    variables!("x"; order=poly_order, numvars=r)
     # the following vectors are shared for each polynomial
     rem = zero_itv(N)
     dom = sym_box(r, N)
