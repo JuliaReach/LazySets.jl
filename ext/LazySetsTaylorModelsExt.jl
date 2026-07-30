@@ -1,14 +1,14 @@
 module LazySetsTaylorModelsExt
 
-using IntervalArithmetic: Interval, inf, sup
+using IntervalArithmetic: Interval, inf, mid, sup
 import LazySets
 using LazySets.HyperrectangleModule: Hyperrectangle
 using LazySets.ZonotopeModule: Zonotope
-using TaylorModels: HomogeneousPolynomial, TaylorModel1, TaylorModelN, Taylor1,
-                    TaylorN, constant_term, domain, evaluate, get_numvars,
-                    get_order, linear_polynomial, mid, normalize_taylor,
-                    polynomial, remainder
-using TaylorModels.TaylorSeries: numtype  # NOTE: this is an internal function
+using TaylorModels: TaylorModel1, TaylorModelN, domain, polynomial, remainder
+using TaylorSeries: HomogeneousPolynomial, Taylor1, TaylorN, constant_term,
+                    evaluate, get_numvars, linear_polynomial, normalize_taylor,
+                    order,
+                    numtype  # NOTE: this is an internal function
 import LazySets.Approximations: box_approximation, overapproximate
 
 include("TaylorModels/SparsePolynomialZonotopeExt.jl")
@@ -32,7 +32,7 @@ end
 
 # internal helper function
 @inline function get_linear_coeffs(p::Taylor1)
-    if get_order(p) == 0
+    if order(p) == 0
         return zeros(eltype(p), 1)
     end
     return linear_polynomial(p).coeffs[2:2]
@@ -40,7 +40,7 @@ end
 
 # internal helper function
 @inline function get_linear_coeffs(p::TaylorN)
-    if get_order(p) == 0
+    if order(p) == 0
         n = get_numvars()
         return zeros(eltype(p), n)
     end
@@ -52,7 +52,7 @@ end
 @inline function _nonlinear_polynomial(p::Taylor1{T}) where {T}
     pnl = deepcopy(p)
     pnl.coeffs[1] = zero(T)
-    if get_order(p) > 0
+    if order(p) > 0
         pnl.coeffs[2] = zero(T)
     end
     return pnl
@@ -62,7 +62,7 @@ end
 @inline function _nonlinear_polynomial(p::TaylorN{T}) where {T}
     pnl = deepcopy(p)
     pnl.coeffs[1] = HomogeneousPolynomial([zero(T)])
-    if get_order(p) > 0
+    if order(p) > 0
         pnl.coeffs[2] = HomogeneousPolynomial([zero(T)])
     end
     return pnl
@@ -281,7 +281,7 @@ julia> using LazySets, TaylorModels
 
 julia> const IA = IntervalArithmetic;
 
-julia> x₁, x₂ = set_variables(Float64, ["x₁", "x₂"], order=8)
+julia> x₁, x₂ = variables!(Float64, ["x₁", "x₂"], order=8)
 2-element Vector{TaylorN{Float64}}:
   1.0 x₁ + 𝒪(‖x‖⁹)
   1.0 x₂ + 𝒪(‖x‖⁹)

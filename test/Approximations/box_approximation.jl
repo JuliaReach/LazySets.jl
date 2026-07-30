@@ -122,7 +122,7 @@ for N in [Float64, Float32]
         local vTM = [TaylorModels.TaylorModel1(q₁, I, x0, D)]
         @test box_approximation(vTM) == Hyperrectangle(N[2], N[3])
         # TaylorModelN
-        local x₁, x₂, x₃ = TaylorModels.set_variables(N, ["x₁", "x₂", "x₃"]; order=5)
+        local x₁, x₂, x₃ = TaylorModels.variables!(N, ["x₁", "x₂", "x₃"]; order=5)
         local p₁ = 1 + x₁ - x₂
         local p₂ = x₃ - x₁
         Dx₁ = IA.interval(N(-1), N(1))
