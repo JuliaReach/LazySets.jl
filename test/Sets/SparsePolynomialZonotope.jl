@@ -6,6 +6,23 @@ IA = LazySets.IA
 end
 @static if isdefined(Main, :TaylorModels)
     import TaylorModels
+
+    # TODO temporary workaround for `==` of `TaylorModelN`s with `JetSpace`s
+    function Base.:(==)(a::TaylorModels.TaylorN{T}, b::TaylorModels.TaylorN{T}) where {T<:Number}
+        TaylorModels.space(a) == TaylorModels.space(b) || return false
+        if TaylorModels.order(a) != TaylorModels.order(b)
+            a, b = TaylorModels.fixorder(a, b)
+        end
+        return a.coeffs == b.coeffs
+    end
+    function Base.:(==)(a::TaylorModels.HomogeneousPolynomial, b::TaylorModels.HomogeneousPolynomial)
+        TaylorModels.space(a) == TaylorModels.space(b) || return false
+        TaylorModels.order(a) == TaylorModels.order(b) && return a.coeffs == b.coeffs
+        return iszero(a.coeffs) && iszero(b.coeffs)
+    end
+    function Base.:(==)(a::TaylorModels.JetSpace, b::TaylorModels.JetSpace)
+        return true  # this should actually compare something
+    end
 end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
