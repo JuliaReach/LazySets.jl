@@ -4,11 +4,8 @@ using SafeTestsets
     using Test
     import LazySets, ExplicitImports
 
-    ignores_all_explicit_imports_are_public = (:GLOBAL_RNG, :SamplerType, :invokelatest, :parse,
-                                               :apply_recipe, :product, :checksquare, :Mesh,
-                                               :coeff_table, :in_base, :numtype, :pos_table,
-                                               :AbstractEnclosureAlgorithm, :_exp_remainder,
-                                               :BasicSymbolic, :Symbolic, :Arrays,
+    ignores_all_explicit_imports_are_public = (:GLOBAL_RNG, :SamplerType, :product, :checksquare,
+                                               :Arrays,
                                                Symbol("@assert"),
                                                # package extensions
                                                # LazySetsExt
@@ -34,7 +31,8 @@ using SafeTestsets
                                                :_witness_result_empty, Symbol("@validate"),
                                                Symbol("@validate_commutative"),
                                                # LazySetsRecipesBaseExt
-                                               :plot_recipe, :plot_vlist, :_plot_recipe_3d_polytope,
+                                               :apply_recipe, :plot_recipe, :plot_vlist,
+                                               :_plot_recipe_3d_polytope,
                                                # LazySetsDistributionsExt
                                                :RejectionSampler, :_sample_unit_nball_muller!,
                                                :_sample_unit_nsphere_muller!,
@@ -46,17 +44,19 @@ using SafeTestsets
                                                # LazySetsMakieExt
                                                :Automatic,
                                                # LazySetsIntervalConstraintProgrammingExt
+                                               :invokelatest, :parse,
                                                :_contract_zonotope_halfspace_ICP,
                                                # LazySetsSetProgExt
                                                :InteriorPoint, :Translation, :ellipsoid,
                                                :_underapproximate_ellipsoid, :default_sdp_solver,
                                                # LazySetsSymbolicsExt (not needed in v"1.12")
-                                               :Arr, :get_variables, :gradient, :value,
+                                               :Arr, :BasicSymbolic, :Symbolic, :get_variables,
+                                               :gradient, :value,
                                                # LazySetsExpokitExt
                                                :_expmv, :exponential_backend,
                                                :set_exponential_backend!,
                                                # LazySetsRangeEnclosuresExt
-                                               :_ρ_range_enclosures,
+                                               :AbstractEnclosureAlgorithm, :_ρ_range_enclosures,
                                                # LazySetsOptimExt
                                                :_line_search_optim,
                                                # LazySetsMiniQhullExt
@@ -76,7 +76,8 @@ using SafeTestsets
                                                :dir_south, :dir_west,
                                                # LazySetsPolyhedraExt
                                                :EXACT, :EliminationAlgorithm, :GLPK_ON,
-                                               :LinearMapElimination, :default_lp_solver_polyhedra,
+                                               :LinearMapElimination, :Mesh,
+                                               :default_lp_solver_polyhedra,
                                                :default_polyhedra_backend_1d,
                                                :default_polyhedra_backend_nd, :hcartesianproduct,
                                                :hvectortype, :setvrep!, :supportssolver,
@@ -90,7 +91,8 @@ using SafeTestsets
                                                :_minkowski_sum_hrep_preprocess,
                                                :_removehredundancy!, :_removevredundancy!,
                                                :_remove_redundant_vertices, :_vertices_list,
-                                               # LazySetsPolyhedraExt
+                                               # LazySetsTaylorModelsExt
+                                               :coeff_table, :in_base, :numtype, :pos_table,
                                                :sym_box, :sym_itv, :zero_box, :zero_itv)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:EXACT, :SIMPLEX, :Assertions, :Commutative,
