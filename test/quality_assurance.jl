@@ -30,50 +30,31 @@ using SafeTestsets
                                                :_σ_hyperplane_halfspace, :_σ_vertices, :_tohrep,
                                                :_witness_result_empty, Symbol("@validate"),
                                                Symbol("@validate_commutative"),
-                                               # LazySetsRecipesBaseExt
-                                               :apply_recipe, :plot_recipe, :plot_vlist,
-                                               :_plot_recipe_3d_polytope,
+                                               # LazySetsCDDLibExt
+                                               :Library, :default_cddlib_backend,
                                                # LazySetsDistributionsExt
                                                :RejectionSampler, :_sample_unit_nball_muller!,
                                                :_sample_unit_nsphere_muller!,
-                                               # LazySetsSCSExt
-                                               :Optimizer, :OptimizerWithAttributes, :Silent,
-                                               :sdp_solver, :set_sdp_solver!, :_default_sdp_solver,
+                                               # LazySetsExpokitExt
+                                               :_expmv, :exponential_backend,
+                                               :set_exponential_backend!,
+                                               # LazySetsIntervalBoxesExt
+                                               :_difference,
+                                               # LazySetsIntervalConstraintProgrammingExt
+                                               :invokelatest, :parse,
+                                               :_contract_zonotope_halfspace_ICP,
+                                               # LazySetsIntervalMatricesExt
+                                               :_exp_remainder, :taylor_expmap_remainder,
+                                               # LazySetsGeometryBasicsExt
+                                               :_area_polytope_3D, :_area_triangle_3D!,
                                                # LazySetsIpoptExt
                                                :_default_nln_solver,
                                                # LazySetsMakieExt
                                                :Automatic,
-                                               # LazySetsIntervalConstraintProgrammingExt
-                                               :invokelatest, :parse,
-                                               :_contract_zonotope_halfspace_ICP,
-                                               # LazySetsSetProgExt
-                                               :InteriorPoint, :Translation, :ellipsoid,
-                                               :_underapproximate_ellipsoid, :default_sdp_solver,
-                                               # LazySetsSymbolicsExt (not needed in v"1.12")
-                                               :Arr, :BasicSymbolic, :Symbolic, :get_variables,
-                                               :gradient, :value,
-                                               # LazySetsExpokitExt
-                                               :_expmv, :exponential_backend,
-                                               :set_exponential_backend!,
-                                               # LazySetsRangeEnclosuresExt
-                                               :AbstractEnclosureAlgorithm, :_ρ_range_enclosures,
-                                               # LazySetsOptimExt
-                                               :_line_search_optim,
                                                # LazySetsMiniQhullExt
                                                :_triangulate_delaunay,
-                                               # LazySetsCDDLibExt
-                                               :Library, :default_cddlib_backend,
-                                               # LazySetsIntervalBoxesExt
-                                               :_difference,
-                                               # LazySetsGeometryBasicsExt
-                                               :_area_polytope_3D, :_area_triangle_3D!,
-                                               # LazySetsIntervalMatricesExt
-                                               :_exp_remainder, :taylor_expmap_remainder,
-                                               # LazySetsStaticArraysCoreExt
-                                               :AbstractReductionMethod, :GIR05, :_convert_static,
-                                               :_genmat_static, :_hcat_KLred, :_interval_hull,
-                                               :_split_ret, :_to_colVector, :dir_east, :dir_north,
-                                               :dir_south, :dir_west,
+                                               # LazySetsOptimExt
+                                               :_line_search_optim,
                                                # LazySetsPolyhedraExt
                                                :EXACT, :EliminationAlgorithm, :GLPK_ON,
                                                :LinearMapElimination, :Mesh,
@@ -91,6 +72,25 @@ using SafeTestsets
                                                :_minkowski_sum_hrep_preprocess,
                                                :_removehredundancy!, :_removevredundancy!,
                                                :_remove_redundant_vertices, :_vertices_list,
+                                               # LazySetsRangeEnclosuresExt
+                                               :AbstractEnclosureAlgorithm, :_ρ_range_enclosures,
+                                               # LazySetsRecipesBaseExt
+                                               :apply_recipe, :plot_recipe, :plot_vlist,
+                                               :_plot_recipe_3d_polytope,
+                                               # LazySetsSCSExt
+                                               :Optimizer, :OptimizerWithAttributes, :Silent,
+                                               :sdp_solver, :set_sdp_solver!, :_default_sdp_solver,
+                                               # LazySetsSetProgExt
+                                               :InteriorPoint, :Translation, :ellipsoid,
+                                               :_underapproximate_ellipsoid, :default_sdp_solver,
+                                               # LazySetsStaticArraysCoreExt
+                                               :AbstractReductionMethod, :GIR05, :_convert_static,
+                                               :_genmat_static, :_hcat_KLred, :_interval_hull,
+                                               :_split_ret, :_to_colVector, :dir_east, :dir_north,
+                                               :dir_south, :dir_west,
+                                               # LazySetsSymbolicsExt (not needed in v"1.12")
+                                               :Arr, :BasicSymbolic, :Symbolic, :get_variables,
+                                               :gradient, :value,
                                                # LazySetsTaylorModelsExt
                                                :coeff_table, :in_base, :numtype, :pos_table,
                                                :sym_box, :sym_itv, :zero_box, :zero_itv)
