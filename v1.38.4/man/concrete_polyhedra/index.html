@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Concrete Polyhedra · LazySets.jl</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/juliareach.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="LazySets.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit">LazySets.jl</span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="../getting_started/">Getting Started</a></li><li><a class="tocitem" href="../convex_sets/">Introduction to Convex Sets</a></li><li><a class="tocitem" href="../polyhedral_approximations/">Polyhedral Approximations</a></li><li><a class="tocitem" href="../decompose_example/">Decomposing an Affine Map</a></li><li><a class="tocitem" href="../fast_2d_LPs/">Fast 2D LPs</a></li><li><a class="tocitem" href="../iterative_refinement/">Iterative Refinement</a></li><li><a class="tocitem" href="../interval_hulls/">Interval Hulls</a></li><li><a class="tocitem" href="../convex_hulls/">Convex Hulls</a></li><li><a class="tocitem" href="../set_operations/">Operations on Sets</a></li><li><a class="tocitem" href="../reach_zonotopes/">A Reachability Algorithm</a></li><li><a class="tocitem" href="../reach_zonotopes_hybrid/">A Hybrid Reachability Algorithm</a></li><li class="is-active"><a class="tocitem" href>Concrete Polyhedra</a><ul class="internal"><li><a class="tocitem" href="#Creating-polyhedra"><span>Creating polyhedra</span></a></li><li><a class="tocitem" href="#Methods"><span>Methods</span></a></li><li><a class="tocitem" href="#Projections"><span>Projections</span></a></li></ul></li><li><a class="tocitem" href="../parallel_approximations/">Parallel Approximations</a></li><li><a class="tocitem" href="../lazy_intersections/">Lazy Intersections</a></li></ul></li><li><span class="tocitem">Library</span><ul><li><a class="tocitem" href="../../lib/interfaces/">Interfaces</a></li><li><input class="collapse-toggle" id="menuitem-3-2" type="checkbox"/><label class="tocitem" for="menuitem-3-2"><span class="docs-label">Sets</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../lib/sets/Ball1/">Ball1</a></li><li><a class="tocitem" href="../../lib/sets/Ball2/">Ball2</a></li><li><a class="tocitem" href="../../lib/sets/BallInf/">BallInf</a></li><li><a class="tocitem" href="../../lib/sets/Ballp/">Ballp</a></li><li><a class="tocitem" href="../../lib/sets/Ellipsoid/">Ellipsoid</a></li><li><a class="tocitem" href="../../lib/sets/EmptySet/">EmptySet</a></li><li><a class="tocitem" href="../../lib/sets/HalfSpace/">HalfSpace</a></li><li><a class="tocitem" href="../../lib/sets/HPolygon/">HPolygon</a></li><li><a class="tocitem" href="../../lib/sets/HPolygonOpt/">HPolygonOpt</a></li><li><a class="tocitem" href="../../lib/sets/HPolyhedron/">HPolyhedron</a></li><li><a class="tocitem" href="../../lib/sets/HPolytope/">HPolytope</a></li><li><a class="tocitem" href="../../lib/sets/Hyperplane/">Hyperplane</a></li><li><a class="tocitem" href="../../lib/sets/Hyperrectangle/">Hyperrectangle</a></li><li><a class="tocitem" href="../../lib/sets/Interval/">Interval</a></li><li><a class="tocitem" href="../../lib/sets/Line2D/">Line2D</a></li><li><a class="tocitem" href="../../lib/sets/Line/">Line</a></li><li><a class="tocitem" href="../../lib/sets/LineSegment/">LineSegment</a></li><li><a class="tocitem" href="../../lib/sets/PolynomialZonotope/">PolynomialZonotope</a></li><li><a class="tocitem" href="../../lib/sets/Singleton/">Singleton</a></li><li><a class="tocitem" href="../../lib/sets/Universe/">Universe</a></li><li><a class="tocitem" href="../../lib/sets/VPolygon/">VPolygon</a></li><li><a class="tocitem" href="../../lib/sets/VPolytope/">VPolytope</a></li><li><a class="tocitem" href="../../lib/sets/ZeroSet/">ZeroSet</a></li><li><a class="tocitem" href="../../lib/sets/Zonotope/">Zonotope</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-3-3" type="checkbox"/><label class="tocitem" for="menuitem-3-3"><span class="docs-label">Lazy Operations</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../lib/lazy_operations/AffineMap/">AffineMap</a></li><li><a class="tocitem" href="../../lib/lazy_operations/Bloating/">Bloating</a></li><li><a class="tocitem" href="../../lib/lazy_operations/CartesianProduct/">CartesianProduct</a></li><li><a class="tocitem" href="../../lib/lazy_operations/Complement/">Complement</a></li><li><a class="tocitem" href="../../lib/lazy_operations/ConvexHull/">ConvexHull</a></li><li><a class="tocitem" href="../../lib/lazy_operations/ExponentialMap/">ExponentialMap</a></li><li><a class="tocitem" href="../../lib/lazy_operations/Intersection/">Intersection</a></li><li><a class="tocitem" href="../../lib/lazy_operations/LinearMap/">LinearMap</a></li><li><a class="tocitem" href="../../lib/lazy_operations/MinkowskiSum/">MinkowskiSum</a></li><li><a class="tocitem" href="../../lib/lazy_operations/Rectification/">Rectification</a></li><li><a class="tocitem" href="../../lib/lazy_operations/ResetMap/">ResetMap</a></li><li><a class="tocitem" href="../../lib/lazy_operations/SymmetricIntervalHull/">SymmetricIntervalHull</a></li><li><a class="tocitem" href="../../lib/lazy_operations/Translation/">Translation</a></li><li><a class="tocitem" href="../../lib/lazy_operations/UnionSet/">UnionSet</a></li></ul></li><li><a class="tocitem" href="../../lib/binary_functions/">Concrete Operations</a></li><li><a class="tocitem" href="../../lib/conversion/">Conversions between set representations</a></li><li><a class="tocitem" href="../../lib/comparisons/">Comparisons</a></li><li><a class="tocitem" href="../../lib/approximations/">Approximations</a></li><li><a class="tocitem" href="../../lib/utils/">Utility Functions</a></li><li><a class="tocitem" href="../../lib/parallel/">Parallel</a></li></ul></li><li><a class="tocitem" href="../../about/">About</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li class="is-active"><a href>Concrete Polyhedra</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Concrete Polyhedra</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/JuliaReach/LazySets.jl/blob/master/docs/src/man/concrete_polyhedra.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Concrete-Polyhedra"><a class="docs-heading-anchor" href="#Concrete-Polyhedra">Concrete Polyhedra</a><a id="Concrete-Polyhedra-1"></a><a class="docs-heading-anchor-permalink" href="#Concrete-Polyhedra" title="Permalink"></a></h1><p>The focus of <code>LazySets.jl</code> is to wrap set representations and operations into specialized types, delaying the evaluation of the result of an expression until it is necessary. However, sometimes it is desirable to perform an explicit computation. For concrete operations with polyhedra we rely on the polyhedra manipulation library <a href="https://github.com/JuliaPolyhedra/Polyhedra.jl"><code>Polyhedra.jl</code></a>.</p><p><code>Polyhedra.jl</code> provides a unified interface to well-known implementations of polyhedral computations (which we also call <em>backends</em>) such as <em>CDD</em> or <em>LRS</em>. See the complete list in <a href="https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation/#Getting-Libraries-1">the documentation of <code>Polyhedra.jl</code></a>. This is a great advantage because we can easily use a library that supports floating point arithmetic, rational arithmetic, multiple precision, etc. The libraries also include projection and elimination of variables through Fourier-Motzkin. If you are interested in specific numeric types different from the default <code>Float64</code>, such as <code>Float32</code>, these may not be supported by the backend, in which case Julia may automatically promote to, e.g., <code>Float64</code>. As an example, <em>CDD</em> (which is used via the wrapper package <a href="https://github.com/JuliaPolyhedra/CDDLib.jl"><code>CDDLib.jl</code></a>) can only be used with numeric type <code>Float64</code> for floating-point arithmetic and with numeric type <code>Rational{BigInt}</code> for exact arithmetic.</p><p>Below we give examples of operations that are performed using <code>Polyhedra.jl</code>.</p><ul><li><a href="#Concrete-Polyhedra">Concrete Polyhedra</a></li><ul><li><a href="#Creating-polyhedra">Creating polyhedra</a></li><li><a href="#Methods">Methods</a></li><li><a href="#Projections">Projections</a></li></ul></ul><h2 id="Creating-polyhedra"><a class="docs-heading-anchor" href="#Creating-polyhedra">Creating polyhedra</a><a id="Creating-polyhedra-1"></a><a class="docs-heading-anchor-permalink" href="#Creating-polyhedra" title="Permalink"></a></h2><p>To use the <code>Polyhedra.jl</code> interface, you need to load the package with <code>using Polyhedra</code>. Let&#39;s create an H-representation object:</p><pre><code class="language-julia">using Plots, LazySets, Polyhedra, LinearAlgebra
+
+A = [1. 1;1 -1;-1 0]
+b = [1.,0,0]
+H = Polyhedra.hrep(A, b)</code></pre><pre class="documenter-example-output">H-representation Polyhedra.MixedMatHRep{Float64,Array{Float64,2}}:
+3-element iterator of Polyhedra.HalfSpace{Float64,Array{Float64,1}}:
+ HalfSpace([1.0, 1.0], 1.0)
+ HalfSpace([1.0, -1.0], 0.0)
+ HalfSpace([-1.0, 0.0], 0.0)</pre><p>It is used to instantiate a new polyhedron:</p><pre><code class="language-julia">p = polyhedron(H)</code></pre><pre class="documenter-example-output">Polyhedron Polyhedra.DefaultPolyhedron{Float64,Polyhedra.MixedMatHRep{Float64,Array{Float64,2}},Polyhedra.MixedMatVRep{Float64,Array{Float64,2}}}:
+3-element iterator of Polyhedra.HalfSpace{Float64,Array{Float64,1}}:
+ HalfSpace([1.0, 1.0], 1.0)
+ HalfSpace([1.0, -1.0], 0.0)
+ HalfSpace([-1.0, 0.0], 0.0)</pre><p>Now, <code>p</code> is of the generic type <code>Polyhedra.SimplePolyhedron{2,Float64, ...}</code>, where <code>2</code> states for its ambient dimension, and <code>Float64</code> the numeric field. The remaining fields specify the type of representation:</p><pre><code class="language-julia">typeof(p)</code></pre><pre class="documenter-example-output">Polyhedra.DefaultPolyhedron{Float64,Polyhedra.MixedMatHRep{Float64,Array{Float64,2}},Polyhedra.MixedMatVRep{Float64,Array{Float64,2}}}</pre><p>Observe that we can use a particular backend, such as the <code>CDD</code> library:</p><pre><code class="language-julia">using CDDLib
+
+p = polyhedron(H, CDDLib.Library())</code></pre><pre class="documenter-example-output">Polyhedron CDDLib.Polyhedron{Float64}:
+3-element iterator of Polyhedra.HalfSpace{Float64,Array{Float64,1}}:
+ HalfSpace([1.0, 1.0], 1.0)
+ HalfSpace([1.0, -1.0], 0.0)
+ HalfSpace([-1.0, 0.0], 0.0)</pre><p>On the other hand, a <code>LazySets.HPolytope</code> object can be constructed from <code>p</code>:</p><pre><code class="language-julia">x = HPolytope(p)
+x.constraints</code></pre><pre class="documenter-example-output">3-element Array{HalfSpace{Float64,Array{Float64,1}},1}:
+ HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0], 1.0)
+ HalfSpace{Float64,Array{Float64,1}}([1.0, -1.0], 0.0)
+ HalfSpace{Float64,Array{Float64,1}}([-1.0, 0.0], 0.0)</pre><p>Conversely, from a <code>HPolytope</code> we can build a polyhedron:</p><pre><code class="language-julia">y = polyhedron(x)
+typeof(y)</code></pre><pre class="documenter-example-output">Polyhedra.DefaultPolyhedron{Float64,Polyhedra.MixedMatHRep{Float64,Array{Float64,2}},Polyhedra.MixedMatVRep{Float64,Array{Float64,2}}}</pre><p>Moreover, you can specify the backend with an extra argument. For instance, we can use an exact representation through the <code>Library(:exact)</code>:</p><pre><code class="language-julia">A, b = Rational{Int}[1 1;1 -1;-1 0], Rational{Int}[1,0,0]
+p = HPolytope(A, b)
+
+polyhedron(p; backend=CDDLib.Library(:exact))</code></pre><pre class="documenter-example-output">Polyhedron CDDLib.Polyhedron{Rational{BigInt}}:
+3-element iterator of Polyhedra.HalfSpace{Rational{BigInt},Array{Rational{BigInt},1}}:
+ HalfSpace(Rational{BigInt}[1//1, 1//1], 1//1)
+ HalfSpace(Rational{BigInt}[1//1, -1//1], 0//1)
+ HalfSpace(Rational{BigInt}[-1//1, 0//1], 0//1)</pre><h2 id="Methods"><a class="docs-heading-anchor" href="#Methods">Methods</a><a id="Methods-1"></a><a class="docs-heading-anchor-permalink" href="#Methods" title="Permalink"></a></h2><p>The utility methods available are convex hull, intersection and cartesian product. The dual representation as a list of vertices can be obtained with the <code>vertices_list</code> function.</p><pre><code class="language-julia">p = HPolytope([LinearConstraint([1.0, 0.0], 1.0),
+               LinearConstraint([0.0, 1.0], 1.0),
+               LinearConstraint([-1.0, 0.0], 1.0),
+               LinearConstraint([0.0, -1.0], 1.0)])
+
+constraints_list(p)</code></pre><pre class="documenter-example-output">4-element Array{HalfSpace{Float64,Array{Float64,1}},1}:
+ HalfSpace{Float64,Array{Float64,1}}([1.0, 0.0], 1.0)
+ HalfSpace{Float64,Array{Float64,1}}([0.0, 1.0], 1.0)
+ HalfSpace{Float64,Array{Float64,1}}([-1.0, 0.0], 1.0)
+ HalfSpace{Float64,Array{Float64,1}}([0.0, -1.0], 1.0)</pre><pre><code class="language-julia">vertices_list(p)</code></pre><pre class="documenter-example-output">4-element Array{Array{Float64,1},1}:
+ [1.0, 1.0]
+ [-1.0, 1.0]
+ [-1.0, -1.0]
+ [1.0, -1.0]</pre><p>For example, the concrete intersection of two polytopes is performed with the <code>intersection</code> method.</p><pre><code class="language-julia">E = Ellipsoid(ones(2), Diagonal([2.0, 0.5]))
+B = Ball1([2.5, 1.5], .8)
+
+import LazySets.Approximations.overapproximate
+polyoverapprox(x) = HPolytope(overapproximate(x, 1e-3).constraints)
+
+Epoly = polyoverapprox(E)
+Bpoly = polyoverapprox(B)
+X = intersection(Epoly, Bpoly)
+
+plot(E, 1e-3, aspectratio=1, alpha=0.4)
+plot!(B, 1e-3, alpha=0.4)
+plot!(X, 1e-3, alpha=0.4, color=&quot;black&quot;)</code></pre><?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="400" viewBox="0 0 2400 1600">
+<defs>
+  <clipPath id="clip400">
+    <rect x="0" y="0" width="2400" height="1600"/>
+  </clipPath>
+</defs>
+<path clip-path="url(#clip400)" d="
+M0 1600 L2400 1600 L2400 0 L0 0  Z
+  " fill="#ffffff" fill-rule="evenodd" fill-opacity="1"/>
+<defs>
+  <clipPath id="clip401">
+    <rect x="480" y="0" width="1681" height="1600"/>
+  </clipPath>
+</defs>
+<path clip-path="url(#clip400)" d="
+M146.853 1486.45 L2352.76 1486.45 L2352.76 47.2441 L146.853 47.2441  Z
+  " fill="#ffffff" fill-rule="evenodd" fill-opacity="1"/>
+<defs>
+  <clipPath id="clip402">
+    <rect x="146" y="47" width="2207" height="1440"/>
+  </clipPath>
+</defs>
+<polyline clip-path="url(#clip402)" style="stroke:#000000; stroke-width:2; stroke-opacity:0.1; fill:none" points="
+  441.364,1486.45 441.364,47.2441 
+  "/>
+<polyline clip-path="url(#clip402)" style="stroke:#000000; stroke-width:2; stroke-opacity:0.1; fill:none" points="
+  1001.66,1486.45 1001.66,47.2441 
+  "/>
+<polyline clip-path="url(#clip402)" style="stroke:#000000; stroke-width:2; stroke-opacity:0.1; fill:none" points="
+  1561.95,1486.45 1561.95,47.2441 
+  "/>
+<polyline clip-path="url(#clip402)" style="stroke:#000000; stroke-width:2; stroke-opacity:0.1; fill:none" points="
+  2122.24,1486.45 2122.24,47.2441 
+  "/>
+<polyline clip-path="url(#clip400)" style="stroke:#000000; stroke-width:4; stroke-opacity:1; fill:none" points="
+  146.853,1486.45 2352.76,1486.45 
+  "/>
+<polyline clip-path="url(#clip400)" style="stroke:#000000; stroke-width:4; stroke-opacity:1; fill:none" points="
+  441.364,1486.45 441.364,1469.18 
+  "/>
+<polyline clip-path="url(#clip400)" style="stroke:#000000; stroke-width:4; stroke-opacity:1; fill:none" points="
+  1001.66,1486.45 1001.66,1469.18 
+  "/>
+<polyline clip-path="url(#clip400)" style="stroke:#000000; stroke-width:4; stroke-opacity:1; fill:none" points="
+  1561.95,1486.45 1561.95,1469.18 
+  "/>
+<polyline clip-path="url(#clip400)" style="stroke:#000000; stroke-width:4; stroke-opacity:1; fill:none" points="
+  2122.24,1486.45 2122.24,1469.18 
+  "/>
+<path clip-path="url(#clip400)" d="M 0 0 M441.364 1515.64 Q437.753 1515.64 435.924 1519.2 Q434.119 1522.75 434.119 1529.87 Q434.119 1536.98 435.924 1540.55 Q437.753 1544.09 441.364 1544.09 Q444.999 1544.09 446.804 1540.55 Q448.633 1536.98 448.633 1529.87 Q448.633 1522.75 446.804 1519.2 Q444.999 1515.64 441.364 1515.64 M441.364 1511.93 Q447.174 1511.93 450.23 1516.54 Q453.309 1521.12 453.309 1529.87 Q453.309 1538.6 450.23 1543.21 Q447.174 1547.79 441.364 1547.79 Q435.554 1547.79 432.475 1543.21 Q429.42 1538.6 429.42 1529.87 Q429.42 1521.12 432.475 1516.54 Q435.554 1511.93 441.364 1511.93 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M992.037 1543.18 L999.676 1543.18 L999.676 1516.82 L991.366 1518.49 L991.366 1514.23 L999.63 1512.56 L1004.31 1512.56 L1004.31 1543.18 L1011.94 1543.18 L1011.94 1547.12 L992.037 1547.12 L992.037 1543.18 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M1556.6 1543.18 L1572.92 1543.18 L1572.92 1547.12 L1550.97 1547.12 L1550.97 1543.18 Q1553.64 1540.43 1558.22 1535.8 Q1562.83 1531.15 1564.01 1529.81 Q1566.25 1527.28 1567.13 1525.55 Q1568.03 1523.79 1568.03 1522.1 Q1568.03 1519.34 1566.09 1517.61 Q1564.17 1515.87 1561.07 1515.87 Q1558.87 1515.87 1556.41 1516.63 Q1553.98 1517.4 1551.21 1518.95 L1551.21 1514.23 Q1554.03 1513.09 1556.48 1512.51 Q1558.94 1511.93 1560.97 1511.93 Q1566.34 1511.93 1569.54 1514.62 Q1572.73 1517.31 1572.73 1521.8 Q1572.73 1523.93 1571.92 1525.85 Q1571.14 1527.74 1569.03 1530.34 Q1568.45 1531.01 1565.35 1534.23 Q1562.25 1537.42 1556.6 1543.18 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M2126.49 1528.49 Q2129.84 1529.2 2131.72 1531.47 Q2133.61 1533.74 2133.61 1537.07 Q2133.61 1542.19 2130.1 1544.99 Q2126.58 1547.79 2120.1 1547.79 Q2117.92 1547.79 2115.61 1547.35 Q2113.31 1546.93 2110.86 1546.08 L2110.86 1541.56 Q2112.8 1542.7 2115.12 1543.28 Q2117.43 1543.86 2119.96 1543.86 Q2124.36 1543.86 2126.65 1542.12 Q2128.96 1540.38 2128.96 1537.07 Q2128.96 1534.02 2126.81 1532.31 Q2124.68 1530.57 2120.86 1530.57 L2116.83 1530.57 L2116.83 1526.73 L2121.05 1526.73 Q2124.49 1526.73 2126.32 1525.36 Q2128.15 1523.97 2128.15 1521.38 Q2128.15 1518.72 2126.25 1517.31 Q2124.38 1515.87 2120.86 1515.87 Q2118.94 1515.87 2116.74 1516.29 Q2114.54 1516.7 2111.9 1517.58 L2111.9 1513.42 Q2114.56 1512.68 2116.88 1512.31 Q2119.22 1511.93 2121.28 1511.93 Q2126.6 1511.93 2129.7 1514.37 Q2132.8 1516.77 2132.8 1520.89 Q2132.8 1523.76 2131.16 1525.75 Q2129.52 1527.72 2126.49 1528.49 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><polyline clip-path="url(#clip402)" style="stroke:#000000; stroke-width:2; stroke-opacity:0.1; fill:none" points="
+  146.853,1213.09 2352.76,1213.09 
+  "/>
+<polyline clip-path="url(#clip402)" style="stroke:#000000; stroke-width:2; stroke-opacity:0.1; fill:none" points="
+  146.853,932.942 2352.76,932.942 
+  "/>
+<polyline clip-path="url(#clip402)" style="stroke:#000000; stroke-width:2; stroke-opacity:0.1; fill:none" points="
+  146.853,652.797 2352.76,652.797 
+  "/>
+<polyline clip-path="url(#clip402)" style="stroke:#000000; stroke-width:2; stroke-opacity:0.1; fill:none" points="
+  146.853,372.651 2352.76,372.651 
+  "/>
+<polyline clip-path="url(#clip402)" style="stroke:#000000; stroke-width:2; stroke-opacity:0.1; fill:none" points="
+  146.853,92.5058 2352.76,92.5058 
+  "/>
+<polyline clip-path="url(#clip400)" style="stroke:#000000; stroke-width:4; stroke-opacity:1; fill:none" points="
+  146.853,1486.45 146.853,47.2441 
+  "/>
+<polyline clip-path="url(#clip400)" style="stroke:#000000; stroke-width:4; stroke-opacity:1; fill:none" points="
+  146.853,1213.09 173.324,1213.09 
+  "/>
+<polyline clip-path="url(#clip400)" style="stroke:#000000; stroke-width:4; stroke-opacity:1; fill:none" points="
+  146.853,932.942 173.324,932.942 
+  "/>
+<polyline clip-path="url(#clip400)" style="stroke:#000000; stroke-width:4; stroke-opacity:1; fill:none" points="
+  146.853,652.797 173.324,652.797 
+  "/>
+<polyline clip-path="url(#clip400)" style="stroke:#000000; stroke-width:4; stroke-opacity:1; fill:none" points="
+  146.853,372.651 173.324,372.651 
+  "/>
+<polyline clip-path="url(#clip400)" style="stroke:#000000; stroke-width:4; stroke-opacity:1; fill:none" points="
+  146.853,92.5058 173.324,92.5058 
+  "/>
+<path clip-path="url(#clip400)" d="M 0 0 M62.9365 1198.89 Q59.3254 1198.89 57.4967 1202.45 Q55.6912 1205.99 55.6912 1213.12 Q55.6912 1220.23 57.4967 1223.79 Q59.3254 1227.34 62.9365 1227.34 Q66.5707 1227.34 68.3763 1223.79 Q70.205 1220.23 70.205 1213.12 Q70.205 1205.99 68.3763 1202.45 Q66.5707 1198.89 62.9365 1198.89 M62.9365 1195.18 Q68.7467 1195.18 71.8022 1199.79 Q74.8809 1204.37 74.8809 1213.12 Q74.8809 1221.85 71.8022 1226.46 Q68.7467 1231.04 62.9365 1231.04 Q57.1264 1231.04 54.0477 1226.46 Q50.9921 1221.85 50.9921 1213.12 Q50.9921 1204.37 54.0477 1199.79 Q57.1264 1195.18 62.9365 1195.18 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M79.9503 1224.49 L84.8345 1224.49 L84.8345 1230.37 L79.9503 1230.37 L79.9503 1224.49 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M89.9503 1195.81 L108.307 1195.81 L108.307 1199.74 L94.2326 1199.74 L94.2326 1208.22 Q95.2511 1207.87 96.2697 1207.71 Q97.2882 1207.52 98.3067 1207.52 Q104.094 1207.52 107.473 1210.69 Q110.853 1213.86 110.853 1219.28 Q110.853 1224.86 107.381 1227.96 Q103.909 1231.04 97.5891 1231.04 Q95.4132 1231.04 93.1447 1230.67 Q90.8993 1230.3 88.4919 1229.56 L88.4919 1224.86 Q90.5752 1225.99 92.7975 1226.55 Q95.0197 1227.1 97.4965 1227.1 Q101.501 1227.1 103.839 1225 Q106.177 1222.89 106.177 1219.28 Q106.177 1215.67 103.839 1213.56 Q101.501 1211.46 97.4965 1211.46 Q95.6215 1211.46 93.7465 1211.87 Q91.8947 1212.29 89.9503 1213.17 L89.9503 1195.81 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M53.9782 946.287 L61.6171 946.287 L61.6171 919.922 L53.3069 921.588 L53.3069 917.329 L61.5708 915.662 L66.2467 915.662 L66.2467 946.287 L73.8855 946.287 L73.8855 950.222 L53.9782 950.222 L53.9782 946.287 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M78.9549 944.343 L83.8392 944.343 L83.8392 950.222 L78.9549 950.222 L78.9549 944.343 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M98.9085 918.741 Q95.2974 918.741 93.4688 922.306 Q91.6632 925.847 91.6632 932.977 Q91.6632 940.084 93.4688 943.648 Q95.2974 947.19 98.9085 947.19 Q102.543 947.19 104.348 943.648 Q106.177 940.084 106.177 932.977 Q106.177 925.847 104.348 922.306 Q102.543 918.741 98.9085 918.741 M98.9085 915.037 Q104.719 915.037 107.774 919.644 Q110.853 924.227 110.853 932.977 Q110.853 941.704 107.774 946.31 Q104.719 950.894 98.9085 950.894 Q93.0984 950.894 90.0197 946.31 Q86.9642 941.704 86.9642 932.977 Q86.9642 924.227 90.0197 919.644 Q93.0984 915.037 98.9085 915.037 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M54.9736 666.142 L62.6124 666.142 L62.6124 639.776 L54.3023 641.443 L54.3023 637.184 L62.5661 635.517 L67.242 635.517 L67.242 666.142 L74.8809 666.142 L74.8809 670.077 L54.9736 670.077 L54.9736 666.142 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M79.9503 664.197 L84.8345 664.197 L84.8345 670.077 L79.9503 670.077 L79.9503 664.197 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M89.9503 635.517 L108.307 635.517 L108.307 639.452 L94.2326 639.452 L94.2326 647.924 Q95.2511 647.577 96.2697 647.415 Q97.2882 647.23 98.3067 647.23 Q104.094 647.23 107.473 650.401 Q110.853 653.572 110.853 658.989 Q110.853 664.568 107.381 667.669 Q103.909 670.748 97.5891 670.748 Q95.4132 670.748 93.1447 670.378 Q90.8993 670.007 88.4919 669.267 L88.4919 664.568 Q90.5752 665.702 92.7975 666.257 Q95.0197 666.813 97.4965 666.813 Q101.501 666.813 103.839 664.707 Q106.177 662.6 106.177 658.989 Q106.177 655.378 103.839 653.271 Q101.501 651.165 97.4965 651.165 Q95.6215 651.165 93.7465 651.582 Q91.8947 651.998 89.9503 652.878 L89.9503 635.517 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M57.5662 385.996 L73.8855 385.996 L73.8855 389.931 L51.9412 389.931 L51.9412 385.996 Q54.6032 383.242 59.1865 378.612 Q63.793 373.959 64.9735 372.617 Q67.2189 370.093 68.0985 368.357 Q69.0013 366.598 69.0013 364.908 Q69.0013 362.154 67.0569 360.418 Q65.1356 358.681 62.0337 358.681 Q59.8347 358.681 57.381 359.445 Q54.9504 360.209 52.1727 361.76 L52.1727 357.038 Q54.9967 355.904 57.4504 355.325 Q59.9041 354.746 61.9411 354.746 Q67.3115 354.746 70.5059 357.432 Q73.7003 360.117 73.7003 364.607 Q73.7003 366.737 72.8902 368.658 Q72.1031 370.556 69.9967 373.149 Q69.418 373.82 66.3161 377.038 Q63.2143 380.232 57.5662 385.996 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M78.9549 384.052 L83.8392 384.052 L83.8392 389.931 L78.9549 389.931 L78.9549 384.052 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M98.9085 358.45 Q95.2974 358.45 93.4688 362.015 Q91.6632 365.556 91.6632 372.686 Q91.6632 379.792 93.4688 383.357 Q95.2974 386.899 98.9085 386.899 Q102.543 386.899 104.348 383.357 Q106.177 379.792 106.177 372.686 Q106.177 365.556 104.348 362.015 Q102.543 358.45 98.9085 358.45 M98.9085 354.746 Q104.719 354.746 107.774 359.353 Q110.853 363.936 110.853 372.686 Q110.853 381.413 107.774 386.019 Q104.719 390.603 98.9085 390.603 Q93.0984 390.603 90.0197 386.019 Q86.9642 381.413 86.9642 372.686 Q86.9642 363.936 90.0197 359.353 Q93.0984 354.746 98.9085 354.746 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M58.5615 105.851 L74.8809 105.851 L74.8809 109.786 L52.9366 109.786 L52.9366 105.851 Q55.5986 103.096 60.1819 98.4664 Q64.7883 93.8137 65.9689 92.4711 Q68.2143 89.948 69.0939 88.2119 Q69.9967 86.4526 69.9967 84.7628 Q69.9967 82.0082 68.0522 80.2721 Q66.1309 78.536 63.0291 78.536 Q60.83 78.536 58.3763 79.2999 Q55.9458 80.0637 53.168 81.6147 L53.168 76.8925 Q55.9921 75.7582 58.4458 75.1795 Q60.8995 74.6008 62.9365 74.6008 Q68.3068 74.6008 71.5013 77.286 Q74.6957 79.9712 74.6957 84.4619 Q74.6957 86.5915 73.8855 88.5128 Q73.0985 90.4109 70.992 93.0035 Q70.4133 93.6748 67.3115 96.8924 Q64.2096 100.087 58.5615 105.851 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M79.9503 103.906 L84.8345 103.906 L84.8345 109.786 L79.9503 109.786 L79.9503 103.906 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip400)" d="M 0 0 M89.9503 75.2258 L108.307 75.2258 L108.307 79.161 L94.2326 79.161 L94.2326 87.6332 Q95.2511 87.2859 96.2697 87.1239 Q97.2882 86.9387 98.3067 86.9387 Q104.094 86.9387 107.473 90.11 Q110.853 93.2813 110.853 98.6979 Q110.853 104.277 107.381 107.378 Q103.909 110.457 97.5891 110.457 Q95.4132 110.457 93.1447 110.087 Q90.8993 109.716 88.4919 108.976 L88.4919 104.277 Q90.5752 105.411 92.7975 105.966 Q95.0197 106.522 97.4965 106.522 Q101.501 106.522 103.839 104.415 Q106.177 102.309 106.177 98.6979 Q106.177 95.0868 103.839 92.9803 Q101.501 90.8739 97.4965 90.8739 Q95.6215 90.8739 93.7465 91.2905 Q91.8947 91.7072 89.9503 92.5868 L89.9503 75.2258 Z" fill="#000000" fill-rule="evenodd" fill-opacity="1" /><path clip-path="url(#clip402)" d="
+M209.284 942.668 L211.193 962.096 L215.006 981.454 L220.715 1000.7 L228.304 1019.77 L237.757 1038.64 L249.05 1057.26 L262.156 1075.57 L277.044 1093.54 L293.677 1111.13 
+  L312.016 1128.28 L332.016 1144.96 L353.629 1161.14 L376.804 1176.76 L401.484 1191.8 L427.61 1206.21 L455.119 1219.97 L483.944 1233.03 L514.017 1245.37 L545.264 1256.96 
+  L577.611 1267.76 L610.979 1277.76 L645.289 1286.93 L680.457 1295.25 L734.392 1306.42 L808.893 1317.72 L885.25 1325.31 L962.729 1329.13 L1040.58 1329.13 L1118.06 1325.31 
+  L1194.42 1317.72 L1268.92 1306.42 L1322.85 1295.25 L1358.02 1286.93 L1392.33 1277.76 L1425.7 1267.76 L1458.05 1256.96 L1489.29 1245.37 L1519.37 1233.03 L1548.19 1219.97 
+  L1575.7 1206.21 L1601.83 1191.8 L1626.51 1176.76 L1649.68 1161.14 L1671.29 1144.96 L1691.29 1128.28 L1709.63 1111.13 L1726.27 1093.54 L1741.15 1075.57 L1754.26 1057.26 
+  L1765.55 1038.64 L1775.01 1019.77 L1782.6 1000.7 L1788.3 981.454 L1792.12 962.096 L1794.03 942.668 L1794.03 923.217 L1792.12 903.788 L1788.3 884.43 L1782.6 865.189 
+  L1775.01 846.111 L1765.55 827.243 L1754.26 808.629 L1741.15 790.314 L1726.27 772.343 L1709.63 754.759 L1691.29 737.604 L1671.29 720.92 L1649.68 704.747 L1626.51 689.123 
+  L1601.83 674.087 L1575.7 659.674 L1548.19 645.92 L1519.37 632.857 L1489.29 620.517 L1458.05 608.929 L1425.7 598.123 L1392.33 588.123 L1358.02 578.953 L1322.85 570.637 
+  L1268.92 559.466 L1194.42 548.166 L1118.06 540.572 L1040.58 536.757 L962.729 536.757 L885.25 540.572 L808.893 548.166 L734.392 559.466 L680.457 570.637 L645.289 578.953 
+  L610.979 588.123 L577.611 598.123 L545.264 608.929 L514.017 620.517 L483.944 632.857 L455.119 645.92 L427.61 659.674 L401.484 674.087 L376.804 689.123 L353.629 704.747 
+  L332.016 720.92 L312.016 737.604 L293.677 754.759 L277.044 772.343 L262.156 790.314 L249.05 808.629 L237.757 827.243 L228.304 846.111 L220.715 865.189 L215.006 884.43 
+  L211.193 903.788 L209.284 923.217 L209.284 942.668 L209.284 942.668  Z
+  " fill="#009af9" fill-rule="evenodd" fill-opacity="0.4"/>
+<polyline clip-path="url(#clip402)" style="stroke:#000000; stroke-width:4; stroke-opacity:0.4; fill:none" points="
+  209.284,942.668 211.193,962.096 215.006,981.454 220.715,1000.7 228.304,1019.77 237.757,1038.64 249.05,1057.26 262.156,1075.57 277.044,1093.54 293.677,1111.13 
+  312.016,1128.28 332.016,1144.96 353.629,1161.14 376.804,1176.76 401.484,1191.8 427.61,1206.21 455.119,1219.97 483.944,1233.03 514.017,1245.37 545.264,1256.96 
+  577.611,1267.76 610.979,1277.76 645.289,1286.93 680.457,1295.25 734.392,1306.42 808.893,1317.72 885.25,1325.31 962.729,1329.13 1040.58,1329.13 1118.06,1325.31 
+  1194.42,1317.72 1268.92,1306.42 1322.85,1295.25 1358.02,1286.93 1392.33,1277.76 1425.7,1267.76 1458.05,1256.96 1489.29,1245.37 1519.37,1233.03 1548.19,1219.97 
+  1575.7,1206.21 1601.83,1191.8 1626.51,1176.76 1649.68,1161.14 1671.29,1144.96 1691.29,1128.28 1709.63,1111.13 1726.27,1093.54 1741.15,1075.57 1754.26,1057.26 
+  1765.55,1038.64 1775.01,1019.77 1782.6,1000.7 1788.3,981.454 1792.12,962.096 1794.03,942.668 1794.03,923.217 1792.12,903.788 1788.3,884.43 1782.6,865.189 
+  1775.01,846.111 1765.55,827.243 1754.26,808.629 1741.15,790.314 1726.27,772.343 1709.63,754.759 1691.29,737.604 1671.29,720.92 1649.68,704.747 1626.51,689.123 
+  1601.83,674.087 1575.7,659.674 1548.19,645.92 1519.37,632.857 1489.29,620.517 1458.05,608.929 1425.7,598.123 1392.33,588.123 1358.02,578.953 1322.85,570.637 
+  1268.92,559.466 1194.42,548.166 1118.06,540.572 1040.58,536.757 962.729,536.757 885.25,540.572 808.893,548.166 734.392,559.466 680.457,570.637 645.289,578.953 
+  610.979,588.123 577.611,598.123 545.264,608.929 514.017,620.517 483.944,632.857 455.119,645.92 427.61,659.674 401.484,674.087 376.804,689.123 353.629,704.747 
+  332.016,720.92 312.016,737.604 293.677,754.759 277.044,772.343 262.156,790.314 249.05,808.629 237.757,827.243 228.304,846.111 220.715,865.189 215.006,884.43 
+  211.193,903.788 209.284,923.217 209.284,942.668 
+  "/>
+<path clip-path="url(#clip402)" d="
+M1842.09 1101.03 L2290.32 652.797 L1842.09 204.564 L1393.86 652.797 L1842.09 1101.03 L1842.09 1101.03  Z
+  " fill="#e26f46" fill-rule="evenodd" fill-opacity="0.4"/>
+<polyline clip-path="url(#clip402)" style="stroke:#000000; stroke-width:4; stroke-opacity:0.4; fill:none" points="
+  1842.09,1101.03 2290.32,652.797 1842.09,204.564 1393.86,652.797 1842.09,1101.03 
+  "/>
+<path clip-path="url(#clip402)" d="
+M1393.86 652.797 L1770.28 1029.21 L1775.01 1019.77 L1782.6 1000.7 L1788.3 981.454 L1792.12 962.096 L1794.03 942.668 L1794.03 923.217 L1792.12 903.788 L1788.3 884.43 
+  L1782.6 865.189 L1775.01 846.111 L1765.55 827.243 L1754.26 808.629 L1741.15 790.314 L1726.27 772.343 L1709.63 754.759 L1691.29 737.604 L1671.29 720.92 L1649.68 704.747 
+  L1626.51 689.123 L1601.83 674.087 L1575.7 659.674 L1548.19 645.92 L1519.37 632.857 L1489.29 620.517 L1458.05 608.929 L1442.82 603.841 L1393.86 652.797 L1393.86 652.797 
+   Z
+  " fill="#000000" fill-rule="evenodd" fill-opacity="0.4"/>
+<polyline clip-path="url(#clip402)" style="stroke:#000000; stroke-width:4; stroke-opacity:0.4; fill:none" points="
+  1393.86,652.797 1770.28,1029.21 1775.01,1019.77 1782.6,1000.7 1788.3,981.454 1792.12,962.096 1794.03,942.668 1794.03,923.217 1792.12,903.788 1788.3,884.43 
+  1782.6,865.189 1775.01,846.111 1765.55,827.243 1754.26,808.629 1741.15,790.314 1726.27,772.343 1709.63,754.759 1691.29,737.604 1671.29,720.92 1649.68,704.747 
+  1626.51,689.123 1601.83,674.087 1575.7,659.674 1548.19,645.92 1519.37,632.857 1489.29,620.517 1458.05,608.929 1442.82,603.841 1393.86,652.797 
+  
+  "/>
+</svg>
+<h2 id="Projections"><a class="docs-heading-anchor" href="#Projections">Projections</a><a id="Projections-1"></a><a class="docs-heading-anchor-permalink" href="#Projections" title="Permalink"></a></h2><p>Projection of high-dimensional polyhedra and elimination of variables can be performed with the <code>eliminate</code> function, which supports three types of methods: <code>:FourierMotzkin</code>, <code>:BlockElimination</code> and <code>:ProjectGenerators</code>.</p><p>For further details, see <a href="https://juliapolyhedra.github.io/Polyhedra.jl/latest/projection/">the documentation of <code>Polyhedra.jl</code></a>.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../reach_zonotopes_hybrid/">« A Hybrid Reachability Algorithm</a><a class="docs-footer-nextpage" href="../parallel_approximations/">Parallel Approximations »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 4 February 2021 20:13">Thursday 4 February 2021</span>. Using Julia version 1.5.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
