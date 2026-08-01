@@ -147,7 +147,7 @@ end
 function _area_Polyhedra(P; backend)
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="volume")
-    error()
+    return error()
 end
 
 """
