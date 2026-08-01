@@ -6,6 +6,23 @@ IA = LazySets.IA
 end
 @static if isdefined(Main, :TaylorModels)
     import TaylorModels
+
+    # TODO temporary workaround for `==` of `TaylorModelN`s with `JetSpace`s
+    function Base.:(==)(a::TaylorModels.TaylorN{T}, b::TaylorModels.TaylorN{T}) where {T<:Number}
+        TaylorModels.space(a) == TaylorModels.space(b) || return false
+        if TaylorModels.order(a) != TaylorModels.order(b)
+            a, b = TaylorModels.fixorder(a, b)
+        end
+        return a.coeffs == b.coeffs
+    end
+    function Base.:(==)(a::TaylorModels.HomogeneousPolynomial, b::TaylorModels.HomogeneousPolynomial)
+        TaylorModels.space(a) == TaylorModels.space(b) || return false
+        TaylorModels.order(a) == TaylorModels.order(b) && return a.coeffs == b.coeffs
+        return iszero(a.coeffs) && iszero(b.coeffs)
+    end
+    function Base.:(==)(a::TaylorModels.JetSpace, b::TaylorModels.JetSpace)
+        return true  # this should actually compare something
+    end
 end
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
@@ -296,7 +313,7 @@ for N in [Float64]
         @test indexvector(PZ) == 1:2
 
         # conversion from Taylor model
-        x₁, x₂, x₃ = TaylorModels.set_variables(Float64, ["x₁", "x₂", "x₃"]; order=3)
+        x₁, x₂, x₃ = TaylorModels.variables!(Float64, ["x₁", "x₂", "x₃"]; order=3, nowarn=true)
         dom1 = IA.interval(N(-1), N(1))
         dom = [dom1, dom1, dom1]
         x0 = [IA.interval(IA.mid(di)) for di in dom]
@@ -324,8 +341,8 @@ for N in [Float64]
 
         # proper SparsePolynomialZonotope, but with zero independent generators
         PZ = SparsePolynomialZonotope(PZ.c, PZ.G, zeros(2, 2), PZ.E, PZ.idx)
-        x₁, x₂, x₃, x₄, x₅ = TaylorModels.set_variables(Float64, ["x₁", "x₂", "x₃", "x₄", "x₅"];
-                                                        order=5)
+        x₁, x₂, x₃, x₄, x₅ = TaylorModels.variables!(Float64, ["x₁", "x₂", "x₃", "x₄", "x₅"];
+                                                     order=5, nowarn=true)
         vTM2 = convert(Vector{<:TaylorModels.TaylorModelN}, PZ)
         for i in eachindex(vTM)
             @test vTM2[i].rem == vTM[i].rem

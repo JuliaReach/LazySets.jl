@@ -40,6 +40,7 @@ SymEngine = "123dc426-2d89-5057-bbad-38513e3affd8"
 SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
 TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
+TaylorSeries = "6aa5eb33-94cf-58f4-a9d0-e4b2c4fc25ea"
 WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
 
 [extensions]
@@ -65,7 +66,7 @@ LazySetsSetProgExt = ["JuMP", "SetProg"]
 LazySetsStaticArraysCoreExt = ["ReachabilityBase", "StaticArraysCore"]
 LazySetsSymEngineExt = "SymEngine"
 LazySetsSymbolicsExt = ["SymbolicUtils", "Symbolics"]
-LazySetsTaylorModelsExt = ["IntervalArithmetic", "TaylorModels"]
+LazySetsTaylorModelsExt = ["IntervalArithmetic", "TaylorModels", "TaylorSeries"]
 LazySetsWriteVTKExt = "WriteVTK"
 
 [compat]
@@ -103,6 +104,7 @@ StaticArraysCore = "1"
 SymEngine = "0.7 - 0.13"
 SymbolicUtils = "0.12 - 0.20, 1 - 4"
 Symbolics = "1 - 5.30, 6.1 - 7"
-TaylorModels = "0.9, 0.10"
+TaylorModels = "0.11 - 0.12"
+TaylorSeries = "0.22.2"
 WriteVTK = "1"
 julia = "1.10"
