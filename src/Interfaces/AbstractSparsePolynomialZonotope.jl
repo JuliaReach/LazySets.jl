@@ -207,7 +207,7 @@ end
 function _ρ_range_enclosures(d, P, enclosure_method)
     mod = Base.get_extension(@__MODULE__, :LazySetsRangeEnclosuresExt)
     require(mod, :RangeEnclosures; fun_name="ρ")
-    error()
+    return error()
 end
 
 _indexvector(P::AbstractPolynomialZonotope) = uniqueID(size(expmat(P), 1))
