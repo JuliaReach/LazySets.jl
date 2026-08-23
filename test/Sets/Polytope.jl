@@ -130,6 +130,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test P2 isa HPolytope{N} && ispermutation(constraints_list(P2),
                                                [HalfSpace(N[1, 0], N(2)), HalfSpace(N[0, 1], N(3)),
                                                 HalfSpace(N[-1, -0], N(0)), HalfSpace(N[-0, -1], N(-1))])
+    # in-place translation
+    @test_throws DimensionMismatch translate!(copy(P), N[1])
+    P3 = copy(P)
+    translate!(P3, N[1, 2])
+    @test P3 isa HPolytope{N} && ispermutation(constraints_list(P3), constraints_list(P2)) &&
+          constraints_list(P) != constraints_list(P3)
 
     # subset
     H = BallInf(N[0, 0], N(1))

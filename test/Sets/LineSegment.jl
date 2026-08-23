@@ -89,6 +89,10 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # translation
     @test translate(l, N[1, 2]) == LineSegment(N[2, 3], N[3, 4])
+    @test_throws DimensionMismatch translate!(copy(l), N[1])
+    l2 = copy(l)
+    @inferred translate!(l2, N[1, 2])
+    @test l2 == LineSegment(N[2, 3], N[3, 4]) && l != l2
 
     # intersection emptiness
     l1 = LineSegment(N[1, 1], N[2, 2])

@@ -102,6 +102,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test p2 isa HPolyhedron{N} && ispermutation(constraints_list(p2),
                                                  [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
                                                   HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))])
+    # in-place translation
+    @test_throws DimensionMismatch translate!(copy(p), N[1])
+    p3 = copy(p)
+    translate!(p3, N[1, 2])
+    @test p3 isa HPolyhedron{N} && ispermutation(constraints_list(p3), constraints_list(p2)) &&
+          constraints_list(p) != constraints_list(p3)
 
     # constraints iterator
     @test ispermutation(collect(constraints(p)), constraints_list(p))
