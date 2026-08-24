@@ -22,3 +22,21 @@ We translate every constraint.
     return HPolygon(constraints; sort_constraints=false,
                     check_boundedness=false, prune=false)
 end
+
+"""
+# Extended help
+
+    translate!(P::HPolygon, v::AbstractVector)
+
+### Algorithm
+
+We translate every constraint in place. Since translation preserves the
+normal vectors (only the offsets change), the constraints remain sorted.
+"""
+@validate function translate!(P::HPolygon, v::AbstractVector)
+    constraints = P.constraints
+    @inbounds for i in eachindex(constraints)
+        constraints[i] = translate(constraints[i], v)
+    end
+    return P
+end

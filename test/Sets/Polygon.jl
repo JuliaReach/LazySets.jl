@@ -201,6 +201,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
         @test p2 isa t_hp &&
               p2.constraints == [HalfSpace(N[2, 2], N(18)), HalfSpace(N[-3, 3], N(9)),
                                  HalfSpace(N[-1, -1], N(-3)), HalfSpace(N[2, -4], N(-6))]
+        # in-place translation
+        @test_throws DimensionMismatch translate!(copy(hp), N[1])
+        hp2 = copy(hp)
+        translate!(hp2, N[1, 2])
+        @test hp2 isa t_hp && hp2.constraints == p2.constraints && hp.constraints != hp2.constraints
 
         # test for concrete minkowski sum
         A = [N[4, 0], N[6, 2], N[4, 4]]

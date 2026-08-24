@@ -11,7 +11,7 @@ using ReachabilityBase.Distribution: reseed!
 
 @reexport import ..API: an_element, center, constraints_list, dim,
                         isoperationtype, rand, vertices_list, in, scale, scale!,
-                        ρ, σ, translate, isdisjoint
+                        ρ, σ, translate, translate!, isdisjoint
 @reexport import ..LazySets: genmat, ngens, halfspace_left, halfspace_right
 @reexport using ..API
 

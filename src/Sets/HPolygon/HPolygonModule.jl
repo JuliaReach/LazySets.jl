@@ -8,7 +8,7 @@ using ..LazySets: AbstractHPolygon, BINARY_SEARCH_THRESHOLD,
                   _sort_constraints, @validate
 using ..HalfSpaceModule: HalfSpace, _normal_Vector
 
-@reexport import ..API: isoperationtype, σ, translate
+@reexport import ..API: isoperationtype, σ, translate, translate!
 @reexport using ..API
 
 export HPolygon

@@ -18,7 +18,7 @@ using ReachabilityBase.Distribution: reseed!
 using ReachabilityBase.Require: require
 
 @reexport import ..API: constraints_list, dim, isempty, isoperationtype, rand,
-                        permute, ρ, σ, translate, convex_hull
+                        permute, ρ, σ, translate, translate!, convex_hull
 @reexport import ..LazySets: ishyperplanar, normalize,
                              remove_redundant_constraints,
                              remove_redundant_constraints!, tohrep,
