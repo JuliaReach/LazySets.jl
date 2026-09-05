@@ -40,7 +40,7 @@ In the binary case, the lists contain pairs of set types.
 
 `shape_matrix` is only available for ellipsoids.
 
-```jldoctests implementing_sets
+```jldoctest implementing_sets
 julia> using LazySets: implementing_sets
 
 julia> dict = implementing_sets(shape_matrix);
@@ -52,7 +52,7 @@ julia> dict["available"]
 
 Every convex set type implements the function `σ`.
 
-```jldoctests implementing_sets
+```jldoctest implementing_sets
 julia> dict = implementing_sets(σ; signature=Type[AbstractVector], index=2);
 
 julia> dict["missing"]
@@ -67,7 +67,7 @@ julia> dict["missing"]
 
 Some operations are not available for sets with rational numbers.
 
-```jldoctests implementing_sets
+```jldoctest implementing_sets
 julia> N = Rational{Int};
 
 julia> dict = implementing_sets(σ; signature=Type[AbstractVector{N}], index=2, type_args=N);
@@ -80,7 +80,7 @@ For binary functions, the dictionary contains pairs of set types.
 This check takes several seconds because it considers all possible set-type
 combinations.
 
-```jldoctests implementing_sets
+```jldoctest implementing_sets
 julia> dict = LazySets.implementing_sets(convex_hull; binary=true);
 
 julia> (HPolytope, HPolytope) ∈ dict["available"]
