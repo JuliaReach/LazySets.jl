@@ -28,7 +28,7 @@ end
 function default_cddlib_backend(N)
     mod = Base.get_extension(@__MODULE__, :LazySetsCDDLibExt)
     require(mod, :CDDLib; fun_name="default_cddlib_backend")
-    error()
+    return error()
 end
 
 # check for Polyhedra backend (fallback method)

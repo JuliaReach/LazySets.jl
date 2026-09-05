@@ -34,5 +34,5 @@ end
 function _convex_hull(P1, P2; backend)
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="convex_hull")
-    error()
+    return error()
 end

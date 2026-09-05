@@ -840,7 +840,7 @@ end
 function _contract_zonotope_halfspace_ICP(e, X, vars_string)
     mod = Base.get_extension(@__MODULE__, :LazySetsIntervalConstraintProgrammingExt)
     require(mod, :IntervalConstraintProgramming; fun_name="overapproximate")
-    error()
+    return error()
 end
 
 """
