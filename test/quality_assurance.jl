@@ -92,8 +92,8 @@ using SafeTestsets
                                                :Arr, :BasicSymbolic, :Symbolic, :get_variables,
                                                :gradient, :value,
                                                # LazySetsTaylorModelsExt
-                                               :coeff_table, :in_base, :numtype, :pos_table,
-                                               :sym_box, :sym_itv, :zero_box, :zero_itv)
+                                               :default_space, :in_base, :numtype, :sym_box,
+                                               :sym_itv, :zero_box, :zero_itv)
     ignores_all_explicit_imports_via_owners = (:BasicSymbolic,)
     ignores_all_qualified_accesses_are_public = (:EXACT, :SIMPLEX, :Assertions, :Commutative,
                                                  :Comparison, :Ellipsoid, :Optimizer, :commutative,
