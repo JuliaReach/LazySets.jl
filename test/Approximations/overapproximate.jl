@@ -662,35 +662,38 @@ for N in [Float64]
         @test (L ∩ Z) ⊆ cap
     end
 
-    @static if isdefined(@__MODULE__, :IntervalConstraintProgramming) &&
-               isdefined(@__MODULE__, :IntervalBoxes) && isdefined(@__MODULE__, :Symbolics)
-        # overapproximate a nonlinear constraint with an HPolyhedron
-        vars = Symbolics.@variables x, y
-        dom = IntervalBoxes.IntervalBox([IA.interval(-2, 2), IA.interval(-2, 2)]...)
-        C = IntervalConstraintProgramming.constraint(x^2 + y^2 <= 1, vars)
-        # (`invokelatest` to avoid world-age issue)
-        inner, boundary = invokelatest(IntervalConstraintProgramming.pave, dom, C, 0.01)
-        dirs = OctDirections(2)
-        Uouter = UnionSetArray(convert.(Hyperrectangle, boundary))
-        H = overapproximate(Uouter, dirs)
-        B2 = Ball2(N[0, 0], N(1))
-        @test B2 ⊆ H
-    end
-
-    @static if isdefined(@__MODULE__, :IntervalConstraintProgramming)
-        # overapproximate the intersection of a zonotope with an axis-aligned
-        # half-space by a zonotope using ICP
-        G = N[1//2 1//2; 1 0]
-        for G2 in (G, -G)
-            Z = Zonotope(N[0, 2], G2)
-            for v in (N(1), N(-1))
-                H = HalfSpace(SingleEntryVector(1, 2, v), N(0))
-                R = overapproximate(Z ∩ H, Zonotope)
-                R_exact = intersection(Z, H)
-                @test R ⊆ Z && R_exact ⊆ R
-            end
-        end
-    end
+    # TODO temporarily deactivated due to error in IntervalConstraintProgramming
+    #      (https://github.com/JuliaIntervals/ReversePropagation.jl/issues/86)
+    #
+    # @static if isdefined(@__MODULE__, :IntervalConstraintProgramming) &&
+    #            isdefined(@__MODULE__, :IntervalBoxes) && isdefined(@__MODULE__, :Symbolics)
+    #     # overapproximate a nonlinear constraint with an HPolyhedron
+    #     vars = Symbolics.@variables x, y
+    #     dom = IntervalBoxes.IntervalBox([IA.interval(-2, 2), IA.interval(-2, 2)]...)
+    #     C = IntervalConstraintProgramming.constraint(x^2 + y^2 <= 1, vars)
+    #     # (`invokelatest` to avoid world-age issue)
+    #     inner, boundary = invokelatest(IntervalConstraintProgramming.pave, dom, C, 0.01)
+    #     dirs = OctDirections(2)
+    #     Uouter = UnionSetArray(convert.(Hyperrectangle, boundary))
+    #     H = overapproximate(Uouter, dirs)
+    #     B2 = Ball2(N[0, 0], N(1))
+    #     @test B2 ⊆ H
+    # end
+    #
+    # @static if isdefined(@__MODULE__, :IntervalConstraintProgramming)
+    #     # overapproximate the intersection of a zonotope with an axis-aligned
+    #     # half-space by a zonotope using ICP
+    #     G = N[1//2 1//2; 1 0]
+    #     for G2 in (G, -G)
+    #         Z = Zonotope(N[0, 2], G2)
+    #         for v in (N(1), N(-1))
+    #             H = HalfSpace(SingleEntryVector(1, 2, v), N(0))
+    #             R = overapproximate(Z ∩ H, Zonotope)
+    #             R_exact = intersection(Z, H)
+    #             @test R ⊆ Z && R_exact ⊆ R
+    #         end
+    #     end
+    # end
 
     # quadratic map
     Z = Zonotope(N[0, 0], N[1 0; 0 1])
