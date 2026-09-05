@@ -52,7 +52,7 @@ end
 function _triangulate_delaunay(X; kwargs...)
     mod = Base.get_extension(@__MODULE__, :LazySetsMiniQhullExt)
     require(mod, :MiniQhull; fun_name="triangulate")
-    error()
+    return error()
 end
 
 # see ext/LazySetsGeometryBasicsExt.jl
@@ -128,14 +128,14 @@ end
 function default_polyhedra_backend_1d(N)
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="default_polyhedra_backend")
-    error()
+    return error()
 end
 
 # see ext/LazySetsPolyhedraExt.jl
 function default_polyhedra_backend_nd(N)
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="default_polyhedra_backend")
-    error()
+    return error()
 end
 
 # Note: this method cannot be documented due to a bug in Julia
@@ -785,7 +785,7 @@ end
 function _plot_recipe_3d_polytope(P, N=eltype(P))
     mod = Base.get_extension(@__MODULE__, :LazySetsMiniQhullExt)
     require(mod, :MiniQhull; fun_name="_plot_recipe_3d_polytope")
-    error()
+    return error()
 end
 
 """
@@ -925,7 +925,7 @@ end
 function _area_polytope_3D(P)
     mod = Base.get_extension(@__MODULE__, :LazySetsGeometryBasicsExt)
     require(mod, [:GeometryBasics, :Polyhedra]; fun_name="area")
-    error()
+    return error()
 end
 
 # see https://en.wikipedia.org/wiki/Area_of_a_triangle#Using_coordinates
@@ -1226,7 +1226,7 @@ end
 function polyhedron(P; backend=default_polyhedra_backend(P))
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="polyhedron")
-    error()
+    return error()
 end
 
 """
@@ -1299,7 +1299,7 @@ function _isempty_polyhedron_polyhedra(P, witness=false;
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="isempty",
             explanation="with the active option `use_polyhedra_interface`")
-    error()
+    return error()
 end
 
 """

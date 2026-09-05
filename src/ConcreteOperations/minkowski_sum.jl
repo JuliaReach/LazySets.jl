@@ -119,7 +119,7 @@ end
 function _minkowski_sum_hrep_preprocess(P, Q, backend, algorithm, prune)
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="minkowski_sum")
-    error()
+    return error()
 end
 
 """
@@ -258,7 +258,7 @@ end
 function _backend_solver_nd()
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="minkowski_sum")
-    error()
+    return error()
 end
 
 """

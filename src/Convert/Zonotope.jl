@@ -167,5 +167,5 @@ end
 function _convert_static(Ztype, Hsvec)
     mod = Base.get_extension(@__MODULE__, :LazySetsStaticArraysCoreExt)
     require(mod, :StaticArraysCore; fun_name="_convert_static")
-    error()
+    return error()
 end
