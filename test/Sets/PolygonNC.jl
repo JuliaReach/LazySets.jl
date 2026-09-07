@@ -63,6 +63,21 @@ for N in @tN([Float64, Float32, Rational{Int}])
     P2 = deepcopy(P3)
     scale!(N(2), P2)
     @test scale(N(2), P3) == P2 == Polygon([N[3, 0], N[3, 11 // 5]])
+
+    # vertices_list
+    @test vertices_list(P) == P.vertices
+
+    # tovrep
+    @test tovrep(P) === P
+
+    # translate/translate!
+    v = N[1, 1]
+    P4 = translate(P, v)
+    @test P4.vertices == [x + v for x in P.vertices]
+    @test P.vertices == [N[0, 0], N[0, 2], N[2, 2], N[2, 0], N[1, 1]]  # not modified
+    P5 = deepcopy(P)
+    translate!(P5, v)
+    @test P5.vertices == P4.vertices
 end
 
 # default Float64 constructor

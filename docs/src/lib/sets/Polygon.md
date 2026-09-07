@@ -8,6 +8,15 @@ CurrentModule = LazySets.PolygonModule
 Polygon
 ```
 
+## Operations
+
+```@meta
+CurrentModule = LazySets.PolygonModule
+```
+```@docs
+tovrep(::Polygon)
+```
+
 ```@meta
 CurrentModule = LazySets.API
 ```
@@ -26,8 +35,11 @@ Undocumented implementations:
 * [`in`](@ref in(::AbstractVector, ::LazySet))
 * [`scale`](@ref scale(::Real, ::LazySet))
 * [`scale!`](@ref scale!(::Real, ::LazySet))
+* [`vertices_list`](@ref vertices_list(::LazySet))
 * [`ρ`](@ref ρ(::AbstractVector, ::LazySet))
 * [`σ`](@ref σ(::AbstractVector, ::LazySet))
+* [`translate`](@ref translate(::LazySet, ::AbstractVector))
+* [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 
 ```@meta
 CurrentModule = LazySets
@@ -70,8 +82,6 @@ Inherited from [`LazySet`](@ref):
 * [`linear_map`](@ref linear_map(::AbstractMatrix, ::LazySet))
 * [`project`](@ref project(::LazySet, ::AbstractVector{Int}))
 * [`sample`](@ref sample(::LazySet, ::Int=1))
-* [`translate`](@ref translate(::LazySet, ::AbstractVector))
-* [`translate!`](@ref translate!(::LazySet, ::AbstractVector))
 * [`cartesian_product`](@ref cartesian_product(::LazySet, ::LazySet))
 * [`convex_hull`](@ref convex_hull(::LazySet, ::LazySet))
 * [`exact_sum`](@ref exact_sum(::LazySet, ::LazySet))
