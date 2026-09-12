@@ -85,7 +85,7 @@ function _cartesian_product_hrep_polyhedra(P1, P2; backend1=nothing,
                                            backend2=nothing)
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="`cartesian_product")
-    error()
+    return error()
 end
 
 # if the first set is an interval => the result is always a polytope

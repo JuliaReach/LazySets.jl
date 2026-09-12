@@ -20,5 +20,5 @@ end
 function _cartesian_product_vrep(P1, P2; backend1=nothing, backend2=nothing)
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="cartesian_product")
-    error()
+    return error()
 end
