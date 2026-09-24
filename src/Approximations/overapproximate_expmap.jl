@@ -129,7 +129,7 @@ end
 function taylor_expmap_remainder(Z, matnorm, k)
     mod = Base.get_extension(@__MODULE__, :LazySetsIntervalMatricesExt)
     require(mod, :IntervalMatrices; fun_name="taylor_expmap_remainder")
-    error()
+    return error()
 end
 
 function _overapproximate_emz(em::ExponentialMap{N,S,MAT}, k::Int,

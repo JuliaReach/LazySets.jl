@@ -21,7 +21,7 @@ end
 function _difference(X, Y)
     mod = Base.get_extension(@__MODULE__, :LazySetsIntervalBoxesExt)
     require(mod, :IntervalBoxes; fun_name="difference")
-    error()
+    return error()
 end
 
 @validate function difference(X::Interval{N}, H::HalfSpace) where {N}

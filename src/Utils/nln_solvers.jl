@@ -6,5 +6,5 @@ end
 function _default_nln_solver(N)
     mod = Base.get_extension(@__MODULE__, :LazySetsIpoptExt)
     require(mod, :Ipopt; fun_name="default_nln_solver")
-    error()
+    return error()
 end

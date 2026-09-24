@@ -358,7 +358,7 @@ end
 function _line_search_optim(ℓ, X, H; kwargs...)
     mod = Base.get_extension(@__MODULE__, :LazySetsOptimExt)
     require(mod, :Optim; fun_name="ρ", explanation="(algorithm \"line_search\")")
-    error()
+    return error()
 end
 
 """

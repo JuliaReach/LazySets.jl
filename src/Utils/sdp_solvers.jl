@@ -31,5 +31,5 @@ function _default_sdp_solver(solver)
     # note: `@__MODULE__` does not detect when a package extension is loaded;
     #       however, the method will simply be overwritten
     require(@__MODULE__, SUPPORTED_SDP_PACKAGES; fun_name="_default_sdp_solver")
-    error()
+    return error()
 end

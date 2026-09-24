@@ -133,7 +133,7 @@ end
 function _get_elimination_instance(N, backend, elimination_method)
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="linear_map with elimination")
-    error()
+    return error()
 end
 
 function _default_linear_map_algorithm(M::AbstractMatrix, P::LazySet;
@@ -513,7 +513,7 @@ end
 function _linear_map_hrep(M, P, algo)
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="linear_map with elimination")
-    error()
+    return error()
 end
 
 @inline function _preallocate_constraints(constraints::Vector{<:HalfSpace{N}}) where {N}

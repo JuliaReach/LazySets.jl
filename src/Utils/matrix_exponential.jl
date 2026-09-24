@@ -31,5 +31,5 @@ function _expmv(backend, t, A, b; kwargs...)
     # note: `@__MODULE__` does not detect when a package extension is loaded;
     #       however, the method will simply be overwritten
     require(@__MODULE__, SUPPORTED_EXPONENTIAL_PACKAGES; fun_name="_expmv")
-    error()
+    return error()
 end

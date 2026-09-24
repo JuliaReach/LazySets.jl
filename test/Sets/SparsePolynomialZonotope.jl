@@ -15,7 +15,8 @@ end
         end
         return a.coeffs == b.coeffs
     end
-    function Base.:(==)(a::TaylorModels.HomogeneousPolynomial, b::TaylorModels.HomogeneousPolynomial)
+    function Base.:(==)(a::TaylorModels.HomogeneousPolynomial,
+                        b::TaylorModels.HomogeneousPolynomial)
         TaylorModels.space(a) == TaylorModels.space(b) || return false
         TaylorModels.order(a) == TaylorModels.order(b) && return a.coeffs == b.coeffs
         return iszero(a.coeffs) && iszero(b.coeffs)

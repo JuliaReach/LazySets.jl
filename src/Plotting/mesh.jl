@@ -5,7 +5,7 @@ function plot3d(S; backend=default_polyhedra_backend(S), alpha=1.0,
                 transparency=true, visible=true)
     mod = Base.get_extension(@__MODULE__, :LazySetsMakieExt)
     require(mod, [:Makie, :Polyhedra]; fun_name="plot3d")
-    error()
+    return error()
 end
 
 # see ext/LazySetsMakieExt.jl
@@ -15,5 +15,5 @@ function plot3d!(S; backend=default_polyhedra_backend(S), alpha=1.0,
                  transparency=true, visible=true)
     mod = Base.get_extension(@__MODULE__, :LazySetsMakieExt)
     require(mod, [:Makie, :Polyhedra]; fun_name="plot3d!")
-    error()
+    return error()
 end
