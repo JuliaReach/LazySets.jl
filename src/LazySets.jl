@@ -30,8 +30,9 @@ export subtypes
 import GLPK, JuMP, ExprTools
 import IntervalArithmetic as IA
 
-using LinearAlgebra: /, Diagonal, I, UniformScaling, checksquare, copyto!, det,  # NOTE: `checksquare` is an internal symbol
-                     dot, nullspace, tr, transpose
+using Base: /, copyto!, transpose
+using LinearAlgebra: Diagonal, I, UniformScaling, checksquare, det, dot, # NOTE: `checksquare` is an internal symbol
+                     nullspace, tr
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, randperm  # NOTE: `GLOBAL_RNG` and `SamplerType` are internal symbols
 using SparseArrays: AbstractSparseMatrix, AbstractSparseVector, SparseVector,
                     blockdiag, findnz, issparse, sparse, sparsevec, spzeros
