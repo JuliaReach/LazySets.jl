@@ -25,7 +25,8 @@ export approximate,
 
 import IntervalArithmetic as IA
 
-using LinearAlgebra: /, I, dot, norm, normalize, nullspace, transpose
+using Base: /, transpose
+using LinearAlgebra: I, dot, norm, normalize, nullspace
 using SparseArrays: SparseVector, sparsevec, spzeros
 
 using ReachabilityBase.Arrays: At_mul_B, SingleEntryVector, rectify,

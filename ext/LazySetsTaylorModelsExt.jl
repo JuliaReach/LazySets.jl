@@ -161,7 +161,7 @@ Hyperrectangle{Float64, Vector{Float64}, Vector{Float64}}([1.0, -2.0999999999999
 julia> Y = [evaluate(vTM[1], vTM[1].dom), evaluate(vTM[2], vTM[2].dom)]
 2-element Vector{IntervalArithmetic.Interval{Float64}}:
  [-1.5, 3.5]
- [-8.60001, 4.40001]
+ [-8.60001, 4.4]
 ```
 However, the zonotope returns better results if we want to approximate the
 Taylor model because it is not axis-aligned:
