@@ -115,5 +115,7 @@ end
 @safetestset "Aqua tests" begin
     import LazySets, Aqua
 
-    Aqua.test_all(LazySets)
+    # TODO Expokit (https://github.com/acroy/Expokit.jl/issues/39) fails `persistent_tasks` test;
+    # hence it is deactivated for now
+    Aqua.test_all(LazySets; persistent_tasks=false)
 end
