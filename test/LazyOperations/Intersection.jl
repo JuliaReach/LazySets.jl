@@ -156,6 +156,16 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # constructor with size hint and type
     IntersectionArray(10, N)
 
+    # conversion of a polygon to an exact intersection of zonotopes (#1307)
+    P = VPolygon([N[1, -3], N[1 // 2, 3], N[2, 6], N[7 // 2, 4], N[3, -4]])
+    ZB = convert(IntersectionArray, P)
+    @test ZB isa IntersectionArray{N,<:Zonotope}
+    @test length(ZB) == 3
+    @test isequivalent(convert(HPolygon, ZB), convert(HPolygon, P))
+    @test_throws AssertionError convert(IntersectionArray, Interval(N(0), N(1)))
+    P_unbounded = HPolytope([HalfSpace(N[1, 0], N(1))])
+    @test_throws ArgumentError convert(IntersectionArray, P_unbounded)
+
     # concretize
     @test concretize(IArr) == intersection(B, H)
 
