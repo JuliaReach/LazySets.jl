@@ -95,6 +95,13 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # support vector of polygon with no constraints
     @test_throws DimensionMismatch σ(N[0], HPolygon{N}())
 
+    # support vector of an empty polygon (#3297)
+    Hempty = HPolygon([HalfSpace(N[1, 0], N(1)), HalfSpace(N[0, 1], N(1)),
+                       HalfSpace(N[-1, 0], N(1)), HalfSpace(N[0, -1], N(1))])
+    addconstraint!(Hempty, HalfSpace(N[0, -1], N(-2)))
+    @test isempty(Hempty)
+    @test_throws ArgumentError σ(N[1, 0], Hempty)
+
     # boundedness
     @test isbounded(p)
     @test !isbounded(HPolygon{N}(), false)
