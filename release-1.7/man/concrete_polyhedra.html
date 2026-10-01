@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Concrete Polyhedra · LazySets.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/><link href="../assets/juliareach.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../index.html"><img class="logo" src="../assets/logo.png" alt="LazySets.jl logo"/></a><h1>LazySets.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../index.html">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="getting_started.html">Getting Started</a></li><li><a class="toctext" href="polyhedral_approximations.html">Polyhedral Approximations</a></li><li><a class="toctext" href="decompose_example.html">Decomposing an Affine Map</a></li><li><a class="toctext" href="fast_2d_LPs.html">Fast 2D LPs</a></li><li><a class="toctext" href="iterative_refinement.html">Iterative Refinement</a></li><li><a class="toctext" href="interval_hulls.html">Interval Hulls</a></li><li><a class="toctext" href="convex_hulls.html">Convex Hulls</a></li><li><a class="toctext" href="set_operations.html">Operations on Sets</a></li><li><a class="toctext" href="reach_zonotopes.html">A Reachability Algorithm</a></li><li><a class="toctext" href="reach_zonotopes_hybrid.html">A Hybrid Reachability Algorithm</a></li><li class="current"><a class="toctext" href="concrete_polyhedra.html">Concrete Polyhedra</a><ul class="internal"><li><a class="toctext" href="#Creating-polyhedra-1">Creating polyhedra</a></li><li><a class="toctext" href="#Methods-1">Methods</a></li><li><a class="toctext" href="#Projections-1">Projections</a></li></ul></li><li><a class="toctext" href="parallel_approximations.html">Parallel Approximations</a></li><li><a class="toctext" href="lazy_intersections.html">Lazy Intersections</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../lib/interfaces.html">Set Interfaces</a></li><li><a class="toctext" href="../lib/representations.html">Common Set Representations</a></li><li><a class="toctext" href="../lib/operations.html">Common Set Operations</a></li><li><a class="toctext" href="../lib/comparisons.html">Comparisons</a></li><li><a class="toctext" href="../lib/conversion.html">Conversions between set representations</a></li><li><a class="toctext" href="../lib/binary_functions.html">Binary Functions on Sets</a></li><li><a class="toctext" href="../lib/approximations.html">Approximations</a></li><li><a class="toctext" href="../lib/utils.html">Utility Functions</a></li><li><a class="toctext" href="../lib/parallel.html">Parallel</a></li></ul></li><li><a class="toctext" href="../about.html">About</a></li></ul></nav><article id="docs"><header><nav><ul><li>Manual</li><li><a href="concrete_polyhedra.html">Concrete Polyhedra</a></li></ul><a class="edit-page" href="https://github.com/JuliaReach/LazySets.jl/blob/master/docs/src/man/concrete_polyhedra.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Concrete Polyhedra</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Concrete-Polyhedra-1" href="#Concrete-Polyhedra-1">Concrete Polyhedra</a></h1><p>The focus of <code>LazySets.jl</code> is to wrap set representations and operations into specialized types, delaying the evaluation of the result of an expression until it is necessary. However, sometimes it is necessary to do an explicit computation. For concrete operations with polyhedra we rely on the polyhedra manipulation library <a href="https://github.com/JuliaPolyhedra/Polyhedra.jl">Polyhedra.jl</a>.</p><p>Actually, <code>Polyhedra.jl</code> provides a unified interface to well-known implementations of polyhedral computations, such as CDD or LRS (see the complete list in <a href="https://juliapolyhedra.github.io/Polyhedra.jl/latest/installation.html#Getting-Libraries-1">the documentation of <code>Polyhedra.jl</code></a>). This is a great advantage because we can easily use a library that supports floating point arithmetic, rational arithmetic, multiple precision, etc. The libraries also include projection and elimination of variables through Fourier-Motzkin.</p><p>Below we give examples of operations that are actually done via <code>Polyhedra.jl</code>.</p><ul><li><a href="concrete_polyhedra.html#Concrete-Polyhedra-1">Concrete Polyhedra</a></li><ul><li><a href="concrete_polyhedra.html#Creating-polyhedra-1">Creating polyhedra</a></li><li><a href="concrete_polyhedra.html#Methods-1">Methods</a></li><li><a href="concrete_polyhedra.html#Projections-1">Projections</a></li></ul></ul><h2><a class="nav-anchor" id="Creating-polyhedra-1" href="#Creating-polyhedra-1">Creating polyhedra</a></h2><p>To use the <code>Polyhedra.jl</code> interface, you need to load the package with <code>using Polyhedra</code>. Let&#39;s create an H-representation object:</p><div><pre><code class="language-julia">using Plots, LazySets, Polyhedra, Compat.LinearAlgebra
+
+A = [1. 1;1 -1;-1 0]
+b = [1.,0,0]
+H = Polyhedra.hrep(A, b)</code></pre><pre><code class="language-none">H-representation MixedMatHRep{Float64,Array{Float64,2}}:
+3-element iterator of Polyhedra.HalfSpace{Float64,Array{Float64,1}}:
+ HalfSpace([1.0, 1.0], 1.0)
+ HalfSpace([1.0, -1.0], 0.0)
+ HalfSpace([-1.0, 0.0], 0.0)</code></pre></div><p>It is used to instantiate a new polyhedron:</p><div><pre><code class="language-julia">p = polyhedron(H)</code></pre><pre><code class="language-none">Polyhedron DefaultPolyhedron{Float64,MixedMatHRep{Float64,Array{Float64,2}},MixedMatVRep{Float64,Array{Float64,2}}}:
+3-element iterator of Polyhedra.HalfSpace{Float64,Array{Float64,1}}:
+ HalfSpace([1.0, 1.0], 1.0)
+ HalfSpace([1.0, -1.0], 0.0)
+ HalfSpace([-1.0, 0.0], 0.0)</code></pre></div><p>Now, <code>p</code> is of the generic type <code>Polyhedra.SimplePolyhedron{2,Float64, ...}</code>, where <code>2</code> states for its ambient dimension, and <code>Float64</code> the numeric field. The remaining fields specify the type of representation:</p><div><pre><code class="language-julia">typeof(p)</code></pre><pre><code class="language-none">DefaultPolyhedron{Float64,MixedMatHRep{Float64,Array{Float64,2}},MixedMatVRep{Float64,Array{Float64,2}}}</code></pre></div><p>Observe that we can use a particular backend, such as the <code>CDD</code> library:</p><div><pre><code class="language-julia">using CDDLib
+
+p = polyhedron(H, CDDLib.Library())</code></pre><pre><code class="language-none">Polyhedron CDDLib.Polyhedron{Float64}:
+3-element iterator of Polyhedra.HalfSpace{Float64,Array{Float64,1}}:
+ HalfSpace([1.0, 1.0], 1.0)
+ HalfSpace([1.0, -1.0], 0.0)
+ HalfSpace([-1.0, 0.0], 0.0)</code></pre></div><p>On the other hand, a <code>LazySets.HPolytope</code> object can be constructed from <code>p</code>:</p><div><pre><code class="language-julia">x = HPolytope(p)
+x.constraints</code></pre><pre><code class="language-none">3-element Array{LazySets.HalfSpace{Float64},1}:
+ LazySets.HalfSpace{Float64}([1.0, 1.0], 1.0)
+ LazySets.HalfSpace{Float64}([1.0, -1.0], 0.0)
+ LazySets.HalfSpace{Float64}([-1.0, 0.0], 0.0)</code></pre></div><p>Conversely, from a <code>HPolytope</code> we can build a polyhedron:</p><div><pre><code class="language-julia">y = polyhedron(x)
+typeof(y)</code></pre><pre><code class="language-none">DefaultPolyhedron{Float64,MixedMatHRep{Float64,Array{Float64,2}},MixedMatVRep{Float64,Array{Float64,2}}}</code></pre></div><p>Moreover, you can specify the backend with an extra argument. For instance, we can use an exact representation through the <code>Library(:exact)</code>:</p><div><pre><code class="language-julia">A, b = Rational{Int}[1 1;1 -1;-1 0], Rational{Int}[1,0,0]
+p = HPolytope(A, b)
+
+polyhedron(p; backend=CDDLib.Library(:exact))</code></pre><pre><code class="language-none">Polyhedron CDDLib.Polyhedron{Rational{BigInt}}:
+3-element iterator of Polyhedra.HalfSpace{Rational{BigInt},Array{Rational{BigInt},1}}:
+ HalfSpace(Rational{BigInt}[1//1, 1//1], 1//1)
+ HalfSpace(Rational{BigInt}[1//1, -1//1], 0//1)
+ HalfSpace(Rational{BigInt}[-1//1, 0//1], 0//1)</code></pre></div><h2><a class="nav-anchor" id="Methods-1" href="#Methods-1">Methods</a></h2><p>The utility methods available are convex hull, intersection and cartesian product. The dual representation as a list of vertices can be obtained with the <code>vertices_list</code> function.</p><div><pre><code class="language-julia">p = HPolytope([LinearConstraint([1.0, 0.0], 1.0),
+               LinearConstraint([0.0, 1.0], 1.0),
+               LinearConstraint([-1.0, 0.0], 1.0),
+               LinearConstraint([0.0, -1.0], 1.0)])
+
+constraints_list(p)</code></pre><pre><code class="language-none">4-element Array{LazySets.HalfSpace{Float64},1}:
+ LazySets.HalfSpace{Float64}([1.0, 0.0], 1.0)
+ LazySets.HalfSpace{Float64}([0.0, 1.0], 1.0)
+ LazySets.HalfSpace{Float64}([-1.0, 0.0], 1.0)
+ LazySets.HalfSpace{Float64}([0.0, -1.0], 1.0)</code></pre></div><div><pre><code class="language-julia">vertices_list(p)</code></pre><pre><code class="language-none">4-element Array{Array{Float64,1},1}:
+ [1.0, 1.0]
+ [-1.0, 1.0]
+ [1.0, -1.0]
+ [-1.0, -1.0]</code></pre></div><p>For example, the concrete intersection of two polytopes is performed with the <code>intersection</code> method.</p><div><pre><code class="language-julia">E = Ellipsoid(ones(2), Diagonal([2.0, 0.5]))
+B = Ball1([2.5, 1.5], .8)
+
+import LazySets.Approximations.overapproximate
+polyoverapprox(x) = HPolytope(overapproximate(x, 1e-3).constraints)
+
+Epoly = polyoverapprox(E)
+Bpoly = polyoverapprox(B)
+X = intersection(Epoly, Bpoly)
+
+plot(E, 1e-3, aspectratio=1, alpha=0.4)
+plot!(B, 1e-3, alpha=0.4)
+plot!(X, 1e-3, alpha=0.4, color=&quot;black&quot;)</code></pre><?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="400" viewBox="0 0 600 400">
+<defs>
+  <clipPath id="clip0900">
+    <rect x="0" y="0" width="600" height="400"/>
+  </clipPath>
+</defs>
+<polygon clip-path="url(#clip0900)" points="
+0,400 600,400 600,0 0,0 
+  " fill="#ffffff" fill-opacity="1"/>
+<defs>
+  <clipPath id="clip0901">
+    <rect x="120" y="0" width="421" height="400"/>
+  </clipPath>
+</defs>
+<polygon clip-path="url(#clip0900)" points="
+40.3485,339.735 580.315,339.735 580.315,47.9449 40.3485,47.9449 
+  " fill="#ffffff" fill-opacity="1"/>
+<defs>
+  <clipPath id="clip0902">
+    <rect x="40" y="47" width="541" height="293"/>
+  </clipPath>
+</defs>
+<polyline clip-path="url(#clip0902)" style="stroke:#000000; stroke-width:0.5; stroke-opacity:0.1; fill:none" points="
+  112.44,339.735 112.44,47.9449 
+  "/>
+<polyline clip-path="url(#clip0902)" style="stroke:#000000; stroke-width:0.5; stroke-opacity:0.1; fill:none" points="
+  249.589,339.735 249.589,47.9449 
+  "/>
+<polyline clip-path="url(#clip0902)" style="stroke:#000000; stroke-width:0.5; stroke-opacity:0.1; fill:none" points="
+  386.739,339.735 386.739,47.9449 
+  "/>
+<polyline clip-path="url(#clip0902)" style="stroke:#000000; stroke-width:0.5; stroke-opacity:0.1; fill:none" points="
+  523.888,339.735 523.888,47.9449 
+  "/>
+<polyline clip-path="url(#clip0902)" style="stroke:#000000; stroke-width:0.5; stroke-opacity:0.1; fill:none" points="
+  40.3485,303.072 580.315,303.072 
+  "/>
+<polyline clip-path="url(#clip0902)" style="stroke:#000000; stroke-width:0.5; stroke-opacity:0.1; fill:none" points="
+  40.3485,234.497 580.315,234.497 
+  "/>
+<polyline clip-path="url(#clip0902)" style="stroke:#000000; stroke-width:0.5; stroke-opacity:0.1; fill:none" points="
+  40.3485,165.923 580.315,165.923 
+  "/>
+<polyline clip-path="url(#clip0902)" style="stroke:#000000; stroke-width:0.5; stroke-opacity:0.1; fill:none" points="
+  40.3485,97.3479 580.315,97.3479 
+  "/>
+<polyline clip-path="url(#clip0900)" style="stroke:#000000; stroke-width:1; stroke-opacity:1; fill:none" points="
+  40.3485,339.735 580.315,339.735 
+  "/>
+<polyline clip-path="url(#clip0900)" style="stroke:#000000; stroke-width:1; stroke-opacity:1; fill:none" points="
+  40.3485,339.735 40.3485,47.9449 
+  "/>
+<polyline clip-path="url(#clip0900)" style="stroke:#000000; stroke-width:1; stroke-opacity:1; fill:none" points="
+  112.44,339.735 112.44,335.358 
+  "/>
+<polyline clip-path="url(#clip0900)" style="stroke:#000000; stroke-width:1; stroke-opacity:1; fill:none" points="
+  249.589,339.735 249.589,335.358 
+  "/>
+<polyline clip-path="url(#clip0900)" style="stroke:#000000; stroke-width:1; stroke-opacity:1; fill:none" points="
+  386.739,339.735 386.739,335.358 
+  "/>
+<polyline clip-path="url(#clip0900)" style="stroke:#000000; stroke-width:1; stroke-opacity:1; fill:none" points="
+  523.888,339.735 523.888,335.358 
+  "/>
+<polyline clip-path="url(#clip0900)" style="stroke:#000000; stroke-width:1; stroke-opacity:1; fill:none" points="
+  40.3485,303.072 48.448,303.072 
+  "/>
+<polyline clip-path="url(#clip0900)" style="stroke:#000000; stroke-width:1; stroke-opacity:1; fill:none" points="
+  40.3485,234.497 48.448,234.497 
+  "/>
+<polyline clip-path="url(#clip0900)" style="stroke:#000000; stroke-width:1; stroke-opacity:1; fill:none" points="
+  40.3485,165.923 48.448,165.923 
+  "/>
+<polyline clip-path="url(#clip0900)" style="stroke:#000000; stroke-width:1; stroke-opacity:1; fill:none" points="
+  40.3485,97.3479 48.448,97.3479 
+  "/>
+<g clip-path="url(#clip0900)">
+<text style="fill:#000000; fill-opacity:1; font-family:Arial,Helvetica Neue,Helvetica,sans-serif; font-size:12; text-anchor:middle;" transform="rotate(0, 112.44, 353.535)" x="112.44" y="353.535">0</text>
+</g>
+<g clip-path="url(#clip0900)">
+<text style="fill:#000000; fill-opacity:1; font-family:Arial,Helvetica Neue,Helvetica,sans-serif; font-size:12; text-anchor:middle;" transform="rotate(0, 249.589, 353.535)" x="249.589" y="353.535">1</text>
+</g>
+<g clip-path="url(#clip0900)">
+<text style="fill:#000000; fill-opacity:1; font-family:Arial,Helvetica Neue,Helvetica,sans-serif; font-size:12; text-anchor:middle;" transform="rotate(0, 386.739, 353.535)" x="386.739" y="353.535">2</text>
+</g>
+<g clip-path="url(#clip0900)">
+<text style="fill:#000000; fill-opacity:1; font-family:Arial,Helvetica Neue,Helvetica,sans-serif; font-size:12; text-anchor:middle;" transform="rotate(0, 523.888, 353.535)" x="523.888" y="353.535">3</text>
+</g>
+<g clip-path="url(#clip0900)">
+<text style="fill:#000000; fill-opacity:1; font-family:Arial,Helvetica Neue,Helvetica,sans-serif; font-size:12; text-anchor:end;" transform="rotate(0, 34.3485, 307.572)" x="34.3485" y="307.572">0.5</text>
+</g>
+<g clip-path="url(#clip0900)">
+<text style="fill:#000000; fill-opacity:1; font-family:Arial,Helvetica Neue,Helvetica,sans-serif; font-size:12; text-anchor:end;" transform="rotate(0, 34.3485, 238.997)" x="34.3485" y="238.997">1.0</text>
+</g>
+<g clip-path="url(#clip0900)">
+<text style="fill:#000000; fill-opacity:1; font-family:Arial,Helvetica Neue,Helvetica,sans-serif; font-size:12; text-anchor:end;" transform="rotate(0, 34.3485, 170.423)" x="34.3485" y="170.423">1.5</text>
+</g>
+<g clip-path="url(#clip0900)">
+<text style="fill:#000000; fill-opacity:1; font-family:Arial,Helvetica Neue,Helvetica,sans-serif; font-size:12; text-anchor:end;" transform="rotate(0, 34.3485, 101.848)" x="34.3485" y="101.848">2.0</text>
+</g>
+<polygon clip-path="url(#clip0902)" points="
+443.548,232.117 443.081,227.361 442.147,222.622 440.75,217.913 438.892,213.243 436.578,208.624 433.814,204.068 430.606,199.584 426.961,195.185 422.89,190.881 
+  418.401,186.682 413.505,182.598 408.215,178.639 402.542,174.815 396.501,171.134 390.105,167.606 383.372,164.239 376.316,161.042 368.955,158.021 361.306,155.185 
+  353.388,152.539 345.22,150.091 336.821,147.847 328.213,145.811 315.011,143.077 296.774,140.311 278.083,138.452 259.118,137.518 240.061,137.518 221.095,138.452 
+  202.404,140.311 184.168,143.077 170.965,145.811 162.357,147.847 153.959,150.091 145.791,152.539 137.873,155.185 130.224,158.021 122.863,161.042 115.807,164.239 
+  109.073,167.606 102.678,171.134 96.6365,174.815 90.9638,178.639 85.6732,182.598 80.7775,186.682 76.2884,190.881 72.2169,195.185 68.5727,199.584 65.3645,204.068 
+  62.6002,208.624 60.2863,213.243 58.4285,217.913 57.0312,222.622 56.0978,227.361 55.6306,232.117 55.6306,236.878 56.0978,241.634 57.0312,246.372 58.4285,251.082 
+  60.2863,255.752 62.6002,260.371 65.3645,264.927 68.5727,269.41 72.2169,273.809 76.2884,278.113 80.7775,282.313 85.6732,286.397 90.9638,290.356 96.6365,294.18 
+  102.678,297.861 109.073,301.389 115.807,304.755 122.863,307.953 130.224,310.974 137.873,313.81 145.791,316.455 153.959,318.903 162.357,321.148 170.965,323.183 
+  184.168,325.918 202.404,328.684 221.095,330.543 240.061,331.477 259.118,331.477 278.083,330.543 296.774,328.684 315.011,325.918 328.213,323.183 336.821,321.148 
+  345.22,318.903 353.388,316.455 361.306,313.81 368.955,310.974 376.316,307.953 383.372,304.755 390.105,301.389 396.501,297.861 402.542,294.18 408.215,290.356 
+  413.505,286.397 418.401,282.313 422.89,278.113 426.961,273.809 430.606,269.41 433.814,264.927 436.578,260.371 438.892,255.752 440.75,251.082 442.147,246.372 
+  443.081,241.634 443.548,236.878 443.548,232.117 443.548,232.117 
+  " fill="#009af9" fill-opacity="0.4"/>
+<polyline clip-path="url(#clip0902)" style="stroke:#000000; stroke-width:1; stroke-opacity:0.4; fill:none" points="
+  443.548,232.117 443.081,227.361 442.147,222.622 440.75,217.913 438.892,213.243 436.578,208.624 433.814,204.068 430.606,199.584 426.961,195.185 422.89,190.881 
+  418.401,186.682 413.505,182.598 408.215,178.639 402.542,174.815 396.501,171.134 390.105,167.606 383.372,164.239 376.316,161.042 368.955,158.021 361.306,155.185 
+  353.388,152.539 345.22,150.091 336.821,147.847 328.213,145.811 315.011,143.077 296.774,140.311 278.083,138.452 259.118,137.518 240.061,137.518 221.095,138.452 
+  202.404,140.311 184.168,143.077 170.965,145.811 162.357,147.847 153.959,150.091 145.791,152.539 137.873,155.185 130.224,158.021 122.863,161.042 115.807,164.239 
+  109.073,167.606 102.678,171.134 96.6365,174.815 90.9638,178.639 85.6732,182.598 80.7775,186.682 76.2884,190.881 72.2169,195.185 68.5727,199.584 65.3645,204.068 
+  62.6002,208.624 60.2863,213.243 58.4285,217.913 57.0312,222.622 56.0978,227.361 55.6306,232.117 55.6306,236.878 56.0978,241.634 57.0312,246.372 58.4285,251.082 
+  60.2863,255.752 62.6002,260.371 65.3645,264.927 68.5727,269.41 72.2169,273.809 76.2884,278.113 80.7775,282.313 85.6732,286.397 90.9638,290.356 96.6365,294.18 
+  102.678,297.861 109.073,301.389 115.807,304.755 122.863,307.953 130.224,310.974 137.873,313.81 145.791,316.455 153.959,318.903 162.357,321.148 170.965,323.183 
+  184.168,325.918 202.404,328.684 221.095,330.543 240.061,331.477 259.118,331.477 278.083,330.543 296.774,328.684 315.011,325.918 328.213,323.183 336.821,321.148 
+  345.22,318.903 353.388,316.455 361.306,313.81 368.955,310.974 376.316,307.953 383.372,304.755 390.105,301.389 396.501,297.861 402.542,294.18 408.215,290.356 
+  413.505,286.397 418.401,282.313 422.89,278.113 426.961,273.809 430.606,269.41 433.814,264.927 436.578,260.371 438.892,255.752 440.75,251.082 442.147,246.372 
+  443.081,241.634 443.548,236.878 443.548,232.117 
+  "/>
+<polygon clip-path="url(#clip0902)" points="
+565.033,165.923 455.313,56.2031 455.313,56.2031 345.594,165.923 345.594,165.923 455.313,275.642 455.313,275.642 565.033,165.923 565.033,165.923 565.033,165.923 
+  
+  " fill="#e26f46" fill-opacity="0.4"/>
+<polyline clip-path="url(#clip0902)" style="stroke:#000000; stroke-width:1; stroke-opacity:0.4; fill:none" points="
+  565.033,165.923 455.313,56.2031 345.594,165.923 345.594,165.923 455.313,275.642 455.313,275.642 565.033,165.923 565.033,165.923 
+  
+  "/>
+<polygon clip-path="url(#clip0902)" points="
+443.548,232.117 443.081,227.361 442.147,222.622 440.75,217.913 439.936,215.566 437.848,210.919 436.578,208.624 433.814,204.068 429.535,198.089 424.656,192.585 
+  420.003,188.096 418.401,186.682 413.505,182.598 406.45,177.318 399.031,172.565 392.312,168.765 390.105,167.606 381.99,163.548 372.643,159.419 364.408,156.298 
+  357.834,153.939 357.577,153.939 345.594,165.923 345.594,165.923 437.734,258.063 437.734,258.063 438.892,255.752 439.646,254.008 441.134,250.065 442.147,246.372 
+  443.081,241.634 443.081,241.634 443.548,236.878 443.548,232.117 443.548,232.117 
+  " fill="#000000" fill-opacity="0.4"/>
+<polyline clip-path="url(#clip0902)" style="stroke:#000000; stroke-width:1; stroke-opacity:0.4; fill:none" points="
+  443.548,232.117 443.081,227.361 442.147,222.622 440.75,217.913 439.936,215.566 437.848,210.919 436.578,208.624 433.814,204.068 429.535,198.089 424.656,192.585 
+  420.003,188.096 418.401,186.682 413.505,182.598 406.45,177.318 399.031,172.565 392.312,168.765 390.105,167.606 381.99,163.548 372.643,159.419 364.408,156.298 
+  357.834,153.939 357.577,153.939 345.594,165.923 437.734,258.063 438.892,255.752 439.646,254.008 441.134,250.065 442.147,246.372 
+  443.081,241.634 443.081,241.634 443.548,236.878 443.548,232.117 
+  "/>
+</svg>
+</div><h2><a class="nav-anchor" id="Projections-1" href="#Projections-1">Projections</a></h2><p>Projection of high-dimensional polyhedra and elimination of variables can be performed with the <code>eliminate</code> function, which supports three types of methods: <code>:FourierMotzkin</code>, <code>:BlockElimination</code> and <code>:ProjectGenerators</code>.</p><p>For further details, see <a href="https://juliapolyhedra.github.io/Polyhedra.jl/latest/polyhedron.html#Projecting-a-polyhedron-1">the documentation of Polyhedra.jl</a>.</p><footer><hr/><a class="previous" href="reach_zonotopes_hybrid.html"><span class="direction">Previous</span><span class="title">A Hybrid Reachability Algorithm</span></a><a class="next" href="parallel_approximations.html"><span class="direction">Next</span><span class="title">Parallel Approximations</span></a></footer></article></body></html>
