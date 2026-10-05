@@ -29,9 +29,6 @@ TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
 
-[sources]
-Expokit = {url = "https://github.com/acroy/Expokit.jl"}
-
 [compat]
 Aqua = "0.8.9"
 CDDLib = "0.6 - 0.10"
