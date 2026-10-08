@@ -32,9 +32,6 @@ search by default.
     linear_search = true  # TODO fix binary search and then remove this line
     n = length(P.constraints)
     @assert n > 0 "the polygon has no constraints"
-    # `an_element` intersects the first two (angularly sorted) constraints, which is a
-    # genuine vertex iff `P` is non-empty; cheaper than `isempty`, which enumerates all
-    # vertices
     if n >= 2 && isempty(P)
         throw(ArgumentError("the support vector is undefined because the polygon is empty"))
     end
