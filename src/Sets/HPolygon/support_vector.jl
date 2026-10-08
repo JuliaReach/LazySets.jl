@@ -32,6 +32,9 @@ search by default.
     linear_search = true  # TODO fix binary search and then remove this line
     n = length(P.constraints)
     @assert n > 0 "the polygon has no constraints"
+    if n >= 2 && isempty(P)
+        throw(ArgumentError("the support vector is undefined because the polygon is empty"))
+    end
 
     if linear_search
         # linear search
