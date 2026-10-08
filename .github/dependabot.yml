@@ -1,7 +1,13 @@
-# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 version: 2
+enable-beta-ecosystems: true
 updates:
+  # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
   - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+  - package-ecosystem: "julia"
     directory: "/"
     schedule:
       interval: "weekly"
