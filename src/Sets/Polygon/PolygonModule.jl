@@ -2,10 +2,12 @@ module PolygonModule
 
 using Reexport: @reexport
 
-using ..LazySets: LazySet
+using ..LazySets: LazySet, @validate
 
 @reexport import ..API: an_element, dim, isconvextype, isbounded, isboundedtype,
-                        isempty, isoperationtype, isuniversal, scale, scale!
+                        isempty, isoperationtype, isuniversal, scale, scale!,
+                        vertices_list, translate, translate!
+@reexport import ..LazySets: tovrep
 @reexport using ..API
 
 export Polygon
@@ -25,5 +27,8 @@ include("isuniversal.jl")
 include("scale.jl")
 # include("support_function.jl")
 # include("support_vector.jl")
+include("vertices_list.jl")
+include("tovrep.jl")
+include("translate.jl")
 
 end  # module
