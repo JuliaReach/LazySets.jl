@@ -8,6 +8,9 @@ updates:
       interval: "weekly"
   # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
   - package-ecosystem: "julia"
-    directory: "/"
+    directories:
+      - "/"
+      - "/test/"
+      - "/docs/"
     schedule:
       interval: "weekly"
