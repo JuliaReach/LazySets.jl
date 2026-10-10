@@ -30,7 +30,9 @@ julia> subtypes(AbstractSparsePolynomialZonotope)
 """
 abstract type AbstractSparsePolynomialZonotope{N} <: AbstractPolynomialZonotope{N} end
 
-"""
+function expmat end
+
+@doc """
     expmat(P::AbstractSparsePolynomialZonotope)
 
 Return the matrix of exponents of a sparse polynomial zonotope.
@@ -48,9 +50,11 @@ The matrix of exponents, where each column is a multidegree.
 In the exponent matrix, each row corresponds to a parameter (``αₖ`` in the
 definition) and each column corresponds to a monomial.
 """
-function expmat(::AbstractSparsePolynomialZonotope) end
+expmat(::AbstractSparsePolynomialZonotope)
 
-"""
+function genmat_dep end
+
+@doc """
     genmat_dep(P::AbstractSparsePolynomialZonotope)
 
 Return the matrix of dependent generators of a sparse polynomial zonotope.
@@ -63,9 +67,11 @@ Return the matrix of dependent generators of a sparse polynomial zonotope.
 
 The matrix of dependent generators.
 """
-function genmat_dep(::AbstractSparsePolynomialZonotope) end
+genmat_dep(::AbstractSparsePolynomialZonotope)
 
-"""
+function genmat_indep end
+
+@doc """
     genmat_indep(P::AbstractSparsePolynomialZonotope)
 
 Return the matrix of independent generators of a sparse polynomial zonotope.
@@ -78,7 +84,7 @@ Return the matrix of independent generators of a sparse polynomial zonotope.
 
 The matrix of independent generators.
 """
-function genmat_indep(::AbstractSparsePolynomialZonotope) end
+genmat_indep(::AbstractSparsePolynomialZonotope)
 
 function ngens_dep(P::AbstractSparsePolynomialZonotope)
     return size(genmat_dep(P), 2)

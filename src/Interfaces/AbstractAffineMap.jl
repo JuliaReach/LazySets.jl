@@ -32,7 +32,9 @@ julia> subtypes(AbstractAffineMap)
 """
 abstract type AbstractAffineMap{N,S<:LazySet{N}} <: LazySet{N} end
 
-"""
+function matrix end
+
+@doc """
     matrix(X::AbstractAffineMap)
 
 Return the matrix of an affine map.
@@ -45,9 +47,11 @@ Return the matrix of an affine map.
 
 The matrix of `X`.
 """
-function matrix(::AbstractAffineMap) end
+matrix(::AbstractAffineMap)
 
-"""
+function vector end
+
+@doc """
     vector(X::AbstractAffineMap)
 
 Return the vector of an affine map.
@@ -60,9 +64,11 @@ Return the vector of an affine map.
 
 The vector of `X`.
 """
-function vector(::AbstractAffineMap) end
+vector(::AbstractAffineMap)
 
-"""
+function set end
+
+@doc """
     set(X::AbstractAffineMap)
 
 Return the set of an affine map.
@@ -75,7 +81,7 @@ Return the set of an affine map.
 
 The set of `X` before applying the map.
 """
-function set(::AbstractAffineMap) end
+set(::AbstractAffineMap)
 
 isoperationtype(::Type{<:AbstractAffineMap}) = true
 

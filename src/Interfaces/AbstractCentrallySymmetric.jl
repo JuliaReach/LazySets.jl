@@ -23,7 +23,9 @@ julia> subtypes(AbstractCentrallySymmetric)
 """
 abstract type AbstractCentrallySymmetric{N} <: ConvexSet{N} end
 
-"""
+function ○ end
+
+@doc """
     ○(c, a)
 
 Convenience constructor of `Ellipsoid`s or `Ball2`s depending on the type of `a`.
@@ -42,7 +44,7 @@ A `Ellipsoid`s or `Ball2`s depending on the type of `a`.
 
 "`○`" can be typed by `\\bigcirc<tab>`.
 """
-function ○(c, a) end
+○(c, a)
 
 # a set with a unique center must be bounded
 function isboundedtype(::Type{<:AbstractCentrallySymmetric})

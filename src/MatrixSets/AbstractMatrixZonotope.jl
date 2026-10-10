@@ -8,10 +8,10 @@ Every concrete `AbstractSparsePolynomialZonotope` must define the following func
 """
 abstract type AbstractMatrixZonotope{N} end
 
-"""
+@doc """
     size(::AbstractMatrixZonotope, [dim])
 
 Return a tuple containing the dimensions of a matrix zonotope.
 Optionally you can specify a dimension to just get the length of that dimension.
 """
-function size(::AbstractMatrixZonotope) end  # COV_EXCL_LINE
+size(::AbstractMatrixZonotope)

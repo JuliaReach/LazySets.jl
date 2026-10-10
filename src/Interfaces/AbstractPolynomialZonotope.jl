@@ -33,7 +33,9 @@ julia> subtypes(AbstractPolynomialZonotope)
 """
 abstract type AbstractPolynomialZonotope{N} <: LazySet{N} end
 
-"""
+function polynomial_order end
+
+@doc """
     polynomial_order(P::AbstractPolynomialZonotope)
 
 Determine the polynomial order of a polynomial zonotope.
@@ -50,9 +52,11 @@ A nonnegative integer representing the polynomial order.
 
 The polynomial order is the maximum sum of all monomials' parameter exponents.
 """
-function polynomial_order(::AbstractPolynomialZonotope) end
+polynomial_order(::AbstractPolynomialZonotope)
 
-"""
+function ngens_dep end
+
+@doc """
     ngens_dep(P::AbstractPolynomialZonotope)
 
 Determine the number of dependent generators of a polynomial zonotope.
@@ -65,9 +69,11 @@ Determine the number of dependent generators of a polynomial zonotope.
 
 A nonnegative integer representing the number of dependent generators.
 """
-function ngens_dep(::AbstractPolynomialZonotope) end
+ngens_dep(::AbstractPolynomialZonotope)
 
-"""
+function ngens_indep end
+
+@doc """
     ngens_indep(P::AbstractPolynomialZonotope)
 
 Determine the number of independent generators of a polynomial zonotope.
@@ -80,7 +86,7 @@ Determine the number of independent generators of a polynomial zonotope.
 
 A nonnegative integer representing the number of independent generators.
 """
-function ngens_indep(::AbstractPolynomialZonotope) end
+ngens_indep(::AbstractPolynomialZonotope)
 
 @validate function center(P::AbstractPolynomialZonotope, i::Int)
     return center(P)[i]
