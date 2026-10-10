@@ -57,7 +57,7 @@ Return the hyperrectangle radius of a hyperrectangular set.
 
 The hyperrectangle radius of `H`, which is a full-dimensional vector.
 """
-function radius_hyperrectangle(::AbstractHyperrectangle) end
+function radius_hyperrectangle end
 
 """
     radius_hyperrectangle(H::AbstractHyperrectangle, i::Int)
@@ -97,7 +97,7 @@ A `Hyperrectangle`s or `BallInf`s depending on the type of `r`.
 
 The function symbol can be typed via `\\square<tab>`.
 """
-function □(c, r) end
+function □ end
 
 function genmat(H::AbstractHyperrectangle)
     n_flat = _flat_dims(H)

@@ -48,7 +48,7 @@ The matrix of exponents, where each column is a multidegree.
 In the exponent matrix, each row corresponds to a parameter (``αₖ`` in the
 definition) and each column corresponds to a monomial.
 """
-function expmat(::AbstractSparsePolynomialZonotope) end
+function expmat end
 
 """
     genmat_dep(P::AbstractSparsePolynomialZonotope)
@@ -63,7 +63,7 @@ Return the matrix of dependent generators of a sparse polynomial zonotope.
 
 The matrix of dependent generators.
 """
-function genmat_dep(::AbstractSparsePolynomialZonotope) end
+function genmat_dep end
 
 """
     genmat_indep(P::AbstractSparsePolynomialZonotope)
@@ -78,7 +78,7 @@ Return the matrix of independent generators of a sparse polynomial zonotope.
 
 The matrix of independent generators.
 """
-function genmat_indep(::AbstractSparsePolynomialZonotope) end
+function genmat_indep end
 
 function ngens_dep(P::AbstractSparsePolynomialZonotope)
     return size(genmat_dep(P), 2)

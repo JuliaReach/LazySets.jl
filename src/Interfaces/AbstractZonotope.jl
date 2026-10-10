@@ -65,7 +65,7 @@ Return an iterator over the generators of a zonotopic set.
 
 An iterator over the generators of `Z`.
 """
-function generators(::AbstractZonotope) end
+function generators end
 
 """
     genmat(Z::AbstractZonotope)
@@ -80,7 +80,7 @@ Return a generator matrix of a zonotopic set.
 
 A generator matrix of `Z`.
 """
-function genmat(::AbstractZonotope) end
+function genmat end
 
 """
     genmat_fallback(Z::AbstractZonotope; [gens]=generators(Z), [ngens]=nothing)
@@ -1241,7 +1241,9 @@ function reflect(Z::AbstractZonotope)
 end
 
 # internal function; defined here due to dependency StaticArrays and submodules
-function _genmat_static(::AbstractZonotope) end
+function _genmat_static(::AbstractZonotope)  # COV_EXCL_LINE
+    throw(ErrorException("not implemented"))  # COV_EXCL_LINE
+end
 
 """
     _norm_1(Z::AbstractZonotope)

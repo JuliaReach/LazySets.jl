@@ -233,7 +233,9 @@ end
 
 # declare function here so it can be found
 # (the `Bool` argument is a dummy to avoid warnings; the actual argument is `Type{<:LazySet}`)
-function concrete_function(::Bool) end
+function concrete_function(::Bool)  # COV_EXCL_LINE
+    throw(ErrorException("not implemented"))  # COV_EXCL_LINE
+end
 
 """
     @declare_array_version(SET, SETARR)

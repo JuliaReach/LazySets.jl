@@ -50,7 +50,7 @@ A nonnegative integer representing the polynomial order.
 
 The polynomial order is the maximum sum of all monomials' parameter exponents.
 """
-function polynomial_order(::AbstractPolynomialZonotope) end
+function polynomial_order end
 
 """
     ngens_dep(P::AbstractPolynomialZonotope)
@@ -65,7 +65,7 @@ Determine the number of dependent generators of a polynomial zonotope.
 
 A nonnegative integer representing the number of dependent generators.
 """
-function ngens_dep(::AbstractPolynomialZonotope) end
+function ngens_dep end
 
 """
     ngens_indep(P::AbstractPolynomialZonotope)
@@ -80,7 +80,7 @@ Determine the number of independent generators of a polynomial zonotope.
 
 A nonnegative integer representing the number of independent generators.
 """
-function ngens_indep(::AbstractPolynomialZonotope) end
+function ngens_indep end
 
 @validate function center(P::AbstractPolynomialZonotope, i::Int)
     return center(P)[i]
