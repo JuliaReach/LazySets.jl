@@ -25,10 +25,13 @@ function constraints_list(B::Bloating)
     @assert ispolyhedral(B) "the constraints list is only available for " *
                             "polyhedral bloating (which requires a polyhedral base set and the " *
                             "1-norm or the infinity norm)"
+
     if B.ε < 0
         throw(ArgumentError("computing the constraints list of a negatively " *
                             "bloated set is not supported"))
     end
 
-    return constraints_list(MinkowskiSum(B.X, _bloating_ball(B)))
+    MS = MinkowskiSum(B.X, _bloating_ball(B))
+    @assert MS isa MinkowskiSum || MS isa ZeroSet "MinkowskiSum should not be empty"
+    return constraints_list(MS)
 end

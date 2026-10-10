@@ -1,5 +1,6 @@
 function convert(::Type{ZonotopeMD}, Z::AbstractZonotope)
     N = eltype(Z)
+    @assert N isa Type{<:Number} "cannot work with non-numeric sets"
     n = dim(Z)
     Gvec = Vector{N}[]
     d = zeros(N, n)

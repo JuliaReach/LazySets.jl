@@ -157,7 +157,7 @@ function convert(::Type{Zonotope}, cpa::CartesianProductArray{N,AZ}) where {N,AZ
     return Zonotope(c, G)
 end
 
-function convert(::Type{Zonotope}, P::AbstractPolynomialZonotope)
+function convert(::Type{Zonotope}, P::AbstractSparsePolynomialZonotope)  # TODO generalize once `genmat_indep` is supported for DensePolynomialZonotope
     @assert iszero(ngens_dep(P)) "cannot convert a general polynomial zonotope to a Zonotope"
 
     return Zonotope(center(P), genmat_indep(P))

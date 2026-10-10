@@ -13,6 +13,7 @@ The unique element of the zero set, i.e., a zero vector.
 """
 function center(Z::ZeroSet)
     N = eltype(Z)
+    @assert N isa Type{<:Number} "cannot work with non-numeric sets"
     return zeros(N, Z.dim)
 end
 

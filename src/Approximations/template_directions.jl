@@ -494,7 +494,7 @@ LazySets.dim(dd::DiagDirections) = dd.n
 isbounding(::Type{<:DiagDirections}) = true
 isnormalized(::Type{<:DiagDirections}) = false
 
-function iterate(dd::DiagDirections{N,Vector{N}}) where {N}
+function iterate(dd::DiagDirections{N,Vector{N}}) where {N<:Number}  # requires numberic directions
     return (ones(N, dd.n), ones(N, dd.n))
 end
 

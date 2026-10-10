@@ -88,7 +88,12 @@ function _isdisjoint_hyperplane_hyperplane(hp1::Hyperplane,
     if res
         return _witness_result_empty(witness, true, hp1, hp2)
     end
-    return witness ? (false, w) : false
+    if witness
+        @assert @isdefined w
+        return (false, w)
+    else
+        return false
+    end
 end
 
 """

@@ -21,6 +21,7 @@ constraint.
 """
 function tosimplehrep(constraints::AbstractVector{<:HalfSpace}; n::Int=0)
     N = eltype(eltype(constraints))
+    @assert N isa Type{<:Number} "cannot work with non-numeric sets"
     m = length(constraints)
     if m == 0
         A = Matrix{N}(undef, 0, n)

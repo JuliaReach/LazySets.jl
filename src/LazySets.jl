@@ -164,7 +164,10 @@ include("Sets/HParallelotope/HParallelotopeModule.jl")
                                         extremal_vertices,
                                         offset
 
-include("Sets/HPolygon/HPolygonModule.jl")
+include("Sets/Singleton/SingletonModule.jl")
+@reexport using ..SingletonModule: Singleton
+
+include("Sets/HPolygon/HPolygonModule.jl")  # must come after SingletonModule
 @reexport using ..HPolygonModule: HPolygon
 
 include("Sets/HPolytope/HPolytopeModule.jl")
@@ -212,9 +215,6 @@ include("MatrixSets/MatrixZonotopeModule.jl")
 include("Sets/SimpleSparsePolynomialZonotope/SimpleSparsePolynomialZonotopeModule.jl")
 @reexport using ..SimpleSparsePolynomialZonotopeModule: SimpleSparsePolynomialZonotope,
                                                         quadratic_map
-
-include("Sets/Singleton/SingletonModule.jl")
-@reexport using ..SingletonModule: Singleton
 
 include("Sets/SparsePolynomialZonotope/SparsePolynomialZonotopeModule.jl")
 @reexport using ..SparsePolynomialZonotopeModule: SparsePolynomialZonotope

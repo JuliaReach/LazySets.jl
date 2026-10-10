@@ -370,6 +370,7 @@ function _issubset_interval(X::Interval{N}, Y::Interval, Z::Interval,
     end
 
     # compute witness
+    @assert W isa Interval "at this point the difference must be of type Interval"
     w = _min(Z) > _min(W) ? [(_min(W) + _min(Z)) / 2] : high(W)
     return (false, w)
 end

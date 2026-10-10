@@ -32,6 +32,7 @@ function _constraints_list_cartesian_product(cp::Union{CartesianProduct,Cartesia
             indices = prev_step:(prev_step + n_low - 1)
         end
         for constr in c_low_list
+            @assert @isdefined indices
             new_constr = HalfSpace(sparsevec(indices, constr.a, n), constr.b)
             push!(clist, new_constr)
         end

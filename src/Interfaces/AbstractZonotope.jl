@@ -617,6 +617,7 @@ function _constraints_list_zonotope(Z::AbstractZonotope{N}) where {N<:AbstractFl
     end
     if isflat_Z
         # add constraints about flat dimensions
+        @assert @isdefined Z_orig
         c = center(Z_orig)
         n = length(c)
         @inbounds for i in extend_indices
@@ -1000,7 +1001,7 @@ function _reduce_order_zonotope_common(Z, r, n, p, method::Union{ASB10,COMB03,GI
 
     if isone(r)
         # if r = 1 => m = 0 and the generators need not be sorted
-        Lred = _approximate_reduce_order(c, G, 1:p, method)
+        Lred = _approximate_reduce_order(c, G, 1:p, method)::AbstractMatrix  # needed for JET; TODO why can A be an `Array{Float64, 3}`?
         return Zonotope(c, Lred)
     end
 
@@ -1018,7 +1019,8 @@ end
 function _absorb_generators_zonotope(c, G, indices, m, method)
 
     # compute interval hull of L
-    Lred = _approximate_reduce_order(c, G, view(indices, (m + 1):length(indices)), method)
+    Lred = _approximate_reduce_order(c, G, view(indices, (m + 1):length(indices)),
+                                     method)::AbstractMatrix  # needed for JET; TODO why can A be an `Array{Float64, 3}`?
 
     # concatenate non-reduced and reduced generators
     Gred = _hcat_KLred(G, view(indices, 1:m), Lred)
@@ -1160,12 +1162,12 @@ function _rref!(A::AbstractMatrix)
 end
 
 # approximate with a box
-function _approximate_reduce_order(c, G, indices, ::Union{COMB03,GIR05})
+function _approximate_reduce_order(c::AbstractVector, G::AbstractMatrix, indices, ::Union{COMB03,GIR05})
     return _interval_hull(G, indices)
 end
 
 # approximate with a parallelotope
-function _approximate_reduce_order(c, G, indices, ::ASB10)
+function _approximate_reduce_order(c::AbstractVector, G::AbstractMatrix, indices, ::ASB10)
     Ztilde = Zonotope(c, view(G, :, indices))
     Ψ = Approximations._overapproximate_hparallelotope(Ztilde)
     return genmat(Ψ)

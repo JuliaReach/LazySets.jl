@@ -71,7 +71,7 @@ function symmetric_interval_hull(P::Union{VPolygon{N},VPolytope{N}}) where {N}
     return Hyperrectangle(zeros(N, n), r)
 end
 
-function symmetric_interval_hull(L::LineSegment{N}) where {N}
+function symmetric_interval_hull(L::LineSegment{N}) where {N<:Number}
     r = @inbounds [max(abs(L.p[1]), abs(L.q[1])),
                    max(abs(L.p[2]), abs(L.q[2]))]
     return Hyperrectangle(zeros(N, 2), r)

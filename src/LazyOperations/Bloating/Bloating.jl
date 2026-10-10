@@ -39,7 +39,7 @@ function _bloating_ball(B::Bloating)
     return _bloating_ball(B.ε, B.p, dim(B))
 end
 
-function _bloating_ball(ε::N, p::N, n::Int) where {N}
+function _bloating_ball(ε::N, p::N, n::Int) where {N<:Number}
     @assert ε >= zero(N) "cannot compute the ball for a negative bloating"
     return Ballp(p, zeros(N, n), ε)
 end

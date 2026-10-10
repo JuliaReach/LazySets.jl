@@ -49,8 +49,10 @@ search by default.
 
     if k == 1 || k == n + 1
         # corner cases: wrap-around in constraints list
-        return center(_intersection_line2d(P.constraints[1], P.constraints[n]))
+        cap = _intersection_line2d(P.constraints[1], P.constraints[n])
     else
-        return center(_intersection_line2d(P.constraints[k], P.constraints[k - 1]))
+        cap = _intersection_line2d(P.constraints[k], P.constraints[k - 1])
     end
+    @assert cap isa Singleton "the polygon constraints do not intersect"
+    return center(cap)
 end

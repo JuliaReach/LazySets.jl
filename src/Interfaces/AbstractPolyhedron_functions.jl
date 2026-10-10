@@ -979,7 +979,7 @@ end
 # 1 times ∑_i x_i ≥ 1
 # Note: constraints are sorted CCW in 2D
 # Note: code is similar to `_constraints_list_singleton_Vector`
-function _infeasible_constraints_list(n::Int; N=Float64)
+function _infeasible_constraints_list(n::Int; N::Type{<:Number}=Float64)
     clist = Vector{HalfSpace{N,Vector{N}}}(undef, n + 1)
     @inbounds for i in 1:n
         a = zeros(N, n)

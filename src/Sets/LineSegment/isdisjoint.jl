@@ -67,6 +67,7 @@ equation of the intersection point, if it exists.
         end
     end
     if witness && !empty_intersection
+        @assert @isdefined v
         return (false, v)
     end
     return _witness_result_empty(witness, empty_intersection, L1, L2)

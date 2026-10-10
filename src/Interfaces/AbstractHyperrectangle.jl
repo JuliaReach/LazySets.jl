@@ -103,6 +103,7 @@ function genmat(H::AbstractHyperrectangle)
     n_flat = _flat_dims(H)
     n = dim(H)
     N = eltype(H)
+    @assert N isa Type{<:Number} "cannot work with non-numeric sets"
     G = zeros(N, n, n - n_flat)
     j = 1
     for i in 1:dim(H)

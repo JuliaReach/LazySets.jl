@@ -922,8 +922,9 @@ function _bound_intersect_2D(Z::Zonotope, L::Line2D)
             throw(ArgumentError("unexpected case; check that the sets intersect"))
         end
     end
-    singleton = intersection(LineSegment(P, P + 2g(j)), L)
-    return center(singleton)[2]
+    cap = intersection(LineSegment(P, P + 2g(j)), L)
+    @assert cap isa Singleton "the polygon constraints do not intersect"
+    return center(cap)[2]
 end
 
 # ============== #

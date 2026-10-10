@@ -7,6 +7,7 @@ using ..LazySets: AbstractHPolygon, BINARY_SEARCH_THRESHOLD,
                   remove_redundant_constraints!, ⪯, _intersection_line2d,
                   _sort_constraints, @validate
 using ..HalfSpaceModule: HalfSpace, _normal_Vector
+using ..SingletonModule: Singleton  # only needed for an assertion
 
 @reexport import ..API: isoperationtype, σ, translate, translate!
 @reexport using ..API

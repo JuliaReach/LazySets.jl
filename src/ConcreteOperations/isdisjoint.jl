@@ -241,6 +241,7 @@ function _isdisjoint_hyperplane(hp::Union{Hyperplane,Line2D}, X::LazySet, witnes
     # compute witness
     point_hp = an_element(hp)
     point_line = sv_left
+    @assert @isdefined sv_right
     dir_line = sv_right - sv_left
     d = dot((point_hp - point_line), normal_hp) /
         dot(dir_line, normal_hp)
@@ -405,7 +406,12 @@ function _isdisjoint_union(cup::Union{UnionSet,UnionSetArray}, X::LazySet, witne
             result = isdisjoint(Y, X, witness)
         end
         if !result
-            return witness ? (false, w) : false
+            if witness
+                @assert @isdefined w
+                return (false, w)
+            else
+                return false
+            end
         end
     end
     N = promote_type(eltype(cup), eltype(X))
@@ -532,6 +538,7 @@ We perform these checks sequentially.
         Hi = project(H, block, Hyperrectangle, n)
         res = isdisjoint(bi, Hi, witness)
         if witness
+            @assert @isdefined w
             if res[1]
                 return (true, N[])
             else
@@ -542,7 +549,12 @@ We perform these checks sequentially.
         end
         block_start += ni
     end
-    return witness ? (false, w) : false
+    if witness
+        @assert @isdefined w
+        return (false, w)
+    else
+        return false
+    end
 end
 
 @validate_commutative function isdisjoint(∅::EmptySet, X::LazySet, witness::Bool=false)
