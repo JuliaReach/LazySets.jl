@@ -112,6 +112,14 @@ using SafeTestsets
                                           no_stale_explicit_imports=(ignore=ignores_no_stale_explicit_imports,))
 end
 
+@safetestset "JET tests" begin
+    using Test
+    import LazySets, JET
+
+    # false positives for Base functionality
+    JET.test_package(LazySets; target_modules=(LazySets,))
+end
+
 @safetestset "Aqua tests" begin
     import LazySets, Aqua
 
