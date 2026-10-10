@@ -42,7 +42,7 @@ Compute the radius of a p-norm ball.
 
 A number representing the radius.
 """
-function radius_ball(::AbstractBallp) end
+function radius_ball end
 
 """
     norm_ball(B::AbstractBallp)
@@ -57,7 +57,7 @@ Determine the norm (p) of a p-norm ball.
 
 A number representing the norm.
 """
-function norm_ball(::AbstractBallp) end
+function norm_ball end
 
 function low(B::AbstractBallp)
     return _low_AbstractBallp(B)

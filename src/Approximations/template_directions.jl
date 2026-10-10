@@ -44,7 +44,9 @@ Returns the dimension of the generated directions.
 
 The ambient dimension of the generated directions.
 """
-function LazySets.dim(::AbstractDirections) end
+function LazySets.dim(::AbstractDirections)  # COV_EXCL_LINE
+    throw(ErrorException("not implemented"))  # COV_EXCL_LINE
+end
 
 """
     isbounding(ad::AbstractDirections)

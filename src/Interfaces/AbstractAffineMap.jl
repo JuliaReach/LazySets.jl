@@ -45,7 +45,7 @@ Return the matrix of an affine map.
 
 The matrix of `X`.
 """
-function matrix(::AbstractAffineMap) end
+function matrix end
 
 """
     vector(X::AbstractAffineMap)
@@ -60,7 +60,7 @@ Return the vector of an affine map.
 
 The vector of `X`.
 """
-function vector(::AbstractAffineMap) end
+function vector end
 
 """
     set(X::AbstractAffineMap)
@@ -75,7 +75,7 @@ Return the set of an affine map.
 
 The set of `X` before applying the map.
 """
-function set(::AbstractAffineMap) end
+function set end
 
 isoperationtype(::Type{<:AbstractAffineMap}) = true
 

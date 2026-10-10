@@ -42,7 +42,7 @@ A `Ellipsoid`s or `Ball2`s depending on the type of `a`.
 
 "`○`" can be typed by `\\bigcirc<tab>`.
 """
-function ○(c, a) end
+function ○ end
 
 # a set with a unique center must be bounded
 function isboundedtype(::Type{<:AbstractCentrallySymmetric})

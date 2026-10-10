@@ -14,4 +14,6 @@ abstract type AbstractMatrixZonotope{N} end
 Return a tuple containing the dimensions of a matrix zonotope.
 Optionally you can specify a dimension to just get the length of that dimension.
 """
-function size(::AbstractMatrixZonotope) end  # COV_EXCL_LINE
+function size(::AbstractMatrixZonotope)  # COV_EXCL_LINE
+    throw(ErrorException("not implemented"))  # COV_EXCL_LINE
+end
