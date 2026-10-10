@@ -19,8 +19,8 @@ function linear_map(MZ::MatrixZonotope, P::SparsePolynomialZonotope)
                             "`SparsePolynomialZonotope`s with no independent generators; " *
                             "try using `overapproximate` instead"))
     end
-    @assert size(MZ, 2) == dim(P) "a linear map of size $(size(M)) cannot " *
-                                  "be applied to a set of dimension $(dim(X))"
+    @assert size(MZ, 2) == dim(P) "a linear map of size $(size(MZ)) cannot " *
+                                  "be applied to a set of dimension $(dim(P))"
 
     T = promote_type(eltype(MZ), eltype(P))
 

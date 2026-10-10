@@ -73,5 +73,7 @@ end
         end
         i0 = i1 + 1
     end
-    return sfun
+    @assert false "unreachable code"
+    N = promote_type(eltype(d), eltype(cpa))
+    return zero(N)
 end
