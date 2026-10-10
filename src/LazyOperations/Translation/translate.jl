@@ -1,3 +1,3 @@
 @validate function translate(tr::Translation, x::AbstractVector)
-    return Translation(translate(tr.X, x))
+    return Translation(tr.X, tr.v + x)
 end

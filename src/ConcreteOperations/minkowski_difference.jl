@@ -126,9 +126,11 @@ For higher-dimensional sets, this method implements [Althoff15; Theorem 3](@cite
 end
 
 function _minkowski_difference_1d(Z1::AbstractZonotope, Z2::AbstractZonotope)
-    N = promote_type(eltype(I1), eltype(I2))
-    l = low(I1, 1) - low(I2, 1)
+    N = promote_type(eltype(Z1), eltype(Z2))
+    l = low(Z1, 1) - low(Z2, 1)
+    h = high(Z1, 1) - high(Z2, 1)
     if h < l
+        N = promote_type(eltype(Z1), eltype(Z2))
         return EmptySet{N}(1)
     end
     c = center(Z1, 1) - center(Z2, 1)

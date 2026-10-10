@@ -255,7 +255,7 @@ function _minkowski_sum_vrep_nd(vlist1::Vector{VT}, vlist2::Vector{VT};
 end
 
 # see ext/LazySetsPolyhedraExt.jl
-function _backend_solver_nd()
+function _backend_solver_nd(N)
     mod = Base.get_extension(@__MODULE__, :LazySetsPolyhedraExt)
     require(mod, :Polyhedra; fun_name="minkowski_sum")
     return error()

@@ -238,7 +238,7 @@ end
     if _isapprox(ai, zero(N))
         if _geq(b, zero(N))
             # half-space is universal
-            return X
+            return B
         else
             # half-space is empty
             return EmptySet{N}(dim(H))
