@@ -22,8 +22,7 @@ false
 ```
 """
 function isapprox(X::LazySet, Y::LazySet)
-    # if the common supertype of X and Y is abstract, they cannot be compared
-    if isabstracttype(promote_type(typeof(X), typeof(Y)))
+    if basetype(X) != basetype(Y)
         return false
     end
 
