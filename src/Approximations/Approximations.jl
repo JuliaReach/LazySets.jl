@@ -38,7 +38,7 @@ using ..LazySets
 using ..LazySets: ACS, _isbounded_stiemke, require, linprog, is_lp_optimal,
                   default_lp_solver, default_nln_solver, default_sdp_solver,
                   _normal_Vector, get_exponential_backend, _expmv, second,
-                  @assert, _box_radius
+                  @assert, _box_radius, _intersection_line2d_point
 using ..LazySets.JuMP: Model, set_silent, @variable, @constraint, optimize!,
                        value, @NLobjective
 using ..LazySets.MatrixZonotopeModule: _rowwise_zonotope_norm

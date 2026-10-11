@@ -531,6 +531,7 @@ The implementation is based on [LeGuernic09; Section 8.2.4](@citet).
 """
 function _overapproximate_zonotope_cpa(X::LazySet, dir::AbstractDirections)
     n = dim(X)
+    @assert n > 0 "invalid set dimension"
     if dim(dir) != 2
         # try to convert to 2D directions
         dir = _get_directions(typeof(dir), 2)
@@ -539,6 +540,8 @@ function _overapproximate_zonotope_cpa(X::LazySet, dir::AbstractDirections)
     if n > 1
         πX_2D = [project(X, [i, i + 1]) for i in 1:2:(n - 1)]
         Z_2D = [_overapproximate_zonotope_vrep(poly, dir) for poly in πX_2D]
+    else
+        Z_2D = nothing  # only needed for JET
     end
 
     if iseven(n)

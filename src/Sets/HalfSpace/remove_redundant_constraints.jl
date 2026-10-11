@@ -97,7 +97,7 @@ function remove_redundant_constraints!(constraints::AbstractVector{<:HalfSpace};
         br[i] += one(N)
         lp = linprog(-α, Ar, '<', br, -Inf, Inf, backend)
         if is_lp_optimal(lp.status)
-            objval = -lp.objval
+            objval = (-lp.objval)::Real
             if _leq(objval, b[j])
                 # the constraint is redundant
                 non_redundant_indices = setdiff(non_redundant_indices, j)

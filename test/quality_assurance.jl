@@ -1,7 +1,6 @@
 using SafeTestsets
 
 @safetestset "ExplicitImports tests" begin
-    using Test
     import LazySets, ExplicitImports
 
     ignores_all_explicit_imports_are_public = (:GLOBAL_RNG, :SamplerType, :product, :checksquare,
@@ -110,6 +109,20 @@ using SafeTestsets
                                           all_explicit_imports_via_owners=(ignore=ignores_all_explicit_imports_via_owners,),
                                           all_qualified_accesses_are_public=(ignore=ignores_all_qualified_accesses_are_public,),
                                           no_stale_explicit_imports=(ignore=ignores_no_stale_explicit_imports,))
+end
+
+@static if VERSION < v"1.13"
+    # unclear whether `VERSION < v"1.13"` is the correct condition, but it
+    # works with v1.10; loading CDDLib and then running this test leads to
+    # errors; minimal reproducer:
+    # julia> import CDDLib, LazySets, JET
+    # julia> JET.test_package(LazySets; target_modules=(LazySets,))
+    @safetestset "JET tests" begin
+        import LazySets, JET
+
+        # false positives for Base functionality
+        JET.test_package(LazySets; target_modules=(LazySets,))
+    end
 end
 
 @safetestset "Aqua tests" begin

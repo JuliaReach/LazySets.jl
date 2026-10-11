@@ -30,7 +30,7 @@ function convert(::Type{SparsePolynomialZonotope}, Z::AbstractZonotope;
     throw(ArgumentError("invalid algorithm $algorithm"))
 end
 
-function _convert_SPZ_Z_K21(Z::AbstractZonotope{N}) where {N}
+function _convert_SPZ_Z_K21(Z::AbstractZonotope{N}) where {N<:Number}
     c = center(Z)
     G = genmat(Z)
     p = ngens(Z)
@@ -39,7 +39,7 @@ function _convert_SPZ_Z_K21(Z::AbstractZonotope{N}) where {N}
     return SparsePolynomialZonotope(c, G, GI, E)
 end
 
-function _convert_SPZ_Z_GI(Z::AbstractZonotope{N}) where {N}
+function _convert_SPZ_Z_GI(Z::AbstractZonotope{N}) where {N<:Number}
     c = center(Z)
     GI = genmat(Z)
     E = zeros(Int, 0, 0)

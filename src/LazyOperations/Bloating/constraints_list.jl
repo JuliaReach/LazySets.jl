@@ -30,5 +30,7 @@ function constraints_list(B::Bloating)
                             "bloated set is not supported"))
     end
 
-    return constraints_list(MinkowskiSum(B.X, _bloating_ball(B)))
+    MS = MinkowskiSum(B.X, _bloating_ball(B))
+    @assert MS isa MinkowskiSum || MS isa ZeroSet "MinkowskiSum should not be empty"
+    return constraints_list(MS)
 end

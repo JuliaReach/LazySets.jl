@@ -225,6 +225,13 @@ end
 # internal function; defined here due to dependency in submodules
 function _intersection_line2d end
 
+# version of `_intersection_line2d` that is expected to result in a point
+function _intersection_line2d_point(c1, c2)
+    cap = _intersection_line2d(c1, c2)
+    @assert cap isa Singleton "the polygon constraints do not intersect"
+    return center(cap)
+end
+
 # internal functions; defined here due to dependency in submodules
 function _minkowski_sum_hrep_preprocess end
 function _minkowski_sum_vrep_2d end
