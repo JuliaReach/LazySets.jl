@@ -85,12 +85,12 @@ function underapproximate(X::LazySet{N}, ::Type{<:Hyperrectangle};
     return _underapproximate_box(X, solver)
 end
 
-function _underapproximate_box(X::S, solver) where {S<:LazySet}
+function _underapproximate_box(X::LazySet, solver)
     if !ispolytopic(X)
         throw(ArgumentError("box underapproximation is only available for convex polytopes"))
     end
 
-    n = dim(X)
+    n = dim(X)::Int
     @assert n == 2 "currently only 2D sets are supported"
     P, b = tosimplehrep(X)
 

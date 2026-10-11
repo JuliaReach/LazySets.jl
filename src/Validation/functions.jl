@@ -106,8 +106,8 @@ function validate_affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
     m = size(M, 1)
     if m != length(v)
         throw(DimensionMismatch("`affine_map` requires compatible matrix and vector dimensions " *
-                                "but received a matrix of size $m and a vector of size " *
-                                "$(length(v))"))
+                                "but received a matrix of size $m and a vector of " *
+                                "size $(length(v))"))
     end
     return validate_map_dim(M, X; fun=affine_map)
 end

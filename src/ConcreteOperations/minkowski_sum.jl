@@ -162,7 +162,7 @@ function _minkowski_sum_vpolygon(P::LazySet, Q::LazySet)
 end
 
 function _minkowski_sum_vrep_2d(vlistP::AbstractVector{<:AbstractVector{N}},
-                                vlistQ::AbstractVector{<:AbstractVector{N}}) where {N}
+                                vlistQ::AbstractVector{<:AbstractVector{N}}) where {N<:Number}
     mP = length(vlistP)
     mQ = length(vlistQ)
     if mP == 1 || mQ == 1
