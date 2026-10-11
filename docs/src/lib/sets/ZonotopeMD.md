@@ -37,6 +37,7 @@ Undocumented implementations:
 ```@meta
 CurrentModule = LazySets
 ```
+* [`generators`](@ref generators(::AbstractZonotope))
 * [`ngens`](@ref ngens(::AbstractZonotope))
 ```@meta
 CurrentModule = LazySets.API
