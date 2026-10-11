@@ -16,6 +16,7 @@ If `P` is unbounded in the given direction, there are two cases:
 - If `P` is an `HPolyedron`, the result is `Inf`.
 """
 @validate function ρ(d::AbstractVector{M}, P::HPoly{N}; solver=default_lp_solver(M, N)) where {M,N}
+    @assert N isa Type{<:Number} "cannot work with non-numeric sets"
     lp, unbounded = σ_helper(d, P, solver)
     if unbounded
         if P isa HPolytope

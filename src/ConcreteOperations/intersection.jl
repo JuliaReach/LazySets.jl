@@ -922,8 +922,9 @@ function _bound_intersect_2D(Z::Zonotope, L::Line2D)
             throw(ArgumentError("unexpected case; check that the sets intersect"))
         end
     end
-    p = _intersection_line2d_point(LineSegment(P, P + 2g(j)), L)
-    return p[2]
+    cap = intersection(LineSegment(P, P + 2g(j)), L)
+    @assert cap isa Singleton "the lines do not intersect"
+    return center(cap)[2]
 end
 
 # ============== #

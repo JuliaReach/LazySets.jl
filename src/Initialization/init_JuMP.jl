@@ -55,7 +55,7 @@ end
 end
 @inline linprog_model(solver) = Model(solver)
 
-function lin_prog_variable!(model, n, l::Number, u::Number)
+function lin_prog_variable!(model, n::Int, l::Number, u::Number)
     if isfinite(l) && isfinite(u)
         return @variable(model, x[1:n], lower_bound = l, upper_bound = u)
     elseif isfinite(l)
@@ -67,7 +67,7 @@ function lin_prog_variable!(model, n, l::Number, u::Number)
     end
 end
 
-function lin_prog_variable!(model, n, l::Vector{T}, u::Vector{T}) where {T}
+function lin_prog_variable!(model, n::Int, l::Vector{T}, u::Vector{T}) where {T}
     return @variable(model, l[i] <= x[i=1:n] <= u[i])
 end
 

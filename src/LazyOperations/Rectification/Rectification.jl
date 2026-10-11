@@ -185,6 +185,7 @@ function to_union_of_projections(R::Rectification,
                                  concrete_intersection::Bool=false;
                                  filter_empty_sets::Bool=true)
     N = eltype(R)
+    @assert N isa Type{<:Number} "cannot work with non-numeric sets"
     n = dim(R.X)
 
     negative_dimensions, mixed_dimensions, mixed_dimensions_enumeration = compute_negative_and_mixed_dimensions(R.X,

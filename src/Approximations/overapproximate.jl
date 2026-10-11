@@ -443,8 +443,8 @@ This function implements [LeGuernic09; Algorithm 8.1](@citet).
 function overapproximate(X::Intersection{N,<:AbstractZonotope,<:Hyperplane},
                          dirs::AbstractDirections) where {N}
     dim(X) == dim(dirs) || throw(DimensionMismatch("the dimension of the set $(dim(X)) does not " *
-                                                   "match the dimension of the directions " *
-                                                   "$(dim(dirs))"))
+                                                   "match the dimension of the " *
+                                                   "directions $(dim(dirs))"))
     Z, G = first(X), second(X)
 
     if isdisjoint(Z, G)
