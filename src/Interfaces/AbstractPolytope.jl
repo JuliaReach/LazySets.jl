@@ -150,7 +150,9 @@ function _area_Polyhedra(P; backend)
     return error()
 end
 
-"""
+function remove_redundant_vertices end
+
+@doc """
     remove_redundant_vertices(P::AbstractPolytope)
 
 Return an equivalent polytope in vertex representation with redundant vertices
@@ -164,9 +166,11 @@ removed.
 
 A new polytope with the redundant vertices removed.
 """
-function remove_redundant_vertices(::AbstractPolytope) end
+remove_redundant_vertices(::AbstractPolytope)
 
-"""
+function remove_redundant_vertices! end
+
+@doc """
     remove_redundant_vertices!(P::AbstractPolytope)
 
 Remove the redundant vertices from a polytope in vertex representation in-place.
@@ -179,7 +183,7 @@ Remove the redundant vertices from a polytope in vertex representation in-place.
 
 A new polytope with the redundant vertices removed.
 """
-function remove_redundant_vertices!(::AbstractPolytope) end
+remove_redundant_vertices!(::AbstractPolytope)
 
 function constrained_dimensions(P::AbstractPolytope)
     return 1:dim(P)

@@ -44,7 +44,9 @@ julia> subtypes(AbstractHyperrectangle)
 """
 abstract type AbstractHyperrectangle{N} <: AbstractZonotope{N} end
 
-"""
+function radius_hyperrectangle end
+
+@doc """
     radius_hyperrectangle(H::AbstractHyperrectangle)
 
 Return the hyperrectangle radius of a hyperrectangular set.
@@ -57,7 +59,7 @@ Return the hyperrectangle radius of a hyperrectangular set.
 
 The hyperrectangle radius of `H`, which is a full-dimensional vector.
 """
-function radius_hyperrectangle(::AbstractHyperrectangle) end
+radius_hyperrectangle(::AbstractHyperrectangle)
 
 """
     radius_hyperrectangle(H::AbstractHyperrectangle, i::Int)
@@ -78,7 +80,9 @@ The hyperrectangle radius of `H` in dimension `i`.
     return radius_hyperrectangle(H)[i]
 end
 
-"""
+function □ end
+
+@doc """
     □(c, r)
 
 Convenience constructor of `Hyperrectangle`s or `BallInf`s depending on the type
@@ -97,7 +101,7 @@ A `Hyperrectangle`s or `BallInf`s depending on the type of `r`.
 
 The function symbol can be typed via `\\square<tab>`.
 """
-function □(c, r) end
+□(c, r)
 
 function genmat(H::AbstractHyperrectangle)
     n_flat = _flat_dims(H)

@@ -31,7 +31,7 @@ Optionally, subtypes may implement:
 """
 abstract type AbstractDirections{N,VN} end
 
-"""
+@doc """
     dim(ad::AbstractDirections)
 
 Returns the dimension of the generated directions.
@@ -44,7 +44,7 @@ Returns the dimension of the generated directions.
 
 The ambient dimension of the generated directions.
 """
-function LazySets.dim(::AbstractDirections) end
+LazySets.dim(::AbstractDirections)
 
 """
     isbounding(ad::AbstractDirections)

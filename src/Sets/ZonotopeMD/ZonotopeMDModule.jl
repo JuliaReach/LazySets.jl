@@ -2,7 +2,7 @@ module ZonotopeMDModule
 
 using Reexport: @reexport
 
-using ..LazySets: AbstractZonotope, generators
+using ..LazySets: AbstractZonotope, generators_fallback
 using LinearAlgebra: isdiag, diag
 using SparseArrays: blockdiag, sparse, spdiagm
 using Random: AbstractRNG, GLOBAL_RNG
@@ -10,7 +10,7 @@ using ReachabilityBase.Arrays: find_unique_nonzero_entry
 using ReachabilityBase.Distribution: reseed!
 
 @reexport import ..API: center, isoperationtype, rand, cartesian_product
-@reexport import ..LazySets: genmat, ngens
+@reexport import ..LazySets: generators, genmat, ngens
 import Base: convert
 @reexport using ..API
 
@@ -23,6 +23,7 @@ include("isoperationtype.jl")
 include("rand.jl")
 include("cartesian_product.jl")
 
+include("generators.jl")
 include("genmat.jl")
 include("ngens.jl")
 
