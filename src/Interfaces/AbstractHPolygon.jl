@@ -155,6 +155,7 @@ constraint.
         if cap isa EmptySet
             return Vector{Vector{N}}()
         else
+            @assert cap isa Singleton "the polygon constraints do not intersect"
             points[i] = center(cap)
         end
     end
@@ -162,6 +163,7 @@ constraint.
     if cap isa EmptySet
         return Vector{Vector{N}}()
     else
+        @assert cap isa Singleton "the polygon constraints do not intersect"
         points[n] = center(cap)
     end
 
@@ -210,7 +212,7 @@ of the constraints).
 """
 function an_element(P::AbstractHPolygon)
     @assert length(P.constraints) >= 2 "polygon has less than two constraints"
-    return center(_intersection_line2d(P.constraints[1], P.constraints[2]))
+    return _intersection_line2d_point(P.constraints[1], P.constraints[2])
 end
 
 """
@@ -347,9 +349,8 @@ function isredundant(cmid::HalfSpace, cright::HalfSpace, cleft::HalfSpace)
         # not the same direction => constraint is not redundant
         return false
     end
-    cap = _intersection_line2d(cright, cleft)
-    @assert cap isa Singleton "lines did not intersect"
-    return cap ⊆ cmid
+    p = _intersection_line2d_point(cright, cleft)
+    return p ∈ cmid
 end
 
 """
@@ -387,7 +388,8 @@ function remove_redundant_constraints!(P::AbstractHPolygon)
         cmid = C[i]
         if i < length(C)
             cleft = C[i + 1]
-        elseif i == length(C)
+        else
+            @assert i == length(C) "unexpected index overflow"
             cleft = C[1]
             go_on = false
         end

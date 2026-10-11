@@ -681,7 +681,7 @@ end
 
     overapproximate(CH::ConvexHull{N,<:AbstractSparsePolynomialZonotope,
                                      <:AbstractSparsePolynomialZonotope},
-                    ::Type{<:SparsePolynomialZonotope}) where {N}
+                    ::Type{<:SparsePolynomialZonotope}) where {N<:Number}
 
 ### Algorithm
 
@@ -689,7 +689,7 @@ This method implements [Kochdumper21a; 3.1.28](@citet).
 """
 function overapproximate(CH::ConvexHull{N,<:AbstractSparsePolynomialZonotope,
                                         <:AbstractSparsePolynomialZonotope},
-                         ::Type{<:SparsePolynomialZonotope}) where {N}
+                         ::Type{<:SparsePolynomialZonotope}) where {N<:Number}
     PZ₁ = first(CH)
     c₁ = center(PZ₁)
     G₁ = genmat_dep(PZ₁)
@@ -767,7 +767,7 @@ end
 
 """
 	overapproximate(lm::LinearMap{N,S,NM,MAT},
-                         ::Type{<:SparsePolynomialZonotope}) where {N,
+                         ::Type{<:SparsePolynomialZonotope}) where {N<:Number,
                                                                     S<:SparsePolynomialZonotope{N},
                                                                     NM,MAT<:MatrixZonotope{NM}}
 
@@ -784,7 +784,7 @@ A sparse polynomial zonotope overapproximating the linear map
 
 """
 function overapproximate(lm::LinearMap{N,S,NM,MAT},
-                         ::Type{<:SparsePolynomialZonotope}) where {N,
+                         ::Type{<:SparsePolynomialZonotope}) where {N<:Number,
                                                                     S<:SparsePolynomialZonotope{N},
                                                                     NM,MAT<:MatrixZonotope{NM}}
     P = set(lm)

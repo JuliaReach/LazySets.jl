@@ -35,7 +35,7 @@ function isuniversal(L::Line2D, witness::Bool=false)
 end
 
 function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Line2D{N},
-                                 algo::AbstractLinearMapAlgorithm) where {N}
+                                 algo::AbstractLinearMapAlgorithm) where {N<:Number}
     constraints = _linear_map_hrep(M, P, algo)
     if length(constraints) == 2
         # assuming these constraints define a line  # TODO assert this

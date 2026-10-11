@@ -45,7 +45,9 @@ end
             else
                 # non-vertical line segment -> intersect (Line2D intersection is used)
                 line2 = Line2D(p, q)
-                y = center(intersection(line2, vline))
+                cap = intersection(line2, vline)
+                @assert cap isa Singleton "the polygon constraints do not intersect"
+                y = center(cap)
                 # compare y coordinate
                 if _geq(y[2], x[2])
                     if y == x

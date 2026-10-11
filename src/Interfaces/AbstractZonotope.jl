@@ -621,6 +621,7 @@ function _constraints_list_zonotope(Z::AbstractZonotope{N}) where {N<:AbstractFl
     end
     if isflat_Z
         # add constraints about flat dimensions
+        @assert @isdefined Z_orig
         c = center(Z_orig)
         n = length(c)
         @inbounds for i in extend_indices
@@ -998,7 +999,7 @@ function reduce_order(Z::AbstractZonotope, r::Real,
     return _reduce_order_zonotope_common(Z, r, n, p, method)
 end
 
-function _reduce_order_zonotope_common(Z, r, n, p, method::Union{ASB10,COMB03,GIR05})
+function _reduce_order_zonotope_common(Z::AbstractZonotope, r, n, p, method::Union{ASB10,COMB03,GIR05})
     c = center(Z)
     G = genmat(Z)
 
@@ -1211,7 +1212,7 @@ end
 
 # compute interval hull of the generators of G (= columns) corresponding to
 # `indices`
-function _interval_hull(G::AbstractMatrix{N}, indices) where {N}
+function _interval_hull(G::AbstractMatrix{N}, indices) where {N<:Number}
     n = size(G, 1)
     Lred = zeros(N, n, n)
     @inbounds for i in 1:n
