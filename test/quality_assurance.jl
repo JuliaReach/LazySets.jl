@@ -111,11 +111,18 @@ using SafeTestsets
                                           no_stale_explicit_imports=(ignore=ignores_no_stale_explicit_imports,))
 end
 
-@safetestset "JET tests" begin
-    import LazySets, JET
+@static if VERSION < v"1.13"
+    # unclear whether `VERSION < v"1.13"` is the correct condition, but it
+    # works with v1.10; loading CDDLib and then running this test leads to
+    # errors; minimal reproducer:
+    # julia> import CDDLib, LazySets, JET
+    # julia> JET.test_package(LazySets; target_modules=(LazySets,))
+    @safetestset "JET tests" begin
+        import LazySets, JET
 
-    # false positives for Base functionality
-    JET.test_package(LazySets; target_modules=(LazySets,))
+        # false positives for Base functionality
+        JET.test_package(LazySets; target_modules=(LazySets,))
+    end
 end
 
 @safetestset "Aqua tests" begin
