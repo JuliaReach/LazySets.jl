@@ -95,7 +95,7 @@ of `r`.
 
 ### Output
 
-A `Hyperrectangle`s or `BallInf`s depending on the type of `r`.
+A `Hyperrectangle` or `BallInf` depending on the type of `r`.
 
 ### Notes
 
