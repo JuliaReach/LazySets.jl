@@ -34,7 +34,7 @@ Convenience constructor of `Ellipsoid`s or `Ball2`s depending on the type of `a`
 
 - `c` -- center
 - `a` -- additional parameter (either a shape matrix for `Ellipsoid` or a radius
-         for `Ball2`)
+         (= a number) for `Ball2`)
 
 ### Output
 
