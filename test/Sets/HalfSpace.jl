@@ -580,8 +580,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test res && w isa Vector{N} && w ∉ H && w ∈ H2
 
     # issubset
+    H2 = HalfSpace(N[1, 2], N(4))
     @test_throws DimensionMismatch H ⊆ H3
-    for X in (H, P, H2=HalfSpace(N[1, 2], N(4)))
+    for X in (H, P, H2)
         @test_broken @inferred H ⊆ X  # TODO make this type-stable (witness)
         @test H ⊆ X
         @test_broken @inferred ⊆(H, X, true)  # TODO make this type-stable (witness)
