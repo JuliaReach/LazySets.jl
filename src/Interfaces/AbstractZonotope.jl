@@ -999,7 +999,8 @@ function reduce_order(Z::AbstractZonotope, r::Real,
     return _reduce_order_zonotope_common(Z, r, n, p, method)
 end
 
-function _reduce_order_zonotope_common(Z::AbstractZonotope, r, n, p, method::Union{ASB10,COMB03,GIR05})
+function _reduce_order_zonotope_common(Z::AbstractZonotope, r, n, p,
+                                       method::Union{ASB10,COMB03,GIR05})
     c = center(Z)
     G = genmat(Z)
 

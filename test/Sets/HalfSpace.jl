@@ -137,9 +137,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # iscomplement
     for (H1a, H1b, eq) in [(HalfSpace(N[-1], N(0)), HalfSpace(N[1 // 2], N(0)), true),
-                         (H, HalfSpace(N[-2, -4], N(-6)), true),
-                         (H, HalfSpace(N[-2, 4], N(-6)), false),
-                         (H, HalfSpace(N[-2, -4], N(6)), false)]
+                           (H, HalfSpace(N[-2, -4], N(-6)), true),
+                           (H, HalfSpace(N[-2, 4], N(-6)), false),
+                           (H, HalfSpace(N[-2, -4], N(6)), false)]
         @test LazySets.iscomplement(H1a, H1b) == eq
     end
 
@@ -278,7 +278,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
             isequivalent(H2, Line(N[0, 0], N[1, 1]))
             H2 = affine_map(N[1 0; 0 2; 0 0], H, N[1, 1, 3])
             @test isequivalent(H2,
-                               HPolyhedron([HalfSpace(N[1, 1, 0], N(5)), HalfSpace(N[0, 0, 1], N(3)),
+                               HPolyhedron([HalfSpace(N[1, 1, 0], N(5)),
+                                            HalfSpace(N[0, 0, 1], N(3)),
                                             HalfSpace(N[0, 0, -1], N(-3))]))
         else
             @test_broken isequivalent(H2, Line(N[0, 0], N[1, 1]))  # TODO problem with Rational conversion
@@ -405,7 +406,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # scale
     @test_broken @inferred scale(N(2), H)  # TODO this should work
     H2 = scale(N(2), H)
-    @test isidentical(H2, HalfSpace(N[1//2, 1], N(3)))
+    @test isidentical(H2, HalfSpace(N[1 // 2, 1], N(3)))
     # degenerate case
     @static if isdefined(@__MODULE__, :Polyhedra) && isdefined(@__MODULE__, :CDDLib)
         X = scale(N(0), H)
@@ -444,15 +445,19 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @static if isdefined(@__MODULE__, :Polyhedra)
         @test_broken @inferred cartesian_product(H, H1)  # TODO make this type-stable (only a problem with Polyhedra?)
         H2 = cartesian_product(H, H1)
-        @test isequivalent(H2, HPolyhedron([HalfSpace(N[0, 0, 3], N(4)), HalfSpace(N[1, 2, 0], N(3))]))
+        @test isequivalent(H2,
+                           HPolyhedron([HalfSpace(N[0, 0, 3], N(4)), HalfSpace(N[1, 2, 0], N(3))]))
         @test_broken @inferred cartesian_product(H1, H)  # TODO make this type-stable (only a problem with Polyhedra?)
         H2 = cartesian_product(H1, H)
-        @test isequivalent(H2, HPolyhedron([HalfSpace(N[0, 1, 2], N(3)), HalfSpace(N[3, 0, 0], N(4))]))
+        @test isequivalent(H2,
+                           HPolyhedron([HalfSpace(N[0, 1, 2], N(3)), HalfSpace(N[3, 0, 0], N(4))]))
     else
         H2 = @inferred cartesian_product(H, H1)
-        @test isequivalent(H2, HPolyhedron([HalfSpace(N[0, 0, 3], N(4)), HalfSpace(N[1, 2, 0], N(3))]))
+        @test isequivalent(H2,
+                           HPolyhedron([HalfSpace(N[0, 0, 3], N(4)), HalfSpace(N[1, 2, 0], N(3))]))
         H2 = @inferred cartesian_product(H1, H)
-        @test isequivalent(H2, HPolyhedron([HalfSpace(N[0, 1, 2], N(3)), HalfSpace(N[3, 0, 0], N(4))]))
+        @test isequivalent(H2,
+                           HPolyhedron([HalfSpace(N[0, 1, 2], N(3)), HalfSpace(N[3, 0, 0], N(4))]))
     end
 
     # convex_hull (binary)
@@ -576,7 +581,7 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
     # issubset
     @test_throws DimensionMismatch H ⊆ H3
-    for X in (H, P, H2 = HalfSpace(N[1, 2], N(4)))
+    for X in (H, P, H2=HalfSpace(N[1, 2], N(4)))
         @test_broken @inferred H ⊆ X  # TODO make this type-stable (witness)
         @test H ⊆ X
         @test_broken @inferred ⊆(H, X, true)  # TODO make this type-stable (witness)
