@@ -4,7 +4,7 @@ using JuMP: Model, optimize!, @constraint, @objective, @variable
 using LazySets: AbstractPolyhedron, chebyshev_center_radius, default_sdp_solver,
                 polyhedron
 using LazySets.EllipsoidModule: Ellipsoid
-import SetProg
+import SetProg, SumOfSquares
 using SetProg: InteriorPoint, nth_root, value, volume
 using SetProg.Sets: Translation, ellipsoid
 import SetProg.Sets as Sets

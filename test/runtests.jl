@@ -51,7 +51,8 @@ Random.seed!(seed)
     import CDDLib, Distributions, ExponentialUtilities, Expokit, GeometryBasics,
            IntervalBoxes, IntervalConstraintProgramming, IntervalMatrices,
            Ipopt, MiniQhull, Optim, PkgVersion, Polyhedra, RangeEnclosures, SCS,
-           SetProg, StaticArrays, SymEngine, Symbolics, TaylorModels
+           SetProg, StaticArrays, SumOfSquares, SymEngine, Symbolics,
+           TaylorModels
 end
 
 # tests
