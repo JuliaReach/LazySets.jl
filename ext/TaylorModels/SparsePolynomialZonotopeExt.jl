@@ -67,21 +67,24 @@ end
 
 # implements Proposition 3.1.13 in thesis
 function convert(::Type{Vector{<:TaylorModelN}}, P::SparsePolynomialZonotope{N}) where {N}
-    n = dim(P)
+    @show P
+    @show n = dim(P)
     p = nparams(P)  # number of parameters
     q = ngens_indep(P)  # independent/linear parameters
-    h = ngens_dep(P)  # dependent/nonlinear parameters
-    r = p + q
+    @show h = ngens_dep(P)  # dependent/nonlinear parameters
+    @show r = p + q
     c = center(P)
     G = genmat_dep(P)
     GI = genmat_indep(P)
     E = expmat(P)
-    poly_order = polynomial_order(P)
-    z = zeros(Int, q)
+    @show poly_order = polynomial_order(P)
     # we need to rewrite the global variables
-    space = default_space[]
+    @show space = default_space[]
     if space.num_vars != r || space.order != poly_order
         variables!("x"; numvars=r, order=poly_order, nowarn=true)
+        @show 1
+        @show space
+        @show space.pos_table
     end
     # the following vectors are shared for each polynomial
     rem = zero_itv(N)
@@ -89,36 +92,58 @@ function convert(::Type{Vector{<:TaylorModelN}}, P::SparsePolynomialZonotope{N})
     x0 = zero_box(r, N)
 
     vTM = Vector{TaylorModelN{r,N,N}}(undef, n)
-    @inbounds for i in 1:n
-        coeffs = zeros(HomogeneousPolynomial{N}, poly_order)
+    for i in 1:n
+        # `coeffs` stores polynomial terms; index i stores terms of order i+1
+        # (e.g., index 1 = constant term, index 2 = linear terms, etc.)
+        coeffs = zeros(HomogeneousPolynomial{N}, poly_order + 1)
 
-        # constant term
+        # constant term from c
         coeffs[1] = c[i]
 
-        # linear terms
+        # linear terms from GI
+        ord = 1
+        c_idx = 2
         for j in 1:q
             v = zeros(N, r)
             v[p + j] = GI[i, j]
-            coeffs[2] += HomogeneousPolynomial(v, 1)
+            pj = HomogeneousPolynomial(space, v, ord)
+            if iszero(coeffs[c_idx])
+                coeffs[c_idx] = pj
+            else
+                coeffs[c_idx] += pj
+            end
         end
+	@show coeffs[2].space
 
-        # nonlinear terms
+        # linear and nonlinear terms from G & E
         # TODO can be faster if loop is restructured so that index j is
         # created for each dimension
+        z_extend = zeros(Int, q)
         for j in 1:h
-            Ej = E[:, j]
-            ord = sum(Ej)
-            G[i, j]
-            space = coeffs[ord + 1].space
-            idx = space.pos_table[ord + 1][in_base(poly_order, Ej)]
-            l = length(space.coeff_table[ord + 1])
+            @show Ej = E[:, j]
+            @show ord = sum(Ej)
+            @show c_idx = ord + 1
+#             space = coeffs[c_idx].space
+            @show space
+            @show length(space.pos_table)
+            pos_table_entry = space.pos_table[c_idx]
+            @show Ej_ext = vcat(Ej, z_extend)
+            @show ib = in_base(r, Ej_ext)  # TODO `r` should be `poly_order`, but it does not work
+            idx = pos_table_entry[ib]
+            l = length(space.coeff_table[c_idx])
             v = Vector(SingleEntryVector(idx, l, G[i, j]))
-            pj = HomogeneousPolynomial(v, ord)
-            coeffs[ord + 1] += pj
+            @show pj = HomogeneousPolynomial(space, v, ord)
+            @show coeffs[c_idx]
+            if iszero(coeffs[c_idx])
+                coeffs[c_idx] = pj
+            else
+                coeffs[c_idx] += pj
+            end
         end
 
         pol = TaylorN(coeffs, poly_order)
         vTM[i] = TaylorModelN(pol, rem, x0, dom)
     end
+    println("--------__")
     return vTM
 end
