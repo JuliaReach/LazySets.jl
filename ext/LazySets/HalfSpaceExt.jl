@@ -108,7 +108,7 @@ Universe{Float64}(1)
 ```
 """
 @validate function project(H::HalfSpace{<:Number}, block::AbstractVector{Int}; kwargs...)
-    if constrained_dimensions(H) ⊆ block
+    if (constrained_dimensions(H) ⊆ block)::Bool
         return HalfSpace(H.a[block], H.b)
     else
         N = eltype(H)
