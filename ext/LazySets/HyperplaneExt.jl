@@ -62,10 +62,11 @@ function _linear_map_hrep_helper(M::AbstractMatrix{N}, P::Hyperplane{N},
     end
 end
 
-@validate function project(H::Hyperplane{N}, block::AbstractVector{Int}; kwargs...) where {N}
+@validate function project(H::Hyperplane{<:Number}, block::AbstractVector{Int}; kwargs...)
     if constrained_dimensions(H) ⊆ block
         return Hyperplane(H.a[block], H.b)
     else
+        N = eltype(H)
         return Universe{N}(length(block))
     end
 end

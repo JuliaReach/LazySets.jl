@@ -235,7 +235,7 @@ Inherited from [`AbstractCentrallySymmetricPolytope`](@ref):
 ```@docs
 generators_fallback(::AbstractZonotope)
 genmat_fallback(::AbstractZonotope)
-_norm_1(::AbstractZonotope)
+_norm_1(::AbstractZonotope{N}) where {N<:Real}
 ```
 
 ## Order-reduction methods
