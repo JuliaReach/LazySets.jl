@@ -6,11 +6,11 @@ using GeometryBasics: coordinates, faces
 using Polyhedra: Mesh
 import LazySets: triangulate_faces, _area_polytope_3D
 
-function _area_polytope_3D(P::LazySet)
+function _area_polytope_3D(P::LazySet{N}) where {N<:Number}
     points, connections = triangulate_faces(P)
-    N = (eltype(P) <: AbstractFloat) ? eltype(P) : Float64  # `_area_triangle_3D!` uses `sqrt`
-    res = zero(N)
-    M = ones(N, 3, 3)
+    N2 = (N <: AbstractFloat) ? N : Float64  # `_area_triangle_3D!` uses `sqrt`
+    res = zero(N2)
+    M = ones(N2, 3, 3)
     @inbounds for triple in connections
         x, y, z = points[:, triple[1]], points[:, triple[2]], points[:, triple[3]]
         res += _area_triangle_3D!(M, x, y, z)

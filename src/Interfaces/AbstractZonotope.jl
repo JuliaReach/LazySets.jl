@@ -1252,7 +1252,7 @@ function _genmat_static(::AbstractZonotope)  # COV_EXCL_LINE
 end
 
 """
-    _norm_1(Z::AbstractZonotope)
+    _norm_1(Z::AbstractZonotope{N}) where {N<:Real}
 
 Compute the exact ``ℓ₁`` norm of a zonotope with generator matrix ``G ∈ \\mathbb{R}^{d×n}``
 
@@ -1265,8 +1265,7 @@ a convex function of the coefficients ``ξ_i``.  As a result, its maximum over t
 This algorithm has time complexity ``\\mathcal{O}(2ⁿ · d)``, and thus is only practical for
 zonotopes with a small number of generators.
 """
-function _norm_1(Z::AbstractZonotope)
-    N = eltype(Z)
+function _norm_1(Z::AbstractZonotope{N}) where {N<:Real}
     c = center(Z)
     G = genmat(Z)
     n = size(G, 2)

@@ -482,7 +482,8 @@ function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron,
 end
 
 # preconditions should have been checked in the caller function
-function _linear_map_hrep(M::AbstractMatrix, P::AbstractPolyhedron, algo::LinearMapLift)
+function _linear_map_hrep(M::AbstractMatrix{<:Number}, P::AbstractPolyhedron{<:Number},
+                          algo::LinearMapLift)
     m, n = size(M)
     N = promote_type(eltype(M), eltype(P))
 

@@ -107,8 +107,8 @@ julia> project(H, [1])
 Universe{Float64}(1)
 ```
 """
-@validate function project(H::HalfSpace, block::AbstractVector{Int}; kwargs...)
-    if constrained_dimensions(H) ⊆ block
+@validate function project(H::HalfSpace{<:Number}, block::AbstractVector{Int}; kwargs...)
+    if (constrained_dimensions(H) ⊆ block)::Bool
         return HalfSpace(H.a[block], H.b)
     else
         N = eltype(H)
