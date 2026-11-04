@@ -1,7 +1,7 @@
 module LazySetsIntervalMatricesExt
 
 using IntervalArithmetic: Interval, interval
-using IntervalMatrices: AbstractIntervalMatrix, IntervalMatrix, midpoint_radius,
+using IntervalMatrices: AbstractIntervalMatrix, IntervalMatrix, midradius,
                         _exp_remainder
 using LazySets: AbstractZonotope, LinearMap, center, dim, generators,
                 minkowski_sum, ngens, scale
@@ -84,7 +84,7 @@ conventional matrix and a symmetric interval matrix) and a zonotope
 """
 function overapproximate(lm::LinearMap{N,<:AbstractZonotope,NM,<:AbstractIntervalMatrix{NM}},
                          ::Type{<:Zonotope}) where {N,NM}
-    Mc, Ms = midpoint_radius(lm.M)
+    Mc, Ms = midradius(lm.M)
     Z = lm.X
     c = Mc * center(Z)
     n = dim(lm)
@@ -137,7 +137,7 @@ MatrixZonotope{Float64, Matrix{Float64}}([-1.0 -4.0; 4.0 -1.0], [[0.100000000000
 """
 function convert(::Type{MatrixZonotope}, IM::IntervalMatrix{N}) where {N}
     m, n = size(IM)
-    center, halfIM = midpoint_radius(IM)
+    center, halfIM = midradius(IM)
 
     gens = Vector{Matrix{N}}()
     sizehint!(gens, m * n)
