@@ -14,10 +14,10 @@ Check whether a given point is contained in a linear map.
 
 ### Algorithm
 
-Note that ``x ∈ M⋅S`` iff ``M^{-1}⋅x ∈ S``.
-This implementation does not explicitly invert the matrix: instead of
-``M^{-1}⋅x`` it computes ``M \\ x``.
-Hence it also works for non-square matrices.
+For well-conditioned square or tall matrices, we compute ``y = M \\ x`` and
+check whether ``y ∈ S``. For tall matrices, we also check ``M⋅y = x``.
+For wide or ill-conditioned matrices, we use a concrete representation of the
+linear map and check membership in that set.
 
 ### Examples
 
@@ -41,9 +41,11 @@ true
 ```
 """
 @validate function in(x::AbstractVector, lm::LinearMap)
-    if !iswellconditioned(matrix(lm))
-        # ill-conditioned matrix; use concrete set representation
-        return x ∈ linear_map(matrix(lm), set(lm))
+    M = matrix(lm)
+    if size(M, 1) < size(M, 2) || !iswellconditioned(M)
+        # wide or ill-conditioned matrix; use concrete set representation
+        return x ∈ linear_map(M, set(lm))
     end
-    return matrix(lm) \ x ∈ set(lm)
+    y = M \ x
+    return (issquare(M) || _isapprox(M * y, x)) && y ∈ set(lm)
 end
