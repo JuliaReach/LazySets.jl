@@ -51,7 +51,7 @@ end
 
 _is_linear_combination(L::Expr) = _is_linear_combination(convert(Basic, L))
 
-"""
+@doc """
     free_symbols(expr::Expr, set_type::Type{<:LazySet})
 
 Return the free symbols in an expression that represents a given set type.
@@ -86,7 +86,7 @@ julia> free_symbols(:(x1 + x2 <= 2*x4 + 6), HalfSpace)
  x4
 ```
 """
-function free_symbols(::Expr, ::Type{<:LazySet}) end  # COV_EXCL_LINE
+free_symbols(::Expr, ::Type{<:LazySet})
 
 # parse `a` and `b` from `a1 x1 + ... + an xn + K [cmp] 0` for [cmp] in {<, <=, =, >, >=}
 function _parse_linear_expression(linexpr::Basic, vars::Vector{Basic}, N)
