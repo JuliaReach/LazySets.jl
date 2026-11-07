@@ -1,4 +1,4 @@
-"""
+@doc """
     isempty(X::LazySet, witness::Bool=false)
 
 Check whether a set is empty.
@@ -15,4 +15,4 @@ Check whether a set is empty.
   * `(true, [])` iff ``X = ∅``
   * `(false, v)` iff ``X ≠ ∅`` for some ``v ∈ X``
 """
-function isempty(::LazySet, ::Bool=false) end
+isempty(::LazySet, ::Bool=false)

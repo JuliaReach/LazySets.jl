@@ -1,4 +1,4 @@
-"""
+@doc """
     issubset(X::LazySet, Y::LazySet, [witness]::Bool=false)
 
 Check whether a set is a subset of another set, and optionally compute a witness.
@@ -20,4 +20,4 @@ Check whether a set is a subset of another set, and optionally compute a witness
 
 The convenience alias `issubset` is also available.
 """
-function issubset(::LazySet, ::LazySet, ::Bool=false) end
+issubset(::LazySet, ::LazySet, ::Bool=false)

@@ -1,4 +1,4 @@
-"""
+@doc """
     constraints_list(X::LazySet)
 
 Compute a list of linear constraints of a polyhedral set.
@@ -11,4 +11,5 @@ Compute a list of linear constraints of a polyhedral set.
 
 A list of the linear constraints of `X`.
 """
-function constraints_list(::LazySet) end
+constraints_list(::LazySet)
+function constraints_list end

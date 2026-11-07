@@ -1,4 +1,4 @@
-"""
+@doc """
     linear_map(M::AbstractMatrix, X::LazySet)
 
 Compute the linear map ``M · X``.
@@ -12,4 +12,5 @@ Compute the linear map ``M · X``.
 
 A set representing the linear map ``M · X``.
 """
-function linear_map(::AbstractMatrix, ::LazySet) end
+linear_map(::AbstractMatrix, ::LazySet)
+function linear_map end

@@ -1,4 +1,4 @@
-"""
+@doc """
     minkowski_difference(X::LazySet, Y::LazySet)
 
 Compute the Minkowski difference of two sets.
@@ -26,6 +26,7 @@ There is some inconsistency in the literature regarding the naming conventions.
 In this library, both *Minkowski difference* and *Pontryagin difference* refer
 to the geometric difference of two sets.
 """
-function minkowski_difference(::LazySet, ::LazySet) end
+minkowski_difference(::LazySet, ::LazySet)
+function minkowski_difference end
 
 const pontryagin_difference = minkowski_difference

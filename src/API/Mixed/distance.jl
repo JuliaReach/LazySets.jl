@@ -1,4 +1,4 @@
-"""
+@doc """
     distance(x::AbstractVector, X::LazySet; [p]::Real=2)
     distance(X::LazySet, x::AbstractVector; [p]::Real=2)
 
@@ -24,4 +24,4 @@ in the set. Formally,
     \\inf_{y ∈ X} \\{ d(x, y) \\}.
 ```
 """
-function distance(::AbstractVector, ::LazySet; p::Real=2) end
+distance(::AbstractVector, ::LazySet; p::Real=2)

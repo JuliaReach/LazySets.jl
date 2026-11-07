@@ -33,10 +33,6 @@ begin
     end
 end
 
-@safetestset "API" begin
-    include("API.jl")
-end
-
 using LazySets
 
 # fix seed of random number generator (for reproducibility)

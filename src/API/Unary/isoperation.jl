@@ -1,4 +1,4 @@
-"""
+@doc """
     isoperation(X::LazySet)
 
 Check whether a set is an instance of a (lazy) set operation.
@@ -15,4 +15,5 @@ Check whether a set is an instance of a (lazy) set operation.
 
 See also [`isoperationtype(::Type{<:LazySet})`](@ref).
 """
-function isoperation(::LazySet) end
+isoperation(::LazySet)
+function isoperation end

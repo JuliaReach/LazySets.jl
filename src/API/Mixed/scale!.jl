@@ -1,4 +1,4 @@
-"""
+@doc """
     scale!(α::Real, X::LazySet)
 
 Scale a set by modifying it.
@@ -12,4 +12,5 @@ Scale a set by modifying it.
 
 The scaled set representing ``α ⋅ X``.
 """
-function scale!(::Real, ::LazySet) end
+scale!(::Real, ::LazySet)
+function scale! end

@@ -1,4 +1,4 @@
-"""
+@doc """
     exponential_map(M::AbstractMatrix, X::LazySet)
 
 Compute the exponential map of `M` and `X`, i.e., ``eᴹ ⋅ X``.
@@ -12,4 +12,5 @@ Compute the exponential map of `M` and `X`, i.e., ``eᴹ ⋅ X``.
 
 A set representing the exponential map ``eᴹ ⋅ X``.
 """
-function exponential_map(::AbstractMatrix, ::LazySet) end
+exponential_map(::AbstractMatrix, ::LazySet)
+function exponential_map end

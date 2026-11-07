@@ -1,4 +1,4 @@
-"""
+@doc """
     ispolyhedraltype(T::Type{<:LazySet})
 
 Check whether a set type only represents polyhedral sets.
@@ -15,4 +15,5 @@ Check whether a set type only represents polyhedral sets.
 
 See also [`ispolyhedral(::LazySet)`](@ref).
 """
-function ispolyhedraltype(::Type{<:LazySet}) end
+ispolyhedraltype(::Type{<:LazySet})
+function ispolyhedraltype end

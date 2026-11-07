@@ -1,4 +1,4 @@
-"""
+@doc """
     eltype(T::Type{<:LazySet})
 
 Determine the numeric type of a set type.
@@ -11,4 +11,4 @@ Determine the numeric type of a set type.
 
 The numeric type of `T`.
 """
-function eltype(::Type{<:LazySet}) end
+eltype(::Type{<:LazySet})

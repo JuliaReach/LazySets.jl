@@ -1,4 +1,4 @@
-"""
+@doc """
     isconvextype(T::Type{<:LazySet})
 
 Check whether `T` is convex just by using type information.
@@ -17,4 +17,5 @@ Since this operation only acts on types (not on values), it can return false
 negatives, i.e., there may be instances where the set is convex, even though the
 answer of this function is `false`.
 """
-function isconvextype(::Type{<:LazySet}) end
+isconvextype(::Type{<:LazySet})
+function isconvextype end

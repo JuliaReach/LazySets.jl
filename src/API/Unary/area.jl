@@ -1,4 +1,4 @@
-"""
+@doc """
     area(X::LazySet)
 
 Compute the area of a two-dimensional set, respectively the surface area of a
@@ -12,4 +12,5 @@ three-dimensional set.
 
 A number representing the (surface) area of `X`.
 """
-function area(::LazySet) end
+area(::LazySet)
+function area end

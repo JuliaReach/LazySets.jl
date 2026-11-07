@@ -1,4 +1,4 @@
-"""
+@doc """
     isapprox(X::LazySet, Y::LazySet)
 
 Check whether two sets of the same type are approximately equal.
@@ -22,4 +22,4 @@ allowed (and results in the answer `false`).
 
 The convenience alias `≈` can be typed by `\\approx<tab>`.
 """
-function isapprox(::LazySet, ::LazySet) end
+isapprox(::LazySet, ::LazySet)

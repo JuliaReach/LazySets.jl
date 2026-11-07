@@ -1,4 +1,4 @@
-"""
+@doc """
     sample(X::LazySet, [m]::Int=1;
            [rng]::AbstractRNG=GLOBAL_RNG,
            [seed]::Union{Int,Nothing}=nothing)
@@ -16,4 +16,5 @@ Compute random samples from a set.
 
 A vector of `m` elements in `X` if `X` is nonempty, and an error otherwise.
 """
-function sample(::LazySet, ::Int=1) end
+sample(::LazySet, ::Int=1)
+function sample end

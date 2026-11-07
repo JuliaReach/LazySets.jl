@@ -1,5 +1,5 @@
 
-"""
+@doc """
     scale(α::Real, X::LazySet)
 
 Compute the scaling of a set.
@@ -13,4 +13,5 @@ Compute the scaling of a set.
 
 A set representing ``α ⋅ X``.
 """
-function scale(::Real, ::LazySet) end
+scale(::Real, ::LazySet)
+function scale end

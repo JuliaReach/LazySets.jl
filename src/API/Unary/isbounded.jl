@@ -1,4 +1,4 @@
-"""
+@doc """
     isbounded(X::LazySet)
 
 Check whether a set is bounded.
@@ -15,4 +15,5 @@ Check whether a set is bounded.
 
 See also [`isboundedtype(::Type{<:LazySet})`](@ref).
 """
-function isbounded(::LazySet) end
+isbounded(::LazySet)
+function isbounded end

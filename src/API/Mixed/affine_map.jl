@@ -1,4 +1,4 @@
-"""
+@doc """
     affine_map(M::AbstractMatrix, X::LazySet, v::AbstractVector)
 
 Compute the affine map ``M · X + v``.
@@ -13,4 +13,5 @@ Compute the affine map ``M · X + v``.
 
 A set representing the affine map ``M · X + v``.
 """
-function affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector) end
+affine_map(::AbstractMatrix, ::LazySet, ::AbstractVector)
+function affine_map end

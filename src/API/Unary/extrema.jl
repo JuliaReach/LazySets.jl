@@ -1,4 +1,4 @@
-"""
+@doc """
     extrema(X::LazySet, i::Int)
 
 Compute the lowest and highest coordinate of a set in a given dimension.
@@ -20,9 +20,9 @@ computed more efficiently.
 
 The resulting values are the lower and upper ends of the projection.
 """
-function extrema(::LazySet, ::Int) end
+extrema(::LazySet, ::Int)
 
-"""
+@doc """
     extrema(X::LazySet)
 
 Compute the lowest and highest coordinate of a set in each dimension.
@@ -49,4 +49,4 @@ approximation, so they are not necessarily contained in `X`.
 
 The default implementation computes the extrema via `low` and `high`.
 """
-function extrema(::LazySet) end
+extrema(::LazySet)

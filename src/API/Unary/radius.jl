@@ -1,4 +1,4 @@
-"""
+@doc """
     radius(X::LazySet, [p]::Real=Inf)
 
 Return the radius of a set.
@@ -17,4 +17,5 @@ A real number representing the radius.
 The radius of a set is the radius of the enclosing ball (of the given
 ``p``-norm) of minimal volume.
 """
-function radius(::LazySet, ::Real=Inf) end
+radius(::LazySet, ::Real=Inf)
+function radius end

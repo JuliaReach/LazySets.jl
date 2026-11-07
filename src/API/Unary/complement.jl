@@ -1,4 +1,4 @@
-"""
+@doc """
     complement(X::LazySet)
 
 Compute the complement of a set.
@@ -11,4 +11,5 @@ Compute the complement of a set.
 
 A set representing the complement of `X`.
 """
-function complement(::LazySet) end
+complement(::LazySet)
+function complement end

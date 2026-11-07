@@ -1,4 +1,4 @@
-"""
+@doc """
     constraints(X::LazySet)
 
 Construct an iterator over the constraints of a polyhedral set.
@@ -11,4 +11,5 @@ Construct an iterator over the constraints of a polyhedral set.
 
 An iterator over the constraints of `X`.
 """
-function constraints(::LazySet) end
+constraints(::LazySet)
+function constraints end

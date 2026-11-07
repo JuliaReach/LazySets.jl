@@ -1,4 +1,4 @@
-"""
+@doc """
     cartesian_product(X::LazySet, Y::LazySet)
 
 Compute the Cartesian product of two sets.
@@ -20,4 +20,5 @@ The Cartesian product of two sets ``X`` and ``Y`` is defined as
     X × Y = \\{[x, y] \\mid x ∈ X, y ∈ Y\\}.
 ```
 """
-function cartesian_product(::LazySet, ::LazySet) end
+cartesian_product(::LazySet, ::LazySet)
+function cartesian_product end

@@ -1,4 +1,4 @@
-"""
+@doc """
     diameter(X::LazySet, [p]::Real=Inf)
 
 Return the diameter of a set.
@@ -17,4 +17,5 @@ A real number representing the diameter.
 The diameter of a set is the diameter of the enclosing ball (of the given
 ``p``-norm) of minimal volume.
 """
-function diameter(::LazySet, ::Real=Inf) end
+diameter(::LazySet, ::Real=Inf)
+function diameter end

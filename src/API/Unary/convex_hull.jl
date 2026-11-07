@@ -1,4 +1,4 @@
-"""
+@doc """
     convex_hull(X::LazySet)
 
 Compute the convex hull of a set.
@@ -19,4 +19,5 @@ The convex hull of a set ``X`` is defined as
     \\{λx + (1-λ)y \\mid x, y ∈ X, λ ∈ [0, 1]\\}.
 ```
 """
-function convex_hull(::LazySet) end
+convex_hull(::LazySet)
+function convex_hull end
