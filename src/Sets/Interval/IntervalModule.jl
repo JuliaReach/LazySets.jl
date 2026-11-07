@@ -4,7 +4,6 @@ using Reexport: @reexport
 
 using ..LazySets: LazySet, AbstractHyperrectangle, _witness_result_empty,
                   @validate
-using ..API: eltype, isconvextype
 import IntervalArithmetic as IA
 using Random: AbstractRNG, GLOBAL_RNG
 using ReachabilityBase.Comparison: isapproxzero, _isapprox, _leq
