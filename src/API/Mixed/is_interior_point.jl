@@ -1,4 +1,4 @@
-"""
+@doc """
     is_interior_point(v::AbstractVector, X::LazySet; [p]::Real=Inf, [ε]::Real=_rtol(eltype(X)))
 
 Check whether a point is contained in the interior of a set.
@@ -15,4 +15,5 @@ Check whether a point is contained in the interior of a set.
 
 `true` iff the point `v` is strictly contained in `X` with tolerance `ε`.
 """
-function is_interior_point(::AbstractVector, ::LazySet) end
+is_interior_point(::AbstractVector, ::LazySet)
+function is_interior_point end

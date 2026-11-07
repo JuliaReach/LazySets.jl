@@ -1,4 +1,4 @@
-"""
+@doc """
     low(X::LazySet, i::Int)
 
 Compute the lowest coordinate of a set in a given dimension.
@@ -17,9 +17,10 @@ dimension.
 
 The resulting value is the lower end of the projection.
 """
-function low(::LazySet, ::Int) end
+low(::LazySet, ::Int)
+function low end
 
-"""
+@doc """
     low(X::LazySet)
 
 Compute the lowest coordinates of a set in each dimension.
@@ -39,4 +40,4 @@ See also `low(X::LazySet, i::Int)`.
 The result is the lowermost corner of the box approximation, so it is not
 necessarily contained in `X`.
 """
-function low(::LazySet) end
+low(::LazySet)

@@ -1,4 +1,4 @@
-"""
+@doc """
     exact_sum(X::LazySet, Y::LazySet)
 
 Compute the exact sum of two parametric sets.
@@ -18,4 +18,5 @@ For parametric sets, the exact sum behaves like the Minkowski sum, except that
 the parameters are shared. Thus, for nonparametric sets, it coincides with the
 Minkowski sum.
 """
-function exact_sum(::LazySet, ::LazySet) end
+exact_sum(::LazySet, ::LazySet)
+function exact_sum end

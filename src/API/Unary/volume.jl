@@ -1,4 +1,4 @@
-"""
+@doc """
     volume(X::LazySet)
 
 Compute the volume, or Lebesgue measure, of a set.
@@ -22,4 +22,5 @@ following common special cases:
 
 In higher dimensions, it is also known as the *hypervolume* or simply *volume*.
 """
-function volume(::LazySet) end
+volume(::LazySet)
+function volume end

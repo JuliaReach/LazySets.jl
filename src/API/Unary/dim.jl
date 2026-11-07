@@ -1,4 +1,4 @@
-"""
+@doc """
     dim(X::LazySet)
 
 Compute the ambient dimension of a set.
@@ -11,4 +11,5 @@ Compute the ambient dimension of a set.
 
 The ambient dimension of the set.
 """
-function dim(::LazySet) end
+dim(::LazySet)
+function dim end

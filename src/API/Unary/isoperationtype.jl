@@ -1,4 +1,4 @@
-"""
+@doc """
     isoperationtype(T::Type{<:LazySet})
 
 Check whether a set type only represents (lazy) set operations.
@@ -15,4 +15,5 @@ Check whether a set type only represents (lazy) set operations.
 
 See also [`isoperation(::LazySet)`](@ref).
 """
-function isoperationtype(::Type{<:LazySet}) end
+isoperationtype(::Type{<:LazySet})
+function isoperationtype end

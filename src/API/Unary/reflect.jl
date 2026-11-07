@@ -1,4 +1,4 @@
-"""
+@doc """
     reflect(X::LazySet)
 
 Compute the reflection of a set in the origin.
@@ -11,4 +11,5 @@ Compute the reflection of a set in the origin.
 
 A set representing the reflection ``-X``.
 """
-function reflect(::LazySet) end
+reflect(::LazySet)
+function reflect end

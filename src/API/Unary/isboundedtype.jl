@@ -1,4 +1,4 @@
-"""
+@doc """
     isboundedtype(T::Type{<:LazySet})
 
 Check whether a set type only represents bounded sets.
@@ -15,4 +15,5 @@ Check whether a set type only represents bounded sets.
 
 See also [`isbounded(::LazySet)`](@ref).
 """
-function isboundedtype(::Type{<:LazySet}) end
+isboundedtype(::Type{<:LazySet})
+function isboundedtype end

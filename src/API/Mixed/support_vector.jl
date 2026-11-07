@@ -1,4 +1,4 @@
-"""
+@doc """
     σ(d::AbstractVector, X::LazySet)
 
 Compute a support vector of a set in a given direction.
@@ -16,6 +16,7 @@ A support vector of `X` in direction `d`.
 
 The convenience alias `support_vector` is also available.
 """
-function σ(::AbstractVector, ::LazySet) end
+σ(::AbstractVector, ::LazySet)
+function σ end
 
 const support_vector = σ

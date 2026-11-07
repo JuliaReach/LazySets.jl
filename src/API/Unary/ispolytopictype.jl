@@ -1,4 +1,4 @@
-"""
+@doc """
     ispolytopictype(T::Type{<:LazySet})
 
 Check whether a set type only represents polytopic sets.
@@ -15,4 +15,5 @@ Check whether a set type only represents polytopic sets.
 
 See also [`ispolytopic(::LazySet)`](@ref).
 """
-function ispolytopictype(::Type{<:LazySet}) end
+ispolytopictype(::Type{<:LazySet})
+function ispolytopictype end

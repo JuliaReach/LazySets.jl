@@ -1,4 +1,4 @@
-"""
+@doc """
     isdisjoint(X::LazySet, Y::LazySet, [witness]::Bool=false)
 
 Check whether two sets are disjoint (i.e., do not intersect), and optionally
@@ -21,6 +21,6 @@ compute a witness.
 
 The convenience alias `is_intersection_empty` is also available.
 """
-function isdisjoint(::LazySet, ::LazySet, ::Bool=false) end
+isdisjoint(::LazySet, ::LazySet, ::Bool=false)
 
 const is_intersection_empty = isdisjoint

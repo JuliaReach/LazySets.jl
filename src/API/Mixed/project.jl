@@ -1,4 +1,4 @@
-"""
+@doc """
     project(X::LazySet, block::AbstractVector{Int})
 
 Project a set to a given block by using a concrete linear map.
@@ -12,4 +12,5 @@ Project a set to a given block by using a concrete linear map.
 
 A set representing the projection of `X` to block `block`.
 """
-function project(::LazySet, ::AbstractVector{Int}) end
+project(::LazySet, ::AbstractVector{Int})
+function project end

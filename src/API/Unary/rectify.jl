@@ -1,4 +1,4 @@
-"""
+@doc """
     rectify(X::LazySet)
 
 Compute the rectification of a set.
@@ -11,4 +11,4 @@ Compute the rectification of a set.
 
 A set representing the rectification of `X`.
 """
-function rectify(::LazySet) end
+rectify(::LazySet)

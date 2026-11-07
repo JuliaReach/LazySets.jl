@@ -1,4 +1,4 @@
-"""
+@doc """
     isconvex(X::LazySet)
 
 Check whether a set is convex.
@@ -18,4 +18,5 @@ convex.
 
 See also [`isconvextype(::Type{<:LazySet})`](@ref).
 """
-function isconvex(::LazySet) end
+isconvex(::LazySet)
+function isconvex end

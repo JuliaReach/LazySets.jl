@@ -1,4 +1,4 @@
-"""
+@doc """
     intersection(X::LazySet, Y::LazySet)
 
 Compute the intersection of two sets.
@@ -20,4 +20,5 @@ The intersection of two sets ``X`` and ``Y`` is defined as
     X ∩ Y = \\{x \\mid x ∈ X \\text{ and } x ∈ Y\\}.
 ```
 """
-function intersection(::LazySet, ::LazySet) end
+intersection(::LazySet, ::LazySet)
+function intersection end

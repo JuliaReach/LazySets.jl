@@ -1,4 +1,4 @@
-"""
+@doc """
     difference(X::LazySet, Y::LazySet)
 
 Compute the set difference of two sets.
@@ -20,4 +20,5 @@ The set difference is defined as:
     X ∖ Y = \\{x \\mid x ∈ X \\text{ and } x ∉ Y \\}
 ```
 """
-function difference(::LazySet, ::LazySet) end
+difference(::LazySet, ::LazySet)
+function difference end

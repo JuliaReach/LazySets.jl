@@ -1,4 +1,4 @@
-"""
+@doc """
     isuniversal(X::LazySet, witness::Bool=false)
 
 Check whether a set is universal.
@@ -15,4 +15,5 @@ Check whether a set is universal.
   * `(true, [])` iff ``X = ℝ^n``
   * `(false, v)` iff ``X ≠ ℝ^n`` for some ``v ∉ X``
 """
-function isuniversal(::LazySet, ::Bool=false) end
+isuniversal(::LazySet, ::Bool=false)
+function isuniversal end

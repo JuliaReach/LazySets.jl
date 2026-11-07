@@ -1,4 +1,4 @@
-"""
+@doc """
     center(X::LazySet, i::Int)
 
 Compute the center of a centrally symmetric set in a given dimension.
@@ -12,9 +12,10 @@ Compute the center of a centrally symmetric set in a given dimension.
 
 A real number representing the center of the set in the given dimension.
 """
-function center(::LazySet, ::Int) end
+center(::LazySet, ::Int)
+function center end
 
-"""
+@doc """
     center(X::LazySet)
 
 Compute the center of a centrally symmetric set.
@@ -27,4 +28,4 @@ Compute the center of a centrally symmetric set.
 
 A vector with the center, or midpoint, of `X`.
 """
-function center(::LazySet) end
+center(::LazySet)

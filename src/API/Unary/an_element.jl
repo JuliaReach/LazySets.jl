@@ -1,4 +1,4 @@
-"""
+@doc """
     an_element(X::LazySet)
 
 Return some element of a nonempty set.
@@ -11,4 +11,5 @@ Return some element of a nonempty set.
 
 An element of `X` unless `X` is empty.
 """
-function an_element(::LazySet) end
+an_element(::LazySet)
+function an_element end

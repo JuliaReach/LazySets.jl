@@ -1,4 +1,4 @@
-"""
+@doc """
     ispolyhedral(X::LazySet)
 
 Check whether a set is polyhedral.
@@ -18,4 +18,5 @@ polyhedral.
 
 See also [`ispolyhedraltype(::Type{<:LazySet})`](@ref).
 """
-function ispolyhedral(::LazySet) end
+ispolyhedral(::LazySet)
+function ispolyhedral end

@@ -1,4 +1,4 @@
-"""
+@doc """
     ==(X::LazySet, Y::LazySet)
 
 Check whether two sets use exactly the same set representation.
@@ -20,4 +20,4 @@ set. But `X::T{Int64} == Y::T{Float64}` is a valid comparison. Note that, unlike
 most other binary operations, a query with `X` and `Y` of different dimension is
 allowed (and results in the answer `false`).
 """
-function ==(::LazySet, ::LazySet) end
+==(::LazySet, ::LazySet)

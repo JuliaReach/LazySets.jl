@@ -1,4 +1,4 @@
-"""
+@doc """
     linear_combination(X::LazySet, Y::LazySet)
 
 Compute the linear combination of two sets.
@@ -23,4 +23,5 @@ The linear combination of two sets ``X`` and ``Y`` is defined as
 If ``X`` and ``Y`` are convex, their linear combination is identical with the convex hull of their
 union ``X ∪ Y``.
 """
-function linear_combination(::LazySet, ::LazySet) end
+linear_combination(::LazySet, ::LazySet)
+function linear_combination end

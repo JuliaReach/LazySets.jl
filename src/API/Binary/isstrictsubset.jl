@@ -1,4 +1,4 @@
-"""
+@doc """
     ⊂(X::LazySet, Y::LazySet, [witness]::Bool=false)
 
 Check whether a set is a strict subset of another set, and optionally compute a
@@ -31,4 +31,5 @@ Strict inclusion is sometimes written as `⊊`. The following identity holds:
 The default implementation first checks inclusion of `X` in `Y` and then checks
 noninclusion of `Y` in `X`:
 """
-function ⊂(::LazySet, ::LazySet, ::Bool=false) end
+⊂(::LazySet, ::LazySet, ::Bool=false)
+function ⊂ end

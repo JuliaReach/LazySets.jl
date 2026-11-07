@@ -1,4 +1,4 @@
-"""
+@doc """
     rand(T::Type{<:LazySet}; [N]::Type{<:Real}=Float64, [dim]::Int=2,
          [rng]::AbstractRNG=GLOBAL_RNG, [seed]::Union{Int, Nothing}=nothing
         )
@@ -17,4 +17,4 @@ Create a random set of the given set type.
 
 A random set of the given set type.
 """
-function rand(::Type{<:LazySet}) end
+rand(::Type{<:LazySet})

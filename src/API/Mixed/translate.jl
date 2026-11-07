@@ -1,4 +1,4 @@
-"""
+@doc """
     translate(X::LazySet, v::AbstractVector)
 
 Compute the translation of a set with a vector.
@@ -12,4 +12,5 @@ Compute the translation of a set with a vector.
 
 A set representing ``X + \\{v\\}``.
 """
-function translate(::LazySet, ::AbstractVector) end
+translate(::LazySet, ::AbstractVector)
+function translate end

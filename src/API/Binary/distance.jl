@@ -1,4 +1,4 @@
-"""
+@doc """
     distance(X::LazySet, Y::LazySet; [p]::Real=2)
 
 Compute the standard distance (induced by the ``p``-norm) between two sets.
@@ -22,4 +22,4 @@ Otherwise, it is the ``p``-norm of the shortest line segment between any pair of
     \\inf_{x ∈ X, y ∈ Y} \\{ d(x, y) \\}.
 ```
 """
-function distance(::LazySet, ::LazySet; p::Real=2) end
+distance(::LazySet, ::LazySet; p::Real=2)

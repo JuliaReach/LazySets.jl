@@ -1,4 +1,4 @@
-"""
+@doc """
     ispolytopic(X::LazySet)
 
 Check whether a set is polytopic.
@@ -18,4 +18,5 @@ polytopic.
 
 A set is polytopic if it is both polyhedral and bounded.
 """
-function ispolytopic(::LazySet) end
+ispolytopic(::LazySet)
+function ispolytopic end

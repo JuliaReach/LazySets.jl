@@ -1,4 +1,4 @@
-"""
+@doc """
     norm(X::LazySet, [p]::Real=Inf)
 
 Return the norm of a set.
@@ -17,4 +17,4 @@ A real number representing the norm.
 The norm of a set is the norm of the enclosing ball (of the given ``p``-norm) of
 minimal volume that is centered in the origin.
 """
-function norm(::LazySet, ::Real=Inf) end
+norm(::LazySet, ::Real=Inf)
