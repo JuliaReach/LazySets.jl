@@ -15,7 +15,7 @@ If the direction has norm zero, the result depends on the wrapped set.
 """
 @validate function σ(d::AbstractVector, rm::ResetMap)
     N = promote_type(eltype(d), eltype(rm))
-    d_reset = copy(d)
+    d_reset = Vector(d)
     for var in keys(rm.resets)
         d_reset[var] = zero(N)
     end
