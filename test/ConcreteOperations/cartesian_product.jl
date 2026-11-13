@@ -1,5 +1,5 @@
 using LazySets, Test, SparseArrays
-using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+using ReachabilityBase.Arrays: SingleEntryVector
 @static if isdefined(Main, :Polyhedra)
     import Polyhedra
 end

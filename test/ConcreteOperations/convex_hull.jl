@@ -1,5 +1,5 @@
 using LazySets, Test
-using LazySets.ReachabilityBase.Arrays: ispermutation, is_cyclic_permutation
+using ReachabilityBase.Arrays: ispermutation, is_cyclic_permutation
 @static if isdefined(Main, :Polyhedra)
     import Polyhedra
 end

@@ -1,5 +1,5 @@
 using LazySets, Test
-using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+using ReachabilityBase.Arrays: SingleEntryVector
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

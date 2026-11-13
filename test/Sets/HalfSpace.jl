@@ -1,4 +1,5 @@
 using LazySets, Test, SparseArrays
+using ReachabilityBase.Comparison: isidentical
 @static if isdefined(Main, :CDDLib)
     import CDDLib
 end
@@ -20,14 +21,6 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
     end
-end
-
-function isidentical(::HalfSpace, ::HalfSpace)
-    return false
-end
-
-function isidentical(H1::HalfSpace{N}, H2::HalfSpace{N}) where {N}
-    return H1.a == H2.a && H1.b == H2.b
 end
 
 for N in @tN([Float64, Float32, Rational{Int}])
@@ -643,10 +636,10 @@ for N in @tN([Float64, Float32])
     @test H2 isa HalfSpace{N} && dim(H2) == 3
 
     # rationalize
-    H2 = rationalize(H)
+    H2 = @inferred rationalize(H)
     @test isa(H2, HalfSpace{Rational{Int},Vector{Rational{Int}}})
     H2.a == Rational{Int}[1 // 1, 2 // 1]
-    H2 = rationalize(BigInt, H)
+    H2 = @inferred rationalize(BigInt, H)
     @test isa(H2, HalfSpace{Rational{BigInt},Vector{Rational{BigInt}}})
     H2.a == Rational{BigInt}[1 // 1, 2 // 1]
 

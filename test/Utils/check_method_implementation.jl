@@ -1,3 +1,5 @@
+import ReachabilityBase.Subtypes
+
 """
     check_method_implementation(interface::Type,
                                 func_name,
@@ -45,7 +47,7 @@ function check_method_implementation(interface::Type,
                                      print_results::Bool=false)::Bool
     # first collect all base types that are subtypes of this interface
     # NOTE: 'isleaftype' does not work due to type parameters
-    base_types = LazySets.ReachabilityBase.Subtypes.subtypes(interface, true)
+    base_types = Subtypes.subtypes(interface, true)
 
     # now check all base types
     for subtype in base_types

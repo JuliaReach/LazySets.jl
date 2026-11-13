@@ -1,7 +1,7 @@
 using LazySets, Test, SparseArrays
 using LazySets: ⪯
-using LazySets.ReachabilityBase.Arrays: is_cyclic_permutation, ispermutation, allequal
-using LazySets.ReachabilityBase.Comparison: _isapprox
+using ReachabilityBase.Arrays: is_cyclic_permutation, ispermutation, allequal
+using ReachabilityBase.Comparison: _isapprox
 @static if isdefined(Main, :CDDLib)
     import CDDLib
 end

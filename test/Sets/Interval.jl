@@ -1,6 +1,6 @@
 using LazySets, Test
-using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
-using LazySets.ReachabilityBase.Comparison: set_rtol, _rtol, _ztol
+using ReachabilityBase.Arrays: ispermutation, SingleEntryVector
+using ReachabilityBase.Comparison: isidentical, set_rtol, _rtol, _ztol
 IA = LazySets.IA
 @static if isdefined(Main, :MiniQhull)
     import MiniQhull
@@ -12,14 +12,6 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
     end
-end
-
-function isidentical(::Interval, ::Interval)
-    return false
-end
-
-function isidentical(X1::Interval{N}, X2::Interval{N}) where {N}
-    return X1 == X2
 end
 
 for N in @tN([Float64, Float32, Rational{Int}])

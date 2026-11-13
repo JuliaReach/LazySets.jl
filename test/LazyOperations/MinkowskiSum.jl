@@ -1,5 +1,5 @@
 using LazySets, Test
-using LazySets.ReachabilityBase.Arrays: ispermutation
+using ReachabilityBase.Arrays: ispermutation
 @static if isdefined(Main, :CDDLib)
     import CDDLib
 end

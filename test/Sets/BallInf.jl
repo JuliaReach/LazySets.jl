@@ -1,5 +1,5 @@
 using LazySets, Test
-using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
+using ReachabilityBase.Arrays: SingleEntryVector, ispermutation
 @static if isdefined(Main, :IntervalBoxes)
     import IntervalBoxes
 end

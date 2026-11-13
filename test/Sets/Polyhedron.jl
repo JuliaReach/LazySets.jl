@@ -1,5 +1,5 @@
 using LazySets, Test, SparseArrays
-using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation, isinvertible
+using ReachabilityBase.Arrays: SingleEntryVector, ispermutation, isinvertible
 @static if isdefined(Main, :CDDLib)
     import CDDLib
 end

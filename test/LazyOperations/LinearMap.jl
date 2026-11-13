@@ -1,5 +1,5 @@
 using LazySets, Test, LinearAlgebra
-using LazySets.ReachabilityBase.Arrays: ispermutation
+using ReachabilityBase.Arrays: ispermutation
 @static if isdefined(Main, :Polyhedra)
     import Polyhedra
 end

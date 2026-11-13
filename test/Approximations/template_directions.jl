@@ -1,5 +1,5 @@
 using LazySets, Test, LinearAlgebra
-using LazySets.ReachabilityBase.Arrays: SingleEntryVector
+using ReachabilityBase.Arrays: SingleEntryVector
 @static if isdefined(Main, :Optim)
     import Optim
 end

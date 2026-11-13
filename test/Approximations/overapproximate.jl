@@ -1,7 +1,7 @@
 using LazySets, Test, LinearAlgebra, SparseArrays
 using LazySets.MatrixZonotopeModule: vectorize
-using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
-using LazySets.ReachabilityBase.Comparison: _leq, _geq
+using ReachabilityBase.Arrays: ispermutation, SingleEntryVector
+using ReachabilityBase.Comparison: _leq, _geq
 IA = LazySets.IA
 @static if isdefined(Main, :IntervalBoxes)
     import IntervalBoxes

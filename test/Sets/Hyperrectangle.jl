@@ -1,6 +1,6 @@
 using LazySets, Test, SparseArrays, LinearAlgebra
-using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
-using LazySets.ReachabilityBase.Comparison: set_rtol, _rtol
+using ReachabilityBase.Arrays: ispermutation, SingleEntryVector
+using ReachabilityBase.Comparison: isidentical, set_rtol, _rtol
 IA = LazySets.IA
 @static if isdefined(Main, :GeometryBasics)
     import GeometryBasics
@@ -21,14 +21,6 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
     end
-end
-
-function isidentical(::Hyperrectangle, ::Hyperrectangle)
-    return false
-end
-
-function isidentical(H1::Hyperrectangle{N}, H2::Hyperrectangle{N}) where {N}
-    return H1.center == H2.center && H1.radius == H2.radius
 end
 
 for N in @tN([Float64, Float32, Rational{Int}])
@@ -72,7 +64,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
         X = convert(IB.IntervalBox, H)
         @test X isa IB.IntervalBox{2,N} && Interval(X[1]) == Interval(N(0), N(2)) &&
               Interval(X[2]) == Interval(N(-3), N(1))
-        @test isidentical(convert(Hyperrectangle, X), H)
+        H2 = convert(Hyperrectangle, X)
+        @test H2 == H && eltype(H2) == eltype(H)  # `H2` uses `SVector`s, so `isidentical` fails
     end
     # from IA.Interval
     H2 = @inferred convert(Hyperrectangle, IA.interval(N(-1), N(1)))
@@ -265,7 +258,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test @inferred ispolytopictype(typeof(H))
 
     # isuniversal
-    @test !(@inferred isuniversal(H))
+    if VERSION >= v"1.11"  # works with v1.13, does not work with v1.10
+        @test !(@inferred isuniversal(H))
+    else
+        @test_broken @inferred isuniversal(H)
+        @test !isuniversal(H)
+    end
     @test_broken @inferred isuniversal(H, true)  # TODO make this type-stable (witness)
     res, w = isuniversal(H, true)
     @test !res && w isa Vector{N} && w ∉ H
@@ -776,8 +774,7 @@ for N in @tN([Float64, Float32])
     @test H2 isa Hyperrectangle{N} && dim(H2) == 3
 
     # rationalize
-    @test_broken @inferred rationalize(H)  # TODO make this type-stable (fix in ReachabilityBase)
-    H2 = rationalize(H)
+    H2 = @inferred rationalize(H)
     T = Rational{Int64}
     @test H2 isa Hyperrectangle{T} && isidentical(H2, Hyperrectangle(T[1, -1], T[1, 2]))
 end

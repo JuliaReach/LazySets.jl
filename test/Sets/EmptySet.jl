@@ -1,4 +1,5 @@
 using LazySets, Test
+using ReachabilityBase.Comparison: isidentical
 @static if isdefined(Main, :Polyhedra)
     import Polyhedra
 end
@@ -6,14 +7,6 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
     end
-end
-
-function isidentical(::EmptySet, ::EmptySet)
-    return false
-end
-
-function isidentical(E1::EmptySet{N}, E2::EmptySet{N}) where {N}
-    return E1.dim == E2.dim
 end
 
 let

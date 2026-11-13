@@ -1,6 +1,6 @@
 using LazySets, Test
-using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
-using LazySets.ReachabilityBase.Comparison: set_rtol, _rtol
+using ReachabilityBase.Arrays: ispermutation, SingleEntryVector
+using ReachabilityBase.Comparison: isidentical, set_rtol, _rtol
 @static if isdefined(Main, :GeometryBasics)
     import GeometryBasics
 end
@@ -14,14 +14,6 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
     end
-end
-
-function isidentical(::Singleton, ::Singleton)
-    return false
-end
-
-function isidentical(S1::Singleton{N}, S2::Singleton{N}) where {N}
-    return S1.element == S2.element
 end
 
 for N in @tN([Float64, Float32, Rational{Int}])
@@ -602,7 +594,7 @@ for N in @tN([Float64, Float32])
     @test S2 isa Singleton{N} && dim(S2) == 3
 
     # rationalize
-    S2 = rationalize(S)
+    S2 = @inferred rationalize(S)
     T = Rational{Int64}
     @test S2 isa Singleton{T} && isidentical(S2, Singleton(T[2, -1]))
 end
