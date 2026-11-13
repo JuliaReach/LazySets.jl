@@ -258,7 +258,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test @inferred ispolytopictype(typeof(H))
 
     # isuniversal
-    @test !(@inferred isuniversal(H))
+    if VERSION >= v"1.11"  # works with v1.13, does not work with v1.10
+        @test !(@inferred isuniversal(H))
+    else
+        @test_broken @inferred isuniversal(H)
+        @test !isuniversal(H)
+    end
     @test_broken @inferred isuniversal(H, true)  # TODO make this type-stable (witness)
     res, w = isuniversal(H, true)
     @test !res && w isa Vector{N} && w ∉ H

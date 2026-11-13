@@ -483,7 +483,12 @@ for N in @tN([Float64, Float32, Rational{Int}])
     # minkowski_difference
     @test_throws DimensionMismatch minkowski_difference(U, U3)
     # empty difference
-    E2 = @inferred minkowski_difference(B, U)
+    if VERSION >= v"1.11"  # works with v1.13, does not work with v1.10
+        E2 = @inferred minkowski_difference(B, U)
+    else
+        @test_broken @inferred minkowski_difference(B, U)
+        E2 = minkowski_difference(B, U)
+    end
     @test E2 isa EmptySet{N} && dim(E2) == 2
     # Universe
     for X in (U, B, Z)
