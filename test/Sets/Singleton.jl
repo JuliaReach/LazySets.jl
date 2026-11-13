@@ -594,7 +594,7 @@ for N in @tN([Float64, Float32])
     @test S2 isa Singleton{N} && dim(S2) == 3
 
     # rationalize
-    S2 = rationalize(S)
+    S2 = @inferred rationalize(S)
     T = Rational{Int64}
     @test S2 isa Singleton{T} && isidentical(S2, Singleton(T[2, -1]))
 end

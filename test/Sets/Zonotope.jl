@@ -906,8 +906,7 @@ for N in @tN([Float64, Float32])
     @test Z2 isa Zonotope{N} && dim(Z2) == 2 && ngens(Z2) == 5
 
     # rationalize
-    @test_broken @inferred rationalize(Z)  # TODO make this type-stable (fix in ReachabilityBase)
-    Z2 = rationalize(Z)
+    Z2 = @inferred rationalize(Z)
     T = Rational{Int64}
     @test Z2 isa Zonotope{T} && isidentical(Z2, Zonotope(T[1, 2], T[1 3; 2 4]))
 

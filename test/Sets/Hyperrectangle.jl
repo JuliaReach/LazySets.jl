@@ -769,8 +769,7 @@ for N in @tN([Float64, Float32])
     @test H2 isa Hyperrectangle{N} && dim(H2) == 3
 
     # rationalize
-    @test_broken @inferred rationalize(H)  # TODO make this type-stable (fix in ReachabilityBase)
-    H2 = rationalize(H)
+    H2 = @inferred rationalize(H)
     T = Rational{Int64}
     @test H2 isa Hyperrectangle{T} && isidentical(H2, Hyperrectangle(T[1, -1], T[1, 2]))
 end

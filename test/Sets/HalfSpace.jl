@@ -636,10 +636,10 @@ for N in @tN([Float64, Float32])
     @test H2 isa HalfSpace{N} && dim(H2) == 3
 
     # rationalize
-    H2 = rationalize(H)
+    H2 = @inferred rationalize(H)
     @test isa(H2, HalfSpace{Rational{Int},Vector{Rational{Int}}})
     H2.a == Rational{Int}[1 // 1, 2 // 1]
-    H2 = rationalize(BigInt, H)
+    H2 = @inferred rationalize(BigInt, H)
     @test isa(H2, HalfSpace{Rational{BigInt},Vector{Rational{BigInt}}})
     H2.a == Rational{BigInt}[1 // 1, 2 // 1]
 
