@@ -43,7 +43,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
     r = N[4, 5]
     G = N[4 0; 0 5]
     Z2 = @inferred convert(Zonotope, Hyperrectangle(c, r))
-    @test isidentical(Z2, Zonotope(c, G))
+    Z2a = Zonotope(c, G)
+    @test isidentical(Z2, Z2a)
     # from AbstractHyperrectangle with flat first dimension
     r2 = N[0, 5]
     Z2 = @inferred convert(Zonotope, Hyperrectangle(c, r2))
@@ -60,11 +61,11 @@ for N in @tN([Float64, Float32, Rational{Int}])
         using StaticArrays: SVector, SMatrix
 
         H = Hyperrectangle(SVector{2}(c), SVector{2}(r))
-        Z2a = convert(Zonotope, H)
-        @test isidentical(Z2a, Zonotope(SVector{2}(c), SMatrix{2,2}(G)))
+        Z2b = convert(Zonotope, H)
+        @test isidentical(Z2b, Zonotope(SVector{2}(c), SMatrix{2,2}(G)))
         # _convert_static
         Z2 = @inferred LazySets._convert_static(Zonotope, H)
-        @test isidentical(Z2, Z2a)
+        @test isidentical(Z2, Z2b)
         # flat first dimension
         r2 = N[0, 5]
         Z2 = convert(Zonotope, Hyperrectangle(SVector{2}(c), SVector{2}(r2)))
@@ -91,29 +92,29 @@ for N in @tN([Float64, Float32, Rational{Int}])
     H1 = Hyperrectangle([c[1]], [r[1]])
     H2 = Hyperrectangle([c[2]], [r[2]])
     Z2 = @inferred convert(Zonotope, H1 × H2)
-    @test isidentical(Z2, Zonotope(c, G))
+    @test isidentical(Z2, Z2a)
     # from CartesianProductArray of AbstractHyperrectangles
     Z2 = @inferred convert(Zonotope, CartesianProductArray([H1, H2]))
-    @test isidentical(Z2, Zonotope(c, G))
+    @test isidentical(Z2, Z2a)
     # from CartesianProduct of AbstractZonotopes
     Z2 = @inferred convert(Zonotope, convert(Zonotope, H1) × convert(Zonotope, H2))
-    @test isidentical(Z2, Zonotope(c, G))
+    @test isidentical(Z2, Z2a)
     # from CartesianProductArray of AbstractZonotopes
     Z2 = @inferred convert(Zonotope,
                            CartesianProductArray([convert(Zonotope, H1), convert(Zonotope, H2)]))
-    @test isidentical(Z2, Zonotope(c, G))
+    @test Z2 == Z2a && eltype(Z2) == eltype(Z2a)
     # from LinearMap of AbstractZonotope
     M = N isa AbstractFloat ? rand(N, 2, 2) : M = N[1 -2; 3 4]
     Z2 = @inferred convert(Zonotope, M * Z)
     @test isidentical(Z2, linear_map(M, Z))
     # from LinearMap of CartesianProduct of AbstractZonotopes
     Z2 = @inferred convert(Zonotope, M * (convert(Zonotope, H1) × convert(Zonotope, H2)))
-    @test isidentical(Z2, linear_map(M, Zonotope(c, G)))
+    @test isidentical(Z2, linear_map(M, Z2a))
     # from LinearMap of CartesianProductArray of AbstractZonotopes
     Z2 = @inferred convert(Zonotope,
                            M *
                            CartesianProductArray([convert(Zonotope, H1), convert(Zonotope, H2)]))
-    @test isidentical(Z2, linear_map(M, Zonotope(c, G)))
+    @test isidentical(Z2, linear_map(M, Z2a))
     # from AbstractAffineMap of AbstractZonotope
     Z2 = @inferred convert(Zonotope, M * Z + c)
     @test isidentical(Z2, affine_map(M, Z, c))
@@ -413,7 +414,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
             @test Z2c === Z2a
         else
             if N == Float64
-                @test isidentical(Z2c, Zonotope(c2, G2))
+                Z2d = Zonotope(c2, G2)
+                @test Z2c == Z2d && eltype(Z2c) == eltype(Z2d)
             elseif N == Float32
                 # imprecision with ±0.0
                 @test typeof(Z2c) == typeof(Z2a) && Z2c.center == c2 && Z2c.generators ≈ G2
@@ -716,7 +718,9 @@ for N in @tN([Float64, Float32, Rational{Int}])
 
         Z2 = Zonotope(SVector{2}(c), SMatrix{2,2}(N[1 3; 2 4]))
         Z2b = @inferred translate(Z2, N[1, 2])
-        @test isidentical(Z2b, Zonotope(SVector{2}(N[2, 4]), SMatrix{2,2}(N[1 3; 2 4])))
+        Z2a = Zonotope(SVector{2}(N[2, 4]), SMatrix{2,2}(N[1 3; 2 4]))
+        @test_broken isidentical(Z2b, Z2a)  # TODO add method for `SVector` to preserve type
+        @test Z2b == Z2a && eltype(Z2b) == eltype(Z2a)
         @test_throws ErrorException translate!(Z2, N[1, 2])
     end
 

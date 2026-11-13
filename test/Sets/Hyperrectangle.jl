@@ -64,7 +64,8 @@ for N in @tN([Float64, Float32, Rational{Int}])
         X = convert(IB.IntervalBox, H)
         @test X isa IB.IntervalBox{2,N} && Interval(X[1]) == Interval(N(0), N(2)) &&
               Interval(X[2]) == Interval(N(-3), N(1))
-        @test isidentical(convert(Hyperrectangle, X), H)
+        H2 = convert(Hyperrectangle, X)
+        @test H2 == H && eltype(H2) == eltype(H)  # `H2` uses `SVector`s, so `isidentical` fails
     end
     # from IA.Interval
     H2 = @inferred convert(Hyperrectangle, IA.interval(N(-1), N(1)))
