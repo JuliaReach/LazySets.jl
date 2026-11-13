@@ -1,5 +1,5 @@
 using LazySets, Test
-using LazySets.ReachabilityBase.Comparison: _geq
+using ReachabilityBase.Comparison: _geq
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

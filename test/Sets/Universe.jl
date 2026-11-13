@@ -1,4 +1,5 @@
 using LazySets, Test
+using ReachabilityBase.Comparison: isidentical
 @static if isdefined(Main, :CDDLib)
     import CDDLib
 end
@@ -9,14 +10,6 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
     end
-end
-
-function isidentical(::Universe, ::Universe)
-    return false
-end
-
-function isidentical(U1::Universe{N}, U2::Universe{N}) where {N}
-    return U1.dim == U2.dim
 end
 
 let

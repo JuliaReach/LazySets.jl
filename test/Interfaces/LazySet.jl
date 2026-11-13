@@ -1,5 +1,5 @@
 using LazySets, Test
-using LazySets.ReachabilityBase.Basetype
+using ReachabilityBase.Basetype
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

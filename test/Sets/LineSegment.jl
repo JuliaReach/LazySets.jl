@@ -1,6 +1,6 @@
 using LazySets, Test
-using LazySets.ReachabilityBase.Arrays: ispermutation
-using LazySets.ReachabilityBase.Comparison: set_rtol, _rtol
+using ReachabilityBase.Arrays: ispermutation
+using ReachabilityBase.Comparison: set_rtol, _rtol
 if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v

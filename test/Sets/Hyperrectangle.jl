@@ -1,6 +1,6 @@
 using LazySets, Test, SparseArrays, LinearAlgebra
-using LazySets.ReachabilityBase.Arrays: ispermutation, SingleEntryVector
-using LazySets.ReachabilityBase.Comparison: set_rtol, _rtol
+using ReachabilityBase.Arrays: ispermutation, SingleEntryVector
+using ReachabilityBase.Comparison: isidentical, set_rtol, _rtol
 IA = LazySets.IA
 @static if isdefined(Main, :GeometryBasics)
     import GeometryBasics
@@ -21,14 +21,6 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
     end
-end
-
-function isidentical(::Hyperrectangle, ::Hyperrectangle)
-    return false
-end
-
-function isidentical(H1::Hyperrectangle{N}, H2::Hyperrectangle{N}) where {N}
-    return H1.center == H2.center && H1.radius == H2.radius
 end
 
 for N in @tN([Float64, Float32, Rational{Int}])

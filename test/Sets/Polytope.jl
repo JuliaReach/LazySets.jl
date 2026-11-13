@@ -1,6 +1,6 @@
 using LazySets, Test, LinearAlgebra
 using LazySets: linear_map_inverse, affine_map_inverse
-using LazySets.ReachabilityBase.Arrays: SingleEntryVector, ispermutation
+using ReachabilityBase.Arrays: SingleEntryVector, ispermutation
 @static if isdefined(Main, :CDDLib)
     import CDDLib
 end

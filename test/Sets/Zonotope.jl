@@ -1,6 +1,6 @@
 using LazySets, Test, LinearAlgebra, SparseArrays
-using LazySets.ReachabilityBase.Arrays: ispermutation
-using LazySets.ReachabilityBase.Comparison: isapproxzero, set_rtol, _rtol
+using ReachabilityBase.Arrays: ispermutation
+using ReachabilityBase.Comparison: isapproxzero, isidentical, set_rtol, _rtol
 @static if isdefined(Main, :GeometryBasics)
     import GeometryBasics
 end
@@ -17,14 +17,6 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     macro tN(v)
         return v
     end
-end
-
-function isidentical(::Zonotope, ::Zonotope)
-    return false
-end
-
-function isidentical(Z1::Zonotope{N}, Z2::Zonotope{N}) where {N}
-    return Z1.center == Z2.center && Z1.generators == Z2.generators
 end
 
 for N in @tN([Float64, Float32, Rational{Int}])
