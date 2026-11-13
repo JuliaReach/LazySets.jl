@@ -32,7 +32,7 @@ import IntervalArithmetic as IA
 
 using Base: /, copyto!, transpose
 using LinearAlgebra: Diagonal, I, UniformScaling, checksquare, det, dot, # NOTE: `checksquare` is an internal symbol
-                     nullspace, tr
+                     nullspace, rank, tr
 using Random: AbstractRNG, GLOBAL_RNG, SamplerType, randperm  # NOTE: `GLOBAL_RNG` and `SamplerType` are internal symbols
 using SparseArrays: AbstractSparseMatrix, AbstractSparseVector, SparseVector,
                     blockdiag, findnz, issparse, sparse, sparsevec, spzeros
@@ -51,7 +51,7 @@ using ReachabilityBase.Arrays: At_ldiv_B, At_mul_B, DEFAULT_COND_TOL,
                                extend_with_zeros, is_right_turn, isinvertible,
                                ismultiple, issquare, isupwards,
                                iswellconditioned, prepend_zeros,
-                               projection_matrix, rank, remove_zero_columns,
+                               projection_matrix, remove_zero_columns,
                                right_turn, same_sign, samedir, similar_type,
                                substitute, vector_type
 using ReachabilityBase.Basetype: basetype
