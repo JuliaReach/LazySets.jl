@@ -7,4 +7,4 @@ function _minkowski_difference_universe(U::Universe, X::LazySet)
 end
 
 # see ext/LazySets/LazySetsUniverseExt.jl
-_minkowski_difference_universe2(X, U) = error
+_minkowski_difference_universe2(X, U) = error()
