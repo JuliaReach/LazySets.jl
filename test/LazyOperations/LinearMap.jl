@@ -141,6 +141,20 @@ for N in @tN([Float64, Float32, Rational{Int}])
     @test N[-1, 1, 5] ∈ M * L
     @test N[0, 0, 0] ∉ M * L
 
+    # containment with full-rank nonsquare matrices (#4392)
+    M = reshape(N[1, 0], 2, 1)
+    lm = LinearMap(M, BallInf(N[0], N(1)))
+    @test N[0, 0] ∈ lm
+    @test N[0, 1] ∉ lm
+    if N <: AbstractFloat
+        lm = LinearMap(M, Ball2(N[0], N(1)))
+        @test N[0, 0] ∈ lm
+        @test N[0, 1] ∉ lm
+    end
+    lm = LinearMap(reshape(N[1, 0], 1, 2), BallInf(N[2, 2], N(1)))
+    @test N[2] ∈ lm
+    @test N[4] ∉ lm
+
     # conversion to polygon in constraint representation
     if N <: AbstractFloat
         Lp = convert(HPolygon, L)
