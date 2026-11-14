@@ -467,9 +467,9 @@ function monotone_chain!(points::Vector{VN}; sort::Bool=true) where {N,VN<:Abstr
     @inline function build_hull!(semihull, iterator, points)
         @inbounds for i in iterator
             while length(semihull) >= 2 &&
-                (right_turn(semihull[end - 1], semihull[end], points[i])
-                 <=
-                 zero(N))
+                  (right_turn(semihull[end - 1], semihull[end], points[i])
+                   <=
+                   zero(N))
                 pop!(semihull)
             end
             push!(semihull, points[i])

@@ -63,7 +63,7 @@ struct SparseMatrixExp{N,MN<:AbstractSparseMatrix{N}} <: AbstractMatrix{N}
 end
 
 function SparseMatrixExp(M::AbstractMatrix)
-    throw(ArgumentError("only sparse matrices can be used to create a `SparseMatrixExp`"))
+    return throw(ArgumentError("only sparse matrices can be used to create a `SparseMatrixExp`"))
 end
 
 function IndexStyle(::Type{<:SparseMatrixExp})

@@ -62,5 +62,5 @@ function _unpack_arg(arg::Expr)
         # var::Type=value
         return _unpack_arg(arg.args[1])
     end
-    throw(ArgumentError("unsupported argument $arg in validation"))
+    return throw(ArgumentError("unsupported argument $arg in validation"))
 end

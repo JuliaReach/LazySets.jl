@@ -816,14 +816,14 @@ end
 
 # common error
 function isoperation(::Type{<:LazySet})
-    throw(ArgumentError("`isoperation` cannot be applied to a set type; use " *
-                        "`isoperationtype` instead"))
+    return throw(ArgumentError("`isoperation` cannot be applied to a set type; use " *
+                               "`isoperationtype` instead"))
 end
 
 # common error
 function isoperationtype(::LazySet)
-    throw(ArgumentError("`isoperationtype` cannot be applied to a set " *
-                        "instance; use `isoperation` instead"))
+    return throw(ArgumentError("`isoperationtype` cannot be applied to a set " *
+                               "instance; use `isoperation` instead"))
 end
 
 """
