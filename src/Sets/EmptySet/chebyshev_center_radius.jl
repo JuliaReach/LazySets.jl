@@ -14,5 +14,5 @@ and the corresponding radius of an empty set.
 An error.
 """
 function chebyshev_center_radius(∅::EmptySet; kwargs...)
-    throw(ArgumentError("the Chebyshev center and radius of an empty set are undefined"))
+    return throw(ArgumentError("the Chebyshev center and radius of an empty set are undefined"))
 end

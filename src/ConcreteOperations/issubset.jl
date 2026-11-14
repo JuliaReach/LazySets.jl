@@ -1,10 +1,10 @@
 # this operation is invalid, but it is a common error, so we give a detailed
 # error message
 function issubset(::AbstractVector, ::LazySet)
-    throw(ArgumentError("cannot make an inclusion check if the left-hand side " *
-                        "is a vector; either wrap it as a set with one element, as in " *
-                        "`Singleton(v) ⊆ X`, or check for set membership, as in `v ∈ X` " *
-                        "(they behave equivalently although the implementations may differ)"))
+    return throw(ArgumentError("cannot make an inclusion check if the left-hand side " *
+                               "is a vector; either wrap it as a set with one element, as in " *
+                               "`Singleton(v) ⊆ X`, or check for set membership, as in `v ∈ X` " *
+                               "(they behave equivalently although the implementations may differ)"))
 end
 
 """
@@ -203,7 +203,7 @@ function _issubset_in_polyhedron_high(S::LazySet, P::LazySet, witness::Bool=fals
     elseif !witness
         return false
     end
-    throw(ArgumentError("witness production is not supported yet"))
+    return throw(ArgumentError("witness production is not supported yet"))
 end
 
 @validate function issubset(Z::AbstractZonotope, P::AbstractPolyhedron, witness::Bool=false)

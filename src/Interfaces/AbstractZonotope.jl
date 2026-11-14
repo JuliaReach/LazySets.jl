@@ -1248,7 +1248,7 @@ end
 
 # internal function; defined here due to dependency StaticArrays and submodules
 function _genmat_static(::AbstractZonotope)  # COV_EXCL_LINE
-    throw(ErrorException("not implemented"))  # COV_EXCL_LINE
+    return throw(ErrorException("not implemented"))  # COV_EXCL_LINE
 end
 
 """

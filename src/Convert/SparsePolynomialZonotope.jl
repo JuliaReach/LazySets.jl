@@ -27,7 +27,7 @@ function convert(::Type{SparsePolynomialZonotope}, Z::AbstractZonotope;
     elseif algorithm == "K21"
         return _convert_SPZ_Z_K21(Z)
     end
-    throw(ArgumentError("invalid algorithm $algorithm"))
+    return throw(ArgumentError("invalid algorithm $algorithm"))
 end
 
 function _convert_SPZ_Z_K21(Z::AbstractZonotope{N}) where {N<:Number}
