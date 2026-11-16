@@ -23,6 +23,31 @@ end
                   (N[i, j, k] / 4 for i in -1:5, j in -1:5, k in -1:5))
         @test_throws ArgumentError convert(IntersectionArray,
                                            HPolytope([HalfSpace(N[1, 0, 0], N(1))]))
+
+        for n in (1, 4)
+            constraints = HalfSpace{N,Vector{N}}[]
+            for i in 1:n
+                a = zeros(N, n)
+                a[i] = one(N)
+                push!(constraints, HalfSpace(a, one(N)))
+                push!(constraints, HalfSpace(-a, one(N)))
+            end
+            box = HPolytope(constraints)
+            intersection = convert(IntersectionArray, box)
+            @test eltype(intersection) == N
+            @test length(array(intersection)) == 2n
+            @test zeros(N, n) in intersection
+            @test !(fill(N(2), n) in intersection)
+        end
+
+        point = HPolytope([HalfSpace(N[1], zero(N)),
+                           HalfSpace(N[-1], zero(N))])
+        point_intersection = convert(IntersectionArray, point)
+        @test N[0] in point_intersection
+        @test !(N[0.1] in point_intersection)
+        @test_throws ArgumentError convert(IntersectionArray,
+                                           HPolytope([HalfSpace(N[1], N(-1)),
+                                                      HalfSpace(N[-1], N(-1))]))
     end
 end
 
