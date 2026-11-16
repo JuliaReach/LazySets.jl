@@ -9,6 +9,48 @@ if !isdefined(@__MODULE__, Symbol("@tN"))
     end
 end
 
+@testset "Polytope to intersection of zonotopes" begin
+    for N in @tN([Float64, Float32])
+        P = HPolytope([HalfSpace(N[-1, 0, 0], N(0)),
+                       HalfSpace(N[0, -1, 0], N(0)),
+                       HalfSpace(N[0, 0, -1], N(0)),
+                       HalfSpace(N[1, 1, 1], N(1))])
+        Z = convert(IntersectionArray, P)
+        @test eltype(Z) == N
+        @test length(array(Z)) == 4
+        @test all(z -> z isa Zonotope && dim(z) == 3, array(Z))
+        @test all(x -> (x in Z) == (x in P),
+                  (N[i, j, k] / 4 for i in -1:5, j in -1:5, k in -1:5))
+        @test_throws ArgumentError convert(IntersectionArray,
+                                           HPolytope([HalfSpace(N[1, 0, 0], N(1))]))
+
+        for n in (1, 4)
+            constraints = HalfSpace{N,Vector{N}}[]
+            for i in 1:n
+                a = zeros(N, n)
+                a[i] = one(N)
+                push!(constraints, HalfSpace(a, one(N)))
+                push!(constraints, HalfSpace(-a, one(N)))
+            end
+            box = HPolytope(constraints)
+            intersection = convert(IntersectionArray, box)
+            @test eltype(intersection) == N
+            @test length(array(intersection)) == 2n
+            @test zeros(N, n) in intersection
+            @test !(fill(N(2), n) in intersection)
+        end
+
+        point = HPolytope([HalfSpace(N[1], zero(N)),
+                           HalfSpace(N[-1], zero(N))])
+        point_intersection = convert(IntersectionArray, point)
+        @test N[0] in point_intersection
+        @test !(N[0.1] in point_intersection)
+        @test_throws ArgumentError convert(IntersectionArray,
+                                           HPolytope([HalfSpace(N[1], N(-1)),
+                                                      HalfSpace(N[-1], N(-1))]))
+    end
+end
+
 for N in @tN([Float64, Float32, Rational{Int}])
     B = BallInf(ones(N, 2), N(3))
     H = Hyperrectangle(ones(N, 2), ones(N, 2))
